@@ -2,21 +2,24 @@
 
 #include <string>
 
-#include <QGraphicsItem>
+#include <QGraphicsRectItem>
 #include <QGraphicsTextItem>
 
-class Node : public QGraphicsItem {
+#include "port.h"
+
+class Node : public QGraphicsRectItem {
 	public:
-		Node(const QString& name, const QPointF& position = QPointF(0,0));
+		Node(const QString& name, const QPointF& position = QPointF(0,0),
+			const std::initializer_list< std::pair<QString, Port::Type> >& ports = std::initializer_list< std::pair<QString, Port::Type> >());
 
 		void setName(const QString& n);
 		const QString name() const;
 
-		virtual QRectF boundingRect() const override;
-		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = NULL) override;
-
 	protected:
 	private:
+		void updateRect();
+
+		QGraphicsRectItem* m_titleBackground;
 		QGraphicsTextItem* m_title;
-		// QVector<QGraphicsItem>* m_ports;
+		QVector<Port*> m_ports;
 };

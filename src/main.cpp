@@ -52,8 +52,8 @@ int main(int argc, char* argv[]) {
 
 	QGraphicsScene* scene = new QGraphicsScene(&win);
 
-	scene->addItem(new Node("first", QPointF(-20,-20)));
-	scene->addItem(new Node("second", QPointF(20,-20)));
+	scene->addItem(new Node("first", QPointF(-20,-20), {{"aaaaa", Port::kInput}, {"b", Port::kOutput}}));
+	scene->addItem(new Node("second", QPointF(20,-20), {{"xxxxxxxxxxxxxxxx", Port::kInputOutput}}));
 
 	///
 
