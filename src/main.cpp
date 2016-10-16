@@ -8,10 +8,11 @@
 
 #include <QApplication>
 #include <QMainWindow>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 #include <ImathVec.h>
 
-#include "viewport.h"
 #include "bind.h"
 
 namespace po = boost::program_options;
@@ -19,20 +20,6 @@ namespace po = boost::program_options;
 using std::cout;
 using std::endl;
 using std::flush;
-
-void drawGrid(unsigned x_center, unsigned y_center) {
-	glBegin(GL_LINES);
-	for(int a=-30;a<=30;++a) {
-		glColor3f(0, 0.2 + 0.2*(float)(a % 10 == 0), 0);
-
-		glVertex2f(a*10 + x_center, -300 + y_center);
-		glVertex2f(a*10 + x_center, 300 + y_center);
-
-		glVertex2f(-300 + x_center, a*10 + y_center);
-		glVertex2f(300 + x_center, a*10 + y_center);
-	}
-	glEnd();
-}
 
 int main(int argc, char* argv[]) {
 	// // Declare the supported options.
@@ -53,8 +40,6 @@ int main(int argc, char* argv[]) {
 
 	///////////////////////////////
 
-	glutInit(&argc, argv);
-
 	QApplication app(argc, argv);
 
 	// make a window only with a viewport
@@ -62,18 +47,14 @@ int main(int argc, char* argv[]) {
 
 	win.showMaximized();
 
-	viewport* vp = new viewport(&win);
-	win.setCentralWidget(vp);
+	///
+
+	QGraphicsScene* scene = new QGraphicsScene(&win);
 
 	///
 
-	qt_bind(vp, SIGNAL(render()), [&]() {
-		// draw the grid
-		drawGrid(vp->width()/2, vp->height()/2);
-
-		// and request next repaint
-		vp->repaint();
-	});
+	QGraphicsView* view = new QGraphicsView(scene, &win);
+	win.setCentralWidget(view);
 
 	app.exec();
 
