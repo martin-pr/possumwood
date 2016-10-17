@@ -1,10 +1,12 @@
 #include "node.h"
 
+#include <cassert>
+
 #include <QPainter>
 #include <QBrush>
 #include <QPen>
 
-Node::Node(const QString& name, const QPointF& position, const std::initializer_list< std::pair<QString, Port::Type> >& ports) {
+Node::Node(const QString& name, const QPointF& position, const std::initializer_list<std::pair<QString, Port::Type>>& ports) {
 	setPos(position);
 
 	m_titleBackground = new QGraphicsRectItem(this);
@@ -29,14 +31,6 @@ Node::Node(const QString& name, const QPointF& position, const std::initializer_
 	setPen(Qt::NoPen);
 }
 
-void Node::setName(const QString& n) {
-	m_title->setPlainText(n);
-
-	updateRect();
-
-	update();
-}
-
 const QString Node::name() const {
 	return m_title->toPlainText();
 }
@@ -50,10 +44,19 @@ void Node::updateRect() {
 		width = std::max(width, p->minWidth());
 	}
 
-	m_titleBackground->setRect(1, 1, width-2, m_title->boundingRect().height()-2);
-	m_title->setPos((width-m_title->boundingRect().width()) / 2, 0);
+	m_titleBackground->setRect(1, 1, width - 2, m_title->boundingRect().height() - 2);
+	m_title->setPos((width - m_title->boundingRect().width()) / 2, 0);
 	for(auto& p : m_ports)
 		p->setWidth(width);
 
 	setRect(0, 0, width, height);
+}
+
+unsigned Node::portCount() const {
+	return m_ports.size();
+}
+
+const Port& Node::port(unsigned i) const {
+	assert(i < (unsigned)m_ports.size());
+	return *m_ports[i];
 }

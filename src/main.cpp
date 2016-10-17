@@ -8,13 +8,12 @@
 
 #include <QApplication>
 #include <QMainWindow>
-#include <QGraphicsScene>
-#include <QGraphicsView>
 
 #include <ImathVec.h>
 
 #include "bind.h"
 #include "node.h"
+#include "graph_widget.h"
 
 namespace po = boost::program_options;
 
@@ -26,7 +25,7 @@ int main(int argc, char* argv[]) {
 	// // Declare the supported options.
 	po::options_description desc("Allowed options");
 	desc.add_options()
-		("help", "produce help message")
+	("help", "produce help message")
 	;
 
 	// process the options
@@ -50,15 +49,13 @@ int main(int argc, char* argv[]) {
 
 	///
 
-	QGraphicsScene* scene = new QGraphicsScene(&win);
+	GraphWidget* graph = new GraphWidget(&win);
+	win.setCentralWidget(graph);
 
-	scene->addItem(new Node("first", QPointF(-20,-20), {{"aaaaa", Port::kInput}, {"b", Port::kOutput}}));
-	scene->addItem(new Node("second", QPointF(20,-20), {{"xxxxxxxxxxxxxxxx", Port::kInputOutput}}));
+	graph->addNode("first", QPointF(-20, -20), {{"aaaaa", Port::kInput}, {"b", Port::kOutput}});
+	graph->addNode("second", QPointF(20, -20), {{"xxxxxxxxxxxxxxxx", Port::kInputOutput}});
 
 	///
-
-	QGraphicsView* view = new QGraphicsView(scene, &win);
-	win.setCentralWidget(view);
 
 	app.exec();
 

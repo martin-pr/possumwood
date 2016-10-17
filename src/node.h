@@ -12,8 +12,10 @@ class Node : public QGraphicsRectItem {
 		Node(const QString& name, const QPointF& position = QPointF(0,0),
 			const std::initializer_list< std::pair<QString, Port::Type> >& ports = std::initializer_list< std::pair<QString, Port::Type> >());
 
-		void setName(const QString& n);
 		const QString name() const;
+
+		unsigned portCount() const;
+		const Port& port(unsigned i) const;
 
 	protected:
 	private:
