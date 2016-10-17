@@ -14,16 +14,19 @@ class GraphWidget : public QWidget {
 
 		void clear();
 
-		const Node& node(unsigned index) const;
+		Node& node(unsigned index);
 		unsigned nodeCount() const;
 
-		const Node& addNode(const QString& name, const QPointF& position = QPointF(0, 0),
-		                    const std::initializer_list<std::pair<QString, Port::Type>>& ports = std::initializer_list<std::pair<QString, Port::Type>>());
-		void removeNode(const Node& n);
+		Node& addNode(const QString& name, const QPointF& position = QPointF(0, 0),
+		              const std::initializer_list<std::pair<QString, Port::Type>>& ports = std::initializer_list<std::pair<QString, Port::Type>>());
+		void removeNode(Node& n);
+
+		void connect(Port& p1, Port& p2);
 
 	private:
 		QGraphicsScene* m_scene;
 		QGraphicsView* m_view;
 
 		QVector<Node*> m_nodes;
+		QVector<Edge*> m_edges;
 };

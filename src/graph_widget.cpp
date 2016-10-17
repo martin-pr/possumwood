@@ -4,6 +4,8 @@
 
 #include <QHBoxLayout>
 
+#include "edge.h"
+
 GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent) {
 	m_scene = new QGraphicsScene(this);
 	m_view = new QGraphicsView(m_scene, this);
@@ -18,7 +20,7 @@ void GraphWidget::clear() {
 	m_nodes.clear();
 }
 
-const Node& GraphWidget::node(unsigned index) const {
+Node& GraphWidget::node(unsigned index) {
 	assert(index < (unsigned)m_nodes.size());
 	return *m_nodes[index];
 }
@@ -27,8 +29,8 @@ unsigned GraphWidget::nodeCount() const {
 	return m_nodes.size();
 }
 
-const Node& GraphWidget::addNode(const QString& name, const QPointF& position,
-                                 const std::initializer_list<std::pair<QString, Port::Type>>& ports) {
+Node& GraphWidget::addNode(const QString& name, const QPointF& position,
+                           const std::initializer_list<std::pair<QString, Port::Type>>& ports) {
 
 	Node* n = new Node(name, position, ports);
 	m_nodes.push_back(n);
@@ -37,13 +39,19 @@ const Node& GraphWidget::addNode(const QString& name, const QPointF& position,
 	return *n;
 }
 
-void GraphWidget::removeNode(const Node& n) {
-	Node* removed = NULL;
+void GraphWidget::removeNode(Node& n) {
 	for(auto i = m_nodes.begin(); i != m_nodes.end(); ++i)
 		if(*i == &n) {
-			removed = *i;
+			m_scene->removeItem(*i);
 			m_nodes.erase(i);
 		}
-
-	m_scene->removeItem(removed);
 }
+
+void GraphWidget::connect(Port& p1, Port& p2) {
+	if((p1.portType() & Port::kOutput) && (p2.portType() & Port::kInput)) {
+		Edge* e = new Edge(p1, p2);
+		m_edges.push_back(e);
+		m_scene->addItem(e);
+	}
+}
+

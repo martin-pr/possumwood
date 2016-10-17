@@ -9,15 +9,17 @@
 
 class Node : public QGraphicsRectItem {
 	public:
-		Node(const QString& name, const QPointF& position = QPointF(0,0),
-			const std::initializer_list< std::pair<QString, Port::Type> >& ports = std::initializer_list< std::pair<QString, Port::Type> >());
+		Node(const QString& name, const QPointF& position = QPointF(0, 0),
+		     const std::initializer_list<std::pair<QString, Port::Type>>& ports = std::initializer_list<std::pair<QString, Port::Type>>());
 
 		const QString name() const;
 
 		unsigned portCount() const;
-		const Port& port(unsigned i) const;
+		Port& port(unsigned i);
 
 	protected:
+		QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
+
 	private:
 		void updateRect();
 

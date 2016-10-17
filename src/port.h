@@ -2,8 +2,10 @@
 
 #include <QGraphicsTextItem>
 #include <QGraphicsTextItem>
+#include <QSet>
 
 class Node;
+class Edge;
 
 class Port : public QGraphicsRectItem {
 	public:
@@ -18,10 +20,15 @@ class Port : public QGraphicsRectItem {
 		void setWidth(unsigned w);
 		unsigned minWidth() const;
 
+		void adjustEdges();
+
 		QGraphicsTextItem* m_name;
 
 		QGraphicsRectItem* m_in;
 		QGraphicsRectItem* m_out;
 
-	friend class Node;
+		QSet<Edge*> m_edges;
+
+		friend class Node;
+		friend class Edge;
 };

@@ -1,6 +1,7 @@
 #include "node.h"
 
 #include <cassert>
+#include <iostream>
 
 #include <QPainter>
 #include <QBrush>
@@ -8,11 +9,11 @@
 
 Node::Node(const QString& name, const QPointF& position, const std::initializer_list<std::pair<QString, Port::Type>>& ports) {
 	setPos(position);
+	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
+	setZValue(1);
 
 	m_titleBackground = new QGraphicsRectItem(this);
 	m_title = new QGraphicsTextItem(name, this);
-
-	setFlags(ItemIsMovable | ItemIsSelectable);
 
 	unsigned height = m_title->boundingRect().height();
 	for(auto& p : ports) {
@@ -56,7 +57,15 @@ unsigned Node::portCount() const {
 	return m_ports.size();
 }
 
-const Port& Node::port(unsigned i) const {
+Port& Node::port(unsigned i) {
 	assert(i < (unsigned)m_ports.size());
 	return *m_ports[i];
+}
+
+QVariant Node::itemChange(GraphicsItemChange change, const QVariant& value) {
+	if(change == ItemPositionHasChanged && scene())
+		for(auto& p : m_ports)
+			p->adjustEdges();
+
+	return value;
 }

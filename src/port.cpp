@@ -1,7 +1,11 @@
 #include "port.h"
 
+#include <iostream>
+
 #include <QBrush>
 #include <QPen>
+
+#include "edge.h"
 
 namespace {
 const unsigned s_margin = 7;
@@ -59,4 +63,9 @@ const Port::Type Port::portType() const {
 		return kInput;
 	else
 		return kOutput;
+}
+
+void Port::adjustEdges() {
+	for(auto& e : m_edges)
+		e->adjust();
 }
