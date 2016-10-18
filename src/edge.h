@@ -4,14 +4,19 @@
 
 class Port;
 
-class Edge : public QGraphicsLineItem {
+class Edge : public QGraphicsItem {
 	public:
 		Edge(Port& p1, Port& p2);
+
+		virtual QRectF boundingRect() const override;
+		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 
 	private:
 		void adjust();
 
-		Port *m_p1, *m_p2;
+		Port* m_p1, *m_p2;
 
-	friend class Port;
+		QPointF m_origin, m_target;
+
+		friend class Port;
 };
