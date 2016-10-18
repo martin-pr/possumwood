@@ -8,6 +8,20 @@
 
 #include "port.h"
 
+namespace {
+
+const float s_curvature = 50.0f;
+
+float min(float a, float b, float c, float d) {
+	return std::min(std::min(a, b), std::min(c, d));
+}
+
+float max(float a, float b, float c, float d) {
+	return std::max(std::max(a, b), std::max(c, d));
+}
+
+}
+
 Edge::Edge(Port& p1, Port& p2) : m_p1(&p1), m_p2(&p2) {
 	setFlags(ItemIsSelectable);
 
@@ -39,14 +53,32 @@ void Edge::adjust() {
 }
 
 QRectF Edge::boundingRect() const {
-	return QRectF(
-	           QPointF(std::min(m_origin.x(), m_target.x()) - 1,
-	                   std::min(m_origin.y(), m_target.y()) - 1),
-	           QPointF(std::max(m_origin.x(), m_target.x()) + 1,
-	                   std::max(m_origin.y(), m_target.y()) + 1)
-	       );
+	const float xMin = min(m_origin.x(), m_target.x(), m_origin.x() + s_curvature, m_target.x() - s_curvature);
+	const float xMax = max(m_origin.x(), m_target.x(), m_origin.x() + s_curvature, m_target.x() - s_curvature);
+	const float yMin = std::min(m_origin.y(), m_target.y());
+	const float yMax = std::max(m_origin.y(), m_target.y());
+
+	const QRectF box(xMin - 1, yMin - 1, xMax - xMin + 2, yMax - yMin + 2);
+
+	return box;
 }
 
 void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
-	painter->drawLine(m_origin, m_target);
+	QPainterPath path;
+
+	path.moveTo(m_origin);
+	for(unsigned a = 1; a < 20; ++a) {
+		const float t = (float)a / 20.0f;
+		path.lineTo(
+		    powf(1.0f - t, 3) * m_origin +
+		    3.0 * (1.0 - t) * (1.0 - t) * t * (m_origin + QPointF(s_curvature, 0)) +
+		    3.0 * (1.0 - t) * t * t * (m_target - QPointF(s_curvature, 0)) +
+		    t * t * t * m_target
+		);
+	}
+	path.lineTo(m_target);
+
+	painter->drawPath(path);
+
+
 }
