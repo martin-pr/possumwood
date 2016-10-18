@@ -3,12 +3,16 @@
 #include <cassert>
 
 #include <QHBoxLayout>
+#include <QGLWidget>
 
 #include "edge.h"
 
 GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent) {
 	m_scene = new QGraphicsScene(this);
 	m_view = new QGraphicsView(m_scene, this);
+
+	m_view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+	m_view->setViewport(new QGLWidget());
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setContentsMargins(0, 0, 0, 0);
