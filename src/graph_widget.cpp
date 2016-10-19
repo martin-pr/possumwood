@@ -13,7 +13,6 @@ GraphWidget::GraphWidget(QWidget* parent) : QGraphicsView(parent) {
 	m_scene->setSceneRect(-width() / 2, -height() / 2, width(), height());
 
 	setScene(m_scene);
-	setViewportUpdateMode(QGraphicsView::FullViewportUpdate /*BoundingRectViewportUpdate*/);
 	setDragMode(QGraphicsView::RubberBandDrag);
 	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 }

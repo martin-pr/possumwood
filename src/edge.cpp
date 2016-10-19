@@ -50,6 +50,8 @@ void Edge::adjust() {
 
 	if(scene())
 		scene()->update(boundingRect().united(origBbox));
+
+	prepareGeometryChange();
 }
 
 QRectF Edge::boundingRect() const {
