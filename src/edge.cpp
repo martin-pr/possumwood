@@ -5,6 +5,8 @@
 
 #include <QPainter>
 #include <QGraphicsScene>
+#include <QStyleOptionGraphicsItem>
+#include <QPainterPathStroker>
 
 #include "port.h"
 
@@ -20,7 +22,21 @@ float max(float a, float b, float c, float d) {
 	return std::max(std::max(a, b), std::max(c, d));
 }
 
+QPointF evalBezier(float t, const QPointF& p0, const QPointF& p1, const QPointF& p2, const QPointF& p3) {
+	return QPointF(
+	           powf(1.0f - t, 3) * p0 +
+	           3.0 * (1.0 - t) * (1.0 - t) * t * p1 +
+	           3.0 * (1.0 - t) * t * t * p2 +
+	           t * t * t * p3
+	       );
 }
+
+float length(const QPointF& p) {
+	return sqrt(p.x() * p.x() + p.y() * p.y());
+}
+
+}
+
 
 Edge::Edge(Port& p1, Port& p2) : m_p1(&p1), m_p2(&p2) {
 	setFlags(ItemIsSelectable);
@@ -55,30 +71,17 @@ void Edge::adjust() {
 }
 
 QRectF Edge::boundingRect() const {
-	const float xMin = min(m_origin.x(), m_target.x(), m_origin.x() + s_curvature, m_target.x() - s_curvature);
-	const float xMax = max(m_origin.x(), m_target.x(), m_origin.x() + s_curvature, m_target.x() - s_curvature);
-	const float yMin = std::min(m_origin.y(), m_target.y());
-	const float yMax = std::max(m_origin.y(), m_target.y());
+	const QPointF p1 = m_origin;
+	const QPointF p2 = m_target;
 
-	const QRectF box(xMin - 1, yMin - 1, xMax - xMin + 2, yMax - yMin + 2);
+	const float xMin = min(p1.x(), p2.x(), p1.x() + s_curvature, p2.x() - s_curvature);
+	const float xMax = max(p1.x(), p2.x(), p1.x() + s_curvature, p2.x() - s_curvature);
+	const float yMin = std::min(p1.y(), p2.y());
+	const float yMax = std::max(p1.y(), p2.y());
+
+	const QRectF box(xMin - 2, yMin - 2, xMax - xMin + 4, yMax - yMin + 4);
 
 	return box;
-}
-
-namespace {
-QPointF evalBezier(float t, const QPointF& p0, const QPointF& p1, const QPointF& p2, const QPointF& p3) {
-	return QPointF(
-	           powf(1.0f - t, 3) * p0 +
-	           3.0 * (1.0 - t) * (1.0 - t) * t * p1 +
-	           3.0 * (1.0 - t) * t * t * p2 +
-	           t * t * t * p3
-	       );
-}
-
-float length(const QPointF& p) {
-	return sqrt(p.x() * p.x() + p.y() * p.y());
-}
-
 }
 
 QPointF Edge::bezierPoint(float t) const {
@@ -93,7 +96,7 @@ QPointF Edge::bezierPoint(float t) const {
 	       );
 }
 
-void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+QPainterPath Edge::makePath() const {
 	QPainterPath path;
 
 	path.moveTo(m_origin);
@@ -103,11 +106,30 @@ void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 	}
 	path.lineTo(m_target);
 
+	return path;
+}
+
+void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+
 	QColor color;
 	color.setRed(m_p1->color().red() / 2 + m_p2->color().red() / 2);
 	color.setGreen(m_p1->color().green() / 2 + m_p2->color().green() / 2);
 	color.setBlue(m_p1->color().blue() / 2 + m_p2->color().blue() / 2);
-	painter->setPen(QPen(color, 2));
 
+	const QPainterPath path = makePath();
+
+	if(option->state & QStyle::State_Selected) {
+		painter->setPen(QPen(Qt::white, 4));
+		painter->drawPath(path);
+	}
+
+	painter->setPen(QPen(color, 2));
 	painter->drawPath(path);
+}
+
+QPainterPath Edge::shape() const {
+	QPainterPathStroker stroker;
+	stroker.setWidth(8);
+
+	return stroker.createStroke(makePath());
 }
