@@ -4,19 +4,18 @@
 
 #include <QHBoxLayout>
 #include <QGLWidget>
+#include <QResizeEvent>
 
 #include "edge.h"
 
-GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent) {
+GraphWidget::GraphWidget(QWidget* parent) : QGraphicsView(parent) {
 	m_scene = new QGraphicsScene(this);
-	m_view = new QGraphicsView(m_scene, this);
+	m_scene->setSceneRect(-width() / 2, -height() / 2, width(), height());
 
-	m_view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-	m_view->setViewport(new QGLWidget());
-
-	QHBoxLayout* layout = new QHBoxLayout(this);
-	layout->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(m_view);
+	setScene(m_scene);
+	setViewportUpdateMode(QGraphicsView::FullViewportUpdate /*BoundingRectViewportUpdate*/);
+	setDragMode(QGraphicsView::RubberBandDrag);
+	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 }
 
 void GraphWidget::clear() {
@@ -59,3 +58,13 @@ void GraphWidget::connect(Port& p1, Port& p2) {
 	}
 }
 
+void GraphWidget::resizeEvent(QResizeEvent* event) {
+	const QPointF mid = m_scene->sceneRect().center();
+
+	m_scene->setSceneRect(mid.x() - event->size().width() / 2,
+	                      mid.y() - event->size().height() / 2,
+	                      event->size().width(),
+	                      event->size().height());
+
+	QGraphicsView::resizeEvent(event);
+}

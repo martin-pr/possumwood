@@ -6,8 +6,8 @@
 #include "node.h"
 
 /// a simple graph widget
-class GraphWidget : public QWidget {
-	Q_OBJECT
+class GraphWidget : public QGraphicsView {
+		Q_OBJECT
 
 	public:
 		GraphWidget(QWidget* parent);
@@ -23,9 +23,11 @@ class GraphWidget : public QWidget {
 
 		void connect(Port& p1, Port& p2);
 
+	protected:
+		virtual void resizeEvent(QResizeEvent* event) override;
+
 	private:
 		QGraphicsScene* m_scene;
-		QGraphicsView* m_view;
 
 		QVector<Node*> m_nodes;
 		QVector<Edge*> m_edges;
