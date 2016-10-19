@@ -14,6 +14,8 @@ class Edge : public QGraphicsItem {
 	private:
 		void adjust();
 
+		QPointF bezierPoint(float t) const;
+
 		Port* m_p1, *m_p2;
 
 		QPointF m_origin, m_target;

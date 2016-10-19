@@ -63,18 +63,41 @@ QRectF Edge::boundingRect() const {
 	return box;
 }
 
+namespace {
+QPointF evalBezier(float t, const QPointF& p0, const QPointF& p1, const QPointF& p2, const QPointF& p3) {
+	return QPointF(
+	           powf(1.0f - t, 3) * p0 +
+	           3.0 * (1.0 - t) * (1.0 - t) * t * p1 +
+	           3.0 * (1.0 - t) * t * t * p2 +
+	           t * t * t * p3
+	       );
+}
+
+float length(const QPointF& p) {
+	return sqrt(p.x() * p.x() + p.y() * p.y());
+}
+
+}
+
+QPointF Edge::bezierPoint(float t) const {
+	const QPointF tangent = QPointF(s_curvature, 0) * pow(length(m_origin - m_target) / 20.0f, 0.25);
+
+	return evalBezier(
+	           t,
+	           m_origin,
+	           m_origin + tangent,
+	           m_target - tangent,
+	           m_target
+	       );
+}
+
 void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
 	QPainterPath path;
 
 	path.moveTo(m_origin);
 	for(unsigned a = 1; a < 50; ++a) {
 		const float t = (float)a / 50.0f;
-		path.lineTo(
-		    powf(1.0f - t, 3) * m_origin +
-		    3.0 * (1.0 - t) * (1.0 - t) * t * (m_origin + QPointF(s_curvature, 0)) +
-		    3.0 * (1.0 - t) * t * t * (m_target - QPointF(s_curvature, 0)) +
-		    t * t * t * m_target
-		);
+		path.lineTo(bezierPoint(t));
 	}
 	path.lineTo(m_target);
 
