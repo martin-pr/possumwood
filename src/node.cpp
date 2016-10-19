@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QBrush>
 #include <QPen>
+#include <QStyleOptionGraphicsItem>
 
 Node::Node(const QString& name, const QPointF& position, const std::initializer_list<PortDefinition>& ports) {
 	setPos(position);
@@ -25,11 +26,11 @@ Node::Node(const QString& name, const QPointF& position, const std::initializer_
 
 	updateRect();
 
-	setBrush(Qt::lightGray);
+	setBrush(QColor(32, 32, 32));
 	m_titleBackground->setPen(Qt::NoPen);
-	m_titleBackground->setBrush(Qt::darkGray);
+	m_titleBackground->setBrush(QColor(64, 64, 64));
 	m_title->setDefaultTextColor(Qt::white);
-	setPen(Qt::NoPen);
+	setPen(QPen(QColor(64, 64, 64), 1));
 }
 
 const QString Node::name() const {
@@ -68,4 +69,18 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant& value) {
 			p->adjustEdges();
 
 	return value;
+}
+
+void Node::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+	// paint as if not selected
+	QStyleOptionGraphicsItem optionCopy(*option);
+	optionCopy.state = optionCopy.state & (~QStyle::State_Selected);
+	QGraphicsRectItem::paint(painter, &optionCopy, widget);
+
+	if(option->state & QStyle::State_Selected) {
+		// and paint the white outline
+		painter->setPen(QPen(Qt::white, 1));
+		painter->setBrush(Qt::NoBrush);
+		painter->drawRect(boundingRect());
+	}
 }

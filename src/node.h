@@ -24,7 +24,8 @@ class Node : public QGraphicsRectItem {
 		Port& port(unsigned i);
 
 	protected:
-		QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
+		virtual QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
+		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
 
 	private:
 		void updateRect();

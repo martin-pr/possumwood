@@ -15,6 +15,7 @@ GraphWidget::GraphWidget(QWidget* parent) : QGraphicsView(parent) {
 	setScene(m_scene);
 	setDragMode(QGraphicsView::RubberBandDrag);
 	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+	setBackgroundBrush(Qt::black);
 }
 
 void GraphWidget::clear() {
