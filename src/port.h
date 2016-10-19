@@ -11,10 +11,11 @@ class Port : public QGraphicsRectItem {
 	public:
 		enum Type { kInput = 1, kOutput = 2, kInputOutput = 3 };
 
-		Port(const QString& name, Type t, QGraphicsItem* parent);
+		Port(const QString& name, Type t, QColor color, QGraphicsItem* parent);
 
 		const QString name() const;
 		const Type portType() const;
+		const QColor color() const;
 
 	private:
 		void setWidth(unsigned w);
@@ -23,6 +24,8 @@ class Port : public QGraphicsRectItem {
 		void adjustEdges();
 
 		QGraphicsTextItem* m_name;
+
+		QColor m_color;
 
 		QGraphicsRectItem* m_in;
 		QGraphicsRectItem* m_out;

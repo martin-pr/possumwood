@@ -52,8 +52,8 @@ int main(int argc, char* argv[]) {
 	GraphWidget* graph = new GraphWidget(&win);
 	win.setCentralWidget(graph);
 
-	Node& n1 = graph->addNode("first", QPointF(-50, -20), {{"aaaaa", Port::kInput}, {"b", Port::kOutput}});
-	Node& n2 = graph->addNode("second", QPointF(50, -20), {{"xxxxxxxxxxxxxxxx", Port::kInputOutput}});
+	Node& n1 = graph->addNode("first", QPointF(-50, 20), {{"aaaaa", Port::kInput, Qt::blue}, {"b", Port::kOutput, Qt::red}});
+	Node& n2 = graph->addNode("second", QPointF(50, 20), {{"xxxxxxxxxxxxxxxx", Port::kInputOutput, Qt::red}});
 
 	graph->connect(n1.port(1), n2.port(0));
 

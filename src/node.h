@@ -9,8 +9,14 @@
 
 class Node : public QGraphicsRectItem {
 	public:
+		struct PortDefinition {
+			QString name;
+			Port::Type type;
+			QColor color;
+		};
+
 		Node(const QString& name, const QPointF& position = QPointF(0, 0),
-		     const std::initializer_list<std::pair<QString, Port::Type>>& ports = std::initializer_list<std::pair<QString, Port::Type>>());
+		     const std::initializer_list<PortDefinition>& ports = std::initializer_list<PortDefinition>());
 
 		const QString name() const;
 

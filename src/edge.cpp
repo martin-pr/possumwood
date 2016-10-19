@@ -40,9 +40,9 @@ void Edge::adjust() {
 	const QRectF bb1 = m_p1->mapRectToScene(m_p1->boundingRect());
 	const QRectF bb2 = m_p2->mapRectToScene(m_p2->boundingRect());
 
-	const float x1 = bb1.x() + bb1.width();
+	const float x1 = bb1.x() + bb1.width() - bb1.height() / 2;
 	const float y1 = bb1.y() + bb1.height() / 2;
-	const float x2 = bb2.x();
+	const float x2 = bb2.x() + bb2.height() / 2;
 	const float y2 = bb2.y() + bb2.height() / 2;
 
 	m_origin = QPointF(x1, y1);
@@ -67,8 +67,8 @@ void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 	QPainterPath path;
 
 	path.moveTo(m_origin);
-	for(unsigned a = 1; a < 20; ++a) {
-		const float t = (float)a / 20.0f;
+	for(unsigned a = 1; a < 50; ++a) {
+		const float t = (float)a / 50.0f;
 		path.lineTo(
 		    powf(1.0f - t, 3) * m_origin +
 		    3.0 * (1.0 - t) * (1.0 - t) * t * (m_origin + QPointF(s_curvature, 0)) +
@@ -78,7 +78,11 @@ void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 	}
 	path.lineTo(m_target);
 
+	QColor color;
+	color.setRed(m_p1->color().red() / 2 + m_p2->color().red() / 2);
+	color.setGreen(m_p1->color().green() / 2 + m_p2->color().green() / 2);
+	color.setBlue(m_p1->color().blue() / 2 + m_p2->color().blue() / 2);
+	painter->setPen(QPen(color, 2));
+
 	painter->drawPath(path);
-
-
 }

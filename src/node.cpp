@@ -7,17 +7,17 @@
 #include <QBrush>
 #include <QPen>
 
-Node::Node(const QString& name, const QPointF& position, const std::initializer_list<std::pair<QString, Port::Type>>& ports) {
+Node::Node(const QString& name, const QPointF& position, const std::initializer_list<PortDefinition>& ports) {
 	setPos(position);
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
-	setZValue(1);
+	setZValue(-1);
 
 	m_titleBackground = new QGraphicsRectItem(this);
 	m_title = new QGraphicsTextItem(name, this);
 
 	unsigned height = m_title->boundingRect().height();
 	for(auto& p : ports) {
-		m_ports.push_back(new Port(p.first, p.second, this));
+		m_ports.push_back(new Port(p.name, p.type, p.color, this));
 		m_ports.back()->setPos(0, height);
 
 		height += m_ports.back()->boundingRect().height();

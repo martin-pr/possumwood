@@ -8,10 +8,10 @@
 #include "edge.h"
 
 namespace {
-const unsigned s_margin = 7;
+const unsigned s_margin = 5;
 }
 
-Port::Port(const QString& name, Port::Type t, QGraphicsItem* parent) : QGraphicsRectItem(parent), m_in(NULL), m_out(NULL) {
+Port::Port(const QString& name, Port::Type t, QColor color, QGraphicsItem* parent) : QGraphicsRectItem(parent), m_color(color), m_in(NULL), m_out(NULL) {
 	m_name = new QGraphicsTextItem(name, this);
 	m_name->setPos(m_name->boundingRect().height(), 0);
 
@@ -20,7 +20,7 @@ Port::Port(const QString& name, Port::Type t, QGraphicsItem* parent) : QGraphics
 		    s_margin, s_margin,
 		    m_name->boundingRect().height() - 2 * s_margin, m_name->boundingRect().height() - 2 * s_margin,
 		    this);
-		m_in->setBrush(Qt::blue);
+		m_in->setBrush(m_color);
 		m_in->setPen(Qt::NoPen);
 	}
 
@@ -29,7 +29,7 @@ Port::Port(const QString& name, Port::Type t, QGraphicsItem* parent) : QGraphics
 		    m_name->boundingRect().height() + m_name->boundingRect().width() + s_margin, s_margin,
 		    m_name->boundingRect().height() - 2 * s_margin, m_name->boundingRect().height() - 2 * s_margin,
 		    this);
-		m_out->setBrush(Qt::blue);
+		m_out->setBrush(m_color);
 		m_out->setPen(Qt::NoPen);
 	}
 
@@ -68,4 +68,8 @@ const Port::Type Port::portType() const {
 void Port::adjustEdges() {
 	for(auto& e : m_edges)
 		e->adjust();
+}
+
+const QColor Port::color() const {
+	return m_color;
 }

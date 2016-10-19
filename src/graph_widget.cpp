@@ -33,7 +33,7 @@ unsigned GraphWidget::nodeCount() const {
 }
 
 Node& GraphWidget::addNode(const QString& name, const QPointF& position,
-                           const std::initializer_list<std::pair<QString, Port::Type>>& ports) {
+                           const std::initializer_list<Node::PortDefinition>& ports) {
 
 	Node* n = new Node(name, position, ports);
 	m_nodes.push_back(n);
