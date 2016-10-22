@@ -1,17 +1,19 @@
 #include "port.h"
 
 #include <iostream>
+#include <cassert>
 
 #include <QBrush>
 #include <QPen>
 
 #include "edge.h"
+#include "node.h"
 
 namespace {
 const unsigned s_margin = 5;
 }
 
-Port::Port(const QString& name, Port::Type t, QColor color, QGraphicsItem* parent) : QGraphicsRectItem(parent), m_color(color), m_in(NULL), m_out(NULL) {
+Port::Port(const QString& name, Port::Type t, QColor color, Node* parent) : QGraphicsRectItem(parent), m_color(color), m_in(NULL), m_out(NULL), m_parent(parent) {
 	m_name = new QGraphicsTextItem(name, this);
 	m_name->setPos(m_name->boundingRect().height(), 0);
 	m_name->setDefaultTextColor(QColor(192, 192, 192));
@@ -76,4 +78,14 @@ void Port::adjustEdges() {
 
 const QColor Port::color() const {
 	return m_color;
+}
+
+Node& Port::parentNode() {
+	assert(m_parent);
+	return *m_parent;
+}
+
+const Node& Port::parentNode() const {
+	assert(m_parent);
+	return *m_parent;
 }
