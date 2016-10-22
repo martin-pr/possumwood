@@ -10,11 +10,13 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QAction>
+#include <QKeyEvent>
 
 #include <ImathVec.h>
 
 #include "bind.h"
 #include "node.h"
+#include "edge.h"
 #include "graph_widget.h"
 
 namespace po = boost::program_options;
@@ -100,6 +102,33 @@ int main(int argc, char* argv[]) {
 		}, &menu));
 
 		menu.exec(p);
+	});
+
+	graph->setKeyPressCallback([&](const QKeyEvent& event) {
+		if(event.key() == Qt::Key_Delete) {
+			{
+				unsigned ei = 0;
+				while(ei < graph->edgeCount()) {
+					Edge& e = graph->edge(ei);
+					if(e.isSelected())
+						graph->disconnect(e);
+					else
+						++ei;
+				}
+			}
+
+			{
+				unsigned ni = 0;
+				while(ni < graph->nodeCount()) {
+					Node& n = graph->node(ni);
+					if(n.isSelected())
+						graph->removeNode(n);
+					else
+						++ni;
+				}
+			}
+		}
+
 	});
 
 	///

@@ -140,3 +140,12 @@ void GraphWidget::mousePressEvent(QMouseEvent* event) {
 void GraphWidget::setContextMenuCallback(std::function<void(QPoint)> fn) {
 	m_contextMenuCallback = fn;
 }
+
+void GraphWidget::setKeyPressCallback(std::function<void(const QKeyEvent&)> fn) {
+	m_keyPressCallback = fn;
+}
+
+void GraphWidget::keyPressEvent(QKeyEvent* event) {
+	if(m_keyPressCallback)
+		m_keyPressCallback(*event);
+}

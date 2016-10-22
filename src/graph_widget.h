@@ -38,10 +38,12 @@ class GraphWidget : public QGraphicsView {
 		// QGraphView is not a QWidget - cannot use Qt's signals/slots.
 		// Whatever - let's do it via functors.
 		void setContextMenuCallback(std::function<void(QPoint)> fn);
+		void setKeyPressCallback(std::function<void(const QKeyEvent&)> fn);
 
 	protected:
 		virtual void resizeEvent(QResizeEvent* event) override;
 		virtual void mousePressEvent(QMouseEvent* event) override;
+		virtual void keyPressEvent(QKeyEvent* event) override;
 
 	private:
 		QGraphicsScene* m_scene;
@@ -50,4 +52,5 @@ class GraphWidget : public QGraphicsView {
 		QVector<Edge*> m_edges;
 
 		std::function<void(QPoint)> m_contextMenuCallback;
+		std::function<void(const QKeyEvent&)> m_keyPressCallback;
 };
