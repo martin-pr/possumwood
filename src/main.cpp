@@ -25,8 +25,8 @@ using std::flush;
 
 namespace {
 
-QAction* makeAction(QString title, std::function<void()> fn) {
-	QAction* result = new QAction(title, NULL);
+QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
+	QAction* result = new QAction(title, parent);
 	qt_bind(result, SIGNAL(triggered(bool)), fn);
 	return result;
 }
@@ -83,11 +83,11 @@ int main(int argc, char* argv[]) {
 
 		menu.addAction(makeAction("Add single input node", [&]() {
 			graph->addNode(makeUniqueNodeName(), {{"input", Port::kInput, Qt::blue}});
-		}));
+		}, &menu));
 
 		menu.addAction(makeAction("Add single output node", [&]() {
 			graph->addNode(makeUniqueNodeName(), {{"output", Port::kOutput, Qt::blue}});
-		}));
+		}, &menu));
 
 		menu.addAction(makeAction("Add more complex node", [&]() {
 			graph->addNode(makeUniqueNodeName(), {
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
 				{"blue_output", Port::kOutput, Qt::blue},
 				{"red_output", Port::kOutput, Qt::red}
 			});
-		}));
+		}, &menu));
 
 		menu.exec(p);
 	});
