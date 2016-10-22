@@ -133,3 +133,13 @@ QPainterPath Edge::shape() const {
 
 	return stroker.createStroke(makePath());
 }
+
+const Port& Edge::fromPort() const {
+	assert(m_p1);
+	return *m_p1;
+}
+
+const Port& Edge::toPort() const {
+	assert(m_p2);
+	return *m_p2;
+}

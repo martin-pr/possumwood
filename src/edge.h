@@ -12,6 +12,9 @@ class Edge : public QGraphicsItem {
 		virtual QPainterPath shape() const override;
 		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 
+		const Port& fromPort() const;
+		const Port& toPort() const;
+
 	private:
 		void adjust();
 

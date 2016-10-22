@@ -28,8 +28,27 @@ Node& GraphWidget::node(unsigned index) {
 	return *m_nodes[index];
 }
 
+const Node& GraphWidget::node(unsigned index) const {
+	assert(index < (unsigned)m_nodes.size());
+	return *m_nodes[index];
+}
+
 unsigned GraphWidget::nodeCount() const {
 	return m_nodes.size();
+}
+
+Edge& GraphWidget::edge(unsigned index) {
+	assert(index < (unsigned)m_edges.size());
+	return *m_edges[index];
+}
+
+const Edge& GraphWidget::edge(unsigned index) const {
+	assert(index < (unsigned)m_edges.size());
+	return *m_edges[index];
+}
+
+unsigned GraphWidget::edgeCount() const {
+	return m_edges.size();
 }
 
 Node& GraphWidget::addNode(const QString& name,
@@ -50,11 +69,27 @@ Node& GraphWidget::addNode(const QString& name,
 }
 
 void GraphWidget::removeNode(Node& n) {
-	for(auto i = m_nodes.begin(); i != m_nodes.end(); ++i)
-		if(*i == &n) {
-			m_scene->removeItem(*i);
-			m_nodes.erase(i);
-		}
+	{
+		auto i = m_edges.begin();
+		while(i != m_edges.end())
+			if((&(*i)->fromPort().parentNode() == &n || &(*i)->toPort().parentNode() == &n)) {
+				m_scene->removeItem(*i);
+				i = m_edges.erase(i);
+			}
+			else
+				++i;
+	}
+
+	{
+		auto i = m_nodes.begin();
+		while(i != m_nodes.end())
+			if(*i == &n) {
+				m_scene->removeItem(*i);
+				i = m_nodes.erase(i);
+			}
+			else
+				++i;
+	}
 }
 
 void GraphWidget::connect(Port& p1, Port& p2) {
@@ -62,6 +97,23 @@ void GraphWidget::connect(Port& p1, Port& p2) {
 		Edge* e = new Edge(p1, p2);
 		m_edges.push_back(e);
 		m_scene->addItem(e);
+	}
+}
+
+void GraphWidget::disconnect(Port& p1, Port& p2) {
+	auto it = m_edges.begin();
+	while(it != m_edges.end())
+		if((&(*it)->fromPort() == &p1) && (&(*it)->toPort() == &p2))
+			it = m_edges.erase(it);
+		else
+			++it;
+}
+
+void GraphWidget::disconnect(Edge& e) {
+	auto it = std::find(m_edges.begin(), m_edges.end(), &e);
+	if(it != m_edges.end()) {
+		m_scene->removeItem(*it);
+		m_edges.erase(it);
 	}
 }
 

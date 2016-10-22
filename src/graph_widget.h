@@ -17,7 +17,12 @@ class GraphWidget : public QGraphicsView {
 		void clear();
 
 		Node& node(unsigned index);
+		const Node& node(unsigned index) const;
 		unsigned nodeCount() const;
+
+		Edge& edge(unsigned index);
+		const Edge& edge(unsigned index) const;
+		unsigned edgeCount() const;
 
 		Node& addNode(const QString& name,
 		              const std::initializer_list<Node::PortDefinition>& ports = std::initializer_list<Node::PortDefinition>());
@@ -27,6 +32,8 @@ class GraphWidget : public QGraphicsView {
 		void removeNode(Node& n);
 
 		void connect(Port& p1, Port& p2);
+		void disconnect(Port& p1, Port& p2);
+		void disconnect(Edge& e);
 
 		// QGraphView is not a QWidget - cannot use Qt's signals/slots.
 		// Whatever - let's do it via functors.
