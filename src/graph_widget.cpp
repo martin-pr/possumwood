@@ -32,8 +32,15 @@ unsigned GraphWidget::nodeCount() const {
 	return m_nodes.size();
 }
 
-Node& GraphWidget::addNode(const QString& name, const QPointF& position,
+Node& GraphWidget::addNode(const QString& name,
                            const std::initializer_list<Node::PortDefinition>& ports) {
+
+	return addNode(name, ports, mapToScene(mapFromGlobal(QCursor::pos())));
+}
+
+Node& GraphWidget::addNode(const QString& name,
+                           const std::initializer_list<Node::PortDefinition>& ports,
+                           const QPointF& position) {
 
 	Node* n = new Node(name, position, ports);
 	m_nodes.push_back(n);
@@ -67,4 +74,17 @@ void GraphWidget::resizeEvent(QResizeEvent* event) {
 	                      event->size().height());
 
 	QGraphicsView::resizeEvent(event);
+}
+
+void GraphWidget::mousePressEvent(QMouseEvent* event) {
+	if(event->button() == Qt::RightButton) {
+		if(m_contextMenuCallback)
+			m_contextMenuCallback(event->globalPos());
+	}
+	else
+		QGraphicsView::mousePressEvent(event);
+}
+
+void GraphWidget::setContextMenuCallback(std::function<void(QPoint)> fn) {
+	m_contextMenuCallback = fn;
 }
