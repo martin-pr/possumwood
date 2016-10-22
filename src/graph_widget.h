@@ -20,8 +20,8 @@ class GraphWidget : public QGraphicsView {
 		const Node& node(unsigned index) const;
 		unsigned nodeCount() const;
 
-		Edge& edge(unsigned index);
-		const Edge& edge(unsigned index) const;
+		ConnectedEdge& edge(unsigned index);
+		const ConnectedEdge& edge(unsigned index) const;
 		unsigned edgeCount() const;
 
 		Node& addNode(const QString& name,
@@ -33,7 +33,7 @@ class GraphWidget : public QGraphicsView {
 
 		void connect(Port& p1, Port& p2);
 		void disconnect(Port& p1, Port& p2);
-		void disconnect(Edge& e);
+		void disconnect(ConnectedEdge& e);
 
 		// QGraphView is not a QWidget - cannot use Qt's signals/slots.
 		// Whatever - let's do it via functors.
@@ -49,7 +49,7 @@ class GraphWidget : public QGraphicsView {
 		QGraphicsScene* m_scene;
 
 		QVector<Node*> m_nodes;
-		QVector<Edge*> m_edges;
+		QVector<ConnectedEdge*> m_edges;
 
 		std::function<void(QPoint)> m_contextMenuCallback;
 		std::function<void(const QKeyEvent&)> m_keyPressCallback;

@@ -4,9 +4,9 @@
 
 class Port;
 
-class Edge : public QGraphicsItem {
+class ConnectedEdge : public QGraphicsItem {
 	public:
-		Edge(Port& p1, Port& p2);
+		ConnectedEdge(Port& p1, Port& p2);
 
 		virtual QRectF boundingRect() const override;
 		virtual QPainterPath shape() const override;

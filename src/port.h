@@ -5,7 +5,7 @@
 #include <QSet>
 
 class Node;
-class Edge;
+class ConnectedEdge;
 
 class Port : public QGraphicsRectItem {
 	public:
@@ -33,9 +33,9 @@ class Port : public QGraphicsRectItem {
 		QGraphicsRectItem* m_in;
 		QGraphicsRectItem* m_out;
 
-		QSet<Edge*> m_edges;
+		QSet<ConnectedEdge*> m_edges;
 		Node* m_parent;
 
 		friend class Node;
-		friend class Edge;
+		friend class ConnectedEdge;
 };

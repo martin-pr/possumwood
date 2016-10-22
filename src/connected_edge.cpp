@@ -1,4 +1,4 @@
-#include "edge.h"
+#include "connected_edge.h"
 
 #include <cassert>
 #include <iostream>
@@ -38,7 +38,7 @@ float length(const QPointF& p) {
 }
 
 
-Edge::Edge(Port& p1, Port& p2) : m_p1(&p1), m_p2(&p2) {
+ConnectedEdge::ConnectedEdge(Port& p1, Port& p2) : m_p1(&p1), m_p2(&p2) {
 	setFlags(ItemIsSelectable);
 
 	assert(p1.portType() & Port::kOutput);
@@ -50,7 +50,7 @@ Edge::Edge(Port& p1, Port& p2) : m_p1(&p1), m_p2(&p2) {
 	adjust();
 }
 
-void Edge::adjust() {
+void ConnectedEdge::adjust() {
 	const QRectF origBbox = boundingRect();
 
 	const QRectF bb1 = m_p1->mapRectToScene(m_p1->boundingRect());
@@ -70,7 +70,7 @@ void Edge::adjust() {
 	prepareGeometryChange();
 }
 
-QRectF Edge::boundingRect() const {
+QRectF ConnectedEdge::boundingRect() const {
 	const QPointF p1 = m_origin;
 	const QPointF p2 = m_target;
 
@@ -84,7 +84,7 @@ QRectF Edge::boundingRect() const {
 	return box;
 }
 
-QPointF Edge::bezierPoint(float t) const {
+QPointF ConnectedEdge::bezierPoint(float t) const {
 	const QPointF tangent = QPointF(s_curvature, 0) * pow(length(m_origin - m_target) / 20.0f, 0.25);
 
 	return evalBezier(
@@ -96,7 +96,7 @@ QPointF Edge::bezierPoint(float t) const {
 	       );
 }
 
-QPainterPath Edge::makePath() const {
+QPainterPath ConnectedEdge::makePath() const {
 	QPainterPath path;
 
 	path.moveTo(m_origin);
@@ -109,7 +109,7 @@ QPainterPath Edge::makePath() const {
 	return path;
 }
 
-void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+void ConnectedEdge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
 
 	QColor color;
 	color.setRed(m_p1->color().red() / 2 + m_p2->color().red() / 2);
@@ -127,19 +127,19 @@ void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 	painter->drawPath(path);
 }
 
-QPainterPath Edge::shape() const {
+QPainterPath ConnectedEdge::shape() const {
 	QPainterPathStroker stroker;
 	stroker.setWidth(8);
 
 	return stroker.createStroke(makePath());
 }
 
-const Port& Edge::fromPort() const {
+const Port& ConnectedEdge::fromPort() const {
 	assert(m_p1);
 	return *m_p1;
 }
 
-const Port& Edge::toPort() const {
+const Port& ConnectedEdge::toPort() const {
 	assert(m_p2);
 	return *m_p2;
 }

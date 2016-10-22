@@ -6,7 +6,7 @@
 #include <QGLWidget>
 #include <QResizeEvent>
 
-#include "edge.h"
+#include "connected_edge.h"
 
 GraphWidget::GraphWidget(QWidget* parent) : QGraphicsView(parent) {
 	m_scene = new QGraphicsScene(this);
@@ -37,12 +37,12 @@ unsigned GraphWidget::nodeCount() const {
 	return m_nodes.size();
 }
 
-Edge& GraphWidget::edge(unsigned index) {
+ConnectedEdge& GraphWidget::edge(unsigned index) {
 	assert(index < (unsigned)m_edges.size());
 	return *m_edges[index];
 }
 
-const Edge& GraphWidget::edge(unsigned index) const {
+const ConnectedEdge& GraphWidget::edge(unsigned index) const {
 	assert(index < (unsigned)m_edges.size());
 	return *m_edges[index];
 }
@@ -94,7 +94,7 @@ void GraphWidget::removeNode(Node& n) {
 
 void GraphWidget::connect(Port& p1, Port& p2) {
 	if((p1.portType() & Port::kOutput) && (p2.portType() & Port::kInput)) {
-		Edge* e = new Edge(p1, p2);
+		ConnectedEdge* e = new ConnectedEdge(p1, p2);
 		m_edges.push_back(e);
 		m_scene->addItem(e);
 	}
@@ -109,7 +109,7 @@ void GraphWidget::disconnect(Port& p1, Port& p2) {
 			++it;
 }
 
-void GraphWidget::disconnect(Edge& e) {
+void GraphWidget::disconnect(ConnectedEdge& e) {
 	auto it = std::find(m_edges.begin(), m_edges.end(), &e);
 	if(it != m_edges.end()) {
 		m_scene->removeItem(*it);

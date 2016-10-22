@@ -6,7 +6,7 @@
 #include <QBrush>
 #include <QPen>
 
-#include "edge.h"
+#include "connected_edge.h"
 #include "node.h"
 
 namespace {

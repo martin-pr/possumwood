@@ -16,7 +16,7 @@
 
 #include "bind.h"
 #include "node.h"
-#include "edge.h"
+#include "connected_edge.h"
 #include "graph_widget.h"
 
 namespace po = boost::program_options;
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
 			{
 				unsigned ei = 0;
 				while(ei < graph->edgeCount()) {
-					Edge& e = graph->edge(ei);
+					ConnectedEdge& e = graph->edge(ei);
 					if(e.isSelected())
 						graph->disconnect(e);
 					else
