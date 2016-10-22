@@ -46,7 +46,10 @@ unsigned Port::minWidth() const {
 void Port::setWidth(unsigned w) {
 	setRect(QRect(rect().x(), rect().y(), w, m_name->boundingRect().height()));
 
-	m_name->setPos(w - m_name->boundingRect().height() - m_name->boundingRect().width(), 0);
+	if(m_in)
+		m_name->setPos(m_name->boundingRect().height(), 0);
+	else
+		m_name->setPos(w - m_name->boundingRect().height() - m_name->boundingRect().width(), 0);
 
 	if(m_out)
 		m_out->setRect(w - m_name->boundingRect().height() + s_margin, s_margin,
