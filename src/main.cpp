@@ -73,10 +73,12 @@ int main(int argc, char* argv[]) {
 	GraphWidget* graph = new GraphWidget(&win);
 	win.setCentralWidget(graph);
 
-	Node& n1 = graph->addNode("first", {{"aaaaa", Port::kInput, Qt::blue}, {"b", Port::kOutput, Qt::red}}, QPointF(-50, 20));
-	Node& n2 = graph->addNode("second", {{"xxxxxxxxxxxxxxxx", Port::kInputOutput, Qt::red}}, QPointF(50, 20));
+	GraphScene& scene = graph->scene();
 
-	graph->connect(n1.port(1), n2.port(0));
+	Node& n1 = scene.addNode("first", {{"aaaaa", Port::kInput, Qt::blue}, {"b", Port::kOutput, Qt::red}}, QPointF(-50, 20));
+	Node& n2 = scene.addNode("second", {{"xxxxxxxxxxxxxxxx", Port::kInputOutput, Qt::red}}, QPointF(50, 20));
+
+	scene.connect(n1.port(1), n2.port(0));
 
 	///
 
@@ -84,21 +86,24 @@ int main(int argc, char* argv[]) {
 		QMenu menu(graph);
 
 		menu.addAction(makeAction("Add single input node", [&]() {
-			graph->addNode(makeUniqueNodeName(), {{"input", Port::kInput, Qt::blue}});
+			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
+			scene.addNode(makeUniqueNodeName(), {{"input", Port::kInput, Qt::blue}}, pos);
 		}, &menu));
 
 		menu.addAction(makeAction("Add single output node", [&]() {
-			graph->addNode(makeUniqueNodeName(), {{"output", Port::kOutput, Qt::blue}});
+			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
+			scene.addNode(makeUniqueNodeName(), {{"output", Port::kOutput, Qt::blue}}, pos);
 		}, &menu));
 
 		menu.addAction(makeAction("Add more complex node", [&]() {
-			graph->addNode(makeUniqueNodeName(), {
+			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
+			scene.addNode(makeUniqueNodeName(), {
 				{"red_input", Port::kInput, Qt::red},
 				{"red_pass_through", Port::kInputOutput, Qt::red},
 				{"blue_pass_through", Port::kInputOutput, Qt::blue},
 				{"blue_output", Port::kOutput, Qt::blue},
 				{"red_output", Port::kOutput, Qt::red}
-			});
+			}, pos);
 		}, &menu));
 
 		menu.exec(p);
@@ -108,10 +113,10 @@ int main(int argc, char* argv[]) {
 		if(event.key() == Qt::Key_Delete) {
 			{
 				unsigned ei = 0;
-				while(ei < graph->edgeCount()) {
-					ConnectedEdge& e = graph->edge(ei);
+				while(ei < scene.edgeCount()) {
+					ConnectedEdge& e = scene.edge(ei);
 					if(e.isSelected())
-						graph->disconnect(e);
+						scene.disconnect(e);
 					else
 						++ei;
 				}
@@ -119,10 +124,10 @@ int main(int argc, char* argv[]) {
 
 			{
 				unsigned ni = 0;
-				while(ni < graph->nodeCount()) {
-					Node& n = graph->node(ni);
+				while(ni < scene.nodeCount()) {
+					Node& n = scene.node(ni);
 					if(n.isSelected())
-						graph->removeNode(n);
+						scene.removeNode(n);
 					else
 						++ni;
 				}
