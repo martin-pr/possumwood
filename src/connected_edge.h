@@ -7,6 +7,7 @@ class Port;
 class ConnectedEdge : public Edge {
 	public:
 		ConnectedEdge(Port& p1, Port& p2);
+		virtual ~ConnectedEdge();
 
 		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 

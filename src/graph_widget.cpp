@@ -74,6 +74,7 @@ void GraphWidget::removeNode(Node& n) {
 		while(i != m_edges.end())
 			if((&(*i)->fromPort().parentNode() == &n || &(*i)->toPort().parentNode() == &n)) {
 				m_scene->removeItem(*i);
+				delete *i;
 				i = m_edges.erase(i);
 			}
 			else
@@ -85,6 +86,7 @@ void GraphWidget::removeNode(Node& n) {
 		while(i != m_nodes.end())
 			if(*i == &n) {
 				m_scene->removeItem(*i);
+				delete *i;
 				i = m_nodes.erase(i);
 			}
 			else
@@ -103,8 +105,11 @@ void GraphWidget::connect(Port& p1, Port& p2) {
 void GraphWidget::disconnect(Port& p1, Port& p2) {
 	auto it = m_edges.begin();
 	while(it != m_edges.end())
-		if((&(*it)->fromPort() == &p1) && (&(*it)->toPort() == &p2))
+		if((&(*it)->fromPort() == &p1) && (&(*it)->toPort() == &p2)) {
+			m_scene->removeItem(*it);
+			delete *it;
 			it = m_edges.erase(it);
+		}
 		else
 			++it;
 }
@@ -113,6 +118,7 @@ void GraphWidget::disconnect(ConnectedEdge& e) {
 	auto it = std::find(m_edges.begin(), m_edges.end(), &e);
 	if(it != m_edges.end()) {
 		m_scene->removeItem(*it);
+		delete *it;
 		m_edges.erase(it);
 	}
 }

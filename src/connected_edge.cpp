@@ -42,6 +42,20 @@ ConnectedEdge::ConnectedEdge(Port& p1, Port& p2) :
 	adjust();
 }
 
+ConnectedEdge::~ConnectedEdge() {
+	{
+		auto it = m_p1->m_edges.find(this);
+		assert(it != m_p1->m_edges.end());
+		m_p1->m_edges.erase(it);
+	}
+
+	{
+		auto it = m_p2->m_edges.find(this);
+		assert(it != m_p2->m_edges.end());
+		m_p2->m_edges.erase(it);
+	}
+}
+
 void ConnectedEdge::adjust() {
 	const QRectF bb1 = m_p1->mapRectToScene(m_p1->boundingRect());
 	const QRectF bb2 = m_p2->mapRectToScene(m_p2->boundingRect());
