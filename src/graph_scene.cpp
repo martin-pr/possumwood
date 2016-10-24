@@ -147,6 +147,7 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 
 		m_editedEdge->setVisible(true);
 		m_editedEdge->setPoints(pos, pos);
+		m_editedEdge->setPen(QPen(port->color(), 2));
 		m_connectedSide = portType;
 	}
 	else {

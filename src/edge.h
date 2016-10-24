@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QGraphicsLineItem>
+#include <QPen>
 
 class GraphWidget;
 
@@ -11,6 +12,10 @@ class Edge : public QGraphicsItem {
 
 		virtual QRectF boundingRect() const override;
 		virtual QPainterPath shape() const override;
+
+		void setPen(QPen pen);
+		const QPen& pen() const;
+
 		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 
 	protected:
@@ -23,6 +28,7 @@ class Edge : public QGraphicsItem {
 		QPainterPath makePath() const;
 
 		QPointF m_origin, m_target;
+		QPen m_pen;
 
 		friend class GraphScene;
 };

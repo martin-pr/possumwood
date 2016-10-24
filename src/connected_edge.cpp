@@ -39,6 +39,13 @@ ConnectedEdge::ConnectedEdge(Port& p1, Port& p2) :
 	p1.m_edges.insert(this);
 	p2.m_edges.insert(this);
 
+	QColor color;
+	color.setRed(m_p1->color().red() / 2 + m_p2->color().red() / 2);
+	color.setGreen(m_p1->color().green() / 2 + m_p2->color().green() / 2);
+	color.setBlue(m_p1->color().blue() / 2 + m_p2->color().blue() / 2);
+
+	setPen(QPen(color, 2));
+
 	adjust();
 }
 
@@ -66,17 +73,6 @@ void ConnectedEdge::adjust() {
 	const float y2 = bb2.y() + bb2.height() / 2;
 
 	setPoints(QPointF(x1, y1), QPointF(x2, y2));
-}
-
-void ConnectedEdge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
-	QColor color;
-	color.setRed(m_p1->color().red() / 2 + m_p2->color().red() / 2);
-	color.setGreen(m_p1->color().green() / 2 + m_p2->color().green() / 2);
-	color.setBlue(m_p1->color().blue() / 2 + m_p2->color().blue() / 2);
-
-	painter->setPen(QPen(color, 2));
-
-	Edge::paint(painter, option, widget);
 }
 
 const Port& ConnectedEdge::fromPort() const {

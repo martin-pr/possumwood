@@ -96,14 +96,11 @@ void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 	const QPainterPath path = makePath();
 
 	if(option->state & QStyle::State_Selected) {
-		QPen tmp = painter->pen();
-
 		painter->setPen(QPen(Qt::white, 4));
 		painter->drawPath(path);
-
-		painter->setPen(tmp);
 	}
 
+	painter->setPen(m_pen);
 	painter->drawPath(path);
 }
 
@@ -132,4 +129,12 @@ const QPointF& Edge::origin() const {
 
 const QPointF& Edge::target() const {
 	return m_target;
+}
+
+void Edge::setPen(QPen pen) {
+	m_pen = pen;
+}
+
+const QPen& Edge::pen() const {
+	return m_pen;
 }
