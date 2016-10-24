@@ -5,12 +5,13 @@
 #include "node.h"
 
 class ConnectedEdge;
+class Edge;
+class Node;
 
 class GraphScene : public QGraphicsScene {
 	public:
 		GraphScene(QGraphicsView* parent);
-
-		void clear();
+		virtual ~GraphScene();
 
 		Node& node(unsigned index);
 		const Node& node(unsigned index) const;
@@ -20,8 +21,6 @@ class GraphScene : public QGraphicsScene {
 		const ConnectedEdge& edge(unsigned index) const;
 		unsigned edgeCount() const;
 
-		// Node& addNode(const QString& name,
-		//               const std::initializer_list<Node::PortDefinition>& ports = std::initializer_list<Node::PortDefinition>());
 		Node& addNode(const QString& name,
 		              const std::initializer_list<Node::PortDefinition>& ports,
 		              const QPointF& position);
@@ -33,6 +32,12 @@ class GraphScene : public QGraphicsScene {
 
 	protected:
 	private:
+		void remove(Node* n);
+		void remove(Edge* e);
+
 		QVector<Node*> m_nodes;
 		QVector<ConnectedEdge*> m_edges;
+
+		friend class Edge;
+		friend class Node;
 };

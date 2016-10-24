@@ -8,6 +8,9 @@
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
 
+#include "graph_scene.h"
+#include "connected_edge.h"
+
 Node::Node(const QString& name, const QPointF& position, const std::initializer_list<PortDefinition>& ports) {
 	setPos(position);
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
@@ -31,6 +34,24 @@ Node::Node(const QString& name, const QPointF& position, const std::initializer_
 	m_titleBackground->setBrush(QColor(64, 64, 64));
 	m_title->setDefaultTextColor(Qt::white);
 	setPen(QPen(QColor(64, 64, 64), 1));
+}
+
+Node::~Node() {
+	assert(scene());
+	GraphScene* s = dynamic_cast<GraphScene*>(scene());
+	assert(s);
+
+	unsigned ei = 0;
+	while(ei < s->edgeCount()) {
+		ConnectedEdge& e = s->edge(ei);
+		if((&(e.fromPort().parentNode()) == this || &(e.toPort().parentNode()) == this))
+			s->disconnect(e);
+		else
+			++ei;
+	}
+
+	s->removeItem(this);
+	s->remove(this);
 }
 
 const QString Node::name() const {

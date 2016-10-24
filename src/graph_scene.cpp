@@ -11,6 +11,13 @@ GraphScene::GraphScene(QGraphicsView* parent) : QGraphicsScene(parent) {
 
 }
 
+GraphScene::~GraphScene() {
+	clear();
+
+	assert(m_nodes.empty());
+	assert(m_edges.empty());
+}
+
 Node& GraphScene::node(unsigned index) {
 	assert(index < (unsigned)m_nodes.size());
 	return *m_nodes[index];
@@ -39,12 +46,6 @@ unsigned GraphScene::edgeCount() const {
 	return m_edges.size();
 }
 
-// Node& GraphScene::addNode(const QString& name,
-//                            const std::initializer_list<Node::PortDefinition>& ports) {
-
-// 	return addNode(name, ports, mapToScene(mapFromGlobal(QCursor::pos())));
-// }
-
 Node& GraphScene::addNode(const QString& name,
                            const std::initializer_list<Node::PortDefinition>& ports,
                            const QPointF& position) {
@@ -57,29 +58,14 @@ Node& GraphScene::addNode(const QString& name,
 }
 
 void GraphScene::removeNode(Node& n) {
-	{
-		auto i = m_edges.begin();
-		while(i != m_edges.end())
-			if((&(*i)->fromPort().parentNode() == &n || &(*i)->toPort().parentNode() == &n)) {
-				removeItem(*i);
-				delete *i;
-				i = m_edges.erase(i);
-			}
-			else
-				++i;
-	}
+	auto i = m_nodes.begin();
+	while(i != m_nodes.end())
+		if(*i == &n)
+			delete *i;
+		else
+			++i;
 
-	{
-		auto i = m_nodes.begin();
-		while(i != m_nodes.end())
-			if(*i == &n) {
-				removeItem(*i);
-				delete *i;
-				i = m_nodes.erase(i);
-			}
-			else
-				++i;
-	}
+	assert(std::find(m_nodes.begin(), m_nodes.end(), &n) == m_nodes.end());
 }
 
 void GraphScene::connect(Port& p1, Port& p2) {
@@ -93,21 +79,29 @@ void GraphScene::connect(Port& p1, Port& p2) {
 void GraphScene::disconnect(Port& p1, Port& p2) {
 	auto it = m_edges.begin();
 	while(it != m_edges.end())
-		if((&(*it)->fromPort() == &p1) && (&(*it)->toPort() == &p2)) {
-			removeItem(*it);
+		if((&(*it)->fromPort() == &p1) && (&(*it)->toPort() == &p2))
 			delete *it;
-			it = m_edges.erase(it);
-		}
 		else
 			++it;
 }
 
 void GraphScene::disconnect(ConnectedEdge& e) {
 	auto it = std::find(m_edges.begin(), m_edges.end(), &e);
-	if(it != m_edges.end()) {
-		removeItem(*it);
+	if(it != m_edges.end())
 		delete *it;
-		m_edges.erase(it);
-	}
+
+	assert(std::find(m_edges.begin(), m_edges.end(), &e) == m_edges.end());
+}
+
+void GraphScene::remove(Node* n) {
+	auto it = std::find(m_nodes.begin(), m_nodes.end(), n);
+	assert(it != m_nodes.end());
+	m_nodes.erase(it);
+}
+
+void GraphScene::remove(Edge* e) {
+	auto it = std::find(m_edges.begin(), m_edges.end(), e);
+	assert(it != m_edges.end());
+	m_edges.erase(it);
 }
 

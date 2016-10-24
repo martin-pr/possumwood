@@ -9,6 +9,7 @@
 #include <QPainterPathStroker>
 
 #include "port.h"
+#include "graph_scene.h"
 
 namespace {
 
@@ -42,6 +43,14 @@ Edge::Edge(QPointF origin, QPointF target) : m_origin(origin), m_target(target) 
 	setFlags(ItemIsSelectable);
 
 	setPoints(origin, target);
+}
+
+Edge::~Edge() {
+	GraphScene* s = dynamic_cast<GraphScene*>(scene());
+	assert(s);
+
+	s->removeItem(this);
+	s->remove(this);
 }
 
 QRectF Edge::boundingRect() const {

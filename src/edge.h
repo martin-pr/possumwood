@@ -7,6 +7,7 @@ class GraphWidget;
 class Edge : public QGraphicsItem {
 	public:
 		Edge(QPointF origin, QPointF target);
+		virtual ~Edge();
 
 		virtual QRectF boundingRect() const override;
 		virtual QPainterPath shape() const override;
