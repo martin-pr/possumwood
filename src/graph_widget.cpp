@@ -41,6 +41,16 @@ void GraphWidget::mousePressEvent(QMouseEvent* event) {
 		QGraphicsView::mousePressEvent(event);
 }
 
+void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
+	if(m_scene.isEdgeEditInProgress()) {
+		QMouseEvent tmp(event->type(), event->pos(), Qt::NoButton,
+			event->buttons() & ~Qt::LeftButton, event->modifiers());
+		QGraphicsView::mouseMoveEvent(&tmp);
+	}
+	else
+		QGraphicsView::mouseMoveEvent(event);
+}
+
 void GraphWidget::setContextMenuCallback(std::function<void(QPoint)> fn) {
 	m_contextMenuCallback = fn;
 }

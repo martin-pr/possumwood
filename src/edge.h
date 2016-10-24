@@ -24,5 +24,5 @@ class Edge : public QGraphicsItem {
 
 		QPointF m_origin, m_target;
 
-		friend class GraphWidget;
+		friend class GraphScene;
 };

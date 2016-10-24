@@ -24,6 +24,7 @@ class GraphWidget : public QGraphicsView {
 	protected:
 		virtual void resizeEvent(QResizeEvent* event) override;
 		virtual void mousePressEvent(QMouseEvent* event) override;
+		virtual void mouseMoveEvent(QMouseEvent* event) override;
 		virtual void keyPressEvent(QKeyEvent* event) override;
 
 	private:

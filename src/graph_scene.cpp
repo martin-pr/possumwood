@@ -1,14 +1,18 @@
 #include "graph_scene.h"
 
 #include <cassert>
+#include <iostream>
 
 #include <QGraphicsView>
+#include <QGraphicsSceneMouseEvent>
 
 #include "node.h"
 #include "connected_edge.h"
 
 GraphScene::GraphScene(QGraphicsView* parent) : QGraphicsScene(parent) {
-
+	m_editedEdge = new Edge(QPointF(0, 0), QPointF(0, 0));
+	m_editedEdge->setVisible(false);
+	addItem(m_editedEdge);
 }
 
 GraphScene::~GraphScene() {
@@ -47,8 +51,8 @@ unsigned GraphScene::edgeCount() const {
 }
 
 Node& GraphScene::addNode(const QString& name,
-                           const std::initializer_list<Node::PortDefinition>& ports,
-                           const QPointF& position) {
+                          const std::initializer_list<Node::PortDefinition>& ports,
+                          const QPointF& position) {
 
 	Node* n = new Node(name, position, ports);
 	m_nodes.push_back(n);
@@ -101,7 +105,75 @@ void GraphScene::remove(Node* n) {
 
 void GraphScene::remove(Edge* e) {
 	auto it = std::find(m_edges.begin(), m_edges.end(), e);
-	assert(it != m_edges.end());
-	m_edges.erase(it);
+	if(it != m_edges.end())
+		m_edges.erase(it);
 }
 
+namespace {
+Port* findPort(QGraphicsItem* item) {
+	Port* result = NULL;
+	while(item && !result) {
+		result = dynamic_cast<Port*>(item);
+		item = item->parentItem();
+	}
+	return result;
+}
+}
+
+void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
+	Port* port = findPort(itemAt(mouseEvent->scenePos()));
+	if(port) {
+		Port::Type portType;
+		if((port->portType() == Port::kInput) || (port->portType() == Port::kOutput))
+			portType = port->portType();
+		else {
+			const QPointF pos = port->mapFromScene(mouseEvent->scenePos());
+			const QRectF bbox = port->boundingRect();
+			if(pos.x() < bbox.width() / 2)
+				portType = Port::kInput;
+			else
+				portType = Port::kOutput;
+		}
+
+		QPointF pos;
+		{
+			const QRectF bbox = port->boundingRect();
+			if(portType == Port::kInput)
+				pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
+			else
+				pos = QPointF(bbox.x() + bbox.width() - bbox.height() / 2, bbox.y() + bbox.height() / 2);
+			pos = port->mapToScene(pos);
+		}
+
+		m_editedEdge->setVisible(true);
+		m_editedEdge->setPoints(pos, pos);
+		m_connectedSide = portType;
+	}
+	else {
+		m_editedEdge->setVisible(false);
+
+		QGraphicsScene::mousePressEvent(mouseEvent);
+	}
+}
+
+void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
+	if(m_editedEdge->isVisible()) {
+		if(m_connectedSide == Port::kInput)
+			m_editedEdge->setPoints(mouseEvent->scenePos(), m_editedEdge->target());
+		else
+			m_editedEdge->setPoints(m_editedEdge->origin(), mouseEvent->scenePos());
+	}
+	else
+		QGraphicsScene::mouseMoveEvent(mouseEvent);
+}
+
+void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
+	if(m_editedEdge->isVisible())
+		m_editedEdge->setVisible(false);
+	else
+		QGraphicsScene::mouseReleaseEvent(mouseEvent);
+}
+
+bool GraphScene::isEdgeEditInProgress() const {
+	return m_editedEdge->isVisible();
+}
