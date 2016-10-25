@@ -43,6 +43,8 @@ class GraphScene : public QGraphicsScene {
 		void remove(Node* n);
 		void remove(Edge* e);
 
+		QPointF findConnectionPoint(QPointF pos, Port::Type portType);
+
 		QVector<Node*> m_nodes;
 		QVector<ConnectedEdge*> m_edges;
 

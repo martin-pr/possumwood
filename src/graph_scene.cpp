@@ -110,6 +110,7 @@ void GraphScene::remove(Edge* e) {
 }
 
 namespace {
+
 Port* findPort(QGraphicsItem* item) {
 	Port* result = NULL;
 	while(item && !result) {
@@ -118,6 +119,30 @@ Port* findPort(QGraphicsItem* item) {
 	}
 	return result;
 }
+
+}
+
+QPointF GraphScene::findConnectionPoint(QPointF pos, Port::Type portType) {
+	// try to find a port under the mouse
+	Port* port = NULL;
+	auto it = items(pos);
+	for(auto& i : it) {
+		port = findPort(i);
+		if(port)
+			break;
+	}
+
+	// if a port was found, and it was the opposite type than portType, snap
+	if(port && (!(port->portType() & portType) || port->portType() == Port::kInputOutput)) {
+		const QRectF bbox = port->boundingRect();
+		if(portType == Port::kOutput)
+			pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
+		else
+			pos = QPointF(bbox.x() + bbox.width() - bbox.height() / 2, bbox.y() + bbox.height() / 2);
+		pos = port->mapToScene(pos);
+	}
+
+	return pos;
 }
 
 void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
@@ -160,9 +185,9 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 	if(m_editedEdge->isVisible()) {
 		if(m_connectedSide == Port::kInput)
-			m_editedEdge->setPoints(mouseEvent->scenePos(), m_editedEdge->target());
+			m_editedEdge->setPoints(findConnectionPoint(mouseEvent->scenePos(), m_connectedSide), m_editedEdge->target());
 		else
-			m_editedEdge->setPoints(m_editedEdge->origin(), mouseEvent->scenePos());
+			m_editedEdge->setPoints(m_editedEdge->origin(), findConnectionPoint(mouseEvent->scenePos(), m_connectedSide));
 	}
 	else
 		QGraphicsScene::mouseMoveEvent(mouseEvent);
