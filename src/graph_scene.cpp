@@ -81,12 +81,14 @@ void GraphScene::connect(Port& p1, Port& p2) {
 }
 
 void GraphScene::disconnect(Port& p1, Port& p2) {
-	auto it = m_edges.begin();
-	while(it != m_edges.end())
-		if((&(*it)->fromPort() == &p1) && (&(*it)->toPort() == &p2))
-			delete *it;
+	int index = 0;
+	while(index < m_edges.size()) {
+		auto* edge = m_edges[index];
+		if((&edge->fromPort() == &p1) && (&edge->toPort() == &p2))
+			delete edge;
 		else
-			++it;
+			++index;
+	}
 }
 
 void GraphScene::disconnect(ConnectedEdge& e) {
@@ -122,15 +124,20 @@ Port* findPort(QGraphicsItem* item) {
 
 }
 
-QPointF GraphScene::findConnectionPoint(QPointF pos, Port::Type portType) {
-	// try to find a port under the mouse
-	Port* port = NULL;
+Port* GraphScene::findConnectionPort(QPointF pos) const {
 	auto it = items(pos);
 	for(auto& i : it) {
-		port = findPort(i);
+		Port* port = findPort(i);
 		if(port)
-			break;
+			return port;
 	}
+
+	return NULL;
+}
+
+QPointF GraphScene::findConnectionPoint(QPointF pos, Port::Type portType) const {
+	// try to find a port under the mouse
+	Port* port = findConnectionPort(pos);
 
 	// if a port was found, and it was the opposite type than portType, snap
 	if(port && (!(port->portType() & portType) || port->portType() == Port::kInputOutput)) {
@@ -194,8 +201,18 @@ void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 }
 
 void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
-	if(m_editedEdge->isVisible())
+	if(m_editedEdge->isVisible()) {
 		m_editedEdge->setVisible(false);
+
+		Port* portFrom = findConnectionPort(m_editedEdge->origin());
+		Port* portTo = findConnectionPort(m_editedEdge->target());
+
+		if(portFrom != NULL && portTo != NULL && portFrom != portTo &&
+			portFrom->portType() & Port::kOutput && portTo->portType() & Port::kInput) {
+
+			connect(*portFrom, *portTo);
+		}
+	}
 	else
 		QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }

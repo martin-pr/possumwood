@@ -49,7 +49,7 @@ Edge::~Edge() {
 	GraphScene* s = dynamic_cast<GraphScene*>(scene());
 	assert(s);
 
-	s->removeItem(this);
+	// s->removeItem(this);
 	s->remove(this);
 }
 
