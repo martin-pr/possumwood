@@ -19,15 +19,8 @@ Node::Node(const QString& name, const QPointF& position, const std::initializer_
 	m_titleBackground = new QGraphicsRectItem(this);
 	m_title = new QGraphicsTextItem(name, this);
 
-	unsigned height = m_title->boundingRect().height();
-	for(auto& p : ports) {
-		m_ports.push_back(new Port(p.name, p.type, p.color, this));
-		m_ports.back()->setPos(0, height);
-
-		height += m_ports.back()->boundingRect().height();
-	}
-
-	updateRect();
+	for(auto& p : ports)
+		addPort(p);
 
 	setBrush(QColor(32, 32, 32));
 	m_titleBackground->setPen(Qt::NoPen);
@@ -63,6 +56,8 @@ void Node::updateRect() {
 	unsigned width = m_title->boundingRect().width();
 
 	for(auto& p : m_ports) {
+		p->setPos(0, height);
+
 		height += p->boundingRect().height();
 		width = std::max(width, p->minWidth());
 	}
@@ -83,6 +78,23 @@ Port& Node::port(unsigned i) {
 	assert(i < (unsigned)m_ports.size());
 	return *m_ports[i];
 }
+
+void Node::addPort(const PortDefinition& def) {
+	m_ports.push_back(new Port(def.name, def.type, def.color, this));
+
+	updateRect();
+}
+
+void Node::removePort(Port& p) {
+	auto it = std::find(m_ports.begin(), m_ports.end(), &p);
+	assert(it != m_ports.end());
+
+	delete *it;
+	m_ports.erase(it);
+
+	updateRect();
+}
+
 
 QVariant Node::itemChange(GraphicsItemChange change, const QVariant& value) {
 	if(change == ItemPositionHasChanged && scene())

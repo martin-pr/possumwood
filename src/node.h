@@ -25,6 +25,9 @@ class Node : public QGraphicsRectItem {
 		unsigned portCount() const;
 		Port& port(unsigned i);
 
+		void addPort(const PortDefinition& def);
+		void removePort(Port& p);
+
 	protected:
 		virtual QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;

@@ -51,8 +51,8 @@ unsigned GraphScene::edgeCount() const {
 }
 
 Node& GraphScene::addNode(const QString& name,
-                          const std::initializer_list<Node::PortDefinition>& ports,
-                          const QPointF& position) {
+                          const QPointF& position,
+                          const std::initializer_list<Node::PortDefinition>& ports) {
 
 	Node* n = new Node(name, position, ports);
 	m_nodes.push_back(n);
@@ -208,10 +208,9 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 		Port* portTo = findConnectionPort(m_editedEdge->target());
 
 		if(portFrom != NULL && portTo != NULL && portFrom != portTo &&
-			portFrom->portType() & Port::kOutput && portTo->portType() & Port::kInput) {
+		        portFrom->portType() & Port::kOutput && portTo->portType() & Port::kInput)
 
 			connect(*portFrom, *portTo);
-		}
 	}
 	else
 		QGraphicsScene::mouseReleaseEvent(mouseEvent);

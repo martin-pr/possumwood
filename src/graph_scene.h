@@ -24,8 +24,9 @@ class GraphScene : public QGraphicsScene {
 		unsigned edgeCount() const;
 
 		Node& addNode(const QString& name,
-		              const std::initializer_list<Node::PortDefinition>& ports,
-		              const QPointF& position);
+		              const QPointF& position,
+		              const std::initializer_list<Node::PortDefinition>& ports = std::initializer_list<Node::PortDefinition>());
+
 		void removeNode(Node& n);
 
 		void connect(Port& p1, Port& p2);

@@ -40,6 +40,11 @@ QString makeUniqueNodeName() {
 	return "node_" + QString::number(s_counter);
 }
 
+QColor randomColor() {
+	static const std::vector<QColor> colors = {QColor(255, 0, 0), QColor(0, 255, 0), QColor(0, 0, 255)};
+	return colors[rand() % colors.size()];
+}
+
 }
 
 int main(int argc, char* argv[]) {
@@ -75,8 +80,8 @@ int main(int argc, char* argv[]) {
 
 	GraphScene& scene = graph->scene();
 
-	Node& n1 = scene.addNode("first", {{"aaaaa", Port::kInput, Qt::blue}, {"b", Port::kOutput, Qt::red}}, QPointF(-50, 20));
-	Node& n2 = scene.addNode("second", {{"xxxxxxxxxxxxxxxx", Port::kInputOutput, Qt::red}}, QPointF(50, 20));
+	Node& n1 = scene.addNode("first", QPointF(-50, 20), {{"aaaaa", Port::kInput, Qt::blue}, {"b", Port::kOutput, Qt::red}});
+	Node& n2 = scene.addNode("second", QPointF(50, 20), {{"xxxxxxxxxxxxxxxx", Port::kInputOutput, Qt::red}});
 
 	scene.connect(n1.port(1), n2.port(0));
 
@@ -87,29 +92,39 @@ int main(int argc, char* argv[]) {
 
 		menu.addAction(makeAction("Add single input node", [&]() {
 			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-			scene.addNode(makeUniqueNodeName(), {{"input", Port::kInput, Qt::blue}}, pos);
+			scene.addNode(makeUniqueNodeName(), pos, {{"input", Port::kInput, randomColor()}});
 		}, &menu));
 
 		menu.addAction(makeAction("Add single output node", [&]() {
 			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-			scene.addNode(makeUniqueNodeName(), {{"output", Port::kOutput, Qt::blue}}, pos);
+			scene.addNode(makeUniqueNodeName(), pos, {{"output", Port::kOutput, randomColor()}});
 		}, &menu));
 
-		menu.addAction(makeAction("Add more complex node", [&]() {
+		menu.addAction(makeAction("Add random more complex node", [&]() {
 			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-			scene.addNode(makeUniqueNodeName(), {
-				{"red_input", Port::kInput, Qt::red},
-				{"red_pass_through", Port::kInputOutput, Qt::red},
-				{"blue_pass_through", Port::kInputOutput, Qt::blue},
-				{"blue_output", Port::kOutput, Qt::blue},
-				{"red_output", Port::kOutput, Qt::red}
-			}, pos);
+
+			Node& node = scene.addNode(makeUniqueNodeName(), pos);
+
+			const unsigned portCount = rand() % 8 + 1;
+			for(unsigned p = 0; p < portCount; ++p) {
+				std::stringstream name;
+				name << "port_" << p;
+
+				const unsigned pi = rand() % 3;
+
+				if(pi == 0)
+					node.addPort(Node::PortDefinition{name.str().c_str(), Port::kInput, randomColor()});
+				else if(pi == 1)
+					node.addPort(Node::PortDefinition{name.str().c_str(), Port::kOutput, randomColor()});
+				else
+					node.addPort(Node::PortDefinition{name.str().c_str(), Port::kInputOutput, randomColor()});
+			}
 		}, &menu));
 
 		menu.exec(p);
 	});
 
-	graph->setKeyPressCallback([&](const QKeyEvent& event) {
+	graph->setKeyPressCallback([&](const QKeyEvent & event) {
 		if(event.key() == Qt::Key_Delete) {
 			{
 				unsigned ei = 0;
