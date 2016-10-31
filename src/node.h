@@ -8,16 +8,23 @@ class Datablock;
 
 class Node {
 	public:
-		class Attr : public boost::noncopyable {
+		Datablock& inputs();
+
+		const Datablock& outputs();
+
+/*		class Attr : public boost::noncopyable {
 			public:
 				const std::string& name() const;
 
 				/// forces the attribute dirty, even when no node inputs are
-				void forceDirty();
+				void markDirty();
+
+				/// returns true if given attribute is dirty
+				bool isDirty();
 
 			private:
 				friend class Node;
-		};
+		};*/
 
 		Attr& attribute(const std::string& name);
 		const Attr& attribute(const std::string& name) const;

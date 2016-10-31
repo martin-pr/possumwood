@@ -5,44 +5,44 @@
 class Metadata;
 
 /// Common attribute base class
-class Attribute {
+class AttrDefinition {
 	public:
 		enum Category { kInput, kOutput };
 
-		virtual ~Attribute = 0;
+		virtual ~AttrDefinition = 0;
 
 		const std::string& name() const;
 		const Category& category() const;
 		const unsigned& index() const;
 
 	protected:
-		Attribute(const std::string& name, unsigned index);
+		AttrDefinition(const std::string& name, unsigned index);
 };
 
 /// Input attribute type (constructed by Metadata class)
 template<typename T>
-class InAttribute : public Attribute {
+class InAttrDefinition : public AttrDefinition {
 	public:
-		InAttribute();
+		InAttrDefinition();
 
 		bool isValid();
 
 	protected:
-		InAttribute(const std::string& name, unsigned index);
+		InAttrDefinition(const std::string& name, unsigned index);
 
 		friend class Metadata;
 };
 
 /// Output attribute type (constructed by Metadata class)
 template<typename T>
-class OutAttribute : public Attribute {
+class OutAttrDefinition : public AttrDefinition {
 	public:
-		OutAttribute();
+		OutAttrDefinition();
 
 		bool isValid();
 
 	protected:
-		OutAttribute(const std::string& name, unsigned index);
+		OutAttrDefinition(const std::string& name, unsigned index);
 
 		friend class Metadata;
 };
