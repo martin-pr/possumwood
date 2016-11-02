@@ -17,5 +17,9 @@ class Datablock {
 		void set(const OutAttribute<T>& attr, const T& value);
 
 	protected:
+	private:
+		template<typename T>
+		void set(const InAttribute& attr, const T& value);
+
 		friend class Evaluator;
 };

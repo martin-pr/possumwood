@@ -5,30 +5,33 @@
 #include <boost/noncopyable.hpp>
 
 class Datablock;
+class Metadata;
 
 class Node {
 	public:
-		Datablock& inputs();
+		Datablock& data();
+		const Datablock& data() const;
 
-		const Datablock& outputs();
-
-/*		class Attr : public boost::noncopyable {
+		class Port : public boost::noncopyable {
 			public:
 				const std::string& name() const;
+				const Attr::Category category() const;
 
-				/// forces the attribute dirty, even when no node inputs are
+				/// forces the port dirty, even when no node inputs are
 				void markDirty();
 
-				/// returns true if given attribute is dirty
-				bool isDirty();
+				/// returns true if given port is dirty
+				bool isDirty() const;
 
 			private:
-				friend class Node;
-		};*/
+				Port(const std::string& name);
 
-		Attr& attribute(const std::string& name);
-		const Attr& attribute(const std::string& name) const;
+				friend class Node;
+		};
+
+		Port& port(const std::string& name);
+		const Port& port(const std::string& name) const;
 
 	protected:
-		Node(const std::string& name, const Metadata& meta, std::function<bool(Datablock&)> compute);
+		Node(const std::string& name, const Metadata& def);
 };
