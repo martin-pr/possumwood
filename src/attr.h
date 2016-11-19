@@ -9,7 +9,7 @@ class Attr {
 	public:
 		enum Category { kInput, kOutput };
 
-		virtual ~Attr = 0;
+		virtual ~Attr() = 0;
 
 		const std::string& name() const;
 		const Category& category() const;

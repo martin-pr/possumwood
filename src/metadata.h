@@ -1,10 +1,16 @@
 #pragma once
 
-template<typename T>
-class InAttribute;
+#include <string>
+#include <functional>
 
 template<typename T>
-class OutAttribute;
+class InAttr;
+
+template<typename T>
+class OutAttr;
+
+class Datablock;
+class Attribute;
 
 class Metadata {
 	public:
@@ -16,7 +22,7 @@ class Metadata {
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(InAttribute<T>& in, const std::string& name);
+		void addAttribute(InAttr<T>& in, const std::string& name);
 
 		/// registers an output attribute.
 		/// Each attribute instance should be held statically in the
@@ -24,13 +30,13 @@ class Metadata {
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(OutAttribute<T>& out, const std::string& name);
+		void addAttribute(OutAttr<T>& out, const std::string& name);
 
 		template<typename T, typename U>
-		void addInfluence(const InAttribute<T>& in, const OutAttribute<U>& out);
+		void addInfluence(const InAttr<T>& in, const OutAttr<U>& out);
 
 		/// compute method of this node
-		void setCompute(std::function<bool(Datablock&)> compute);
+		void setCompute(std::function<void(Datablock&)> compute);
 
 		/// returns the number of attributes currently present
 		size_t attributeCount() const;

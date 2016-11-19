@@ -4,6 +4,8 @@
 
 #include <boost/noncopyable.hpp>
 
+#include "attr.h"
+
 class Datablock;
 class Metadata;
 

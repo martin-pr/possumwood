@@ -1,15 +1,18 @@
 #include <boost/test/unit_test.hpp>
 
 #include "graph.h"
+#include "attr.h"
+#include "datablock.h"
+#include "metadata.h"
 
 BOOST_AUTO_TEST_CASE(arithmetic) {
 
 	//////////////////
 	// addition node
 
-	InAttribute<float> additionInput1, additionInput2;
-	OutAttribute<float> additionOutput;
-	std::function<bool(Datablock&)> additionCompute = [&](Datablock & data) {
+	InAttr<float> additionInput1, additionInput2;
+	OutAttr<float> additionOutput;
+	std::function<void(Datablock&)> additionCompute = [&](Datablock & data) {
 		const float a = data.get(additionInput1);
 		const float b = data.get(additionInput2);
 
@@ -22,17 +25,17 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	addition.addAttribute(additionInput2, "input_2");
 	addition.addAttribute(additionOutput, "output");
 
-	addition.setInfluence(additionInput1, additionOutput);
-	addition.setInfluence(additionInput2, additionOutput);
+	addition.addInfluence(additionInput1, additionOutput);
+	addition.addInfluence(additionInput2, additionOutput);
 
 	addition.setCompute(additionCompute);
 
 	////////////////////////
 	// multiplication node
 
-	InAttribute<float> multiplicationInput1, multiplicationInput2;
-	OutAttribute<float> multiplicationOutput;
-	std::function<bool(Datablock&)> multiplicationCompute = [&](Datablock & data) {
+	InAttr<float> multiplicationInput1, multiplicationInput2;
+	OutAttr<float> multiplicationOutput;
+	std::function<void(Datablock&)> multiplicationCompute = [&](Datablock & data) {
 		const float a = data.get(multiplicationInput1);
 		const float b = data.get(multiplicationInput2);
 
@@ -45,8 +48,8 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	multiplication.addAttribute(multiplicationInput2, "input_2");
 	multiplication.addAttribute(multiplicationOutput, "output");
 
-	multiplication.setInfluence(multiplicationInput1, multiplicationOutput);
-	multiplication.setInfluence(multiplicationInput2, multiplicationOutput);
+	multiplication.addInfluence(multiplicationInput1, multiplicationOutput);
+	multiplication.addInfluence(multiplicationInput2, multiplicationOutput);
 
 	multiplication.setCompute(multiplicationCompute);
 

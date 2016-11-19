@@ -30,6 +30,10 @@ class Graph {
 		Nodes& nodes();
 		const Nodes& nodes() const;
 
+		struct Connection {
+			Node::Port& src, dest;
+		};
+
 		class Connections : public boost::noncopyable {
 			public:
 				Connection& add(const Node::Port& src, const Node::Port& dest);
@@ -44,7 +48,7 @@ class Graph {
 				// iterator end();
 
 				// iterator erase(iterator i);
-		}
+		};
 
 		Connections& connections();
 		const Connections& connections() const;
