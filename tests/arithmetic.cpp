@@ -1,9 +1,9 @@
 #include <boost/test/unit_test.hpp>
 
 #include "graph.h"
-#include "attr.h"
-#include "datablock.h"
-#include "metadata.h"
+#include "attr.inl"
+#include "datablock.inl"
+#include "metadata.inl"
 
 BOOST_AUTO_TEST_CASE(arithmetic) {
 

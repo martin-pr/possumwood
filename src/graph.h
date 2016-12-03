@@ -1,10 +1,12 @@
 #pragma once
 
+#include <vector>
+
 #include <boost/noncopyable.hpp>
 
 #include "node.h"
 
-class Graph {
+class Graph : public boost::noncopyable {
 	public:
 		Graph();
 
@@ -24,14 +26,25 @@ class Graph {
 				// iterator erase(iterator i);
 
 			private:
-				Nodes();
+				Nodes() = default;
+
+				// stored in a pointer container, to keep parent pointers
+				//   stable without too much effort (might change)
+				std::vector<std::unique_ptr<Node>> m_nodes;
+
+				friend class Graph;
 		};
 
 		Nodes& nodes();
 		const Nodes& nodes() const;
 
 		struct Connection {
-			Node::Port& src, dest;
+			const Node::Port* src;
+			const Node::Port* dest;
+
+			bool operator ==(const Connection& c) {
+				return src == c.src && dest == c.dest;
+			}
 		};
 
 		class Connections : public boost::noncopyable {
@@ -48,8 +61,22 @@ class Graph {
 				// iterator end();
 
 				// iterator erase(iterator i);
+
+			private:
+				Connections() = default;
+
+				std::vector<Connection> m_connections;
+
+				friend class Graph;
 		};
 
 		Connections& connections();
 		const Connections& connections() const;
+
+	private:
+		static std::unique_ptr<Node> makeNode(const std::string& name, const Metadata& md);
+
+		Nodes m_nodes;
+		Connections m_connections;
+
 };

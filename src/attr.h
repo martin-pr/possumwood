@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <memory>
+
+#include "datablock.h"
 
 class Metadata;
 
@@ -15,8 +18,19 @@ class Attr {
 		const Category& category() const;
 		const unsigned& offset() const;
 
+		bool isValid() const;
+
 	protected:
-		Attr(const std::string& name, unsigned offset);
+		Attr(const std::string& name, unsigned offset, Category cat);
+
+		virtual std::unique_ptr<Datablock::BaseData> createData() const = 0;
+
+	private:
+		std::string m_name;
+		unsigned m_offset;
+		Category m_category;
+
+		friend class Datablock;
 };
 
 /// Input attribute type (constructed by Metadata class)
@@ -25,10 +39,10 @@ class InAttr : public Attr {
 	public:
 		InAttr();
 
-		bool isValid();
-
 	protected:
 		InAttr(const std::string& name, unsigned offset);
+
+		virtual std::unique_ptr<Datablock::BaseData> createData() const override;
 
 		friend class Metadata;
 };
@@ -39,10 +53,10 @@ class OutAttr : public Attr {
 	public:
 		OutAttr();
 
-		bool isValid();
-
 	protected:
 		OutAttr(const std::string& name, unsigned offset);
+
+		virtual std::unique_ptr<Datablock::BaseData> createData() const override;
 
 		friend class Metadata;
 };

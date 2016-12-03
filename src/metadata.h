@@ -2,6 +2,10 @@
 
 #include <string>
 #include <functional>
+#include <vector>
+
+#include <boost/bimap.hpp>
+#include <boost/bimap/multiset_of.hpp>
 
 template<typename T>
 class InAttr;
@@ -10,7 +14,7 @@ template<typename T>
 class OutAttr;
 
 class Datablock;
-class Attribute;
+class Attr;
 
 class Metadata {
 	public:
@@ -42,8 +46,14 @@ class Metadata {
 		size_t attributeCount() const;
 
 		/// returns an attribute reference
-		Attribute& attr(unsigned index);
+		Attr& attr(unsigned index);
 		/// returns an attribute reference
-		const Attribute& attr(unsigned index) const;
+		const Attr& attr(unsigned index) const;
 
+	private:
+		std::string m_type;
+		std::vector<Attr*> m_attrs; // not owning the attr instances
+		std::function<void(Datablock&)> m_compute;
+
+		boost::bimap<boost::bimaps::multiset_of<unsigned>, boost::bimaps::multiset_of<unsigned>> m_influences;
 };

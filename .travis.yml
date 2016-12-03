@@ -42,6 +42,7 @@ script:
   - export CC=gcc-5
   - cd $TRAVIS_BUILD_DIR
   - ./tools/build-debug
+  - ./tools/run-tests
 
 # Generate and deploy documentation
 after_success:
