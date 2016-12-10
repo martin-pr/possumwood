@@ -20,6 +20,10 @@ class Metadata {
 	public:
 		Metadata(const std::string& nodeType);
 
+		/// returns the type of the node this metadata object describes
+		const std::string& type() const;
+
+
 		/// registers an input attribute.
 		/// Each attribute instance should be held statically in the
 		/// implementation of the "node" concept of the target application.
@@ -36,9 +40,6 @@ class Metadata {
 		template<typename T>
 		void addAttribute(OutAttr<T>& out, const std::string& name);
 
-		template<typename T, typename U>
-		void addInfluence(const InAttr<T>& in, const OutAttr<U>& out);
-
 		/// compute method of this node
 		void setCompute(std::function<void(Datablock&)> compute);
 
@@ -46,11 +47,25 @@ class Metadata {
 		size_t attributeCount() const;
 
 		/// returns an attribute reference
-		Attr& attr(unsigned index);
+		Attr& attr(size_t index);
 		/// returns an attribute reference
-		const Attr& attr(unsigned index) const;
+		const Attr& attr(size_t index) const;
+
+
+		/// adds attribute influence - inputs required to compute outputs
+		template<typename T, typename U>
+		void addInfluence(const InAttr<T>& in, const OutAttr<U>& out);
+
+		template<typename T>
+		std::vector<std::reference_wrapper<const Attr>> influences(const InAttr<T>& in) const;
+
+		template<typename T>
+		std::vector<std::reference_wrapper<const Attr>> influencedBy(const OutAttr<T>& out) const;
 
 	private:
+		std::vector<std::reference_wrapper<const Attr>> influences(size_t index) const;
+		std::vector<std::reference_wrapper<const Attr>> influencedBy(size_t index) const;
+
 		std::string m_type;
 		std::vector<Attr*> m_attrs; // not owning the attr instances
 		std::function<void(Datablock&)> m_compute;

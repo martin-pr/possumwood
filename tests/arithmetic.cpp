@@ -10,28 +10,54 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	//////////////////
 	// addition node
 
+	// base initialisation
+	Metadata addition("addition");
+	BOOST_REQUIRE_EQUAL(addition.type(), "addition");
+
+	// create attributes
 	InAttr<float> additionInput1, additionInput2;
 	OutAttr<float> additionOutput;
+	BOOST_CHECK(not additionInput1.isValid());
+	BOOST_CHECK(not additionInput2.isValid());
+	BOOST_CHECK(not additionOutput.isValid());
+
+	// add attributes to the Metadata instance
+	addition.addAttribute(additionInput1, "input_1");
+	addition.addAttribute(additionInput2, "input_2");
+	addition.addAttribute(additionOutput, "output");
+
+	BOOST_CHECK_EQUAL(addition.attributeCount(), 3u);
+	BOOST_CHECK_EQUAL(&addition.attr(0), &additionInput1);
+	BOOST_CHECK_EQUAL(&addition.attr(1), &additionInput2);
+	BOOST_CHECK_EQUAL(&addition.attr(2), &additionOutput);
+
+	// setup influences
+	addition.addInfluence(additionInput1, additionOutput);
+	addition.addInfluence(additionInput2, additionOutput);
+
+	std::vector<std::reference_wrapper<const Attr>> influences;
+
+	BOOST_CHECK_NO_THROW(influences = addition.influences(additionInput1));
+	BOOST_CHECK_EQUAL(influences.size(), 1u);
+	BOOST_CHECK_EQUAL(&((Attr&)(*influences.begin())), &additionOutput);
+
+	BOOST_CHECK_NO_THROW(influences = addition.influencedBy(additionOutput));
+	BOOST_CHECK_EQUAL(influences.size(), 2u);
+	BOOST_CHECK_EQUAL(&(Attr&)(influences[0]), &additionInput1);
+	BOOST_CHECK_EQUAL(&(Attr&)(influences[2]), &additionInput2);
+
 	std::function<void(Datablock&)> additionCompute = [&](Datablock & data) {
 		const float a = data.get(additionInput1);
 		const float b = data.get(additionInput2);
 
 		data.set(additionOutput, a + b);
 	};
-
-	Metadata addition("addition");
-
-	addition.addAttribute(additionInput1, "input_1");
-	addition.addAttribute(additionInput2, "input_2");
-	addition.addAttribute(additionOutput, "output");
-
-	addition.addInfluence(additionInput1, additionOutput);
-	addition.addInfluence(additionInput2, additionOutput);
-
 	addition.setCompute(additionCompute);
 
 	////////////////////////
 	// multiplication node
+
+	// no need to test again what was tested above
 
 	InAttr<float> multiplicationInput1, multiplicationInput2;
 	OutAttr<float> multiplicationOutput;
