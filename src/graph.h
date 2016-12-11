@@ -26,7 +26,9 @@ class Graph : public boost::noncopyable {
 				// iterator erase(iterator i);
 
 			private:
-				Nodes() = default;
+				Nodes(Graph* parent);
+
+				Graph* m_parent;
 
 				// stored in a pointer container, to keep parent pointers
 				//   stable without too much effort (might change)
@@ -74,7 +76,7 @@ class Graph : public boost::noncopyable {
 		const Connections& connections() const;
 
 	private:
-		static std::unique_ptr<Node> makeNode(const std::string& name, const Metadata& md);
+		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata& md);
 
 		Nodes m_nodes;
 		Connections m_connections;

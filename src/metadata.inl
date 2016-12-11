@@ -40,5 +40,5 @@ std::vector<std::reference_wrapper<const Attr>> Metadata::influences(const InAtt
 template<typename T>
 std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(const OutAttr<T>& out) const {
 	assert(out.isValid());
-	return influences(out.offset());
+	return influencedBy(out.offset());
 }

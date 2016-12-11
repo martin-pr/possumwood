@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-Graph::Graph() {
+Graph::Graph() : m_nodes(this) {
 
 }
 
@@ -23,11 +23,15 @@ const Graph::Connections& Graph::connections() const {
 }
 
 std::unique_ptr<Node> Graph::makeNode(const std::string& name, const Metadata& md) {
-	return std::move(std::unique_ptr<Node>(new Node(name, md)));
+	return std::move(std::unique_ptr<Node>(new Node(name, md, this)));
+}
+
+Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
+
 }
 
 Node& Graph::Nodes::add(const Metadata& type, const std::string& name) {
-	m_nodes.push_back(std::move(Graph::makeNode(name, type)));
+	m_nodes.push_back(std::move(m_parent->makeNode(name, type)));
 	return *m_nodes.back();
 }
 

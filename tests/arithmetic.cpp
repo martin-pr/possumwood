@@ -4,6 +4,7 @@
 #include "attr.inl"
 #include "datablock.inl"
 #include "metadata.inl"
+#include "node.inl"
 
 BOOST_AUTO_TEST_CASE(arithmetic) {
 
@@ -26,7 +27,7 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	addition.addAttribute(additionInput2, "input_2");
 	addition.addAttribute(additionOutput, "output");
 
-	BOOST_CHECK_EQUAL(addition.attributeCount(), 3u);
+	BOOST_REQUIRE_EQUAL(addition.attributeCount(), 3u);
 	BOOST_CHECK_EQUAL(&addition.attr(0), &additionInput1);
 	BOOST_CHECK_EQUAL(&addition.attr(1), &additionInput2);
 	BOOST_CHECK_EQUAL(&addition.attr(2), &additionOutput);
@@ -38,13 +39,13 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	std::vector<std::reference_wrapper<const Attr>> influences;
 
 	BOOST_CHECK_NO_THROW(influences = addition.influences(additionInput1));
-	BOOST_CHECK_EQUAL(influences.size(), 1u);
-	BOOST_CHECK_EQUAL(&((Attr&)(*influences.begin())), &additionOutput);
+	BOOST_REQUIRE_EQUAL(influences.size(), 1u);
+	BOOST_CHECK_EQUAL(&(influences.begin()->get()), &additionOutput);
 
 	BOOST_CHECK_NO_THROW(influences = addition.influencedBy(additionOutput));
-	BOOST_CHECK_EQUAL(influences.size(), 2u);
-	BOOST_CHECK_EQUAL(&(Attr&)(influences[0]), &additionInput1);
-	BOOST_CHECK_EQUAL(&(Attr&)(influences[2]), &additionInput2);
+	BOOST_REQUIRE_EQUAL(influences.size(), 2u);
+	BOOST_CHECK_EQUAL(&(influences[0].get()), &additionInput1);
+	BOOST_CHECK_EQUAL(&(influences[1].get()), &additionInput2);
 
 	std::function<void(Datablock&)> additionCompute = [&](Datablock & data) {
 		const float a = data.get(additionInput1);
@@ -80,12 +81,12 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	multiplication.setCompute(multiplicationCompute);
 
 	/////////////////////////////
-	// build a simple graph for a + b * c
+	// build a simple graph for (a + b) * c
 
 	Graph g;
 
 	Node& add = g.nodes().add(addition, "add");
 	Node& mult = g.nodes().add(multiplication, "mult");
 
-	g.connections().add(add.port("output"), mult.port("input_2"));
+	g.connections().add(add.port(2), mult.port(1));
 }
