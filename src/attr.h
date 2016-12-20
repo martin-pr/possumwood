@@ -6,6 +6,7 @@
 #include "datablock.h"
 
 class Metadata;
+class Node;
 
 /// Common attribute base class
 class Attr {
@@ -31,6 +32,7 @@ class Attr {
 		Category m_category;
 
 		friend class Datablock;
+		friend class Node;
 };
 
 /// Input attribute type (constructed by Metadata class)

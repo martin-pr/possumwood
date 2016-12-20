@@ -43,6 +43,8 @@ class Node : public boost::noncopyable {
 			private:
 				Port(const std::string& name, unsigned id, Node* parent);
 
+				void markAsDirty();
+
 				std::string m_name;
 				unsigned m_id;
 				bool m_dirty;
@@ -59,8 +61,11 @@ class Node : public boost::noncopyable {
 	protected:
 		Node(const std::string& name, const Metadata& def, Graph* parent);
 
+		void computeInput(size_t index);
+		void computeOutput(size_t index);
+
 		template<typename T>
-		const T& get(size_t index, bool dirty) const;
+		const T& get(size_t index) const;
 
 		template<typename T>
 		void set(size_t index, const T& value);

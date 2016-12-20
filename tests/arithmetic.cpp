@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	multiplication.setCompute(multiplicationCompute);
 
 	/////////////////////////////
-	// build a simple graph for (a + b) * c
+	// build a simple graph for (a + b) * c + (a + b) * d
 
 	Graph g;
 
@@ -104,10 +104,10 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	/////////////////////////////
 	// compute (2 + 3) * 4 + (2 + 3) * 5 = 20
 
-	add1.port(0).set(2.0f);
-	add1.port(1).set(3.0f);
-	mult1.port(0).set(4.0f);
-	mult2.port(0).set(5.0f);
+	BOOST_CHECK_NO_THROW(add1.port(0).set(2.0f));
+	BOOST_CHECK_NO_THROW(add1.port(1).set(3.0f));
+	BOOST_CHECK_NO_THROW(mult1.port(0).set(4.0f));
+	BOOST_CHECK_NO_THROW(mult2.port(0).set(5.0f));
 
 	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 20.0f);
 }
