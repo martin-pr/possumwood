@@ -3,6 +3,8 @@
 #include <vector>
 
 #include <boost/noncopyable.hpp>
+#include <boost/bimap.hpp>
+#include <boost/bimap/multiset_of.hpp>
 
 #include "node.h"
 
@@ -40,34 +42,31 @@ class Graph : public boost::noncopyable {
 		Nodes& nodes();
 		const Nodes& nodes() const;
 
-		struct Connection {
-			const Node::Port* src;
-			const Node::Port* dest;
-
-			bool operator ==(const Connection& c) {
-				return src == c.src && dest == c.dest;
-			}
-		};
-
 		class Connections : public boost::noncopyable {
 			public:
-				Connection& add(const Node::Port& src, const Node::Port& dest);
-				// std::size_t size() const;
+				void add(Node::Port& src, Node::Port& dest);
 
-				// typedef ... const_iterator;
-				// const_iterator begin() const;
-				// const_iterator end() const;
+				/// returns the connections of an input port (result contains references
+				///   to output ports connected to this input)
+				std::vector<std::reference_wrapper<const Node>> connectedFrom(const Node::Port& p) const;
+				/// returns the connections of an output port (result contains references
+				///   to input ports connected to this output)
+				std::vector<std::reference_wrapper<const Node>> connectedTo(const Node::Port& p) const;
 
-				// typedef ... iterator;
-				// iterator begin();
-				// iterator end();
-
-				// iterator erase(iterator i);
+				/// returns the connections of an input port (result contains references
+				///   to output ports connected to this input)
+				std::vector<std::reference_wrapper<Node>> connectedFrom(Node::Port& p);
+				/// returns the connections of an output port (result contains references
+				///   to input ports connected to this output)
+				std::vector<std::reference_wrapper<Node>> connectedTo(Node::Port& p);
 
 			private:
 				Connections() = default;
 
-				std::vector<Connection> m_connections;
+				boost::bimap<
+					boost::bimaps::multiset_of<Node::Port*>, // output
+					Node::Port* // input (only one output to any input)
+				> m_connections;
 
 				friend class Graph;
 		};

@@ -17,6 +17,18 @@ const Attr::Category Node::Port::category() const {
 	return m_parent->m_meta.attr(m_id).category();
 }
 
+Node& Node::Port::node() {
+	assert(m_parent != NULL);
+	return *m_parent;
+}
+
+const Node& Node::Port::node() const {
+	assert(m_parent != NULL);
+	return *m_parent;
+}
+
+/////////////
+
 Node::Node(const std::string& name, const Metadata& def, Graph* parent) : m_name(name), m_parent(parent), m_meta(def), m_data(def) {
 	for(std::size_t a = 0; a < def.attributeCount(); ++a) {
 		auto& meta = def.attr(a);
@@ -34,4 +46,11 @@ Node::Port& Node::port(size_t index) {
 const Node::Port& Node::port(size_t index) const {
 	assert(index < m_ports.size());
 	return m_ports[index];
+}
+
+bool Node::inputIsNotConnected(const Port& p) const {
+	assert(p.category() == Attr::kInput);
+
+	// return true if there are no connections leading to this input port
+	return m_parent->connections().connectedTo(p).empty();
 }

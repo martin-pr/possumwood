@@ -33,8 +33,8 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	BOOST_CHECK_EQUAL(&addition.attr(2), &additionOutput);
 
 	// setup influences
-	addition.addInfluence(additionInput1, additionOutput);
-	addition.addInfluence(additionInput2, additionOutput);
+	BOOST_CHECK_NO_THROW(addition.addInfluence(additionInput1, additionOutput));
+	BOOST_CHECK_NO_THROW(addition.addInfluence(additionInput2, additionOutput));
 
 	std::vector<std::reference_wrapper<const Attr>> influences;
 
@@ -85,8 +85,29 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 
 	Graph g;
 
-	Node& add = g.nodes().add(addition, "add");
-	Node& mult = g.nodes().add(multiplication, "mult");
+	Node& add1 = g.nodes().add(addition, "add_1");
+	Node& mult1 = g.nodes().add(multiplication, "mult_1");
+	Node& mult2 = g.nodes().add(multiplication, "mult_2");
+	Node& add2 = g.nodes().add(multiplication, "add_2");
 
-	g.connections().add(add.port(2), mult.port(1));
+	// a valid connection
+	BOOST_CHECK_NO_THROW(g.connections().add(add1.port(2), mult1.port(1)));
+	BOOST_CHECK_NO_THROW(g.connections().add(add1.port(2), mult2.port(1)));
+	BOOST_CHECK_NO_THROW(g.connections().add(mult1.port(2), add2.port(0)));
+	BOOST_CHECK_NO_THROW(g.connections().add(mult2.port(2), add2.port(1)));
+
+	// // invalid connections
+	BOOST_CHECK_THROW(g.connections().add(add1.port(1), mult1.port(1)), std::runtime_error);
+	BOOST_CHECK_THROW(g.connections().add(add1.port(2), mult1.port(2)), std::runtime_error);
+	BOOST_CHECK_THROW(g.connections().add(add1.port(1), mult1.port(2)), std::runtime_error);
+
+	/////////////////////////////
+	// compute (2 + 3) * 4 + (2 + 3) * 5 = 20
+
+	add1.port(0).set(2.0f);
+	add1.port(1).set(3.0f);
+	mult1.port(0).set(4.0f);
+	mult2.port(0).set(5.0f);
+
+	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 20.0f);
 }
