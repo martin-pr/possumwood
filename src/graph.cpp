@@ -46,59 +46,61 @@ void Graph::Connections::add(Node::Port& src, Node::Port& dest) {
 	m_connections.left.insert(std::make_pair(&src, &dest));
 }
 
-std::vector<std::reference_wrapper<const Node>> Graph::Connections::connectedFrom(const Node::Port& p) const {
+boost::optional<const Node::Port&> Graph::Connections::connectedFrom(const Node::Port& p) const {
+	if(p.category() != Attr::kInput)
+		throw std::runtime_error("Connected From request can be only run on input ports.");
+
+	// ugly const casts, to keep const-correctness, ironically
+	auto it = m_connections.right.lower_bound(const_cast<Node::Port*>(&p));
+
+	if((it == m_connections.right.end()) || (it->first != &p))
+		return boost::optional<const Node::Port&>();
+	else {
+		assert(m_connections.right.count(const_cast<Node::Port*>(&p)) == 1);
+		return *it->second;
+	}
+}
+
+std::vector<std::reference_wrapper<const Node::Port>> Graph::Connections::connectedTo(const Node::Port& p) const {
 	if(p.category() != Attr::kOutput)
-		throw std::runtime_error("Connected From request can be only run on output ports.");
+		throw std::runtime_error("Connected To request can be only run on output ports.");
 
 	// ugly const casts, to keep const-correctness, ironically
 	auto it1 = m_connections.left.lower_bound(const_cast<Node::Port*>(&p));
 	auto it2 = m_connections.left.upper_bound(const_cast<Node::Port*>(&p));
 
-	std::vector<std::reference_wrapper<const Node>> result;
+	std::vector<std::reference_wrapper<const Node::Port>> result;
 	for(auto it = it1; it != it2; ++it)
-		result.push_back(std::cref(it->second->node()));
+		result.push_back(std::cref(*it->second));
 	return result;
 }
 
-std::vector<std::reference_wrapper<const Node>> Graph::Connections::connectedTo(const Node::Port& p) const {
+boost::optional<Node::Port&> Graph::Connections::connectedFrom(Node::Port& p) {
 	if(p.category() != Attr::kInput)
-		throw std::runtime_error("Connected To request can be only run on input ports.");
+		throw std::runtime_error("Connected From request can be only run on input ports.");
 
 	// ugly const casts, to keep const-correctness, ironically
-	auto it1 = m_connections.right.lower_bound(const_cast<Node::Port*>(&p));
-	auto it2 = m_connections.right.upper_bound(const_cast<Node::Port*>(&p));
+	auto it = m_connections.right.lower_bound(&p);
 
-	std::vector<std::reference_wrapper<const Node>> result;
-	for(auto it = it1; it != it2; ++it)
-		result.push_back(std::cref(it->second->node()));
-	return result;
+	if((it == m_connections.right.end()) || (it->first != &p))
+		return boost::optional<Node::Port&>();
+	else {
+		assert(m_connections.right.count(&p) == 1);
+		return *it->second;
+	}
 }
 
-std::vector<std::reference_wrapper<Node>> Graph::Connections::connectedFrom(Node::Port& p) {
+std::vector<std::reference_wrapper<Node::Port>> Graph::Connections::connectedTo(Node::Port& p) {
 	if(p.category() != Attr::kOutput)
-		throw std::runtime_error("Connected From request can be only run on output ports.");
+		throw std::runtime_error("Connected To request can be only run on output ports.");
 
 	// ugly const casts, to keep const-correctness, ironically
 	auto it1 = m_connections.left.lower_bound(&p);
 	auto it2 = m_connections.left.upper_bound(&p);
 
-	std::vector<std::reference_wrapper<Node>> result;
+	std::vector<std::reference_wrapper<Node::Port>> result;
 	for(auto it = it1; it != it2; ++it)
-		result.push_back(std::ref(it->second->node()));
-	return result;
-}
-
-std::vector<std::reference_wrapper<Node>> Graph::Connections::connectedTo(Node::Port& p) {
-	if(p.category() != Attr::kInput)
-		throw std::runtime_error("Connected To request can be only run on input ports.");
-
-	// ugly const casts, to keep const-correctness, ironically
-	auto it1 = m_connections.right.lower_bound(&p);
-	auto it2 = m_connections.right.upper_bound(&p);
-
-	std::vector<std::reference_wrapper<Node>> result;
-	for(auto it = it1; it != it2; ++it)
-		result.push_back(std::ref(it->second->node()));
+		result.push_back(std::ref(*it->second));
 	return result;
 
 }

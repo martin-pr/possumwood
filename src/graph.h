@@ -5,6 +5,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
+#include <boost/optional.hpp>
 
 #include "node.h"
 
@@ -48,17 +49,17 @@ class Graph : public boost::noncopyable {
 
 				/// returns the connections of an input port (result contains references
 				///   to output ports connected to this input)
-				std::vector<std::reference_wrapper<const Node>> connectedFrom(const Node::Port& p) const;
+				boost::optional<const Node::Port&> connectedFrom(const Node::Port& p) const;
 				/// returns the connections of an output port (result contains references
 				///   to input ports connected to this output)
-				std::vector<std::reference_wrapper<const Node>> connectedTo(const Node::Port& p) const;
+				std::vector<std::reference_wrapper<const Node::Port>> connectedTo(const Node::Port& p) const;
 
 				/// returns the connections of an input port (result contains references
 				///   to output ports connected to this input)
-				std::vector<std::reference_wrapper<Node>> connectedFrom(Node::Port& p);
+				boost::optional<Node::Port&> connectedFrom(Node::Port& p);
 				/// returns the connections of an output port (result contains references
 				///   to input ports connected to this output)
-				std::vector<std::reference_wrapper<Node>> connectedTo(Node::Port& p);
+				std::vector<std::reference_wrapper<Node::Port>> connectedTo(Node::Port& p);
 
 			private:
 				Connections() = default;
