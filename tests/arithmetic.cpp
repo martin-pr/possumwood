@@ -51,6 +51,8 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 		const float a = data.get(additionInput1);
 		const float b = data.get(additionInput2);
 
+		std::cout << "- ADD " << a << " + " << b << std::endl;
+
 		data.set(additionOutput, a + b);
 	};
 	addition.setCompute(additionCompute);
@@ -65,6 +67,8 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	std::function<void(Datablock&)> multiplicationCompute = [&](Datablock & data) {
 		const float a = data.get(multiplicationInput1);
 		const float b = data.get(multiplicationInput2);
+
+		std::cout << "- MULT " << a << " * " << b << std::endl;
 
 		data.set(multiplicationOutput, a * b);
 	};
@@ -88,7 +92,7 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	Node& add1 = g.nodes().add(addition, "add_1");
 	Node& mult1 = g.nodes().add(multiplication, "mult_1");
 	Node& mult2 = g.nodes().add(multiplication, "mult_2");
-	Node& add2 = g.nodes().add(multiplication, "add_2");
+	Node& add2 = g.nodes().add(addition, "add_2");
 
 	// a valid connection
 	BOOST_CHECK_NO_THROW(g.connections().add(add1.port(2), mult1.port(1)));
@@ -102,12 +106,19 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	BOOST_CHECK_THROW(g.connections().add(add1.port(1), mult1.port(2)), std::runtime_error);
 
 	/////////////////////////////
-	// compute (2 + 3) * 4 + (2 + 3) * 5 = 20
+	// compute (2 + 3) * 4 + (2 + 3) * 5 = 20 + 25 = 45
 
+	// set input values
 	BOOST_CHECK_NO_THROW(add1.port(0).set(2.0f));
 	BOOST_CHECK_NO_THROW(add1.port(1).set(3.0f));
 	BOOST_CHECK_NO_THROW(mult1.port(0).set(4.0f));
 	BOOST_CHECK_NO_THROW(mult2.port(0).set(5.0f));
 
-	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 20.0f);
+	// evaluate the whole graph and test output
+	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 45.0f);
+
+	// and test partial outputs
+	BOOST_CHECK_EQUAL(add1.port(2).get<float>(), 5.0f);
+	BOOST_CHECK_EQUAL(mult1.port(2).get<float>(), 20.0f);
+	BOOST_CHECK_EQUAL(mult2.port(2).get<float>(), 25.0f);
 }
