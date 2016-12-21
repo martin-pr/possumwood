@@ -16,7 +16,7 @@ void Node::Port::set(const T& value) {
 	// explicitly setting a value makes it not dirty, but makes everything that
 	//   depends on it dirty
 	m_parent->markAsDirty(m_id);
-	m_dirty = false;
+	setDirty(false);
 }
 
 template<typename T>
@@ -29,9 +29,9 @@ const T& Node::Port::get() {
 			m_parent->computeInput(m_id);
 		else
 			m_parent->computeOutput(m_id);
-
-		m_dirty = false;
 	}
+	// when the computation is done, the port should not be dirty
+	assert(!m_dirty);
 
 	// and return the value
 	return m_parent->get<T>(m_id);

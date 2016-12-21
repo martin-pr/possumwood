@@ -43,7 +43,7 @@ class Node : public boost::noncopyable {
 			private:
 				Port(const std::string& name, unsigned id, Node* parent);
 
-				void markAsDirty();
+				void setDirty(bool dirty);
 
 				std::string m_name;
 				unsigned m_id;

@@ -71,4 +71,6 @@ class Metadata {
 		std::function<void(Datablock&)> m_compute;
 
 		boost::bimap<boost::bimaps::multiset_of<unsigned>, boost::bimaps::multiset_of<unsigned>> m_influences;
+
+		friend class Node;
 };
