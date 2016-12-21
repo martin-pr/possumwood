@@ -29,3 +29,19 @@ template<typename T>
 void Datablock::set(const OutAttr<T>& attr, const T& value) {
 	set<T>(attr.offset(), value);
 }
+
+template<typename T>
+void Datablock::Data<T>::assign(const BaseData& src) {
+	assert(dynamic_cast<const Data<T>*>(&src) != NULL);
+
+	const Data<T>& srcData = dynamic_cast<const Data<T>&>(src);
+	value = srcData.value;
+}
+
+template<typename T>
+bool Datablock::Data<T>::isEqual(const BaseData& src) const {
+	assert(dynamic_cast<const Data<T>*>(&src) != NULL);
+
+	const Data<T>& srcData = dynamic_cast<const Data<T>&>(src);
+	return value == srcData.value;
+}

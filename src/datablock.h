@@ -18,11 +18,17 @@ class Datablock {
 	public:
 		struct BaseData {
 			virtual ~BaseData() {};
+
+			virtual void assign(const BaseData& src) = 0;
+			virtual bool isEqual(const BaseData& src) const = 0;
 		};
 
 		template<typename T>
 		struct Data : public BaseData {
 			virtual ~Data() {};
+			virtual void assign(const BaseData& src) override;
+			virtual bool isEqual(const BaseData& src) const;
+
 			T value;
 		};
 
@@ -40,6 +46,9 @@ class Datablock {
 
 		template<typename T>
 		void set(size_t index, const T& value);
+
+		const BaseData& data(size_t index) const;
+		BaseData& data(size_t index);
 
 	private:
 		std::vector<std::unique_ptr<BaseData>> m_data;
