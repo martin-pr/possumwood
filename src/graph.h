@@ -3,6 +3,9 @@
 #include <vector>
 
 #include <boost/noncopyable.hpp>
+#include <boost/bimap.hpp>
+#include <boost/bimap/multiset_of.hpp>
+#include <boost/optional.hpp>
 
 #include "node.h"
 
@@ -26,7 +29,9 @@ class Graph : public boost::noncopyable {
 				// iterator erase(iterator i);
 
 			private:
-				Nodes() = default;
+				Nodes(Graph* parent);
+
+				Graph* m_parent;
 
 				// stored in a pointer container, to keep parent pointers
 				//   stable without too much effort (might change)
@@ -38,34 +43,31 @@ class Graph : public boost::noncopyable {
 		Nodes& nodes();
 		const Nodes& nodes() const;
 
-		struct Connection {
-			const Node::Port* src;
-			const Node::Port* dest;
-
-			bool operator ==(const Connection& c) {
-				return src == c.src && dest == c.dest;
-			}
-		};
-
 		class Connections : public boost::noncopyable {
 			public:
-				Connection& add(const Node::Port& src, const Node::Port& dest);
-				// std::size_t size() const;
+				void add(Node::Port& src, Node::Port& dest);
 
-				// typedef ... const_iterator;
-				// const_iterator begin() const;
-				// const_iterator end() const;
+				/// returns the connections of an input port (result contains references
+				///   to output ports connected to this input)
+				boost::optional<const Node::Port&> connectedFrom(const Node::Port& p) const;
+				/// returns the connections of an output port (result contains references
+				///   to input ports connected to this output)
+				std::vector<std::reference_wrapper<const Node::Port>> connectedTo(const Node::Port& p) const;
 
-				// typedef ... iterator;
-				// iterator begin();
-				// iterator end();
-
-				// iterator erase(iterator i);
+				/// returns the connections of an input port (result contains references
+				///   to output ports connected to this input)
+				boost::optional<Node::Port&> connectedFrom(Node::Port& p);
+				/// returns the connections of an output port (result contains references
+				///   to input ports connected to this output)
+				std::vector<std::reference_wrapper<Node::Port>> connectedTo(Node::Port& p);
 
 			private:
 				Connections() = default;
 
-				std::vector<Connection> m_connections;
+				boost::bimap<
+					boost::bimaps::multiset_of<Node::Port*>, // output
+					Node::Port* // input (only one output to any input)
+				> m_connections;
 
 				friend class Graph;
 		};
@@ -74,7 +76,7 @@ class Graph : public boost::noncopyable {
 		const Connections& connections() const;
 
 	private:
-		static std::unique_ptr<Node> makeNode(const std::string& name, const Metadata& md);
+		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata& md);
 
 		Nodes m_nodes;
 		Connections m_connections;

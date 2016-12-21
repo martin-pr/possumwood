@@ -30,3 +30,15 @@ void Metadata::addInfluence(const InAttr<T>& in, const OutAttr<U>& out) {
 
 	m_influences.left.insert(std::make_pair(in.offset(), out.offset()));
 }
+
+template<typename T>
+std::vector<std::reference_wrapper<const Attr>> Metadata::influences(const InAttr<T>& in) const {
+	assert(in.isValid());
+	return influences(in.offset());
+}
+
+template<typename T>
+std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(const OutAttr<T>& out) const {
+	assert(out.isValid());
+	return influencedBy(out.offset());
+}
