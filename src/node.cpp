@@ -37,6 +37,10 @@ void Node::Port::setDirty(bool d) {
 	m_dirty = d;
 }
 
+void Node::Port::connect(Port& p) {
+	p.m_parent->m_parent->connections().add(*this, p);
+}
+
 /////////////
 
 Node::Node(const std::string& name, const Metadata& def, Graph* parent) : m_name(name), m_parent(parent), m_meta(def), m_data(def) {

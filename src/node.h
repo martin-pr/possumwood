@@ -38,7 +38,10 @@ class Node : public boost::noncopyable {
 				/// returns a reference to the parent node
 				const Node& node() const;
 
-				/// TODO: add something like "connect()" ? Maybe?
+				/// creates a connection between this port an the port in argument.
+				/// The direction is always from *this port to p - only applicable
+				/// to output ports with an input port as the argument.
+				void connect(Port& p);
 
 			private:
 				Port(const std::string& name, unsigned id, Node* parent);

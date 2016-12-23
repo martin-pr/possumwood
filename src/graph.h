@@ -45,8 +45,6 @@ class Graph : public boost::noncopyable {
 
 		class Connections : public boost::noncopyable {
 			public:
-				void add(Node::Port& src, Node::Port& dest);
-
 				/// returns the connections of an input port (result contains references
 				///   to output ports connected to this input)
 				boost::optional<const Node::Port&> connectedFrom(const Node::Port& p) const;
@@ -64,12 +62,15 @@ class Graph : public boost::noncopyable {
 			private:
 				Connections() = default;
 
+				void add(Node::Port& src, Node::Port& dest);
+
 				boost::bimap<
 					boost::bimaps::multiset_of<Node::Port*>, // output
 					Node::Port* // input (only one output to any input)
 				> m_connections;
 
 				friend class Graph;
+				friend class Node::Port;
 		};
 
 		Connections& connections();
