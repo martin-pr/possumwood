@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include <typeinfo>
 
 #include "datablock.h"
 
@@ -18,6 +19,7 @@ class Attr {
 		const std::string& name() const;
 		const Category& category() const;
 		const unsigned& offset() const;
+		virtual const std::type_info& type() const = 0;
 
 		bool isValid() const;
 
@@ -41,6 +43,8 @@ class InAttr : public Attr {
 	public:
 		InAttr();
 
+		virtual const std::type_info& type() const override;
+
 	protected:
 		InAttr(const std::string& name, unsigned offset);
 
@@ -54,6 +58,8 @@ template<typename T>
 class OutAttr : public Attr {
 	public:
 		OutAttr();
+
+		virtual const std::type_info& type() const override;
 
 	protected:
 		OutAttr(const std::string& name, unsigned offset);
