@@ -23,6 +23,9 @@ class Attr {
 
 		bool isValid() const;
 
+		bool operator == (const Attr& a) const;
+		bool operator != (const Attr& a) const;
+
 	protected:
 		Attr(const std::string& name, unsigned offset, Category cat);
 
