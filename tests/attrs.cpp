@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(input_attr_instantiation) {
 
 	{
 		// in attribute instantiation -> not initialised
-		InAttr<float> attr;
+		static InAttr<float> attr;
 
 		BOOST_CHECK(not attr.isValid());
 		BOOST_CHECK_EQUAL(attr.name(), "");
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(input_attr_instantiation) {
 
 	{
 		// in attribute instantiation -> not initialised
-		InAttr<TestStruct> attr;
+		static InAttr<TestStruct> attr;
 
 		BOOST_CHECK(not attr.isValid());
 		BOOST_CHECK_EQUAL(attr.name(), "");
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(input_attr_instantiation) {
 
 	{
 		// out attribute instantiation -> not initialised
-		OutAttr<float> attr;
+		static OutAttr<float> attr;
 
 		BOOST_CHECK(not attr.isValid());
 		BOOST_CHECK_EQUAL(attr.name(), "");
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(input_attr_instantiation) {
 
 	{
 		// out attribute instantiation -> not initialised
-		OutAttr<TestStruct> attr;
+		static OutAttr<TestStruct> attr;
 
 		BOOST_CHECK(not attr.isValid());
 		BOOST_CHECK_EQUAL(attr.name(), "");
@@ -76,4 +76,29 @@ BOOST_AUTO_TEST_CASE(input_attr_instantiation) {
 		BOOST_CHECK_EQUAL(attr.name(), "fourth");
 		BOOST_CHECK_EQUAL(attr.offset(), 3u);
 	}
+
+	//////////////
+	// testing the result
+
+	BOOST_CHECK_EQUAL(meta.attributeCount(), 4u);
+
+	BOOST_CHECK_EQUAL(meta.attr(0).name(), "first");
+	BOOST_CHECK_EQUAL(meta.attr(0).category(), Attr::kInput);
+	BOOST_CHECK_EQUAL(meta.attr(0).offset(), 0u);
+	BOOST_CHECK_EQUAL(meta.attr(0).type(), typeid(float));
+
+	BOOST_CHECK_EQUAL(meta.attr(1).name(), "second");
+	BOOST_CHECK_EQUAL(meta.attr(1).category(), Attr::kInput);
+	BOOST_CHECK_EQUAL(meta.attr(1).offset(), 1u);
+	BOOST_CHECK_EQUAL(meta.attr(1).type(), typeid(TestStruct));
+
+	BOOST_CHECK_EQUAL(meta.attr(2).name(), "third");
+	BOOST_CHECK_EQUAL(meta.attr(2).category(), Attr::kOutput);
+	BOOST_CHECK_EQUAL(meta.attr(2).offset(), 2u);
+	BOOST_CHECK_EQUAL(meta.attr(2).type(), typeid(float));
+
+	BOOST_CHECK_EQUAL(meta.attr(3).name(), "fourth");
+	BOOST_CHECK_EQUAL(meta.attr(3).category(), Attr::kOutput);
+	BOOST_CHECK_EQUAL(meta.attr(3).offset(), 3u);
+	BOOST_CHECK_EQUAL(meta.attr(3).type(), typeid(TestStruct));
 }
