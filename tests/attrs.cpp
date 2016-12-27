@@ -5,9 +5,9 @@
 #include "datablock.inl"
 #include "metadata.inl"
 
-struct TestStruct {
-	bool operator == (const TestStruct& ts) const { return true; }
-};
+// struct TestStruct {
+// 	bool operator == (const TestStruct& ts) const { return true; }
+// };
 
 
 BOOST_AUTO_TEST_CASE(input_attr_instantiation) {
