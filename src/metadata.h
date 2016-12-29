@@ -23,6 +23,9 @@ class Metadata {
 		/// returns the type of the node this metadata object describes
 		const std::string& type() const;
 
+		/// returns true if this metadata instance has no attributes or no compute
+		bool isValid() const;
+
 
 		/// registers an input attribute.
 		/// Each attribute instance should be held statically in the

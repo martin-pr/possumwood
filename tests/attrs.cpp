@@ -12,6 +12,7 @@
 
 BOOST_AUTO_TEST_CASE(input_attr_instantiation) {
 	Metadata meta("test_type");
+	BOOST_REQUIRE_EQUAL(meta.type(), "test_type");
 
 	{
 		// in attribute instantiation -> not initialised

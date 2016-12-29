@@ -5,6 +5,10 @@
 Metadata::Metadata(const std::string& nodeType) : m_type(nodeType) {
 }
 
+bool Metadata::isValid() const {
+	return !m_attrs.empty() && m_compute;
+}
+
 const std::string& Metadata::type() const {
 	return m_type;
 }

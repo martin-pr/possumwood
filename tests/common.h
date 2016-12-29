@@ -3,6 +3,8 @@
 #include <iostream>
 #include <typeinfo>
 
+#include "metadata.h"
+
 namespace std {
 
 /// printing type_info, to allow its use in BOOST_*_EQUAL macro
@@ -23,3 +25,11 @@ struct TestStruct {
 };
 
 std::ostream& operator << (std::ostream& out, const TestStruct& t);
+
+//////
+
+/// returns a reference to metadata of a simple addition node
+const Metadata& additionNode();
+
+/// returns a reference to metadata of a simple multiplication node
+const Metadata& multiplicationNode();
