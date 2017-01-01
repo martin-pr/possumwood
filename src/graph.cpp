@@ -6,6 +6,15 @@ Graph::Graph() : m_nodes(this) {
 
 }
 
+bool Graph::empty() const {
+	return m_nodes.empty();
+}
+
+void Graph::clear() {
+	m_connections.m_connections.clear();
+	m_nodes.m_nodes.clear();
+}
+
 Graph::Nodes& Graph::nodes() {
 	return m_nodes;
 }
@@ -26,6 +35,8 @@ std::unique_ptr<Node> Graph::makeNode(const std::string& name, const Metadata* m
 	return std::move(std::unique_ptr<Node>(new Node(name, md, this)));
 }
 
+//////////////
+
 Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
 
 }
@@ -34,6 +45,49 @@ Node& Graph::Nodes::add(const Metadata& type, const std::string& name) {
 	m_nodes.push_back(std::move(m_parent->makeNode(name, &type)));
 	return *m_nodes.back();
 }
+
+Graph::Nodes::iterator Graph::Nodes::erase(iterator i) {
+	// TODO: clear all connections!
+
+	auto it = m_nodes.erase(i.base());
+	return boost::make_indirect_iterator(it);
+}
+
+bool Graph::Nodes::empty() const {
+	return m_nodes.empty();
+}
+
+std::size_t Graph::Nodes::size() const {
+	return m_nodes.size();
+}
+
+Graph::Nodes::const_iterator Graph::Nodes::begin() const {
+	return boost::make_indirect_iterator(m_nodes.begin());
+}
+
+Graph::Nodes::const_iterator Graph::Nodes::end() const {
+	return boost::make_indirect_iterator(m_nodes.end());
+}
+
+Graph::Nodes::iterator Graph::Nodes::begin() {
+	return boost::make_indirect_iterator(m_nodes.begin());
+}
+
+Graph::Nodes::iterator Graph::Nodes::end() {
+	return boost::make_indirect_iterator(m_nodes.end());
+}
+
+Node& Graph::Nodes::operator[](std::size_t index) {
+	assert(index < m_nodes.size());
+	return *m_nodes[index];
+}
+
+const Node& Graph::Nodes::operator[](std::size_t index) const {
+	assert(index < m_nodes.size());
+	return *m_nodes[index];
+}
+
+//////////////
 
 void Graph::Connections::add(Node::Port& src, Node::Port& dest) {
 	if(src.category() != Attr::kOutput)

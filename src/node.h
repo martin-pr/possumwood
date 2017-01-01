@@ -56,6 +56,8 @@ class Node : public boost::noncopyable {
 				friend class Node;
 		};
 
+		const std::string& name() const;
+
 		const Metadata& metadata() const;
 
 		Port& port(size_t index);

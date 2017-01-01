@@ -52,6 +52,10 @@ Node::Node(const std::string& name, const Metadata* def, Graph* parent) : m_name
 	}
 }
 
+const std::string& Node::name() const {
+	return m_name;
+}
+
 const Metadata& Node::metadata() const {
 	return *m_meta;
 }
