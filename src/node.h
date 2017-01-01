@@ -62,6 +62,7 @@ class Node : public boost::noncopyable {
 
 		Port& port(size_t index);
 		const Port& port(size_t index) const;
+		const size_t portCount() const;
 
 	protected:
 		Node(const std::string& name, const Metadata* def, Graph* parent);

@@ -3,7 +3,7 @@
 #include "graph.h"
 
 Node::Port::Port(const std::string& name, unsigned id, Node* parent) :
-	m_name(name), m_id(id), m_dirty(false), m_parent(parent) {
+	m_name(name), m_id(id), m_dirty(true), m_parent(parent) {
 
 }
 
@@ -70,6 +70,10 @@ const Node::Port& Node::port(size_t index) const {
 	return m_ports[index];
 }
 
+const size_t Node::portCount() const {
+	return m_ports.size();
+}
+
 void Node::markAsDirty(size_t index) {
 	Node::Port& p = port(index);
 
@@ -85,7 +89,7 @@ void Node::markAsDirty(size_t index) {
 	else {
 		// all inputs connected to this output are marked dirty
 		for(Port& o : m_parent->connections().connectedTo(port(index)))
-			o.setDirty(true);
+			o.node().markAsDirty(o.m_id);
 	}
 }
 
