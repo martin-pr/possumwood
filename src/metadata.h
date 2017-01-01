@@ -16,7 +16,7 @@ class OutAttr;
 class Datablock;
 class Attr;
 
-class Metadata {
+class Metadata : public boost::noncopyable {
 	public:
 		Metadata(const std::string& nodeType);
 

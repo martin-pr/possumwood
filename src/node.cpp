@@ -16,7 +16,7 @@ const std::string& Node::Port::name() const {
 }
 
 const Attr::Category Node::Port::category() const {
-	return m_parent->m_meta.attr(m_id).category();
+	return m_parent->m_meta->attr(m_id).category();
 }
 
 bool Node::Port::isDirty() const {
@@ -43,13 +43,17 @@ void Node::Port::connect(Port& p) {
 
 /////////////
 
-Node::Node(const std::string& name, const Metadata& def, Graph* parent) : m_name(name), m_parent(parent), m_meta(def), m_data(def) {
-	for(std::size_t a = 0; a < def.attributeCount(); ++a) {
-		auto& meta = def.attr(a);
+Node::Node(const std::string& name, const Metadata* def, Graph* parent) : m_name(name), m_parent(parent), m_meta(def), m_data(*m_meta) {
+	for(std::size_t a = 0; a < m_meta->attributeCount(); ++a) {
+		auto& meta = m_meta->attr(a);
 		assert(meta.offset() == a);
 
 		m_ports.push_back(std::move(Port(meta.name(), meta.offset(), this)));
 	}
+}
+
+const Metadata& Node::metadata() const {
+	return *m_meta;
 }
 
 Node::Port& Node::port(size_t index) {
@@ -71,7 +75,7 @@ void Node::markAsDirty(size_t index) {
 	// recurse + handle each port type slightly differently
 	if(p.category() == Attr::kInput) {
 		// all outputs influenced by this input are marked dirty
-		for(const Attr& i : m_meta.influences(p.m_id))
+		for(const Attr& i : m_meta->influences(p.m_id))
 			markAsDirty(i.offset());
 	}
 	else {
@@ -114,7 +118,7 @@ void Node::computeOutput(size_t index) {
 	assert(port(index).isDirty() && "output should be dirty for recomputation");
 
 	// first, figure out which inputs need pulling, if any
-	std::vector<std::reference_wrapper<const Attr>> inputs = m_meta.influencedBy(index);
+	std::vector<std::reference_wrapper<const Attr>> inputs = m_meta->influencedBy(index);
 
 	// pull on all inputs
 	for(const Attr& i : inputs)
@@ -123,7 +127,7 @@ void Node::computeOutput(size_t index) {
 
 	// now run compute, as all inputs are fine
 	//  -> this will change the output value (if the compute method works)
-	m_meta.m_compute(m_data);
+	m_meta->m_compute(m_data);
 
 	// and mark as not dirty
 	port(index).setDirty(false);

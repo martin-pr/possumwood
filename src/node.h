@@ -62,7 +62,7 @@ class Node : public boost::noncopyable {
 		const Port& port(size_t index) const;
 
 	protected:
-		Node(const std::string& name, const Metadata& def, Graph* parent);
+		Node(const std::string& name, const Metadata* def, Graph* parent);
 
 		void computeInput(size_t index);
 		void computeOutput(size_t index);
@@ -81,7 +81,7 @@ class Node : public boost::noncopyable {
 		std::string m_name;
 		Graph* m_parent;
 
-		Metadata m_meta;
+		const Metadata* m_meta;
 		Datablock m_data;
 
 		std::vector<Port> m_ports;
