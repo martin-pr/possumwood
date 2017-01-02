@@ -16,12 +16,15 @@ class OutAttr;
 class Datablock;
 class Attr;
 
-class Metadata {
+class Metadata : public boost::noncopyable {
 	public:
 		Metadata(const std::string& nodeType);
 
 		/// returns the type of the node this metadata object describes
 		const std::string& type() const;
+
+		/// returns true if this metadata instance has no attributes or no compute
+		bool isValid() const;
 
 
 		/// registers an input attribute.

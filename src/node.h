@@ -38,7 +38,13 @@ class Node : public boost::noncopyable {
 				/// returns a reference to the parent node
 				const Node& node() const;
 
-				/// TODO: add something like "connect()" ? Maybe?
+				/// creates a connection between this port an the port in argument.
+				/// The direction is always from *this port to p - only applicable
+				/// to output ports with an input port as the argument.
+				void connect(Port& p);
+
+				/// disconnects two connected ports
+				void disconnect(Port& p);
 
 			private:
 				Port(const std::string& name, unsigned id, Node* parent);
@@ -53,13 +59,16 @@ class Node : public boost::noncopyable {
 				friend class Node;
 		};
 
+		const std::string& name() const;
+
 		const Metadata& metadata() const;
 
 		Port& port(size_t index);
 		const Port& port(size_t index) const;
+		const size_t portCount() const;
 
 	protected:
-		Node(const std::string& name, const Metadata& def, Graph* parent);
+		Node(const std::string& name, const Metadata* def, Graph* parent);
 
 		void computeInput(size_t index);
 		void computeOutput(size_t index);
@@ -78,7 +87,7 @@ class Node : public boost::noncopyable {
 		std::string m_name;
 		Graph* m_parent;
 
-		Metadata m_meta;
+		const Metadata* m_meta;
 		Datablock m_data;
 
 		std::vector<Port> m_ports;

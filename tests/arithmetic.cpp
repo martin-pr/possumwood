@@ -1,88 +1,36 @@
 #include <boost/test/unit_test.hpp>
 
+#include <set>
+
 #include "graph.h"
 #include "attr.inl"
 #include "datablock.inl"
 #include "metadata.inl"
 #include "node.inl"
+#include "common.h"
+
+bool checkDirtyPorts(const Node& n, const std::set<size_t>& dirtyPorts) {
+	bool result = true;
+
+	for(size_t pi = 0; pi < n.portCount(); ++pi) {
+		BOOST_CHECK_EQUAL(n.port(pi).isDirty(), dirtyPorts.find(pi) != dirtyPorts.end());
+
+		if(n.port(pi).isDirty() != (dirtyPorts.find(pi) != dirtyPorts.end()))
+			result = false;
+	}
+
+	return result;
+}
 
 BOOST_AUTO_TEST_CASE(arithmetic) {
 
 	//////////////////
 	// addition node
 
-	// base initialisation
-	Metadata addition("addition");
-	BOOST_REQUIRE_EQUAL(addition.type(), "addition");
-
-	// create attributes
-	InAttr<float> additionInput1, additionInput2;
-	OutAttr<float> additionOutput;
-	BOOST_CHECK(not additionInput1.isValid());
-	BOOST_CHECK(not additionInput2.isValid());
-	BOOST_CHECK(not additionOutput.isValid());
-
-	// add attributes to the Metadata instance
-	addition.addAttribute(additionInput1, "input_1");
-	addition.addAttribute(additionInput2, "input_2");
-	addition.addAttribute(additionOutput, "output");
-
-	BOOST_REQUIRE_EQUAL(addition.attributeCount(), 3u);
-	BOOST_CHECK_EQUAL(&addition.attr(0), &additionInput1);
-	BOOST_CHECK_EQUAL(&addition.attr(1), &additionInput2);
-	BOOST_CHECK_EQUAL(&addition.attr(2), &additionOutput);
-
-	// setup influences
-	BOOST_CHECK_NO_THROW(addition.addInfluence(additionInput1, additionOutput));
-	BOOST_CHECK_NO_THROW(addition.addInfluence(additionInput2, additionOutput));
-
-	std::vector<std::reference_wrapper<const Attr>> influences;
-
-	BOOST_CHECK_NO_THROW(influences = addition.influences(additionInput1));
-	BOOST_REQUIRE_EQUAL(influences.size(), 1u);
-	BOOST_CHECK_EQUAL(&(influences.begin()->get()), &additionOutput);
-
-	BOOST_CHECK_NO_THROW(influences = addition.influencedBy(additionOutput));
-	BOOST_REQUIRE_EQUAL(influences.size(), 2u);
-	BOOST_CHECK_EQUAL(&(influences[0].get()), &additionInput1);
-	BOOST_CHECK_EQUAL(&(influences[1].get()), &additionInput2);
-
-	std::function<void(Datablock&)> additionCompute = [&](Datablock & data) {
-		const float a = data.get(additionInput1);
-		const float b = data.get(additionInput2);
-
-		std::cout << "- ADD " << a << " + " << b << std::endl;
-
-		data.set(additionOutput, a + b);
-	};
-	addition.setCompute(additionCompute);
-
-	////////////////////////
-	// multiplication node
-
-	// no need to test again what was tested above
-
-	InAttr<float> multiplicationInput1, multiplicationInput2;
-	OutAttr<float> multiplicationOutput;
-	std::function<void(Datablock&)> multiplicationCompute = [&](Datablock & data) {
-		const float a = data.get(multiplicationInput1);
-		const float b = data.get(multiplicationInput2);
-
-		std::cout << "- MULT " << a << " * " << b << std::endl;
-
-		data.set(multiplicationOutput, a * b);
-	};
-
-	Metadata multiplication("multiplication");
-
-	multiplication.addAttribute(multiplicationInput1, "input_1");
-	multiplication.addAttribute(multiplicationInput2, "input_2");
-	multiplication.addAttribute(multiplicationOutput, "output");
-
-	multiplication.addInfluence(multiplicationInput1, multiplicationOutput);
-	multiplication.addInfluence(multiplicationInput2, multiplicationOutput);
-
-	multiplication.setCompute(multiplicationCompute);
+	// metadata for a simple addition node
+	const Metadata& addition = additionNode();
+	// and for a simple multiplication node
+	const Metadata& multiplication = multiplicationNode();
 
 	/////////////////////////////
 	// build a simple graph for (a + b) * c + (a + b) * d
@@ -95,30 +43,65 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	Node& add2 = g.nodes().add(addition, "add_2");
 
 	// a valid connection
-	BOOST_CHECK_NO_THROW(g.connections().add(add1.port(2), mult1.port(1)));
-	BOOST_CHECK_NO_THROW(g.connections().add(add1.port(2), mult2.port(1)));
-	BOOST_CHECK_NO_THROW(g.connections().add(mult1.port(2), add2.port(0)));
-	BOOST_CHECK_NO_THROW(g.connections().add(mult2.port(2), add2.port(1)));
-
-	// // invalid connections
-	BOOST_CHECK_THROW(g.connections().add(add1.port(1), mult1.port(1)), std::runtime_error);
-	BOOST_CHECK_THROW(g.connections().add(add1.port(2), mult1.port(2)), std::runtime_error);
-	BOOST_CHECK_THROW(g.connections().add(add1.port(1), mult1.port(2)), std::runtime_error);
+	BOOST_CHECK_NO_THROW(add1.port(2).connect(mult1.port(1)));
+	BOOST_CHECK_NO_THROW(add1.port(2).connect(mult2.port(1)));
+	BOOST_CHECK_NO_THROW(mult1.port(2).connect(add2.port(0)));
+	BOOST_CHECK_NO_THROW(mult2.port(2).connect(add2.port(1)));
 
 	/////////////////////////////
 	// compute (2 + 3) * 4 + (2 + 3) * 5 = 20 + 25 = 45
 
-	// set input values
+	// at the beginning before any evaluation, everything is dirty
+	for(auto& n : g.nodes())
+		for(size_t pi = 0; pi < n.portCount(); ++pi)
+			BOOST_CHECK(n.port(pi).isDirty());
+
+	// set input values, which makes them not dirty
 	BOOST_CHECK_NO_THROW(add1.port(0).set(2.0f));
 	BOOST_CHECK_NO_THROW(add1.port(1).set(3.0f));
 	BOOST_CHECK_NO_THROW(mult1.port(0).set(4.0f));
 	BOOST_CHECK_NO_THROW(mult2.port(0).set(5.0f));
 
+	BOOST_REQUIRE(checkDirtyPorts(add1, {2})); // only output of the add node is dirty
+	BOOST_REQUIRE(checkDirtyPorts(mult1, {1, 2})); // first input and output of mult1 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(mult2, {1, 2})); // first input and output of mult2 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(add2, {0, 1, 2})); // all ports of the add2 node are dirty
+
 	// evaluate the whole graph and test output
 	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 45.0f);
+
+	// at the end after any evaluation, everything is NOT dirty
+	for(auto& n : g.nodes())
+		for(size_t pi = 0; pi < n.portCount(); ++pi)
+			BOOST_CHECK(not n.port(pi).isDirty());
 
 	// and test partial outputs
 	BOOST_CHECK_EQUAL(add1.port(2).get<float>(), 5.0f);
 	BOOST_CHECK_EQUAL(mult1.port(2).get<float>(), 20.0f);
 	BOOST_CHECK_EQUAL(mult2.port(2).get<float>(), 25.0f);
+
+	////////////////////////////////
+	// dirtiness propagation
+
+	// change 2 to 6
+	BOOST_CHECK_NO_THROW(add1.port(0).set(6.0f));
+
+	BOOST_REQUIRE(checkDirtyPorts(add1, {2})); // the output of the add node is dirty
+	BOOST_REQUIRE(checkDirtyPorts(mult1, {1, 2})); // first input and output of mult1 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(mult2, {1, 2})); // first input and output of mult2 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(add2, {0, 1, 2})); // all ports of the add2 node are dirty
+
+	// compute (6 + 3) * 4 + (6 + 3) * 5 = 36 + 45 = 81
+	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 81.0f);
+
+	// change 4 to 7
+	BOOST_CHECK_NO_THROW(mult1.port(0).set(7.0f));
+
+	BOOST_REQUIRE(checkDirtyPorts(add1, {})); // add1 has not been affected by this change
+	BOOST_REQUIRE(checkDirtyPorts(mult1, {2})); // the output of mult1 is now dirty
+	BOOST_REQUIRE(checkDirtyPorts(mult2, {})); // mult2 has not been affected
+	BOOST_REQUIRE(checkDirtyPorts(add2, {0, 2})); // first input and output of the add2 node are dirty
+
+	// compute (6 + 3) * 7 + (6 + 3) * 5 = 63 + 45 = 108
+	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 108.0f);
 }

@@ -21,3 +21,11 @@ const unsigned& Attr::offset() const {
 bool Attr::isValid() const {
 	return m_offset != unsigned(-1);
 }
+
+bool Attr::operator == (const Attr& a) const {
+	return name() == a.name() && category() == a.category() && offset() == a.offset() && type() == a.type();
+}
+
+bool Attr::operator != (const Attr& a) const {
+	return name() != a.name() || category() != a.category() || offset() != a.offset() || type() != a.type();
+}
