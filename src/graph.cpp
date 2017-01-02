@@ -148,7 +148,6 @@ std::vector<std::reference_wrapper<Node::Port>> Graph::Connections::connectedTo(
 	if(p.category() != Attr::kOutput)
 		throw std::runtime_error("Connected To request can be only run on output ports.");
 
-	// ugly const casts, to keep const-correctness, ironically
 	auto it1 = m_connections.left.lower_bound(&p);
 	auto it2 = m_connections.left.upper_bound(&p);
 
@@ -156,5 +155,27 @@ std::vector<std::reference_wrapper<Node::Port>> Graph::Connections::connectedTo(
 	for(auto it = it1; it != it2; ++it)
 		result.push_back(std::ref(*it->second));
 	return result;
-
 }
+
+size_t Graph::Connections::size() const {
+	return m_connections.size();
+}
+
+namespace {
+	/// dereferencing function to convert internal connection representation to a pair of port references
+	const std::pair<const Node::Port&, const Node::Port&> convert(const Graph::Connections::connections_container::left_value_type& val)	{
+		const Node::Port& left = *val.first;
+		const Node::Port& right = *val.second;
+
+		return std::pair<const Node::Port&, const Node::Port&>(left, right);
+	}
+}
+
+Graph::Connections::const_iterator Graph::Connections::begin() const {
+	return const_iterator(m_connections.left.begin(), convert);
+}
+
+Graph::Connections::const_iterator Graph::Connections::end() const {
+	return const_iterator(m_connections.left.end(), convert);
+}
+

@@ -1,12 +1,14 @@
 #pragma once
 
 #include <vector>
+#include <functional>
 
 #include <boost/noncopyable.hpp>
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/optional.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 #include "node.h"
 
@@ -75,15 +77,33 @@ class Graph : public boost::noncopyable {
 				///   to input ports connected to this output)
 				std::vector<std::reference_wrapper<Node::Port>> connectedTo(Node::Port& p);
 
+				/// returns the total number of valid connections in this graph
+				size_t size() const;
+
+				/// the container for connection data (a helper define - not useable outside the implementation cpp)
+				typedef
+					boost::bimap<
+						boost::bimaps::multiset_of<Node::Port*>, // output
+						Node::Port* // input (only one output to any input)
+					> connections_container;
+
+				/// allows iteration over connections
+				typedef boost::transform_iterator<
+					std::function<const std::pair<const Node::Port&, const Node::Port&>(const connections_container::left_value_type&)>,
+					connections_container::left_const_iterator
+				> const_iterator;
+
+				/// connections iteration
+				const_iterator begin() const;
+				/// connections iteration
+				const_iterator end() const;
+
 			private:
 				Connections() = default;
 
 				void add(Node::Port& src, Node::Port& dest);
 
-				boost::bimap<
-					boost::bimaps::multiset_of<Node::Port*>, // output
-					Node::Port* // input (only one output to any input)
-				> m_connections;
+				connections_container m_connections;
 
 				friend class Graph;
 				friend class Node::Port;
