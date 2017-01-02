@@ -80,6 +80,9 @@ class Graph : public boost::noncopyable {
 				/// returns the total number of valid connections in this graph
 				size_t size() const;
 
+				/// true if this graph contains no connections
+				bool empty() const;
+
 				/// the container for connection data (a helper define - not useable outside the implementation cpp)
 				typedef
 					boost::bimap<
@@ -103,11 +106,14 @@ class Graph : public boost::noncopyable {
 
 				void add(Node::Port& src, Node::Port& dest);
 				void remove(Node::Port& src, Node::Port& dest);
+				/// remove all connections related to a node (both in and out)
+				void purge(const Node& n);
 
 				connections_container m_connections;
 
 				friend class Graph;
 				friend class Node::Port;
+				friend class Nodes;
 		};
 
 		Connections& connections();

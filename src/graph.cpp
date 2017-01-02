@@ -47,7 +47,7 @@ Node& Graph::Nodes::add(const Metadata& type, const std::string& name) {
 }
 
 Graph::Nodes::iterator Graph::Nodes::erase(iterator i) {
-	// TODO: clear all connections!
+	m_parent->m_connections.purge(*i);
 
 	auto it = m_nodes.erase(i.base());
 	return boost::make_indirect_iterator(it);
@@ -116,6 +116,16 @@ void Graph::Connections::remove(Node::Port& src, Node::Port& dest) {
 	m_connections.right.erase(it);
 }
 
+void Graph::Connections::purge(const Node& n) {
+	// remove all connections related to a node
+	auto it = m_connections.left.begin();
+	while(it != m_connections.left.end())
+		if((&(it->first->node()) == &n) || (&(it->second->node()) == &n))
+			it = m_connections.left.erase(it);
+		else
+			++it;
+}
+
 boost::optional<const Node::Port&> Graph::Connections::connectedFrom(const Node::Port& p) const {
 	if(p.category() != Attr::kInput)
 		throw std::runtime_error("Connected From request can be only run on input ports.");
@@ -175,6 +185,10 @@ std::vector<std::reference_wrapper<Node::Port>> Graph::Connections::connectedTo(
 
 size_t Graph::Connections::size() const {
 	return m_connections.size();
+}
+
+bool Graph::Connections::empty() const {
+	return m_connections.empty();
 }
 
 namespace {

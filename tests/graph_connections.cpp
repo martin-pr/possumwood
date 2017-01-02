@@ -110,4 +110,23 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	BOOST_CHECK_THROW(add1.port(1).disconnect(mult1.port(1)), std::runtime_error);
 	BOOST_CHECK_THROW(add1.port(2).disconnect(mult1.port(2)), std::runtime_error);
 	BOOST_CHECK_THROW(add1.port(1).disconnect(mult1.port(2)), std::runtime_error);
+
+	// remove mult2 node, which should also remove relevant connections
+	auto it = std::find_if(g.nodes().begin(), g.nodes().end(), [&](const Node& n) {
+		return n.name() == "mult_2";
+	});
+	BOOST_REQUIRE(it != g.nodes().end());
+	g.nodes().erase(it);
+
+	// now all two connections of the mult2 node should be removed as well
+	BOOST_REQUIRE_EQUAL(g.connections().size(), 1u);
+	BOOST_REQUIRE(checkConnections(g, {
+		{&mult1.port(2), &add2.port(0)}
+	}));
+
+	// and clear() shold remove the rest
+	g.clear();
+	BOOST_REQUIRE_EQUAL(g.connections().size(), 0u);
+	BOOST_REQUIRE(g.connections().empty());
+	BOOST_REQUIRE(g.nodes().empty());
 }
