@@ -100,6 +100,22 @@ void Graph::Connections::add(Node::Port& src, Node::Port& dest) {
 	m_connections.left.insert(std::make_pair(&src, &dest));
 }
 
+void Graph::Connections::remove(Node::Port& src, Node::Port& dest) {
+	if(src.category() != Attr::kOutput)
+		throw std::runtime_error("Attempting to connect an input as the origin of a connection.");
+
+	if(dest.category() != Attr::kInput)
+		throw std::runtime_error("Attempting to connect an output as the target of a connection.");
+
+	// try to find the connection (from right - only one connection allowed that way)
+	auto it = m_connections.right.find(&dest);
+	if((it == m_connections.right.end()) || (it->second != &src))
+		throw std::runtime_error("Attempting to remove a non-existing connection.");
+
+	// and if found, remove it
+	m_connections.right.erase(it);
+}
+
 boost::optional<const Node::Port&> Graph::Connections::connectedFrom(const Node::Port& p) const {
 	if(p.category() != Attr::kInput)
 		throw std::runtime_error("Connected From request can be only run on input ports.");

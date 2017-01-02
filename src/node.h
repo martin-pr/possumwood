@@ -43,6 +43,9 @@ class Node : public boost::noncopyable {
 				/// to output ports with an input port as the argument.
 				void connect(Port& p);
 
+				/// disconnects two connected ports
+				void disconnect(Port& p);
+
 			private:
 				Port(const std::string& name, unsigned id, Node* parent);
 

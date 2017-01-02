@@ -102,6 +102,7 @@ class Graph : public boost::noncopyable {
 				Connections() = default;
 
 				void add(Node::Port& src, Node::Port& dest);
+				void remove(Node::Port& src, Node::Port& dest);
 
 				connections_container m_connections;
 

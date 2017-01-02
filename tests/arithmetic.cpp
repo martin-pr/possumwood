@@ -48,11 +48,6 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	BOOST_CHECK_NO_THROW(mult1.port(2).connect(add2.port(0)));
 	BOOST_CHECK_NO_THROW(mult2.port(2).connect(add2.port(1)));
 
-	// invalid connections
-	BOOST_CHECK_THROW(add1.port(1).connect(mult1.port(1)), std::runtime_error);
-	BOOST_CHECK_THROW(add1.port(2).connect(mult1.port(2)), std::runtime_error);
-	BOOST_CHECK_THROW(add1.port(1).connect(mult1.port(2)), std::runtime_error);
-
 	/////////////////////////////
 	// compute (2 + 3) * 4 + (2 + 3) * 5 = 20 + 25 = 45
 

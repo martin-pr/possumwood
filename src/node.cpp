@@ -41,6 +41,10 @@ void Node::Port::connect(Port& p) {
 	p.m_parent->m_parent->connections().add(*this, p);
 }
 
+void Node::Port::disconnect(Port& p) {
+	p.m_parent->m_parent->connections().remove(*this, p);
+}
+
 /////////////
 
 Node::Node(const std::string& name, const Metadata* def, Graph* parent) : m_name(name), m_parent(parent), m_meta(def), m_data(*m_meta) {
