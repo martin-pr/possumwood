@@ -1,4 +1,4 @@
-project (animation_sandbox)
+project (qt_node_editor)
 
 # set(CMAKE_CXX_COMPILER "clang")
 
@@ -63,3 +63,4 @@ set(LIBS ${LIBS} ${GLUT_LIBRARY})
 
 include_directories(src)
 add_subdirectory(src)
+add_subdirectory(sandbox)
