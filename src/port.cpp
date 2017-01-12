@@ -9,6 +9,8 @@
 #include "connected_edge.h"
 #include "node.h"
 
+namespace node_editor {
+
 namespace {
 const unsigned s_margin = 5;
 }
@@ -88,4 +90,6 @@ Node& Port::parentNode() {
 const Node& Port::parentNode() const {
 	assert(m_parent);
 	return *m_parent;
+}
+
 }

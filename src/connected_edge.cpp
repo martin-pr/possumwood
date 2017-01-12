@@ -10,6 +10,8 @@
 
 #include "port.h"
 
+namespace node_editor {
+
 namespace {
 
 QPointF pointFromPort(const Port& p, Port::Type t) {
@@ -83,4 +85,6 @@ const Port& ConnectedEdge::fromPort() const {
 const Port& ConnectedEdge::toPort() const {
 	assert(m_p2);
 	return *m_p2;
+}
+
 }

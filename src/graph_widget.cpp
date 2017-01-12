@@ -8,6 +8,8 @@
 
 #include "connected_edge.h"
 
+namespace node_editor {
+
 GraphWidget::GraphWidget(QWidget* parent) : QGraphicsView(parent), m_scene(this) {
 	m_scene.setSceneRect(-width() / 2, -height() / 2, width(), height());
 
@@ -62,4 +64,6 @@ void GraphWidget::setKeyPressCallback(std::function<void(const QKeyEvent&)> fn) 
 void GraphWidget::keyPressEvent(QKeyEvent* event) {
 	if(m_keyPressCallback)
 		m_keyPressCallback(*event);
+}
+
 }

@@ -3,6 +3,8 @@
 #include <QGraphicsLineItem>
 #include <QPen>
 
+namespace node_editor {
+
 class GraphWidget;
 
 class Edge : public QGraphicsItem {
@@ -32,3 +34,5 @@ class Edge : public QGraphicsItem {
 
 		friend class GraphScene;
 };
+
+}

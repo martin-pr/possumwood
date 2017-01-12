@@ -11,6 +11,8 @@
 #include "graph_scene.h"
 #include "connected_edge.h"
 
+namespace node_editor {
+
 Node::Node(const QString& name, const QPointF& position, const std::initializer_list<PortDefinition>& ports) {
 	setPos(position);
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
@@ -116,4 +118,6 @@ void Node::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 		painter->setBrush(Qt::NoBrush);
 		painter->drawRect(boundingRect());
 	}
+}
+
 }

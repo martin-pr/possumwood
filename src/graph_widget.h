@@ -7,6 +7,8 @@
 #include "node.h"
 #include "graph_scene.h"
 
+namespace node_editor {
+
 /// a simple graph widget
 class GraphWidget : public QGraphicsView {
 		Q_OBJECT
@@ -33,3 +35,5 @@ class GraphWidget : public QGraphicsView {
 		std::function<void(QPoint)> m_contextMenuCallback;
 		std::function<void(const QKeyEvent&)> m_keyPressCallback;
 };
+
+}

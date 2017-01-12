@@ -12,6 +12,8 @@
 #include "port.h"
 #include "graph_scene.h"
 
+namespace node_editor {
+
 namespace {
 
 const float s_curvature = 50.0f;
@@ -138,4 +140,6 @@ void Edge::setPen(QPen pen) {
 
 const QPen& Edge::pen() const {
 	return m_pen;
+}
+
 }
