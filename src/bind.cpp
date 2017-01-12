@@ -1,5 +1,7 @@
 #include "bind.h"
 
+namespace node_editor {
+
 BindSignal::BindSignal(QObject* parent, const std::function<void(void)>& fn) : QObject(parent), m_fn(fn) {
 }
 
@@ -29,4 +31,6 @@ const BindConnection qt_bind(QObject* sender, const char* sign, const std::funct
 	QObject::connect(sender, sign, ptr, SLOT(handler()), type);
 
 	return BindConnection(ptr);
+}
+
 }

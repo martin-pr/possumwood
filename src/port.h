@@ -4,6 +4,8 @@
 #include <QGraphicsTextItem>
 #include <QSet>
 
+namespace node_editor {
+
 class Node;
 class ConnectedEdge;
 
@@ -39,3 +41,5 @@ class Port : public QGraphicsRectItem {
 		friend class Node;
 		friend class ConnectedEdge;
 };
+
+}

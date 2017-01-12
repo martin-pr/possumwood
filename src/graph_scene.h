@@ -7,6 +7,8 @@
 #include "node.h"
 #include "edge.h"
 
+namespace node_editor {
+
 class ConnectedEdge;
 class Node;
 
@@ -56,3 +58,5 @@ class GraphScene : public QGraphicsScene {
 		friend class Edge;
 		friend class Node;
 };
+
+}

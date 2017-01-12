@@ -7,6 +7,8 @@
 
 #include "port.h"
 
+namespace node_editor {
+
 class Node : public QGraphicsRectItem {
 	public:
 		struct PortDefinition {
@@ -39,3 +41,5 @@ class Node : public QGraphicsRectItem {
 		QGraphicsTextItem* m_title;
 		QVector<Port*> m_ports;
 };
+
+}

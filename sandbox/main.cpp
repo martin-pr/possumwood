@@ -25,6 +25,8 @@ using std::cout;
 using std::endl;
 using std::flush;
 
+using namespace node_editor;
+
 namespace {
 
 QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {

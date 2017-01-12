@@ -9,6 +9,8 @@
 #include "node.h"
 #include "connected_edge.h"
 
+namespace node_editor {
+
 GraphScene::GraphScene(QGraphicsView* parent) : QGraphicsScene(parent) {
 	m_editedEdge = new Edge(QPointF(0, 0), QPointF(0, 0));
 	m_editedEdge->setVisible(false);
@@ -218,4 +220,6 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 
 bool GraphScene::isEdgeEditInProgress() const {
 	return m_editedEdge->isVisible();
+}
+
 }

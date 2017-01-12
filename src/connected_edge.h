@@ -2,6 +2,8 @@
 
 #include "edge.h"
 
+namespace node_editor {
+
 class Port;
 
 class ConnectedEdge : public Edge {
@@ -19,3 +21,5 @@ class ConnectedEdge : public Edge {
 
 		friend class Port;
 };
+
+}
