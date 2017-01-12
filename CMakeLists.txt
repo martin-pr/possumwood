@@ -71,3 +71,7 @@ set(LIBS ${LIBS} ${GLUT_LIBRARY})
 # libraries (git submodules)
 add_subdirectory(libs/dependency_graph/src)
 add_subdirectory(libs/qt_node_editor/src)
+
+# the application
+include_directories(libs/dependency_graph/src libs/qt_node_editor/src)
+add_subdirectory(src)
