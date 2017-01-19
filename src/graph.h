@@ -9,6 +9,7 @@
 #include <boost/optional.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/signals2.hpp>
 
 #include "node.h"
 
@@ -119,10 +120,17 @@ class Graph : public boost::noncopyable {
 		Connections& connections();
 		const Connections& connections() const;
 
+		boost::signals2::connection onAddNode(std::function<void(Node&)> callback);
+		boost::signals2::connection onRemoveNode(std::function<void(Node&)> callback);
+
 	private:
 		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
 
 		Nodes m_nodes;
 		Connections m_connections;
 
+		boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode;
+
+		friend class Nodes;
+		friend class Connections;
 };

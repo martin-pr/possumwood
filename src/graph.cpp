@@ -11,8 +11,8 @@ bool Graph::empty() const {
 }
 
 void Graph::clear() {
-	m_connections.m_connections.clear();
-	m_nodes.m_nodes.clear();
+	// clear only nodes - connections will clear themselves with the nodes
+	m_nodes.clear();
 }
 
 Graph::Nodes& Graph::nodes() {
@@ -35,6 +35,14 @@ std::unique_ptr<Node> Graph::makeNode(const std::string& name, const Metadata* m
 	return std::move(std::unique_ptr<Node>(new Node(name, md, this)));
 }
 
+boost::signals2::connection Graph::onAddNode(std::function<void(Node&)> callback) {
+	return m_onAddNode.connect(callback);
+}
+
+boost::signals2::connection Graph::onRemoveNode(std::function<void(Node&)> callback) {
+	return m_onRemoveNode.connect(callback);
+}
+
 //////////////
 
 Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
@@ -43,14 +51,24 @@ Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
 
 Node& Graph::Nodes::add(const Metadata& type, const std::string& name) {
 	m_nodes.push_back(std::move(m_parent->makeNode(name, &type)));
+
+	m_parent->m_onAddNode(*m_nodes.back());
+
 	return *m_nodes.back();
 }
 
 Graph::Nodes::iterator Graph::Nodes::erase(iterator i) {
 	m_parent->m_connections.purge(*i);
 
+	m_parent->m_onRemoveNode(*i);
+
 	auto it = m_nodes.erase(i.base());
 	return boost::make_indirect_iterator(it);
+}
+
+void Graph::Nodes::clear() {
+	while(!m_nodes.empty())
+		erase(boost::make_indirect_iterator(m_nodes.end() - 1));
 }
 
 bool Graph::Nodes::empty() const {
