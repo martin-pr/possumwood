@@ -46,6 +46,7 @@ class Graph : public boost::noncopyable {
 
 				Node& add(const Metadata& type, const std::string& name);
 				iterator erase(iterator i);
+				void clear();
 
 			private:
 				Nodes(Graph* parent);
@@ -103,13 +104,14 @@ class Graph : public boost::noncopyable {
 				const_iterator end() const;
 
 			private:
-				Connections() = default;
+				Connections(Graph* parent);
 
 				void add(Node::Port& src, Node::Port& dest);
 				void remove(Node::Port& src, Node::Port& dest);
 				/// remove all connections related to a node (both in and out)
 				void purge(const Node& n);
 
+				Graph* m_parent;
 				connections_container m_connections;
 
 				friend class Graph;
@@ -123,6 +125,9 @@ class Graph : public boost::noncopyable {
 		boost::signals2::connection onAddNode(std::function<void(Node&)> callback);
 		boost::signals2::connection onRemoveNode(std::function<void(Node&)> callback);
 
+		boost::signals2::connection onConnect(std::function<void(Node::Port&, Node::Port&)> callback);
+		boost::signals2::connection onDisconnect(std::function<void(Node::Port&, Node::Port&)> callback);
+
 	private:
 		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
 
@@ -130,6 +135,7 @@ class Graph : public boost::noncopyable {
 		Connections m_connections;
 
 		boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode;
+		boost::signals2::signal<void(Node::Port&, Node::Port&)> m_onConnect, m_onDisconnect;
 
 		friend class Nodes;
 		friend class Connections;

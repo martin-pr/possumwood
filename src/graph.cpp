@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-Graph::Graph() : m_nodes(this) {
+Graph::Graph() : m_nodes(this), m_connections(this) {
 
 }
 
@@ -41,6 +41,15 @@ boost::signals2::connection Graph::onAddNode(std::function<void(Node&)> callback
 
 boost::signals2::connection Graph::onRemoveNode(std::function<void(Node&)> callback) {
 	return m_onRemoveNode.connect(callback);
+}
+
+
+boost::signals2::connection Graph::onConnect(std::function<void(Node::Port&, Node::Port&)> callback) {
+	return m_onConnect.connect(callback);
+}
+
+boost::signals2::connection Graph::onDisconnect(std::function<void(Node::Port&, Node::Port&)> callback) {
+	return m_onDisconnect.connect(callback);
 }
 
 //////////////
@@ -107,6 +116,9 @@ const Node& Graph::Nodes::operator[](std::size_t index) const {
 
 //////////////
 
+Graph::Connections::Connections(Graph* parent) : m_parent(parent) {
+}
+
 void Graph::Connections::add(Node::Port& src, Node::Port& dest) {
 	if(src.category() != Attr::kOutput)
 		throw std::runtime_error("Attempting to connect an input as the origin of a connection.");
@@ -116,6 +128,9 @@ void Graph::Connections::add(Node::Port& src, Node::Port& dest) {
 
 	// make a new connection
 	m_connections.left.insert(std::make_pair(&src, &dest));
+
+	// and run the callback
+	m_parent->m_onConnect(src, dest);
 }
 
 void Graph::Connections::remove(Node::Port& src, Node::Port& dest) {
@@ -130,7 +145,10 @@ void Graph::Connections::remove(Node::Port& src, Node::Port& dest) {
 	if((it == m_connections.right.end()) || (it->second != &src))
 		throw std::runtime_error("Attempting to remove a non-existing connection.");
 
-	// and if found, remove it
+	// run the callback
+	m_parent->m_onDisconnect(src, dest);
+
+	// and remove it
 	m_connections.right.erase(it);
 }
 
@@ -138,8 +156,12 @@ void Graph::Connections::purge(const Node& n) {
 	// remove all connections related to a node
 	auto it = m_connections.left.begin();
 	while(it != m_connections.left.end())
-		if((&(it->first->node()) == &n) || (&(it->second->node()) == &n))
+		if((&(it->first->node()) == &n) || (&(it->second->node()) == &n)) {
+			m_parent->m_onDisconnect(*it->first, *it->second);
+
+			// remove the iterator
 			it = m_connections.left.erase(it);
+		}
 		else
 			++it;
 }
