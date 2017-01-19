@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
 #include <boost/noncopyable.hpp>
 
@@ -63,6 +64,16 @@ class Node : public boost::noncopyable {
 
 		const Metadata& metadata() const;
 
+		/// blind per-node data, to be used by the client application
+		///   to store visual information (e.g., node position, colour...)
+		template<typename T>
+		T& blindData();
+
+		/// blind per-node data, to be used by the client application
+		///   to store visual information (e.g., node position, colour...)
+		template<typename T>
+		const T& blindData() const;
+
 		Port& port(size_t index);
 		const Port& port(size_t index) const;
 		const size_t portCount() const;
@@ -89,6 +100,7 @@ class Node : public boost::noncopyable {
 
 		const Metadata* m_meta;
 		Datablock m_data;
+		std::unique_ptr<Datablock::BaseData> m_blindData;
 
 		std::vector<Port> m_ports;
 

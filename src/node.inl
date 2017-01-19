@@ -50,3 +50,25 @@ void Node::set(size_t index, const T& value) {
 	assert(port(index).category() == Attr::kOutput || inputIsNotConnected(port(index)));
 	m_data.set<T>(index, value);
 }
+
+template<typename T>
+T& Node::blindData() {
+	// create blind data if they're not present
+	if(m_blindData.get() == NULL)
+		m_blindData = std::unique_ptr<Datablock::BaseData>(new Datablock::Data<T>());
+
+	// retype and return
+	T* val = dynamic_cast<T*>(m_blindData.get());
+	assert(val);
+	return *val;
+}
+
+/// blind per-node data, to be used by the client application
+///   to store visual information (e.g., node position, colour...)
+template<typename T>
+const T& Node::blindData() const {
+	// retype and return
+	const T* val = dynamic_cast<const T*>(m_blindData.get());
+	assert(val);
+	return *val;
+}
