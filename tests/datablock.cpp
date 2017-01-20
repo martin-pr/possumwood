@@ -5,6 +5,8 @@
 #include "datablock.inl"
 #include "metadata.inl"
 
+namespace dependency_graph {
+
 // cheating my way into the private interface of Datablock class
 class Node {
 	public:
@@ -18,6 +20,10 @@ class Node {
 			return data.get<T>(attr.offset());
 		}
 };
+
+}
+
+using namespace dependency_graph;
 
 ////////
 

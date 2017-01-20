@@ -2,6 +2,8 @@
 
 #include "metadata.h"
 
+namespace dependency_graph {
+
 template<typename T>
 void Metadata::addAttribute(InAttr<T>& in, const std::string& name) {
 	assert(!in.isValid());
@@ -41,4 +43,6 @@ template<typename T>
 std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(const OutAttr<T>& out) const {
 	assert(out.isValid());
 	return influencedBy(out.offset());
+}
+
 }

@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+namespace dependency_graph {
+
 Graph::Graph() : m_nodes(this), m_connections(this) {
 
 }
@@ -249,3 +251,4 @@ Graph::Connections::const_iterator Graph::Connections::end() const {
 	return const_iterator(m_connections.left.end(), convert);
 }
 
+}

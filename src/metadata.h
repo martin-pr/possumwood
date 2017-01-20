@@ -7,6 +7,8 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 
+namespace dependency_graph {
+
 template<typename T>
 class InAttr;
 
@@ -15,6 +17,8 @@ class OutAttr;
 
 class Datablock;
 class Attr;
+
+class Node;
 
 class Metadata : public boost::noncopyable {
 	public:
@@ -77,3 +81,5 @@ class Metadata : public boost::noncopyable {
 
 		friend class Node;
 };
+
+}

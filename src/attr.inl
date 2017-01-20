@@ -2,6 +2,8 @@
 
 #include "attr.h"
 
+namespace dependency_graph {
+
 template<typename T>
 InAttr<T>::InAttr() : Attr("", unsigned(-1), Attr::kInput) {
 }
@@ -37,4 +39,6 @@ std::unique_ptr<Datablock::BaseData> OutAttr<T>::createData() const {
 template<typename T>
 const std::type_info& OutAttr<T>::type() const {
 	return typeid(T);
+}
+
 }

@@ -3,6 +3,8 @@
 #include "graph.h"
 #include "common.h"
 
+using namespace dependency_graph;
+
 namespace {
 	bool checkConnections(const Graph& g, std::vector<std::pair<const Node::Port*, const Node::Port*>> connections) {
 		bool result = true;

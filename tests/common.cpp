@@ -4,6 +4,8 @@
 
 #include "attr.inl"
 
+using namespace dependency_graph;
+
 namespace std {
 
 ostream& operator << (ostream& out, const type_info& t) {

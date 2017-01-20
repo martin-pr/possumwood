@@ -1,5 +1,7 @@
 #include "attr.h"
 
+namespace dependency_graph {
+
 Attr::Attr(const std::string& name, unsigned offset, Category cat) : m_name(name), m_offset(offset), m_category(cat) {
 }
 
@@ -28,4 +30,6 @@ bool Attr::operator == (const Attr& a) const {
 
 bool Attr::operator != (const Attr& a) const {
 	return name() != a.name() || category() != a.category() || offset() != a.offset() || type() != a.type();
+}
+
 }

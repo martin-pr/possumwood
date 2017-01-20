@@ -5,6 +5,8 @@
 #include "datablock.inl"
 #include "metadata.inl"
 
+using namespace dependency_graph;
+
 // struct TestStruct {
 // 	bool operator == (const TestStruct& ts) const { return true; }
 // };

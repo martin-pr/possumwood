@@ -13,6 +13,8 @@
 
 #include "node.h"
 
+namespace dependency_graph {
+
 /// The graph data structure - holds node instances and connections.
 class Graph : public boost::noncopyable {
 	public:
@@ -140,3 +142,5 @@ class Graph : public boost::noncopyable {
 		friend class Nodes;
 		friend class Connections;
 };
+
+}

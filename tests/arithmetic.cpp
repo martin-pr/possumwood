@@ -9,6 +9,8 @@
 #include "node.inl"
 #include "common.h"
 
+using namespace dependency_graph;
+
 bool checkDirtyPorts(const Node& n, const std::set<size_t>& dirtyPorts) {
 	bool result = true;
 

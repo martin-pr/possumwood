@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+namespace dependency_graph {
+
 Metadata::Metadata(const std::string& nodeType) : m_type(nodeType) {
 }
 
@@ -51,4 +53,6 @@ std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(size_t in
 		result.push_back(attr(i->second));
 
 	return result;
+}
+
 }

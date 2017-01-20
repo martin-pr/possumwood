@@ -29,7 +29,7 @@ std::ostream& operator << (std::ostream& out, const TestStruct& t);
 //////
 
 /// returns a reference to metadata of a simple addition node
-const Metadata& additionNode();
+const dependency_graph::Metadata& additionNode();
 
 /// returns a reference to metadata of a simple multiplication node
-const Metadata& multiplicationNode();
+const dependency_graph::Metadata& multiplicationNode();

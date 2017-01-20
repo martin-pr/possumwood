@@ -6,6 +6,8 @@
 
 #include "metadata.h"
 
+namespace dependency_graph {
+
 template<typename T>
 const T& Datablock::get(size_t index) const {
 	assert(index < m_data.size());
@@ -44,4 +46,6 @@ bool Datablock::Data<T>::isEqual(const BaseData& src) const {
 
 	const Data<T>& srcData = dynamic_cast<const Data<T>&>(src);
 	return value == srcData.value;
+}
+
 }

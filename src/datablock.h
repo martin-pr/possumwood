@@ -3,6 +3,8 @@
 #include <vector>
 #include <memory>
 
+namespace dependency_graph {
+
 class Metadata;
 class Node;
 
@@ -55,3 +57,5 @@ class Datablock {
 
 		friend class Node;
 };
+
+}
