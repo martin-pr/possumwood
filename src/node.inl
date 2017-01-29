@@ -54,15 +54,18 @@ void Node::set(size_t index, const T& value) {
 }
 
 template<typename T>
-T& Node::blindData() {
+void Node::setBlindData(const T& value) {
 	// create blind data if they're not present
 	if(m_blindData.get() == NULL)
 		m_blindData = std::unique_ptr<Datablock::BaseData>(new Datablock::Data<T>());
 
-	// retype and return
-	T* val = dynamic_cast<T*>(m_blindData.get());
-	assert(val);
-	return *val;
+	// retype
+	Datablock::Data<T>& val = dynamic_cast<Datablock::Data<T>&>(*m_blindData);
+
+	// set the value
+	if(val.value != value) {
+		val.value = value;
+	}
 }
 
 /// blind per-node data, to be used by the client application
@@ -70,9 +73,8 @@ T& Node::blindData() {
 template<typename T>
 const T& Node::blindData() const {
 	// retype and return
-	const T* val = dynamic_cast<const T*>(m_blindData.get());
-	assert(val);
-	return *val;
+	const Datablock::Data<T>& val = dynamic_cast<const Datablock::Data<T>&>(*m_blindData);
+	return val.value;
 }
 
 }

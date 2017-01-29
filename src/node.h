@@ -69,7 +69,7 @@ class Node : public boost::noncopyable {
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)
 		template<typename T>
-		T& blindData();
+		void setBlindData(const T& value);
 
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)
