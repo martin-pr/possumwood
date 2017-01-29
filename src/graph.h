@@ -105,6 +105,17 @@ class Graph : public boost::noncopyable {
 				/// connections iteration
 				const_iterator end() const;
 
+				/// allows iteration over connections
+				typedef boost::transform_iterator<
+					std::function<const std::pair<Node::Port&, Node::Port&>(const connections_container::left_value_type&)>,
+					connections_container::left_const_iterator
+				> iterator;
+
+				/// connections iteration
+				iterator begin();
+				/// connections iteration
+				iterator end();
+
 			private:
 				Connections(Graph* parent);
 
