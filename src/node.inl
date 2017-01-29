@@ -1,6 +1,7 @@
 #pragma once
 
 #include "node.h"
+#include "graph.h"
 
 namespace dependency_graph {
 
@@ -65,6 +66,9 @@ void Node::setBlindData(const T& value) {
 	// set the value
 	if(val.value != value) {
 		val.value = value;
+
+		// and call the callback
+		m_parent->m_onBlindDataChanged(*this);
 	}
 }
 

@@ -141,15 +141,18 @@ class Graph : public boost::noncopyable {
 		boost::signals2::connection onConnect(std::function<void(Node::Port&, Node::Port&)> callback);
 		boost::signals2::connection onDisconnect(std::function<void(Node::Port&, Node::Port&)> callback);
 
+		boost::signals2::connection onBlindDataChanged(std::function<void(Node&)> callback);
+
 	private:
 		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
 
 		Nodes m_nodes;
 		Connections m_connections;
 
-		boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode;
+		boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode, m_onBlindDataChanged;
 		boost::signals2::signal<void(Node::Port&, Node::Port&)> m_onConnect, m_onDisconnect;
 
+		friend class Node;
 		friend class Nodes;
 		friend class Connections;
 };

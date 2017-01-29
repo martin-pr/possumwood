@@ -21,6 +21,7 @@ class Node : public boost::noncopyable {
 
 				const std::string& name() const;
 				const Attr::Category category() const;
+				const unsigned index() const;
 
 				/// sets a value on the port.
 				/// Marks all downstream values dirty.
