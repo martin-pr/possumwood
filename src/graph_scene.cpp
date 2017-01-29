@@ -76,9 +76,17 @@ void GraphScene::removeNode(Node& n) {
 
 void GraphScene::connect(Port& p1, Port& p2) {
 	if((p1.portType() & Port::kOutput) && (p2.portType() & Port::kInput)) {
-		ConnectedEdge* e = new ConnectedEdge(p1, p2);
-		m_edges.push_back(e);
-		addItem(e);
+		// test if the connection doesn't exist already
+		auto it = m_edges.end();
+		for(auto i = m_edges.begin(); i != m_edges.end(); ++i)
+			if((&((*i)->fromPort()) == &p1) && (&((*i)->toPort()) == &p2))
+				it = i;
+
+		if(it == m_edges.end()) {
+			ConnectedEdge* e = new ConnectedEdge(p1, p2);
+			m_edges.push_back(e);
+			addItem(e);
+		}
 	}
 }
 
