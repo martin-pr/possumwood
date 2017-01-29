@@ -76,13 +76,7 @@ void GraphScene::removeNode(Node& n) {
 
 void GraphScene::connect(Port& p1, Port& p2) {
 	if((p1.portType() & Port::kOutput) && (p2.portType() & Port::kInput)) {
-		// test if the connection doesn't exist already
-		auto it = m_edges.end();
-		for(auto i = m_edges.begin(); i != m_edges.end(); ++i)
-			if((&((*i)->fromPort()) == &p1) && (&((*i)->toPort()) == &p2))
-				it = i;
-
-		if(it == m_edges.end()) {
+		if(!isConnected(p1, p2)) {
 			ConnectedEdge* e = new ConnectedEdge(p1, p2);
 			m_edges.push_back(e);
 			addItem(e);
@@ -107,6 +101,14 @@ void GraphScene::disconnect(ConnectedEdge& e) {
 		delete *it;
 
 	assert(std::find(m_edges.begin(), m_edges.end(), &e) == m_edges.end());
+}
+
+bool GraphScene::isConnected(const Port& p1, const Port& p2) {
+	auto it = std::find_if(m_edges.begin(), m_edges.end(), [&](const ConnectedEdge* e) {
+		return &e->fromPort() == &p1 && &e->toPort() == &p2;
+	});
+
+	return it != m_edges.end();
 }
 
 void GraphScene::remove(Node* n) {
@@ -218,9 +220,15 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 		Port* portTo = findConnectionPort(m_editedEdge->target());
 
 		if(portFrom != NULL && portTo != NULL && portFrom != portTo &&
-		        portFrom->portType() & Port::kOutput && portTo->portType() & Port::kInput)
+		        portFrom->portType() & Port::kOutput && portTo->portType() & Port::kInput) {
 
-			connect(*portFrom, *portTo);
+			if(!isConnected(*portFrom, *portTo)) {
+				connect(*portFrom, *portTo);
+
+				if(m_connectionCallback)
+					m_connectionCallback(*portFrom, *portTo);
+			}
+		}
 	}
 	else
 		QGraphicsScene::mouseReleaseEvent(mouseEvent);
@@ -228,6 +236,10 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 
 bool GraphScene::isEdgeEditInProgress() const {
 	return m_editedEdge->isVisible();
+}
+
+void GraphScene::setMouseConnectionCallback(std::function<void(Port&, Port&)> fn) {
+	m_connectionCallback = fn;
 }
 
 void GraphScene::setNodeMoveCallback(std::function<void(Node&)> fn) {
