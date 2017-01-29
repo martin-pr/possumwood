@@ -14,7 +14,7 @@ class GraphWidget : public QGraphicsView {
 		Q_OBJECT
 
 	public:
-		GraphWidget(QWidget* parent);
+		GraphWidget(QWidget* parent = NULL);
 
 		GraphScene& scene();
 

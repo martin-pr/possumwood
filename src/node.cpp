@@ -82,7 +82,7 @@ Port& Node::port(unsigned i) {
 }
 
 void Node::addPort(const PortDefinition& def) {
-	m_ports.push_back(new Port(def.name, def.type, def.color, this));
+	m_ports.push_back(new Port(def.name, def.type, def.color, this, m_ports.size()));
 
 	updateRect();
 }
