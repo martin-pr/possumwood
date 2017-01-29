@@ -230,4 +230,8 @@ bool GraphScene::isEdgeEditInProgress() const {
 	return m_editedEdge->isVisible();
 }
 
+void GraphScene::setNodeMoveCallback(std::function<void(Node&)> fn) {
+	m_nodeMoveCallback = fn;
+}
+
 }
