@@ -54,6 +54,10 @@ boost::signals2::connection Graph::onDisconnect(std::function<void(Node::Port&, 
 	return m_onDisconnect.connect(callback);
 }
 
+boost::signals2::connection Graph::onBlindDataChanged(std::function<void(Node&)> callback) {
+	return m_onBlindDataChanged.connect(callback);
+}
+
 //////////////
 
 Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {

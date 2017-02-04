@@ -21,6 +21,7 @@ class Node : public boost::noncopyable {
 
 				const std::string& name() const;
 				const Attr::Category category() const;
+				const unsigned index() const;
 
 				/// sets a value on the port.
 				/// Marks all downstream values dirty.
@@ -69,7 +70,7 @@ class Node : public boost::noncopyable {
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)
 		template<typename T>
-		T& blindData();
+		void setBlindData(const T& value);
 
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)

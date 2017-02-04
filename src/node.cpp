@@ -21,6 +21,10 @@ const Attr::Category Node::Port::category() const {
 	return m_parent->m_meta->attr(m_id).category();
 }
 
+const unsigned Node::Port::index() const {
+	return m_id;
+}
+
 bool Node::Port::isDirty() const {
 	return m_dirty;
 }
