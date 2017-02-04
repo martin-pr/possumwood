@@ -27,6 +27,7 @@ class Datablock {
 
 		template<typename T>
 		struct Data : public BaseData {
+			Data(const T& v = T()) : value(v) {};
 			virtual ~Data() {};
 			virtual void assign(const BaseData& src) override;
 			virtual bool isEqual(const BaseData& src) const;
