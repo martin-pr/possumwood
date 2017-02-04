@@ -87,4 +87,14 @@ const Port& ConnectedEdge::toPort() const {
 	return *m_p2;
 }
 
+Port& ConnectedEdge::fromPort() {
+	assert(m_p1);
+	return *m_p1;
+}
+
+Port& ConnectedEdge::toPort() {
+	assert(m_p2);
+	return *m_p2;
+}
+
 }
