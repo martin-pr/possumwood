@@ -12,7 +12,9 @@ class ConnectedEdge : public Edge {
 		virtual ~ConnectedEdge();
 
 		const Port& fromPort() const;
+		Port& fromPort();
 		const Port& toPort() const;
+		Port& toPort();
 
 	private:
 		void adjust();

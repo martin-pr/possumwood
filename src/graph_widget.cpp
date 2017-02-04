@@ -34,15 +34,6 @@ void GraphWidget::resizeEvent(QResizeEvent* event) {
 	QGraphicsView::resizeEvent(event);
 }
 
-void GraphWidget::mousePressEvent(QMouseEvent* event) {
-	if(event->button() == Qt::RightButton) {
-		if(m_contextMenuCallback)
-			m_contextMenuCallback(event->globalPos());
-	}
-	else
-		QGraphicsView::mousePressEvent(event);
-}
-
 void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 	if(m_scene.isEdgeEditInProgress()) {
 		QMouseEvent tmp(event->type(), event->pos(), Qt::NoButton,
@@ -51,19 +42,6 @@ void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 	}
 	else
 		QGraphicsView::mouseMoveEvent(event);
-}
-
-void GraphWidget::setContextMenuCallback(std::function<void(QPoint)> fn) {
-	m_contextMenuCallback = fn;
-}
-
-void GraphWidget::setKeyPressCallback(std::function<void(const QKeyEvent&)> fn) {
-	m_keyPressCallback = fn;
-}
-
-void GraphWidget::keyPressEvent(QKeyEvent* event) {
-	if(m_keyPressCallback)
-		m_keyPressCallback(*event);
 }
 
 }

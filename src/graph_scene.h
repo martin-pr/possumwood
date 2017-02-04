@@ -34,8 +34,14 @@ class GraphScene : public QGraphicsScene {
 		void connect(Port& p1, Port& p2);
 		void disconnect(Port& p1, Port& p2);
 		void disconnect(ConnectedEdge& e);
+		bool isConnected(const Port& p1, const Port& p2);
 
 		bool isEdgeEditInProgress() const;
+		/// node connection changes callback (the only graph change necessary
+		///   out of the box)
+		void setMouseConnectionCallback(std::function<void(Port&, Port&)> fn);
+
+		void setNodeMoveCallback(std::function<void(Node&)> fn);
 
 	protected:
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
@@ -54,6 +60,9 @@ class GraphScene : public QGraphicsScene {
 
 		Edge* m_editedEdge;
 		Port::Type m_connectedSide;
+
+		std::function<void(Port&, Port&)> m_connectionCallback;
+		std::function<void(Node&)> m_nodeMoveCallback;
 
 		friend class Edge;
 		friend class Node;

@@ -89,68 +89,68 @@ int main(int argc, char* argv[]) {
 
 	///
 
-	graph->setContextMenuCallback([&](QPoint p) {
-		QMenu menu(graph);
+	graph->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-		menu.addAction(makeAction("Add single input node", [&]() {
-			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-			scene.addNode(makeUniqueNodeName(), pos, {{"input", Port::kInput, randomColor()}});
-		}, &menu));
+	graph->addAction(makeAction("Add single input node", [&]() {
+		QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
+		scene.addNode(makeUniqueNodeName(), pos, {{"input", Port::kInput, randomColor()}});
+	}, NULL));
 
-		menu.addAction(makeAction("Add single output node", [&]() {
-			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-			scene.addNode(makeUniqueNodeName(), pos, {{"output", Port::kOutput, randomColor()}});
-		}, &menu));
+	graph->addAction(makeAction("Add single output node", [&]() {
+		QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
+		scene.addNode(makeUniqueNodeName(), pos, {{"output", Port::kOutput, randomColor()}});
+	}, NULL));
 
-		menu.addAction(makeAction("Add random more complex node", [&]() {
-			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
+	graph->addAction(makeAction("Add random more complex node", [&]() {
+		QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
 
-			Node& node = scene.addNode(makeUniqueNodeName(), pos);
+		Node& node = scene.addNode(makeUniqueNodeName(), pos);
 
-			const unsigned portCount = rand() % 8 + 1;
-			for(unsigned p = 0; p < portCount; ++p) {
-				std::stringstream name;
-				name << "port_" << p;
+		const unsigned portCount = rand() % 8 + 1;
+		for(unsigned p = 0; p < portCount; ++p) {
+			std::stringstream name;
+			name << "port_" << p;
 
-				const unsigned pi = rand() % 3;
+			const unsigned pi = rand() % 3;
 
-				if(pi == 0)
-					node.addPort(Node::PortDefinition{name.str().c_str(), Port::kInput, randomColor()});
-				else if(pi == 1)
-					node.addPort(Node::PortDefinition{name.str().c_str(), Port::kOutput, randomColor()});
+			if(pi == 0)
+				node.addPort(Node::PortDefinition{name.str().c_str(), Port::kInput, randomColor()});
+			else if(pi == 1)
+				node.addPort(Node::PortDefinition{name.str().c_str(), Port::kOutput, randomColor()});
+			else
+				node.addPort(Node::PortDefinition{name.str().c_str(), Port::kInputOutput, randomColor()});
+		}
+	}, NULL));
+
+	QAction* separator = new QAction(graph);
+	separator->setSeparator(true);
+	graph->addAction(separator);
+
+	QAction* deleteAction = new QAction("Delete selected items", graph);
+	deleteAction->setShortcut(QKeySequence::Delete);
+	graph->addAction(deleteAction);
+	qt_bind(deleteAction, SIGNAL(triggered()), [&]() {
+		{
+			unsigned ei = 0;
+			while(ei < scene.edgeCount()) {
+				ConnectedEdge& e = scene.edge(ei);
+				if(e.isSelected())
+					scene.disconnect(e);
 				else
-					node.addPort(Node::PortDefinition{name.str().c_str(), Port::kInputOutput, randomColor()});
-			}
-		}, &menu));
-
-		menu.exec(p);
-	});
-
-	graph->setKeyPressCallback([&](const QKeyEvent & event) {
-		if(event.key() == Qt::Key_Delete) {
-			{
-				unsigned ei = 0;
-				while(ei < scene.edgeCount()) {
-					ConnectedEdge& e = scene.edge(ei);
-					if(e.isSelected())
-						scene.disconnect(e);
-					else
-						++ei;
-				}
-			}
-
-			{
-				unsigned ni = 0;
-				while(ni < scene.nodeCount()) {
-					Node& n = scene.node(ni);
-					if(n.isSelected())
-						scene.removeNode(n);
-					else
-						++ni;
-				}
+					++ei;
 			}
 		}
 
+		{
+			unsigned ni = 0;
+			while(ni < scene.nodeCount()) {
+				Node& n = scene.node(ni);
+				if(n.isSelected())
+					scene.removeNode(n);
+				else
+					++ni;
+			}
+		}
 	});
 
 	///

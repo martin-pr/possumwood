@@ -13,11 +13,12 @@ class Port : public QGraphicsRectItem {
 	public:
 		enum Type { kInput = 1, kOutput = 2, kInputOutput = 3 };
 
-		Port(const QString& name, Type t, QColor color, Node* parent);
+		Port(const QString& name, Type t, QColor color, Node* parent, unsigned id);
 
 		const QString name() const;
 		const Type portType() const;
 		const QColor color() const;
+		const unsigned index() const;
 
 		Node& parentNode();
 		const Node& parentNode() const;
@@ -37,6 +38,7 @@ class Port : public QGraphicsRectItem {
 
 		QSet<ConnectedEdge*> m_edges;
 		Node* m_parent;
+		unsigned m_id;
 
 		friend class Node;
 		friend class ConnectedEdge;

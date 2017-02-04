@@ -82,7 +82,7 @@ Port& Node::port(unsigned i) {
 }
 
 void Node::addPort(const PortDefinition& def) {
-	m_ports.push_back(new Port(def.name, def.type, def.color, this));
+	m_ports.push_back(new Port(def.name, def.type, def.color, this, m_ports.size()));
 
 	updateRect();
 }
@@ -99,9 +99,16 @@ void Node::removePort(Port& p) {
 
 
 QVariant Node::itemChange(GraphicsItemChange change, const QVariant& value) {
-	if(change == ItemPositionHasChanged && scene())
+	if(change == ItemPositionHasChanged && scene()) {
+		// adjust the edges to the new node position
 		for(auto& p : m_ports)
 			p->adjustEdges();
+
+		// and send a signal that the position has changed
+		GraphScene* sc = dynamic_cast<GraphScene*>(scene());
+		if(sc && sc->m_nodeMoveCallback)
+			sc->m_nodeMoveCallback(*this);
+	}
 
 	return value;
 }

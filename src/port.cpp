@@ -15,7 +15,7 @@ namespace {
 const unsigned s_margin = 5;
 }
 
-Port::Port(const QString& name, Port::Type t, QColor color, Node* parent) : QGraphicsRectItem(parent), m_color(color), m_in(NULL), m_out(NULL), m_parent(parent) {
+Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsigned id) : QGraphicsRectItem(parent), m_color(color), m_in(NULL), m_out(NULL), m_parent(parent), m_id(id) {
 	m_name = new QGraphicsTextItem(name, this);
 	m_name->setPos(m_name->boundingRect().height(), 0);
 	m_name->setDefaultTextColor(QColor(192, 192, 192));
@@ -62,6 +62,10 @@ void Port::setWidth(unsigned w) {
 
 const QString Port::name() const {
 	return m_name->toPlainText();
+}
+
+const unsigned Port::index() const {
+	return m_id;
 }
 
 const Port::Type Port::portType() const {
