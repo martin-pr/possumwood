@@ -5,20 +5,16 @@
 #include "datablock.inl"
 #include "common.h"
 
+using namespace dependency_graph;
+
 typedef std::vector<std::reference_wrapper<const Attr>> Influences;
 
-bool operator ==(const Influences i1, const Influences i2) {
-	auto it1 = i1.begin();
-	auto it2 = i2.begin();
-	while((it1 != i1.end()) && (it2 != i2.end()))
-		if(it1->get() != it2->get())
-			return false;
-		else {
-			++it1;
-			++it2;
-		}
+namespace std {
 
-	return it1 == i1.end() && it2 == i2.end();
+bool operator ==(const reference_wrapper<const Attr>& i1, const reference_wrapper<const Attr>& i2) {
+	return i1.get() == i2.get();
+}
+
 }
 
 namespace std {

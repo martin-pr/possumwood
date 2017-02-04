@@ -8,6 +8,8 @@
 #include "attr.h"
 #include "metadata.h"
 
+namespace dependency_graph {
+
 class Datablock;
 class Graph;
 
@@ -107,3 +109,5 @@ class Node : public boost::noncopyable {
 		friend class Graph;
 		friend class Port;
 };
+
+}

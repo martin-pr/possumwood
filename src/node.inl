@@ -2,6 +2,8 @@
 
 #include "node.h"
 
+namespace dependency_graph {
+
 template<typename T>
 void Node::Port::set(const T& value) {
 	// can set only inputs, not outputs
@@ -71,4 +73,6 @@ const T& Node::blindData() const {
 	const T* val = dynamic_cast<const T*>(m_blindData.get());
 	assert(val);
 	return *val;
+}
+
 }

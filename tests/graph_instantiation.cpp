@@ -3,6 +3,8 @@
 #include "graph.h"
 #include "common.h"
 
+using namespace dependency_graph;
+
 namespace {
 
 unsigned s_nodeCount = 0;

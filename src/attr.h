@@ -6,6 +6,8 @@
 
 #include "datablock.h"
 
+namespace dependency_graph {
+
 class Metadata;
 class Node;
 
@@ -71,3 +73,5 @@ class OutAttr : public Attr {
 
 		friend class Metadata;
 };
+
+}

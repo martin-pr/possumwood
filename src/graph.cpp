@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+namespace dependency_graph {
+
 Graph::Graph() : m_nodes(this), m_connections(this) {
 
 }
@@ -32,7 +34,7 @@ const Graph::Connections& Graph::connections() const {
 }
 
 std::unique_ptr<Node> Graph::makeNode(const std::string& name, const Metadata* md) {
-	return std::move(std::unique_ptr<Node>(new Node(name, md, this)));
+	return std::unique_ptr<Node>(new Node(name, md, this));
 }
 
 boost::signals2::connection Graph::onAddNode(std::function<void(Node&)> callback) {
@@ -59,7 +61,7 @@ Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
 }
 
 Node& Graph::Nodes::add(const Metadata& type, const std::string& name) {
-	m_nodes.push_back(std::move(m_parent->makeNode(name, &type)));
+	m_nodes.push_back(m_parent->makeNode(name, &type));
 
 	m_parent->m_onAddNode(*m_nodes.back());
 
@@ -239,6 +241,14 @@ namespace {
 
 		return std::pair<const Node::Port&, const Node::Port&>(left, right);
 	}
+
+	/// dereferencing function to convert internal connection representation to a pair of port references
+	const std::pair<Node::Port&, Node::Port&> convertConst(const Graph::Connections::connections_container::left_value_type& val)	{
+		Node::Port& left = *val.first;
+		Node::Port& right = *val.second;
+
+		return std::pair<Node::Port&, Node::Port&>(left, right);
+	}
 }
 
 Graph::Connections::const_iterator Graph::Connections::begin() const {
@@ -249,3 +259,12 @@ Graph::Connections::const_iterator Graph::Connections::end() const {
 	return const_iterator(m_connections.left.end(), convert);
 }
 
+Graph::Connections::iterator Graph::Connections::begin() {
+	return iterator(m_connections.left.begin(), convertConst);
+}
+
+Graph::Connections::iterator Graph::Connections::end() {
+	return iterator(m_connections.left.end(), convertConst);
+}
+
+}

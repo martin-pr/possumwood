@@ -2,6 +2,8 @@
 
 #include "graph.h"
 
+namespace dependency_graph {
+
 Node::Port::Port(const std::string& name, unsigned id, Node* parent) :
 	m_name(name), m_id(id), m_dirty(true), m_parent(parent) {
 
@@ -144,4 +146,6 @@ void Node::computeOutput(size_t index) {
 	// and mark as not dirty
 	port(index).setDirty(false);
 	assert(not port(index).isDirty());
+}
+
 }
