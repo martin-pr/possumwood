@@ -11,6 +11,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QKeyEvent>
+#include <QHBoxLayout>
 
 #include <ImathVec.h>
 
@@ -18,6 +19,13 @@
 #include "node.h"
 #include "connected_edge.h"
 #include "graph_widget.h"
+#include "graph.h"
+#include "node.inl"
+#include "datablock.inl"
+#include "node_data.h"
+#include "metadata.inl"
+#include "attr.inl"
+#include "adaptor.h"
 
 namespace po = boost::program_options;
 
@@ -33,16 +41,55 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 	return result;
 }
 
-QString makeUniqueNodeName() {
-	static unsigned s_counter = 0;
-	++s_counter;
+const dependency_graph::Metadata& additionNode() {
+	static dependency_graph::Metadata s_meta("addition");
 
-	return "node_" + QString::number(s_counter);
+	if(!s_meta.isValid()) {
+		// create attributes
+		static dependency_graph::InAttr<float> additionInput1, additionInput2;
+		static dependency_graph::OutAttr<float> additionOutput;
+
+		// add attributes to the Metadata instance
+		s_meta.addAttribute(additionInput1, "input_1");
+		s_meta.addAttribute(additionInput2, "input_2");
+		s_meta.addAttribute(additionOutput, "output");
+
+		std::function<void(dependency_graph::Datablock&)> additionCompute = [&](dependency_graph::Datablock & data) {
+			const float a = data.get(additionInput1);
+			const float b = data.get(additionInput2);
+
+			data.set(additionOutput, a + b);
+		};
+		s_meta.setCompute(additionCompute);
+	}
+
+	return s_meta;
 }
 
-QColor randomColor() {
-	static const std::vector<QColor> colors = {QColor(255, 0, 0), QColor(0, 255, 0), QColor(0, 0, 255)};
-	return colors[rand() % colors.size()];
+const dependency_graph::Metadata& multiplicationNode() {
+	static dependency_graph::Metadata s_meta("multiplication");
+
+	if(!s_meta.isValid()) {
+		static dependency_graph::InAttr<float> multiplicationInput1, multiplicationInput2;
+		static dependency_graph::OutAttr<float> multiplicationOutput;
+		std::function<void(dependency_graph::Datablock&)> multiplicationCompute = [&](dependency_graph::Datablock & data) {
+			const float a = data.get(multiplicationInput1);
+			const float b = data.get(multiplicationInput2);
+
+			data.set(multiplicationOutput, a * b);
+		};
+
+		s_meta.addAttribute(multiplicationInput1, "input_1");
+		s_meta.addAttribute(multiplicationInput2, "input_2");
+		s_meta.addAttribute(multiplicationOutput, "output");
+
+		s_meta.addInfluence(multiplicationInput1, multiplicationOutput);
+		s_meta.addInfluence(multiplicationInput2, multiplicationOutput);
+
+		s_meta.setCompute(multiplicationCompute);
+	}
+
+	return s_meta;
 }
 
 }
@@ -66,6 +113,20 @@ int main(int argc, char* argv[]) {
 
 	///////////////////////////////
 
+	dependency_graph::Graph dg;
+
+	{
+		auto& add = dg.nodes().add(additionNode(), "add1");
+		add.setBlindData(NodeData{QPointF(-100, 20)});
+
+		auto& mult = dg.nodes().add(multiplicationNode(), "mult1");
+		mult.setBlindData(NodeData{QPointF(100, 20)});
+
+		add.port(2).connect(mult.port(0));
+	}
+
+	///////////////////////////////
+
 	QApplication app(argc, argv);
 
 	// make a window only with a viewport
@@ -75,80 +136,43 @@ int main(int argc, char* argv[]) {
 
 	///
 
-	node_editor::GraphWidget* graph = new node_editor::GraphWidget(&win);
-	win.setCentralWidget(graph);
+	QWidget* main = new QWidget();
+	win.setCentralWidget(main);
 
-	node_editor::GraphScene& scene = graph->scene();
+	QHBoxLayout* layout = new QHBoxLayout(main);
+	layout->setContentsMargins(0,0,0,0);
 
-	node_editor::Node& n1 = scene.addNode("first", QPointF(-50, 20), {{"aaaaa", node_editor::Port::kInput, Qt::blue}, {"b", node_editor::Port::kOutput, Qt::red}});
-	node_editor::Node& n2 = scene.addNode("second", QPointF(50, 20), {{"xxxxxxxxxxxxxxxx", node_editor::Port::kInputOutput, Qt::red}});
+	Adaptor* g1 = new Adaptor(&dg);
+	layout->addWidget(g1);
 
-	scene.connect(n1.port(1), n2.port(0));
+	Adaptor* g2 = new Adaptor(&dg);
+	layout->addWidget(g2);
 
 	///
 
-	graph->setContextMenuCallback([&](QPoint p) {
-		QMenu menu(graph);
+	unsigned nodeCounter = 0;
 
-		menu.addAction(makeAction("Add single input node", [&]() {
-			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-			scene.addNode(makeUniqueNodeName(), pos, {{"input", node_editor::Port::kInput, randomColor()}});
-		}, &menu));
+	g1->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-		menu.addAction(makeAction("Add single output node", [&]() {
-			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-			scene.addNode(makeUniqueNodeName(), pos, {{"output", node_editor::Port::kOutput, randomColor()}});
-		}, &menu));
+	g1->addAction(makeAction("Add addition node", [&]() {
+		QPointF pos = g1->mapToScene(g1->mapFromGlobal(QCursor::pos()));
+		dg.nodes().add(additionNode(), "add_" + std::to_string(nodeCounter++), NodeData{pos});
+	}, g1));
 
-		menu.addAction(makeAction("Add random more complex node", [&]() {
-			QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
+	g1->addAction(makeAction("Add multiplication node", [&]() {
+		QPointF pos = g1->mapToScene(g1->mapFromGlobal(QCursor::pos()));
+		dg.nodes().add(multiplicationNode(), "mult_" + std::to_string(nodeCounter++), NodeData{pos});
+	}, g1));
 
-			node_editor::Node& node = scene.addNode(makeUniqueNodeName(), pos);
+	QAction* separator = new QAction(g1);
+	separator->setSeparator(true);
+	g1->addAction(separator);
 
-			const unsigned portCount = rand() % 8 + 1;
-			for(unsigned p = 0; p < portCount; ++p) {
-				std::stringstream name;
-				name << "port_" << p;
-
-				const unsigned pi = rand() % 3;
-
-				if(pi == 0)
-					node.addPort(node_editor::Node::PortDefinition{name.str().c_str(), node_editor::Port::kInput, randomColor()});
-				else if(pi == 1)
-					node.addPort(node_editor::Node::PortDefinition{name.str().c_str(), node_editor::Port::kOutput, randomColor()});
-				else
-					node.addPort(node_editor::Node::PortDefinition{name.str().c_str(), node_editor::Port::kInputOutput, randomColor()});
-			}
-		}, &menu));
-
-		menu.exec(p);
-	});
-
-	graph->setKeyPressCallback([&](const QKeyEvent & event) {
-		if(event.key() == Qt::Key_Delete) {
-			{
-				unsigned ei = 0;
-				while(ei < scene.edgeCount()) {
-					node_editor::ConnectedEdge& e = scene.edge(ei);
-					if(e.isSelected())
-						scene.disconnect(e);
-					else
-						++ei;
-				}
-			}
-
-			{
-				unsigned ni = 0;
-				while(ni < scene.nodeCount()) {
-					node_editor::Node& n = scene.node(ni);
-					if(n.isSelected())
-						scene.removeNode(n);
-					else
-						++ni;
-				}
-			}
-		}
-
+	QAction* deleteAction = new QAction("Delete selected items", g1);
+	deleteAction->setShortcut(QKeySequence::Delete);
+	g1->addAction(deleteAction);
+	node_editor::qt_bind(deleteAction, SIGNAL(triggered()), [&]() {
+		g1->deleteSelected();
 	});
 
 	///
