@@ -45,7 +45,13 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph) {
 		assert(n2 != m_nodes.right.end());
 
 		// and connect them in the graph as well
-		n1->second->port(p1.index()).connect(n2->second->port(p2.index()));
+		try {
+			n1->second->port(p1.index()).connect(n2->second->port(p2.index()));
+		}
+		catch(std::runtime_error& err) {
+			// something went wrong during connecting, undo it
+			m_graphWidget->scene().disconnect(p1, p2);
+		}
 	});
 
 	m_graphWidget->scene().setNodeMoveCallback([&](node_editor::Node& node) {
