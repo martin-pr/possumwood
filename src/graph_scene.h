@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <set>
 
 #include <QGraphicsScene>
 
@@ -13,6 +14,8 @@ class ConnectedEdge;
 class Node;
 
 class GraphScene : public QGraphicsScene {
+	Q_OBJECT
+
 	public:
 		GraphScene(QGraphicsView* parent);
 		virtual ~GraphScene();
@@ -43,10 +46,19 @@ class GraphScene : public QGraphicsScene {
 
 		void setNodeMoveCallback(std::function<void(Node&)> fn);
 
+		struct NodeRefComparator {
+			bool operator() (const std::reference_wrapper<Node>& r1, const std::reference_wrapper<Node>& r2);
+		};
+
+		void setNodeSelectionCallback(std::function<void(std::set<std::reference_wrapper<Node>, NodeRefComparator>)> fn);
+
 	protected:
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
 		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
 		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
+
+	private slots:
+		void onSelectionChanged();
 
 	private:
 		void remove(Node* n);
@@ -63,6 +75,7 @@ class GraphScene : public QGraphicsScene {
 
 		std::function<void(Port&, Port&)> m_connectionCallback;
 		std::function<void(Node&)> m_nodeMoveCallback;
+		std::function<void(std::set<std::reference_wrapper<Node>, NodeRefComparator>)> m_nodeSelectionCallback;
 
 		friend class Edge;
 		friend class Node;

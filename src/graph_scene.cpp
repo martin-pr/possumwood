@@ -15,6 +15,8 @@ GraphScene::GraphScene(QGraphicsView* parent) : QGraphicsScene(parent) {
 	m_editedEdge = new Edge(QPointF(0, 0), QPointF(0, 0));
 	m_editedEdge->setVisible(false);
 	addItem(m_editedEdge);
+
+	QObject::connect(this, SIGNAL(selectionChanged()), this, SLOT(onSelectionChanged()));
 }
 
 GraphScene::~GraphScene() {
@@ -244,6 +246,35 @@ void GraphScene::setMouseConnectionCallback(std::function<void(Port&, Port&)> fn
 
 void GraphScene::setNodeMoveCallback(std::function<void(Node&)> fn) {
 	m_nodeMoveCallback = fn;
+}
+
+void GraphScene::setNodeSelectionCallback(std::function<void(std::set<std::reference_wrapper<Node>, NodeRefComparator>)> fn) {
+	m_nodeSelectionCallback = fn;
+}
+
+void GraphScene::onSelectionChanged() {
+	if(m_nodeSelectionCallback) {
+		std::set<std::reference_wrapper<Node>, NodeRefComparator> selectionSet;
+
+		QList<QGraphicsItem *> selection = selectedItems();
+		for(auto& i : selection) {
+			Node* node = dynamic_cast<Node*>(i);
+			if(node)
+				selectionSet.insert(std::ref(*node));
+		}
+
+		if(m_nodeSelectionCallback)
+			m_nodeSelectionCallback(selectionSet);
+	}
+}
+
+bool GraphScene::NodeRefComparator::operator() (const std::reference_wrapper<Node>& r1, const std::reference_wrapper<Node>& r2) {
+	// sort by name first
+	if(r1.get().name() != r2.get().name())
+		return r1.get().name() < r2.get().name();
+
+	// if names are the same, use node pointers
+	return &(r1.get()) < &(r2.get());
 }
 
 }
