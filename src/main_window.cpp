@@ -2,6 +2,7 @@
 
 #include <QHBoxLayout>
 #include <QAction>
+#include <QHeaderView>
 
 #include <bind.h>
 #include <datablock.inl>
@@ -84,40 +85,56 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 		add.port(2).connect(mult.port(0));
 	}
 
-	// create the main widget, and two graph views on the scene
+	// create the main widget, and the main window content
 	QWidget* main = new QWidget();
 	setCentralWidget(main);
 
 	QHBoxLayout* layout = new QHBoxLayout(main);
 	layout->setContentsMargins(0,0,0,0);
 
-	Adaptor* g1 = new Adaptor(&m_graph);
-	layout->addWidget(g1);
+	m_adaptor = new Adaptor(&m_graph);
+	layout->addWidget(m_adaptor, 1);
 
-	Adaptor* g2 = new Adaptor(&m_graph);
-	layout->addWidget(g2);
+	m_properties = new QTreeWidget();
+	m_properties->header()->hide();
+	m_properties->setRootIsDecorated(false);
+	layout->addWidget(m_properties);
+
+	// connect the selection signal
+	m_adaptor->scene().setNodeSelectionCallback(
+		[&](std::set<std::reference_wrapper<node_editor::Node>, node_editor::GraphScene::NodeRefComparator> selection) {
+			m_properties->clear();
+
+			for(auto& node : selection) {
+				QTreeWidgetItem* item = new QTreeWidgetItem();
+				item->setText(0, node.get().name());
+
+				m_properties->addTopLevelItem(item);
+			}
+		}
+	);
 
 	// create the context click menu
-	g1->setContextMenuPolicy(Qt::ActionsContextMenu);
+	m_adaptor->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-	g1->addAction(makeAction("Add addition node", [this, g1]() {
-		QPointF pos = g1->mapToScene(g1->mapFromGlobal(QCursor::pos()));
+	m_adaptor->addAction(makeAction("Add addition node", [this]() {
+		QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
 		m_graph.nodes().add(additionNode(), "add_" + std::to_string(m_nodeCounter++), NodeData{pos});
-	}, g1));
+	}, m_adaptor));
 
-	g1->addAction(makeAction("Add multiplication node", [this, g1]() {
-		QPointF pos = g1->mapToScene(g1->mapFromGlobal(QCursor::pos()));
+	m_adaptor->addAction(makeAction("Add multiplication node", [this]() {
+		QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
 		m_graph.nodes().add(multiplicationNode(), "mult_" + std::to_string(m_nodeCounter++), NodeData{pos});
-	}, g1));
+	}, m_adaptor));
 
-	QAction* separator = new QAction(g1);
+	QAction* separator = new QAction(m_adaptor);
 	separator->setSeparator(true);
-	g1->addAction(separator);
+	m_adaptor->addAction(separator);
 
-	QAction* deleteAction = new QAction("Delete selected items", g1);
+	QAction* deleteAction = new QAction("Delete selected items", m_adaptor);
 	deleteAction->setShortcut(QKeySequence::Delete);
-	g1->addAction(deleteAction);
-	node_editor::qt_bind(deleteAction, SIGNAL(triggered()), [this, g1]() {
-		g1->deleteSelected();
+	m_adaptor->addAction(deleteAction);
+	node_editor::qt_bind(deleteAction, SIGNAL(triggered()), [this]() {
+		m_adaptor->deleteSelected();
 	});
 }

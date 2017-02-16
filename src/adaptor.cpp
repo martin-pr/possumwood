@@ -178,3 +178,11 @@ void Adaptor::deleteSelected() {
 			++ni;
 	}
 }
+
+node_editor::GraphScene& Adaptor::scene() {
+	return m_graphWidget->scene();
+}
+
+const node_editor::GraphScene& Adaptor::scene() const {
+	return m_graphWidget->scene();
+}

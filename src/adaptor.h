@@ -22,6 +22,10 @@ class Adaptor : public QWidget {
 		/// maps a position in widget space to scene space
 		QPointF mapToScene(QPoint pos) const;
 
+		/// returns the scene instance
+		node_editor::GraphScene& scene();
+		const node_editor::GraphScene& scene() const;
+
 		/// deletes all selected items in the associated graph
 		void deleteSelected();
 
