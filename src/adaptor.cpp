@@ -179,6 +179,29 @@ void Adaptor::deleteSelected() {
 	}
 }
 
+std::vector<std::reference_wrapper<dependency_graph::Node>> Adaptor::selectedNodes() {
+	std::vector<std::reference_wrapper<dependency_graph::Node>> result;
+
+	for(unsigned ni=0; ni<m_graphWidget->scene().nodeCount(); ++ni) {
+		node_editor::Node& n = m_graphWidget->scene().node(ni);
+		if(n.isSelected()) {
+			auto node = m_nodes.right.find(&n);
+			assert(node != m_nodes.right.end());
+
+			auto nodeRef = std::find_if(m_graph->nodes().begin(), m_graph->nodes().end(),
+				[&](const dependency_graph::Node& n) {
+					return &n == node->second;
+				}
+			);
+			assert(nodeRef != m_graph->nodes().end());
+
+			result.push_back(*nodeRef);
+		}
+	}
+
+	return result;
+}
+
 node_editor::GraphScene& Adaptor::scene() {
 	return m_graphWidget->scene();
 }

@@ -29,6 +29,9 @@ class Adaptor : public QWidget {
 		/// deletes all selected items in the associated graph
 		void deleteSelected();
 
+		/// returns a list of all selected nodes
+		std::vector<std::reference_wrapper<dependency_graph::Node>> selectedNodes();
+
 	protected:
 	private:
 		void onAddNode(dependency_graph::Node& node);

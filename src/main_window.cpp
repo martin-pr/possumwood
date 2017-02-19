@@ -95,22 +95,13 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 	m_adaptor = new Adaptor(&m_graph);
 	layout->addWidget(m_adaptor, 1);
 
-	m_properties = new QTreeWidget();
-	m_properties->header()->hide();
-	m_properties->setRootIsDecorated(false);
+	m_properties = new Properties();
 	layout->addWidget(m_properties);
 
 	// connect the selection signal
 	m_adaptor->scene().setNodeSelectionCallback(
 		[&](std::set<std::reference_wrapper<node_editor::Node>, node_editor::GraphScene::NodeRefComparator> selection) {
-			m_properties->clear();
-
-			for(auto& node : selection) {
-				QTreeWidgetItem* item = new QTreeWidgetItem();
-				item->setText(0, node.get().name());
-
-				m_properties->addTopLevelItem(item);
-			}
+			m_properties->show(m_adaptor->selectedNodes());
 		}
 	);
 
