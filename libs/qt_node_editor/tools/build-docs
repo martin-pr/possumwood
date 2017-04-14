@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# exit with nonzero exit code if anything fails
+set -x -v
+
+# exit code on error
+trap 'echo "A command failed, exiting with error";exit 1' ERR
+
+# empty the target directory
+rm -rf docs/doxygen/*
+rm -f docs/doxygen.log
+
+# and run doxygen
+mkdir -p docs/doxygen
+doxygen $DOXYFILE 2>&1 | tee docs/doxygen.log
+
+# if doxygen succeeded
+if [ -d "docs/doxygen" ] && [ -f "docs/doxygen/index.html" ]; then
+
+    # create a clean directory for Git to work in
+    mkdir docs_tmp
+    cd docs_tmp
+
+    # get the current gh-pages branch
+    git clone -b gh-pages https://git@$GH_REPO_REF
+    cd $GH_REPO_NAME
+
+    # setup git
+    git config --global push.default simple
+    git config user.name "Travis CI"
+    git config user.email "travis@travis-ci.org"
+
+    # empty the content of the current repo
+    rm -rf *
+
+    # copy everything here
+    cp -r ../../docs/doxygen/* ./
+
+    # add and commit to Git
+    git add --all
+    git commit -m "Deploy code docs to GitHub Pages Travis build: ${TRAVIS_BUILD_NUMBER}" -m "Commit: ${TRAVIS_COMMIT}"
+
+    # force push to the remote gh-pages branch.
+
+    # command echo off
+    set +x
+
+    # the ouput is redirected to /dev/null to hide any sensitive credential data
+    # that might otherwise be exposed.
+    git push --force "https://${GH_REPO_TOKEN}@${GH_REPO_REF}" > /dev/null 2>&1
+
+else
+    # fail if doxygen didn't produce any input
+    exit 1
+fi
