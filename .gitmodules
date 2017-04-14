@@ -1,6 +1,0 @@
-[submodule "libs/dependency_graph"]
-	path = libs/dependency_graph
-	url = git@github.com:martin-pr/dependency_graph.git
-[submodule "libs/qt_node_editor"]
-	path = libs/qt_node_editor
-	url = git@github.com:martin-pr/qt_node_editor.git
