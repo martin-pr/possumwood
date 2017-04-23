@@ -58,6 +58,12 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 		for(size_t pi = 0; pi < n.portCount(); ++pi)
 			BOOST_CHECK(n.port(pi).isDirty());
 
+	// check we can get a value from input ports, if they're not connected
+	BOOST_REQUIRE_EQUAL(add1.port(0).get<float>(), 0.0f);
+	BOOST_REQUIRE_EQUAL(add1.port(1).get<float>(), 0.0f);
+	BOOST_REQUIRE_EQUAL(mult1.port(0).get<float>(), 0.0f);
+	BOOST_REQUIRE_EQUAL(mult2.port(0).get<float>(), 0.0f);
+
 	// set input values, which makes them not dirty
 	BOOST_CHECK_NO_THROW(add1.port(0).set(2.0f));
 	BOOST_CHECK_NO_THROW(add1.port(1).set(3.0f));

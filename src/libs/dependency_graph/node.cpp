@@ -99,7 +99,7 @@ Node::Node(const std::string& name, const Metadata* def, Graph* parent) : m_name
 		auto& meta = m_meta->attr(a);
 		assert(meta.offset() == a);
 
-		m_ports.push_back(std::move(Port(meta.name(), meta.offset(), this)));
+		m_ports.push_back(Port(meta.name(), meta.offset(), this));
 	}
 }
 
@@ -144,17 +144,17 @@ void Node::markAsDirty(size_t index) {
 	}
 }
 
-bool Node::inputIsNotConnected(const Port& p) const {
+bool Node::inputIsConnected(const Port& p) const {
 	assert(p.category() == Attr::kInput);
 
 	// return true if there are no connections leading to this input port
-	return !m_parent->connections().connectedFrom(p);
+	return m_parent->connections().connectedFrom(p);
 }
 
 void Node::computeInput(size_t index) {
 	assert(port(index).category() == Attr::kInput && "computeInput can be only called on inputs");
 	assert(port(index).isDirty() && "input should be dirty for recomputation");
-	assert(not inputIsNotConnected(port(index)) && "input has to be connected to be computed");
+	assert(inputIsConnected(port(index)) && "input has to be connected to be computed");
 
 	// pull on the single connected output if needed
 	boost::optional<Node::Port&> out = m_parent->connections().connectedFrom(port(index));
