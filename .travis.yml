@@ -1,6 +1,6 @@
-# Use new trusty images, should yield newer compilers and packages
+# Basic parameters of the build
 sudo: required
-dist: precise
+dist: trusty
 language: cpp
 compiler: gcc
 
@@ -12,9 +12,9 @@ branches:
 # Environment variables
 env:
   global:
-    - GH_REPO_NAME: qt_node_editor
+    - GH_REPO_NAME: possumwood
     - DOXYFILE: $TRAVIS_BUILD_DIR/Doxyfile
-    - GH_REPO_REF: github.com/martin-pr/qt_node_editor.git
+    - GH_REPO_REF: github.com/martin-pr/possumwood.git
     - COMPILER: g++-5
 
 # Install dependencies
@@ -46,6 +46,7 @@ script:
   - export CC=gcc-5
   - cd $TRAVIS_BUILD_DIR
   - ./tools/build-debug
+  - ./tools/run-tests
 
 # Generate and deploy documentation
 after_success:

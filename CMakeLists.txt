@@ -46,23 +46,15 @@ endif (OPENEXR_INCLUDE_DIR AND OPENEXR_HALF_LIBRARY AND OPENEXR_IEX_LIBRARY)
 include_directories(${OPENEXR_INCLUDE_DIR})
 set(LIBS ${LIBS} ${OPENEXR_HALF_LIBRARY} ${OPENEXR_IEX_LIBRARY})
 
-# Qt fun
-SET(QT_USE_QTOPENGL TRUE)
-FIND_PACKAGE(Qt4 REQUIRED)
-include(${QT_USE_FILE})
-include_directories(${QT_INCLUDE_DIR})
-set(LIBS ${LIBS} ${QT_LIBRARIES})
-message(STATUS ${QT_LIBRARIES})
-
 # looking for OpenGL libraries
-find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIR})
-set(LIBS ${LIBS} ${OPENGL_LIBRARY})
+#find_package(OpenGL REQUIRED)
+#include_directories(${OPENGL_INCLUDE_DIR})
+#set(LIBS ${LIBS} ${OPENGL_LIBRARY})
 
 # looking for glut
-find_package(GLUT REQUIRED)
-include_directories(${GLUT_INCLUDE_DIR})
-set(LIBS ${LIBS} ${GLUT_LIBRARY})
+#find_package(GLUT REQUIRED)
+#include_directories(${GLUT_INCLUDE_DIR})
+#set(LIBS ${LIBS} ${GLUT_LIBRARY})
 
 # blindly adding tbb
 # set(LIBS ${LIBS} tbb)
@@ -70,10 +62,5 @@ set(LIBS ${LIBS} ${GLUT_LIBRARY})
 ###########################################################
 # BUILD
 
-# libraries (git submodules)
-add_subdirectory(libs/dependency_graph/src)
-add_subdirectory(libs/qt_node_editor/src)
-
-# the application
-include_directories(libs/dependency_graph/src libs/qt_node_editor/src)
+include_directories(src/libs/dependency_graph src/libs/qt_node_editor)
 add_subdirectory(src)
