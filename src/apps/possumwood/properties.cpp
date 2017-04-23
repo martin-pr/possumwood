@@ -2,6 +2,8 @@
 
 #include <QHeaderView>
 
+#include <node.inl>
+
 Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 	setRootIsDecorated(false);
 
@@ -23,10 +25,12 @@ void Properties::show(const std::vector<std::reference_wrapper<dependency_graph:
 
 		// add each port as a subitem
 		for(unsigned pi = 0; pi != node.get().portCount(); ++pi) {
-			const auto& port = node.get().port(pi);
+			auto& port = node.get().port(pi);
 
 			QTreeWidgetItem* portItem = new QTreeWidgetItem();
 			portItem->setText(0, port.name().c_str());
+			portItem->setText(1, std::to_string(port.get<float>()).c_str());
+
 
 			nodeItem->addChild(portItem);
 		}
