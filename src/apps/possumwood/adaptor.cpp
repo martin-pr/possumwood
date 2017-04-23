@@ -196,6 +196,9 @@ std::vector<std::reference_wrapper<dependency_graph::Node>> Adaptor::selectedNod
 					return &n == node->second;
 				}
 			);
+
+			// deselection happens during the Qt object destruction -> the original
+			//   node might not exist
 			if(nodeRef != m_graph->nodes().end())
 				result.push_back(*nodeRef);
 		}
