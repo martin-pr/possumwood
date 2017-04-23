@@ -14,11 +14,23 @@ Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 void Properties::show(const std::vector<std::reference_wrapper<dependency_graph::Node>>& selection) {
 	clear();
 
-	for(auto& node : selection) {
+	for(const auto& node : selection) {
 		// create a top level item for each node
 		QTreeWidgetItem* nodeItem = new QTreeWidgetItem();
 		nodeItem->setText(0, node.get().name().c_str());
 
 		addTopLevelItem(nodeItem);
+
+		// add each port as a subitem
+		for(unsigned pi = 0; pi != node.get().portCount(); ++pi) {
+			const auto& port = node.get().port(pi);
+
+			QTreeWidgetItem* portItem = new QTreeWidgetItem();
+			portItem->setText(0, port.name().c_str());
+
+			nodeItem->addChild(portItem);
+		}
 	}
+
+	expandAll();
 }
