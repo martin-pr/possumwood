@@ -5,7 +5,7 @@
 #include <node.inl>
 
 Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
-	setRootIsDecorated(false);
+	// setRootIsDecorated(false);
 
 	headerItem()->setText(0, "item");
 	headerItem()->setText(1, "value");
@@ -15,6 +15,7 @@ Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 
 void Properties::show(const std::vector<std::reference_wrapper<dependency_graph::Node>>& selection) {
 	clear();
+	m_properties.clear();
 
 	for(const auto& node : selection) {
 		// create a top level item for each node
@@ -29,10 +30,12 @@ void Properties::show(const std::vector<std::reference_wrapper<dependency_graph:
 
 			QTreeWidgetItem* portItem = new QTreeWidgetItem();
 			portItem->setText(0, port.name().c_str());
-			portItem->setText(1, std::to_string(port.get<float>()).c_str());
-
 
 			nodeItem->addChild(portItem);
+
+			// portItem->setText(1, std::to_string(port.get<float>()).c_str());
+			m_properties.push_back(properties::factories::singleton().create<float>());
+			setItemWidget(portItem, 1, m_properties.back()->widget());
 		}
 	}
 

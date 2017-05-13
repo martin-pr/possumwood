@@ -3,6 +3,7 @@
 #include <QtWidgets/QTreeWidget>
 
 #include <node.h>
+#include <properties_ui/property.h>
 
 /// A widget displaying properties of selected nodes
 class Properties : public QTreeWidget {
@@ -15,4 +16,5 @@ class Properties : public QTreeWidget {
 
 	protected:
 	private:
+		std::vector<std::unique_ptr<properties::property_base>> m_properties;
 };
