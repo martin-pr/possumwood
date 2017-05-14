@@ -6,11 +6,11 @@
 
 #include <GL/freeglut.h>
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QMenu>
-#include <QAction>
-#include <QKeyEvent>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QAction>
+#include <QtGui/QKeyEvent>
 
 #include <ImathVec.h>
 

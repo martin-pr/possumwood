@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QMainWindow>
-#include <QTreeWidget>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QTreeWidget>
 
 #include <graph.h>
 

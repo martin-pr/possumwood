@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QTreeWidget>
+#include <QtWidgets/QTreeWidget>
 
 #include <node.h>
 

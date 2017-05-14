@@ -1,22 +1,16 @@
 include_directories(./)
 
-# Qt fun
-SET(QT_USE_QTOPENGL TRUE)
-FIND_PACKAGE(Qt4 REQUIRED)
-include(${QT_USE_FILE})
-include_directories(${QT_INCLUDE_DIR})
-set(LIBS ${LIBS} ${QT_LIBRARIES})
-message(STATUS ${QT_LIBRARIES})
-
 # Building the library
 file(GLOB headers_lib *.h)
 file(GLOB sources_lib *.cpp)
 
-QT4_WRAP_CPP(headers_lib_moc ${headers_lib})
+# Qt fun
+FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Gui Widgets OpenGL)
+set(LIBS ${LIBS} Qt5::Widgets)
 
-include(${QT_USE_FILE})
+QT5_WRAP_CPP(headers_lib_moc ${headers_lib})
 add_definitions(${QT_DEFINITIONS})
-
 add_library(nodeeditor SHARED ${sources_lib} ${headers_lib_moc})
 
+# Final linking
 target_link_libraries(nodeeditor ${LIBS})

@@ -3,7 +3,6 @@
 #include <cassert>
 
 #include <QHBoxLayout>
-#include <QGLWidget>
 #include <QResizeEvent>
 
 #include "connected_edge.h"
