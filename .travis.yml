@@ -32,7 +32,9 @@ addons:
       - gcc-5
       - g++-5
       - freeglut3-dev
-      - libqt4-opengl-dev
+      - qtbase5-dev
+      - qt5-default
+      - libqt5opengl5-dev
       - libxmu-dev
       - libxi-dev
       - cmake
