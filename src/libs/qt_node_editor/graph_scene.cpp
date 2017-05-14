@@ -167,7 +167,7 @@ QPointF GraphScene::findConnectionPoint(QPointF pos, Port::Type portType) const 
 }
 
 void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
-	Port* port = findPort(itemAt(mouseEvent->scenePos()));
+	Port* port = findPort(itemAt(mouseEvent->scenePos(), QTransform()));
 	if(port) {
 		Port::Type portType;
 		if((port->portType() == Port::kInput) || (port->portType() == Port::kOutput))

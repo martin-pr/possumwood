@@ -193,9 +193,8 @@ std::vector<std::reference_wrapper<dependency_graph::Node>> Adaptor::selectedNod
 					return &n == node->second;
 				}
 			);
-			assert(nodeRef != m_graph->nodes().end());
-
-			result.push_back(*nodeRef);
+			if(nodeRef != m_graph->nodes().end())
+				result.push_back(*nodeRef);
 		}
 	}
 

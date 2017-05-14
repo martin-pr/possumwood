@@ -1,17 +1,14 @@
+# Find Qt
 SET(QT_USE_QTOPENGL TRUE)
-FIND_PACKAGE(Qt4 REQUIRED)
-include(${QT_USE_FILE})
+FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 include_directories(${QT_INCLUDE_DIR})
-set(LIBS ${LIBS} ${QT_LIBRARIES})
-message(STATUS ${QT_LIBRARIES})
+set(LIBS ${LIBS} Qt5::Widgets)
 
-
-include_directories(./)
-
-file(GLOB sources_sandbox *.cpp)
-
-include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
+
+# Build
+file(GLOB sources_sandbox *.cpp)
+include_directories(./)
 
 add_executable(nodeeditor_sandbox ${sources_sandbox})
 
