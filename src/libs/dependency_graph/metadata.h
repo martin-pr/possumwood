@@ -19,6 +19,7 @@ class Datablock;
 class Attr;
 
 class Node;
+class Port;
 
 class Metadata : public boost::noncopyable {
 	public:
@@ -80,6 +81,7 @@ class Metadata : public boost::noncopyable {
 		boost::bimap<boost::bimaps::multiset_of<unsigned>, boost::bimaps::multiset_of<unsigned>> m_influences;
 
 		friend class Node;
+		friend class Port;
 };
 
 }

@@ -37,8 +37,8 @@ class Adaptor : public QWidget {
 		void onAddNode(dependency_graph::Node& node);
 		void onRemoveNode(dependency_graph::Node& node);
 
-		void onConnect(dependency_graph::Node::Port& p1, dependency_graph::Node::Port& p2);
-		void onDisconnect(dependency_graph::Node::Port& p1, dependency_graph::Node::Port& p2);
+		void onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
+		void onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 
 		void onBlindDataChanged(dependency_graph::Node& node);
 

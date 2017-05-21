@@ -3,6 +3,7 @@
 #include <QHeaderView>
 
 #include <node.inl>
+#include <port.inl>
 
 Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 	// setRootIsDecorated(false);
@@ -44,7 +45,7 @@ void Properties::show(const std::vector<std::reference_wrapper<dependency_graph:
 
 ////////
 
-Properties::Property::Property(dependency_graph::Node::Port& port) {
+Properties::Property::Property(dependency_graph::Port& port) {
 	// create the widget
 	ui = properties::factories::singleton().create(port.type());
 	if(ui) {

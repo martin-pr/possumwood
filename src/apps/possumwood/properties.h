@@ -19,7 +19,7 @@ class Properties : public QTreeWidget {
 	protected:
 	private:
 		struct Property : public boost::noncopyable {
-			Property(dependency_graph::Node::Port& port);
+			Property(dependency_graph::Port& port);
 			~Property();
 
 			Property(Property&&);

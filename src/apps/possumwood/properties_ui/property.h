@@ -7,6 +7,7 @@
 
 #include "factory.inl"
 #include "node.inl"
+#include "port.inl"
 
 namespace properties {
 
@@ -30,9 +31,9 @@ class property_base : public boost::noncopyable {
 		boost::signals2::connection valueCallback(std::function<void()> fn);
 
 		/// transfer the typed value to a port
-		virtual void valueToPort(dependency_graph::Node::Port& port) const = 0;
+		virtual void valueToPort(dependency_graph::Port& port) const = 0;
 		/// transfer the typed value from a port
-		virtual void valueFromPort(dependency_graph::Node::Port& port) = 0;
+		virtual void valueFromPort(dependency_graph::Port& port) = 0;
 
 	protected:
 		/// can be reimplemented to change the UI's properties based on flag changes
@@ -63,12 +64,12 @@ class property : public property_base {
 		virtual void set(const T& value) = 0;
 
 	private:
-		virtual void valueToPort(dependency_graph::Node::Port& port) const override {
+		virtual void valueToPort(dependency_graph::Port& port) const override {
 			// transfer the templated value
 			port.set(get());
 		}
 
-		void valueFromPort(dependency_graph::Node::Port& port) override {
+		void valueFromPort(dependency_graph::Port& port) override {
 			// transfer the templated value
 			set(port.get<T>());
 		}
