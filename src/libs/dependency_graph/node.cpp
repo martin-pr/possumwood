@@ -52,6 +52,7 @@ void Node::Port::connect(Port& p) {
 
 		std::set<Port*> addedPorts;
 		addedPorts.insert(&p);
+		addedPorts.insert(this);
 
 		while(!addedPorts.empty()) {
 			// collect all connected ports
