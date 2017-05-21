@@ -5,16 +5,6 @@
 namespace properties {
 
 template<typename T>
-std::unique_ptr<property_base> factories::create() {
-	auto it = m_factories.find(typeid(T).name());
-	assert(it != m_factories.end());
-
-	return it->second->create();
-}
-
-////////
-
-template<typename T>
 std::string factory_typed<T>::type() const {
 	return typeid(typename T::result_type).name();
 }

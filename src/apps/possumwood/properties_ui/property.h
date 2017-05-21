@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/noncopyable.hpp>
+#include <boost/signals2.hpp>
 
 #include <QWidget>
 
@@ -24,11 +25,18 @@ class property_base : public boost::noncopyable {
 		unsigned flags() const;
 		void setFlags(unsigned flags);
 
-	protected:
+		/// called when the UI value is changed by the user
+		boost::signals2::connection valueCallback(std::function<void()> fn);
 		virtual void onFlagsChanged(unsigned flags);
+
+	protected:
+
+		/// a callback to be connected to widget's "onChange" signal
+		void callValueChangedCallbacks();
 
 	private:
 		unsigned m_flags;
+		boost::signals2::signal<void()> m_valueChanged;
 };
 
 template<typename T, typename DERIVED>

@@ -19,4 +19,12 @@ void property_base::onFlagsChanged(unsigned flags) {
 	// do nothing in the base class
 }
 
+boost::signals2::connection property_base::valueCallback(std::function<void()> fn) {
+	return m_valueChanged.connect(fn);
+}
+
+void property_base::callValueChangedCallbacks() {
+	m_valueChanged();
+}
+
 }

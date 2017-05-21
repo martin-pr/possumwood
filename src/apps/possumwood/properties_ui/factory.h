@@ -20,8 +20,7 @@ class factories : public boost::noncopyable {
 	public:
 		static factories& singleton();
 
-		template<typename T>
-		std::unique_ptr<property_base> create();
+		std::unique_ptr<property_base> create(const std::string& type);
 
 	private:
 		factories();

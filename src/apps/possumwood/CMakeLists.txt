@@ -1,6 +1,6 @@
 # Find the source files
 file(GLOB headers *.h)
-file(GLOB sources *.cpp)
+file(GLOB_RECURSE sources *.cpp)
 
 # Find Qt
 SET(QT_USE_QTOPENGL TRUE)
