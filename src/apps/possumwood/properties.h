@@ -2,6 +2,8 @@
 
 #include <QtWidgets/QTreeWidget>
 
+#include <boost/noncopyable.hpp>
+
 #include <node.h>
 #include <properties_ui/property.h>
 
@@ -16,5 +18,15 @@ class Properties : public QTreeWidget {
 
 	protected:
 	private:
-		std::vector<std::unique_ptr<properties::property_base>> m_properties;
+		struct Property : public boost::noncopyable {
+			Property(dependency_graph::Node::Port& port);
+			~Property();
+
+			Property(Property&&);
+
+			std::unique_ptr<properties::property_base> ui;
+			boost::signals2::connection graphValueConnection, uiValueConnection, flagsConnection;
+		};
+
+		std::vector<Property> m_properties;
 };

@@ -6,6 +6,7 @@
 #include <QWidget>
 
 #include "factory.inl"
+#include "node.inl"
 
 namespace properties {
 
@@ -27,9 +28,15 @@ class property_base : public boost::noncopyable {
 
 		/// called when the UI value is changed by the user
 		boost::signals2::connection valueCallback(std::function<void()> fn);
-		virtual void onFlagsChanged(unsigned flags);
+
+		/// transfer the typed value to a port
+		virtual void valueToPort(dependency_graph::Node::Port& port) const = 0;
+		/// transfer the typed value from a port
+		virtual void valueFromPort(dependency_graph::Node::Port& port) = 0;
 
 	protected:
+		/// can be reimplemented to change the UI's properties based on flag changes
+		virtual void onFlagsChanged(unsigned flags);
 
 		/// a callback to be connected to widget's "onChange" signal
 		void callValueChangedCallbacks();
@@ -56,6 +63,16 @@ class property : public property_base {
 		virtual void set(const T& value) = 0;
 
 	private:
+		virtual void valueToPort(dependency_graph::Node::Port& port) const override {
+			// transfer the templated value
+			port.set(get());
+		}
+
+		void valueFromPort(dependency_graph::Node::Port& port) override {
+			// transfer the templated value
+			set(port.get<T>());
+		}
+
 		static factory_typed<DERIVED> s_pf;
 };
 
