@@ -44,7 +44,11 @@ void Node::Port::setDirty(bool d) {
 }
 
 void Node::Port::connect(Port& p) {
-	p.m_parent->m_parent->connections().add(*this, p);
+	// add the connection
+ 	p.m_parent->m_parent->connections().add(*this, p);
+	// and mark the "connected to" as dirty - will most likely need recomputation
+	// TODO: compare values, before marking it dirty wholesale?
+	node().markAsDirty(p.index());
 }
 
 void Node::Port::disconnect(Port& p) {
@@ -139,9 +143,16 @@ void Node::computeOutput(size_t index) {
 	std::vector<std::reference_wrapper<const Attr>> inputs = m_meta->influencedBy(index);
 
 	// pull on all inputs
-	for(const Attr& i : inputs)
-		if(port(i.offset()).isDirty())
-			computeInput(i.offset());
+	for(const Attr& i : inputs) {
+		if(port(i.offset()).isDirty()) {
+			if(!inputIsNotConnected(port(i.offset())))
+				computeInput(i.offset());
+			else
+				port(i.offset()).setDirty(false);
+		}
+
+		assert(!port(i.offset()).isDirty());
+	}
 
 	// now run compute, as all inputs are fine
 	//  -> this will change the output value (if the compute method works)
