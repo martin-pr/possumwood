@@ -33,6 +33,9 @@ const dependency_graph::Metadata& additionNode() {
 		s_meta.addAttribute(additionInput2, "input_2");
 		s_meta.addAttribute(additionOutput, "output");
 
+		s_meta.addInfluence(additionInput1, additionOutput);
+		s_meta.addInfluence(additionInput2, additionOutput);
+
 		std::function<void(dependency_graph::Datablock&)> additionCompute = [&](dependency_graph::Datablock & data) {
 			const float a = data.get(additionInput1);
 			const float b = data.get(additionInput2);
