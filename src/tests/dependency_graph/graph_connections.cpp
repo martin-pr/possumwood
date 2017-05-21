@@ -131,6 +131,11 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	BOOST_CHECK_THROW(add1.port(2).connect(mult1.port(2)), std::runtime_error);
 	BOOST_CHECK_THROW(add1.port(1).connect(mult1.port(2)), std::runtime_error);
 
+	// try to connect a single node's output to its input
+	BOOST_CHECK_THROW(add1.port(2).connect(add1.port(1)), std::runtime_error);
+	// and try to connect the end of the chain to its beginning
+	BOOST_CHECK_THROW(mult2.port(2).connect(add1.port(1)), std::runtime_error);
+
 	BOOST_CHECK_EQUAL(s_connectionCount, 4u);
 
 	// test the final computation result (will pull recursively on everything)

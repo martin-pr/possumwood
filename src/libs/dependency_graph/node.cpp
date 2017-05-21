@@ -44,6 +44,42 @@ void Node::Port::setDirty(bool d) {
 }
 
 void Node::Port::connect(Port& p) {
+	// test the recursivity
+	{
+		std::set<Port*> usedPorts;
+		usedPorts.insert(&p);
+		usedPorts.insert(this);
+
+		std::set<Port*> addedPorts;
+		addedPorts.insert(&p);
+
+		while(!addedPorts.empty()) {
+			// collect all connected ports
+			std::set<Port*> newAddedPorts;
+			for(auto& current : addedPorts) {
+				if(current->category() == Attr::kInput)
+					for(const Attr& i : current->node().metadata().influences(current->m_id))
+						newAddedPorts.insert(&current->node().port(i.offset()));
+				else {
+					for(Port& i : current->node().graph().connections().connectedTo(*current))
+						newAddedPorts.insert(&i);
+				}
+			}
+
+			// and insert all, or throw an exception if recursion is detected
+			for(auto a : newAddedPorts) {
+				const bool insertedNew = usedPorts.insert(a).second;
+				if(!insertedNew) {
+					std::stringstream msg;
+					msg << "a connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() << " would cause a cyclical dependency";
+
+					throw(std::runtime_error(msg.str()));
+				}
+			}
+			addedPorts = newAddedPorts;
+		}
+	}
+
 	// add the connection
  	p.m_parent->m_parent->connections().add(*this, p);
 	// and mark the "connected to" as dirty - will most likely need recomputation
@@ -161,6 +197,16 @@ void Node::computeOutput(size_t index) {
 	// and mark as not dirty
 	port(index).setDirty(false);
 	assert(not port(index).isDirty());
+}
+
+const Graph& Node::graph() const {
+	assert(m_parent);
+	return *m_parent;
+}
+
+Graph& Node::graph() {
+	assert(m_parent);
+	return *m_parent;
 }
 
 }
