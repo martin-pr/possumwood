@@ -1,5 +1,7 @@
 #include "node.h"
 
+#include <cassert>
+
 #include "graph.h"
 
 namespace dependency_graph {
@@ -25,6 +27,10 @@ const unsigned Node::Port::index() const {
 	return m_id;
 }
 
+const std::string Node::Port::type() const {
+	return m_parent->m_meta->attr(m_id).type().name();
+}
+
 bool Node::Port::isDirty() const {
 	return m_dirty;
 }
@@ -40,7 +46,13 @@ const Node& Node::Port::node() const {
 }
 
 void Node::Port::setDirty(bool d) {
-	m_dirty = d;
+	// change in dirtiness flag
+	if(m_dirty != d) {
+		m_dirty = d;
+
+		// call all flags change callbacks (intended to update UIs accordingly)
+		m_flagsCallbacks();
+	}
 }
 
 void Node::Port::connect(Port& p) {
@@ -86,11 +98,26 @@ void Node::Port::connect(Port& p) {
 	// and mark the "connected to" as dirty - will most likely need recomputation
 	// TODO: compare values, before marking it dirty wholesale?
 	node().markAsDirty(p.index());
+	// connect / disconnect - might change UI's appearance
+	m_flagsCallbacks();
+	p.m_flagsCallbacks();
 }
 
 void Node::Port::disconnect(Port& p) {
 	p.m_parent->m_parent->connections().remove(*this, p);
+	// connect / disconnect - might change UI's appearance
+	m_flagsCallbacks();
+	p.m_flagsCallbacks();
 }
+
+boost::signals2::connection Node::Port::valueCallback(const std::function<void()>& fn) {
+	return m_flagsCallbacks.connect(fn);
+}
+
+boost::signals2::connection Node::Port::flagsCallback(const std::function<void()>& fn) {
+	return m_flagsCallbacks.connect(fn);
+}
+
 
 /////////////
 
@@ -129,18 +156,20 @@ void Node::markAsDirty(size_t index) {
 	Node::Port& p = port(index);
 
 	// mark the port itself as dirty
-	p.setDirty(true);
+	if(!p.isDirty()) {
+		p.setDirty(true);
 
-	// recurse + handle each port type slightly differently
-	if(p.category() == Attr::kInput) {
-		// all outputs influenced by this input are marked dirty
-		for(const Attr& i : m_meta->influences(p.m_id))
-			markAsDirty(i.offset());
-	}
-	else {
-		// all inputs connected to this output are marked dirty
-		for(Port& o : m_parent->connections().connectedTo(port(index)))
-			o.node().markAsDirty(o.m_id);
+		// recurse + handle each port type slightly differently
+		if(p.category() == Attr::kInput) {
+			// all outputs influenced by this input are marked dirty
+			for(const Attr& i : m_meta->influences(p.m_id))
+				markAsDirty(i.offset());
+		}
+		else {
+			// all inputs connected to this output are marked dirty
+			for(Port& o : m_parent->connections().connectedTo(port(index)))
+				o.node().markAsDirty(o.m_id);
+		}
 	}
 }
 
@@ -167,6 +196,9 @@ void Node::computeInput(size_t index) {
 	m_data.data(index).assign(out->node().m_data.data(out->m_id));
 	assert(m_data.data(index).isEqual(out->node().m_data.data(out->m_id)));
 
+	// run the watcher callbacks
+	m_ports[index].m_valueCallbacks();
+
 	// and mark as not dirty
 	port(index).setDirty(false);
 	assert(not port(index).isDirty());
@@ -182,7 +214,7 @@ void Node::computeOutput(size_t index) {
 	// pull on all inputs
 	for(const Attr& i : inputs) {
 		if(port(i.offset()).isDirty()) {
-			if(!inputIsNotConnected(port(i.offset())))
+			if(inputIsConnected(port(i.offset())))
 				computeInput(i.offset());
 			else
 				port(i.offset()).setDirty(false);
@@ -195,9 +227,12 @@ void Node::computeOutput(size_t index) {
 	//  -> this will change the output value (if the compute method works)
 	m_meta->m_compute(m_data);
 
-	// and mark as not dirty
+	// mark as not dirty
 	port(index).setDirty(false);
 	assert(not port(index).isDirty());
+
+	// and run the watcher callbacks
+	m_ports[index].m_valueCallbacks();
 }
 
 const Graph& Node::graph() const {
