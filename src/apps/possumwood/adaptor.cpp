@@ -1,6 +1,7 @@
 #include "adaptor.h"
 
 #include <QHBoxLayout>
+#include <QMessageBox>
 
 #include "node.inl"
 
@@ -51,6 +52,8 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph) {
 		catch(std::runtime_error& err) {
 			// something went wrong during connecting, undo it
 			m_graphWidget->scene().disconnect(p1, p2);
+			// and make an error dialog with the problem
+			QMessageBox::critical(m_graphWidget, "Error connecting nodes", err.what());
 		}
 	});
 
