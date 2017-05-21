@@ -1,6 +1,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include "graph.h"
+#include "node.inl"
+#include "datablock.inl"
 #include "common.h"
 
 using namespace dependency_graph;
@@ -49,6 +51,23 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 
 	BOOST_CHECK_EQUAL(s_connectionCount, 0u);
 
+	// set some values of them, to test the evaluation results
+	BOOST_REQUIRE_NO_THROW(add1.port(0).set(1.0f));
+	BOOST_REQUIRE_NO_THROW(add1.port(1).set(2.0f));
+	BOOST_CHECK_EQUAL(add1.port(2).get<float>(), 3.0f);
+
+	BOOST_REQUIRE_NO_THROW(mult1.port(0).set(4.0f));
+	BOOST_REQUIRE_NO_THROW(mult1.port(1).set(5.0f));
+	BOOST_CHECK_EQUAL(mult1.port(2).get<float>(), 20.0f);
+
+	BOOST_REQUIRE_NO_THROW(add2.port(0).set(6.0f));
+	BOOST_REQUIRE_NO_THROW(add2.port(1).set(7.0f));
+	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 13.0f);
+
+	BOOST_REQUIRE_NO_THROW(mult2.port(0).set(8.0f));
+	BOOST_REQUIRE_NO_THROW(mult2.port(1).set(9.0f));
+	BOOST_CHECK_EQUAL(mult2.port(2).get<float>(), 72.0f);
+
 	//////////
 	// adding
 
@@ -67,6 +86,11 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	BOOST_CHECK_EQUAL(&(g.connections().begin()->second), &mult1.port(1));
 
 	BOOST_CHECK_EQUAL(s_connectionCount, 1u);
+
+	// test values of a single connection (PULLS on the output)
+	BOOST_CHECK_EQUAL(add1.port(2).get<float>(), 3.0f);
+	BOOST_CHECK_EQUAL(mult1.port(1).get<float>(), 3.0f);
+	BOOST_CHECK_EQUAL(mult1.port(2).get<float>(), 12.0f);
 
 	// add another connection
 	BOOST_CHECK_NO_THROW(add1.port(2).connect(mult2.port(1)));
@@ -107,7 +131,16 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	BOOST_CHECK_THROW(add1.port(2).connect(mult1.port(2)), std::runtime_error);
 	BOOST_CHECK_THROW(add1.port(1).connect(mult1.port(2)), std::runtime_error);
 
+	// try to connect a single node's output to its input
+	BOOST_CHECK_THROW(add1.port(2).connect(add1.port(1)), std::runtime_error);
+	// and try to connect the end of the chain to its beginning
+	BOOST_CHECK_THROW(mult2.port(2).connect(add1.port(1)), std::runtime_error);
+
 	BOOST_CHECK_EQUAL(s_connectionCount, 4u);
+
+	// test the final computation result (will pull recursively on everything)
+	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 36.0f);
+
 
 	/////////
 	// removing
