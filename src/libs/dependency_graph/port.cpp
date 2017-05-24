@@ -5,11 +5,13 @@
 namespace dependency_graph {
 
 Port::Port(const std::string& name, unsigned id, Node* parent) :
-	m_name(name), m_id(id), m_dirty(true), m_parent(parent) {
+	m_name(name), m_id(id), m_parent(parent) {
+
+	m_dirty = category() == Attr::kOutput;
 
 }
 
-Port::Port(Port&& p) : m_name(std::move(p.m_name)), m_id(p.m_id), m_dirty(true), m_parent(p.m_parent) {
+Port::Port(Port&& p) : m_name(std::move(p.m_name)), m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent) {
 
 }
 
@@ -95,7 +97,7 @@ void Port::connect(Port& p) {
  	p.m_parent->m_parent->connections().add(*this, p);
 	// and mark the "connected to" as dirty - will most likely need recomputation
 	// TODO: compare values, before marking it dirty wholesale?
-	node().markAsDirty(p.index());
+	p.node().markAsDirty(p.index());
 	// connect / disconnect - might change UI's appearance
 	m_flagsCallbacks();
 	p.m_flagsCallbacks();

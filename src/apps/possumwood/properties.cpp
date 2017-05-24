@@ -80,10 +80,6 @@ Properties::Property::Property(dependency_graph::Port& port) {
 		flagsConnection = port.flagsCallback(updateFlags);
 
 		uiValueConnection = ui->valueCallback([prop, &port]() {
-			std::cout << "valueCallback" << port.name() <<
-				"  in="  << (prop->flags() & properties::property_base::kOutput) <<
-				"  out=" << (prop->flags() & properties::property_base::kOutput) << std::endl;
-
 			// value changes only for non-disabled input port UIs
 			// (avoid Qt's value changed callbacks when not necessary)
 			if((prop->flags() & properties::property_base::kInput) && !(prop->flags() & properties::property_base::kDisabled))

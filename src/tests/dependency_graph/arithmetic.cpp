@@ -44,8 +44,14 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	Node& mult2 = g.nodes().add(multiplication, "mult_2");
 	Node& add2 = g.nodes().add(addition, "add_2");
 
+	// before anything is connected, only output ports are dirty (they need to be pulled on)
+	for(auto& n : g.nodes())
+		for(size_t pi = 0; pi < n.portCount(); ++pi)
+			BOOST_CHECK_EQUAL(n.port(pi).isDirty(), n.port(pi).category() == Attr::kOutput);
+
 	// a valid connection
 	BOOST_CHECK_NO_THROW(add1.port(2).connect(mult1.port(1)));
+
 	BOOST_CHECK_NO_THROW(add1.port(2).connect(mult2.port(1)));
 	BOOST_CHECK_NO_THROW(mult1.port(2).connect(add2.port(0)));
 	BOOST_CHECK_NO_THROW(mult2.port(2).connect(add2.port(1)));
@@ -53,10 +59,10 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	/////////////////////////////
 	// compute (2 + 3) * 4 + (2 + 3) * 5 = 20 + 25 = 45
 
-	// at the beginning before any evaluation, everything is dirty
+	// at the beginning before any evaluation, only non-connected inputs are not dirty
 	for(auto& n : g.nodes())
 		for(size_t pi = 0; pi < n.portCount(); ++pi)
-			BOOST_CHECK(n.port(pi).isDirty());
+			BOOST_CHECK_EQUAL(n.port(pi).isDirty(), n.port(pi).category() == Attr::kOutput || g.connections().connectedFrom(n.port(pi)));
 
 	// check we can get a value from input ports, if they're not connected
 	BOOST_REQUIRE_EQUAL(add1.port(0).get<float>(), 0.0f);
