@@ -5,12 +5,15 @@ namespace properties {
 float_ui::float_ui() : m_spinBox(new QDoubleSpinBox(NULL)) {
 	m_valueChangeConnection = QObject::connect(
 		m_spinBox,
-		&QDoubleSpinBox::editingFinished,
-		// static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+		static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
 		[this]() -> void {
 			callValueChangedCallbacks();
 		}
 	);
+
+	m_spinBox->setKeyboardTracking(false);
+
+	m_spinBox->setRange(-1e13, 1e13);
 }
 
 float_ui::~float_ui() {
