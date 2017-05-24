@@ -2,17 +2,18 @@
 
 #include "graph.h"
 #include "node.inl"
+#include "port.inl"
 #include "datablock.inl"
 #include "common.h"
 
 using namespace dependency_graph;
 
 namespace {
-	bool checkConnections(const Graph& g, std::vector<std::pair<const Node::Port*, const Node::Port*>> connections) {
+	bool checkConnections(const Graph& g, std::vector<std::pair<const Port*, const Port*>> connections) {
 		bool result = true;
 
 		for(auto c : g.connections()) {
-			std::pair<const Node::Port*, const Node::Port*> key(&c.first, &c.second);
+			std::pair<const Port*, const Port*> key(&c.first, &c.second);
 
 			auto it = std::find(connections.begin(), connections.end(), key);
 			if(it == connections.end())
@@ -32,8 +33,8 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 
 	//////
 	// connect callbacks
-	g.onConnect([&](Node::Port&, Node::Port&) { ++s_connectionCount; });
-	g.onDisconnect([&](Node::Port&, Node::Port&) { --s_connectionCount; });
+	g.onConnect([&](Port&, Port&) { ++s_connectionCount; });
+	g.onDisconnect([&](Port&, Port&) { --s_connectionCount; });
 
 	// instantiate nodes from arithmetic.cpp
 	const Metadata& addition = additionNode();

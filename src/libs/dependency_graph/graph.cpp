@@ -46,11 +46,11 @@ boost::signals2::connection Graph::onRemoveNode(std::function<void(Node&)> callb
 }
 
 
-boost::signals2::connection Graph::onConnect(std::function<void(Node::Port&, Node::Port&)> callback) {
+boost::signals2::connection Graph::onConnect(std::function<void(Port&, Port&)> callback) {
 	return m_onConnect.connect(callback);
 }
 
-boost::signals2::connection Graph::onDisconnect(std::function<void(Node::Port&, Node::Port&)> callback) {
+boost::signals2::connection Graph::onDisconnect(std::function<void(Port&, Port&)> callback) {
 	return m_onDisconnect.connect(callback);
 }
 
@@ -125,7 +125,7 @@ const Node& Graph::Nodes::operator[](std::size_t index) const {
 Graph::Connections::Connections(Graph* parent) : m_parent(parent) {
 }
 
-void Graph::Connections::add(Node::Port& src, Node::Port& dest) {
+void Graph::Connections::add(Port& src, Port& dest) {
 	if(src.category() != Attr::kOutput)
 		throw std::runtime_error("Attempting to connect an input as the origin of a connection.");
 
@@ -139,7 +139,7 @@ void Graph::Connections::add(Node::Port& src, Node::Port& dest) {
 	m_parent->m_onConnect(src, dest);
 }
 
-void Graph::Connections::remove(Node::Port& src, Node::Port& dest) {
+void Graph::Connections::remove(Port& src, Port& dest) {
 	if(src.category() != Attr::kOutput)
 		throw std::runtime_error("Attempting to connect an input as the origin of a connection.");
 
@@ -172,36 +172,36 @@ void Graph::Connections::purge(const Node& n) {
 			++it;
 }
 
-boost::optional<const Node::Port&> Graph::Connections::connectedFrom(const Node::Port& p) const {
+boost::optional<const Port&> Graph::Connections::connectedFrom(const Port& p) const {
 	if(p.category() != Attr::kInput)
 		throw std::runtime_error("Connected From request can be only run on input ports.");
 
 	// ugly const casts, to keep const-correctness, ironically
-	auto it = m_connections.right.lower_bound(const_cast<Node::Port*>(&p));
+	auto it = m_connections.right.lower_bound(const_cast<Port*>(&p));
 
 	if((it == m_connections.right.end()) || (it->first != &p))
-		return boost::optional<const Node::Port&>();
+		return boost::optional<const Port&>();
 	else {
-		assert(m_connections.right.count(const_cast<Node::Port*>(&p)) == 1);
+		assert(m_connections.right.count(const_cast<Port*>(&p)) == 1);
 		return *it->second;
 	}
 }
 
-std::vector<std::reference_wrapper<const Node::Port>> Graph::Connections::connectedTo(const Node::Port& p) const {
+std::vector<std::reference_wrapper<const Port>> Graph::Connections::connectedTo(const Port& p) const {
 	if(p.category() != Attr::kOutput)
 		throw std::runtime_error("Connected To request can be only run on output ports.");
 
 	// ugly const casts, to keep const-correctness, ironically
-	auto it1 = m_connections.left.lower_bound(const_cast<Node::Port*>(&p));
-	auto it2 = m_connections.left.upper_bound(const_cast<Node::Port*>(&p));
+	auto it1 = m_connections.left.lower_bound(const_cast<Port*>(&p));
+	auto it2 = m_connections.left.upper_bound(const_cast<Port*>(&p));
 
-	std::vector<std::reference_wrapper<const Node::Port>> result;
+	std::vector<std::reference_wrapper<const Port>> result;
 	for(auto it = it1; it != it2; ++it)
 		result.push_back(std::cref(*it->second));
 	return result;
 }
 
-boost::optional<Node::Port&> Graph::Connections::connectedFrom(Node::Port& p) {
+boost::optional<Port&> Graph::Connections::connectedFrom(Port& p) {
 	if(p.category() != Attr::kInput)
 		throw std::runtime_error("Connected From request can be only run on input ports.");
 
@@ -209,21 +209,21 @@ boost::optional<Node::Port&> Graph::Connections::connectedFrom(Node::Port& p) {
 	auto it = m_connections.right.lower_bound(&p);
 
 	if((it == m_connections.right.end()) || (it->first != &p))
-		return boost::optional<Node::Port&>();
+		return boost::optional<Port&>();
 	else {
 		assert(m_connections.right.count(&p) == 1);
 		return *it->second;
 	}
 }
 
-std::vector<std::reference_wrapper<Node::Port>> Graph::Connections::connectedTo(Node::Port& p) {
+std::vector<std::reference_wrapper<Port>> Graph::Connections::connectedTo(Port& p) {
 	if(p.category() != Attr::kOutput)
 		throw std::runtime_error("Connected To request can be only run on output ports.");
 
 	auto it1 = m_connections.left.lower_bound(&p);
 	auto it2 = m_connections.left.upper_bound(&p);
 
-	std::vector<std::reference_wrapper<Node::Port>> result;
+	std::vector<std::reference_wrapper<Port>> result;
 	for(auto it = it1; it != it2; ++it)
 		result.push_back(std::ref(*it->second));
 	return result;
@@ -239,19 +239,19 @@ bool Graph::Connections::empty() const {
 
 namespace {
 	/// dereferencing function to convert internal connection representation to a pair of port references
-	const std::pair<const Node::Port&, const Node::Port&> convert(const Graph::Connections::connections_container::left_value_type& val)	{
-		const Node::Port& left = *val.first;
-		const Node::Port& right = *val.second;
+	const std::pair<const Port&, const Port&> convert(const Graph::Connections::connections_container::left_value_type& val)	{
+		const Port& left = *val.first;
+		const Port& right = *val.second;
 
-		return std::pair<const Node::Port&, const Node::Port&>(left, right);
+		return std::pair<const Port&, const Port&>(left, right);
 	}
 
 	/// dereferencing function to convert internal connection representation to a pair of port references
-	const std::pair<Node::Port&, Node::Port&> convertConst(const Graph::Connections::connections_container::left_value_type& val)	{
-		Node::Port& left = *val.first;
-		Node::Port& right = *val.second;
+	const std::pair<Port&, Port&> convertConst(const Graph::Connections::connections_container::left_value_type& val)	{
+		Port& left = *val.first;
+		Port& right = *val.second;
 
-		return std::pair<Node::Port&, Node::Port&>(left, right);
+		return std::pair<Port&, Port&>(left, right);
 	}
 }
 

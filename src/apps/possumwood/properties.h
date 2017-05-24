@@ -2,7 +2,10 @@
 
 #include <QtWidgets/QTreeWidget>
 
+#include <boost/noncopyable.hpp>
+
 #include <node.h>
+#include <properties_ui/property.h>
 
 /// A widget displaying properties of selected nodes
 class Properties : public QTreeWidget {
@@ -15,4 +18,15 @@ class Properties : public QTreeWidget {
 
 	protected:
 	private:
+		struct Property : public boost::noncopyable {
+			Property(dependency_graph::Port& port);
+			~Property();
+
+			Property(Property&&);
+
+			std::unique_ptr<properties::property_base> ui;
+			boost::signals2::connection graphValueConnection, uiValueConnection, flagsConnection;
+		};
+
+		std::vector<Property> m_properties;
 };

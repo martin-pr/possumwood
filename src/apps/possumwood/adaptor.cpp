@@ -19,11 +19,11 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph) {
 	));
 
 	m_signals.push_back(graph->onConnect(
-		[&](dependency_graph::Node::Port& p1, dependency_graph::Node::Port& p2) { onConnect(p1, p2); }
+		[&](dependency_graph::Port& p1, dependency_graph::Port& p2) { onConnect(p1, p2); }
 	));
 
 	m_signals.push_back(graph->onDisconnect(
-		[&](dependency_graph::Node::Port& p1, dependency_graph::Node::Port& p2) { onDisconnect(p1, p2); }
+		[&](dependency_graph::Port& p1, dependency_graph::Port& p2) { onDisconnect(p1, p2); }
 	));
 
 	m_signals.push_back(graph->onBlindDataChanged(
@@ -109,7 +109,7 @@ void Adaptor::onRemoveNode(dependency_graph::Node& node) {
 	m_graphWidget->scene().removeNode(*(it->second));
 }
 
-void Adaptor::onConnect(dependency_graph::Node::Port& p1, dependency_graph::Node::Port& p2) {
+void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	// find the two nodes to be connected
 	auto n1 = m_nodes.left.find(&p1.node());
 	assert(n1 != m_nodes.left.end());
@@ -120,7 +120,7 @@ void Adaptor::onConnect(dependency_graph::Node::Port& p1, dependency_graph::Node
 	m_graphWidget->scene().connect(n1->second->port(p1.index()), n2->second->port(p2.index()));
 }
 
-void Adaptor::onDisconnect(dependency_graph::Node::Port& p1, dependency_graph::Node::Port& p2) {
+void Adaptor::onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	// find the two nodes to be disconnected
 	auto n1 = m_nodes.left.find(&p1.node());
 	assert(n1 != m_nodes.left.end());
@@ -196,6 +196,9 @@ std::vector<std::reference_wrapper<dependency_graph::Node>> Adaptor::selectedNod
 					return &n == node->second;
 				}
 			);
+
+			// deselection happens during the Qt object destruction -> the original
+			//   node might not exist
 			if(nodeRef != m_graph->nodes().end())
 				result.push_back(*nodeRef);
 		}

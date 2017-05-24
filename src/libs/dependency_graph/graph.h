@@ -73,17 +73,17 @@ class Graph : public boost::noncopyable {
 			public:
 				/// returns the connections of an input port (result contains references
 				///   to output ports connected to this input)
-				boost::optional<const Node::Port&> connectedFrom(const Node::Port& p) const;
+				boost::optional<const Port&> connectedFrom(const Port& p) const;
 				/// returns the connections of an output port (result contains references
 				///   to input ports connected to this output)
-				std::vector<std::reference_wrapper<const Node::Port>> connectedTo(const Node::Port& p) const;
+				std::vector<std::reference_wrapper<const Port>> connectedTo(const Port& p) const;
 
 				/// returns the connections of an input port (result contains references
 				///   to output ports connected to this input)
-				boost::optional<Node::Port&> connectedFrom(Node::Port& p);
+				boost::optional<Port&> connectedFrom(Port& p);
 				/// returns the connections of an output port (result contains references
 				///   to input ports connected to this output)
-				std::vector<std::reference_wrapper<Node::Port>> connectedTo(Node::Port& p);
+				std::vector<std::reference_wrapper<Port>> connectedTo(Port& p);
 
 				/// returns the total number of valid connections in this graph
 				size_t size() const;
@@ -94,13 +94,13 @@ class Graph : public boost::noncopyable {
 				/// the container for connection data (a helper define - not useable outside the implementation cpp)
 				typedef
 					boost::bimap<
-						boost::bimaps::multiset_of<Node::Port*>, // output
-						Node::Port* // input (only one output to any input)
+						boost::bimaps::multiset_of<Port*>, // output
+						Port* // input (only one output to any input)
 					> connections_container;
 
 				/// allows iteration over connections
 				typedef boost::transform_iterator<
-					std::function<const std::pair<const Node::Port&, const Node::Port&>(const connections_container::left_value_type&)>,
+					std::function<const std::pair<const Port&, const Port&>(const connections_container::left_value_type&)>,
 					connections_container::left_const_iterator
 				> const_iterator;
 
@@ -111,7 +111,7 @@ class Graph : public boost::noncopyable {
 
 				/// allows iteration over connections
 				typedef boost::transform_iterator<
-					std::function<const std::pair<Node::Port&, Node::Port&>(const connections_container::left_value_type&)>,
+					std::function<const std::pair<Port&, Port&>(const connections_container::left_value_type&)>,
 					connections_container::left_const_iterator
 				> iterator;
 
@@ -123,8 +123,8 @@ class Graph : public boost::noncopyable {
 			private:
 				Connections(Graph* parent);
 
-				void add(Node::Port& src, Node::Port& dest);
-				void remove(Node::Port& src, Node::Port& dest);
+				void add(Port& src, Port& dest);
+				void remove(Port& src, Port& dest);
 				/// remove all connections related to a node (both in and out)
 				void purge(const Node& n);
 
@@ -132,7 +132,7 @@ class Graph : public boost::noncopyable {
 				connections_container m_connections;
 
 				friend class Graph;
-				friend class Node::Port;
+				friend class Port;
 				friend class Nodes;
 		};
 
@@ -142,8 +142,8 @@ class Graph : public boost::noncopyable {
 		boost::signals2::connection onAddNode(std::function<void(Node&)> callback);
 		boost::signals2::connection onRemoveNode(std::function<void(Node&)> callback);
 
-		boost::signals2::connection onConnect(std::function<void(Node::Port&, Node::Port&)> callback);
-		boost::signals2::connection onDisconnect(std::function<void(Node::Port&, Node::Port&)> callback);
+		boost::signals2::connection onConnect(std::function<void(Port&, Port&)> callback);
+		boost::signals2::connection onDisconnect(std::function<void(Port&, Port&)> callback);
 
 		boost::signals2::connection onBlindDataChanged(std::function<void(Node&)> callback);
 
@@ -154,7 +154,7 @@ class Graph : public boost::noncopyable {
 		Connections m_connections;
 
 		boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode, m_onBlindDataChanged;
-		boost::signals2::signal<void(Node::Port&, Node::Port&)> m_onConnect, m_onDisconnect;
+		boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
 
 		friend class Node;
 		friend class Nodes;
