@@ -66,7 +66,8 @@ class property : public property_base {
 	private:
 		virtual void valueToPort(dependency_graph::Port& port) const override {
 			// transfer the templated value
-			port.set(get());
+			if((flags() & kInput) && !(flags() & kDisabled))
+				port.set(get());
 		}
 
 		void valueFromPort(dependency_graph::Port& port) override {
