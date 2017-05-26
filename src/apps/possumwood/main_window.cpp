@@ -36,13 +36,12 @@ const dependency_graph::Metadata& additionNode() {
 		s_meta.addInfluence(additionInput1, additionOutput);
 		s_meta.addInfluence(additionInput2, additionOutput);
 
-		std::function<void(dependency_graph::Datablock&)> additionCompute = [&](dependency_graph::Datablock & data) {
+		s_meta.setCompute([&](dependency_graph::Datablock & data) {
 			const float a = data.get(additionInput1);
 			const float b = data.get(additionInput2);
 
 			data.set(additionOutput, a + b);
-		};
-		s_meta.setCompute(additionCompute);
+		});
 	}
 
 	return s_meta;
@@ -54,12 +53,6 @@ const dependency_graph::Metadata& multiplicationNode() {
 	if(!s_meta.isValid()) {
 		static dependency_graph::InAttr<float> multiplicationInput1, multiplicationInput2;
 		static dependency_graph::OutAttr<float> multiplicationOutput;
-		std::function<void(dependency_graph::Datablock&)> multiplicationCompute = [&](dependency_graph::Datablock & data) {
-			const float a = data.get(multiplicationInput1);
-			const float b = data.get(multiplicationInput2);
-
-			data.set(multiplicationOutput, a * b);
-		};
 
 		s_meta.addAttribute(multiplicationInput1, "input_1");
 		s_meta.addAttribute(multiplicationInput2, "input_2");
@@ -68,7 +61,12 @@ const dependency_graph::Metadata& multiplicationNode() {
 		s_meta.addInfluence(multiplicationInput1, multiplicationOutput);
 		s_meta.addInfluence(multiplicationInput2, multiplicationOutput);
 
-		s_meta.setCompute(multiplicationCompute);
+		s_meta.setCompute([&](dependency_graph::Datablock & data) {
+			const float a = data.get(multiplicationInput1);
+			const float b = data.get(multiplicationInput2);
+
+			data.set(multiplicationOutput, a * b);
+		});
 	}
 
 	return s_meta;

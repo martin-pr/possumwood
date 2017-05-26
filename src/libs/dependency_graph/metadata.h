@@ -24,6 +24,7 @@ class Port;
 class Metadata : public boost::noncopyable {
 	public:
 		Metadata(const std::string& nodeType);
+		virtual ~Metadata();
 
 		/// returns the type of the node this metadata object describes
 		const std::string& type() const;

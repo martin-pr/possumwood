@@ -7,6 +7,9 @@ namespace dependency_graph {
 Metadata::Metadata(const std::string& nodeType) : m_type(nodeType) {
 }
 
+Metadata::~Metadata() {
+}
+
 bool Metadata::isValid() const {
 	return !m_attrs.empty() && m_compute;
 }
