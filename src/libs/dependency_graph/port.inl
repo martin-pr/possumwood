@@ -27,14 +27,18 @@ template<typename T>
 const T& Port::get() {
 	// do the computation if needed, to get rid of the dirty flag
 	if(m_dirty) {
-		if(category() == Attr::kInput && m_parent->inputIsConnected(*this))
-			m_parent->computeInput(m_id);
+		if(category() == Attr::kInput) {
+			if(m_parent->inputIsConnected(*this))
+				m_parent->computeInput(m_id);
+			else
+				setDirty(false);
+		}
 		else if(category() == Attr::kOutput)
 			m_parent->computeOutput(m_id);
 	}
 
 	// when the computation is done, the port should not be dirty
-	assert(!m_dirty || !m_parent->inputIsConnected(*this));
+	assert(!m_dirty);
 
 	// and return the value
 	return m_parent->get<T>(m_id);
