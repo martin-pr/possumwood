@@ -8,11 +8,9 @@ namespace dependency_graph {
 
 template<typename T>
 void Port::set(const T& value) {
-	// can set only inputs, not outputs
-	assert(category() == Attr::kInput);
 	// setting a value in the middle of the graph might do
 	//   weird things, so lets assert it
-	assert(!m_parent->inputIsConnected(*this));
+	assert(category() == Attr::kOutput || !m_parent->inputIsConnected(*this));
 
 	// set the value in the data block
 	m_parent->set<T>(m_id, value);

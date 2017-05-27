@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include "graph.h"
+#include "values.h"
 
 namespace dependency_graph {
 
@@ -110,7 +111,10 @@ void Node::computeOutput(size_t index) {
 
 	// now run compute, as all inputs are fine
 	//  -> this will change the output value (if the compute method works)
-	m_meta->m_compute(m_data);
+	{
+		Values vals(*this);
+		m_meta->m_compute(vals);
+	}
 
 	// mark as not dirty
 	port(index).setDirty(false);

@@ -15,7 +15,7 @@ class InAttr;
 template<typename T>
 class OutAttr;
 
-class Datablock;
+class Values;
 class Attr;
 
 class Node;
@@ -50,7 +50,7 @@ class Metadata : public boost::noncopyable {
 		void addAttribute(OutAttr<T>& out, const std::string& name);
 
 		/// compute method of this node
-		void setCompute(std::function<void(Datablock&)> compute);
+		void setCompute(std::function<void(Values&)> compute);
 
 		/// returns the number of attributes currently present
 		size_t attributeCount() const;
@@ -77,7 +77,7 @@ class Metadata : public boost::noncopyable {
 
 		std::string m_type;
 		std::vector<Attr*> m_attrs; // not owning the attr instances
-		std::function<void(Datablock&)> m_compute;
+		std::function<void(Values&)> m_compute;
 
 		boost::bimap<boost::bimaps::multiset_of<unsigned>, boost::bimaps::multiset_of<unsigned>> m_influences;
 

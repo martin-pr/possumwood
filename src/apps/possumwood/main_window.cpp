@@ -5,9 +5,9 @@
 #include <QHeaderView>
 
 #include <bind.h>
-#include <datablock.inl>
 #include <attr.inl>
 #include <metadata.inl>
+#include <values.inl>
 
 #include "adaptor.h"
 #include "node_data.h"
@@ -36,7 +36,7 @@ const dependency_graph::Metadata& additionNode() {
 		s_meta.addInfluence(additionInput1, additionOutput);
 		s_meta.addInfluence(additionInput2, additionOutput);
 
-		s_meta.setCompute([&](dependency_graph::Datablock & data) {
+		s_meta.setCompute([&](dependency_graph::Values & data) {
 			const float a = data.get(additionInput1);
 			const float b = data.get(additionInput2);
 
@@ -61,7 +61,7 @@ const dependency_graph::Metadata& multiplicationNode() {
 		s_meta.addInfluence(multiplicationInput1, multiplicationOutput);
 		s_meta.addInfluence(multiplicationInput2, multiplicationOutput);
 
-		s_meta.setCompute([&](dependency_graph::Datablock & data) {
+		s_meta.setCompute([&](dependency_graph::Values & data) {
 			const float a = data.get(multiplicationInput1);
 			const float b = data.get(multiplicationInput2);
 
