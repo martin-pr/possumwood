@@ -1,5 +1,9 @@
 #include "adaptor.h"
 
+#include <map>
+#include <array>
+#include <functional>
+
 #include <QHBoxLayout>
 #include <QMessageBox>
 
@@ -7,6 +11,29 @@
 
 #include "node_data.h"
 #include "connected_edge.h"
+
+namespace {
+
+/// creates a unique colour for a datatype
+QColor colour(const std::string& datatype) {
+	static std::map<std::string, QColor> s_colours;
+	auto it = s_colours.find(datatype);
+	if(it != s_colours.end())
+		return it->second;
+
+	const unsigned hash = std::hash<std::string>()(datatype);
+	QColor result(
+		(unsigned char)hash,
+		(unsigned char)(hash >> 8),
+		(unsigned char)(hash >> 16)
+	);
+
+	s_colours.insert(std::make_pair(datatype, result));
+
+	return result;
+}
+
+}
 
 Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph) {
 	// register callbacks
@@ -86,13 +113,13 @@ void Adaptor::onAddNode(dependency_graph::Node& node) {
 		node.name().c_str(), data.position);
 
 	// add all ports, based on the node's metadata
-	for(size_t a = 0; a<node.metadata().attributeCount(); ++a) {
+	for(size_t a = 0; a < node.metadata().attributeCount(); ++a) {
 		const dependency_graph::Attr& attr = node.metadata().attr(a);
 
-		newNode.addPort(node_editor::Node::PortDefinition{
+		newNode.addPort(node_editor::Node::PortDefinition {
 			attr.name().c_str(),
 			attr.category() == dependency_graph::Attr::kInput ? node_editor::Port::kInput : node_editor::Port::kOutput,
-			QColor(255,0,0)
+			colour(attr.type().name())
 		});
 	}
 
