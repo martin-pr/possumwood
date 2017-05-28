@@ -62,5 +62,5 @@ set(LIBS ${LIBS} ${OPENEXR_HALF_LIBRARY} ${OPENEXR_IEX_LIBRARY})
 ###########################################################
 # BUILD
 
-include_directories(src/libs/dependency_graph src/libs/qt_node_editor)
+include_directories(src/libs src/libs/qt_node_editor)
 add_subdirectory(src)

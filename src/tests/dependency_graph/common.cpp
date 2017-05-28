@@ -2,8 +2,8 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "attr.inl"
-#include "values.inl"
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/values.inl>
 
 using namespace dependency_graph;
 

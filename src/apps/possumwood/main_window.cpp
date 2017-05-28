@@ -5,9 +5,9 @@
 #include <QHeaderView>
 
 #include <bind.h>
-#include <attr.inl>
-#include <metadata.inl>
-#include <values.inl>
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/metadata.inl>
+#include <dependency_graph/values.inl>
 
 #include "adaptor.h"
 #include "node_data.h"

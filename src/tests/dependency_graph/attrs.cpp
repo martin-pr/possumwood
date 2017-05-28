@@ -1,9 +1,9 @@
 #include <boost/test/unit_test.hpp>
 
 #include "common.h"
-#include "attr.inl"
-#include "datablock.inl"
-#include "metadata.inl"
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/datablock.inl>
+#include <dependency_graph/metadata.inl>
 
 using namespace dependency_graph;
 

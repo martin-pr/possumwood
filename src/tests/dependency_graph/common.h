@@ -3,7 +3,7 @@
 #include <iostream>
 #include <typeinfo>
 
-#include "metadata.h"
+#include <dependency_graph/metadata.h>
 
 namespace std {
 

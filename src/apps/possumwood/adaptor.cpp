@@ -3,7 +3,7 @@
 #include <QHBoxLayout>
 #include <QMessageBox>
 
-#include "node.inl"
+#include <dependency_graph/node.inl>
 
 #include "node_data.h"
 #include "connected_edge.h"

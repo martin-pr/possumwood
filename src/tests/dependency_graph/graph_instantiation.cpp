@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
-#include "graph.h"
+#include <dependency_graph/graph.h>
 #include "common.h"
 
 using namespace dependency_graph;

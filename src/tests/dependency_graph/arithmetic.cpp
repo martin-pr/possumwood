@@ -2,11 +2,11 @@
 
 #include <set>
 
-#include "graph.h"
-#include "attr.inl"
-#include "datablock.inl"
-#include "metadata.inl"
-#include "node.inl"
+#include <dependency_graph/graph.h>
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/datablock.inl>
+#include <dependency_graph/metadata.inl>
+#include <dependency_graph/node.inl>
 #include "common.h"
 
 using namespace dependency_graph;

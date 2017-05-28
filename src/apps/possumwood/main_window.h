@@ -3,7 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QTreeWidget>
 
-#include <graph.h>
+#include <dependency_graph/graph.h>
 
 #include "adaptor.h"
 #include "properties.h"

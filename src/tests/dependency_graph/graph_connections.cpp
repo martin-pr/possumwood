@@ -1,9 +1,9 @@
 #include <boost/test/unit_test.hpp>
 
-#include "graph.h"
-#include "node.inl"
-#include "port.inl"
-#include "datablock.inl"
+#include <dependency_graph/graph.h>
+#include <dependency_graph/node.inl>
+#include <dependency_graph/port.inl>
+#include <dependency_graph/datablock.inl>
 #include "common.h"
 
 using namespace dependency_graph;

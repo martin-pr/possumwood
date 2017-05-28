@@ -6,8 +6,8 @@
 #include <QWidget>
 
 #include "factory.inl"
-#include "node.inl"
-#include "port.inl"
+#include <dependency_graph/node.inl>
+#include <dependency_graph/port.inl>
 
 namespace properties {
 
