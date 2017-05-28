@@ -36,7 +36,10 @@ void Properties::show(const std::vector<std::reference_wrapper<dependency_graph:
 
 			// portItem->setText(1, std::to_string(port.get<float>()).c_str());
 			m_properties.push_back(Property(port));
-			setItemWidget(portItem, 1, m_properties.back().ui->widget());
+			if(m_properties.back().ui)
+				setItemWidget(portItem, 1, m_properties.back().ui->widget());
+			else
+				portItem->setText(1, "(no UI defined for this datatype)");
 		}
 	}
 
