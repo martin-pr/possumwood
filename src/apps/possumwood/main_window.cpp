@@ -85,9 +85,9 @@ const Metadata& cubeNode() {
 		s_meta.addAttribute(a_y, "y");
 		s_meta.addAttribute(a_z, "z");
 
-		s_meta.addAttribute(a_w, "width");
-		s_meta.addAttribute(a_h, "height");
-		s_meta.addAttribute(a_d, "depth");
+		s_meta.addAttribute(a_w, "width", 1.0f);
+		s_meta.addAttribute(a_h, "height", 1.0f);
+		s_meta.addAttribute(a_d, "depth", 1.0f);
 
 		s_meta.setDraw([&](const dependency_graph::Values & data) {
 			const float x = data.get(a_x);

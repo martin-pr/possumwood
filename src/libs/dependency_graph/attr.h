@@ -42,34 +42,40 @@ class Attr {
 		friend class Node;
 };
 
-/// Input attribute type (constructed by Metadata class)
 template<typename T>
-class InAttr : public Attr {
+class TypedAttr : public Attr {
 	public:
-		InAttr();
-
 		virtual const std::type_info& type() const override;
 
 	protected:
-		InAttr(const std::string& name, unsigned offset);
+		TypedAttr(const std::string& name, unsigned offset, Category cat, const T& defaultValue);
 
 		virtual std::unique_ptr<Datablock::BaseData> createData() const override;
+
+	private:
+		T m_defaultValue;
+};
+
+/// Input attribute type (constructed by Metadata class)
+template<typename T>
+class InAttr : public TypedAttr<T> {
+	public:
+		InAttr();
+
+	protected:
+		InAttr(const std::string& name, unsigned offset, const T& defaultValue);
 
 		friend class Metadata;
 };
 
 /// Output attribute type (constructed by Metadata class)
 template<typename T>
-class OutAttr : public Attr {
+class OutAttr : public TypedAttr<T> {
 	public:
 		OutAttr();
 
-		virtual const std::type_info& type() const override;
-
 	protected:
-		OutAttr(const std::string& name, unsigned offset);
-
-		virtual std::unique_ptr<Datablock::BaseData> createData() const override;
+		OutAttr(const std::string& name, unsigned offset, const T& defaultValue);
 
 		friend class Metadata;
 };
