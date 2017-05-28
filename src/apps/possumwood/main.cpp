@@ -56,6 +56,9 @@ int main(int argc, char* argv[]) {
 	// create the application object
 	QApplication app(argc, argv);
 
+	// initialise glut
+	glutInit(&argc, argv);;
+
 	// make a main window
 	MainWindow win;
 	win.showMaximized();

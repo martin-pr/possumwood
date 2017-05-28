@@ -214,3 +214,7 @@ node_editor::GraphScene& Adaptor::scene() {
 const node_editor::GraphScene& Adaptor::scene() const {
 	return m_graphWidget->scene();
 }
+
+dependency_graph::Graph& Adaptor::graph() {
+	return *m_graph;
+}

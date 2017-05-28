@@ -26,6 +26,9 @@ class Adaptor : public QWidget {
 		node_editor::GraphScene& scene();
 		const node_editor::GraphScene& scene() const;
 
+		/// returns the dependency graph
+		dependency_graph::Graph& graph();
+
 		/// deletes all selected items in the associated graph
 		void deleteSelected();
 

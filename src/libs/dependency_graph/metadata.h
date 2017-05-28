@@ -30,7 +30,7 @@ class Metadata : public boost::noncopyable {
 		const std::string& type() const;
 
 		/// returns true if this metadata instance has no attributes or no compute
-		bool isValid() const;
+		virtual bool isValid() const;
 
 
 		/// registers an input attribute.
