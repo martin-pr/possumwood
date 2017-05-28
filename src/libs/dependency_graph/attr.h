@@ -48,9 +48,12 @@ class TypedAttr : public Attr {
 		virtual const std::type_info& type() const override;
 
 	protected:
-		TypedAttr(const std::string& name, unsigned offset, Category cat);
+		TypedAttr(const std::string& name, unsigned offset, Category cat, const T& defaultValue);
 
 		virtual std::unique_ptr<Datablock::BaseData> createData() const override;
+
+	private:
+		T m_defaultValue;
 };
 
 /// Input attribute type (constructed by Metadata class)
@@ -60,7 +63,7 @@ class InAttr : public TypedAttr<T> {
 		InAttr();
 
 	protected:
-		InAttr(const std::string& name, unsigned offset);
+		InAttr(const std::string& name, unsigned offset, const T& defaultValue);
 
 		friend class Metadata;
 };
@@ -72,7 +75,7 @@ class OutAttr : public TypedAttr<T> {
 		OutAttr();
 
 	protected:
-		OutAttr(const std::string& name, unsigned offset);
+		OutAttr(const std::string& name, unsigned offset, const T& defaultValue);
 
 		friend class Metadata;
 };

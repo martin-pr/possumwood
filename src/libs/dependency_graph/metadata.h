@@ -39,7 +39,7 @@ class Metadata : public boost::noncopyable {
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(InAttr<T>& in, const std::string& name);
+		void addAttribute(InAttr<T>& in, const std::string& name, const T& defaultValue = T());
 
 		/// registers an output attribute.
 		/// Each attribute instance should be held statically in the
@@ -47,7 +47,7 @@ class Metadata : public boost::noncopyable {
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(OutAttr<T>& out, const std::string& name);
+		void addAttribute(OutAttr<T>& out, const std::string& name, const T& defaultValue = T());
 
 		/// compute method of this node
 		void setCompute(std::function<void(Values&)> compute);

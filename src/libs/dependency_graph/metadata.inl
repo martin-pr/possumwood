@@ -5,20 +5,20 @@
 namespace dependency_graph {
 
 template<typename T>
-void Metadata::addAttribute(InAttr<T>& in, const std::string& name) {
+void Metadata::addAttribute(InAttr<T>& in, const std::string& name, const T& defaultValue) {
 	assert(!in.isValid());
 
-	in = InAttr<T>(name, m_attrs.size());
+	in = InAttr<T>(name, m_attrs.size(), defaultValue);
 	m_attrs.push_back(&in);
 
 	assert(in.isValid());
 }
 
 template<typename T>
-void Metadata::addAttribute(OutAttr<T>& out, const std::string& name) {
+void Metadata::addAttribute(OutAttr<T>& out, const std::string& name, const T& defaultValue) {
 	assert(!out.isValid());
 
-	out = OutAttr<T>(name, m_attrs.size());
+	out = OutAttr<T>(name, m_attrs.size(), defaultValue);
 	m_attrs.push_back(&out);
 
 	assert(out.isValid());
