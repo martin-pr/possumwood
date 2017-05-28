@@ -19,12 +19,12 @@
 #include "node.h"
 #include "connected_edge.h"
 #include "graph_widget.h"
-#include "graph.h"
-#include "node.inl"
-#include "datablock.inl"
+#include <dependency_graph/graph.h>
+#include <dependency_graph/node.inl>
+#include <dependency_graph/datablock.inl>
 #include "node_data.h"
-#include "metadata.inl"
-#include "attr.inl"
+#include <dependency_graph/metadata.inl>
+#include <dependency_graph/attr.inl>
 #include "adaptor.h"
 #include "main_window.h"
 
@@ -55,6 +55,9 @@ int main(int argc, char* argv[]) {
 
 	// create the application object
 	QApplication app(argc, argv);
+
+	// initialise glut
+	glutInit(&argc, argv);;
 
 	// make a main window
 	MainWindow win;

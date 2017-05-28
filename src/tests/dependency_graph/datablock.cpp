@@ -1,13 +1,13 @@
 #include <boost/test/unit_test.hpp>
 
 #include "common.h"
-#include "attr.inl"
-#include "datablock.inl"
-#include "metadata.inl"
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/datablock.inl>
+#include <dependency_graph/metadata.inl>
 
 namespace dependency_graph {
 
-// cheating my way into the private interface of Datablock class
+// a dummy Node implementation - this is what a node will use
 class Node {
 	public:
 		template<typename T>
@@ -59,22 +59,22 @@ BOOST_AUTO_TEST_CASE(datablock_read_and_write) {
 	Datablock data(meta);
 
 	{
-		BOOST_CHECK(data.get(in1) != 33.0f);
+		BOOST_CHECK(data.get<float>(in1.offset()) != 33.0f);
 		BOOST_REQUIRE_NO_THROW(Node::setInput(in1, data, 33.0f));
-		BOOST_CHECK_EQUAL(data.get(in1), 33.0f);
+		BOOST_CHECK_EQUAL(data.get<float>(in1.offset()), 33.0f);
 
 		TestStruct test1;
-		BOOST_CHECK(data.get(in2) != test1);
+		BOOST_CHECK(data.get<TestStruct>(in2.offset()) != test1);
 		BOOST_REQUIRE_NO_THROW(Node::setInput(in2, data, test1));
-		BOOST_CHECK_EQUAL(data.get(in2), test1);
+		BOOST_CHECK_EQUAL(data.get<TestStruct>(in2.offset()), test1);
 
 		BOOST_CHECK(Node::getOutput(out1, data) != 22.0f);
-		BOOST_REQUIRE_NO_THROW(data.set(out1, 22.0f));
+		BOOST_REQUIRE_NO_THROW(data.set(out1.offset(), 22.0f));
 		BOOST_CHECK_EQUAL(Node::getOutput(out1, data), 22.0f);
 
 		TestStruct test2;
 		BOOST_CHECK(Node::getOutput(out2, data) != test2);
-		BOOST_REQUIRE_NO_THROW(data.set(out2, test2));
+		BOOST_REQUIRE_NO_THROW(data.set(out2.offset(), test2));
 		BOOST_CHECK_EQUAL(Node::getOutput(out2, data), test2);
 	}
 }

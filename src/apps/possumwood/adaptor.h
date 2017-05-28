@@ -7,7 +7,7 @@
 
 #include <QWidget>
 
-#include "graph.h"
+#include <dependency_graph/graph.h>
 #include "graph_widget.h"
 
 /// A simple adaptor widget, marrying qt_graph_editor and dependency_graph
@@ -25,6 +25,9 @@ class Adaptor : public QWidget {
 		/// returns the scene instance
 		node_editor::GraphScene& scene();
 		const node_editor::GraphScene& scene() const;
+
+		/// returns the dependency graph
+		dependency_graph::Graph& graph();
 
 		/// deletes all selected items in the associated graph
 		void deleteSelected();

@@ -23,16 +23,6 @@ void Datablock::set(size_t index, const T& value) {
 }
 
 template<typename T>
-const T& Datablock::get(const InAttr<T>& attr) const {
-	return get<T>(attr.offset());
-}
-
-template<typename T>
-void Datablock::set(const OutAttr<T>& attr, const T& value) {
-	set<T>(attr.offset(), value);
-}
-
-template<typename T>
 void Datablock::Data<T>::assign(const BaseData& src) {
 	assert(dynamic_cast<const Data<T>*>(&src) != NULL);
 

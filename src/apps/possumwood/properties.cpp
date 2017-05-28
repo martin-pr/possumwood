@@ -2,8 +2,8 @@
 
 #include <QHeaderView>
 
-#include <node.inl>
-#include <port.inl>
+#include <dependency_graph/node.inl>
+#include <dependency_graph/port.inl>
 
 Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 	// setRootIsDecorated(false);

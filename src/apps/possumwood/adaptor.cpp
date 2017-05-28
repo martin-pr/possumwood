@@ -3,7 +3,7 @@
 #include <QHBoxLayout>
 #include <QMessageBox>
 
-#include "node.inl"
+#include <dependency_graph/node.inl>
 
 #include "node_data.h"
 #include "connected_edge.h"
@@ -213,4 +213,8 @@ node_editor::GraphScene& Adaptor::scene() {
 
 const node_editor::GraphScene& Adaptor::scene() const {
 	return m_graphWidget->scene();
+}
+
+dependency_graph::Graph& Adaptor::graph() {
+	return *m_graph;
 }

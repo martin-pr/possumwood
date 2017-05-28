@@ -3,6 +3,8 @@
 #include "node.h"
 #include "graph.h"
 
+#include "datablock.inl"
+
 namespace dependency_graph {
 
 template<typename T>

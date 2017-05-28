@@ -2,7 +2,8 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "attr.inl"
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/values.inl>
 
 using namespace dependency_graph;
 
@@ -77,7 +78,7 @@ const Metadata& additionNode() {
 		BOOST_CHECK_EQUAL(&(influences[0].get()), &additionInput1);
 		BOOST_CHECK_EQUAL(&(influences[1].get()), &additionInput2);
 
-		std::function<void(Datablock&)> additionCompute = [&](Datablock & data) {
+		std::function<void(Values&)> additionCompute = [&](Values& data) {
 			const float a = data.get(additionInput1);
 			const float b = data.get(additionInput2);
 
@@ -95,7 +96,7 @@ const Metadata& multiplicationNode() {
 	if(!s_meta.isValid()) {
 		static InAttr<float> multiplicationInput1, multiplicationInput2;
 		static OutAttr<float> multiplicationOutput;
-		std::function<void(Datablock&)> multiplicationCompute = [&](Datablock & data) {
+		std::function<void(Values&)> multiplicationCompute = [&](Values & data) {
 			const float a = data.get(multiplicationInput1);
 			const float b = data.get(multiplicationInput2);
 

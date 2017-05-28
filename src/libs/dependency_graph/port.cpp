@@ -58,13 +58,8 @@ void Port::setDirty(bool d) {
 void Port::connect(Port& p) {
 	// test the recursivity
 	{
-		std::set<Port*> usedPorts;
-		usedPorts.insert(&p);
-		usedPorts.insert(this);
-
 		std::set<Port*> addedPorts;
 		addedPorts.insert(&p);
-		addedPorts.insert(this);
 
 		while(!addedPorts.empty()) {
 			// collect all connected ports
@@ -79,16 +74,13 @@ void Port::connect(Port& p) {
 				}
 			}
 
-			// and insert all, or throw an exception if recursion is detected
-			for(auto a : newAddedPorts) {
-				const bool insertedNew = usedPorts.insert(a).second;
-				if(!insertedNew) {
-					std::stringstream msg;
-					msg << "a connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() << " would cause a cyclical dependency";
+			if(newAddedPorts.find(this) != newAddedPorts.end()) {
+				std::stringstream msg;
+				msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() << " would cause a cyclical dependency";
 
-					throw(std::runtime_error(msg.str()));
-				}
+				throw(std::runtime_error(msg.str()));
 			}
+
 			addedPorts = newAddedPorts;
 		}
 	}
