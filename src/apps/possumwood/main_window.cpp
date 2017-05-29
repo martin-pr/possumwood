@@ -7,6 +7,8 @@
 
 #include <GL/glut.h>
 
+#include <OpenEXR/ImathVec.h>
+
 #include <bind.h>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/metadata.inl>
@@ -78,30 +80,48 @@ const Metadata& multiplicationNode() {
 
 const Metadata& cubeNode() {
 	static Metadata s_meta("cube");
-	static dependency_graph::InAttr<float> a_x, a_y, a_z, a_w, a_h, a_d;
+	static dependency_graph::InAttr<Imath::Vec3<float>> a_pos, a_size;
+
+	if(!s_meta.isValid()) {
+		s_meta.addAttribute(a_pos, "position");
+		s_meta.addAttribute(a_size, "size", Imath::Vec3<float>(1.0f, 1.0f, 1.0f));
+
+		s_meta.setDraw([&](const dependency_graph::Values & data) {
+			const Imath::Vec3<float> pos = data.get(a_pos);
+			const Imath::Vec3<float> size = data.get(a_size);
+
+			glTranslatef(pos.x, pos.y, pos.z);
+			glScalef(size.x, size.y, size.z);
+
+			glColor3f(1, 0, 0);
+			glutWireCube(0.5f);
+		});
+	}
+
+	return s_meta;
+}
+
+const Metadata& makeVec3Node() {
+	static Metadata s_meta("make_vec3");
+	static dependency_graph::InAttr<float> a_x, a_y, a_z;
+	static dependency_graph::OutAttr<Imath::Vec3<float>> a_out;
 
 	if(!s_meta.isValid()) {
 		s_meta.addAttribute(a_x, "x");
 		s_meta.addAttribute(a_y, "y");
 		s_meta.addAttribute(a_z, "z");
+		s_meta.addAttribute(a_out, "out");
 
-		s_meta.addAttribute(a_w, "width", 1.0f);
-		s_meta.addAttribute(a_h, "height", 1.0f);
-		s_meta.addAttribute(a_d, "depth", 1.0f);
+		s_meta.addInfluence(a_x, a_out);
+		s_meta.addInfluence(a_y, a_out);
+		s_meta.addInfluence(a_z, a_out);
 
-		s_meta.setDraw([&](const dependency_graph::Values & data) {
+		s_meta.setCompute([&](dependency_graph::Values & data) {
 			const float x = data.get(a_x);
 			const float y = data.get(a_y);
 			const float z = data.get(a_z);
-			const float w = data.get(a_w);
-			const float h = data.get(a_h);
-			const float d = data.get(a_d);
 
-			glTranslatef(x, y, z);
-			glScalef(w, h, d);
-
-			glColor3f(1, 0, 0);
-			glutWireCube(0.5f);
+			data.set(a_out, Imath::Vec3<float>(x, y, z));
 		});
 	}
 
@@ -165,6 +185,11 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 	m_adaptor->addAction(makeAction("Add cube node", [this]() {
 		QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
 		m_graph.nodes().add(cubeNode(), "cube_" + std::to_string(m_nodeCounter++), NodeData{pos});
+	}, m_adaptor));
+
+	m_adaptor->addAction(makeAction("Add vec3 node", [this]() {
+		QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
+		m_graph.nodes().add(makeVec3Node(), "vec3_" + std::to_string(m_nodeCounter++), NodeData{pos});
 	}, m_adaptor));
 
 	QAction* separator = new QAction(m_adaptor);

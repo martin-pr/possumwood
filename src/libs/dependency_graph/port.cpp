@@ -85,6 +85,14 @@ void Port::connect(Port& p) {
 		}
 	}
 
+	// test for datatype
+	if(type() != p.type()) {
+		std::stringstream msg;
+		msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() << " does not connect the same datatype";
+
+		throw(std::runtime_error(msg.str()));
+	}
+
 	// add the connection
  	p.m_parent->m_parent->connections().add(*this, p);
 	// and mark the "connected to" as dirty - will most likely need recomputation
