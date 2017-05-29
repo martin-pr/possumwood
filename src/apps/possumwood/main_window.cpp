@@ -5,10 +5,6 @@
 #include <QAction>
 #include <QHeaderView>
 
-#include <GL/glut.h>
-
-#include <OpenEXR/ImathVec.h>
-
 #include <bind.h>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/metadata.inl>
@@ -26,117 +22,15 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 	return result;
 }
 
-const Metadata& additionNode() {
-	static Metadata s_meta("addition");
-
-	if(!s_meta.isValid()) {
-		// create attributes
-		static dependency_graph::InAttr<float> additionInput1, additionInput2;
-		static dependency_graph::OutAttr<float> additionOutput;
-
-		// add attributes to the Metadata instance
-		s_meta.addAttribute(additionInput1, "input_1");
-		s_meta.addAttribute(additionInput2, "input_2");
-		s_meta.addAttribute(additionOutput, "output");
-
-		s_meta.addInfluence(additionInput1, additionOutput);
-		s_meta.addInfluence(additionInput2, additionOutput);
-
-		s_meta.setCompute([&](dependency_graph::Values & data) {
-			const float a = data.get(additionInput1);
-			const float b = data.get(additionInput2);
-
-			data.set(additionOutput, a + b);
-		});
-	}
-
-	return s_meta;
-}
-
-const Metadata& multiplicationNode() {
-	static Metadata s_meta("multiplication");
-
-	if(!s_meta.isValid()) {
-		static dependency_graph::InAttr<float> multiplicationInput1, multiplicationInput2;
-		static dependency_graph::OutAttr<float> multiplicationOutput;
-
-		s_meta.addAttribute(multiplicationInput1, "input_1");
-		s_meta.addAttribute(multiplicationInput2, "input_2");
-		s_meta.addAttribute(multiplicationOutput, "output");
-
-		s_meta.addInfluence(multiplicationInput1, multiplicationOutput);
-		s_meta.addInfluence(multiplicationInput2, multiplicationOutput);
-
-		s_meta.setCompute([&](dependency_graph::Values & data) {
-			const float a = data.get(multiplicationInput1);
-			const float b = data.get(multiplicationInput2);
-
-			data.set(multiplicationOutput, a * b);
-		});
-	}
-
-	return s_meta;
-}
-
-const Metadata& cubeNode() {
-	static Metadata s_meta("cube");
-	static dependency_graph::InAttr<Imath::Vec3<float>> a_pos, a_size;
-
-	if(!s_meta.isValid()) {
-		s_meta.addAttribute(a_pos, "position");
-		s_meta.addAttribute(a_size, "size", Imath::Vec3<float>(1.0f, 1.0f, 1.0f));
-
-		s_meta.setDraw([&](const dependency_graph::Values & data) {
-			const Imath::Vec3<float> pos = data.get(a_pos);
-			const Imath::Vec3<float> size = data.get(a_size);
-
-			glTranslatef(pos.x, pos.y, pos.z);
-			glScalef(size.x, size.y, size.z);
-
-			glColor3f(1, 0, 0);
-			glutWireCube(0.5f);
-		});
-	}
-
-	return s_meta;
-}
-
-const Metadata& makeVec3Node() {
-	static Metadata s_meta("make_vec3");
-	static dependency_graph::InAttr<float> a_x, a_y, a_z;
-	static dependency_graph::OutAttr<Imath::Vec3<float>> a_out;
-
-	if(!s_meta.isValid()) {
-		s_meta.addAttribute(a_x, "x");
-		s_meta.addAttribute(a_y, "y");
-		s_meta.addAttribute(a_z, "z");
-		s_meta.addAttribute(a_out, "out");
-
-		s_meta.addInfluence(a_x, a_out);
-		s_meta.addInfluence(a_y, a_out);
-		s_meta.addInfluence(a_z, a_out);
-
-		s_meta.setCompute([&](dependency_graph::Values & data) {
-			const float x = data.get(a_x);
-			const float y = data.get(a_y);
-			const float z = data.get(a_z);
-
-			data.set(a_out, Imath::Vec3<float>(x, y, z));
-		});
-	}
-
-	return s_meta;
-}
-
 }
 
 MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 	// initialise the graph with some nodes (to be removed)
 	{
-		auto& add = m_graph.nodes().add(additionNode(), "add1");
+		auto& add = m_graph.nodes().add(Metadata::instance("addition"), "add1");
 		add.setBlindData(NodeData{QPointF(-100, 20)});
 
-		auto& mult = m_graph.nodes().add(multiplicationNode(), "mult1");
+		auto& mult = m_graph.nodes().add(Metadata::instance("multiplication"), "mult1");
 		mult.setBlindData(NodeData{QPointF(100, 20)});
 
 		add.port(2).connect(mult.port(0));
@@ -172,25 +66,12 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 	// create the context click menu
 	m_adaptor->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-	m_adaptor->addAction(makeAction("Add addition node", [this]() {
-		QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
-		m_graph.nodes().add(additionNode(), "add_" + std::to_string(m_nodeCounter++), NodeData{pos});
-	}, m_adaptor));
-
-	m_adaptor->addAction(makeAction("Add multiplication node", [this]() {
-		QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
-		m_graph.nodes().add(multiplicationNode(), "mult_" + std::to_string(m_nodeCounter++), NodeData{pos});
-	}, m_adaptor));
-
-	m_adaptor->addAction(makeAction("Add cube node", [this]() {
-		QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
-		m_graph.nodes().add(cubeNode(), "cube_" + std::to_string(m_nodeCounter++), NodeData{pos});
-	}, m_adaptor));
-
-	m_adaptor->addAction(makeAction("Add vec3 node", [this]() {
-		QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
-		m_graph.nodes().add(makeVec3Node(), "vec3_" + std::to_string(m_nodeCounter++), NodeData{pos});
-	}, m_adaptor));
+	for(auto& m : Metadata::instances()) {
+		m_adaptor->addAction(makeAction(("Add " + m.type() + " node").c_str(), [&m, this]() {
+			QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
+			m_graph.nodes().add(m, m.type() + "_" + std::to_string(m_nodeCounter++), NodeData{pos});
+		}, m_adaptor));
+	}
 
 	QAction* separator = new QAction(m_adaptor);
 	separator->setSeparator(true);
