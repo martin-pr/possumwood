@@ -4,9 +4,6 @@
 
 namespace dependency_graph {
 
-Values::Values(Node& n) : m_node(&n) {
-}
-
 template<typename T>
 const T& Values::get(const InAttr<T>& attr) const {
 	return 	m_node->port(attr.offset()).get<T>();
