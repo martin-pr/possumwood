@@ -11,6 +11,7 @@
 
 #include "node_data.h"
 #include "connected_edge.h"
+#include "io/io.h"
 
 namespace {
 

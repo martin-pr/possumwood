@@ -38,4 +38,14 @@ bool Datablock::Data<T>::isEqual(const BaseData& src) const {
 	return value == srcData.value;
 }
 
+template<typename T>
+void Datablock::Data<T>::toJson(io::json& j) const {
+	j = value;
+}
+
+template<typename T>
+void Datablock::Data<T>::fromJson(const io::json& j) {
+	value = j.get<T>();
+}
+
 }

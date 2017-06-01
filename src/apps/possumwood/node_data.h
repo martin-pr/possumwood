@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QPoint>
+
 struct NodeData {
 	QPointF position;
 

@@ -13,6 +13,7 @@
 #include "adaptor.h"
 #include "node_data.h"
 #include "metadata.h"
+#include "io/io.h"
 
 namespace {
 

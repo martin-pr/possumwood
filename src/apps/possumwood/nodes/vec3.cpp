@@ -6,6 +6,8 @@
 
 #include <OpenEXR/ImathVec.h>
 
+#include "io/vec3.h"
+
 namespace {
 
 dependency_graph::InAttr<float> a_x, a_y, a_z;
