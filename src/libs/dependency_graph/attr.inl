@@ -14,8 +14,8 @@ const std::type_info& TypedAttr<T>::type() const {
 }
 
 template<typename T>
-std::unique_ptr<Datablock::BaseData> TypedAttr<T>::createData() const {
-	return std::unique_ptr<Datablock::BaseData>(new Datablock::Data<T>(m_defaultValue));
+std::unique_ptr<BaseData> TypedAttr<T>::createData() const {
+	return std::unique_ptr<BaseData>(new Data<T>(m_defaultValue));
 }
 
 

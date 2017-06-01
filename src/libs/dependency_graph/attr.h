@@ -31,7 +31,7 @@ class Attr {
 	protected:
 		Attr(const std::string& name, unsigned offset, Category cat);
 
-		virtual std::unique_ptr<Datablock::BaseData> createData() const = 0;
+		virtual std::unique_ptr<BaseData> createData() const = 0;
 
 	private:
 		std::string m_name;
@@ -50,7 +50,7 @@ class TypedAttr : public Attr {
 	protected:
 		TypedAttr(const std::string& name, unsigned offset, Category cat, const T& defaultValue);
 
-		virtual std::unique_ptr<Datablock::BaseData> createData() const override;
+		virtual std::unique_ptr<BaseData> createData() const override;
 
 	private:
 		T m_defaultValue;

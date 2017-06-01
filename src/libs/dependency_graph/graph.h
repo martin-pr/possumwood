@@ -167,8 +167,8 @@ template<typename T>
 Node& Graph::Nodes::add(const Metadata& type, const std::string& name, const T& blindData) {
 	m_nodes.push_back(m_parent->makeNode(name, &type));
 
-	m_nodes.back()->m_blindData = std::unique_ptr<Datablock::BaseData>(
-		new Datablock::Data<T>{blindData});
+	m_nodes.back()->m_blindData = std::unique_ptr<BaseData>(
+		new Data<T>{blindData});
 
 	m_parent->m_onAddNode(*m_nodes.back());
 

@@ -60,7 +60,7 @@ class Node : public boost::noncopyable {
 
 		const Metadata* m_meta;
 		Datablock m_data;
-		std::unique_ptr<Datablock::BaseData> m_blindData;
+		std::unique_ptr<BaseData> m_blindData;
 
 		std::vector<Port> m_ports;
 
