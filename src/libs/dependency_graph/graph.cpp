@@ -120,6 +120,15 @@ const Node& Graph::Nodes::operator[](std::size_t index) const {
 	return *m_nodes[index];
 }
 
+size_t Graph::Nodes::findNodeIndex(const Node& n) const {
+	auto it = std::find_if(m_nodes.begin(), m_nodes.end(), [&](const std::unique_ptr<Node>& ptr) {
+		return ptr.get() == &n;
+	});
+
+	assert(it != m_nodes.end() && "node not found");
+	return it - m_nodes.begin();
+}
+
 //////////////
 
 Graph::Connections::Connections(Graph* parent) : m_parent(parent) {

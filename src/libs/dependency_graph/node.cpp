@@ -134,4 +134,8 @@ Graph& Node::graph() {
 	return *m_parent;
 }
 
+size_t Node::index() const {
+	return graph().nodes().findNodeIndex(*this);
+}
+
 }

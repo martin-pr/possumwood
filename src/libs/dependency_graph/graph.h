@@ -57,6 +57,8 @@ class Graph : public boost::noncopyable {
 			private:
 				Nodes(Graph* parent);
 
+				size_t findNodeIndex(const Node& n) const;
+
 				Graph* m_parent;
 
 				// stored in a pointer container, to keep parent pointers
@@ -64,6 +66,7 @@ class Graph : public boost::noncopyable {
 				std::vector<std::unique_ptr<Node>> m_nodes;
 
 				friend class Graph;
+				friend class Node;
 		};
 
 		Nodes& nodes();
