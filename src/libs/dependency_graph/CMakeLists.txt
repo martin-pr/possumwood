@@ -13,7 +13,7 @@ set(LIBS ${LIBS} ${Boost_LIBRARIES})
 # Building the library
 include_directories(./)
 
-file(GLOB sources *.cpp)
+file(GLOB_RECURSE sources *.cpp)
 
 add_library(dependency_graph SHARED ${sources})
 
