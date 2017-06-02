@@ -24,10 +24,17 @@ void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g)
 }
 
 void adl_serializer<Graph>::from_json(const json& j, ::dependency_graph::Graph& g) {
-	// first, clear the graph
 	g.nodes().clear();
 
-	// TODO
+	for(auto& n : j["nodes"]) {
+		Node& node = g.nodes().add(Metadata::instance(n["type"].get<std::string>()), n["name"].get<std::string>());
+		adl_serializer<Node>::from_json(n, node);
+	}
+
+	for(auto& c : j["connections"]) {
+		g.nodes()[c["out_node"].get<size_t>()].port(c["out_port"].get<size_t>()).connect(
+			g.nodes()[c["in_node"].get<size_t>()].port(c["in_port"].get<size_t>()));
+	}
 }
 
 } }
