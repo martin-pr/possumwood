@@ -87,6 +87,9 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 
 	// drawing callback
 	connect(m_viewport, SIGNAL(render(float)), this, SLOT(draw(float)));
+	m_graph.onDirty([this]() {
+		m_viewport->update();
+	});
 }
 
 void MainWindow::draw(float dt) {
