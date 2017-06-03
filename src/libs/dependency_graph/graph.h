@@ -150,6 +150,8 @@ class Graph : public boost::noncopyable {
 
 		boost::signals2::connection onBlindDataChanged(std::function<void(Node&)> callback);
 
+		boost::signals2::connection onDirty(std::function<void()> callback);
+
 	private:
 		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
 
@@ -158,6 +160,7 @@ class Graph : public boost::noncopyable {
 
 		boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode, m_onBlindDataChanged;
 		boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
+		boost::signals2::signal<void()> m_onDirty;
 
 		friend class Node;
 		friend class Nodes;
@@ -174,6 +177,7 @@ Node& Graph::Nodes::add(const Metadata& type, const std::string& name, const T& 
 		new Data<T>{blindData});
 
 	m_parent->m_onAddNode(*m_nodes.back());
+	m_parent->m_onDirty();
 
 	return *m_nodes.back();
 }

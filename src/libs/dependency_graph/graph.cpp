@@ -58,6 +58,10 @@ boost::signals2::connection Graph::onBlindDataChanged(std::function<void(Node&)>
 	return m_onBlindDataChanged.connect(callback);
 }
 
+boost::signals2::connection Graph::onDirty(std::function<void()> callback) {
+	return m_onDirty.connect(callback);
+}
+
 //////////////
 
 Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
@@ -68,6 +72,7 @@ Node& Graph::Nodes::add(const Metadata& type, const std::string& name) {
 	m_nodes.push_back(m_parent->makeNode(name, &type));
 
 	m_parent->m_onAddNode(*m_nodes.back());
+	m_parent->m_onDirty();
 
 	return *m_nodes.back();
 }
@@ -76,6 +81,7 @@ Graph::Nodes::iterator Graph::Nodes::erase(iterator i) {
 	m_parent->m_connections.purge(*i);
 
 	m_parent->m_onRemoveNode(*i);
+	m_parent->m_onDirty();
 
 	auto it = m_nodes.erase(i.base());
 	return boost::make_indirect_iterator(it);
