@@ -27,7 +27,14 @@ void adl_serializer<Graph>::from_json(const json& j, ::dependency_graph::Graph& 
 	g.nodes().clear();
 
 	for(auto& n : j["nodes"]) {
-		Node& node = g.nodes().add(Metadata::instance(n["type"].get<std::string>()), n["name"].get<std::string>());
+		std::unique_ptr<BaseData> blindData;
+		if(!n["blind_data"].is_null()) {
+			blindData = BaseData::create(n["blind_data"]["type"].get<std::string>());
+			assert(blindData != nullptr);
+			blindData->fromJson(n["blind_data"]["value"]);
+		}
+
+		Node& node = g.nodes().add(Metadata::instance(n["type"].get<std::string>()), n["name"].get<std::string>(), std::move(blindData));
 		adl_serializer<Node>::from_json(n, node);
 	}
 

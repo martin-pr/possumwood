@@ -42,6 +42,8 @@ void Node::setBlindData(const T& value) {
 template<typename T>
 const T& Node::blindData() const {
 	// retype and return
+	assert(m_blindData != NULL);
+	assert(m_blindData->type() == typeid(T).name());
 	const Data<T>& val = dynamic_cast<const Data<T>&>(*m_blindData);
 	return val.value;
 }
