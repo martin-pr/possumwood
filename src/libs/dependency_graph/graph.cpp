@@ -68,8 +68,9 @@ Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
 
 }
 
-Node& Graph::Nodes::add(const Metadata& type, const std::string& name) {
+Node& Graph::Nodes::add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData) {
 	m_nodes.push_back(m_parent->makeNode(name, &type));
+	m_nodes.back()->m_blindData = std::move(blindData);
 
 	m_parent->m_onAddNode(*m_nodes.back());
 	m_parent->m_onDirty();

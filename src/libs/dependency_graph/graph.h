@@ -46,7 +46,7 @@ class Graph : public boost::noncopyable {
 				iterator begin();
 				iterator end();
 
-				Node& add(const Metadata& type, const std::string& name);
+				Node& add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>());
 
 				template<typename T>
 				Node& add(const Metadata& type, const std::string& name, const T& blindData);
