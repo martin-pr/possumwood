@@ -5,6 +5,7 @@
 
 #include <QHBoxLayout>
 #include <QResizeEvent>
+#include <QScrollBar>
 
 #include "connected_edge.h"
 
@@ -27,6 +28,8 @@ GraphWidget::GraphWidget(QWidget* parent) : QGraphicsView(parent), m_scene(this)
 
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	verticalScrollBar()->setEnabled(false);
+	horizontalScrollBar()->setEnabled(false);
 }
 
 GraphScene& GraphWidget::scene() {
@@ -46,7 +49,10 @@ void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 	else if(event->buttons() & Qt::MiddleButton) {
 		const QPointF tr = QPointF(event->x(), event->y()) - QPointF(m_mouseX, m_mouseY);
 
-		translate(tr.x(), tr.y());
+		const QMatrix m = matrix();
+		const float scale = sqrt(m.m11()*m.m11() + m.m12()*m.m12());
+
+		translate(tr.x() / scale, tr.y() / scale);
 
 		event->accept();
 	}
@@ -57,6 +63,19 @@ void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 	// store current mouse position
 	m_mouseX = event->x();
 	m_mouseY = event->y();
+}
+
+void GraphWidget::wheelEvent(QWheelEvent *event) {
+	const QPointF orig = mapToScene(event->x(), event->y());
+
+	if(event->delta() > 0)
+		scale(1.25, 1.25);
+	else
+		scale(1.0/1.25, 1.0/1.25);
+
+	const QPointF current = mapToScene(event->x(), event->y());
+
+	translate((current - orig).x(), (current - orig).y());
 }
 
 }

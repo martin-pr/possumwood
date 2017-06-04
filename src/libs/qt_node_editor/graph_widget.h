@@ -18,6 +18,7 @@ class GraphWidget : public QGraphicsView {
 
 	protected:
 		virtual void mouseMoveEvent(QMouseEvent* event) override;
+		virtual void wheelEvent(QWheelEvent *event) override;
 
 	private:
 		GraphScene m_scene;
