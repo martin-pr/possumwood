@@ -10,6 +10,9 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDockWidget>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include <bind.h>
 #include <dependency_graph/attr.inl>
@@ -36,10 +39,10 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 	// initialise the graph with some nodes (to be removed)
 	{
 		auto& add = m_graph.nodes().add(Metadata::instance("addition"), "add1");
-		add.setBlindData(NodeData{QPointF(-100, 20)});
+		add.setBlindData(NodeData{QPointF(100, 20)});
 
 		auto& mult = m_graph.nodes().add(Metadata::instance("multiplication"), "mult1");
-		mult.setBlindData(NodeData{QPointF(100, 20)});
+		mult.setBlindData(NodeData{QPointF(300, 20)});
 
 		add.port(2).connect(mult.port(0));
 	}

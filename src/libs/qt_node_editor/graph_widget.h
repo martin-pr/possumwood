@@ -17,11 +17,12 @@ class GraphWidget : public QGraphicsView {
 		GraphScene& scene();
 
 	protected:
-		virtual void resizeEvent(QResizeEvent* event) override;
 		virtual void mouseMoveEvent(QMouseEvent* event) override;
 
 	private:
 		GraphScene m_scene;
+
+		int m_mouseX, m_mouseY;
 };
 
 }
