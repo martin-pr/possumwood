@@ -47,7 +47,7 @@ script:
   - export CXX=g++-5
   - export CC=gcc-5
   - cd $TRAVIS_BUILD_DIR
-  - ./tools/build-debug
+  - ./tools/build-debug -j 4
   - ./tools/run-tests
 
 # Generate and deploy documentation

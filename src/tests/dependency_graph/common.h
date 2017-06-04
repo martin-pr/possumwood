@@ -4,6 +4,7 @@
 #include <typeinfo>
 
 #include <dependency_graph/metadata.h>
+#include <dependency_graph/io/json.h>
 
 namespace std {
 
@@ -23,6 +24,10 @@ struct TestStruct {
 
 	unsigned id;
 };
+
+// implementation of serialization of TestStruct - to make tests compile
+inline void to_json(::dependency_graph::io::json& json, const TestStruct& ts) {}
+inline void from_json(const ::dependency_graph::io::json& json, TestStruct& ts) {}
 
 std::ostream& operator << (std::ostream& out, const TestStruct& t);
 

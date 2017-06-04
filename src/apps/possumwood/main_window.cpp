@@ -1,18 +1,26 @@
 #include "main_window.h"
 
+#include <fstream>
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QAction>
 #include <QHeaderView>
+#include <QMenuBar>
+#include <QAction>
+#include <QMessageBox>
+#include <QFileDialog>
 
 #include <bind.h>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/metadata.inl>
 #include <dependency_graph/values.inl>
+#include <dependency_graph/io/graph.h>
 
 #include "adaptor.h"
 #include "node_data.h"
 #include "metadata.h"
+#include "io/io.h"
 
 namespace {
 
@@ -86,6 +94,98 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 
 	// drawing callback
 	connect(m_viewport, SIGNAL(render(float)), this, SLOT(draw(float)));
+	m_graph.onDirty([this]() {
+		m_viewport->update();
+	});
+
+	////////////////////
+	// window actions
+	QAction* newAct = new QAction("&New...", this);
+	newAct->setShortcuts(QKeySequence::New);
+	connect(newAct, &QAction::triggered, [&](bool) {
+		QMessageBox::StandardButton res = QMessageBox::question(this, "New file...", "Do you want to clear the scene?");
+		if(res == QMessageBox::Yes) {
+			m_adaptor->graph().nodes().clear();
+			m_filename = "";
+		}
+	});
+
+	QAction* openAct = new QAction("&Open...", this);
+	openAct->setShortcuts(QKeySequence::Open);
+	connect(openAct, &QAction::triggered, [this](bool) {
+		QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),
+		                   m_filename.string().c_str(),
+		                   tr("Possumwood files (*.psw)"));
+
+		if(!filename.isEmpty()) {
+			try {
+				std::ifstream in(filename.toStdString());
+
+				dependency_graph::io::json json;
+				in >> json;
+
+				dependency_graph::io::adl_serializer<dependency_graph::Graph>::from_json(json, m_adaptor->graph());
+
+				m_filename = filename.toStdString();
+			}
+			catch(std::exception& err) {
+				QMessageBox::critical(this, "Error loading file...", "Error loading " + filename + ":\n" + err.what());
+			}
+			catch(...) {
+				QMessageBox::critical(this, "Error loading file...", "Error loading " + filename + ":\nUnhandled exception thrown during loading.");
+			}
+		}
+	});
+
+	QAction* saveAct = new QAction("&Save...", this);
+	saveAct->setShortcuts(QKeySequence::Save);
+	QAction* saveAsAct = new QAction("Save &As...", this);
+	saveAsAct->setShortcuts(QKeySequence::SaveAs);
+
+	connect(saveAct, &QAction::triggered, [saveAsAct, this](bool) {
+		if(m_filename.empty())
+			saveAsAct->triggered(true);
+
+		else {
+			try {
+				std::ofstream out(m_filename.string());
+
+				dependency_graph::io::json json;
+				json = m_adaptor->graph();
+
+				out << std::setw(4) << json;
+			}
+			catch(std::exception& err) {
+				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(m_filename.string().c_str()) + ":\n" + err.what());
+			}
+			catch(...) {
+				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(m_filename.string().c_str()) + ":\nUnhandled exception thrown during saving.");
+			}
+		}
+	});
+
+	connect(saveAsAct, &QAction::triggered, [saveAct, this](bool) {
+		QString filename = QFileDialog::getSaveFileName(this, tr("Save File"),
+		                   m_filename.string().c_str(),
+		                   tr("Possumwood files (*.psw)"));
+
+		if(!filename.isEmpty()) {
+			m_filename = filename.toStdString();
+
+			saveAct->triggered(true);
+		}
+	});
+
+
+	////////////////////
+	// create menu
+
+	QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
+
+	fileMenu->addAction(newAct);
+	fileMenu->addAction(openAct);
+	fileMenu->addAction(saveAct);
+	fileMenu->addAction(saveAsAct);
 }
 
 void MainWindow::draw(float dt) {

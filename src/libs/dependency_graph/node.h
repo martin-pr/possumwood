@@ -38,6 +38,10 @@ class Node : public boost::noncopyable {
 		const Graph& graph() const;
 		Graph& graph();
 
+		/// returns the unique numeric ID of this node, used for saving connections.
+		/// This ID can be used in Graph::operator[] to get this node from the graph.
+		size_t index() const;
+
 	protected:
 		Node(const std::string& name, const Metadata* def, Graph* parent);
 
@@ -60,12 +64,14 @@ class Node : public boost::noncopyable {
 
 		const Metadata* m_meta;
 		Datablock m_data;
-		std::unique_ptr<Datablock::BaseData> m_blindData;
+		std::unique_ptr<BaseData> m_blindData;
 
 		std::vector<Port> m_ports;
 
 		friend class Graph;
 		friend class Port;
+
+		friend class io::adl_serializer<Node>;
 };
 
 }

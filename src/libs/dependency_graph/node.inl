@@ -23,10 +23,10 @@ template<typename T>
 void Node::setBlindData(const T& value) {
 	// create blind data if they're not present
 	if(m_blindData.get() == NULL)
-		m_blindData = std::unique_ptr<Datablock::BaseData>(new Datablock::Data<T>());
+		m_blindData = std::unique_ptr<BaseData>(new Data<T>());
 
 	// retype
-	Datablock::Data<T>& val = dynamic_cast<Datablock::Data<T>&>(*m_blindData);
+	Data<T>& val = dynamic_cast<Data<T>&>(*m_blindData);
 
 	// set the value
 	if(val.value != value) {
@@ -42,7 +42,9 @@ void Node::setBlindData(const T& value) {
 template<typename T>
 const T& Node::blindData() const {
 	// retype and return
-	const Datablock::Data<T>& val = dynamic_cast<const Datablock::Data<T>&>(*m_blindData);
+	assert(m_blindData != NULL);
+	assert(m_blindData->type() == typeid(T).name());
+	const Data<T>& val = dynamic_cast<const Data<T>&>(*m_blindData);
 	return val.value;
 }
 

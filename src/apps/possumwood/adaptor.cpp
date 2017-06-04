@@ -11,6 +11,7 @@
 
 #include "node_data.h"
 #include "connected_edge.h"
+#include "io/io.h"
 
 namespace {
 
@@ -38,23 +39,23 @@ QColor colour(const std::string& datatype) {
 Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph) {
 	// register callbacks
 	m_signals.push_back(graph->onAddNode(
-		[&](dependency_graph::Node& node) { onAddNode(node); }
+		[this](dependency_graph::Node& node) { onAddNode(node); }
 	));
 
 	m_signals.push_back(graph->onRemoveNode(
-		[&](dependency_graph::Node& node) { onRemoveNode(node); }
+		[this](dependency_graph::Node& node) { onRemoveNode(node); }
 	));
 
 	m_signals.push_back(graph->onConnect(
-		[&](dependency_graph::Port& p1, dependency_graph::Port& p2) { onConnect(p1, p2); }
+		[this](dependency_graph::Port& p1, dependency_graph::Port& p2) { onConnect(p1, p2); }
 	));
 
 	m_signals.push_back(graph->onDisconnect(
-		[&](dependency_graph::Port& p1, dependency_graph::Port& p2) { onDisconnect(p1, p2); }
+		[this](dependency_graph::Port& p1, dependency_graph::Port& p2) { onDisconnect(p1, p2); }
 	));
 
 	m_signals.push_back(graph->onBlindDataChanged(
-		[&](dependency_graph::Node& n) { onBlindDataChanged(n); }
+		[this](dependency_graph::Node& n) { onBlindDataChanged(n); }
 	));
 
 	// instantiate the graph widget
@@ -134,6 +135,9 @@ void Adaptor::onRemoveNode(dependency_graph::Node& node) {
 
 	// and remove it
 	m_graphWidget->scene().removeNode(*(it->second));
+
+	// and delete it from the list of nodes
+	m_nodes.left.erase(it);
 }
 
 void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
@@ -142,6 +146,9 @@ void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) 
 	assert(n1 != m_nodes.left.end());
 	auto n2 = m_nodes.left.find(&p2.node());
 	assert(n2 != m_nodes.left.end());
+
+	assert(n1->second->portCount() > p1.index());
+	assert(n2->second->portCount() > p2.index());
 
 	// instantiate the connection
 	m_graphWidget->scene().connect(n1->second->port(p1.index()), n2->second->port(p2.index()));

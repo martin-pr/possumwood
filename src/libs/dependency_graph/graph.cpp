@@ -58,16 +58,22 @@ boost::signals2::connection Graph::onBlindDataChanged(std::function<void(Node&)>
 	return m_onBlindDataChanged.connect(callback);
 }
 
+boost::signals2::connection Graph::onDirty(std::function<void()> callback) {
+	return m_onDirty.connect(callback);
+}
+
 //////////////
 
 Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
 
 }
 
-Node& Graph::Nodes::add(const Metadata& type, const std::string& name) {
+Node& Graph::Nodes::add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData) {
 	m_nodes.push_back(m_parent->makeNode(name, &type));
+	m_nodes.back()->m_blindData = std::move(blindData);
 
 	m_parent->m_onAddNode(*m_nodes.back());
+	m_parent->m_onDirty();
 
 	return *m_nodes.back();
 }
@@ -76,6 +82,7 @@ Graph::Nodes::iterator Graph::Nodes::erase(iterator i) {
 	m_parent->m_connections.purge(*i);
 
 	m_parent->m_onRemoveNode(*i);
+	m_parent->m_onDirty();
 
 	auto it = m_nodes.erase(i.base());
 	return boost::make_indirect_iterator(it);
@@ -118,6 +125,15 @@ Node& Graph::Nodes::operator[](std::size_t index) {
 const Node& Graph::Nodes::operator[](std::size_t index) const {
 	assert(index < m_nodes.size());
 	return *m_nodes[index];
+}
+
+size_t Graph::Nodes::findNodeIndex(const Node& n) const {
+	auto it = std::find_if(m_nodes.begin(), m_nodes.end(), [&](const std::unique_ptr<Node>& ptr) {
+		return ptr.get() == &n;
+	});
+
+	assert(it != m_nodes.end() && "node not found");
+	return it - m_nodes.begin();
 }
 
 //////////////

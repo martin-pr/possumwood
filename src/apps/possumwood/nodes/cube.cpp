@@ -8,6 +8,8 @@
 
 #include <GL/glut.h>
 
+#include "io/vec3.h"
+
 namespace {
 
 dependency_graph::InAttr<Imath::Vec3<float>> a_pos, a_size;

@@ -3,6 +3,8 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QTreeWidget>
 
+#include <boost/filesystem/path.hpp>
+
 #include <dependency_graph/graph.h>
 
 #include "adaptor.h"
@@ -26,4 +28,6 @@ class MainWindow : public QMainWindow {
 		Properties* m_properties;
 
 		unsigned m_nodeCounter;
+
+		boost::filesystem::path m_filename;
 };

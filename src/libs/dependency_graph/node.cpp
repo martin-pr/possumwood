@@ -45,6 +45,8 @@ void Node::markAsDirty(size_t index) {
 	if(!p.isDirty()) {
 		p.setDirty(true);
 
+		graph().m_onDirty();
+
 		// recurse + handle each port type slightly differently
 		if(p.category() == Attr::kInput) {
 			// all outputs influenced by this input are marked dirty
@@ -132,6 +134,10 @@ const Graph& Node::graph() const {
 Graph& Node::graph() {
 	assert(m_parent);
 	return *m_parent;
+}
+
+size_t Node::index() const {
+	return graph().nodes().findNodeIndex(*this);
 }
 
 }

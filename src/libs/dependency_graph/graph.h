@@ -46,7 +46,7 @@ class Graph : public boost::noncopyable {
 				iterator begin();
 				iterator end();
 
-				Node& add(const Metadata& type, const std::string& name);
+				Node& add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>());
 
 				template<typename T>
 				Node& add(const Metadata& type, const std::string& name, const T& blindData);
@@ -57,6 +57,8 @@ class Graph : public boost::noncopyable {
 			private:
 				Nodes(Graph* parent);
 
+				size_t findNodeIndex(const Node& n) const;
+
 				Graph* m_parent;
 
 				// stored in a pointer container, to keep parent pointers
@@ -64,6 +66,7 @@ class Graph : public boost::noncopyable {
 				std::vector<std::unique_ptr<Node>> m_nodes;
 
 				friend class Graph;
+				friend class Node;
 		};
 
 		Nodes& nodes();
@@ -147,6 +150,8 @@ class Graph : public boost::noncopyable {
 
 		boost::signals2::connection onBlindDataChanged(std::function<void(Node&)> callback);
 
+		boost::signals2::connection onDirty(std::function<void()> callback);
+
 	private:
 		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
 
@@ -155,6 +160,7 @@ class Graph : public boost::noncopyable {
 
 		boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode, m_onBlindDataChanged;
 		boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
+		boost::signals2::signal<void()> m_onDirty;
 
 		friend class Node;
 		friend class Nodes;
@@ -167,10 +173,11 @@ template<typename T>
 Node& Graph::Nodes::add(const Metadata& type, const std::string& name, const T& blindData) {
 	m_nodes.push_back(m_parent->makeNode(name, &type));
 
-	m_nodes.back()->m_blindData = std::unique_ptr<Datablock::BaseData>(
-		new Datablock::Data<T>{blindData});
+	m_nodes.back()->m_blindData = std::unique_ptr<BaseData>(
+		new Data<T>{blindData});
 
 	m_parent->m_onAddNode(*m_nodes.back());
+	m_parent->m_onDirty();
 
 	return *m_nodes.back();
 }

@@ -52,8 +52,6 @@ void Viewport::paintGL() {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	emit render(dt);
 	glPopAttrib();
-
-	update();
 }
 
 void Viewport::resizeGL(int w, int h) {
@@ -70,12 +68,17 @@ void Viewport::mouseMoveEvent(QMouseEvent* event) {
 	if(event->buttons() & Qt::LeftButton) {
 		m_sceneRotationX += (float)(event->x() - m_mouseX) / (float)width() * 360.0;
 		m_sceneRotationY += (float)(event->y() - m_mouseY) / (float)height() * 360.0;
+
+		update();
 	}
 	m_sceneRotationY = std::max(-90.0f, m_sceneRotationY);
 	m_sceneRotationY = std::min(90.0f, m_sceneRotationY);
 
-	if(event->buttons() & Qt::RightButton)
+	if(event->buttons() & Qt::RightButton) {
 		m_sceneDistance /= pow(10, (float)(event->y() - m_mouseY) / (float)height());
+
+		update();
+	}
 
 	m_mouseX = event->x();
 	m_mouseY = event->y();
