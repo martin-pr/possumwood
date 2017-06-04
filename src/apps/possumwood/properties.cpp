@@ -22,8 +22,8 @@ void Properties::show(const std::vector<std::reference_wrapper<dependency_graph:
 		// create a top level item for each node
 		QTreeWidgetItem* nodeItem = new QTreeWidgetItem();
 		nodeItem->setText(0, node.get().name().c_str());
-
 		addTopLevelItem(nodeItem);
+		nodeItem->setFirstColumnSpanned(true);
 
 		// add each port as a subitem
 		for(unsigned pi = 0; pi != node.get().portCount(); ++pi) {
