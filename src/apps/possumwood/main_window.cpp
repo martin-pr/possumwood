@@ -44,25 +44,22 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 		add.port(2).connect(mult.port(0));
 	}
 
-	// create the main widget, and the main window content
-	QWidget* main = new QWidget();
-	setCentralWidget(main);
-
-	QHBoxLayout* layout = new QHBoxLayout(main);
-	layout->setContentsMargins(0, 0, 0, 0);
-
 	m_viewport = new Viewport();
-	layout->addWidget(m_viewport, 1);
-
-	QVBoxLayout* rightLayout = new QVBoxLayout();
-	layout->addLayout(rightLayout);
-	rightLayout->setContentsMargins(0, 0, 0, 0);
+	setCentralWidget(m_viewport);
 
 	m_properties = new Properties();
-	rightLayout->addWidget(m_properties);
+	QDockWidget* propDock = new QDockWidget("Properties", this);
+	propDock->setWidget(m_properties);
+	addDockWidget(Qt::RightDockWidgetArea, propDock);
 
 	m_adaptor = new Adaptor(&m_graph);
-	rightLayout->addWidget(m_adaptor);
+	auto geom = m_adaptor->sizeHint();
+	geom.setWidth(QApplication::desktop()->screenGeometry().width() / 2 - 200);
+	m_adaptor->setSizeHint(geom);
+
+	QDockWidget* graphDock = new QDockWidget("Graph", this);
+	graphDock->setWidget(m_adaptor);
+	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
 
 	// connect the selection signal
 	m_adaptor->scene().setNodeSelectionCallback(
@@ -180,12 +177,17 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 	////////////////////
 	// create menu
 
-	QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
+	QMenu* fileMenu = menuBar()->addMenu("&File");
 
 	fileMenu->addAction(newAct);
 	fileMenu->addAction(openAct);
 	fileMenu->addAction(saveAct);
+
+	QMenu* viewMenu = menuBar()->addMenu("&View");
 	fileMenu->addAction(saveAsAct);
+
+	viewMenu->addAction(propDock->toggleViewAction());
+	viewMenu->addAction(graphDock->toggleViewAction());
 }
 
 void MainWindow::draw(float dt) {
