@@ -53,6 +53,11 @@ const QString Node::name() const {
 	return m_title->toPlainText();
 }
 
+void Node::setName(const QString& name) {
+	m_title->setPlainText(name);
+	updateRect();
+}
+
 void Node::updateRect() {
 	unsigned height = m_title->boundingRect().height();
 	unsigned width = m_title->boundingRect().width();

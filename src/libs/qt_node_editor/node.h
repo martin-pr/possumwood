@@ -23,6 +23,7 @@ class Node : public QGraphicsRectItem {
 
 
 		const QString name() const;
+		void setName(const QString& name);
 
 		unsigned portCount() const;
 		Port& port(unsigned i);
