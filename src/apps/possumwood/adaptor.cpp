@@ -36,7 +36,7 @@ QColor colour(const std::string& datatype) {
 
 }
 
-Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph) {
+Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(400,400) {
 	// register callbacks
 	m_signals.push_back(graph->onAddNode(
 		[this](dependency_graph::Node& node) { onAddNode(node); }
@@ -251,4 +251,16 @@ const node_editor::GraphScene& Adaptor::scene() const {
 
 dependency_graph::Graph& Adaptor::graph() {
 	return *m_graph;
+}
+
+node_editor::GraphWidget* Adaptor::graphWidget() {
+	return m_graphWidget;
+}
+
+void Adaptor::setSizeHint(const QSize& sh) {
+	m_sizeHint = sh;
+}
+
+QSize Adaptor::sizeHint() const {
+	return m_sizeHint;
 }

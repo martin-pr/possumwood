@@ -29,11 +29,16 @@ class Adaptor : public QWidget {
 		/// returns the dependency graph
 		dependency_graph::Graph& graph();
 
+		node_editor::GraphWidget* graphWidget();
+
 		/// deletes all selected items in the associated graph
 		void deleteSelected();
 
 		/// returns a list of all selected nodes
 		std::vector<std::reference_wrapper<dependency_graph::Node>> selectedNodes();
+
+		void setSizeHint(const QSize& sh);
+		virtual QSize sizeHint() const override;
 
 	protected:
 	private:
@@ -51,4 +56,6 @@ class Adaptor : public QWidget {
 		std::vector<boost::signals2::connection> m_signals;
 
 		boost::bimap<dependency_graph::Node*, node_editor::Node*> m_nodes;
+
+		QSize m_sizeHint;
 };
