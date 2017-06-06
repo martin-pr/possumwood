@@ -20,6 +20,11 @@ const std::string& Node::name() const {
 	return m_name;
 }
 
+void Node::setName(const std::string& name) {
+	m_name = name;
+	graph().m_onNameChanged(*this);
+}
+
 const Metadata& Node::metadata() const {
 	return *m_meta;
 }

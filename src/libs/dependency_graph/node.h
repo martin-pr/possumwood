@@ -18,6 +18,7 @@ class Graph;
 class Node : public boost::noncopyable {
 	public:
 		const std::string& name() const;
+		void setName(const std::string& name);
 
 		const Metadata& metadata() const;
 

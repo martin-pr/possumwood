@@ -58,6 +58,10 @@ boost::signals2::connection Graph::onBlindDataChanged(std::function<void(Node&)>
 	return m_onBlindDataChanged.connect(callback);
 }
 
+boost::signals2::connection Graph::onNameChanged(std::function<void(Node&)> callback) {
+	return m_onNameChanged.connect(callback);
+}
+
 boost::signals2::connection Graph::onDirty(std::function<void()> callback) {
 	return m_onDirty.connect(callback);
 }

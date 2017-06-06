@@ -58,6 +58,10 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		[this](dependency_graph::Node& n) { onBlindDataChanged(n); }
 	));
 
+	m_signals.push_back(graph->onNameChanged(
+		[this](dependency_graph::Node& n) { onNameChanged(n); }
+	));
+
 	// instantiate the graph widget
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setContentsMargins(0,0,0,0);
@@ -172,6 +176,13 @@ void Adaptor::onBlindDataChanged(dependency_graph::Node& node) {
 	const NodeData& data = node.blindData<NodeData>();
 
 	n->second->setPos(data.position);
+}
+
+void Adaptor::onNameChanged(dependency_graph::Node& node) {
+	auto n = m_nodes.left.find(&node);
+	assert(n != m_nodes.left.end());
+
+	n->second->setName(node.name().c_str());
 }
 
 QPointF Adaptor::mapToScene(QPoint pos) const {

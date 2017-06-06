@@ -2,6 +2,8 @@
 
 #include <QtWidgets/QTreeWidget>
 
+#include <map>
+
 #include <boost/noncopyable.hpp>
 
 #include <node.h>
@@ -29,4 +31,5 @@ class Properties : public QTreeWidget {
 		};
 
 		std::vector<Property> m_properties;
+		std::map<QTreeWidgetItem*, dependency_graph::Node*> m_nodes;
 };

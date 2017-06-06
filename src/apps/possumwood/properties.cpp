@@ -12,18 +12,31 @@ Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 	headerItem()->setText(1, "value");
 	headerItem()->setFirstColumnSpanned(false);
 	header()->setStretchLastSection(true);
+
+	connect(this, &Properties::itemChanged, [this](QTreeWidgetItem* item, int column) {
+		auto it = m_nodes.find(item);
+		assert(it != m_nodes.end());
+
+		it->second->setName(item->text(0).toStdString()	);
+	});
 }
 
 void Properties::show(const std::vector<std::reference_wrapper<dependency_graph::Node>>& selection) {
 	clear();
 	m_properties.clear();
+	m_nodes.clear();
+
+	bool block = blockSignals(true);
 
 	for(const auto& node : selection) {
 		// create a top level item for each node
 		QTreeWidgetItem* nodeItem = new QTreeWidgetItem();
 		nodeItem->setText(0, node.get().name().c_str());
-
 		addTopLevelItem(nodeItem);
+		nodeItem->setFirstColumnSpanned(true);
+		nodeItem->setFlags(nodeItem->flags() | Qt::ItemIsEditable);
+
+		m_nodes.insert(std::make_pair(nodeItem, &(node.get())));
 
 		// add each port as a subitem
 		for(unsigned pi = 0; pi != node.get().portCount(); ++pi) {
@@ -42,6 +55,8 @@ void Properties::show(const std::vector<std::reference_wrapper<dependency_graph:
 				portItem->setText(1, "(no UI defined for this datatype)");
 		}
 	}
+
+	blockSignals(block);
 
 	expandAll();
 }

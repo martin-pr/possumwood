@@ -149,6 +149,7 @@ class Graph : public boost::noncopyable {
 		boost::signals2::connection onDisconnect(std::function<void(Port&, Port&)> callback);
 
 		boost::signals2::connection onBlindDataChanged(std::function<void(Node&)> callback);
+		boost::signals2::connection onNameChanged(std::function<void(Node&)> callback);
 
 		boost::signals2::connection onDirty(std::function<void()> callback);
 
@@ -158,7 +159,7 @@ class Graph : public boost::noncopyable {
 		Nodes m_nodes;
 		Connections m_connections;
 
-		boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode, m_onBlindDataChanged;
+		boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode, m_onBlindDataChanged, m_onNameChanged;
 		boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
 		boost::signals2::signal<void()> m_onDirty;
 
