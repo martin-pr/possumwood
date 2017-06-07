@@ -20,11 +20,15 @@ void draw(const dependency_graph::Values& data) {
 	const Imath::Vec3<float> pos = data.get(a_pos);
 	const Imath::Vec3<float> size = data.get(a_size);
 
+	glPushMatrix();
+
 	glTranslatef(pos.x, pos.y, pos.z);
 	glScalef(size.x, size.y, size.z);
 
 	glColor3f(1, 0, 0);
 	glutWireCube(0.5f);
+
+	glPopMatrix();
 }
 
 void init(Metadata& meta) {
