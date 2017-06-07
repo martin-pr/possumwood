@@ -7,7 +7,7 @@
 #include <boost/noncopyable.hpp>
 
 #include <node.h>
-#include <properties_ui/property.h>
+#include <properties/property.h>
 
 /// A widget displaying properties of selected nodes
 class Properties : public QTreeWidget {
