@@ -5,7 +5,7 @@
 
 #include <OpenEXR/ImathVec.h>
 
-#include "property.h"
+#include <possumwood/properties/property.h>
 
 namespace properties {
 
@@ -24,8 +24,8 @@ class vec3_ui : public property<Imath::Vec3<float>, vec3_ui> {
 
 	private:
 		QWidget* m_widget;
-		QDoubleSpinBox *m_x, *m_y, *m_z;
-		QMetaObject::Connection m_xChanged, m_yChanged, m_zChanged;
+		std::vector<QDoubleSpinBox*> m_values;
+		std::vector<QMetaObject::Connection> m_connections;
 };
 
 }

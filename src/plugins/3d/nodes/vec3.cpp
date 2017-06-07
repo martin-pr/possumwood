@@ -1,8 +1,10 @@
-#include "node_implementation.h"
+#include <possumwood/node_implementation.h>
 
 #include <dependency_graph/values.inl>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/datablock.inl>
+#include <dependency_graph/port.inl>
+#include <dependency_graph/node.inl>
 
 #include <OpenEXR/ImathVec.h>
 
@@ -34,6 +36,6 @@ void init(Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-NodeImplementation s_impl("make_vec3", init);
+NodeImplementation s_impl("3d/make_vec3", init);
 
 }

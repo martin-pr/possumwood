@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow {
 
 	public:
 		MainWindow();
+		~MainWindow();
 
 	private slots:
 		void draw(float dt);
@@ -26,8 +27,6 @@ class MainWindow : public QMainWindow {
 		Viewport* m_viewport;
 		Adaptor* m_adaptor;
 		Properties* m_properties;
-
-		unsigned m_nodeCounter;
 
 		boost::filesystem::path m_filename;
 };

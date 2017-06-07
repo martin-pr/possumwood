@@ -1,4 +1,4 @@
-#include "node_implementation.h"
+#include <possumwood/node_implementation.h>
 
 #include <dependency_graph/values.inl>
 #include <dependency_graph/attr.inl>
@@ -17,9 +17,9 @@ void compute(dependency_graph::Values& data) {
 }
 
 void init(Metadata& meta) {
-	meta.addAttribute(input1, "input_1");
-	meta.addAttribute(input2, "input_2");
-	meta.addAttribute(output, "output");
+	meta.addAttribute(input1, "a");
+	meta.addAttribute(input2, "b");
+	meta.addAttribute(output, "out");
 
 	meta.addInfluence(input1, output);
 	meta.addInfluence(input2, output);
@@ -27,6 +27,6 @@ void init(Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-NodeImplementation s_impl("addition", init);
+NodeImplementation s_impl("maths/add", init);
 
 }

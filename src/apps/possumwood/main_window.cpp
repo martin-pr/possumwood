@@ -2,6 +2,9 @@
 
 #include <fstream>
 
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QAction>
@@ -23,7 +26,7 @@
 #include "adaptor.h"
 #include "node_data.h"
 #include "metadata.h"
-#include "io/io.h"
+#include "io/node_data.h"
 
 namespace {
 
@@ -35,18 +38,7 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 
 }
 
-MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
-	// initialise the graph with some nodes (to be removed)
-	{
-		auto& add = m_graph.nodes().add(Metadata::instance("addition"), "add1");
-		add.setBlindData(NodeData{QPointF(100, 20)});
-
-		auto& mult = m_graph.nodes().add(Metadata::instance("multiplication"), "mult1");
-		mult.setBlindData(NodeData{QPointF(300, 20)});
-
-		add.port(2).connect(mult.port(0));
-	}
-
+MainWindow::MainWindow() : QMainWindow() {
 	m_viewport = new Viewport();
 	setCentralWidget(m_viewport);
 
@@ -72,25 +64,49 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 	);
 
 	// create the context click menu
-	m_adaptor->setContextMenuPolicy(Qt::ActionsContextMenu);
+	m_adaptor->setContextMenuPolicy(Qt::CustomContextMenu);
 
-	for(auto& m : Metadata::instances()) {
-		m_adaptor->addAction(makeAction(("Add " + m.type() + " node").c_str(), [&m, this]() {
-			QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
-			m_graph.nodes().add(m, m.type() + "_" + std::to_string(m_nodeCounter++), NodeData{pos});
-		}, m_adaptor));
+	{
+		QMenu* contextMenu = new QMenu(m_adaptor);
+		connect(m_adaptor, &Adaptor::customContextMenuRequested, [contextMenu, this](QPoint pos) {
+			contextMenu->popup(m_adaptor->mapToGlobal(pos));
+		});
+
+		{
+			std::map<std::string, QMenu*> groups;
+
+			for(auto& m : Metadata::instances()) {
+				std::vector<std::string> pieces;
+				boost::split(pieces, m.type(), boost::algorithm::is_any_of("/"));
+
+				QMenu* current = contextMenu;
+				for(unsigned a=0;a<pieces.size()-1;++a) {
+					if(groups[pieces[a]] == nullptr)
+						groups[pieces[a]] = current->addMenu(pieces[a].c_str());
+
+					current = groups[pieces[a]];
+				}
+
+				const std::string name = pieces.back();
+				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
+					QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(contextMenu->pos()));
+					m_graph.nodes().add(m, name, NodeData{pos});
+				}, m_adaptor));
+			}
+		}
+
+		QAction* separator = new QAction(m_adaptor);
+		separator->setSeparator(true);
+		contextMenu->addAction(separator);
+
+		QAction* deleteAction = new QAction("Delete selected items", m_adaptor);
+		deleteAction->setShortcut(QKeySequence::Delete);
+		contextMenu->addAction(deleteAction);
+		m_adaptor->addAction(deleteAction);
+		node_editor::qt_bind(deleteAction, SIGNAL(triggered()), [this]() {
+			m_adaptor->deleteSelected();
+		});
 	}
-
-	QAction* separator = new QAction(m_adaptor);
-	separator->setSeparator(true);
-	m_adaptor->addAction(separator);
-
-	QAction* deleteAction = new QAction("Delete selected items", m_adaptor);
-	deleteAction->setShortcut(QKeySequence::Delete);
-	m_adaptor->addAction(deleteAction);
-	node_editor::qt_bind(deleteAction, SIGNAL(triggered()), [this]() {
-		m_adaptor->deleteSelected();
-	});
 
 	// drawing callback
 	connect(m_viewport, SIGNAL(render(float)), this, SLOT(draw(float)));
@@ -191,6 +207,10 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 
 	viewMenu->addAction(propDock->toggleViewAction());
 	viewMenu->addAction(graphDock->toggleViewAction());
+}
+
+MainWindow::~MainWindow() {
+	m_graph.clear();
 }
 
 void MainWindow::draw(float dt) {
