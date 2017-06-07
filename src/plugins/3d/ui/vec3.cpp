@@ -10,65 +10,40 @@ vec3_ui::vec3_ui() {
 	QHBoxLayout* layout = new QHBoxLayout(m_widget);
 	layout->setContentsMargins(0,0,0,0);
 
-	m_x = new QDoubleSpinBox(NULL);
-	layout->addWidget(m_x);
+	for(unsigned a=0;a<3;++a) {
+		m_values.push_back(new QDoubleSpinBox(NULL));
+		layout->addWidget(m_values.back());
 
-	m_y = new QDoubleSpinBox(NULL);
-	layout->addWidget(m_y);
+		m_connections.push_back(QObject::connect(
+			m_values.back(),
+			static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+			[this]() -> void {
+				callValueChangedCallbacks();
+			}
+		));
 
-	m_z = new QDoubleSpinBox(NULL);
-	layout->addWidget(m_z);
-
-	m_xChanged = QObject::connect(
-		m_x,
-		static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-		[this]() -> void {
-			callValueChangedCallbacks();
-		}
-	);
-
-	m_yChanged = QObject::connect(
-		m_y,
-		static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-		[this]() -> void {
-			callValueChangedCallbacks();
-		}
-	);
-
-	m_zChanged = QObject::connect(
-		m_z,
-		static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-		[this]() -> void {
-			callValueChangedCallbacks();
-		}
-	);
-
-	m_x->setKeyboardTracking(false);
-	m_y->setKeyboardTracking(false);
-	m_z->setKeyboardTracking(false);
-
-	m_x->setRange(-1e13, 1e13);
-	m_y->setRange(-1e13, 1e13);
-	m_z->setRange(-1e13, 1e13);
+		m_values.back()->setKeyboardTracking(false);
+		m_values.back()->setRange(-1e13, 1e13);
+	}
 }
 
 vec3_ui::~vec3_ui() {
-	QObject::disconnect(m_xChanged);
-	QObject::disconnect(m_yChanged);
-	QObject::disconnect(m_zChanged);
+	for(auto& c : m_connections)
+		QObject::disconnect(c);
 }
 
 Imath::Vec3<float> vec3_ui::get() const {
-	return Imath::Vec3<float>(m_x->value(), m_y->value(), m_z->value());
+	Imath::Vec3<float> result;
+	for(unsigned a=0;a<3;++a)
+		result[a] = m_values[a]->value();
+
+	return result;
 }
 
 void vec3_ui::set(const Imath::Vec3<float>& value) {
-	if(m_x->value() != value.x)
-		m_x->setValue(value.x);
-	if(m_y->value() != value.y)
-		m_y->setValue(value.y);
-	if(m_z->value() != value.z)
-		m_z->setValue(value.z);
+	for(unsigned a=0;a<3;++a)
+		if(m_values[a]->value() != value[a])
+			m_values[a]->setValue(value[a]);
 }
 
 QWidget* vec3_ui::widget() {
@@ -76,12 +51,10 @@ QWidget* vec3_ui::widget() {
 }
 
 void vec3_ui::onFlagsChanged(unsigned flags) {
-	m_x->setReadOnly(flags & kOutput);
-	m_x->setDisabled((flags & kDirty) || (flags & kDisabled));
-	m_y->setReadOnly(flags & kOutput);
-	m_y->setDisabled((flags & kDirty) || (flags & kDisabled));
-	m_z->setReadOnly(flags & kOutput);
-	m_z->setDisabled((flags & kDirty) || (flags & kDisabled));
+	for(unsigned a=0;a<3;++a) {
+		m_values[a]->setReadOnly(flags & kOutput);
+		m_values[a]->setDisabled((flags & kDirty) || (flags & kDisabled));
+	}
 }
 
 }
