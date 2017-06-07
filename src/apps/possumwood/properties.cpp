@@ -105,8 +105,8 @@ Properties::Property::Property(dependency_graph::Port& port) {
 		});
 
 		// run the update functions for the first time to set up the UI
-		ui->valueFromPort(port);
 		updateFlags();
+		ui->valueFromPort(port);
 	}
 }
 
