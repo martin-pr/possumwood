@@ -209,6 +209,10 @@ MainWindow::MainWindow() : QMainWindow() {
 	viewMenu->addAction(graphDock->toggleViewAction());
 }
 
+MainWindow::~MainWindow() {
+	m_graph.clear();
+}
+
 void MainWindow::draw(float dt) {
 	// draw the floor grid
 	glBegin(GL_LINES);
