@@ -14,6 +14,7 @@ set(LIBS "")
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 add_definitions(-Wall -Werror -std=c++11 -g)
 
@@ -62,5 +63,5 @@ set(LIBS ${LIBS} ${OPENEXR_HALF_LIBRARY} ${OPENEXR_IEX_LIBRARY})
 ###########################################################
 # BUILD
 
-include_directories(src/libs src/libs/qt_node_editor)
+include_directories(src/libs src/libs/qt_node_editor src/libs/dependency_graph src/apps)
 add_subdirectory(src)
