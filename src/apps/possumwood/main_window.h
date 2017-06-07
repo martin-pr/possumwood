@@ -27,7 +27,5 @@ class MainWindow : public QMainWindow {
 		Adaptor* m_adaptor;
 		Properties* m_properties;
 
-		unsigned m_nodeCounter;
-
 		boost::filesystem::path m_filename;
 };

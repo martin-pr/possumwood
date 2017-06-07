@@ -26,7 +26,7 @@
 #include "adaptor.h"
 #include "node_data.h"
 #include "metadata.h"
-#include "io/io.h"
+#include "io/node_data.h"
 
 namespace {
 
@@ -38,18 +38,7 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 
 }
 
-MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
-	// initialise the graph with some nodes (to be removed)
-	{
-		auto& add = m_graph.nodes().add(Metadata::instance("addition"), "add1");
-		add.setBlindData(NodeData{QPointF(100, 20)});
-
-		auto& mult = m_graph.nodes().add(Metadata::instance("multiplication"), "mult1");
-		mult.setBlindData(NodeData{QPointF(300, 20)});
-
-		add.port(2).connect(mult.port(0));
-	}
-
+MainWindow::MainWindow() : QMainWindow() {
 	m_viewport = new Viewport();
 	setCentralWidget(m_viewport);
 
@@ -98,9 +87,10 @@ MainWindow::MainWindow() : QMainWindow(), m_nodeCounter(0) {
 					current = groups[pieces[a]];
 				}
 
-				current->addAction(makeAction(pieces.back().c_str(), [&m, &pieces, this]() {
-					QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
-					m_graph.nodes().add(m, pieces.back() + "_" + std::to_string(m_nodeCounter++), NodeData{pos});
+				const std::string name = pieces.back();
+				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
+					QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(contextMenu->pos()));
+					m_graph.nodes().add(m, name, NodeData{pos});
 				}, m_adaptor));
 			}
 		}
