@@ -12,8 +12,6 @@
 #include <QtWidgets/QAction>
 #include <QtGui/QKeyEvent>
 
-#include <ImathVec.h>
-
 #include "bind.h"
 #include "node.h"
 #include "connected_edge.h"

@@ -16,8 +16,6 @@
 #include <QKeyEvent>
 #include <QHBoxLayout>
 
-#include <ImathVec.h>
-
 #include <dependency_graph/graph.h>
 #include <dependency_graph/node.inl>
 #include <dependency_graph/datablock.inl>
