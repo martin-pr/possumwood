@@ -67,8 +67,13 @@ int main(int argc, char* argv[]) {
 
 	// scan for plugins
 	for(fs::directory_iterator itr(vm["plugin_directory"].as<std::string>()); itr != fs::directory_iterator(); ++itr) {
-		if(fs::is_regular_file(itr->status()) && itr->path().extension() == ".so")
-			pluginHandles.push_back(dlopen(itr->path().string().c_str(), RTLD_NOW));
+		if(fs::is_regular_file(itr->status()) && itr->path().extension() == ".so") {
+			void* ptr = dlopen(itr->path().string().c_str(), RTLD_NOW);
+			if(ptr)
+				pluginHandles.push_back(ptr);
+			else
+				std::cout << dlerror() << std::endl;
+		}
 	}
 
 	///////////////////////////////
