@@ -45,6 +45,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	m_properties = new Properties();
 	QDockWidget* propDock = new QDockWidget("Properties", this);
 	propDock->setWidget(m_properties);
+	m_properties->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, propDock);
 
 	m_adaptor = new Adaptor(&m_graph);

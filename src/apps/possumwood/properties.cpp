@@ -59,6 +59,7 @@ void Properties::show(const std::vector<std::reference_wrapper<dependency_graph:
 	blockSignals(block);
 
 	expandAll();
+	resizeColumnToContents(0);
 }
 
 ////////
