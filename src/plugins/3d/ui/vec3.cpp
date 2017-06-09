@@ -41,9 +41,15 @@ Imath::Vec3<float> vec3_ui::get() const {
 }
 
 void vec3_ui::set(const Imath::Vec3<float>& value) {
+	for(auto& v : m_values)
+		v->blockSignals(true);
+
 	for(unsigned a=0;a<3;++a)
 		if(m_values[a]->value() != value[a])
 			m_values[a]->setValue(value[a]);
+
+	for(auto& v : m_values)
+		v->blockSignals(false);
 }
 
 QWidget* vec3_ui::widget() {

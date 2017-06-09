@@ -4,7 +4,12 @@
 
 #include <dependency_graph/io/json.h>
 
+// needs to be in the same namespace as the Vec3 - on some systems, the OpenEXR namespaces are versioned
+#ifdef IMATH_INTERNAL_NAMESPACE
+namespace IMATH_INTERNAL_NAMESPACE {
+#else
 namespace Imath {
+#endif
 
 template<typename T>
 void to_json(::dependency_graph::io::json& j, const Vec3<T>& g) {
