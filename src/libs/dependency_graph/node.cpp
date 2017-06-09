@@ -70,7 +70,7 @@ bool Node::inputIsConnected(const Port& p) const {
 	assert(p.category() == Attr::kInput);
 
 	// return true if there are no connections leading to this input port
-	return m_parent->connections().connectedFrom(p);
+	return static_cast<bool>(m_parent->connections().connectedFrom(p));
 }
 
 void Node::computeInput(size_t index) {
