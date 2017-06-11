@@ -3,8 +3,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QTreeWidget>
 
-#include <boost/filesystem/path.hpp>
-
 #include <possumwood_sdk/app.h>
 
 #include "adaptor.h"
@@ -25,6 +23,4 @@ class MainWindow : public QMainWindow {
 		Viewport* m_viewport;
 		Adaptor* m_adaptor;
 		Properties* m_properties;
-
-		boost::filesystem::path m_filename;
 };

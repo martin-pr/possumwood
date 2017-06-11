@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/noncopyable.hpp>
+#include <boost/filesystem/path.hpp>
 
 #include <dependency_graph/graph.h>
 
@@ -17,11 +18,19 @@ class App : public boost::noncopyable {
 
 		dependency_graph::Graph& graph();
 
+		const boost::filesystem::path& filename() const;
+
+		void newFile();
+		void loadFile(const boost::filesystem::path& fn);
+		void saveFile();
+		void saveFile(const boost::filesystem::path& fn);
+
 	protected:
 	private:
 		static App* s_instance;
 
 		dependency_graph::Graph m_graph;
+		boost::filesystem::path m_filename;
 };
 
 }
