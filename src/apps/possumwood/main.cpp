@@ -22,7 +22,6 @@
 #include <dependency_graph/metadata.inl>
 #include <dependency_graph/attr.inl>
 
-#include <qt_node_editor/bind.h>
 #include <qt_node_editor/node.h>
 #include <qt_node_editor/connected_edge.h>
 #include <qt_node_editor/graph_widget.h>
