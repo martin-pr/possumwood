@@ -1,6 +1,7 @@
 #pragma once
 
 #include "data.h"
+#include "data_traits.h"
 
 namespace dependency_graph {
 
@@ -23,7 +24,7 @@ void Data<T>::assign(const BaseData& src) {
 	assert(dynamic_cast<const Data<T>*>(&src) != NULL);
 
 	const Data<T>& srcData = dynamic_cast<const Data<T>&>(src);
-	value = srcData.value;
+	DataTraits<T>::assignValue(value, srcData.value);
 }
 
 template<typename T>
@@ -31,7 +32,7 @@ bool Data<T>::isEqual(const BaseData& src) const {
 	assert(dynamic_cast<const Data<T>*>(&src) != NULL);
 
 	const Data<T>& srcData = dynamic_cast<const Data<T>&>(src);
-	return value == srcData.value;
+	return DataTraits<T>::isEqual(value, srcData.value);
 }
 
 template<typename T>
@@ -41,7 +42,7 @@ void Data<T>::toJson(io::json& j) const {
 
 template<typename T>
 void Data<T>::fromJson(const io::json& j) {
-	value = j.get<T>();
+	DataTraits<T>::assignValue(value, j.get<T>());
 }
 
 template<typename T>
