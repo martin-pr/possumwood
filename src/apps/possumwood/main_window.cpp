@@ -1,14 +1,8 @@
 #include "main_window.h"
 
-#include <fstream>
-
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QAction>
-#include <QHeaderView>
 #include <QMenuBar>
 #include <QAction>
 #include <QMessageBox>
@@ -18,14 +12,12 @@
 #include <QDesktopWidget>
 
 #include <qt_node_editor/bind.h>
-#include <dependency_graph/attr.inl>
-#include <dependency_graph/metadata.inl>
 #include <dependency_graph/values.inl>
-#include <dependency_graph/io/graph.h>
 
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/io/node_data.h>
+#include <possumwood_sdk/app.h>
 
 #include "adaptor.h"
 
@@ -49,7 +41,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	m_properties->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, propDock);
 
-	m_adaptor = new Adaptor(&m_graph);
+	m_adaptor = new Adaptor(&possumwood::App::instance().graph());
 	auto geom = m_adaptor->sizeHint();
 	geom.setWidth(QApplication::desktop()->screenGeometry().width() / 2 - 200);
 	m_adaptor->setSizeHint(geom);
@@ -92,7 +84,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				const std::string name = pieces.back();
 				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
 					QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(contextMenu->pos()));
-					m_graph.nodes().add(m, name, possumwood::NodeData{pos});
+					possumwood::App::instance().graph().nodes().add(m, name, possumwood::NodeData{pos});
 				}, m_adaptor));
 			}
 		}
@@ -112,7 +104,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	// drawing callback
 	connect(m_viewport, SIGNAL(render(float)), this, SLOT(draw(float)));
-	m_graph.onDirty([this]() {
+	possumwood::App::instance().graph().onDirty([this]() {
 		m_viewport->update();
 	});
 
@@ -122,29 +114,20 @@ MainWindow::MainWindow() : QMainWindow() {
 	newAct->setShortcuts(QKeySequence::New);
 	connect(newAct, &QAction::triggered, [&](bool) {
 		QMessageBox::StandardButton res = QMessageBox::question(this, "New file...", "Do you want to clear the scene?");
-		if(res == QMessageBox::Yes) {
-			m_adaptor->graph().nodes().clear();
-			m_filename = "";
-		}
+		if(res == QMessageBox::Yes)
+			possumwood::App::instance().newFile();
 	});
 
 	QAction* openAct = new QAction("&Open...", this);
 	openAct->setShortcuts(QKeySequence::Open);
 	connect(openAct, &QAction::triggered, [this](bool) {
 		QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),
-		                   m_filename.string().c_str(),
+		                   possumwood::App::instance().filename().string().c_str(),
 		                   tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty()) {
 			try {
-				std::ifstream in(filename.toStdString());
-
-				dependency_graph::io::json json;
-				in >> json;
-
-				dependency_graph::io::adl_serializer<dependency_graph::Graph>::from_json(json, m_adaptor->graph());
-
-				m_filename = filename.toStdString();
+				possumwood::App::instance().loadFile(filename.toStdString());
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error loading file...", "Error loading " + filename + ":\n" + err.what());
@@ -161,36 +144,37 @@ MainWindow::MainWindow() : QMainWindow() {
 	saveAsAct->setShortcuts(QKeySequence::SaveAs);
 
 	connect(saveAct, &QAction::triggered, [saveAsAct, this](bool) {
-		if(m_filename.empty())
+		if(possumwood::App::instance().filename().empty())
 			saveAsAct->triggered(true);
 
 		else {
 			try {
-				std::ofstream out(m_filename.string());
-
-				dependency_graph::io::json json;
-				json = m_adaptor->graph();
-
-				out << std::setw(4) << json;
+				possumwood::App::instance().saveFile();
 			}
 			catch(std::exception& err) {
-				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(m_filename.string().c_str()) + ":\n" + err.what());
+				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(possumwood::App::instance().filename().string().c_str()) + ":\n" + err.what());
 			}
 			catch(...) {
-				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(m_filename.string().c_str()) + ":\nUnhandled exception thrown during saving.");
+				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(possumwood::App::instance().filename().string().c_str()) + ":\nUnhandled exception thrown during saving.");
 			}
 		}
 	});
 
 	connect(saveAsAct, &QAction::triggered, [saveAct, this](bool) {
 		QString filename = QFileDialog::getSaveFileName(this, tr("Save File"),
-		                   m_filename.string().c_str(),
+		                   possumwood::App::instance().filename().string().c_str(),
 		                   tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty()) {
-			m_filename = filename.toStdString();
-
-			saveAct->triggered(true);
+			try {
+				possumwood::App::instance().saveFile(filename.toStdString());
+			}
+			catch(std::exception& err) {
+				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(possumwood::App::instance().filename().string().c_str()) + ":\n" + err.what());
+			}
+			catch(...) {
+				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(possumwood::App::instance().filename().string().c_str()) + ":\nUnhandled exception thrown during saving.");
+			}
 		}
 	});
 
@@ -212,7 +196,7 @@ MainWindow::MainWindow() : QMainWindow() {
 }
 
 MainWindow::~MainWindow() {
-	m_graph.clear();
+	possumwood::App::instance().graph().clear();
 }
 
 void MainWindow::draw(float dt) {

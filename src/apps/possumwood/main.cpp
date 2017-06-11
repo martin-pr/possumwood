@@ -26,6 +26,9 @@
 #include <qt_node_editor/node.h>
 #include <qt_node_editor/connected_edge.h>
 #include <qt_node_editor/graph_widget.h>
+
+#include <possumwood_sdk/app.h>
+
 #include "adaptor.h"
 #include "main_window.h"
 
@@ -80,7 +83,10 @@ int main(int argc, char* argv[]) {
 		QApplication app(argc, argv);
 
 		// initialise glut
-		glutInit(&argc, argv);;
+		glutInit(&argc, argv);
+
+		// create the possumwood application
+		possumwood::App papp;
 
 		// make a main window
 		MainWindow win;
