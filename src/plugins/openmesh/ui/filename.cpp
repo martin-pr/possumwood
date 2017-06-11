@@ -24,11 +24,8 @@ filename_ui::~filename_ui() {
 	QObject::disconnect(m_connection);
 }
 
-Filename filename_ui::get() const {
-	Filename result(m_value);
-	result.setFilename(m_lineEdit->text().toStdString());
-
-	return result;
+void filename_ui::get(Filename& value) const {
+	value.setFilename(m_lineEdit->text().toStdString());
 }
 
 void filename_ui::set(const Filename& value) {

@@ -18,8 +18,8 @@ float_ui::~float_ui() {
 	QObject::disconnect(m_valueChangeConnection);
 }
 
-float float_ui::get() const {
-	return m_spinBox->value();
+void float_ui::get(float& value) const {
+	value = m_spinBox->value();
 }
 
 void float_ui::set(const float& value) {

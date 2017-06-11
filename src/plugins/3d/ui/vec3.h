@@ -12,7 +12,7 @@ class vec3_ui : public possumwood::properties::property<Imath::Vec3<float>, vec3
 		vec3_ui();
 		virtual ~vec3_ui();
 
-		virtual Imath::Vec3<float> get() const override;
+		virtual void get(Imath::Vec3<float>& value) const override;
 		virtual void set(const Imath::Vec3<float>& value) override;
 
 		virtual QWidget* widget() override;

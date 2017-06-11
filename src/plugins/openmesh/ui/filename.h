@@ -11,7 +11,7 @@ class filename_ui : public possumwood::properties::property<Filename, filename_u
 		filename_ui();
 		virtual ~filename_ui();
 
-		virtual Filename get() const override;
+		virtual void get(Filename& value) const override;
 		virtual void set(const Filename& value) override;
 
 		virtual QWidget* widget() override;
