@@ -5,6 +5,7 @@
 #include <possumwood_sdk/properties/property.h>
 
 #include <QLineEdit>
+#include <QToolButton>
 
 class filename_ui : public possumwood::properties::property<Filename, filename_ui> {
 	public:
@@ -22,8 +23,9 @@ class filename_ui : public possumwood::properties::property<Filename, filename_u
 	private:
 		QWidget* m_widget;
 		QLineEdit* m_lineEdit;
+		QToolButton* m_browseButton;
 
 		Filename m_value;
 
-		QMetaObject::Connection m_connection;
+		QMetaObject::Connection m_lineEditConnection, m_buttonConnection;
 };

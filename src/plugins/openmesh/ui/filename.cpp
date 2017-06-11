@@ -1,6 +1,15 @@
 #include "filename.h"
 
+#include <boost/algorithm/string/join.hpp>
+
 #include <QHBoxLayout>
+#include <QStyle>
+#include <QFileDialog>
+#include <QAction>
+#include <QApplication>
+#include <QMainWindow>
+
+#include <possumwood_sdk/app.h>
 
 filename_ui::filename_ui() {
 	m_widget = new QWidget(NULL);
@@ -11,17 +20,45 @@ filename_ui::filename_ui() {
 	m_lineEdit = new QLineEdit();
 	layout->addWidget(m_lineEdit, 1);
 
-	m_connection = QObject::connect(
+	m_lineEditConnection = QObject::connect(
 		m_lineEdit,
 		&QLineEdit::editingFinished,
 		[this]() -> void {
 			callValueChangedCallbacks();
 		}
 	);
+
+	m_browseButton = new QToolButton();
+	m_browseButton->setIcon(m_browseButton->style()->standardIcon(QStyle::SP_DialogOpenButton));
+	layout->addWidget(m_browseButton);
+
+	m_buttonConnection = QObject::connect(
+		m_browseButton,
+		&QToolButton::released,
+		[this]() -> void {
+			// starting directory
+			QString path = m_lineEdit->text();
+			if(path.isEmpty())
+				path = possumwood::App::instance().filename().parent_path().string().c_str();
+
+			// run the file dialog
+			path = QFileDialog::getOpenFileName(
+				possumwood::App::instance().mainWindow(),
+				"Select an input file...",
+				path,
+				boost::algorithm::join(m_value.extensions(), ";;").c_str()
+			);
+
+			if(!path.isEmpty()) {
+				m_lineEdit->setText(path);
+				m_lineEdit->editingFinished();
+			}
+		}
+	);
 }
 
 filename_ui::~filename_ui() {
-	QObject::disconnect(m_connection);
+	QObject::disconnect(m_lineEditConnection);
 }
 
 void filename_ui::get(Filename& value) const {
@@ -41,6 +78,7 @@ QWidget* filename_ui::widget() {
 }
 
 void filename_ui::onFlagsChanged(unsigned flags) {
-	// m_values[a]->setReadOnly(flags & kOutput);
-	// m_values[a]->setDisabled((flags & kDirty) || (flags & kDisabled));
+	assert((!(flags & kOutput)) && "Filename should never be used as an output.");
+
+	m_browseButton->setDisabled((flags & kDirty) || (flags & kDisabled));
 }
