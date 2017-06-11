@@ -7,6 +7,8 @@
 
 #include <dependency_graph/graph.h>
 
+#include <possumwood_sdk/app.h>
+
 #include "adaptor.h"
 #include "properties.h"
 #include "viewport.h"
