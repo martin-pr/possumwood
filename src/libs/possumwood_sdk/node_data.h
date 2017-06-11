@@ -2,6 +2,8 @@
 
 #include <QPoint>
 
+namespace possumwood {
+
 struct NodeData {
 	QPointF position;
 
@@ -13,3 +15,5 @@ struct NodeData {
 		return position != d.position;
 	}
 };
+
+}

@@ -16,7 +16,7 @@ void compute(dependency_graph::Values& data) {
 	data.set(output, a * b);
 }
 
-void init(Metadata& meta) {
+void init(possumwood::Metadata& meta) {
 	meta.addAttribute(input1, "a");
 	meta.addAttribute(input2, "b");
 	meta.addAttribute(output, "out");
@@ -27,6 +27,6 @@ void init(Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-NodeImplementation s_impl("maths/mult", init);
+possumwood::NodeImplementation s_impl("maths/mult", init);
 
 }

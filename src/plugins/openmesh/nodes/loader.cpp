@@ -34,7 +34,7 @@ void compute(dependency_graph::Values& data) {
 	data.set(a_mesh, std::shared_ptr<const Mesh>(mesh.release()));
 }
 
-void init(Metadata& meta) {
+void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", Filename({
 		"All files (*.obj *.off *.stl)",
 		"OBJ files (*.obj)",
@@ -48,6 +48,6 @@ void init(Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-NodeImplementation s_impl("openmesh/loader", init);
+possumwood::NodeImplementation s_impl("openmesh/loader", init);
 
 }

@@ -66,9 +66,9 @@ void Properties::show(const std::vector<std::reference_wrapper<dependency_graph:
 
 Properties::Property::Property(dependency_graph::Port& port) {
 	// create the widget
-	ui = properties::factories::singleton().create(port.type());
+	ui = possumwood::properties::factories::singleton().create(port.type());
 	if(ui) {
-		properties::property_base* prop = ui.get();
+		possumwood::properties::property_base* prop = ui.get();
 
 		// chane of port value
 		graphValueConnection = port.valueCallback([prop, &port]() {
@@ -81,16 +81,16 @@ Properties::Property::Property(dependency_graph::Port& port) {
 			unsigned flags = 0;
 
 			if(port.category() == dependency_graph::Attr::kInput) {
-				flags |= properties::property_base::kInput;
+				flags |= possumwood::properties::property_base::kInput;
 				if(port.node().graph().connections().connectedFrom(port))
-					flags |= properties::property_base::kDisabled;
+					flags |= possumwood::properties::property_base::kDisabled;
 			}
 
 			if(port.category() == dependency_graph::Attr::kOutput)
-				flags |= properties::property_base::kOutput;
+				flags |= possumwood::properties::property_base::kOutput;
 
 			if(port.isDirty())
-				flags |= properties::property_base::kDirty;
+				flags |= possumwood::properties::property_base::kDirty;
 
 			// and set the flags on the property (calls UI's update, if implemented)
 			prop->setFlags(flags);
@@ -101,7 +101,7 @@ Properties::Property::Property(dependency_graph::Port& port) {
 		uiValueConnection = ui->valueCallback([prop, &port]() {
 			// value changes only for non-disabled input port UIs
 			// (avoid Qt's value changed callbacks when not necessary)
-			if((prop->flags() & properties::property_base::kInput) && !(prop->flags() & properties::property_base::kDisabled))
+			if((prop->flags() & possumwood::properties::property_base::kInput) && !(prop->flags() & possumwood::properties::property_base::kDisabled))
 				prop->valueToPort(port);
 		});
 

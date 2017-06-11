@@ -7,7 +7,7 @@
 
 #include <boost/noncopyable.hpp>
 
-namespace properties {
+namespace possumwood { namespace properties {
 
 class factory;
 
@@ -61,4 +61,4 @@ class factory_typed : public factory {
 		friend class property;
 };
 
-}
+} }

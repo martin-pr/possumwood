@@ -77,7 +77,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		{
 			std::map<std::string, QMenu*> groups;
 
-			for(auto& m : Metadata::instances()) {
+			for(auto& m : possumwood::Metadata::instances()) {
 				std::vector<std::string> pieces;
 				boost::split(pieces, m.type(), boost::algorithm::is_any_of("/"));
 
@@ -92,7 +92,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				const std::string name = pieces.back();
 				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
 					QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(contextMenu->pos()));
-					m_graph.nodes().add(m, name, NodeData{pos});
+					m_graph.nodes().add(m, name, possumwood::NodeData{pos});
 				}, m_adaptor));
 			}
 		}
@@ -241,7 +241,7 @@ void MainWindow::draw(float dt) {
 	for(auto& n : m_adaptor->graph().nodes()) {
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-		const Metadata& meta = dynamic_cast<const Metadata&>(n.metadata());
+		const possumwood::Metadata& meta = dynamic_cast<const possumwood::Metadata&>(n.metadata());
 		meta.draw(dependency_graph::Values(n));
 
 		glPopAttrib();

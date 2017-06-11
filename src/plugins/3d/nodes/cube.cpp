@@ -31,13 +31,13 @@ void draw(const dependency_graph::Values& data) {
 	glPopMatrix();
 }
 
-void init(Metadata& meta) {
+void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_pos, "position", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_size, "size", Imath::Vec3<float>(1, 1, 1));
 
 	meta.setDraw(draw);
 }
 
-NodeImplementation s_impl("3d/cube", init);
+possumwood::NodeImplementation s_impl("3d/cube", init);
 
 }

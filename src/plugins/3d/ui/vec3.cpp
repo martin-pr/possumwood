@@ -2,8 +2,6 @@
 
 #include <QtWidgets/QHBoxLayout>
 
-namespace properties {
-
 vec3_ui::vec3_ui() {
 	m_widget = new QWidget(NULL);
 
@@ -62,6 +60,3 @@ void vec3_ui::onFlagsChanged(unsigned flags) {
 		m_values[a]->setDisabled((flags & kDirty) || (flags & kDisabled));
 	}
 }
-
-}
-

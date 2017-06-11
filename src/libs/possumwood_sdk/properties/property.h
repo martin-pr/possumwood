@@ -9,7 +9,7 @@
 #include <dependency_graph/node.inl>
 #include <dependency_graph/port.inl>
 
-namespace properties {
+namespace possumwood { namespace properties {
 
 class property_base : public boost::noncopyable {
 	public:
@@ -81,5 +81,4 @@ class property : public property_base {
 template<typename T, typename DERIVED>
 factory_typed<DERIVED> property<T, DERIVED>::s_pf;
 
-
-}
+} }

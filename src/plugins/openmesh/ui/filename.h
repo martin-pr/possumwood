@@ -6,7 +6,7 @@
 
 #include <QLineEdit>
 
-class filename_ui : public properties::property<Filename, filename_ui> {
+class filename_ui : public possumwood::properties::property<Filename, filename_ui> {
 	public:
 		filename_ui();
 		virtual ~filename_ui();

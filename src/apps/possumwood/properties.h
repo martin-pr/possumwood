@@ -26,7 +26,7 @@ class Properties : public QTreeWidget {
 
 			Property(Property&&);
 
-			std::unique_ptr<properties::property_base> ui;
+			std::unique_ptr<possumwood::properties::property_base> ui;
 			boost::signals2::connection graphValueConnection, uiValueConnection, flagsConnection;
 		};
 

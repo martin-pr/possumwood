@@ -7,6 +7,8 @@
 
 #include <dependency_graph/metadata.inl>
 
+namespace possumwood {
+
 class Metadata : public dependency_graph::Metadata {
 	public:
 		Metadata(const std::string& nodeType);
@@ -21,3 +23,5 @@ class Metadata : public dependency_graph::Metadata {
 	private:
 		std::function<void(const dependency_graph::Values&)> m_drawFunctor;
 };
+
+}

@@ -7,7 +7,7 @@
 #include <QLabel>
 #include <QFrame>
 
-class mesh_ui : public properties::property<std::shared_ptr<const Mesh>, mesh_ui> {
+class mesh_ui : public possumwood::properties::property<std::shared_ptr<const Mesh>, mesh_ui> {
 	public:
 		mesh_ui();
 		virtual ~mesh_ui();

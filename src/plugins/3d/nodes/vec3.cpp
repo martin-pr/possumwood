@@ -23,7 +23,7 @@ void compute(dependency_graph::Values& data) {
 	data.set(a_out, Imath::Vec3<float>(x, y, z));
 }
 
-void init(Metadata& meta) {
+void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_x, "x");
 	meta.addAttribute(a_y, "y");
 	meta.addAttribute(a_z, "z");
@@ -36,6 +36,6 @@ void init(Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-NodeImplementation s_impl("3d/make_vec3", init);
+possumwood::NodeImplementation s_impl("3d/make_vec3", init);
 
 }

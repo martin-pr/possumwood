@@ -1,6 +1,6 @@
 #include "property.h"
 
-namespace properties {
+namespace possumwood { namespace properties {
 
 property_base::~property_base() {
 
@@ -27,4 +27,4 @@ void property_base::callValueChangedCallbacks() {
 	m_valueChanged();
 }
 
-}
+} }
