@@ -17,7 +17,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 
-#include <bind.h>
+#include <qt_node_editor/bind.h>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/metadata.inl>
 #include <dependency_graph/values.inl>

@@ -9,8 +9,8 @@
 
 #include <dependency_graph/node.inl>
 
+#include <qt_node_editor/connected_edge.h>
 #include "node_data.h"
-#include "connected_edge.h"
 #include "io/node_data.h"
 
 namespace {

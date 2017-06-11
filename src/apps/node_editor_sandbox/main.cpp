@@ -12,10 +12,10 @@
 #include <QtWidgets/QAction>
 #include <QtGui/QKeyEvent>
 
-#include "bind.h"
-#include "node.h"
-#include "connected_edge.h"
-#include "graph_widget.h"
+#include <qt_node_editor/bind.h>
+#include <qt_node_editor/node.h>
+#include <qt_node_editor/connected_edge.h>
+#include <qt_node_editor/graph_widget.h>
 
 namespace po = boost::program_options;
 

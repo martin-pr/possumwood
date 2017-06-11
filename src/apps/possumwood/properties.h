@@ -6,7 +6,7 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <node.h>
+#include <qt_node_editor/node.h>
 #include <properties/property.h>
 
 /// A widget displaying properties of selected nodes
