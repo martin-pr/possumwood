@@ -60,14 +60,20 @@ class property : public property_base {
 			dummy->type();
 		}
 
-		virtual T get() const = 0;
+		virtual void get(T& value) const = 0;
 		virtual void set(const T& value) = 0;
 
 	private:
 		virtual void valueToPort(dependency_graph::Port& port) const override {
 			// transfer the templated value
-			if((flags() & kInput) && !(flags() & kDisabled))
-				port.set(get());
+			if((flags() & kInput) && !(flags() & kDisabled)) {
+				// get the current value
+				T value = port.get<T>();
+				// allow the UI to change it (or a part of it)
+				get(value);
+				// and transfer it back to port
+				port.set(value);
+			}
 		}
 
 		void valueFromPort(dependency_graph::Port& port) override {

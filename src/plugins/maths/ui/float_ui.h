@@ -10,7 +10,7 @@ class float_ui : public possumwood::properties::property<float, float_ui> {
 		float_ui();
 		virtual ~float_ui();
 
-		virtual float get() const override;
+		virtual void get(float& value) const override;
 		virtual void set(const float& value) override;
 
 		virtual QWidget* widget() override;

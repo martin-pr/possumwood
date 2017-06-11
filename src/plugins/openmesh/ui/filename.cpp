@@ -1,6 +1,16 @@
 #include "filename.h"
 
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+
 #include <QHBoxLayout>
+#include <QStyle>
+#include <QFileDialog>
+#include <QAction>
+#include <QApplication>
+#include <QMainWindow>
+
+#include <possumwood_sdk/app.h>
 
 filename_ui::filename_ui() {
 	m_widget = new QWidget(NULL);
@@ -11,31 +21,62 @@ filename_ui::filename_ui() {
 	m_lineEdit = new QLineEdit();
 	layout->addWidget(m_lineEdit, 1);
 
-	m_connection = QObject::connect(
+	m_lineEditConnection = QObject::connect(
 		m_lineEdit,
 		&QLineEdit::editingFinished,
 		[this]() -> void {
 			callValueChangedCallbacks();
 		}
 	);
+
+	m_browseButton = new QToolButton();
+	m_browseButton->setIcon(m_browseButton->style()->standardIcon(QStyle::SP_DialogOpenButton));
+	layout->addWidget(m_browseButton);
+
+	m_buttonConnection = QObject::connect(
+		m_browseButton,
+		&QToolButton::released,
+		[this]() -> void {
+			// starting directory
+			QString path = m_lineEdit->text();
+			if(path.isEmpty())
+				path = possumwood::App::instance().filename().parent_path().string().c_str();
+
+			// run the file dialog
+			path = QFileDialog::getOpenFileName(
+				possumwood::App::instance().mainWindow(),
+				"Select an input file...",
+				path,
+				boost::algorithm::join(m_value.extensions(), ";;").c_str()
+			);
+
+			if(!path.isEmpty()) {
+				boost::filesystem::path result = path.toStdString();
+				const auto pp = possumwood::App::instance().filename().parent_path();
+
+				if(boost::starts_with(result.string(), pp.string()))
+					result = result.string().substr(pp.string().length()+1);
+
+				m_lineEdit->setText(result.string().c_str());
+				m_lineEdit->editingFinished();
+			}
+		}
+	);
 }
 
 filename_ui::~filename_ui() {
-	QObject::disconnect(m_connection);
+	QObject::disconnect(m_lineEditConnection);
 }
 
-Filename filename_ui::get() const {
-	Filename result(m_value);
-	result.setFilename(m_lineEdit->text().toStdString());
-
-	return result;
+void filename_ui::get(Filename& value) const {
+	value.setFilename(m_lineEdit->text().toStdString());
 }
 
 void filename_ui::set(const Filename& value) {
 	m_value = value;
 
 	const bool bs = m_lineEdit->blockSignals(true);
-	m_lineEdit->setText(m_value.filename().c_str());
+	m_lineEdit->setText(m_value.filename(false).c_str());
 	m_lineEdit->blockSignals(bs);
 }
 
@@ -44,6 +85,7 @@ QWidget* filename_ui::widget() {
 }
 
 void filename_ui::onFlagsChanged(unsigned flags) {
-	// m_values[a]->setReadOnly(flags & kOutput);
-	// m_values[a]->setDisabled((flags & kDirty) || (flags & kDisabled));
+	assert((!(flags & kOutput)) && "Filename should never be used as an output.");
+
+	m_browseButton->setDisabled((flags & kDirty) || (flags & kDisabled));
 }

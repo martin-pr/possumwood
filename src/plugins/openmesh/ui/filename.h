@@ -5,13 +5,14 @@
 #include <possumwood_sdk/properties/property.h>
 
 #include <QLineEdit>
+#include <QToolButton>
 
 class filename_ui : public possumwood::properties::property<Filename, filename_ui> {
 	public:
 		filename_ui();
 		virtual ~filename_ui();
 
-		virtual Filename get() const override;
+		virtual void get(Filename& value) const override;
 		virtual void set(const Filename& value) override;
 
 		virtual QWidget* widget() override;
@@ -22,8 +23,9 @@ class filename_ui : public possumwood::properties::property<Filename, filename_u
 	private:
 		QWidget* m_widget;
 		QLineEdit* m_lineEdit;
+		QToolButton* m_browseButton;
 
 		Filename m_value;
 
-		QMetaObject::Connection m_connection;
+		QMetaObject::Connection m_lineEditConnection, m_buttonConnection;
 };

@@ -12,7 +12,7 @@ class mesh_ui : public possumwood::properties::property<std::shared_ptr<const Me
 		mesh_ui();
 		virtual ~mesh_ui();
 
-		virtual std::shared_ptr<const Mesh> get() const override;
+		virtual void get(std::shared_ptr<const Mesh>& value) const override;
 		virtual void set(const std::shared_ptr<const Mesh>& value) override;
 
 		virtual QWidget* widget() override;

@@ -29,13 +29,9 @@ vec3_ui::~vec3_ui() {
 	for(auto& c : m_connections)
 		QObject::disconnect(c);
 }
-
-Imath::Vec3<float> vec3_ui::get() const {
-	Imath::Vec3<float> result;
+void vec3_ui::get(Imath::Vec3<float>& value) const {
 	for(unsigned a=0;a<3;++a)
-		result[a] = m_values[a]->value();
-
-	return result;
+		value[a] = m_values[a]->value();
 }
 
 void vec3_ui::set(const Imath::Vec3<float>& value) {

@@ -20,8 +20,8 @@ mesh_ui::~mesh_ui() {
 
 }
 
-std::shared_ptr<const Mesh> mesh_ui::get() const {
-	return std::shared_ptr<const Mesh>();
+void mesh_ui::get(std::shared_ptr<const Mesh>& value) const {
+	assert(false && "get() on a mesh should never be called - UI change signals are not implemented");
 }
 
 void mesh_ui::set(const std::shared_ptr<const Mesh>& value) {
@@ -33,7 +33,6 @@ void mesh_ui::set(const std::shared_ptr<const Mesh>& value) {
 		m_vertexCount->setText("(empty)");
 		m_polyCount->setText("(empty)");
 	}
-
 }
 
 QWidget* mesh_ui::widget() {
