@@ -1,6 +1,7 @@
 #include "filename.h"
 
 #include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 #include <QHBoxLayout>
 #include <QStyle>
@@ -50,7 +51,13 @@ filename_ui::filename_ui() {
 			);
 
 			if(!path.isEmpty()) {
-				m_lineEdit->setText(path);
+				boost::filesystem::path result = path.toStdString();
+				const auto pp = possumwood::App::instance().filename().parent_path();
+
+				if(boost::starts_with(result.string(), pp.string()))
+					result = result.string().substr(pp.string().length()+1);
+
+				m_lineEdit->setText(result.string().c_str());
 				m_lineEdit->editingFinished();
 			}
 		}
@@ -69,7 +76,7 @@ void filename_ui::set(const Filename& value) {
 	m_value = value;
 
 	const bool bs = m_lineEdit->blockSignals(true);
-	m_lineEdit->setText(m_value.filename().c_str());
+	m_lineEdit->setText(m_value.filename(false).c_str());
 	m_lineEdit->blockSignals(bs);
 }
 

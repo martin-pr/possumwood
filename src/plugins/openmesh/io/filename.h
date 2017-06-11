@@ -5,7 +5,7 @@
 #include "datatypes/filename.h"
 
 inline void to_json(::dependency_graph::io::json& j, const Filename& fn) {
-	j = fn.filename().string();
+	j = fn.filename(false).string();
 }
 
 inline void from_json(const ::dependency_graph::io::json& j, Filename& fn) {

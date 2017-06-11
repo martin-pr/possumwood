@@ -1,10 +1,20 @@
 #include "filename.h"
 
+#include <possumwood_sdk/app.h>
+
 Filename::Filename(std::initializer_list<std::string> extensions) : m_extensions(extensions) {
 
 }
 
-const boost::filesystem::path& Filename::filename() const {
+const boost::filesystem::path Filename::filename(bool makeAbsolute) const {
+	// make the filename absolute
+	if(makeAbsolute) {
+		if(m_filename.is_absolute())
+			return m_filename;
+		else
+			return possumwood::App::instance().filename().parent_path() / m_filename;
+	}
+
 	return m_filename;
 }
 

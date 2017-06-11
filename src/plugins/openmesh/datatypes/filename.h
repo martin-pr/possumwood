@@ -9,7 +9,7 @@ class Filename {
 	public:
 		Filename(std::initializer_list<std::string> extensions = std::initializer_list<std::string>());
 
-		const boost::filesystem::path& filename() const;
+		const boost::filesystem::path filename(bool makeAbsolute = true) const;
 		void setFilename(const boost::filesystem::path& filename);
 
 		const std::set<std::string>& extensions() const;
