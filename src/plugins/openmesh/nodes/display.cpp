@@ -21,10 +21,25 @@ void draw(const dependency_graph::Values& data) {
 	if(mesh) {
 		glColor3f(1, 0, 0);
 
-		glBegin(GL_POINTS);
-		for(auto it = mesh->vertices_begin(); it != mesh->vertices_end(); ++it) {
-			const auto& pt = mesh->point(*it);
-			glVertex3f(pt[0], pt[1], pt[2]);
+		// glBegin(GL_POINTS);
+		// for(auto it = mesh->vertices_begin(); it != mesh->vertices_end(); ++it) {
+		// 	const auto& pt = mesh->point(*it);
+		// 	glVertex3f(pt[0], pt[1], pt[2]);
+		// }
+		// glEnd();
+
+		glBegin(GL_LINES);
+		for(auto it = mesh->edges_begin(); it != mesh->edges_end(); ++it) {
+			const auto he0h = mesh->halfedge_handle(*it, 0);
+
+			const auto v1 = mesh->from_vertex_handle(he0h);
+			const auto v2 = mesh->to_vertex_handle(he0h);
+
+			const auto& pt1 = mesh->point(v1);
+			const auto& pt2 = mesh->point(v2);
+
+			glVertex3f(pt1[0], pt1[1], pt1[2]);
+			glVertex3f(pt2[0], pt2[1], pt2[2]);
 		}
 		glEnd();
 	}
