@@ -2,6 +2,8 @@
 
 #include <boost/noncopyable.hpp>
 
+#include <dependency_graph/graph.h>
+
 namespace possumwood {
 
 /// App is a singleton, instantiated explicitly in main.cpp.
@@ -13,9 +15,13 @@ class App : public boost::noncopyable {
 		App();
 		~App();
 
+		dependency_graph::Graph& graph();
+
 	protected:
 	private:
 		static App* s_instance;
+
+		dependency_graph::Graph m_graph;
 };
 
 }

@@ -26,6 +26,7 @@
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/io/node_data.h>
+#include <possumwood_sdk/app.h>
 
 #include "adaptor.h"
 
@@ -49,7 +50,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	m_properties->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, propDock);
 
-	m_adaptor = new Adaptor(&m_graph);
+	m_adaptor = new Adaptor(&possumwood::App::instance().graph());
 	auto geom = m_adaptor->sizeHint();
 	geom.setWidth(QApplication::desktop()->screenGeometry().width() / 2 - 200);
 	m_adaptor->setSizeHint(geom);
@@ -92,7 +93,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				const std::string name = pieces.back();
 				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
 					QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(contextMenu->pos()));
-					m_graph.nodes().add(m, name, possumwood::NodeData{pos});
+					possumwood::App::instance().graph().nodes().add(m, name, possumwood::NodeData{pos});
 				}, m_adaptor));
 			}
 		}
@@ -112,7 +113,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	// drawing callback
 	connect(m_viewport, SIGNAL(render(float)), this, SLOT(draw(float)));
-	m_graph.onDirty([this]() {
+	possumwood::App::instance().graph().onDirty([this]() {
 		m_viewport->update();
 	});
 
@@ -212,7 +213,7 @@ MainWindow::MainWindow() : QMainWindow() {
 }
 
 MainWindow::~MainWindow() {
-	m_graph.clear();
+	possumwood::App::instance().graph().clear();
 }
 
 void MainWindow::draw(float dt) {

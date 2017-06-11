@@ -21,4 +21,8 @@ App& App::instance() {
 	return *s_instance;
 }
 
+dependency_graph::Graph& App::graph() {
+	return m_graph;
+}
+
 }
