@@ -1,4 +1,4 @@
-#include <possumwood/node_implementation.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <dependency_graph/values.inl>
 #include <dependency_graph/attr.inl>
@@ -45,12 +45,12 @@ void draw(const dependency_graph::Values& data) {
 	}
 }
 
-void init(Metadata& meta) {
+void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_mesh, "mesh");
 
 	meta.setDraw(draw);
 }
 
-NodeImplementation s_impl("openmesh/display", init);
+possumwood::NodeImplementation s_impl("openmesh/display", init);
 
 }

@@ -4,7 +4,7 @@
 
 #include "property.h"
 
-namespace properties {
+namespace possumwood { namespace properties {
 
 factories& factories::singleton() {
 	static std::unique_ptr<factories> s_factories;
@@ -55,4 +55,4 @@ factory::factory() {
 factory::~factory() {
 }
 
-}
+} }

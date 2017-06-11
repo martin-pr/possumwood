@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace properties {
+namespace possumwood { namespace properties {
 
 template<typename T>
 std::string factory_typed<T>::type() const {
@@ -24,4 +24,4 @@ factory_typed<T>::~factory_typed() {
 	factories::singleton().remove(this);
 }
 
-}
+} }

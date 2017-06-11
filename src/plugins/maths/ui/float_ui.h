@@ -3,11 +3,9 @@
 #include <QDoubleSpinBox>
 #include <QMetaObject>
 
-#include <possumwood/properties/property.h>
+#include <possumwood_sdk/properties/property.h>
 
-namespace properties {
-
-class float_ui : public property<float, float_ui> {
+class float_ui : public possumwood::properties::property<float, float_ui> {
 	public:
 		float_ui();
 		virtual ~float_ui();
@@ -24,5 +22,3 @@ class float_ui : public property<float, float_ui> {
 		QDoubleSpinBox* m_spinBox;
 		QMetaObject::Connection m_valueChangeConnection;
 };
-
-}

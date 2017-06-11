@@ -1,7 +1,5 @@
 #include "float_ui.h"
 
-namespace properties {
-
 float_ui::float_ui() : m_spinBox(new QDoubleSpinBox(NULL)) {
 	m_valueChangeConnection = QObject::connect(
 		m_spinBox,
@@ -36,6 +34,4 @@ QWidget* float_ui::widget() {
 void float_ui::onFlagsChanged(unsigned flags) {
 	m_spinBox->setReadOnly(flags & kOutput);
 	m_spinBox->setDisabled((flags & kDirty) || (flags & kDisabled));
-}
-
 }

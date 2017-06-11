@@ -1,2 +1,3 @@
+add_subdirectory(possumwood_sdk)
 add_subdirectory(qt_node_editor)
 add_subdirectory(dependency_graph)

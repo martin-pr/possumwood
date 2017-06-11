@@ -9,9 +9,9 @@
 
 #include <dependency_graph/node.inl>
 
-#include "node_data.h"
-#include "connected_edge.h"
-#include "io/node_data.h"
+#include <qt_node_editor/connected_edge.h>
+#include <possumwood_sdk/node_data.h>
+#include <possumwood_sdk/io/node_data.h>
 
 namespace {
 
@@ -93,7 +93,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		auto n = m_nodes.right.find(&node);
 		assert(n != m_nodes.right.end());
 
-		n->second->setBlindData<NodeData>(NodeData{n->first->pos()});
+		n->second->setBlindData<possumwood::NodeData>(possumwood::NodeData{n->first->pos()});
 	});
 
 	// and instantiate the current graph state
@@ -111,7 +111,7 @@ Adaptor::~Adaptor() {
 
 void Adaptor::onAddNode(dependency_graph::Node& node) {
 	// get the blind data, containing the node's position
-	const NodeData& data = node.blindData<NodeData>();
+	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
 	// instantiate new graphical item
 	node_editor::Node& newNode = m_graphWidget->scene().addNode(
@@ -173,7 +173,7 @@ void Adaptor::onBlindDataChanged(dependency_graph::Node& node) {
 	auto n = m_nodes.left.find(&node);
 	assert(n != m_nodes.left.end());
 
-	const NodeData& data = node.blindData<NodeData>();
+	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
 	n->second->setPos(data.position);
 }

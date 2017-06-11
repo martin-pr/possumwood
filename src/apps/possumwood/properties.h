@@ -6,8 +6,8 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <node.h>
-#include <properties/property.h>
+#include <qt_node_editor/node.h>
+#include <possumwood_sdk/properties/property.h>
 
 /// A widget displaying properties of selected nodes
 class Properties : public QTreeWidget {
@@ -26,7 +26,7 @@ class Properties : public QTreeWidget {
 
 			Property(Property&&);
 
-			std::unique_ptr<properties::property_base> ui;
+			std::unique_ptr<possumwood::properties::property_base> ui;
 			boost::signals2::connection graphValueConnection, uiValueConnection, flagsConnection;
 		};
 

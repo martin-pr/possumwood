@@ -7,6 +7,8 @@
 
 #include "metadata.h"
 
+namespace possumwood {
+
 /// a simple instantiation object, to be used to register a new node type in a cpp file
 struct NodeImplementation : public boost::noncopyable {
 	public:
@@ -15,3 +17,5 @@ struct NodeImplementation : public boost::noncopyable {
 	private:
 		Metadata m_meta;
 };
+
+}
