@@ -5,6 +5,8 @@
 
 #include <dependency_graph/graph.h>
 
+class QMainWindow;
+
 namespace possumwood {
 
 /// App is a singleton, instantiated explicitly in main.cpp.
@@ -25,12 +27,17 @@ class App : public boost::noncopyable {
 		void saveFile();
 		void saveFile(const boost::filesystem::path& fn);
 
+		QMainWindow* mainWindow() const;
+		void setMainWindow(QMainWindow* win);
+
 	protected:
 	private:
 		static App* s_instance;
 
 		dependency_graph::Graph m_graph;
 		boost::filesystem::path m_filename;
+
+		QMainWindow* m_mainWindow;
 };
 
 }

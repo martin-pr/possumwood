@@ -32,6 +32,8 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 }
 
 MainWindow::MainWindow() : QMainWindow() {
+	possumwood::App::instance().setMainWindow(this);
+
 	m_viewport = new Viewport();
 	setCentralWidget(m_viewport);
 

@@ -11,7 +11,7 @@ namespace possumwood {
 
 App* App::s_instance = NULL;
 
-App::App() {
+App::App() : m_mainWindow(NULL) {
 	assert(s_instance == nullptr);
 	s_instance = this;
 }
@@ -64,6 +64,15 @@ void App::saveFile(const boost::filesystem::path& fn) {
 	out << std::setw(4) << json;
 
 	m_filename = fn;
+}
+
+QMainWindow* App::mainWindow() const {
+	return m_mainWindow;
+}
+
+void App::setMainWindow(QMainWindow* win) {
+	assert(m_mainWindow == NULL && "setMainWindow is called only once at the beginning of an application");
+	m_mainWindow = win;
 }
 
 }
