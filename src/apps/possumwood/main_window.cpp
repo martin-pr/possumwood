@@ -116,8 +116,10 @@ MainWindow::MainWindow() : QMainWindow() {
 	newAct->setShortcuts(QKeySequence::New);
 	connect(newAct, &QAction::triggered, [&](bool) {
 		QMessageBox::StandardButton res = QMessageBox::question(this, "New file...", "Do you want to clear the scene?");
-		if(res == QMessageBox::Yes)
+		if(res == QMessageBox::Yes) {
+			m_properties->show({});
 			possumwood::App::instance().newFile();
+		}
 	});
 
 	QAction* openAct = new QAction("&Open...", this);
@@ -129,6 +131,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 		if(!filename.isEmpty()) {
 			try {
+				m_properties->show({});
 				possumwood::App::instance().loadFile(filename.toStdString());
 			}
 			catch(std::exception& err) {
