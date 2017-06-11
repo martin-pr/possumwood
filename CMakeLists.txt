@@ -49,5 +49,5 @@ set(LIBS ${LIBS} ${Boost_LIBRARIES})
 ###########################################################
 # BUILD
 
-include_directories(src/libs src/apps)
+include_directories(src/libs)
 add_subdirectory(src)

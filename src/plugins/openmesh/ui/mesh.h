@@ -2,7 +2,7 @@
 
 #include "openmesh.h"
 
-#include <possumwood/properties/property.h>
+#include <possumwood_sdk/properties/property.h>
 
 #include <QLabel>
 #include <QFrame>

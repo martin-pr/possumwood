@@ -23,4 +23,4 @@ set(LIBS ${LIBS} ${GLUT_LIBRARY})
 include_directories(./)
 add_executable(possumwood ${sources} ${headers_moc})
 
-target_link_libraries(possumwood nodeeditor dependency_graph ${LIBS} dl)
+target_link_libraries(possumwood nodeeditor dependency_graph possumwood_sdk ${LIBS} dl)

@@ -1,8 +1,8 @@
 include_directories(./)
 
 # Building the library
-file(GLOB headers *.h)
-file(GLOB sources *.cpp)
+file(GLOB_RECURSE headers *.h)
+file(GLOB_RECURSE sources *.cpp)
 
 # Qt fun
 FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Gui Widgets OpenGL)

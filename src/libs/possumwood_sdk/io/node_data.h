@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../node_data.h"
+#include <possumwood_sdk/node_data.h>
 
 #include <dependency_graph/io/json.h>
 

@@ -26,7 +26,6 @@
 #include <qt_node_editor/node.h>
 #include <qt_node_editor/connected_edge.h>
 #include <qt_node_editor/graph_widget.h>
-#include "node_data.h"
 #include "adaptor.h"
 #include "main_window.h"
 

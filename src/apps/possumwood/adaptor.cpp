@@ -10,8 +10,8 @@
 #include <dependency_graph/node.inl>
 
 #include <qt_node_editor/connected_edge.h>
-#include "node_data.h"
-#include "io/node_data.h"
+#include <possumwood_sdk/node_data.h>
+#include <possumwood_sdk/io/node_data.h>
 
 namespace {
 

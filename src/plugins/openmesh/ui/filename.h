@@ -2,7 +2,7 @@
 
 #include "datatypes/filename.h"
 
-#include <possumwood/properties/property.h>
+#include <possumwood_sdk/properties/property.h>
 
 #include <QLineEdit>
 

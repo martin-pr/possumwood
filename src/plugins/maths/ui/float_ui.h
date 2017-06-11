@@ -3,7 +3,7 @@
 #include <QDoubleSpinBox>
 #include <QMetaObject>
 
-#include <possumwood/properties/property.h>
+#include <possumwood_sdk/properties/property.h>
 
 namespace properties {
 

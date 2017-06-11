@@ -23,10 +23,11 @@
 #include <dependency_graph/values.inl>
 #include <dependency_graph/io/graph.h>
 
+#include <possumwood_sdk/metadata.h>
+#include <possumwood_sdk/node_data.h>
+#include <possumwood_sdk/io/node_data.h>
+
 #include "adaptor.h"
-#include "node_data.h"
-#include "metadata.h"
-#include "io/node_data.h"
 
 namespace {
 
