@@ -54,7 +54,7 @@ filename_ui::filename_ui() {
 				boost::filesystem::path result = path.toStdString();
 				const auto pp = possumwood::App::instance().filename().parent_path();
 
-				if(boost::starts_with(result.string(), pp.string()))
+				if(!pp.string().empty() && boost::starts_with(result.string(), pp.string()))
 					result = result.string().substr(pp.string().length()+1);
 
 				m_lineEdit->setText(result.string().c_str());
