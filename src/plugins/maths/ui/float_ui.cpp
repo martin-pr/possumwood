@@ -23,8 +23,12 @@ void float_ui::get(float& value) const {
 }
 
 void float_ui::set(const float& value) {
+	bool block = m_spinBox->blockSignals(true);
+
 	if(m_spinBox->value() != value)
 		m_spinBox->setValue(value);
+
+	m_spinBox->blockSignals(block);
 }
 
 QWidget* float_ui::widget() {
