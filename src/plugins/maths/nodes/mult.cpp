@@ -3,6 +3,8 @@
 #include <dependency_graph/values.inl>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/datablock.inl>
+#include <dependency_graph/port.inl>
+#include <dependency_graph/node.inl>
 
 namespace {
 
