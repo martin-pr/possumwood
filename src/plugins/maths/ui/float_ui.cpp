@@ -12,6 +12,7 @@ float_ui::float_ui() : m_spinBox(new QDoubleSpinBox(NULL)) {
 	m_spinBox->setKeyboardTracking(false);
 
 	m_spinBox->setRange(-1e13, 1e13);
+	m_spinBox->setDecimals(5);
 }
 
 float_ui::~float_ui() {
