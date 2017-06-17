@@ -19,11 +19,13 @@ namespace {
 
 dependency_graph::InAttr<std::vector<DecimaterModule>> a_modules;
 dependency_graph::InAttr<std::shared_ptr<const Mesh>> a_inMesh;
+dependency_graph::InAttr<unsigned> a_collapseCount;
 dependency_graph::OutAttr<std::shared_ptr<const Mesh>> a_outMesh;
 
 void compute(dependency_graph::Values& data) {
 	std::vector<DecimaterModule> modules = data.get(a_modules);
 	std::shared_ptr<const Mesh> inMesh = data.get(a_inMesh);
+	const unsigned collapseCount = data.get(a_collapseCount);
 
 	if(inMesh) {
 		std::unique_ptr<Mesh> mesh(new Mesh(*inMesh));
@@ -34,7 +36,7 @@ void compute(dependency_graph::Values& data) {
 			mod(decimater);
 
 		decimater.initialize();
-		decimater.decimate();
+		decimater.decimate(collapseCount);
 		mesh->garbage_collection();
 
 		data.set(a_outMesh, std::shared_ptr<const Mesh>(mesh.release()));
@@ -46,9 +48,11 @@ void compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_modules, "modules");
 	meta.addAttribute(a_inMesh, "input");
+	meta.addAttribute(a_collapseCount, "collapse_count");
 	meta.addAttribute(a_outMesh, "output");
 
 	meta.addInfluence(a_modules, a_outMesh);
+	meta.addInfluence(a_collapseCount, a_outMesh);
 	meta.addInfluence(a_inMesh, a_outMesh);
 
 	meta.setCompute(compute);
