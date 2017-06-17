@@ -38,7 +38,9 @@ BOOST_AUTO_TEST_CASE(json_io) {
 						{
 							{"name", "add"},
 							{"type", "addition"},
-							{"ports", {2.0, 4.0, nullptr}},
+							{"ports", {
+								{"input_1", 2.0},
+								{"input_2", 4.0}}},
 							{"blind_data", nullptr}
 						}
 					}
@@ -76,13 +78,18 @@ BOOST_AUTO_TEST_CASE(json_io) {
 						{
 							{"name", "add"},
 							{"type", "addition"},
-							{"ports", {2.0, 4.0, nullptr}},
+							{"ports", {
+								{"input_1", 2.0},
+								{"input_2", 4.0}
+							}},
 							{"blind_data", nullptr}
 						},
 						{
 							{"name", "mult"},
 							{"type", "multiplication"},
-							{"ports", {nullptr, 5.0, nullptr}},
+							{"ports", {
+								{"input_2", 5.0}
+							}},
 							{"blind_data", {
 								{"type", typeid(std::string).name()},
 								{"value", "test blind data"}
