@@ -43,7 +43,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_modules", std::vector<DecimaterModule>());
 	meta.addAttribute(a_binary, "binary", false);
 	meta.addAttribute(a_edgeLength, "edge_length", 0.2f);
-	meta.addAttribute(a_errorFactor, "error_factor", 0.0f);
+	meta.addAttribute(a_errorFactor, "error_tolerance_factor", 0.0f);
 	meta.addAttribute(a_out, "out_modules", std::vector<DecimaterModule>());
 
 	meta.addInfluence(a_in, a_out);
