@@ -1,0 +1,472 @@
+{
+    "connections": [
+        {
+            "in_node": 5,
+            "in_port": 0,
+            "out_node": 0,
+            "out_port": 1
+        },
+        {
+            "in_node": 10,
+            "in_port": 1,
+            "out_node": 0,
+            "out_port": 1
+        },
+        {
+            "in_node": 15,
+            "in_port": 1,
+            "out_node": 0,
+            "out_port": 1
+        },
+        {
+            "in_node": 18,
+            "in_port": 1,
+            "out_node": 0,
+            "out_port": 1
+        },
+        {
+            "in_node": 3,
+            "in_port": 0,
+            "out_node": 2,
+            "out_port": 4
+        },
+        {
+            "in_node": 12,
+            "in_port": 0,
+            "out_node": 4,
+            "out_port": 4
+        },
+        {
+            "in_node": 8,
+            "in_port": 1,
+            "out_node": 5,
+            "out_port": 4
+        },
+        {
+            "in_node": 8,
+            "in_port": 0,
+            "out_node": 7,
+            "out_port": 3
+        },
+        {
+            "in_node": 6,
+            "in_port": 0,
+            "out_node": 8,
+            "out_port": 2
+        },
+        {
+            "in_node": 1,
+            "in_port": 0,
+            "out_node": 9,
+            "out_port": 4
+        },
+        {
+            "in_node": 4,
+            "in_port": 0,
+            "out_node": 10,
+            "out_port": 2
+        },
+        {
+            "in_node": 10,
+            "in_port": 0,
+            "out_node": 11,
+            "out_port": 3
+        },
+        {
+            "in_node": 11,
+            "in_port": 0,
+            "out_node": 13,
+            "out_port": 3
+        },
+        {
+            "in_node": 15,
+            "in_port": 0,
+            "out_node": 14,
+            "out_port": 3
+        },
+        {
+            "in_node": 2,
+            "in_port": 0,
+            "out_node": 15,
+            "out_port": 2
+        },
+        {
+            "in_node": 14,
+            "in_port": 0,
+            "out_node": 16,
+            "out_port": 3
+        },
+        {
+            "in_node": 18,
+            "in_port": 0,
+            "out_node": 17,
+            "out_port": 4
+        },
+        {
+            "in_node": 9,
+            "in_port": 0,
+            "out_node": 18,
+            "out_port": 2
+        }
+    ],
+    "nodes": [
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -324.0625,
+                    "y": -265.5
+                }
+            },
+            "name": "loader",
+            "ports": [
+                "bunny.obj",
+                null
+            ],
+            "type": "openmesh/loader"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": 294.94873046875,
+                    "y": -282.944580078125
+                }
+            },
+            "name": "display",
+            "ports": [
+                null
+            ],
+            "type": "openmesh/display"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": 85.90625,
+                    "y": 14.078125
+                }
+            },
+            "name": "transform",
+            "ports": [
+                null,
+                {
+                    "x": -0.100000001490116,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                {
+                    "x": 8.49887007419322e-35,
+                    "y": 4.5914945482067e-41,
+                    "z": 4.26885804927224e-07
+                },
+                {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                null
+            ],
+            "type": "openmesh/transform"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": 308.590637207031,
+                    "y": 113.074996948242
+                }
+            },
+            "name": "display",
+            "ports": [
+                null
+            ],
+            "type": "openmesh/display"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": 81.28125,
+                    "y": 495.390625
+                }
+            },
+            "name": "transform",
+            "ports": [
+                null,
+                {
+                    "x": 0.100000001490116,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                null
+            ],
+            "type": "openmesh/transform"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -154.4375,
+                    "y": 771.25
+                }
+            },
+            "name": "transform",
+            "ports": [
+                null,
+                {
+                    "x": 0.300000011920929,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                {
+                    "x": 8.49887007419322e-35,
+                    "y": 4.5914945482067e-41,
+                    "z": 4.26885804927224e-07
+                },
+                {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                null
+            ],
+            "type": "openmesh/transform"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": 366.6875,
+                    "y": 807.9375
+                }
+            },
+            "name": "display",
+            "ports": [
+                null
+            ],
+            "type": "openmesh/display"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -2.515625,
+                    "y": 710.078125
+                }
+            },
+            "name": "module_normal_deviation",
+            "ports": [
+                [],
+                false,
+                300.0,
+                null
+            ],
+            "type": "openmesh/decimater/module_normal_deviation"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": 202.171875,
+                    "y": 788.203125
+                }
+            },
+            "name": "decimater",
+            "ports": [
+                null,
+                null,
+                null
+            ],
+            "type": "openmesh/decimater/decimater"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": 107.044921875,
+                    "y": -393.948974609375
+                }
+            },
+            "name": "transform",
+            "ports": [
+                null,
+                {
+                    "x": -0.300000011920929,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                {
+                    "x": 8.49887007419322e-35,
+                    "y": 4.5914945482067e-41,
+                    "z": 4.26885804927224e-07
+                },
+                {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                null
+            ],
+            "type": "openmesh/transform"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -108.524215698242,
+                    "y": 550.752319335938
+                }
+            },
+            "name": "decimater",
+            "ports": [
+                null,
+                null,
+                null
+            ],
+            "type": "openmesh/decimater/decimater"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -130.005477905273,
+                    "y": 372.908203125
+                }
+            },
+            "name": "module_hausdorff",
+            "ports": [
+                null,
+                1.60000002384186,
+                0.200000002980232,
+                null
+            ],
+            "type": "openmesh/decimater/module_hausdorff"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": 364.46875,
+                    "y": 594.0625
+                }
+            },
+            "name": "display",
+            "ports": [
+                null
+            ],
+            "type": "openmesh/display"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -130.453125,
+                    "y": 198.75
+                }
+            },
+            "name": "module_normal_deviation",
+            "ports": [
+                [],
+                false,
+                300.0,
+                null
+            ],
+            "type": "openmesh/decimater/module_normal_deviation"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -138.858901977539,
+                    "y": -83.6865615844727
+                }
+            },
+            "name": "module_normal_deviation",
+            "ports": [
+                null,
+                false,
+                300.0,
+                null
+            ],
+            "type": "openmesh/decimater/module_normal_deviation"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -101.615158081055,
+                    "y": 66.8821868896484
+                }
+            },
+            "name": "decimater",
+            "ports": [
+                null,
+                null,
+                null
+            ],
+            "type": "openmesh/decimater/decimater"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -118.352119445801,
+                    "y": -236.265609741211
+                }
+            },
+            "name": "module_aspect_ratio",
+            "ports": [
+                [],
+                3.0,
+                0.0,
+                null
+            ],
+            "type": "openmesh/decimater/module_aspect_ratio"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -108.52275390625,
+                    "y": -544.984619140625
+                }
+            },
+            "name": "module_edge_length",
+            "ports": [
+                [],
+                false,
+                1.0,
+                0.00999999977648258,
+                null
+            ],
+            "type": "openmesh/decimater/module_edge_length"
+        },
+        {
+            "blind_data": {
+                "type": "N10possumwood8NodeDataE",
+                "value": {
+                    "x": -83.89306640625,
+                    "y": -373.475830078125
+                }
+            },
+            "name": "decimater",
+            "ports": [
+                null,
+                null,
+                null
+            ],
+            "type": "openmesh/decimater/decimater"
+        }
+    ]
+}

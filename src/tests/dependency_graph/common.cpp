@@ -4,6 +4,9 @@
 
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/values.inl>
+#include <dependency_graph/port.inl>
+#include <dependency_graph/metadata.inl>
+#include <dependency_graph/node.inl>
 
 using namespace dependency_graph;
 

@@ -1,9 +1,11 @@
-#include "float_ui.h"
+#include "unsigned_ui.h"
 
-float_ui::float_ui() : m_spinBox(new QDoubleSpinBox(NULL)) {
+#include <limits>
+
+unsigned_ui::unsigned_ui() : m_spinBox(new QSpinBox(NULL)) {
 	m_valueChangeConnection = QObject::connect(
 		m_spinBox,
-		static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+		static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
 		[this]() -> void {
 			callValueChangedCallbacks();
 		}
@@ -11,32 +13,31 @@ float_ui::float_ui() : m_spinBox(new QDoubleSpinBox(NULL)) {
 
 	m_spinBox->setKeyboardTracking(false);
 
-	m_spinBox->setRange(-1e13, 1e13);
-	m_spinBox->setDecimals(5);
+	m_spinBox->setRange(0, std::numeric_limits<int>::max());
 }
 
-float_ui::~float_ui() {
+unsigned_ui::~unsigned_ui() {
 	QObject::disconnect(m_valueChangeConnection);
 }
 
-void float_ui::get(float& value) const {
+void unsigned_ui::get(unsigned& value) const {
 	value = m_spinBox->value();
 }
 
-void float_ui::set(const float& value) {
+void unsigned_ui::set(const unsigned& value) {
 	bool block = m_spinBox->blockSignals(true);
 
-	if(m_spinBox->value() != value)
+	if((unsigned)m_spinBox->value() != value)
 		m_spinBox->setValue(value);
 
 	m_spinBox->blockSignals(block);
 }
 
-QWidget* float_ui::widget() {
+QWidget* unsigned_ui::widget() {
 	return m_spinBox;
 }
 
-void float_ui::onFlagsChanged(unsigned flags) {
+void unsigned_ui::onFlagsChanged(unsigned flags) {
 	m_spinBox->setReadOnly(flags & kOutput);
 	m_spinBox->setDisabled((flags & kDirty) || (flags & kDisabled));
 }

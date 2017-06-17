@@ -7,6 +7,10 @@
 #include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata.inl>
 #include <dependency_graph/node.inl>
+#include <dependency_graph/values.inl>
+#include <dependency_graph/io/graph.h>
+#include <dependency_graph/port.inl>
+
 #include "common.h"
 
 using namespace dependency_graph;
