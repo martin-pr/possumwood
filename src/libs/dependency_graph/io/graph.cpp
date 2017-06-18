@@ -99,17 +99,17 @@ Selection from_json(const json& j, Graph& g, bool clearScene) {
 		for(unsigned p=0;p<n1.portCount();++p)
 			if(n1.port(p).name() == c["out_port"].get<std::string>())
 				p1 = p;
-		assert(p1 >= 0);
 
 		int p2 = -1;
 		for(unsigned p=0;p<n2.portCount();++p)
 			if(n2.port(p).name() == c["in_port"].get<std::string>())
 				p2 = p;
-		assert(p2 >= 0);
 
-		n1.port(p1).connect(n2.port(p2));
+		if(p1 >= 0 && p2 >= 0) {
+			n1.port(p1).connect(n2.port(p2));
 
-		selection.addConnection(n1.port(p1), n2.port(p2));
+			selection.addConnection(n1.port(p1), n2.port(p2));
+		}
 	}
 
 	return selection;
