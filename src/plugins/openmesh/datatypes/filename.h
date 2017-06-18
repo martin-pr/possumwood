@@ -7,6 +7,8 @@
 
 #include <dependency_graph/data_traits.h>
 
+namespace possumwood {
+
 class Filename {
 	public:
 		Filename(std::initializer_list<std::string> extensions = std::initializer_list<std::string>());
@@ -30,3 +32,5 @@ class Filename {
 		boost::filesystem::path m_filename;
 		std::set<std::string> m_extensions;
 };
+
+}

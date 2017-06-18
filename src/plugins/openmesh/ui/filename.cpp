@@ -68,11 +68,11 @@ filename_ui::~filename_ui() {
 	QObject::disconnect(m_lineEditConnection);
 }
 
-void filename_ui::get(Filename& value) const {
+void filename_ui::get(possumwood::Filename& value) const {
 	value.setFilename(m_lineEdit->text().toStdString());
 }
 
-void filename_ui::set(const Filename& value) {
+void filename_ui::set(const possumwood::Filename& value) {
 	m_value = value;
 
 	const bool bs = m_lineEdit->blockSignals(true);

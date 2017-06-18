@@ -2,6 +2,8 @@
 
 #include <possumwood_sdk/app.h>
 
+namespace possumwood {
+
 Filename::Filename(std::initializer_list<std::string> extensions) : m_extensions(extensions) {
 
 }
@@ -36,4 +38,6 @@ Filename& Filename::operator = (const Filename& fn) {
 	m_filename = fn.m_filename;
 
 	return *this;
+}
+
 }

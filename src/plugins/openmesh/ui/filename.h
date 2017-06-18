@@ -7,13 +7,13 @@
 #include <QLineEdit>
 #include <QToolButton>
 
-class filename_ui : public possumwood::properties::property<Filename, filename_ui> {
+class filename_ui : public possumwood::properties::property<possumwood::Filename, filename_ui> {
 	public:
 		filename_ui();
 		virtual ~filename_ui();
 
-		virtual void get(Filename& value) const override;
-		virtual void set(const Filename& value) override;
+		virtual void get(possumwood::Filename& value) const override;
+		virtual void set(const possumwood::Filename& value) override;
 
 		virtual QWidget* widget() override;
 
@@ -25,7 +25,7 @@ class filename_ui : public possumwood::properties::property<Filename, filename_u
 		QLineEdit* m_lineEdit;
 		QToolButton* m_browseButton;
 
-		Filename m_value;
+		possumwood::Filename m_value;
 
 		QMetaObject::Connection m_lineEditConnection, m_buttonConnection;
 };
