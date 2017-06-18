@@ -30,9 +30,9 @@ void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g)
 
 		auto& connection = j["connections"].back();
 		connection["out_node"] = nodeIds[&c.first.node()];
-		connection["out_port"] = c.first.index();
+		connection["out_port"] = c.first.name();
 		connection["in_node"] = nodeIds[&c.second.node()];
-		connection["in_port"] = c.second.index();
+		connection["in_port"] = c.second.name();
 	}
 }
 
@@ -61,8 +61,19 @@ void adl_serializer<Graph>::from_json(const json& j, ::dependency_graph::Graph& 
 		Node& n1 = g.nodes()[nodeIds[c["out_node"].get<std::string>()]];
 		Node& n2 = g.nodes()[nodeIds[c["in_node"].get<std::string>()]];
 
-		n1.port(c["out_port"].get<size_t>()).connect(
-			n2.port(c["in_port"].get<size_t>()));
+		int p1 = -1;
+		for(unsigned p=0;p<n1.portCount();++p)
+			if(n1.port(p).name() == c["out_port"].get<std::string>())
+				p1 = p;
+		assert(p1 >= 0);
+
+		int p2 = -1;
+		for(unsigned p=0;p<n2.portCount();++p)
+			if(n2.port(p).name() == c["in_port"].get<std::string>())
+				p2 = p;
+		assert(p2 >= 0);
+
+		n1.port(p1).connect(n2.port(p2));
 	}
 }
 

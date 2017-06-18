@@ -111,9 +111,9 @@ BOOST_AUTO_TEST_CASE(json_io) {
 					"connections", {
 						{
 							{"in_node", "multiplication_0"},
-							{"in_port", 0},
+							{"in_port", "input_1"},
 							{"out_node", "addition_0"},
-							{"out_port", 2}
+							{"out_port", "output"}
 						}
 					}
 				}
