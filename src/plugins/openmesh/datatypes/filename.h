@@ -16,27 +16,17 @@ class Filename {
 
 		const std::set<std::string>& extensions() const;
 
+		Filename& operator = (const Filename& fn);
+
+		bool operator == (const Filename& fn) const {
+			return m_filename == fn.m_filename && m_extensions == fn.m_extensions;
+		}
+
+		bool operator != (const Filename& fn) const {
+			return m_filename != fn.m_filename || m_extensions != fn.m_extensions;
+		}
 
 	private:
 		boost::filesystem::path m_filename;
 		std::set<std::string> m_extensions;
 };
-
-namespace dependency_graph {
-	// traits specialisation for filename, to assign only the filename value,
-	//   not the extensions
-	template<>
-	struct DataTraits<Filename> {
-		static void assignValue(Filename& dest, const Filename& src) {
-			dest.setFilename(src.filename());
-		}
-
-		static bool isEqual(const Filename& v1, const Filename& v2) {
-			return v1.filename() == v2.filename();
-		}
-
-		static bool isNotEqual(const Filename& v1, const Filename& v2) {
-			return v1.filename() != v2.filename();
-		}
-	};
-}

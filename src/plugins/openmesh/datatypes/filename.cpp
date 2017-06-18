@@ -26,4 +26,14 @@ const std::set<std::string>& Filename::extensions() const {
 	return m_extensions;
 }
 
+Filename& Filename::operator = (const Filename& fn) {
+	// only assign a value if the m_extension array is empty
+	// -> allows to keep the extensions list while allowing to change
+	//    the filename value in the UI / serialization
+	if(m_extensions.empty())
+		m_extensions = fn.m_extensions;
 
+	m_filename = fn.m_filename;
+
+	return *this;
+}
