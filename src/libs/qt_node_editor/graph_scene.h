@@ -46,11 +46,11 @@ class GraphScene : public QGraphicsScene {
 
 		void setNodeMoveCallback(std::function<void(Node&)> fn);
 
-		struct NodeRefComparator {
-			bool operator() (const std::reference_wrapper<Node>& r1, const std::reference_wrapper<Node>& r2);
+		struct Selection {
+			std::set<Node*> nodes;
+			std::set<ConnectedEdge*> connections;
 		};
-
-		void setNodeSelectionCallback(std::function<void(std::set<std::reference_wrapper<Node>, NodeRefComparator>)> fn);
+		void setNodeSelectionCallback(std::function<void(const Selection&)> fn);
 
 	protected:
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
@@ -75,7 +75,7 @@ class GraphScene : public QGraphicsScene {
 
 		std::function<void(Port&, Port&)> m_connectionCallback;
 		std::function<void(Node&)> m_nodeMoveCallback;
-		std::function<void(std::set<std::reference_wrapper<Node>, NodeRefComparator>)> m_nodeSelectionCallback;
+		std::function<void(const Selection&)> m_nodeSelectionCallback;
 
 		friend class Edge;
 		friend class Node;

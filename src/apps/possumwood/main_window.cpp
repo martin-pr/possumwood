@@ -54,7 +54,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	// connect the selection signal
 	m_adaptor->scene().setNodeSelectionCallback(
-	[&](std::set<std::reference_wrapper<node_editor::Node>, node_editor::GraphScene::NodeRefComparator> selection) {
+	[&](const node_editor::GraphScene::Selection& selection) {
 		m_properties->show(m_adaptor->selectedNodes());
 	}
 	);
