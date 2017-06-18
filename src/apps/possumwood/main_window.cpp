@@ -16,7 +16,7 @@
 
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/node_data.h>
-#include <possumwood_sdk/io/node_data.h>
+#include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/app.h>
 
 #include "adaptor.h"
