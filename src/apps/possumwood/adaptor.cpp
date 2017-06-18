@@ -127,7 +127,28 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_paste->setShortcut(QKeySequence::Paste);
 	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_paste, &QAction::triggered, [this](bool) {
-		std::cout << "PASTE triggered" << std::endl;
+
+		try {
+			// convert the selection to JSON object
+			auto json = dependency_graph::io::json::parse(QApplication::clipboard()->text().toStdString());
+
+			// import the clipboard
+			dependency_graph::Selection selection = dependency_graph::io::from_json(json, *m_graph, false);
+
+			// set the selection to the newly inserted nodes
+			setSelection(selection);
+
+			// and move all selected nodes by (10, 10)
+			for(dependency_graph::Node& n : selection.nodes()) {
+				possumwood::NodeData d = n.blindData<possumwood::NodeData>();
+				d.position += QPointF(20, 20);
+				n.setBlindData(d);
+			}
+
+		} catch(std::exception& e) {
+			// do nothing
+			// std::cout << e.what() << std::endl;
+		}
 	});
 	addAction(m_paste);
 }
