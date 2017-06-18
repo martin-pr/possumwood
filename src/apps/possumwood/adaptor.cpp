@@ -113,7 +113,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	connect(m_copy, &QAction::triggered, [this](bool) {
 		// convert the selection to JSON string
 		dependency_graph::io::json json;
-		dependency_graph::io::adl_serializer<dependency_graph::Graph>::to_json(json, *m_graph, selection());
+		dependency_graph::io::to_json(json, *m_graph, selection());
 
 		std::stringstream ss;
 		ss << std::setw(4) << json;

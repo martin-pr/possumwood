@@ -38,7 +38,7 @@ void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>
 
 }
 
-void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g, const Selection& selection) {
+void to_json(json& j, const ::dependency_graph::Graph& g, const Selection& selection) {
 	std::map<std::string, unsigned> uniqueIds;
 	std::map<const ::dependency_graph::Node*, std::string> nodeIds;
 
@@ -58,6 +58,10 @@ void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g,
 		connection["in_node"] = nodeIds[&c.second.node()];
 		connection["in_port"] = c.second.name();
 	}
+}
+
+void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g) {
+	::dependency_graph::io::to_json(j, g);
 }
 
 void adl_serializer<Graph>::from_json(const json& j, ::dependency_graph::Graph& g) {
