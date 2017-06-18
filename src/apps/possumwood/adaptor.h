@@ -6,6 +6,7 @@
 #include <boost/bimap.hpp>
 
 #include <QWidget>
+#include <QAction>
 
 #include <dependency_graph/graph.h>
 #include <qt_node_editor/graph_widget.h>
@@ -40,6 +41,9 @@ class Adaptor : public QWidget {
 		void setSizeHint(const QSize& sh);
 		virtual QSize sizeHint() const override;
 
+		QAction* copyAction() const;
+		QAction* pasteAction() const;
+
 	protected:
 	private:
 		void onAddNode(dependency_graph::Node& node);
@@ -59,4 +63,6 @@ class Adaptor : public QWidget {
 		boost::bimap<dependency_graph::Node*, node_editor::Node*> m_nodes;
 
 		QSize m_sizeHint;
+
+		QAction *m_copy, *m_paste;
 };

@@ -102,6 +102,23 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 
 	for(auto& c : m_graph->connections())
 		onConnect(c.first, c.second);
+
+	// setup copy+paste action
+	m_copy = new QAction("&Copy", this);
+	m_copy->setShortcut(QKeySequence::Copy);
+	m_copy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+	connect(m_copy, &QAction::triggered, [this](bool) {
+		std::cout << "COPY triggered" << std::endl;
+	});
+	addAction(m_copy);
+
+	m_paste = new QAction("&Paste", this);
+	m_paste->setShortcut(QKeySequence::Paste);
+	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+	connect(m_paste, &QAction::triggered, [this](bool) {
+		std::cout << "PASTE triggered" << std::endl;
+	});
+	addAction(m_paste);
 }
 
 Adaptor::~Adaptor() {
@@ -274,4 +291,12 @@ void Adaptor::setSizeHint(const QSize& sh) {
 
 QSize Adaptor::sizeHint() const {
 	return m_sizeHint;
+}
+
+QAction* Adaptor::copyAction() const {
+	return m_copy;
+}
+
+QAction* Adaptor::pasteAction() const {
+	return m_paste;
 }
