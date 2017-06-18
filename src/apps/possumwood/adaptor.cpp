@@ -244,8 +244,8 @@ void Adaptor::deleteSelected() {
 	}
 }
 
-std::vector<std::reference_wrapper<dependency_graph::Node>> Adaptor::selectedNodes() {
-	std::vector<std::reference_wrapper<dependency_graph::Node>> result;
+dependency_graph::Selection Adaptor::selection() const {
+	dependency_graph::Selection result;
 
 	for(unsigned ni=0; ni<m_graphWidget->scene().nodeCount(); ++ni) {
 		node_editor::Node& n = m_graphWidget->scene().node(ni);
@@ -262,7 +262,17 @@ std::vector<std::reference_wrapper<dependency_graph::Node>> Adaptor::selectedNod
 			// deselection happens during the Qt object destruction -> the original
 			//   node might not exist
 			if(nodeRef != m_graph->nodes().end())
-				result.push_back(*nodeRef);
+				result.addNode(*nodeRef);
+		}
+	}
+
+	for(unsigned ei=0; ei<m_graphWidget->scene().edgeCount(); ++ei) {
+		node_editor::ConnectedEdge& e = m_graphWidget->scene().edge(ei);
+		if(e.isSelected()) {
+			auto n1 = m_nodes.right.find(&e.fromPort().parentNode());
+			auto n2 = m_nodes.right.find(&e.toPort().parentNode());
+
+			result.addConnection(n1->second->port(e.fromPort().index()), n2->second->port(e.toPort().index()));
 		}
 	}
 

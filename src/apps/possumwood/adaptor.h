@@ -9,6 +9,7 @@
 #include <QAction>
 
 #include <dependency_graph/graph.h>
+#include <dependency_graph/selection.h>
 #include <qt_node_editor/graph_widget.h>
 
 /// A simple adaptor widget, marrying qt_graph_editor and dependency_graph
@@ -35,8 +36,8 @@ class Adaptor : public QWidget {
 		/// deletes all selected items in the associated graph
 		void deleteSelected();
 
-		/// returns a list of all selected nodes
-		std::vector<std::reference_wrapper<dependency_graph::Node>> selectedNodes();
+		/// returns current selection
+		dependency_graph::Selection selection() const;
 
 		void setSizeHint(const QSize& sh);
 		virtual QSize sizeHint() const override;
