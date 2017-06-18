@@ -4,6 +4,7 @@
 #include <dependency_graph/node.inl>
 #include <dependency_graph/io/graph.h>
 #include <dependency_graph/port.inl>
+#include <dependency_graph/rtti.h>
 
 #include "common.h"
 
@@ -92,7 +93,7 @@ BOOST_AUTO_TEST_CASE(json_io) {
 								{"input_2", 5.0}
 							}},
 							{"blind_data", {
-								{"type", typeid(std::string).name()},
+								{"type", unmangledTypeId<std::string>()},
 								{"value", "test blind data"}
 							}}
 						}},
