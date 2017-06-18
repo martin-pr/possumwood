@@ -290,6 +290,22 @@ dependency_graph::Selection Adaptor::selection() const {
 	return result;
 }
 
+void Adaptor::setSelection(const dependency_graph::Selection& selection) {
+	for(auto& n : m_nodes.left)
+		n.second->setSelected(selection.nodes().find(std::ref(*n.first)) != selection.nodes().end());
+
+	for(unsigned ei=0; ei<m_graphWidget->scene().edgeCount(); ++ei) {
+		node_editor::ConnectedEdge& e = m_graphWidget->scene().edge(ei);
+
+		dependency_graph::Port& p1 = m_nodes.right.find(&e.fromPort().parentNode())->second->port(e.fromPort().index());
+		dependency_graph::Port& p2 = m_nodes.right.find(&e.toPort().parentNode())->second->port(e.toPort().index());
+
+		auto it = selection.connections().find(dependency_graph::Selection::Connection{std::ref(p1), std::ref(p2)});
+
+		e.setSelected(it != selection.connections().end());
+	}
+}
+
 node_editor::GraphScene& Adaptor::scene() {
 	return m_graphWidget->scene();
 }

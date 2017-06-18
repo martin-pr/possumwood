@@ -15,7 +15,7 @@ bool Selection::Connection::operator < (const Connection& c) const {
 	return t1 < t2;
 }
 
-bool Selection::NodeComparator::operator()(const std::reference_wrapper<Node>& n1, const std::reference_wrapper<Node>& n2) {
+bool Selection::NodeComparator::operator()(const std::reference_wrapper<Node>& n1, const std::reference_wrapper<Node>& n2) const {
 	return &(n1.get()) < &(n2.get());
 }
 

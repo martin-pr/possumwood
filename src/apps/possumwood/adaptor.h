@@ -38,6 +38,7 @@ class Adaptor : public QWidget {
 
 		/// returns current selection
 		dependency_graph::Selection selection() const;
+		void setSelection(const dependency_graph::Selection& selection);
 
 		void setSizeHint(const QSize& sh);
 		virtual QSize sizeHint() const override;

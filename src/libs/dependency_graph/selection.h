@@ -9,7 +9,7 @@ namespace dependency_graph {
 class Selection {
 	private:
 		struct NodeComparator {
-			bool operator()(const std::reference_wrapper<Node>& n1, const std::reference_wrapper<Node>& n2);
+			bool operator()(const std::reference_wrapper<Node>& n1, const std::reference_wrapper<Node>& n2) const;
 		};
 
 	public:
