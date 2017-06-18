@@ -5,10 +5,19 @@
 namespace dependency_graph { namespace io {
 
 void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g) {
-	j["nodes"] = "[]"_json;
+	std::map<std::string, unsigned> uniqueIds;
+
+	j["nodes"] = "{}"_json;
 	for(auto& n : g.nodes()) {
-		j["nodes"].push_back("{}"_json);
-		j["nodes"].back() = n;
+		// figure out a unique name - type with a number appended
+		std::string name = n.metadata().type();
+		auto slash = name.rfind('/');
+		if(slash != std::string::npos)
+			name = name.substr(slash+1);
+		name += "_" + std::to_string(uniqueIds[name]++);
+
+		// and use this to save the node
+		j["nodes"][name] = n;
 	}
 
 	j["connections"] = "[]"_json;
