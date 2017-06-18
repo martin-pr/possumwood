@@ -4,12 +4,23 @@
 
 namespace dependency_graph { namespace io {
 
-void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g) {
-	std::map<std::string, unsigned> uniqueIds;
-	std::map<const ::dependency_graph::Node*, std::string> nodeIds;
+namespace {
 
-	j["nodes"] = "{}"_json;
-	for(auto& n : g.nodes()) {
+template<typename T>
+const T& dereference(const std::reference_wrapper<T>& n) {
+	return n.get();
+}
+
+template<typename T>
+const T& dereference(const T& n) {
+	return n;
+}
+
+template<typename CONTAINER>
+void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>& uniqueIds, std::map<const ::dependency_graph::Node*, std::string>& nodeIds) {
+	for(auto& ni : nodes) {
+		const Node& n = dereference(ni);
+
 		// figure out a unique name - type with a number appended
 		std::string name = n.metadata().type();
 		auto slash = name.rfind('/');
@@ -18,11 +29,24 @@ void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g)
 		name += "_" + std::to_string(uniqueIds[name]++);
 
 		// and use this to save the node
-		j["nodes"][name] = n;
+		j[name] = n;
 
 		// remember the assigned ID for connection saving
 		nodeIds[&n] = name;
 	}
+}
+
+}
+
+void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g, const Selection& selection) {
+	std::map<std::string, unsigned> uniqueIds;
+	std::map<const ::dependency_graph::Node*, std::string> nodeIds;
+
+	j["nodes"] = "{}"_json;
+	if(selection.empty())
+		writeNodes(j["nodes"], g.nodes(), uniqueIds, nodeIds);
+	else
+		writeNodes(j["nodes"], selection.nodes(), uniqueIds, nodeIds);
 
 	j["connections"] = "[]"_json;
 	for(auto& c : g.connections()) {

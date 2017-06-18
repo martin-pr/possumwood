@@ -6,8 +6,11 @@
 
 #include <QHBoxLayout>
 #include <QMessageBox>
+#include <QApplication>
+#include <QClipboard>
 
 #include <dependency_graph/node.inl>
+#include <dependency_graph/io/graph.h>
 
 #include <qt_node_editor/connected_edge.h>
 #include <possumwood_sdk/node_data.h>
@@ -108,7 +111,15 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_copy->setShortcut(QKeySequence::Copy);
 	m_copy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_copy, &QAction::triggered, [this](bool) {
-		std::cout << "COPY triggered" << std::endl;
+		// convert the selection to JSON string
+		dependency_graph::io::json json;
+		dependency_graph::io::adl_serializer<dependency_graph::Graph>::to_json(json, *m_graph, selection());
+
+		std::stringstream ss;
+		ss << std::setw(4) << json;
+
+		// and put it to the clipboard
+		QApplication::clipboard()->setText(ss.str().c_str());
 	});
 	addAction(m_copy);
 
