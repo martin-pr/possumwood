@@ -6,6 +6,7 @@
 #include <boost/filesystem/path.hpp>
 
 #include <dependency_graph/data_traits.h>
+#include <possumwood_sdk/io.h>
 
 namespace possumwood {
 
@@ -20,13 +21,11 @@ class Filename {
 
 		Filename& operator = (const Filename& fn);
 
-		bool operator == (const Filename& fn) const {
-			return m_filename == fn.m_filename && m_extensions == fn.m_extensions;
-		}
+		bool operator == (const Filename& fn) const;
+		bool operator != (const Filename& fn) const;
 
-		bool operator != (const Filename& fn) const {
-			return m_filename != fn.m_filename || m_extensions != fn.m_extensions;
-		}
+		void fromJson(const ::dependency_graph::io::json& json);
+		void toJson(::dependency_graph::io::json& json) const;
 
 	private:
 		boost::filesystem::path m_filename;

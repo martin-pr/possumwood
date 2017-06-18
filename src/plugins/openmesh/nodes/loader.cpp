@@ -7,8 +7,6 @@
 #include <dependency_graph/node.inl>
 
 #include "datatypes/filename.h"
-
-#include "io/filename.h"
 #include "io/mesh.h"
 
 #include "openmesh.h"

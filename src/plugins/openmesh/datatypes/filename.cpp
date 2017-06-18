@@ -40,4 +40,21 @@ Filename& Filename::operator = (const Filename& fn) {
 	return *this;
 }
 
+bool Filename::operator == (const Filename& fn) const {
+	return m_filename == fn.m_filename && m_extensions == fn.m_extensions;
+}
+
+bool Filename::operator != (const Filename& fn) const {
+	return m_filename != fn.m_filename || m_extensions != fn.m_extensions;
+}
+
+
+void Filename::fromJson(const ::dependency_graph::io::json& json) {
+	setFilename(json.get<std::string>());
+}
+
+void Filename::toJson(::dependency_graph::io::json& json) const {
+	json = filename(false).string();
+}
+
 }
