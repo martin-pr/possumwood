@@ -64,10 +64,14 @@ void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g)
 	::dependency_graph::io::to_json(j, g);
 }
 
-void adl_serializer<Graph>::from_json(const json& j, ::dependency_graph::Graph& g) {
-	g.nodes().clear();
+//////////////
+
+Selection from_json(const json& j, Graph& g, bool clearScene) {
+	if(clearScene)
+		g.nodes().clear();
 
 	std::map<std::string, size_t> nodeIds;
+	Selection selection;
 
 	for(json::const_iterator ni = j["nodes"].begin(); ni != j["nodes"].end(); ++ni) {
 		const json& n = ni.value();
@@ -83,6 +87,8 @@ void adl_serializer<Graph>::from_json(const json& j, ::dependency_graph::Graph& 
 		adl_serializer<Node>::from_json(n, node);
 
 		nodeIds[ni.key()] = g.nodes().size()-1;
+
+		selection.addNode(node);
 	}
 
 	for(auto& c : j["connections"]) {
@@ -102,7 +108,15 @@ void adl_serializer<Graph>::from_json(const json& j, ::dependency_graph::Graph& 
 		assert(p2 >= 0);
 
 		n1.port(p1).connect(n2.port(p2));
+
+		selection.addConnection(n1.port(p1), n2.port(p2));
 	}
+
+	return selection;
+}
+
+void adl_serializer<Graph>::from_json(const json& j, ::dependency_graph::Graph& g) {
+	::dependency_graph::io::from_json(j, g);
 }
 
 } }
