@@ -60,8 +60,8 @@ void compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inMesh, "in_mesh");
-	meta.addAttribute(a_translation, "translation");
-	meta.addAttribute(a_rotation, "rotation");
+	meta.addAttribute(a_translation, "translation", Imath::Vec3<float>(0, 0, 0));
+	meta.addAttribute(a_rotation, "rotation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_scale, "scale", Imath::Vec3<float>(1, 1, 1));
 	meta.addAttribute(a_outMesh, "out_mesh");
 

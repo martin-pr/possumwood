@@ -27,7 +27,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_x, "x");
 	meta.addAttribute(a_y, "y");
 	meta.addAttribute(a_z, "z");
-	meta.addAttribute(a_out, "out");
+	meta.addAttribute(a_out, "out", Imath::Vec3<float>(0, 0, 0));
 
 	meta.addInfluence(a_x, a_out);
 	meta.addInfluence(a_y, a_out);
