@@ -2,6 +2,7 @@
 
 #include "data.h"
 #include "data_traits.h"
+#include "rtti.h"
 
 namespace dependency_graph {
 
@@ -47,12 +48,12 @@ void Data<T>::fromJson(const io::json& j) {
 
 template<typename T>
 std::string Data<T>::type() const {
-	return typeid(T).name();
+	return unmangledTypeId<T>();
 }
 
 template<typename T>
 BaseData::Factory<T>::Factory() {
-	factories().insert(std::make_pair(typeid(T).name(), []() -> std::unique_ptr<BaseData> {
+	factories().insert(std::make_pair(unmangledTypeId<T>(), []() -> std::unique_ptr<BaseData> {
 		return std::unique_ptr<BaseData>(new Data<T>());
 	}));
 }

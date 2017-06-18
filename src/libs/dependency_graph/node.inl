@@ -43,7 +43,7 @@ template<typename T>
 const T& Node::blindData() const {
 	// retype and return
 	assert(m_blindData != NULL);
-	assert(m_blindData->type() == typeid(T).name());
+	assert(m_blindData->type() == unmangledTypeId<T>());
 	const Data<T>& val = dynamic_cast<const Data<T>&>(*m_blindData);
 	return val.value;
 }

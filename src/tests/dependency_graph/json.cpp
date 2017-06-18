@@ -4,6 +4,7 @@
 #include <dependency_graph/node.inl>
 #include <dependency_graph/io/graph.h>
 #include <dependency_graph/port.inl>
+#include <dependency_graph/rtti.h>
 
 #include "common.h"
 
@@ -14,7 +15,7 @@ BOOST_AUTO_TEST_CASE(json_io) {
 
 	// empty serialization
 	{
-		const io::json result = "{\"nodes\":[],\"connections\":[]}"_json;
+		const io::json result = "{\"nodes\":{},\"connections\":[]}"_json;
 
 		io::json json;
 		BOOST_REQUIRE_NO_THROW(json = g);
@@ -35,12 +36,14 @@ BOOST_AUTO_TEST_CASE(json_io) {
 			{
 				{
 					"nodes", {
-						{
+						{"addition_0", {
 							{"name", "add"},
 							{"type", "addition"},
-							{"ports", {2.0, 4.0, nullptr}},
+							{"ports", {
+								{"input_1", 2.0},
+								{"input_2", 4.0}}},
 							{"blind_data", nullptr}
-						}
+						}}
 					}
 				},
 				{
@@ -66,37 +69,52 @@ BOOST_AUTO_TEST_CASE(json_io) {
 		BOOST_CHECK_EQUAL(json2, result);
 	}
 
-	// two nodes, a connection, blind data
+	// three nodes, a connection, blind data
 	Node& m = g.nodes().add(multiplicationNode(), "mult");
+	g.nodes().add(multiplicationNode(), "mult");
 	{
 		const io::json result(
 			{
 				{
 					"nodes", {
-						{
+						{"addition_0", {
 							{"name", "add"},
 							{"type", "addition"},
-							{"ports", {2.0, 4.0, nullptr}},
+							{"ports", {
+								{"input_1", 2.0},
+								{"input_2", 4.0}
+							}},
 							{"blind_data", nullptr}
-						},
-						{
+						}},
+						{"multiplication_0", {
 							{"name", "mult"},
 							{"type", "multiplication"},
-							{"ports", {nullptr, 5.0, nullptr}},
+							{"ports", {
+								{"input_2", 5.0}
+							}},
 							{"blind_data", {
-								{"type", typeid(std::string).name()},
+								{"type", unmangledTypeId<std::string>()},
 								{"value", "test blind data"}
 							}}
-						}
+						}},
+						{"multiplication_1", {
+							{"name", "mult"},
+							{"type", "multiplication"},
+							{"ports", {
+								{"input_1", 0.0},
+								{"input_2", 0.0}
+							}},
+							{"blind_data", nullptr}
+						}}
 					}
 				},
 				{
 					"connections", {
 						{
-							{"in_node", 1},
-							{"in_port", 0},
-							{"out_node", 0},
-							{"out_port", 2}
+							{"in_node", "multiplication_0"},
+							{"in_port", "input_1"},
+							{"out_node", "addition_0"},
+							{"out_port", "output"}
 						}
 					}
 				}
