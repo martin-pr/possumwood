@@ -25,8 +25,10 @@ void draw(const dependency_graph::Values& data) {
 	glTranslatef(pos.x, pos.y, pos.z);
 	glScalef(size.x, size.y, size.z);
 
+	glDisable(GL_LIGHTING);
 	glColor3f(1, 0, 0);
 	glutWireCube(0.5f);
+	glEnable(GL_LIGHTING);
 
 	glPopMatrix();
 }
