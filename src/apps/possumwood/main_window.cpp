@@ -16,7 +16,7 @@
 
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/node_data.h>
-#include <possumwood_sdk/io/node_data.h>
+#include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/app.h>
 
 #include "adaptor.h"
@@ -223,6 +223,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::draw(float dt) {
 	// draw the floor grid
+	glDisable(GL_LIGHTING);
 	glBegin(GL_LINES);
 
 	for(int a = -10; a <= 10; ++a) {
@@ -244,6 +245,7 @@ void MainWindow::draw(float dt) {
 	glEnd();
 
 	// draw everything else
+	glEnable(GL_LIGHTING);
 	for(auto& n : m_adaptor->graph().nodes()) {
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 

@@ -6,6 +6,9 @@
 #include <boost/filesystem/path.hpp>
 
 #include <dependency_graph/data_traits.h>
+#include <possumwood_sdk/io.h>
+
+namespace possumwood {
 
 class Filename {
 	public:
@@ -16,27 +19,17 @@ class Filename {
 
 		const std::set<std::string>& extensions() const;
 
+		Filename& operator = (const Filename& fn);
+
+		bool operator == (const Filename& fn) const;
+		bool operator != (const Filename& fn) const;
+
+		void fromJson(const ::dependency_graph::io::json& json);
+		void toJson(::dependency_graph::io::json& json) const;
 
 	private:
 		boost::filesystem::path m_filename;
 		std::set<std::string> m_extensions;
 };
 
-namespace dependency_graph {
-	// traits specialisation for filename, to assign only the filename value,
-	//   not the extensions
-	template<>
-	struct DataTraits<Filename> {
-		static void assignValue(Filename& dest, const Filename& src) {
-			dest.setFilename(src.filename());
-		}
-
-		static bool isEqual(const Filename& v1, const Filename& v2) {
-			return v1.filename() == v2.filename();
-		}
-
-		static bool isNotEqual(const Filename& v1, const Filename& v2) {
-			return v1.filename() != v2.filename();
-		}
-	};
 }

@@ -14,7 +14,7 @@
 
 #include <qt_node_editor/connected_edge.h>
 #include <possumwood_sdk/node_data.h>
-#include <possumwood_sdk/io/node_data.h>
+#include <possumwood_sdk/node_data.h>
 
 namespace {
 

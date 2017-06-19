@@ -5,7 +5,7 @@
 
 #include <dependency_graph/io/graph.h>
 
-#include "io/node_data.h"
+#include "node_data.h"
 
 namespace possumwood {
 

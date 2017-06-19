@@ -34,6 +34,16 @@ void Viewport::initializeGL() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
+	float white[3] = {1,1,1};
+	float position[4] = {1,1,1,0};
+
+	glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, white);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+	// glEnable(GL_COLOR_MATERIAL);
+
 	m_timer = boost::posix_time::microsec_clock::universal_time();
 }
 

@@ -7,19 +7,17 @@
 #include <dependency_graph/node.inl>
 
 #include "datatypes/filename.h"
-
-#include "io/filename.h"
 #include "io/mesh.h"
 
 #include "openmesh.h"
 
 namespace {
 
-dependency_graph::InAttr<Filename> a_filename;
+dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<std::shared_ptr<const Mesh>> a_mesh;
 
 void compute(dependency_graph::Values& data) {
-	const Filename filename = data.get(a_filename);
+	const possumwood::Filename filename = data.get(a_filename);
 
 	OpenMesh::IO::Options ropt;
 
@@ -35,7 +33,7 @@ void compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_filename, "filename", Filename({
+	meta.addAttribute(a_filename, "filename", possumwood::Filename({
 		"All supported files (*.obj *.off *.stl)",
 		"OBJ files (*.obj)",
 		"OFF files (*.pff)",

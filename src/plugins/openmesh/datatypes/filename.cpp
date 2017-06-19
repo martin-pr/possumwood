@@ -2,6 +2,8 @@
 
 #include <possumwood_sdk/app.h>
 
+namespace possumwood {
+
 Filename::Filename(std::initializer_list<std::string> extensions) : m_extensions(extensions) {
 
 }
@@ -26,4 +28,33 @@ const std::set<std::string>& Filename::extensions() const {
 	return m_extensions;
 }
 
+Filename& Filename::operator = (const Filename& fn) {
+	// only assign a value if the m_extension array is empty
+	// -> allows to keep the extensions list while allowing to change
+	//    the filename value in the UI / serialization
+	if(m_extensions.empty())
+		m_extensions = fn.m_extensions;
 
+	m_filename = fn.m_filename;
+
+	return *this;
+}
+
+bool Filename::operator == (const Filename& fn) const {
+	return m_filename == fn.m_filename && m_extensions == fn.m_extensions;
+}
+
+bool Filename::operator != (const Filename& fn) const {
+	return m_filename != fn.m_filename || m_extensions != fn.m_extensions;
+}
+
+
+void Filename::fromJson(const ::dependency_graph::io::json& json) {
+	setFilename(json.get<std::string>());
+}
+
+void Filename::toJson(::dependency_graph::io::json& json) const {
+	json = filename(false).string();
+}
+
+}
