@@ -28,8 +28,10 @@ void compute(dependency_graph::Values& data) {
 	const float errorFactor = data.get(a_errorFactor);
 
 	decs.push_back(DecimaterModule([maxNormalDev, errorFactor](OpenMesh::Decimater::DecimaterT<Mesh>& dec) {
-		if(!dec.mesh().has_face_normals())
+		if(!dec.mesh().has_face_normals()) {
 			dec.mesh().request_face_normals();
+			dec.mesh().update_normals();
+		}
 
 		OpenMesh::Decimater::ModNormalFlippingT<Mesh>::Handle mod;
 		dec.add(mod);
@@ -43,7 +45,7 @@ void compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_modules", std::vector<DecimaterModule>());
 	meta.addAttribute(a_maxNormalDev, "max_normal_deviation", 0.2f);
-	meta.addAttribute(a_errorFactor, "error_factor", 0.1f);
+	meta.addAttribute(a_errorFactor, "error_tolerance_factor", 0.1f);
 	meta.addAttribute(a_out, "out_modules", std::vector<DecimaterModule>());
 
 	meta.addInfluence(a_in, a_out);
