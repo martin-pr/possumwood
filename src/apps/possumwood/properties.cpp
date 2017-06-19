@@ -21,14 +21,14 @@ Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 	});
 }
 
-void Properties::show(const std::vector<std::reference_wrapper<dependency_graph::Node>>& selection) {
+void Properties::show(const dependency_graph::Selection& selection) {
 	clear();
 	m_properties.clear();
 	m_nodes.clear();
 
 	bool block = blockSignals(true);
 
-	for(const auto& node : selection) {
+	for(const auto& node : selection.nodes()) {
 		// create a top level item for each node
 		QTreeWidgetItem* nodeItem = new QTreeWidgetItem();
 		nodeItem->setText(0, node.get().name().c_str());

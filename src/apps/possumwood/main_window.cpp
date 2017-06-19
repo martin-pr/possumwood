@@ -54,8 +54,8 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	// connect the selection signal
 	m_adaptor->scene().setNodeSelectionCallback(
-	[&](std::set<std::reference_wrapper<node_editor::Node>, node_editor::GraphScene::NodeRefComparator> selection) {
-		m_properties->show(m_adaptor->selectedNodes());
+	[&](const node_editor::GraphScene::Selection& selection) {
+		m_properties->show(m_adaptor->selection());
 	}
 	);
 
@@ -185,19 +185,36 @@ MainWindow::MainWindow() : QMainWindow() {
 
 
 	////////////////////
-	// create menu
+	// file menu
 
-	QMenu* fileMenu = menuBar()->addMenu("&File");
+	{
+		QMenu* fileMenu = menuBar()->addMenu("&File");
 
-	fileMenu->addAction(newAct);
-	fileMenu->addAction(openAct);
-	fileMenu->addAction(saveAct);
+		fileMenu->addAction(newAct);
+		fileMenu->addAction(openAct);
+		fileMenu->addAction(saveAct);
+		fileMenu->addAction(saveAsAct);
+	}
 
-	QMenu* viewMenu = menuBar()->addMenu("&View");
-	fileMenu->addAction(saveAsAct);
+	///////////////////////////////
+	// copy + paste functionality
 
-	viewMenu->addAction(propDock->toggleViewAction());
-	viewMenu->addAction(graphDock->toggleViewAction());
+	{
+		QMenu* editMenu = menuBar()->addMenu("&Edit");
+
+		editMenu->addAction(m_adaptor->copyAction());
+		editMenu->addAction(m_adaptor->pasteAction());
+	}
+
+	/////////////////////
+	// view menu
+
+	{
+		QMenu* viewMenu = menuBar()->addMenu("&View");
+
+		viewMenu->addAction(propDock->toggleViewAction());
+		viewMenu->addAction(graphDock->toggleViewAction());
+	}
 }
 
 MainWindow::~MainWindow() {

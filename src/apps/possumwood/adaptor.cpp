@@ -6,8 +6,11 @@
 
 #include <QHBoxLayout>
 #include <QMessageBox>
+#include <QApplication>
+#include <QClipboard>
 
 #include <dependency_graph/node.inl>
+#include <dependency_graph/io/graph.h>
 
 #include <qt_node_editor/connected_edge.h>
 #include <possumwood_sdk/node_data.h>
@@ -102,6 +105,52 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 
 	for(auto& c : m_graph->connections())
 		onConnect(c.first, c.second);
+
+	// setup copy+paste action
+	m_copy = new QAction("&Copy", this);
+	m_copy->setShortcut(QKeySequence::Copy);
+	m_copy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+	connect(m_copy, &QAction::triggered, [this](bool) {
+		// convert the selection to JSON string
+		dependency_graph::io::json json;
+		dependency_graph::io::to_json(json, *m_graph, selection());
+
+		std::stringstream ss;
+		ss << std::setw(4) << json;
+
+		// and put it to the clipboard
+		QApplication::clipboard()->setText(ss.str().c_str());
+	});
+	addAction(m_copy);
+
+	m_paste = new QAction("&Paste", this);
+	m_paste->setShortcut(QKeySequence::Paste);
+	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+	connect(m_paste, &QAction::triggered, [this](bool) {
+
+		try {
+			// convert the selection to JSON object
+			auto json = dependency_graph::io::json::parse(QApplication::clipboard()->text().toStdString());
+
+			// import the clipboard
+			dependency_graph::Selection selection = dependency_graph::io::from_json(json, *m_graph, false);
+
+			// set the selection to the newly inserted nodes
+			setSelection(selection);
+
+			// and move all selected nodes by (10, 10)
+			for(dependency_graph::Node& n : selection.nodes()) {
+				possumwood::NodeData d = n.blindData<possumwood::NodeData>();
+				d.position += QPointF(20, 20);
+				n.setBlindData(d);
+			}
+
+		} catch(std::exception& e) {
+			// do nothing
+			// std::cout << e.what() << std::endl;
+		}
+	});
+	addAction(m_paste);
 }
 
 Adaptor::~Adaptor() {
@@ -227,8 +276,8 @@ void Adaptor::deleteSelected() {
 	}
 }
 
-std::vector<std::reference_wrapper<dependency_graph::Node>> Adaptor::selectedNodes() {
-	std::vector<std::reference_wrapper<dependency_graph::Node>> result;
+dependency_graph::Selection Adaptor::selection() const {
+	dependency_graph::Selection result;
 
 	for(unsigned ni=0; ni<m_graphWidget->scene().nodeCount(); ++ni) {
 		node_editor::Node& n = m_graphWidget->scene().node(ni);
@@ -245,11 +294,37 @@ std::vector<std::reference_wrapper<dependency_graph::Node>> Adaptor::selectedNod
 			// deselection happens during the Qt object destruction -> the original
 			//   node might not exist
 			if(nodeRef != m_graph->nodes().end())
-				result.push_back(*nodeRef);
+				result.addNode(*nodeRef);
+		}
+	}
+
+	for(unsigned ei=0; ei<m_graphWidget->scene().edgeCount(); ++ei) {
+		node_editor::ConnectedEdge& e = m_graphWidget->scene().edge(ei);
+		if(e.isSelected()) {
+			auto n1 = m_nodes.right.find(&e.fromPort().parentNode());
+			auto n2 = m_nodes.right.find(&e.toPort().parentNode());
+
+			result.addConnection(n1->second->port(e.fromPort().index()), n2->second->port(e.toPort().index()));
 		}
 	}
 
 	return result;
+}
+
+void Adaptor::setSelection(const dependency_graph::Selection& selection) {
+	for(auto& n : m_nodes.left)
+		n.second->setSelected(selection.nodes().find(std::ref(*n.first)) != selection.nodes().end());
+
+	for(unsigned ei=0; ei<m_graphWidget->scene().edgeCount(); ++ei) {
+		node_editor::ConnectedEdge& e = m_graphWidget->scene().edge(ei);
+
+		dependency_graph::Port& p1 = m_nodes.right.find(&e.fromPort().parentNode())->second->port(e.fromPort().index());
+		dependency_graph::Port& p2 = m_nodes.right.find(&e.toPort().parentNode())->second->port(e.toPort().index());
+
+		auto it = selection.connections().find(dependency_graph::Selection::Connection{std::ref(p1), std::ref(p2)});
+
+		e.setSelected(it != selection.connections().end());
+	}
 }
 
 node_editor::GraphScene& Adaptor::scene() {
@@ -274,4 +349,12 @@ void Adaptor::setSizeHint(const QSize& sh) {
 
 QSize Adaptor::sizeHint() const {
 	return m_sizeHint;
+}
+
+QAction* Adaptor::copyAction() const {
+	return m_copy;
+}
+
+QAction* Adaptor::pasteAction() const {
+	return m_paste;
 }

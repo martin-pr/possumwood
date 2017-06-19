@@ -8,6 +8,7 @@
 
 #include <qt_node_editor/node.h>
 #include <possumwood_sdk/properties/property.h>
+#include <dependency_graph/selection.h>
 
 /// A widget displaying properties of selected nodes
 class Properties : public QTreeWidget {
@@ -16,7 +17,7 @@ class Properties : public QTreeWidget {
 	public:
 		Properties(QWidget* parent = NULL);
 
-		void show(const std::vector<std::reference_wrapper<dependency_graph::Node>>& nodes);
+		void show(const dependency_graph::Selection& selection);
 
 	protected:
 	private:

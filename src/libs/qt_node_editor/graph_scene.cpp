@@ -248,33 +248,28 @@ void GraphScene::setNodeMoveCallback(std::function<void(Node&)> fn) {
 	m_nodeMoveCallback = fn;
 }
 
-void GraphScene::setNodeSelectionCallback(std::function<void(std::set<std::reference_wrapper<Node>, NodeRefComparator>)> fn) {
+void GraphScene::setNodeSelectionCallback(std::function<void(const Selection& sel)> fn) {
 	m_nodeSelectionCallback = fn;
 }
 
 void GraphScene::onSelectionChanged() {
 	if(m_nodeSelectionCallback) {
-		std::set<std::reference_wrapper<Node>, NodeRefComparator> selectionSet;
+		Selection selectionSet;
 
 		QList<QGraphicsItem *> selection = selectedItems();
 		for(auto& i : selection) {
 			Node* node = dynamic_cast<Node*>(i);
 			if(node)
-				selectionSet.insert(std::ref(*node));
+				selectionSet.nodes.insert(node);
+
+			ConnectedEdge* edge = dynamic_cast<ConnectedEdge*>(i);
+			if(edge)
+				selectionSet.connections.insert(edge);
 		}
 
 		if(m_nodeSelectionCallback)
 			m_nodeSelectionCallback(selectionSet);
 	}
-}
-
-bool GraphScene::NodeRefComparator::operator() (const std::reference_wrapper<Node>& r1, const std::reference_wrapper<Node>& r2) {
-	// sort by name first
-	if(r1.get().name() != r2.get().name())
-		return r1.get().name() < r2.get().name();
-
-	// if names are the same, use node pointers
-	return &(r1.get()) < &(r2.get());
 }
 
 }
