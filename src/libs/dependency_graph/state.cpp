@@ -30,4 +30,12 @@ State::const_iterator State::end() const {
 	return m_messages.end();
 }
 
+bool State::operator == (const State& s) const {
+	return m_errored == s.m_errored && m_messages == s.m_messages;
+}
+
+bool State::operator != (const State& s) const {
+	return m_errored != s.m_errored || m_messages == s.m_messages;
+}
+
 }

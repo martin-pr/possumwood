@@ -25,6 +25,9 @@ class State {
 		const_iterator begin() const;
 		const_iterator end() const;
 
+		bool operator == (const State& s) const;
+		bool operator != (const State& s) const;
+
 	protected:
 	private:
 		std::vector<std::pair<MessageType, std::string>> m_messages;

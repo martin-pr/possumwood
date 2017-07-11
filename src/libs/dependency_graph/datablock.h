@@ -24,11 +24,14 @@ class Datablock {
 		template<typename T>
 		void set(size_t index, const T& value);
 
+		void reset(size_t index);
+
 		const BaseData& data(size_t index) const;
 		BaseData& data(size_t index);
 
 	private:
 		std::vector<std::unique_ptr<BaseData>> m_data;
+		const Metadata* m_meta;
 };
 
 }

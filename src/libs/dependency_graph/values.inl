@@ -6,12 +6,12 @@ namespace dependency_graph {
 
 template<typename T>
 const T& Values::get(const InAttr<T>& attr) const {
-	return 	m_node->port(attr.offset()).get<T>();
+	return 	m_node->port(attr.offset()).template get<T>();
 }
 
 template<typename T>
 const T& Values::get(const OutAttr<T>& attr) const {
-	return 	m_node->port(attr.offset()).get<T>();
+	return 	m_node->port(attr.offset()).template get<T>();
 }
 
 template<typename T>
