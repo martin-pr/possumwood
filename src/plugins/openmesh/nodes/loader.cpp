@@ -24,14 +24,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::unique_ptr<Mesh> mesh(new Mesh());
 	bool result = OpenMesh::IO::read_mesh(*mesh, filename.filename().string(), ropt);
 
+	dependency_graph::State state;
+
 	if(!result)
-		std::cout << "Error loading " << filename.filename() << std::endl;
+		state.addError("Error loading '" + filename.filename().string() + "'");
 	else
-		std::cout << "Loaded " << filename.filename() << std::endl;
+		state.addInfo("Loaded '" + filename.filename().string() + "'");
 
 	data.set(a_mesh, std::shared_ptr<const Mesh>(mesh.release()));
 
-	return dependency_graph::State();
+	return state;
 }
 
 void init(possumwood::Metadata& meta) {
