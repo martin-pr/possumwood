@@ -141,6 +141,7 @@ void Node::computeOutput(size_t index) {
 	// if the state changed, run state changed callback
 	if(result != m_state) {
 		m_state = result;
+		graph().m_onStateChanged(*this);
 	}
 }
 
