@@ -56,6 +56,7 @@ class Adaptor : public QWidget {
 
 		void onBlindDataChanged(dependency_graph::Node& node);
 		void onNameChanged(dependency_graph::Node& node);
+		void onStateChanged(const dependency_graph::Node& node);
 
 		dependency_graph::Graph* m_graph;
 		node_editor::GraphWidget* m_graphWidget;

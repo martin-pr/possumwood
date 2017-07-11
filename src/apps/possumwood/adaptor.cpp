@@ -65,6 +65,10 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		[this](dependency_graph::Node& n) { onNameChanged(n); }
 	));
 
+	m_signals.push_back(graph->onStateChanged(
+		[this](const dependency_graph::Node& n) { onStateChanged(n); }
+	));
+
 	// instantiate the graph widget
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setContentsMargins(0,0,0,0);
@@ -232,6 +236,16 @@ void Adaptor::onNameChanged(dependency_graph::Node& node) {
 	assert(n != m_nodes.left.end());
 
 	n->second->setName(node.name().c_str());
+}
+
+void Adaptor::onStateChanged(const dependency_graph::Node& node) {
+	auto n = m_nodes.left.find(const_cast<dependency_graph::Node*>(&node)); // hack - to allow using non-const bimap
+	assert(n != m_nodes.left.end());
+
+	if(!node.state().errored())
+		n->second->setState(node_editor::Node::kOk);
+	else
+		n->second->setState(node_editor::Node::kError);
 }
 
 QPointF Adaptor::mapToScene(QPoint pos) const {
