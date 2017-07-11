@@ -22,7 +22,7 @@ dependency_graph::InAttr<std::vector<DecimaterModule>> a_in;
 dependency_graph::InAttr<float> a_maxNormalDev, a_errorFactor;
 dependency_graph::OutAttr<std::vector<DecimaterModule>> a_out;
 
-void compute(dependency_graph::Values& data) {
+dependency_graph::State compute(dependency_graph::Values& data) {
 	std::vector<DecimaterModule> decs = data.get(a_in);
 	const float maxNormalDev = data.get(a_maxNormalDev);
 	const float errorFactor = data.get(a_errorFactor);
@@ -40,6 +40,8 @@ void compute(dependency_graph::Values& data) {
 	}));
 
 	data.set(a_out, decs);
+
+	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {

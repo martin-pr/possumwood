@@ -20,7 +20,7 @@ dependency_graph::InAttr<std::shared_ptr<const Mesh>> a_inMesh;
 dependency_graph::InAttr<Imath::Vec3<float>> a_translation, a_rotation, a_scale;
 dependency_graph::OutAttr<std::shared_ptr<const Mesh>> a_outMesh;
 
-void compute(dependency_graph::Values& data) {
+dependency_graph::State compute(dependency_graph::Values& data) {
 	const std::shared_ptr<const Mesh> mesh = data.get(a_inMesh);
 	const Imath::Vec3<float> tr = data.get(a_translation);
 	const Imath::Vec3<float> rot = data.get(a_rotation);
@@ -55,6 +55,8 @@ void compute(dependency_graph::Values& data) {
 	}
 	else
 		data.set(a_outMesh, std::shared_ptr<const Mesh>());
+
+	return dependency_graph::State();
 
 }
 

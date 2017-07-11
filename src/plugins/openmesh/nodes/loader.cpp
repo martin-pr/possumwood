@@ -16,7 +16,7 @@ namespace {
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<std::shared_ptr<const Mesh>> a_mesh;
 
-void compute(dependency_graph::Values& data) {
+dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::Filename filename = data.get(a_filename);
 
 	OpenMesh::IO::Options ropt;
@@ -30,6 +30,8 @@ void compute(dependency_graph::Values& data) {
 		std::cout << "Loaded " << filename.filename() << std::endl;
 
 	data.set(a_mesh, std::shared_ptr<const Mesh>(mesh.release()));
+
+	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {

@@ -81,11 +81,13 @@ const Metadata& additionNode() {
 		BOOST_CHECK_EQUAL(&(influences[0].get()), &additionInput1);
 		BOOST_CHECK_EQUAL(&(influences[1].get()), &additionInput2);
 
-		std::function<void(Values&)> additionCompute = [&](Values& data) {
+		std::function<State(Values&)> additionCompute = [&](Values& data) {
 			const float a = data.get(additionInput1);
 			const float b = data.get(additionInput2);
 
 			data.set(additionOutput, a + b);
+
+			return State();
 		};
 		s_meta.setCompute(additionCompute);
 	}
@@ -99,11 +101,13 @@ const Metadata& multiplicationNode() {
 	if(!s_meta.isValid()) {
 		static InAttr<float> multiplicationInput1, multiplicationInput2;
 		static OutAttr<float> multiplicationOutput;
-		std::function<void(Values&)> multiplicationCompute = [&](Values & data) {
+		std::function<State(Values&)> multiplicationCompute = [&](Values & data) {
 			const float a = data.get(multiplicationInput1);
 			const float b = data.get(multiplicationInput2);
 
 			data.set(multiplicationOutput, a * b);
+
+			return State();
 		};
 
 		s_meta.addAttribute(multiplicationInput1, "input_1");

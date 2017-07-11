@@ -11,11 +11,13 @@ namespace {
 dependency_graph::InAttr<float> input1, input2;
 dependency_graph::OutAttr<float> output;
 
-void compute(dependency_graph::Values& data) {
+dependency_graph::State compute(dependency_graph::Values& data) {
 	const float a = data.get(input1);
 	const float b = data.get(input2);
 
 	data.set(output, a + b);
+
+	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {

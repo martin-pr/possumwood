@@ -22,7 +22,7 @@ dependency_graph::InAttr<std::shared_ptr<const Mesh>> a_inMesh;
 dependency_graph::InAttr<unsigned> a_collapseCount;
 dependency_graph::OutAttr<std::shared_ptr<const Mesh>> a_outMesh;
 
-void compute(dependency_graph::Values& data) {
+dependency_graph::State compute(dependency_graph::Values& data) {
 	std::vector<DecimaterModule> modules = data.get(a_modules);
 	std::shared_ptr<const Mesh> inMesh = data.get(a_inMesh);
 	const unsigned collapseCount = data.get(a_collapseCount);
@@ -43,6 +43,8 @@ void compute(dependency_graph::Values& data) {
 	}
 	else
 		data.set(a_outMesh, std::shared_ptr<const Mesh>());
+
+	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {

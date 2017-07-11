@@ -9,6 +9,7 @@
 #include "attr.h"
 #include "metadata.h"
 #include "port.h"
+#include "state.h"
 
 namespace dependency_graph {
 
