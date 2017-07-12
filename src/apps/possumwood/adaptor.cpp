@@ -103,6 +103,32 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		n->second->setBlindData<possumwood::NodeData>(possumwood::NodeData{n->first->pos()});
 	});
 
+	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
+		auto n = m_nodes.right.find(const_cast<node_editor::Node*>(&node)); // hack for bimap
+		assert(n != m_nodes.right.end());
+
+		std::stringstream ss;
+		ss << "<span style=\"color:#fff;\">" << n->second->name() << " (" << n->second->metadata().type() << ")" << "</p>";
+		ss << "<br />" << std::endl;
+		for(auto& i : n->second->state()) {
+			switch(i.first) {
+				case dependency_graph::State::kInfo:
+					ss << "<br /><span style=\"color:#aaa\">";
+					break;
+				case dependency_graph::State::kWarning:
+					ss << "<br /><span style=\"color:#ff0\">";
+					break;
+				case dependency_graph::State::kError:
+					ss << "<br /><span style=\"color:#f00\">";
+					break;
+			}
+
+			ss << i.second << "</span>" << std::endl;
+		}
+
+		return ss.str();
+	});
+
 	// and instantiate the current graph state
 	for(auto& n : m_graph->nodes())
 		onAddNode(n);

@@ -52,6 +52,8 @@ class GraphScene : public QGraphicsScene {
 		};
 		void setNodeSelectionCallback(std::function<void(const Selection&)> fn);
 
+		void setNodeInfoCallback(std::function<std::string(const Node&)> fn);
+
 	protected:
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
 		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
@@ -73,9 +75,13 @@ class GraphScene : public QGraphicsScene {
 		Edge* m_editedEdge;
 		Port::Type m_connectedSide;
 
+		QGraphicsTextItem* m_infoText;
+		QGraphicsRectItem* m_infoRect;
+
 		std::function<void(Port&, Port&)> m_connectionCallback;
 		std::function<void(Node&)> m_nodeMoveCallback;
 		std::function<void(const Selection&)> m_nodeSelectionCallback;
+		std::function<std::string(const Node&)> m_nodeInfoCallback;
 
 		friend class Edge;
 		friend class Node;
