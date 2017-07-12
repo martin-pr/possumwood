@@ -35,7 +35,20 @@ bool State::operator == (const State& s) const {
 }
 
 bool State::operator != (const State& s) const {
-	return m_errored != s.m_errored || m_messages == s.m_messages;
+	return m_errored != s.m_errored || m_messages != s.m_messages;
+}
+
+std::ostream& operator << (std::ostream& out, const State& s) {
+	out << "-- err = " << s.errored() << " --" << std::endl;
+	for(auto& m : s) {
+		switch(m.first) {
+			case State::kInfo: out << "  (i) " << m.second << std::endl; break;
+			case State::kWarning: out << "  (w) " << m.second << std::endl; break;
+			case State::kError: out << "  (e) " << m.second << std::endl; break;
+		}
+	}
+
+	return out;
 }
 
 }

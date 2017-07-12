@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 namespace dependency_graph {
 
@@ -33,5 +34,7 @@ class State {
 		std::vector<std::pair<MessageType, std::string>> m_messages;
 		bool m_errored;
 };
+
+std::ostream& operator << (std::ostream& out, const State& s);
 
 }
