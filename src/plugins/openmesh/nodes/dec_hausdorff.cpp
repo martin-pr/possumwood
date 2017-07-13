@@ -14,6 +14,7 @@
 #include "io/mesh.h"
 
 #include "openmesh.h"
+#include "om_log.h"
 
 namespace {
 
@@ -22,6 +23,8 @@ dependency_graph::InAttr<float> a_tolerance, a_errorFactor;
 dependency_graph::OutAttr<std::vector<DecimaterModule>> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	OMLog logRedirect;
+
 	std::vector<DecimaterModule> decs = data.get(a_in);
 	const float tolerance = data.get(a_tolerance);
 	const float errorFactor = data.get(a_errorFactor);

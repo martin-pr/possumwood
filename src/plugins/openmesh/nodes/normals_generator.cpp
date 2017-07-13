@@ -10,6 +10,7 @@
 
 #include "io/mesh.h"
 #include "openmesh.h"
+#include "om_log.h"
 
 namespace {
 
@@ -18,6 +19,8 @@ dependency_graph::InAttr<std::shared_ptr<const Mesh>> a_inMesh;
 dependency_graph::OutAttr<std::shared_ptr<const Mesh>> a_outMesh;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	OMLog logRedirect;
+
 	const possumwood::Enum mode = data.get(a_mode);
 	const std::shared_ptr<const Mesh> inMesh = data.get(a_inMesh);
 

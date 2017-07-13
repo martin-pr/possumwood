@@ -17,6 +17,7 @@
 #include "io/mesh.h"
 
 #include "openmesh.h"
+#include "om_log.h"
 
 namespace {
 
@@ -26,6 +27,8 @@ dependency_graph::InAttr<float> a_minRoundness, a_errorFactor;
 dependency_graph::OutAttr<std::vector<DecimaterModule>> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	OMLog logRedirect;
+
 	std::vector<DecimaterModule> decs = data.get(a_in);
 	const bool binary = data.get(a_binary);
 	const float minRoundness = data.get(a_minRoundness);

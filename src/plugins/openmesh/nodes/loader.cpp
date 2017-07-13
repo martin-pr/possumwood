@@ -10,6 +10,7 @@
 #include "io/mesh.h"
 
 #include "openmesh.h"
+#include "om_log.h"
 
 namespace {
 
@@ -17,6 +18,8 @@ dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<std::shared_ptr<const Mesh>> a_mesh;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	OMLog logRedirect;
+
 	const possumwood::Filename filename = data.get(a_filename);
 
 	OpenMesh::IO::Options ropt;
@@ -24,16 +27,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::unique_ptr<Mesh> mesh(new Mesh());
 	bool result = OpenMesh::IO::read_mesh(*mesh, filename.filename().string(), ropt);
 
-	dependency_graph::State state;
-
 	if(!result)
-		state.addError("Error loading '" + filename.filename().string() + "'");
+		logRedirect.state().addError("Error loading '" + filename.filename().string() + "'");
 	else
-		state.addInfo("Loaded '" + filename.filename().string() + "'");
+		logRedirect.state().addInfo("Loaded '" + filename.filename().string() + "'");
 
 	data.set(a_mesh, std::shared_ptr<const Mesh>(mesh.release()));
 
-	return state;
+	return logRedirect.state();
 }
 
 void init(possumwood::Metadata& meta) {
