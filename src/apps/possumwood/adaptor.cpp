@@ -268,10 +268,24 @@ void Adaptor::onStateChanged(const dependency_graph::Node& node) {
 	auto n = m_nodes.left.find(const_cast<dependency_graph::Node*>(&node)); // hack - to allow using non-const bimap
 	assert(n != m_nodes.left.end());
 
-	if(!node.state().errored())
-		n->second->setState(node_editor::Node::kOk);
-	else
+	// count the different error messages
+	unsigned info = 0, warn = 0, err = 0;
+	for(auto& m : node.state()) {
+		switch(m.first) {
+			case dependency_graph::State::kInfo: ++info; break;
+			case dependency_graph::State::kWarning: ++warn; break;
+			case dependency_graph::State::kError: ++err; break;
+		}
+	}
+
+	if(err > 0)
 		n->second->setState(node_editor::Node::kError);
+	else if(warn > 0)
+		n->second->setState(node_editor::Node::kWarning);
+	else if(info > 0)
+		n->second->setState(node_editor::Node::kInfo);
+	else
+		n->second->setState(node_editor::Node::kOk);
 }
 
 QPointF Adaptor::mapToScene(QPoint pos) const {

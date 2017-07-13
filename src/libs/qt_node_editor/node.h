@@ -13,7 +13,9 @@ class Node : public QGraphicsRectItem {
 	public:
 		enum State {
 			kOk = 0,
-			kError = 1
+			kInfo,
+			kWarning,
+			kError
 		};
 
 		struct PortDefinition {

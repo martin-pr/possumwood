@@ -137,6 +137,8 @@ void Node::setState(const State& s) {
 
 	switch(m_state) {
 		case kOk: setPen(QPen(QColor(64, 64, 64), 3)); break;
+		case kInfo: setPen(QPen(QColor(64, 64, 128), 3)); break;
+		case kWarning: setPen(QPen(QColor(128, 128, 64), 3)); break;
 		case kError: setPen(QPen(QColor(255, 64, 64), 3)); break;
 	}
 }
