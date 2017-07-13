@@ -56,6 +56,14 @@ void Port::setDirty(bool d) {
 }
 
 void Port::connect(Port& p) {
+	// test if the input is not connected already
+	if(p.node().graph().connections().connectedFrom(p)) {
+		std::stringstream msg;
+		msg << "Port " << node().name() << "/" << name() << " is already connected";
+
+		throw std::runtime_error(msg.str());
+	}
+
 	// test the recursivity
 	{
 		std::set<Port*> addedPorts;
