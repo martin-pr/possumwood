@@ -70,6 +70,10 @@ boost::signals2::connection Graph::onStateChanged(std::function<void(const Node&
 	return m_onStateChanged.connect(callback);
 }
 
+boost::signals2::connection Graph::onLog(std::function<void(State::MessageType, const std::string&)> callback) {
+	return m_onLog.connect(callback);
+}
+
 //////////////
 
 Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
