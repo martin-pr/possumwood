@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QClipboard>
+#include <QStyle>
 
 #include <dependency_graph/node.inl>
 #include <dependency_graph/io/graph.h>
@@ -65,6 +66,14 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		[this](dependency_graph::Node& n) { onNameChanged(n); }
 	));
 
+	m_signals.push_back(graph->onStateChanged(
+		[this](const dependency_graph::Node& n) { onStateChanged(n); }
+	));
+
+	m_signals.push_back(graph->onLog(
+		[this](dependency_graph::State::MessageType t, const std::string& msg) { onLog(t, msg); }
+	));
+
 	// instantiate the graph widget
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setContentsMargins(0,0,0,0);
@@ -97,6 +106,32 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		assert(n != m_nodes.right.end());
 
 		n->second->setBlindData<possumwood::NodeData>(possumwood::NodeData{n->first->pos()});
+	});
+
+	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
+		auto n = m_nodes.right.find(const_cast<node_editor::Node*>(&node)); // hack for bimap
+		assert(n != m_nodes.right.end());
+
+		std::stringstream ss;
+		ss << "<span style=\"color:#fff;\">" << n->second->name() << " (" << n->second->metadata().type() << ")" << "</p>";
+		ss << "<br />" << std::endl;
+		for(auto& i : n->second->state()) {
+			switch(i.first) {
+				case dependency_graph::State::kInfo:
+					ss << "<br /><span style=\"color:#aaa\">";
+					break;
+				case dependency_graph::State::kWarning:
+					ss << "<br /><span style=\"color:#ff0\">";
+					break;
+				case dependency_graph::State::kError:
+					ss << "<br /><span style=\"color:#f00\">";
+					break;
+			}
+
+			ss << i.second << "</span>" << std::endl;
+		}
+
+		return ss.str();
 	});
 
 	// and instantiate the current graph state
@@ -232,6 +267,47 @@ void Adaptor::onNameChanged(dependency_graph::Node& node) {
 	assert(n != m_nodes.left.end());
 
 	n->second->setName(node.name().c_str());
+}
+
+void Adaptor::onStateChanged(const dependency_graph::Node& node) {
+	auto n = m_nodes.left.find(const_cast<dependency_graph::Node*>(&node)); // hack - to allow using non-const bimap
+	assert(n != m_nodes.left.end());
+
+	// count the different error messages
+	unsigned info = 0, warn = 0, err = 0;
+	for(auto& m : node.state()) {
+		switch(m.first) {
+			case dependency_graph::State::kInfo: ++info; break;
+			case dependency_graph::State::kWarning: ++warn; break;
+			case dependency_graph::State::kError: ++err; break;
+		}
+	}
+
+	if(err > 0)
+		n->second->setState(node_editor::Node::kError);
+	else if(warn > 0)
+		n->second->setState(node_editor::Node::kWarning);
+	else if(info > 0)
+		n->second->setState(node_editor::Node::kInfo);
+	else
+		n->second->setState(node_editor::Node::kOk);
+}
+
+void Adaptor::onLog(dependency_graph::State::MessageType t, const std::string& msg) {
+	switch(t) {
+		case dependency_graph::State::kInfo:
+			emit logged(style()->standardIcon(QStyle::SP_MessageBoxInformation), msg.c_str());
+			break;
+		case dependency_graph::State::kWarning:
+			emit logged(style()->standardIcon(QStyle::SP_MessageBoxWarning), msg.c_str());
+			break;
+		case dependency_graph::State::kError:
+			emit logged(style()->standardIcon(QStyle::SP_MessageBoxCritical), msg.c_str());
+			break;
+		default:
+			emit logged(style()->standardIcon(QStyle::SP_MessageBoxQuestion), msg.c_str());
+			break;
+	}
 }
 
 QPointF Adaptor::mapToScene(QPoint pos) const {

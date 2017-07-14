@@ -48,6 +48,15 @@ MainWindow::MainWindow() : QMainWindow() {
 	geom.setWidth(QApplication::desktop()->screenGeometry().width() / 2 - 200);
 	m_adaptor->setSizeHint(geom);
 
+	m_log = new Log();
+	QDockWidget* logDock = new QDockWidget("Log", this);
+	logDock->setWidget(m_log);
+	m_log->setMinimumWidth(300);
+	addDockWidget(Qt::RightDockWidgetArea, logDock);
+	connect(m_adaptor, &Adaptor::logged, [this](QIcon icon, const QString& msg) {
+		m_log->addMessage(icon, msg);
+	});
+
 	QDockWidget* graphDock = new QDockWidget("Graph", this);
 	graphDock->setWidget(m_adaptor);
 	addDockWidget(Qt::LeftDockWidgetArea, graphDock);

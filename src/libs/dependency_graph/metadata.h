@@ -10,6 +10,8 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
 
+#include "state.h"
+
 namespace dependency_graph {
 
 template<typename T>
@@ -67,7 +69,7 @@ class Metadata : public boost::noncopyable {
 		void addAttribute(OutAttr<T>& out, const std::string& name, const T& defaultValue = T());
 
 		/// compute method of this node
-		void setCompute(std::function<void(Values&)> compute);
+		void setCompute(std::function<State(Values&)> compute);
 
 		/// returns the number of attributes currently present
 		size_t attributeCount() const;
@@ -94,7 +96,7 @@ class Metadata : public boost::noncopyable {
 
 		std::string m_type;
 		std::vector<Attr*> m_attrs; // not owning the attr instances
-		std::function<void(Values&)> m_compute;
+		std::function<State(Values&)> m_compute;
 
 		boost::bimap<boost::bimaps::multiset_of<unsigned>, boost::bimaps::multiset_of<unsigned>> m_influences;
 

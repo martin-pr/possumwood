@@ -13,7 +13,7 @@
 
 namespace node_editor {
 
-Node::Node(const QString& name, const QPointF& position, const std::initializer_list<PortDefinition>& ports) {
+Node::Node(const QString& name, const QPointF& position, const std::initializer_list<PortDefinition>& ports) : m_state(kOk) {
 	setPos(position);
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
 	setZValue(-1);
@@ -28,7 +28,7 @@ Node::Node(const QString& name, const QPointF& position, const std::initializer_
 	m_titleBackground->setPen(Qt::NoPen);
 	m_titleBackground->setBrush(QColor(64, 64, 64));
 	m_title->setDefaultTextColor(Qt::white);
-	setPen(QPen(QColor(64, 64, 64), 1));
+	setPen(QPen(QColor(64, 64, 64), 3));
 }
 
 Node::~Node() {
@@ -59,8 +59,8 @@ void Node::setName(const QString& name) {
 }
 
 void Node::updateRect() {
-	unsigned height = m_title->boundingRect().height();
-	unsigned width = m_title->boundingRect().width();
+	unsigned height = m_title->boundingRect().height() + 4;
+	unsigned width = m_title->boundingRect().width() + 4;
 
 	for(auto& p : m_ports) {
 		p->setPos(0, height);
@@ -69,7 +69,7 @@ void Node::updateRect() {
 		width = std::max(width, p->minWidth());
 	}
 
-	m_titleBackground->setRect(1, 1, width - 2, m_title->boundingRect().height() - 2);
+	m_titleBackground->setRect(3, 3, width - 6, m_title->boundingRect().height() - 4);
 	m_title->setPos((width - m_title->boundingRect().width()) / 2, 0);
 	for(auto& p : m_ports)
 		p->setWidth(width);
@@ -125,11 +125,26 @@ void Node::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 	QGraphicsRectItem::paint(painter, &optionCopy, widget);
 
 	if(option->state & QStyle::State_Selected) {
-		// and paint the white outline
-		painter->setPen(QPen(Qt::white, 1));
+		// and paint the white outline if selected
+		painter->setPen(QPen(Qt::white, 3, Qt::DotLine));
 		painter->setBrush(Qt::NoBrush);
-		painter->drawRect(boundingRect());
+		painter->drawRect(QRect(0,0,boundingRect().width()-3,boundingRect().height()-3));
 	}
+}
+
+void Node::setState(const State& s) {
+	m_state = s;
+
+	switch(m_state) {
+		case kOk: setPen(QPen(QColor(64, 64, 64), 3)); break;
+		case kInfo: setPen(QPen(QColor(64, 64, 128), 3)); break;
+		case kWarning: setPen(QPen(QColor(128, 128, 64), 3)); break;
+		case kError: setPen(QPen(QColor(255, 64, 64), 3)); break;
+	}
+}
+
+const Node::State& Node::state() const {
+	return m_state;
 }
 
 }

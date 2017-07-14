@@ -118,17 +118,35 @@ void Node::computeOutput(size_t index) {
 
 	// now run compute, as all inputs are fine
 	//  -> this will change the output value (if the compute method works)
-	{
+	State result;
+	try {
 		Values vals(*this);
-		m_meta->m_compute(vals);
+		result = m_meta->m_compute(vals);
+	}
+	catch(std::exception& e) {
+		result.addError(e.what());
 	}
 
 	// mark as not dirty
 	port(index).setDirty(false);
 	assert(not port(index).isDirty());
 
+	// errored - reset the output to default value
+	if(result.errored())
+		m_data.reset(index);
+
 	// and run the watcher callbacks
 	m_ports[index].m_valueCallbacks();
+
+	// if the state changed, run state changed callback
+	if(result != m_state) {
+		m_state = result;
+
+		graph().m_onStateChanged(*this);
+
+		for(auto& l : result)
+			graph().m_onLog(l.first, l.second);
+	}
 }
 
 const Graph& Node::graph() const {
@@ -143,6 +161,10 @@ Graph& Node::graph() {
 
 size_t Node::index() const {
 	return graph().nodes().findNodeIndex(*this);
+}
+
+const State& Node::state() const {
+	return m_state;
 }
 
 }

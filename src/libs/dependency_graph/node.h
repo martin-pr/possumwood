@@ -9,6 +9,7 @@
 #include "attr.h"
 #include "metadata.h"
 #include "port.h"
+#include "state.h"
 
 namespace dependency_graph {
 
@@ -39,6 +40,9 @@ class Node : public boost::noncopyable {
 		const Graph& graph() const;
 		Graph& graph();
 
+		/// returns the current state of the node (as returned by last compute() evaluation)
+		const State& state() const;
+
 		/// returns the unique numeric ID of this node, used for saving connections.
 		/// This ID can be used in Graph::operator[] to get this node from the graph.
 		size_t index() const;
@@ -68,6 +72,8 @@ class Node : public boost::noncopyable {
 		std::unique_ptr<BaseData> m_blindData;
 
 		std::vector<Port> m_ports;
+
+		State m_state;
 
 		friend class Graph;
 		friend class Port;

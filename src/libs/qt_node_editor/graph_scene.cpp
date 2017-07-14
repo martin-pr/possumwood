@@ -5,6 +5,7 @@
 
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
+#include <QApplication>
 
 #include "node.h"
 #include "connected_edge.h"
@@ -15,6 +16,15 @@ GraphScene::GraphScene(QGraphicsView* parent) : QGraphicsScene(parent) {
 	m_editedEdge = new Edge(QPointF(0, 0), QPointF(0, 0));
 	m_editedEdge->setVisible(false);
 	addItem(m_editedEdge);
+
+	m_infoRect = new QGraphicsRectItem();
+	m_infoRect->setBrush(QColor(24, 24, 24));
+	m_infoRect->setZValue(1000);
+	m_infoRect->setVisible(false);
+
+	m_infoText = new QGraphicsTextItem(m_infoRect);
+
+	addItem(m_infoRect);
 
 	QObject::connect(this, SIGNAL(selectionChanged()), this, SLOT(onSelectionChanged()));
 }
@@ -106,7 +116,7 @@ void GraphScene::disconnect(ConnectedEdge& e) {
 }
 
 bool GraphScene::isConnected(const Port& p1, const Port& p2) {
-	auto it = std::find_if(m_edges.begin(), m_edges.end(), [&](const ConnectedEdge* e) {
+	auto it = std::find_if(m_edges.begin(), m_edges.end(), [&](const ConnectedEdge * e) {
 		return &e->fromPort() == &p1 && &e->toPort() == &p2;
 	});
 
@@ -127,10 +137,11 @@ void GraphScene::remove(Edge* e) {
 
 namespace {
 
-Port* findPort(QGraphicsItem* item) {
-	Port* result = NULL;
+template<typename ITEM>
+ITEM* findItem(QGraphicsItem* item) {
+	ITEM* result = NULL;
 	while(item && !result) {
-		result = dynamic_cast<Port*>(item);
+		result = dynamic_cast<ITEM*>(item);
 		item = item->parentItem();
 	}
 	return result;
@@ -141,7 +152,7 @@ Port* findPort(QGraphicsItem* item) {
 Port* GraphScene::findConnectionPort(QPointF pos) const {
 	auto it = items(pos);
 	for(auto& i : it) {
-		Port* port = findPort(i);
+		Port* port = findItem<Port>(i);
 		if(port)
 			return port;
 	}
@@ -167,40 +178,59 @@ QPointF GraphScene::findConnectionPoint(QPointF pos, Port::Type portType) const 
 }
 
 void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
-	Port* port = findPort(itemAt(mouseEvent->scenePos(), QTransform()));
-	if(port) {
-		Port::Type portType;
-		if((port->portType() == Port::kInput) || (port->portType() == Port::kOutput))
-			portType = port->portType();
+	if(mouseEvent->button() == Qt::LeftButton) {
+		Port* port = findItem<Port>(itemAt(mouseEvent->scenePos(), QTransform()));
+		if(port) {
+			Port::Type portType;
+			if((port->portType() == Port::kInput) || (port->portType() == Port::kOutput))
+				portType = port->portType();
+			else {
+				const QPointF pos = port->mapFromScene(mouseEvent->scenePos());
+				const QRectF bbox = port->boundingRect();
+				if(pos.x() < bbox.width() / 2)
+					portType = Port::kInput;
+				else
+					portType = Port::kOutput;
+			}
+
+			QPointF pos;
+			{
+				const QRectF bbox = port->boundingRect();
+				if(portType == Port::kInput)
+					pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
+				else
+					pos = QPointF(bbox.x() + bbox.width() - bbox.height() / 2, bbox.y() + bbox.height() / 2);
+				pos = port->mapToScene(pos);
+			}
+
+			m_editedEdge->setVisible(true);
+			m_editedEdge->setPoints(pos, pos);
+			m_editedEdge->setPen(QPen(port->color(), 2));
+			m_connectedSide = portType;
+
+			mouseEvent->accept();
+		}
 		else {
-			const QPointF pos = port->mapFromScene(mouseEvent->scenePos());
-			const QRectF bbox = port->boundingRect();
-			if(pos.x() < bbox.width() / 2)
-				portType = Port::kInput;
-			else
-				portType = Port::kOutput;
-		}
+			m_editedEdge->setVisible(false);
 
-		QPointF pos;
-		{
-			const QRectF bbox = port->boundingRect();
-			if(portType == Port::kInput)
-				pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
-			else
-				pos = QPointF(bbox.x() + bbox.width() - bbox.height() / 2, bbox.y() + bbox.height() / 2);
-			pos = port->mapToScene(pos);
+			QGraphicsScene::mousePressEvent(mouseEvent);
 		}
-
-		m_editedEdge->setVisible(true);
-		m_editedEdge->setPoints(pos, pos);
-		m_editedEdge->setPen(QPen(port->color(), 2));
-		m_connectedSide = portType;
 	}
-	else {
-		m_editedEdge->setVisible(false);
+	else if(mouseEvent->button() == Qt::MiddleButton) {
+		Node* node = findItem<Node>(itemAt(mouseEvent->scenePos(), QTransform()));
+		if(node && m_nodeInfoCallback) {
+			m_infoText->setHtml(m_nodeInfoCallback(*node).c_str());
+			m_infoRect->setPos(mouseEvent->scenePos().x() - m_infoText->boundingRect().width()/2, mouseEvent->scenePos().y());
+			m_infoRect->setRect(m_infoText->boundingRect());
+			m_infoRect->setVisible(true);
 
+			QApplication::setOverrideCursor(Qt::BlankCursor);
+		}
+
+		mouseEvent->accept();
+	}
+	else
 		QGraphicsScene::mousePressEvent(mouseEvent);
-	}
 }
 
 void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
@@ -209,12 +239,20 @@ void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 			m_editedEdge->setPoints(findConnectionPoint(mouseEvent->scenePos(), m_connectedSide), m_editedEdge->target());
 		else
 			m_editedEdge->setPoints(m_editedEdge->origin(), findConnectionPoint(mouseEvent->scenePos(), m_connectedSide));
+
+		mouseEvent->accept();
 	}
 	else
 		QGraphicsScene::mouseMoveEvent(mouseEvent);
 }
 
 void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
+	if(m_infoRect->isVisible()) {
+		m_infoRect->setVisible(false);
+
+		QApplication::restoreOverrideCursor();
+	}
+
 	if(m_editedEdge->isVisible()) {
 		m_editedEdge->setVisible(false);
 
@@ -231,6 +269,8 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 					m_connectionCallback(*portFrom, *portTo);
 			}
 		}
+
+		mouseEvent->accept();
 	}
 	else
 		QGraphicsScene::mouseReleaseEvent(mouseEvent);
@@ -256,7 +296,7 @@ void GraphScene::onSelectionChanged() {
 	if(m_nodeSelectionCallback) {
 		Selection selectionSet;
 
-		QList<QGraphicsItem *> selection = selectedItems();
+		QList<QGraphicsItem*> selection = selectedItems();
 		for(auto& i : selection) {
 			Node* node = dynamic_cast<Node*>(i);
 			if(node)
@@ -270,6 +310,10 @@ void GraphScene::onSelectionChanged() {
 		if(m_nodeSelectionCallback)
 			m_nodeSelectionCallback(selectionSet);
 	}
+}
+
+void GraphScene::setNodeInfoCallback(std::function<std::string(const Node&)> fn) {
+	m_nodeInfoCallback = fn;
 }
 
 }

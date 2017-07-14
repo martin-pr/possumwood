@@ -25,7 +25,7 @@ const std::string& Metadata::type() const {
 	return m_type;
 }
 
-void Metadata::setCompute(std::function<void(Values&)> compute) {
+void Metadata::setCompute(std::function<State(Values&)> compute) {
 	m_compute = compute;
 }
 

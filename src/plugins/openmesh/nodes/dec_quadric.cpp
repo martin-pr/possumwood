@@ -14,6 +14,7 @@
 #include "io/mesh.h"
 
 #include "openmesh.h"
+#include "om_log.h"
 
 namespace {
 
@@ -22,7 +23,9 @@ dependency_graph::InAttr<bool> a_binary;
 dependency_graph::InAttr<float> a_maxError, a_errorFactor;
 dependency_graph::OutAttr<std::vector<DecimaterModule>> a_out;
 
-void compute(dependency_graph::Values& data) {
+dependency_graph::State compute(dependency_graph::Values& data) {
+	OMLog logRedirect;
+
 	std::vector<DecimaterModule> decs = data.get(a_in);
 	const bool binary = data.get(a_binary);
 	const float maxError = data.get(a_maxError);
@@ -36,6 +39,8 @@ void compute(dependency_graph::Values& data) {
 	}));
 
 	data.set(a_out, decs);
+
+	return logRedirect.state();
 }
 
 void init(possumwood::Metadata& meta) {

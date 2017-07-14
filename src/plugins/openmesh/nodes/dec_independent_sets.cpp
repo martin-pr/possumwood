@@ -14,13 +14,16 @@
 #include "io/mesh.h"
 
 #include "openmesh.h"
+#include "om_log.h"
 
 namespace {
 
 dependency_graph::InAttr<std::vector<DecimaterModule>> a_in;
 dependency_graph::OutAttr<std::vector<DecimaterModule>> a_out;
 
-void compute(dependency_graph::Values& data) {
+dependency_graph::State compute(dependency_graph::Values& data) {
+	OMLog logRedirect;
+
 	std::vector<DecimaterModule> decs = data.get(a_in);
 
 	decs.push_back(DecimaterModule([](OpenMesh::Decimater::DecimaterT<Mesh>& dec) {
@@ -29,6 +32,8 @@ void compute(dependency_graph::Values& data) {
 	}));
 
 	data.set(a_out, decs);
+
+	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {

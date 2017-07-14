@@ -8,6 +8,7 @@
 #include "adaptor.h"
 #include "properties.h"
 #include "viewport.h"
+#include "log.h"
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -23,4 +24,5 @@ class MainWindow : public QMainWindow {
 		Viewport* m_viewport;
 		Adaptor* m_adaptor;
 		Properties* m_properties;
+		Log* m_log;
 };
