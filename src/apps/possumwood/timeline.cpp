@@ -22,7 +22,8 @@ int Timeline::positionFromValue(float value) const {
 }
 
 float Timeline::valueFromPosition(int pos) const {
-	return (float)pos / (float)width() * (m_range.second - m_range.first) + m_range.first;
+	const float val = (float)pos / (float)width() * (m_range.second - m_range.first) + m_range.first;
+	return std::max(std::min(val, m_range.second), m_range.first);
 }
 
 void Timeline::paintEvent(QPaintEvent * event) {
