@@ -78,7 +78,7 @@ class Node : public boost::noncopyable {
 		friend class Graph;
 		friend class Port;
 
-		friend class io::adl_serializer<Node>;
+		friend struct io::adl_serializer<Node>;
 };
 
 }

@@ -10,6 +10,7 @@
 #include <QDockWidget>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QVBoxLayout>
 
 #include <qt_node_editor/bind.h>
 #include <dependency_graph/values.inl>
@@ -34,8 +35,17 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 MainWindow::MainWindow() : QMainWindow() {
 	possumwood::App::instance().setMainWindow(this);
 
+	QWidget* centralWidget = new QWidget();
+	QVBoxLayout* centralLayout = new QVBoxLayout(centralWidget);
+	centralLayout->setContentsMargins(0, 0, 0, 0);
+	centralLayout->setSpacing(0);
+	setCentralWidget(centralWidget);
+
 	m_viewport = new Viewport();
-	setCentralWidget(m_viewport);
+	centralLayout->addWidget(m_viewport, 1);
+
+	m_timeline = new TimelineWidget();
+	centralLayout->addWidget(m_timeline, 0);
 
 	m_properties = new Properties();
 	QDockWidget* propDock = new QDockWidget("Properties", this);
@@ -53,7 +63,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	logDock->setWidget(m_log);
 	m_log->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, logDock);
-	connect(m_adaptor, &Adaptor::logged, [this](QIcon icon, const QString& msg) {
+	connect(m_adaptor, &Adaptor::logged, [this](QIcon icon, const QString & msg) {
 		m_log->addMessage(icon, msg);
 	});
 
@@ -63,7 +73,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	// connect the selection signal
 	m_adaptor->scene().setNodeSelectionCallback(
-	[&](const node_editor::GraphScene::Selection& selection) {
+	[&](const node_editor::GraphScene::Selection & selection) {
 		m_properties->show(m_adaptor->selection());
 	}
 	);
@@ -85,7 +95,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				boost::split(pieces, m.type(), boost::algorithm::is_any_of("/"));
 
 				QMenu* current = contextMenu;
-				for(unsigned a=0;a<pieces.size()-1;++a) {
+				for(unsigned a = 0; a < pieces.size() - 1; ++a) {
 					if(groups[pieces[a]] == nullptr)
 						groups[pieces[a]] = current->addMenu(pieces[a].c_str());
 
