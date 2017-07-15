@@ -4,6 +4,8 @@
 #include <array>
 #include <functional>
 
+#include <GL/gl.h>
+
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QApplication>
@@ -15,7 +17,7 @@
 
 #include <qt_node_editor/connected_edge.h>
 #include <possumwood_sdk/node_data.h>
-#include <possumwood_sdk/node_data.h>
+#include <possumwood_sdk/metadata.h>
 
 namespace {
 
@@ -214,6 +216,12 @@ void Adaptor::onAddNode(dependency_graph::Node& node) {
 
 	// and register the node in the internal map
 	m_nodes.left.insert(std::make_pair(&node, &newNode));
+
+	// finally, create a drawable (if factory returns anything)
+	const possumwood::Metadata& meta = dynamic_cast<const possumwood::Metadata&>(node.metadata());
+	std::unique_ptr<possumwood::Drawable> drawable = meta.createDrawable(dependency_graph::Values(node));
+	if(drawable != nullptr)
+		m_drawables.insert(std::make_pair(&node, std::move(drawable)));
 }
 
 void Adaptor::onRemoveNode(dependency_graph::Node& node) {
@@ -226,6 +234,13 @@ void Adaptor::onRemoveNode(dependency_graph::Node& node) {
 
 	// and delete it from the list of nodes
 	m_nodes.left.erase(it);
+
+	// delete any associated drawables
+	{
+		auto it = m_drawables.find(&node);
+		if(it != m_drawables.end())
+			m_drawables.erase(it);
+	}
 }
 
 void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
@@ -433,4 +448,15 @@ QAction* Adaptor::copyAction() const {
 
 QAction* Adaptor::pasteAction() const {
 	return m_paste;
+}
+
+void Adaptor::draw() {
+	for(auto& n : m_drawables) {
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+		n.second->draw();
+
+		glPopAttrib();
+	}
+
 }

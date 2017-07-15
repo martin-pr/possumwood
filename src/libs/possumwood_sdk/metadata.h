@@ -7,6 +7,8 @@
 
 #include <dependency_graph/metadata.inl>
 
+#include "drawable.h"
+
 namespace possumwood {
 
 class Metadata : public dependency_graph::Metadata {
@@ -15,13 +17,13 @@ class Metadata : public dependency_graph::Metadata {
 		virtual ~Metadata();
 
 		/// compute method of this node
-		void setDraw(std::function<void(const dependency_graph::Values&)> drawFunctor);
+		void setDrawableFactory(std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> drawableFactory);
 
-		/// executes the draw method
-		void draw(const dependency_graph::Values& vals) const;
+		/// creates a new drawable instance for given value set
+		std::unique_ptr<Drawable> createDrawable(dependency_graph::Values&& values) const;
 
 	private:
-		std::function<void(const dependency_graph::Values&)> m_drawFunctor;
+		std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> m_drawableFactory;
 };
 
 }

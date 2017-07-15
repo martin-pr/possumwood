@@ -37,7 +37,10 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_pos, "position", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_size, "size", Imath::Vec3<float>(1, 1, 1));
 
-	meta.setDraw(draw);
+	meta.setDrawableFactory([](dependency_graph::Values&& vals) {
+		return std::unique_ptr<possumwood::Drawable>(
+			new possumwood::DrawableFunctor(std::move(vals), draw));
+	});
 }
 
 possumwood::NodeImplementation s_impl("3d/cube", init);

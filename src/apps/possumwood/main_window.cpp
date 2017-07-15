@@ -265,13 +265,5 @@ void MainWindow::draw(float dt) {
 
 	// draw everything else
 	glEnable(GL_LIGHTING);
-	for(auto& n : m_adaptor->graph().nodes()) {
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-
-		const possumwood::Metadata& meta = dynamic_cast<const possumwood::Metadata&>(n.metadata());
-		meta.draw(dependency_graph::Values(n));
-
-		glPopAttrib();
-	}
-
+	m_adaptor->draw();
 }

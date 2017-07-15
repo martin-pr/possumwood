@@ -81,7 +81,10 @@ void draw(const dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_mesh, "mesh");
 
-	meta.setDraw(draw);
+	meta.setDrawableFactory([](dependency_graph::Values&& vals) {
+		return std::unique_ptr<possumwood::Drawable>(
+			new possumwood::DrawableFunctor(std::move(vals), draw));
+	});
 }
 
 possumwood::NodeImplementation s_impl("openmesh/display", init);
