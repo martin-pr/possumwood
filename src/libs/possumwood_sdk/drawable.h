@@ -13,12 +13,19 @@ class Drawable : public boost::noncopyable {
 
 		virtual void draw() = 0;
 
+		/// a static signal for queuing a refresh - used by the Qt UI to actually do the queuing
+		static boost::signals2::connection onRefreshQueued(std::function<void()> fn);
+
 	protected:
 		dependency_graph::Values& values();
 		const dependency_graph::Values& values() const;
 
+		/// queues a refresh (does not refresh immediately, but on next Qt paint event)
+		static void refresh();
+
 	private:
 		dependency_graph::Values m_vals;
+		static boost::signals2::signal<void()> s_refresh;
 };
 
 class DrawableFunctor : public Drawable {

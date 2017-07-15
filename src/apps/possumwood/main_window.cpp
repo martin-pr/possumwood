@@ -129,6 +129,11 @@ MainWindow::MainWindow() : QMainWindow() {
 		m_viewport->update();
 	});
 
+	// drawable refresh callback
+	possumwood::Drawable::onRefreshQueued([this]() {
+		m_viewport->update();
+	});
+
 	////////////////////
 	// window actions
 	QAction* newAct = new QAction("&New...", this);
