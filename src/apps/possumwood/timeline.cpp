@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cassert>
 #include <sstream>
+#include <cmath>
 
 #include <QPainter>
 #include <QMouseEvent>
@@ -18,7 +19,7 @@ Timeline::~Timeline() {
 }
 
 int Timeline::positionFromValue(float value) const {
-	return round((value - m_range.first) / (m_range.second - m_range.first)  * (float)width());
+	return std::round((value - m_range.first) / (m_range.second - m_range.first)  * (float)width());
 }
 
 float Timeline::valueFromPosition(int pos) const {
@@ -26,12 +27,12 @@ float Timeline::valueFromPosition(int pos) const {
 	return std::max(std::min(val, m_range.second), m_range.first);
 }
 
-void Timeline::paintEvent(QPaintEvent * event) {
+void Timeline::paintEvent(QPaintEvent* event) {
 	QPainter painter(this);
 
 	// fill the background
-	painter.setBrush(QColor(20,20,20));
-	painter.setPen(QColor(20,20,20));
+	painter.setBrush(QColor(20, 20, 20));
+	painter.setPen(QColor(20, 20, 20));
 	painter.drawRect(rect());
 
 	// get the font properties
@@ -39,25 +40,25 @@ void Timeline::paintEvent(QPaintEvent * event) {
 
 	// draw the ticks
 	{
-		painter.setPen(QColor(64,64,64));
+		painter.setPen(QColor(64, 64, 64));
 
-		unsigned end = floor(m_range.second);
+		unsigned end = std::floor(m_range.second);
 		unsigned step = tickSkip(m_tickDistance);
-		for(unsigned a=ceil(m_range.first); a < end; a += step) {
+		for(unsigned a = std::ceil(m_range.first); a < end; a += step) {
 			const int pos = positionFromValue(a);
-			painter.drawLine(pos, metrics.height()+6, pos, height());
+			painter.drawLine(pos, metrics.height() + 6, pos, height());
 		}
 	}
 
 	// draw the units
 	{
-		painter.setPen(QColor(128,128,128));
+		painter.setPen(QColor(128, 128, 128));
 
-		unsigned end = floor(m_range.second);
+		unsigned end = std::floor(m_range.second);
 		unsigned step = tickSkip(m_labelDistance);
-		for(unsigned a=ceil(m_range.first); a < end; a += step) {
+		for(unsigned a = std::ceil(m_range.first); a < end; a += step) {
 			const int pos = positionFromValue(a);
-			painter.drawLine(pos, metrics.height()+2, pos, height());
+			painter.drawLine(pos, metrics.height() + 2, pos, height());
 
 			std::stringstream label;
 			label << a;
@@ -97,7 +98,7 @@ float Timeline::value() const {
 	return m_value;
 }
 
-void Timeline::mousePressEvent(QMouseEvent * event) {
+void Timeline::mousePressEvent(QMouseEvent* event) {
 	if(event->button() == Qt::LeftButton) {
 		const float value = valueFromPosition(event->x());
 		setValue(value);
@@ -108,7 +109,7 @@ void Timeline::mousePressEvent(QMouseEvent * event) {
 		QWidget::mousePressEvent(event);
 }
 
-void Timeline::mouseMoveEvent(QMouseEvent * event) {
+void Timeline::mouseMoveEvent(QMouseEvent* event) {
 	if(event->buttons() & Qt::LeftButton) {
 		const float value = valueFromPosition(event->x());
 		setValue(value);
@@ -144,17 +145,17 @@ unsigned Timeline::tickSkip(unsigned dist) const {
 
 	// compute the mantissa and exponent
 	const float singleTickDist = (m_range.second - m_range.first) * (float)dist / (float)width();
-	const int exponent = floor(log10(singleTickDist));
-	const float mantissa = singleTickDist / pow(10.0f, exponent);
+	const int exponent = std::floor(log10(singleTickDist));
+	const float mantissa = singleTickDist / std::pow(10.0f, exponent);
 
 	// enough space = just draw all sticks
 	if(exponent < 0)
 		return 1;
 
-	const float d1 = std::abs(1.0f - mantissa);
-	const float d2 = std::abs(2.0f - mantissa);
-	const float d5 = std::abs(5.0f - mantissa);
-	const float d10 = std::abs(10.0f - mantissa);
+	const float d1 = std::fabs(1.0f - mantissa);
+	const float d2 = std::fabs(2.0f - mantissa);
+	const float d5 = std::fabs(5.0f - mantissa);
+	const float d10 = std::fabs(10.0f - mantissa);
 
 	unsigned m;
 	if((d1 <= d2) && (d1 <= d5) && (d1 <= d10))
@@ -166,5 +167,5 @@ unsigned Timeline::tickSkip(unsigned dist) const {
 	else
 		m = 10;
 
-	return m * pow(10, exponent);
+	return m * std::pow(10, exponent);
 }
