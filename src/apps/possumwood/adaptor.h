@@ -8,6 +8,7 @@
 #include <QWidget>
 #include <QAction>
 
+#include <possumwood_sdk/drawable.h>
 #include <dependency_graph/graph.h>
 #include <dependency_graph/selection.h>
 #include <qt_node_editor/graph_widget.h>
@@ -46,6 +47,9 @@ class Adaptor : public QWidget {
 		QAction* copyAction() const;
 		QAction* pasteAction() const;
 
+		/// calls all existing Drawables
+		void draw();
+
 	signals:
 		void logged(QIcon, const QString&);
 
@@ -68,6 +72,8 @@ class Adaptor : public QWidget {
 		std::vector<boost::signals2::connection> m_signals;
 
 		boost::bimap<dependency_graph::Node*, node_editor::Node*> m_nodes;
+
+		std::map<dependency_graph::Node*, std::unique_ptr<possumwood::Drawable>> m_drawables;
 
 		QSize m_sizeHint;
 

@@ -9,6 +9,7 @@
 #include "properties.h"
 #include "viewport.h"
 #include "log.h"
+#include "timeline_widget.h"
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -25,4 +26,5 @@ class MainWindow : public QMainWindow {
 		Adaptor* m_adaptor;
 		Properties* m_properties;
 		Log* m_log;
+		TimelineWidget* m_timeline;
 };

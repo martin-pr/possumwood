@@ -10,6 +10,11 @@ class Values : public boost::noncopyable {
 	public:
 		Values(Node& n);
 
+		Values(Values&& vals);
+
+		template<typename T>
+		bool isConnected(const InAttr<T>& attr) const;
+
 		template<typename T>
 		const T& get(const InAttr<T>& attr) const;
 

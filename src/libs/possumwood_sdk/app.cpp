@@ -11,7 +11,7 @@ namespace possumwood {
 
 App* App::s_instance = NULL;
 
-App::App() : m_mainWindow(NULL) {
+App::App() : m_mainWindow(NULL), m_time(0.0f) {
 	assert(s_instance == nullptr);
 	s_instance = this;
 }
@@ -73,6 +73,21 @@ QMainWindow* App::mainWindow() const {
 void App::setMainWindow(QMainWindow* win) {
 	assert(m_mainWindow == NULL && "setMainWindow is called only once at the beginning of an application");
 	m_mainWindow = win;
+}
+
+void App::setTime(float time) {
+	if(m_time != time) {
+		m_time = time;
+		m_timeChanged(time);
+	}
+}
+
+float App::time() const {
+	return m_time;
+}
+
+boost::signals2::connection App::onTimeChanged(std::function<void(float)> fn) {
+	return m_timeChanged.connect(fn);
 }
 
 }
