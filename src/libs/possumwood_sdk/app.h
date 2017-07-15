@@ -2,6 +2,7 @@
 
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/signals2.hpp>
 
 #include <dependency_graph/graph.h>
 
@@ -30,6 +31,10 @@ class App : public boost::noncopyable {
 		QMainWindow* mainWindow() const;
 		void setMainWindow(QMainWindow* win);
 
+		void setTime(float time);
+		float time() const;
+		boost::signals2::connection onTimeChanged(std::function<void(float)> fn);
+
 	protected:
 	private:
 		static App* s_instance;
@@ -38,6 +43,9 @@ class App : public boost::noncopyable {
 		boost::filesystem::path m_filename;
 
 		QMainWindow* m_mainWindow;
+
+		float m_time;
+		boost::signals2::signal<void(float)> m_timeChanged;
 };
 
 }
