@@ -12,7 +12,6 @@
 #include <QtWidgets/QAction>
 #include <QtGui/QKeyEvent>
 
-#include <qt_node_editor/bind.h>
 #include <qt_node_editor/node.h>
 #include <qt_node_editor/connected_edge.h>
 #include <qt_node_editor/graph_widget.h>
@@ -29,7 +28,14 @@ namespace {
 
 QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 	QAction* result = new QAction(title, parent);
-	qt_bind(result, SIGNAL(triggered(bool)), fn);
+	QObject::connect(
+		result,
+		&QAction::triggered,
+		[fn](bool) {
+			fn();
+		}
+	);
+
 	return result;
 }
 
@@ -127,29 +133,33 @@ int main(int argc, char* argv[]) {
 	QAction* deleteAction = new QAction("Delete selected items", graph);
 	deleteAction->setShortcut(QKeySequence::Delete);
 	graph->addAction(deleteAction);
-	qt_bind(deleteAction, SIGNAL(triggered()), [&]() {
-		{
-			unsigned ei = 0;
-			while(ei < scene.edgeCount()) {
-				ConnectedEdge& e = scene.edge(ei);
-				if(e.isSelected())
-					scene.disconnect(e);
-				else
-					++ei;
+	QObject::connect(
+		deleteAction,
+		&QAction::triggered,
+		[&scene]() {
+			{
+				unsigned ei = 0;
+				while(ei < scene.edgeCount()) {
+					ConnectedEdge& e = scene.edge(ei);
+					if(e.isSelected())
+						scene.disconnect(e);
+					else
+						++ei;
+				}
 			}
-		}
 
-		{
-			unsigned ni = 0;
-			while(ni < scene.nodeCount()) {
-				Node& n = scene.node(ni);
-				if(n.isSelected())
-					scene.removeNode(n);
-				else
-					++ni;
+			{
+				unsigned ni = 0;
+				while(ni < scene.nodeCount()) {
+					Node& n = scene.node(ni);
+					if(n.isSelected())
+						scene.removeNode(n);
+					else
+						++ni;
+				}
 			}
 		}
-	});
+	);
 
 	///
 

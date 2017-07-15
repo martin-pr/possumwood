@@ -12,7 +12,6 @@
 #include <QDesktopWidget>
 #include <QVBoxLayout>
 
-#include <qt_node_editor/bind.h>
 #include <dependency_graph/values.inl>
 
 #include <possumwood_sdk/metadata.h>
@@ -26,7 +25,13 @@ namespace {
 
 QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 	QAction* result = new QAction(title, parent);
-	node_editor::qt_bind(result, SIGNAL(triggered(bool)), fn);
+	QObject::connect(
+		result,
+		&QAction::triggered,
+		[fn](bool) {
+			fn();
+		}
+	);
 	return result;
 }
 
@@ -118,9 +123,13 @@ MainWindow::MainWindow() : QMainWindow() {
 		deleteAction->setShortcut(QKeySequence::Delete);
 		contextMenu->addAction(deleteAction);
 		m_adaptor->addAction(deleteAction);
-		node_editor::qt_bind(deleteAction, SIGNAL(triggered()), [this]() {
-			m_adaptor->deleteSelected();
-		});
+		QObject::connect(
+			deleteAction,
+			&QAction::triggered,
+			[this]() {
+				m_adaptor->deleteSelected();
+			}
+		);
 	}
 
 	// drawing callback
