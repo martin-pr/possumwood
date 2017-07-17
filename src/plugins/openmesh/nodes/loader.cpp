@@ -1,4 +1,5 @@
 #include <possumwood_sdk/node_implementation.h>
+#include <possumwood_sdk/datatypes/filename.h>
 
 #include <dependency_graph/values.inl>
 #include <dependency_graph/attr.inl>
@@ -6,7 +7,6 @@
 #include <dependency_graph/port.inl>
 #include <dependency_graph/node.inl>
 
-#include "datatypes/filename.h"
 #include "io/mesh.h"
 
 #include "openmesh.h"
