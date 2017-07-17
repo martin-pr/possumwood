@@ -6,7 +6,7 @@
 
 #include <dependency_graph/rtti.h>
 
-#include "lexical_cast.h"
+#include "../lexical_cast.h"
 
 namespace anim {
 
