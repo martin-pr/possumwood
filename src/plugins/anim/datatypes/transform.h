@@ -26,6 +26,9 @@ struct Transform {
 	const Transform operator * (const Transform& t) const;
 	Transform& operator *= (const Transform& t);
 
+	const Transform operator * (const Imath::Matrix44<float>& m) const;
+	Transform& operator *= (const Imath::Matrix44<float>& m);
+
 	void invert();
 	Transform inverse() const;
 };

@@ -81,6 +81,11 @@ class Skeleton {
 		/// returns hierarchy attributes (shared between skeleton instances)
 		const Attributes& attributes() const;
 
+		/// transforms this skeleton using a transformation matrix
+		Skeleton operator *(const Imath::M44f& m) const;
+		/// transforms this skeleton using a transformation matrix
+		Skeleton& operator *=(Imath::M44f m);
+
 	protected:
 	private:
 		// exists only so I can return references to joints, not instances

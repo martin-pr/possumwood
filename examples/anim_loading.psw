@@ -3,6 +3,12 @@
         {
             "in_node": "skeleton_display_0",
             "in_port": "anim",
+            "out_node": "transform_0",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_anim",
             "out_node": "loader_0",
             "out_port": "anim"
         }
@@ -12,8 +18,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 212.0,
-                    "y": 185.0
+                    "x": 128.0,
+                    "y": 291.0
                 }
             },
             "name": "loader",
@@ -26,8 +32,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 410.0,
-                    "y": 278.0
+                    "x": 496.0,
+                    "y": 408.0
                 }
             },
             "name": "skeleton_display",
@@ -35,6 +41,34 @@
                 "show_base_skeleton": false
             },
             "type": "anim/skeleton_display"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 319.0,
+                    "y": 315.0
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
+                },
+                "translation": {
+                    "x": 1.39999997615814,
+                    "y": 0.0,
+                    "z": -24.0
+                }
+            },
+            "type": "anim/transform"
         }
     }
 }

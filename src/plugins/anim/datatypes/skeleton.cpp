@@ -9,8 +9,7 @@ using std::endl;
 namespace anim {
 
 Skeleton::Joint::Joint(std::size_t id, const Transform& transform, Skeleton* skel) :
-m_id(id), m_transformation(transform), m_skeleton(skel)
-{
+	m_id(id), m_transformation(transform), m_skeleton(skel) {
 }
 
 const std::string& Skeleton::Joint::name() const {
@@ -141,7 +140,7 @@ void Skeleton::addRoot(const std::string& name, const Transform& tr) {
 
 	// and just add a joint to the hierarchy, updating all related joints
 	m_joints.insert(m_joints.begin(), Joint(0, tr, this));
-	for(auto it = m_joints.begin()+1; it != m_joints.end(); ++it)
+	for(auto it = m_joints.begin() + 1; it != m_joints.end(); ++it)
 		++it->m_id;
 
 	assert(m_joints.size() == m_hierarchy->size());
@@ -158,8 +157,8 @@ std::size_t Skeleton::addChild(const Joint& j, const Transform& tr, const std::s
 	std::size_t index = m_hierarchy->addChild((*m_hierarchy)[j.m_id], name);
 
 	// and just add a joint to the hierarchy, updating all related joints
-	m_joints.insert(m_joints.begin()+index, Joint(index, tr, this));
-	for(auto it = m_joints.begin()+index+1; it != m_joints.end(); ++it)
+	m_joints.insert(m_joints.begin() + index, Joint(index, tr, this));
+	for(auto it = m_joints.begin() + index + 1; it != m_joints.end(); ++it)
 		++it->m_id;
 
 	assert(m_joints.size() == m_hierarchy->size());
@@ -187,14 +186,39 @@ bool Skeleton::isCompatibleWith(const Skeleton& s) const {
 	return m_hierarchy == s.m_hierarchy;
 }
 
+Skeleton Skeleton::operator *(const Imath::M44f& m) const {
+	Skeleton result = *this;
+	result *= m;
+	return result;
+}
+
+Skeleton& Skeleton::operator *=(Imath::M44f m) {
+	if(m_joints.size() > 0) {
+		// root should be rotated, translated and scaled
+		m_joints[0].tr() *= m;
+
+		// rest should be only scaled (its translational part)
+		Imath::Vec3<float> sc;
+		for(unsigned a = 0; a < 3; ++a)
+			sc[a] = std::sqrt(powf(m[0][a], 2) + powf(m[1][a], 2) + powf(m[2][a], 2));
+
+		for(auto it = m_joints.begin()+1; it != m_joints.end(); ++it)
+			for(unsigned a=0;a<3;++a)
+				it->tr().translation[a] *= sc[a];
+	}
+
+	return *this;
+}
+
+
 ///
 
 namespace {
-	void printBone(std::ostream& out, const Skeleton& skel, unsigned index, const std::string& prepend = "") {
-		out << prepend << skel[index].name() << " [" << index << "]   " << skel[index].tr() << endl;
-		for(auto& chld : skel[index].children())
-			printBone(out, skel, chld.index(), prepend + "  ");
-	}
+void printBone(std::ostream& out, const Skeleton& skel, unsigned index, const std::string& prepend = "") {
+	out << prepend << skel[index].name() << " [" << index << "]   " << skel[index].tr() << endl;
+	for(auto& chld : skel[index].children())
+		printBone(out, skel, chld.index(), prepend + "  ");
+}
 }
 
 std::ostream& operator << (std::ostream& out, const Skeleton& skel) {
