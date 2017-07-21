@@ -25,4 +25,4 @@ include_directories(./)
 
 add_library(anim SHARED ${sources})
 
-target_link_libraries(anim ${LIBS})
+target_link_libraries(anim ${LIBS} possumwood_sdk)
