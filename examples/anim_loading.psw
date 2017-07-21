@@ -1,0 +1,40 @@
+{
+    "connections": [
+        {
+            "in_node": "skeleton_display_0",
+            "in_port": "anim",
+            "out_node": "loader_0",
+            "out_port": "anim"
+        }
+    ],
+    "nodes": {
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 212.0,
+                    "y": 185.0
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "/home/martin/Dropbox/Coding/possumwood/examples/49_06.bvh"
+            },
+            "type": "anim/loader"
+        },
+        "skeleton_display_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 410.0,
+                    "y": 278.0
+                }
+            },
+            "name": "skeleton_display",
+            "ports": {
+                "show_base_skeleton": false
+            },
+            "type": "anim/skeleton_display"
+        }
+    }
+}
