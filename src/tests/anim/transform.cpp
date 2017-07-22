@@ -1,3 +1,6 @@
+#include <cmath>
+#include <cstdlib>
+
 #include <anim/datatypes/transform.h>
 
 #include <ImathEuler.h>
@@ -13,7 +16,7 @@ const float compareMatrices(const Imath::M44f& m1, const Imath::M44f& m2) {
 	float result = 0.0f;
 	for(unsigned a=0;a<4;++a)
 		for(unsigned b=0;b<4;++b)
-			result += std::abs(m1[a][b] - m2[a][b]);
+			result += std::fabs(m1[a][b] - m2[a][b]);
 	return result;
 }
 
@@ -23,7 +26,7 @@ const float compareMatrices(const Imath::M33f& m1, const Imath::M33f& m2) {
 	float result = 0.0f;
 	for(unsigned a=0;a<3;++a)
 		for(unsigned b=0;b<3;++b)
-			result += std::abs(m1[a][b] - m2[a][b]);
+			result += std::fabs(m1[a][b] - m2[a][b]);
 	return result;
 }
 
@@ -33,13 +36,13 @@ const float compareTransforms(const anim::Transform& m1, const anim::Transform& 
 	// antipodality - two possible solutions to matrix-to-quat transformation - make sure we handle both
 	float antipod1 = 0.0f, antipod2 = 0.0f;
 	for(unsigned a=0;a<4;++a) {
-		antipod1 += std::abs(m1.rotation[a] - m2.rotation[a]);
-		antipod2 += std::abs(m1.rotation[a] + m2.rotation[a]);
+		antipod1 += std::fabs(m1.rotation[a] - m2.rotation[a]);
+		antipod2 += std::fabs(m1.rotation[a] + m2.rotation[a]);
 	}
 	float result = std::min(antipod1, antipod2);
 
 	for(unsigned a=0;a<3;++a)
-		result += std::abs(m1.translation[a] - m2.translation[a]);
+		result += std::fabs(m1.translation[a] - m2.translation[a]);
 
 	return result;
 }
