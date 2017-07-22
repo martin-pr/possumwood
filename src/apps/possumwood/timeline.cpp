@@ -11,7 +11,7 @@
 using std::cout;
 using std::endl;
 
-Timeline::Timeline(QWidget* parent) : QWidget(parent), m_range(0, 100), m_value(0), m_tickDistance(8), m_labelDistance(80) {
+Timeline::Timeline(QWidget* parent) : QWidget(parent), m_range(0, 10), m_value(0), m_tickDistance(13), m_labelDistance(80) {
 	setMinimumHeight(40);
 }
 
@@ -42,10 +42,10 @@ void Timeline::paintEvent(QPaintEvent* event) {
 	{
 		painter.setPen(QColor(64, 64, 64));
 
-		unsigned end = std::floor(m_range.second);
-		unsigned step = tickSkip(m_tickDistance);
-		for(unsigned a = std::ceil(m_range.first); a < end; a += step) {
-			const int pos = positionFromValue(a);
+		const TickSkip skip = tickSkip(m_tickDistance);
+		unsigned end = std::floor(m_range.second / powf(10.0f, skip.exponent));
+		for(unsigned a = std::ceil(m_range.first / powf(10.0f, skip.exponent)); a < end; a += skip.mantissa) {
+			const int pos = positionFromValue(a * powf(10.0f, skip.exponent));
 			painter.drawLine(pos, metrics.height() + 6, pos, height());
 		}
 	}
@@ -54,14 +54,14 @@ void Timeline::paintEvent(QPaintEvent* event) {
 	{
 		painter.setPen(QColor(128, 128, 128));
 
-		unsigned end = std::floor(m_range.second);
-		unsigned step = tickSkip(m_labelDistance);
-		for(unsigned a = std::ceil(m_range.first); a < end; a += step) {
-			const int pos = positionFromValue(a);
+		const TickSkip skip = tickSkip(m_labelDistance);
+		unsigned end = std::floor(m_range.second / powf(10.0f, skip.exponent));
+		for(unsigned a = std::ceil(m_range.first / powf(10.0f, skip.exponent)); a < end; a += skip.mantissa) {
+			const int pos = positionFromValue(a * powf(10.0f, skip.exponent));
 			painter.drawLine(pos, metrics.height() + 2, pos, height());
 
 			std::stringstream label;
-			label << a;
+			label << (float)a * powf(10.0f, skip.exponent);
 			painter.drawText(pos, metrics.height(), label.str().c_str());
 		}
 	}
@@ -138,25 +138,23 @@ unsigned Timeline::labelDistance() const {
 	return m_labelDistance;
 }
 
-unsigned Timeline::tickSkip(unsigned dist) const {
+Timeline::TickSkip Timeline::tickSkip(unsigned dist) const {
 	// crazy cases
 	if(m_range.second - m_range.first < 1.0f)
-		return 1;
+		return TickSkip{1, 1};
 
 	// compute the mantissa and exponent
 	const float singleTickDist = (m_range.second - m_range.first) * (float)dist / (float)width();
 	const int exponent = std::floor(log10(singleTickDist));
 	const float mantissa = singleTickDist / std::pow(10.0f, exponent);
 
-	// enough space = just draw all sticks
-	if(exponent < 0)
-		return 1;
-
+	// errors from different mantissas
 	const float d1 = std::fabs(1.0f - mantissa);
 	const float d2 = std::fabs(2.0f - mantissa);
 	const float d5 = std::fabs(5.0f - mantissa);
 	const float d10 = std::fabs(10.0f - mantissa);
 
+	// pick the one that looks the closest
 	unsigned m;
 	if((d1 <= d2) && (d1 <= d5) && (d1 <= d10))
 		m = 1;
@@ -167,5 +165,5 @@ unsigned Timeline::tickSkip(unsigned dist) const {
 	else
 		m = 10;
 
-	return m * std::pow(10, exponent);
+	return TickSkip{m, exponent};
 }

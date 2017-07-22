@@ -6,7 +6,7 @@
 #include <boost/filesystem/path.hpp>
 
 #include <dependency_graph/data_traits.h>
-#include <possumwood_sdk/io.h>
+#include "../io.h"
 
 namespace possumwood {
 

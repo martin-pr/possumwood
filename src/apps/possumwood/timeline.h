@@ -37,8 +37,13 @@ class Timeline : public QWidget {
 		/// compute a value based on a position
 		float valueFromPosition(int pos) const;
 
+		struct TickSkip {
+			unsigned mantissa;
+			int exponent;
+		};
+
 		/// compute tick skip based on m_tickDistance
-		unsigned tickSkip(unsigned dist) const;
+		TickSkip tickSkip(unsigned dist) const;
 
 		std::pair<float, float> m_range;
 		float m_value;

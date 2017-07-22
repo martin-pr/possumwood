@@ -24,6 +24,10 @@ struct Drawable : public possumwood::Drawable {
 		});
 	}
 
+	~Drawable() {
+		m_timeChangedConnection.disconnect();
+	}
+
 	void draw() {
 		const Imath::Vec3<float> pos = values().get(a_pos);
 		const Imath::Vec3<float> size = values().get(a_size);
