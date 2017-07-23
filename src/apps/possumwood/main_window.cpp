@@ -248,6 +248,14 @@ MainWindow::MainWindow() : QMainWindow() {
 		viewMenu->addAction(propDock->toggleViewAction());
 		viewMenu->addAction(graphDock->toggleViewAction());
 	}
+
+	/////////////////////
+	// playback menu
+	{
+		QMenu* playbackMenu = menuBar()->addMenu("&Playback");
+
+		playbackMenu->addAction(m_timeline->playAction());
+	}
 }
 
 MainWindow::~MainWindow() {
