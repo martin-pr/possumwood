@@ -6,6 +6,7 @@
 #include <dependency_graph/io/graph.h>
 
 #include "node_data.h"
+#include "config.inl"
 
 namespace possumwood {
 
@@ -14,6 +15,19 @@ App* App::s_instance = NULL;
 App::App() : m_mainWindow(NULL), m_time(0.0f) {
 	assert(s_instance == nullptr);
 	s_instance = this;
+
+	////////////////////////
+	// scene configuration
+
+	m_sceneConfig.addItem(Config::Item(
+		"start_time", "timeline", 0.0f, Config::Item::kNoFlags,
+		"Start of the timeline (seconds)"
+	));
+
+	m_sceneConfig.addItem(Config::Item(
+		"end_time", "timeline", 5.0f, Config::Item::kNoFlags,
+		"End of the timeline (seconds)"
+	));
 }
 
 App::~App() {
@@ -88,6 +102,10 @@ float App::time() const {
 
 boost::signals2::connection App::onTimeChanged(std::function<void(float)> fn) {
 	return m_timeChanged.connect(fn);
+}
+
+Config& App::sceneConfig() {
+	return m_sceneConfig;
 }
 
 }

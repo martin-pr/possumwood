@@ -6,6 +6,8 @@
 
 #include <dependency_graph/graph.h>
 
+#include "config.h"
+
 class QMainWindow;
 
 namespace possumwood {
@@ -35,6 +37,8 @@ class App : public boost::noncopyable {
 		float time() const;
 		boost::signals2::connection onTimeChanged(std::function<void(float)> fn);
 
+		Config& sceneConfig();
+
 	protected:
 	private:
 		static App* s_instance;
@@ -46,6 +50,8 @@ class App : public boost::noncopyable {
 
 		float m_time;
 		boost::signals2::signal<void(float)> m_timeChanged;
+
+		Config m_sceneConfig;
 };
 
 }
