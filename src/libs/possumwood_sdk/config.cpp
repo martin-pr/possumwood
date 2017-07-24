@@ -61,18 +61,18 @@ Config::~Config() {
 
 namespace {
 	struct Compare {
-		bool operator() (const Config::Item& i, const std::string& name) const {
-			return i.name() < name;
-		}
+		std::string name;
 
-		bool operator() (const std::string& name, const Config::Item& i) const {
-			return name < i.name();
+		bool operator() (const Config::Item& i) const {
+			return i.name() == name;
 		}
 	};
 }
 
 Config::Item& Config::operator[](const std::string& name) {
-	std::vector<Item>::iterator it = std::lower_bound(m_items.begin(), m_items.end(), name, Compare());
+	std::vector<Item>::iterator it = std::find_if(m_items.begin(), m_items.end(), [&name](const Config::Item& i) {
+		return name == i.name();
+	});
 	assert(it != m_items.end());
 	assert(it->name() == name);
 
@@ -80,7 +80,9 @@ Config::Item& Config::operator[](const std::string& name) {
 }
 
 const Config::Item& Config::operator[](const std::string& name) const {
-	std::vector<Item>::const_iterator it = std::lower_bound(m_items.begin(), m_items.end(), name, Compare());
+	std::vector<Item>::const_iterator it = std::find_if(m_items.begin(), m_items.end(), [&name](const Config::Item& i) {
+		return name == i.name();
+	});
 	assert(it != m_items.end());
 	assert(it->name() == name);
 
@@ -104,9 +106,7 @@ Config::iterator Config::end() {
 }
 
 void Config::addItem(const Item& i) {
-	auto it = std::upper_bound(m_items.begin(), m_items.end(), i.name(), Compare());
-
-	m_items.insert(it, i);
+	m_items.push_back(i);
 }
 
 void Config::reset() {
