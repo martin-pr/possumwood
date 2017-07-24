@@ -1,16 +1,16 @@
 {
     "connections": [
         {
-            "in_node": "skeleton_display_0",
-            "in_port": "anim",
-            "out_node": "transform_0",
-            "out_port": "out_anim"
-        },
-        {
             "in_node": "transform_0",
             "in_port": "in_anim",
             "out_node": "loader_0",
             "out_port": "anim"
+        },
+        {
+            "in_node": "skeleton_display_0",
+            "in_port": "anim",
+            "out_node": "transform_0",
+            "out_port": "out_anim"
         }
     ],
     "nodes": {
@@ -70,5 +70,9 @@
             },
             "type": "anim/transform"
         }
+    },
+    "scene_config": {
+        "end_time": 3.0,
+        "start_time": 0.0
     }
 }
