@@ -4,25 +4,32 @@
 #include <QAction>
 
 #include <possumwood_sdk/app.h>
-
-namespace {
-	static const float minTime = 0.0f;
-	static const float maxTime = 10.0f;
-}
+#include <possumwood_sdk/config.inl>
 
 TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTimer(new QTimer(this)) {
+	possumwood::Config& config = possumwood::App::instance().sceneConfig();
+
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setContentsMargins(0, 0, 0, 0);
 
+	// make the timeline
 	m_timeline = new Timeline();
-	m_timeline->setRange(std::make_pair(minTime, maxTime));
-
+	m_timeline->setRange(std::make_pair(config["start_time"].as<float>(), config["end_time"].as<float>()));
 	layout->addWidget(m_timeline, 1);
 
+	// start/end time observers
+	m_connections.push_back(config["start_time"].onChanged([this](possumwood::Config::Item& item) {
+		m_timeline->setRange(std::make_pair(item.as<float>(), m_timeline->range().second));
+	}));
+
+	m_connections.push_back(config["end_time"].onChanged([this](possumwood::Config::Item& item) {
+		m_timeline->setRange(std::make_pair(m_timeline->range().first, item.as<float>()));
+	}));
+
 	// signal for time changing in App
-	m_timeChangedConnection = possumwood::App::instance().onTimeChanged([this](float t) {
+	m_connections.push_back(possumwood::App::instance().onTimeChanged([this](float t) {
 		m_timeline->setValue(t);
-	});
+	}));
 
 	// response to time changed by clicking in the timeline widget
 	connect(m_timeline, &Timeline::valueChanged, [this](float t) {
@@ -44,7 +51,8 @@ TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTim
 }
 
 TimelineWidget::~TimelineWidget() {
-	m_timeChangedConnection.disconnect();
+	for(auto& c : m_connections)
+		c.disconnect();
 }
 
 QAction* TimelineWidget::playAction() {
@@ -67,9 +75,13 @@ void TimelineWidget::onTimer() {
 	auto now = std::chrono::system_clock::now();
 	std::chrono::duration<float> elapsed = now - m_currentTime;
 
+	const possumwood::Config& config = possumwood::App::instance().sceneConfig();
+	const float startTime = config["start_time"].as<float>();
+	const float endTime = config["end_time"].as<float>();
+
 	float t = possumwood::App::instance().time() + elapsed.count();
-	while(t > maxTime)
-		t -= maxTime - minTime;
+	while(t > endTime)
+		t -= endTime - startTime;
 
 	possumwood::App::instance().setTime(t);
 

@@ -34,7 +34,7 @@ class TimelineWidget : public QWidget {
 		QAction* m_playAction;
 		QTimer* m_playbackTimer;
 
-		boost::signals2::connection m_timeChangedConnection;
+		std::vector<boost::signals2::connection> m_connections;
 
 		std::chrono::time_point<std::chrono::system_clock> m_currentTime;
 };
