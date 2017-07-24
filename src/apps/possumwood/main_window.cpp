@@ -20,6 +20,7 @@
 #include <possumwood_sdk/app.h>
 
 #include "adaptor.h"
+#include "config_dialog.h"
 
 namespace {
 
@@ -216,6 +217,13 @@ MainWindow::MainWindow() : QMainWindow() {
 		}
 	});
 
+	QAction* sceneConfigAct = new QAction("Scene &configuration...", this);
+	connect(sceneConfigAct, &QAction::triggered, [this](bool) {
+		ConfigDialog dialog(this, possumwood::App::instance().sceneConfig());
+		dialog.setWindowTitle("Scene configuration...");
+		dialog.exec();
+	});
+
 
 	////////////////////
 	// file menu
@@ -227,6 +235,8 @@ MainWindow::MainWindow() : QMainWindow() {
 		fileMenu->addAction(openAct);
 		fileMenu->addAction(saveAct);
 		fileMenu->addAction(saveAsAct);
+		fileMenu->addSeparator();
+		fileMenu->addAction(sceneConfigAct);
 	}
 
 	///////////////////////////////
