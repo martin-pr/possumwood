@@ -227,6 +227,10 @@ MainWindow::MainWindow() : QMainWindow() {
 		dialog.exec();
 	});
 
+	QAction* quitAct = new QAction("&Quit", this);
+	connect(quitAct, &QAction::triggered, [this](bool) {
+		close();
+	});
 
 	////////////////////
 	// file menu
@@ -240,6 +244,8 @@ MainWindow::MainWindow() : QMainWindow() {
 		fileMenu->addAction(saveAsAct);
 		fileMenu->addSeparator();
 		fileMenu->addAction(sceneConfigAct);
+		fileMenu->addSeparator();
+		fileMenu->addAction(quitAct);
 	}
 
 	///////////////////////////////
