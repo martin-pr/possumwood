@@ -1,6 +1,9 @@
 #include "config_dialog.h"
 
 #include <map>
+#include <cctype>
+
+#include <boost/algorithm/string/replace.hpp>
 
 #include <QFormLayout>
 #include <QVBoxLayout>
@@ -12,6 +15,24 @@
 
 #include <possumwood_sdk/config.inl>
 
+namespace {
+	std::string toLabel(const std::string& text) {
+		std::string result = text;
+		boost::replace_all(result, "_", " ");
+
+		bool upper = true;
+		for(auto& c : result)
+			if(c == ' ')
+				upper = true;
+			else if(upper) {
+				c = std::toupper(c);
+				upper = false;
+			}
+
+		return result;
+	}
+}
+
 ConfigDialog::ConfigDialog(QWidget* parent, possumwood::Config& config) {
 	QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
@@ -22,7 +43,7 @@ ConfigDialog::ConfigDialog(QWidget* parent, possumwood::Config& config) {
 		// check if theres a group box to work with, and create a new one if not
 		auto grpIt = groups.find(i.group());
 		if(grpIt == groups.end()) {
-			QGroupBox* grp = new QGroupBox(i.group().c_str());
+			QGroupBox* grp = new QGroupBox(toLabel(i.group()).c_str());
 			grp->setLayout(new QFormLayout());
 
 			grpIt = groups.insert(std::make_pair(i.group(), grp)).first;
@@ -41,7 +62,7 @@ ConfigDialog::ConfigDialog(QWidget* parent, possumwood::Config& config) {
 			spinbox->setValue(i.as<float>());
 			spinbox->setToolTip(i.description().c_str());
 
-			layout->addRow(i.name().c_str(), spinbox);
+			layout->addRow(toLabel(i.name()).c_str(), spinbox);
 
 			std::string name = i.name();
 			m_acceptValueFunctors.push_back([spinbox, &config, name]() {
@@ -53,7 +74,7 @@ ConfigDialog::ConfigDialog(QWidget* parent, possumwood::Config& config) {
 			spinbox->setValue(i.as<int>());
 			spinbox->setToolTip(i.description().c_str());
 
-			layout->addRow(i.name().c_str(), spinbox);
+			layout->addRow(toLabel(i.name()).c_str(), spinbox);
 
 			std::string name = i.name();
 			m_acceptValueFunctors.push_back([spinbox, &config, name]() {
@@ -65,7 +86,7 @@ ConfigDialog::ConfigDialog(QWidget* parent, possumwood::Config& config) {
 			edit->setText(i.as<std::string>().c_str());
 			edit->setToolTip(i.description().c_str());
 
-			layout->addRow(i.name().c_str(), edit);
+			layout->addRow(toLabel(i.name()).c_str(), edit);
 
 			std::string name = i.name();
 			m_acceptValueFunctors.push_back([edit, &config, name]() {
