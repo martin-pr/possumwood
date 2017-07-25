@@ -3,9 +3,12 @@
 #include <cassert>
 #include <fstream>
 
+#include <QMainWindow>
+
 #include <dependency_graph/io/graph.h>
 
 #include "node_data.h"
+#include "config.inl"
 
 namespace possumwood {
 
@@ -14,6 +17,19 @@ App* App::s_instance = NULL;
 App::App() : m_mainWindow(NULL), m_time(0.0f) {
 	assert(s_instance == nullptr);
 	s_instance = this;
+
+	////////////////////////
+	// scene configuration
+
+	m_sceneConfig.addItem(Config::Item(
+		"start_time", "timeline", 0.0f, Config::Item::kNoFlags,
+		"Start of the timeline (seconds)"
+	));
+
+	m_sceneConfig.addItem(Config::Item(
+		"end_time", "timeline", 5.0f, Config::Item::kNoFlags,
+		"End of the timeline (seconds)"
+	));
 }
 
 App::~App() {
@@ -40,13 +56,37 @@ void App::newFile() {
 }
 
 void App::loadFile(const boost::filesystem::path& filename) {
+	// read the json file
 	std::ifstream in(filename.string());
-
 	dependency_graph::io::json json;
 	in >> json;
 
+	// read the graph
 	dependency_graph::io::adl_serializer<dependency_graph::Graph>::from_json(json, m_graph);
 
+	// and read the scene config
+	auto& config = json["scene_config"];
+
+	for(auto it = config.begin(); it != config.end(); ++it) {
+		auto& item = possumwood::App::instance().sceneConfig()[it.key()];
+
+		if(item.is<int>())
+			item = it.value().get<int>();
+		else if(item.is<float>())
+			item = it.value().get<float>();
+		else if(item.is<std::string>())
+			item = it.value().get<std::string>();
+		else
+			assert(false);
+	}
+
+	// read the UI configuration
+	if(json.find("ui_geometry") != json.end())
+		mainWindow()->restoreGeometry(QByteArray::fromBase64(json["ui_geometry"].get<std::string>().c_str()));
+	if(json.find("ui_state") != json.end())
+		mainWindow()->restoreState(QByteArray::fromBase64(json["ui_state"].get<std::string>().c_str()));
+
+	// opened filename changed
 	m_filename = filename;
 }
 
@@ -56,13 +96,31 @@ void App::saveFile() {
 }
 
 void App::saveFile(const boost::filesystem::path& fn) {
-	std::ofstream out(fn.string());
-
+	// make a json instance containing the graph
 	dependency_graph::io::json json;
 	json = m_graph;
 
+	// save scene config into the json object
+	auto& config = json["scene_config"];
+	for(auto& i : possumwood::App::instance().sceneConfig())
+		if(i.is<int>())
+			config[i.name()] = i.as<int>();
+		else if(i.is<float>())
+			config[i.name()] = i.as<float>();
+		else if(i.is<std::string>())
+			config[i.name()] = i.as<std::string>();
+		else
+			assert(false);
+
+	// and save the UI configuration
+	json["ui_geometry"] = mainWindow()->saveGeometry().toBase64().data();
+	json["ui_state"] = mainWindow()->saveState().toBase64().data();
+
+	// save the json to the file
+	std::ofstream out(fn.string());
 	out << std::setw(4) << json;
 
+	// and update the filename
 	m_filename = fn;
 }
 
@@ -88,6 +146,10 @@ float App::time() const {
 
 boost::signals2::connection App::onTimeChanged(std::function<void(float)> fn) {
 	return m_timeChanged.connect(fn);
+}
+
+Config& App::sceneConfig() {
+	return m_sceneConfig;
 }
 
 }

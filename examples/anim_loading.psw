@@ -70,5 +70,11 @@
             },
             "type": "anim/transform"
         }
-    }
+    },
+    "scene_config": {
+        "end_time": 3.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAAD9/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAASAAAD9wAAAEkA////AAAAAQAAASwAAAP3/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAASAAADQAAAAEkA////+wAAAAYAbABvAGcBAAADVgAAALMAAABJAP///wAAAy0AAAP3AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

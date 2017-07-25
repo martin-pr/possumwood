@@ -20,6 +20,7 @@
 #include <possumwood_sdk/app.h>
 
 #include "adaptor.h"
+#include "config_dialog.h"
 
 namespace {
 
@@ -54,6 +55,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	m_properties = new Properties();
 	QDockWidget* propDock = new QDockWidget("Properties", this);
+	propDock->setObjectName("properties");
 	propDock->setWidget(m_properties);
 	m_properties->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, propDock);
@@ -65,6 +67,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	m_log = new Log();
 	QDockWidget* logDock = new QDockWidget("Log", this);
+	logDock->setObjectName("log");
 	logDock->setWidget(m_log);
 	m_log->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, logDock);
@@ -73,6 +76,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	});
 
 	QDockWidget* graphDock = new QDockWidget("Graph", this);
+	graphDock->setObjectName("graph");
 	graphDock->setWidget(m_adaptor);
 	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
 
@@ -216,6 +220,13 @@ MainWindow::MainWindow() : QMainWindow() {
 		}
 	});
 
+	QAction* sceneConfigAct = new QAction("Scene &configuration...", this);
+	connect(sceneConfigAct, &QAction::triggered, [this](bool) {
+		ConfigDialog dialog(this, possumwood::App::instance().sceneConfig());
+		dialog.setWindowTitle("Scene configuration...");
+		dialog.exec();
+	});
+
 
 	////////////////////
 	// file menu
@@ -227,6 +238,8 @@ MainWindow::MainWindow() : QMainWindow() {
 		fileMenu->addAction(openAct);
 		fileMenu->addAction(saveAct);
 		fileMenu->addAction(saveAsAct);
+		fileMenu->addSeparator();
+		fileMenu->addAction(sceneConfigAct);
 	}
 
 	///////////////////////////////
@@ -247,6 +260,14 @@ MainWindow::MainWindow() : QMainWindow() {
 
 		viewMenu->addAction(propDock->toggleViewAction());
 		viewMenu->addAction(graphDock->toggleViewAction());
+	}
+
+	/////////////////////
+	// playback menu
+	{
+		QMenu* playbackMenu = menuBar()->addMenu("&Playback");
+
+		playbackMenu->addAction(m_timeline->playAction());
 	}
 }
 
