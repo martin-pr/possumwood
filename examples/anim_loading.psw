@@ -1,16 +1,16 @@
 {
     "connections": [
         {
-            "in_node": "transform_0",
-            "in_port": "in_anim",
-            "out_node": "loader_0",
-            "out_port": "anim"
-        },
-        {
             "in_node": "skeleton_display_0",
             "in_port": "anim",
             "out_node": "transform_0",
             "out_port": "out_anim"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_anim",
+            "out_node": "loader_0",
+            "out_port": "anim"
         }
     ],
     "nodes": {
@@ -74,5 +74,7 @@
     "scene_config": {
         "end_time": 3.0,
         "start_time": 0.0
-    }
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAAD9/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAASAAAD9wAAAEkA////AAAAAQAAASwAAAP3/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAASAAADQAAAAEkA////+wAAAAYAbABvAGcBAAADVgAAALMAAABJAP///wAAAy0AAAP3AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

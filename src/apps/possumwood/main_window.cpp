@@ -55,6 +55,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	m_properties = new Properties();
 	QDockWidget* propDock = new QDockWidget("Properties", this);
+	propDock->setObjectName("properties");
 	propDock->setWidget(m_properties);
 	m_properties->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, propDock);
@@ -66,6 +67,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	m_log = new Log();
 	QDockWidget* logDock = new QDockWidget("Log", this);
+	logDock->setObjectName("log");
 	logDock->setWidget(m_log);
 	m_log->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, logDock);
@@ -74,6 +76,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	});
 
 	QDockWidget* graphDock = new QDockWidget("Graph", this);
+	graphDock->setObjectName("graph");
 	graphDock->setWidget(m_adaptor);
 	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
 

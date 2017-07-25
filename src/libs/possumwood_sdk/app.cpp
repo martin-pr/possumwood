@@ -3,6 +3,8 @@
 #include <cassert>
 #include <fstream>
 
+#include <QMainWindow>
+
 #include <dependency_graph/io/graph.h>
 
 #include "node_data.h"
@@ -78,6 +80,12 @@ void App::loadFile(const boost::filesystem::path& filename) {
 			assert(false);
 	}
 
+	// read the UI configuration
+	if(json.find("ui_geometry") != json.end())
+		mainWindow()->restoreGeometry(QByteArray::fromBase64(json["ui_geometry"].get<std::string>().c_str()));
+	if(json.find("ui_state") != json.end())
+		mainWindow()->restoreState(QByteArray::fromBase64(json["ui_state"].get<std::string>().c_str()));
+
 	// opened filename changed
 	m_filename = filename;
 }
@@ -103,6 +111,10 @@ void App::saveFile(const boost::filesystem::path& fn) {
 			config[i.name()] = i.as<std::string>();
 		else
 			assert(false);
+
+	// and save the UI configuration
+	json["ui_geometry"] = mainWindow()->saveGeometry().toBase64().data();
+	json["ui_state"] = mainWindow()->saveState().toBase64().data();
 
 	// save the json to the file
 	std::ofstream out(fn.string());
