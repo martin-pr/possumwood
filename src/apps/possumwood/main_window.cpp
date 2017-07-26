@@ -149,7 +149,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	////////////////////
 	// window actions
-	QAction* newAct = new QAction("&New...", this);
+	QAction* newAct = new QAction(QIcon(":icons/filenew.png"), "&New...", this);
 	newAct->setShortcuts(QKeySequence::New);
 	connect(newAct, &QAction::triggered, [&](bool) {
 		QMessageBox::StandardButton res = QMessageBox::question(this, "New file...", "Do you want to clear the scene?");
@@ -159,7 +159,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		}
 	});
 
-	QAction* openAct = new QAction("&Open...", this);
+	QAction* openAct = new QAction(QIcon(":icons/fileopen.png"), "&Open...", this);
 	openAct->setShortcuts(QKeySequence::Open);
 	connect(openAct, &QAction::triggered, [this](bool) {
 		QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),
@@ -180,9 +180,9 @@ MainWindow::MainWindow() : QMainWindow() {
 		}
 	});
 
-	QAction* saveAct = new QAction("&Save...", this);
+	QAction* saveAct = new QAction(QIcon(":icons/filesave.png"), "&Save...", this);
 	saveAct->setShortcuts(QKeySequence::Save);
-	QAction* saveAsAct = new QAction("Save &As...", this);
+	QAction* saveAsAct = new QAction(QIcon(":icons/filesaveas.png"), "Save &As...", this);
 	saveAsAct->setShortcuts(QKeySequence::SaveAs);
 
 	connect(saveAct, &QAction::triggered, [saveAsAct, this](bool) {
@@ -220,14 +220,14 @@ MainWindow::MainWindow() : QMainWindow() {
 		}
 	});
 
-	QAction* sceneConfigAct = new QAction("Scene &configuration...", this);
+	QAction* sceneConfigAct = new QAction(QIcon(":icons/settings-scene.png"), "Scene &configuration...", this);
 	connect(sceneConfigAct, &QAction::triggered, [this](bool) {
 		ConfigDialog dialog(this, possumwood::App::instance().sceneConfig());
 		dialog.setWindowTitle("Scene configuration...");
 		dialog.exec();
 	});
 
-	QAction* quitAct = new QAction("&Quit", this);
+	QAction* quitAct = new QAction(QIcon(":icons/exit.png"), "&Quit", this);
 	connect(quitAct, &QAction::triggered, [this](bool) {
 		close();
 	});

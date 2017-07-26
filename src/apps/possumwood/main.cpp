@@ -89,6 +89,7 @@ int main(int argc, char* argv[]) {
 
 		// make a main window
 		MainWindow win;
+		win.setWindowIcon(QIcon(":icons/app.png"));
 		win.showMaximized();
 
 		// and start the main application loop

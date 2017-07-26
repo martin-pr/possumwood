@@ -39,7 +39,7 @@ TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTim
 	// assemble the context menu
 	setContextMenuPolicy(Qt::ActionsContextMenu);
 
-	m_playAction = new QAction("Play/stop", this);
+	m_playAction = new QAction(QIcon(":icons/player_play.png"), "Play/stop", this);
 	m_playAction->setShortcut(Qt::Key_Space);
 	connect(m_playAction, SIGNAL(triggered()), this, SLOT(onPlayAction()));
 

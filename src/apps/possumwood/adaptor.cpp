@@ -144,7 +144,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		onConnect(c.first, c.second);
 
 	// setup copy+paste action
-	m_copy = new QAction("&Copy", this);
+	m_copy = new QAction(QIcon(":icons/edit-copy.png"), "&Copy", this);
 	m_copy->setShortcut(QKeySequence::Copy);
 	m_copy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_copy, &QAction::triggered, [this](bool) {
@@ -160,7 +160,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	});
 	addAction(m_copy);
 
-	m_paste = new QAction("&Paste", this);
+	m_paste = new QAction(QIcon(":icons/edit-paste.png"), "&Paste", this);
 	m_paste->setShortcut(QKeySequence::Paste);
 	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_paste, &QAction::triggered, [this](bool) {
