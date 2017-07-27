@@ -232,6 +232,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	/////////////////////
 	// toolbar
 	QToolBar* docksToolbar = addToolBar("Dock widgets toolbar");
+	docksToolbar->setObjectName("docks_toolbar");
 	docksToolbar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 	docksToolbar->addAction(graphDock->toggleViewAction());
 	docksToolbar->addAction(propDock->toggleViewAction());
