@@ -11,6 +11,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QVBoxLayout>
+#include <QToolBar>
 
 #include <dependency_graph/values.inl>
 
@@ -57,6 +58,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	QDockWidget* propDock = new QDockWidget("Properties", this);
 	propDock->setObjectName("properties");
 	propDock->setWidget(m_properties);
+	propDock->toggleViewAction()->setIcon(QIcon(":icons/dock_properties.png"));
 	m_properties->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, propDock);
 
@@ -69,6 +71,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	QDockWidget* logDock = new QDockWidget("Log", this);
 	logDock->setObjectName("log");
 	logDock->setWidget(m_log);
+	logDock->toggleViewAction()->setIcon(QIcon(":icons/dock_log.png"));
 	m_log->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, logDock);
 	connect(m_adaptor, &Adaptor::logged, [this](QIcon icon, const QString & msg) {
@@ -78,6 +81,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	QDockWidget* graphDock = new QDockWidget("Graph", this);
 	graphDock->setObjectName("graph");
 	graphDock->setWidget(m_adaptor);
+	graphDock->toggleViewAction()->setIcon(QIcon(":icons/dock_graph.png"));
 	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
 
 	// connect the selection signal
@@ -232,6 +236,14 @@ MainWindow::MainWindow() : QMainWindow() {
 		close();
 	});
 
+	/////////////////////
+	// toolbar
+	QToolBar* docksToolbar = addToolBar("Dock widgets toolbar");
+	docksToolbar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	docksToolbar->addAction(graphDock->toggleViewAction());
+	docksToolbar->addAction(propDock->toggleViewAction());
+	docksToolbar->addAction(logDock->toggleViewAction());
+
 	////////////////////
 	// file menu
 
@@ -266,6 +278,9 @@ MainWindow::MainWindow() : QMainWindow() {
 
 		viewMenu->addAction(propDock->toggleViewAction());
 		viewMenu->addAction(graphDock->toggleViewAction());
+		viewMenu->addAction(logDock->toggleViewAction());
+		viewMenu->addSeparator();
+		viewMenu->addAction(docksToolbar->toggleViewAction());
 	}
 
 	/////////////////////
@@ -275,6 +290,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 		playbackMenu->addAction(m_timeline->playAction());
 	}
+
 }
 
 MainWindow::~MainWindow() {

@@ -2,7 +2,8 @@
 <qresource>
 	<file>icons/app.png</file>
 	<file>icons/app.svg</file>
-	<file>icons/dock_nodes.png</file>
+	<file>icons/dock_graph.png</file>
+	<file>icons/dock_log.png</file>
 	<file>icons/dock_properties.png</file>
 	<file>icons/edit-copy.png</file>
 	<file>icons/edit-cut.png</file>
