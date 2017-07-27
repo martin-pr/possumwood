@@ -44,8 +44,10 @@ class Adaptor : public QWidget {
 		void setSizeHint(const QSize& sh);
 		virtual QSize sizeHint() const override;
 
+		QAction* cutAction() const;
 		QAction* copyAction() const;
 		QAction* pasteAction() const;
+		QAction* deleteAction() const;
 
 		/// calls all existing Drawables
 		void draw();
@@ -77,5 +79,5 @@ class Adaptor : public QWidget {
 
 		QSize m_sizeHint;
 
-		QAction *m_copy, *m_paste;
+		QAction *m_copy, *m_paste, *m_cut, *m_delete;
 };

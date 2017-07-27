@@ -127,17 +127,10 @@ MainWindow::MainWindow() : QMainWindow() {
 		separator->setSeparator(true);
 		contextMenu->addAction(separator);
 
-		QAction* deleteAction = new QAction("Delete selected items", m_adaptor);
-		deleteAction->setShortcut(QKeySequence::Delete);
-		contextMenu->addAction(deleteAction);
-		m_adaptor->addAction(deleteAction);
-		QObject::connect(
-			deleteAction,
-			&QAction::triggered,
-			[this]() {
-				m_adaptor->deleteSelected();
-			}
-		);
+		contextMenu->addAction(m_adaptor->copyAction());
+		contextMenu->addAction(m_adaptor->cutAction());
+		contextMenu->addAction(m_adaptor->pasteAction());
+		contextMenu->addAction(m_adaptor->deleteAction());
 	}
 
 	// drawing callback
@@ -267,7 +260,9 @@ MainWindow::MainWindow() : QMainWindow() {
 		QMenu* editMenu = menuBar()->addMenu("&Edit");
 
 		editMenu->addAction(m_adaptor->copyAction());
+		editMenu->addAction(m_adaptor->cutAction());
 		editMenu->addAction(m_adaptor->pasteAction());
+		editMenu->addAction(m_adaptor->deleteAction());
 	}
 
 	/////////////////////

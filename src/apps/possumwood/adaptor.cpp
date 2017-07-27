@@ -144,7 +144,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		onConnect(c.first, c.second);
 
 	// setup copy+paste action
-	m_copy = new QAction(QIcon(":icons/edit-copy.png"), "&Copy", this);
+	m_copy = new QAction(QIcon(":icons/edit-copy.png"), "C&opy", this);
 	m_copy->setShortcut(QKeySequence::Copy);
 	m_copy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_copy, &QAction::triggered, [this](bool) {
@@ -159,6 +159,18 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		QApplication::clipboard()->setText(ss.str().c_str());
 	});
 	addAction(m_copy);
+
+	m_cut = new QAction(QIcon(":icons/edit-cut.png"), "&Cut", this);
+	m_cut->setShortcut(QKeySequence::Cut);
+	m_cut->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+	connect(m_cut, &QAction::triggered, [this](bool) {
+		// trigger the copy action first
+		m_copy->trigger();
+
+		// and delete selection
+		deleteSelected();
+	});
+	addAction(m_cut);
 
 	m_paste = new QAction(QIcon(":icons/edit-paste.png"), "&Paste", this);
 	m_paste->setShortcut(QKeySequence::Paste);
@@ -188,6 +200,15 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		}
 	});
 	addAction(m_paste);
+
+	m_delete = new QAction(QIcon(":icons/edit-delete.png"), "&Delete", this);
+	m_delete->setShortcut(QKeySequence::Delete);
+	m_delete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+	connect(m_delete, &QAction::triggered, [this](bool) {
+		// and delete selection
+		deleteSelected();
+	});
+	addAction(m_delete);
 }
 
 Adaptor::~Adaptor() {
@@ -446,8 +467,16 @@ QAction* Adaptor::copyAction() const {
 	return m_copy;
 }
 
+QAction* Adaptor::cutAction() const {
+	return m_cut;
+}
+
 QAction* Adaptor::pasteAction() const {
 	return m_paste;
+}
+
+QAction* Adaptor::deleteAction() const {
+	return m_delete;
 }
 
 void Adaptor::draw() {
