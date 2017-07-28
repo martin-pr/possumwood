@@ -107,7 +107,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		auto n = m_nodes.right.find(&node);
 		assert(n != m_nodes.right.end());
 
-		n->second->setBlindData<possumwood::NodeData>(possumwood::NodeData{n->first->pos()});
+		n->second->setBlindData<possumwood::NodeData>(possumwood::NodeData(n->first->pos()));
 	});
 
 	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
@@ -190,7 +190,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 			// and move all selected nodes by (10, 10)
 			for(dependency_graph::Node& n : selection.nodes()) {
 				possumwood::NodeData d = n.blindData<possumwood::NodeData>();
-				d.position += QPointF(20, 20);
+				d.setPosition(QPointF(20, 20) + d.position());
 				n.setBlindData(d);
 			}
 
@@ -222,7 +222,7 @@ void Adaptor::onAddNode(dependency_graph::Node& node) {
 
 	// instantiate new graphical item
 	node_editor::Node& newNode = m_graphWidget->scene().addNode(
-		node.name().c_str(), data.position);
+		node.name().c_str(), data.position());
 
 	// add all ports, based on the node's metadata
 	for(size_t a = 0; a < node.metadata().attributeCount(); ++a) {
@@ -295,7 +295,7 @@ void Adaptor::onBlindDataChanged(dependency_graph::Node& node) {
 
 	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
-	n->second->setPos(data.position);
+	n->second->setPos(data.position());
 }
 
 void Adaptor::onNameChanged(dependency_graph::Node& node) {
