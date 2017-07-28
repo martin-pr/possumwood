@@ -1,16 +1,16 @@
 {
     "connections": [
         {
-            "in_node": "skeleton_display_0",
-            "in_port": "anim",
-            "out_node": "transform_0",
-            "out_port": "out_anim"
-        },
-        {
             "in_node": "transform_0",
             "in_port": "in_anim",
             "out_node": "loader_0",
             "out_port": "anim"
+        },
+        {
+            "in_node": "skeleton_display_0",
+            "in_port": "anim",
+            "out_node": "transform_0",
+            "out_port": "out_anim"
         }
     ],
     "nodes": {
@@ -38,7 +38,7 @@
             },
             "name": "skeleton_display",
             "ports": {
-                "show_base_skeleton": false
+                "base_skeleton": false
             },
             "type": "anim/skeleton_display"
         },
@@ -76,5 +76,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAAD9/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAASAAAD9wAAAEkA////AAAAAQAAASwAAAP3/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAASAAADQAAAAEkA////+wAAAAYAbABvAGcBAAADVgAAALMAAABJAP///wAAAy0AAAP3AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADu/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADuwAAAFkA////AAAAAQAAASwAAAO7/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAADAgAAAFkA////+wAAAAYAbABvAGcBAAADVgAAALMAAABZAP///wAAAykAAAO7AAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAEAAAAaAGQAbwBjAGsAcwBfAHQAbwBvAGwAYgBhAHIBAAAAAP////8AAAAAAAAAAA=="
 }

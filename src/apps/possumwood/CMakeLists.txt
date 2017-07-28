@@ -21,6 +21,7 @@ set(LIBS ${LIBS} ${GLUT_LIBRARY})
 
 # Build the executable
 include_directories(./)
-add_executable(possumwood ${sources} ${headers_moc})
+qt5_add_resources(resources resources/resources.qrc)
+add_executable(possumwood ${sources} ${headers_moc} ${resources})
 
 target_link_libraries(possumwood nodeeditor dependency_graph possumwood_sdk ${LIBS} dl)

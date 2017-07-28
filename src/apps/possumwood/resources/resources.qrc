@@ -1,0 +1,28 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+	<file>icons/app.png</file>
+	<file>icons/app.svg</file>
+	<file>icons/dock_graph.png</file>
+	<file>icons/dock_log.png</file>
+	<file>icons/dock_properties.png</file>
+	<file>icons/edit-copy.png</file>
+	<file>icons/edit-cut.png</file>
+	<file>icons/edit-delete.png</file>
+	<file>icons/edit-paste.png</file>
+	<file>icons/edit-redo.png</file>
+	<file>icons/edit-undo.png</file>
+	<file>icons/exit.png</file>
+	<file>icons/filenew.png</file>
+	<file>icons/fileopen.png</file>
+	<file>icons/filesaveas.png</file>
+	<file>icons/filesave.png</file>
+	<file>icons/player_end.png</file>
+	<file>icons/player_fwd.png</file>
+	<file>icons/player_pause.png</file>
+	<file>icons/player_play.png</file>
+	<file>icons/player_rew.png</file>
+	<file>icons/player_start.png</file>
+	<file>icons/settings-scene.png</file>
+</qresource>
+</RCC>
+

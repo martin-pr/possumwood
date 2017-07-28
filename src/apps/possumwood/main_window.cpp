@@ -11,6 +11,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QVBoxLayout>
+#include <QToolBar>
 
 #include <dependency_graph/values.inl>
 
@@ -57,6 +58,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	QDockWidget* propDock = new QDockWidget("Properties", this);
 	propDock->setObjectName("properties");
 	propDock->setWidget(m_properties);
+	propDock->toggleViewAction()->setIcon(QIcon(":icons/dock_properties.png"));
 	m_properties->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, propDock);
 
@@ -69,6 +71,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	QDockWidget* logDock = new QDockWidget("Log", this);
 	logDock->setObjectName("log");
 	logDock->setWidget(m_log);
+	logDock->toggleViewAction()->setIcon(QIcon(":icons/dock_log.png"));
 	m_log->setMinimumWidth(300);
 	addDockWidget(Qt::RightDockWidgetArea, logDock);
 	connect(m_adaptor, &Adaptor::logged, [this](QIcon icon, const QString & msg) {
@@ -78,6 +81,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	QDockWidget* graphDock = new QDockWidget("Graph", this);
 	graphDock->setObjectName("graph");
 	graphDock->setWidget(m_adaptor);
+	graphDock->toggleViewAction()->setIcon(QIcon(":icons/dock_graph.png"));
 	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
 
 	// connect the selection signal
@@ -123,17 +127,10 @@ MainWindow::MainWindow() : QMainWindow() {
 		separator->setSeparator(true);
 		contextMenu->addAction(separator);
 
-		QAction* deleteAction = new QAction("Delete selected items", m_adaptor);
-		deleteAction->setShortcut(QKeySequence::Delete);
-		contextMenu->addAction(deleteAction);
-		m_adaptor->addAction(deleteAction);
-		QObject::connect(
-			deleteAction,
-			&QAction::triggered,
-			[this]() {
-				m_adaptor->deleteSelected();
-			}
-		);
+		contextMenu->addAction(m_adaptor->copyAction());
+		contextMenu->addAction(m_adaptor->cutAction());
+		contextMenu->addAction(m_adaptor->pasteAction());
+		contextMenu->addAction(m_adaptor->deleteAction());
 	}
 
 	// drawing callback
@@ -149,7 +146,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	////////////////////
 	// window actions
-	QAction* newAct = new QAction("&New...", this);
+	QAction* newAct = new QAction(QIcon(":icons/filenew.png"), "&New...", this);
 	newAct->setShortcuts(QKeySequence::New);
 	connect(newAct, &QAction::triggered, [&](bool) {
 		QMessageBox::StandardButton res = QMessageBox::question(this, "New file...", "Do you want to clear the scene?");
@@ -159,7 +156,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		}
 	});
 
-	QAction* openAct = new QAction("&Open...", this);
+	QAction* openAct = new QAction(QIcon(":icons/fileopen.png"), "&Open...", this);
 	openAct->setShortcuts(QKeySequence::Open);
 	connect(openAct, &QAction::triggered, [this](bool) {
 		QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),
@@ -180,9 +177,9 @@ MainWindow::MainWindow() : QMainWindow() {
 		}
 	});
 
-	QAction* saveAct = new QAction("&Save...", this);
+	QAction* saveAct = new QAction(QIcon(":icons/filesave.png"), "&Save...", this);
 	saveAct->setShortcuts(QKeySequence::Save);
-	QAction* saveAsAct = new QAction("Save &As...", this);
+	QAction* saveAsAct = new QAction(QIcon(":icons/filesaveas.png"), "Save &As...", this);
 	saveAsAct->setShortcuts(QKeySequence::SaveAs);
 
 	connect(saveAct, &QAction::triggered, [saveAsAct, this](bool) {
@@ -220,13 +217,26 @@ MainWindow::MainWindow() : QMainWindow() {
 		}
 	});
 
-	QAction* sceneConfigAct = new QAction("Scene &configuration...", this);
+	QAction* sceneConfigAct = new QAction(QIcon(":icons/settings-scene.png"), "Scene &configuration...", this);
 	connect(sceneConfigAct, &QAction::triggered, [this](bool) {
 		ConfigDialog dialog(this, possumwood::App::instance().sceneConfig());
 		dialog.setWindowTitle("Scene configuration...");
 		dialog.exec();
 	});
 
+	QAction* quitAct = new QAction(QIcon(":icons/exit.png"), "&Quit", this);
+	connect(quitAct, &QAction::triggered, [this](bool) {
+		close();
+	});
+
+	/////////////////////
+	// toolbar
+	QToolBar* docksToolbar = addToolBar("Dock widgets toolbar");
+	docksToolbar->setObjectName("docks_toolbar");
+	docksToolbar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	docksToolbar->addAction(graphDock->toggleViewAction());
+	docksToolbar->addAction(propDock->toggleViewAction());
+	docksToolbar->addAction(logDock->toggleViewAction());
 
 	////////////////////
 	// file menu
@@ -240,6 +250,8 @@ MainWindow::MainWindow() : QMainWindow() {
 		fileMenu->addAction(saveAsAct);
 		fileMenu->addSeparator();
 		fileMenu->addAction(sceneConfigAct);
+		fileMenu->addSeparator();
+		fileMenu->addAction(quitAct);
 	}
 
 	///////////////////////////////
@@ -249,7 +261,9 @@ MainWindow::MainWindow() : QMainWindow() {
 		QMenu* editMenu = menuBar()->addMenu("&Edit");
 
 		editMenu->addAction(m_adaptor->copyAction());
+		editMenu->addAction(m_adaptor->cutAction());
 		editMenu->addAction(m_adaptor->pasteAction());
+		editMenu->addAction(m_adaptor->deleteAction());
 	}
 
 	/////////////////////
@@ -260,6 +274,9 @@ MainWindow::MainWindow() : QMainWindow() {
 
 		viewMenu->addAction(propDock->toggleViewAction());
 		viewMenu->addAction(graphDock->toggleViewAction());
+		viewMenu->addAction(logDock->toggleViewAction());
+		viewMenu->addSeparator();
+		viewMenu->addAction(docksToolbar->toggleViewAction());
 	}
 
 	/////////////////////
@@ -269,6 +286,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 		playbackMenu->addAction(m_timeline->playAction());
 	}
+
 }
 
 MainWindow::~MainWindow() {

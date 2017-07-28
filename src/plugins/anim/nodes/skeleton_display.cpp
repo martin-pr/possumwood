@@ -71,7 +71,7 @@ struct Drawable : public possumwood::Drawable {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_anim, "anim");
-	meta.addAttribute(a_showBase, "show_base_skeleton", true);
+	meta.addAttribute(a_showBase, "base_skeleton", true);
 
 	meta.setDrawableFactory([](dependency_graph::Values&& vals) {
 		return std::unique_ptr<possumwood::Drawable>(

@@ -42,17 +42,15 @@ void Properties::show(const dependency_graph::Selection& selection) {
 		for(unsigned pi = 0; pi != node.get().portCount(); ++pi) {
 			auto& port = node.get().port(pi);
 
-			QTreeWidgetItem* portItem = new QTreeWidgetItem();
-			portItem->setText(0, port.name().c_str());
-
-			nodeItem->addChild(portItem);
-
-			// portItem->setText(1, std::to_string(port.get<float>()).c_str());
 			m_properties.push_back(Property(port));
-			if(m_properties.back().ui)
+			if(m_properties.back().ui) {
+				QTreeWidgetItem* portItem = new QTreeWidgetItem();
+				portItem->setText(0, port.name().c_str());
+
+				nodeItem->addChild(portItem);
+
 				setItemWidget(portItem, 1, m_properties.back().ui->widget());
-			else
-				portItem->setText(1, "(no UI defined for this datatype)");
+			}
 		}
 	}
 

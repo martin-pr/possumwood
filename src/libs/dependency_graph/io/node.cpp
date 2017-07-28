@@ -32,10 +32,12 @@ void adl_serializer<Node>::from_json(const json& j, ::dependency_graph::Node& n)
 				for(unsigned a=0;a<n.portCount();++a)
 					if(n.port(a).name() == p.key())
 						pi = a;
-				assert(pi >= 0);
-
-				n.m_data.data(pi).fromJson(p.value());
-				n.markAsDirty(pi);
+				if(pi >= 0) {
+					n.m_data.data(pi).fromJson(p.value());
+					n.markAsDirty(pi);
+				}
+				else
+					std::cerr << "Found unused property '" << p.key() << "' while loading a file. Ignoring its value." << std::endl;
 			}
 		}
 	}
