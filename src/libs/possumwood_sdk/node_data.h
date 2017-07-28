@@ -3,18 +3,20 @@
 #include <QPoint>
 
 #include "io.h"
+#include "unique_id.h"
 
 namespace possumwood {
 
 struct NodeData {
 	QPointF position;
+	UniqueId id;
 
 	bool operator ==(const NodeData& d) const {
-		return position == d.position;
+		return position == d.position && id == d.id;
 	}
 
 	bool operator !=(const NodeData& d) const {
-		return position != d.position;
+		return position != d.position || id != d.id;
 	}
 
 	void fromJson(const dependency_graph::io::json& json) {
