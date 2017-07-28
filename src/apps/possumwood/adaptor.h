@@ -13,6 +13,8 @@
 #include <dependency_graph/selection.h>
 #include <qt_node_editor/graph_widget.h>
 
+#include "index.h"
+
 /// A simple adaptor widget, marrying qt_graph_editor and dependency_graph
 class Adaptor : public QWidget {
 		Q_OBJECT
@@ -73,9 +75,9 @@ class Adaptor : public QWidget {
 
 		std::vector<boost::signals2::connection> m_signals;
 
-		boost::bimap<dependency_graph::Node*, node_editor::Node*> m_nodes;
-
-		std::map<dependency_graph::Node*, std::unique_ptr<possumwood::Drawable>> m_drawables;
+		/// Allows mapping back and forward between UI classes, and underlying data model.
+		/// Also stores the Drawable class instances (to be replaced with a scene graph, eventually).
+		Index m_index;
 
 		QSize m_sizeHint;
 
