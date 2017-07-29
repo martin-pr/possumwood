@@ -22,6 +22,7 @@
 
 #include "adaptor.h"
 #include "config_dialog.h"
+#include "actions.h"
 
 namespace {
 
@@ -118,7 +119,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				const std::string name = pieces.back();
 				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
 					QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(contextMenu->pos()));
-					possumwood::App::instance().graph().nodes().add(m, name, possumwood::NodeData{pos});
+					Actions::createNode(m, name, pos);
 				}, m_adaptor));
 			}
 		}
