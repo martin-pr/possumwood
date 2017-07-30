@@ -22,6 +22,8 @@ class Node : public boost::noncopyable {
 		void setName(const std::string& name);
 
 		const Metadata& metadata() const;
+		/// only useful for copy-paste - needs to replicate a node with its data
+		const Datablock& datablock() const;
 
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)

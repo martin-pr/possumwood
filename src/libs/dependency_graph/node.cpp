@@ -29,6 +29,10 @@ const Metadata& Node::metadata() const {
 	return *m_meta;
 }
 
+const Datablock& Node::datablock() const {
+	return m_data;
+}
+
 Port& Node::port(size_t index) {
 	assert(index < m_ports.size());
 	return m_ports[index];
