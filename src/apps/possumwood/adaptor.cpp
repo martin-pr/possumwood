@@ -19,6 +19,8 @@
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/metadata.h>
 
+#include "actions.h"
+
 namespace {
 
 /// creates a unique colour for a datatype
@@ -146,15 +148,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_copy->setShortcut(QKeySequence::Copy);
 	m_copy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_copy, &QAction::triggered, [this](bool) {
-		// convert the selection to JSON string
-		dependency_graph::io::json json;
-		dependency_graph::io::to_json(json, *m_graph, selection());
-
-		std::stringstream ss;
-		ss << std::setw(4) << json;
-
-		// and put it to the clipboard
-		QApplication::clipboard()->setText(ss.str().c_str());
+		Actions::copy(selection());
 	});
 	addAction(m_copy);
 
@@ -162,11 +156,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_cut->setShortcut(QKeySequence::Cut);
 	m_cut->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_cut, &QAction::triggered, [this](bool) {
-		// trigger the copy action first
-		m_copy->trigger();
-
-		// and delete selection
-		deleteSelected();
+		Actions::cut(selection());
 	});
 	addAction(m_cut);
 
@@ -174,28 +164,8 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_paste->setShortcut(QKeySequence::Paste);
 	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_paste, &QAction::triggered, [this](bool) {
-
-		try {
-			// convert the selection to JSON object
-			auto json = dependency_graph::io::json::parse(QApplication::clipboard()->text().toStdString());
-
-			// import the clipboard
-			dependency_graph::Selection selection = dependency_graph::io::from_json(json, *m_graph, false);
-
-			// set the selection to the newly inserted nodes
-			setSelection(selection);
-
-			// and move all selected nodes by (10, 10)
-			for(dependency_graph::Node& n : selection.nodes()) {
-				possumwood::NodeData d = n.blindData<possumwood::NodeData>();
-				d.setPosition(QPointF(20, 20) + d.position());
-				n.setBlindData(d);
-			}
-
-		} catch(std::exception& e) {
-			// do nothing
-			// std::cout << e.what() << std::endl;
-		}
+		auto sel = Actions::paste();
+		setSelection(sel);
 	});
 	addAction(m_paste);
 
@@ -203,8 +173,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_delete->setShortcut(QKeySequence::Delete);
 	m_delete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_delete, &QAction::triggered, [this](bool) {
-		// and delete selection
-		deleteSelected();
+		Actions::remove(selection());
 	});
 	addAction(m_delete);
 }
@@ -340,37 +309,7 @@ QPointF Adaptor::mapToScene(QPoint pos) const {
 }
 
 void Adaptor::deleteSelected() {
-	unsigned ei = 0;
-	while(ei < m_graphWidget->scene().edgeCount()) {
-		node_editor::ConnectedEdge& e = m_graphWidget->scene().edge(ei);
-		if(e.isSelected()) {
-			auto& n1 = m_index[&(e.fromPort().parentNode())];
-			auto& n2 = m_index[&(e.toPort().parentNode())];
-
-			n1.graphNode->port(e.fromPort().index()).disconnect(n2.graphNode->port(e.toPort().index()));
-		}
-		else
-			++ei;
-	}
-
-	unsigned ni = 0;
-	while(ni < m_graphWidget->scene().nodeCount()) {
-		node_editor::Node& n = m_graphWidget->scene().node(ni);
-		if(n.isSelected()) {
-			auto& node = m_index[&n];
-
-			auto toErase = std::find_if(m_graph->nodes().begin(), m_graph->nodes().end(),
-				[&](const dependency_graph::Node& n) {
-					return &n == node.graphNode;
-				}
-			);
-			assert(toErase != m_graph->nodes().end());
-
-			m_graph->nodes().erase(toErase);
-		}
-		else
-			++ni;
-	}
+	Actions::remove(selection());
 }
 
 dependency_graph::Selection Adaptor::selection() const {
