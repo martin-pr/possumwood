@@ -51,6 +51,10 @@ class Adaptor : public QWidget {
 		/// calls all existing Drawables
 		void draw();
 
+		/// direct use of Index instance needed in actions, to find nodes
+		///   by their IDs
+		Index& index();
+
 	signals:
 		void logged(QIcon, const QString&);
 

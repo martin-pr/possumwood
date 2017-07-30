@@ -18,6 +18,9 @@ class MainWindow : public QMainWindow {
 		MainWindow();
 		~MainWindow();
 
+		/// returns the graph adaptor instance (a QWidget) - used by actions
+		Adaptor& adaptor();
+
 	private slots:
 		void draw(float dt);
 

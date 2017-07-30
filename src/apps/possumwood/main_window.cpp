@@ -321,3 +321,8 @@ void MainWindow::draw(float dt) {
 	glEnable(GL_LIGHTING);
 	m_adaptor->draw();
 }
+
+Adaptor& MainWindow::adaptor() {
+	assert(m_adaptor != nullptr);
+	return *m_adaptor;
+}

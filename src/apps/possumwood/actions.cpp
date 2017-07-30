@@ -2,11 +2,14 @@
 
 #include <QApplication>
 #include <QClipboard>
+#include <QMainWindow>
 
 #include <dependency_graph/io/graph.h>
 #include <dependency_graph/node.inl>
 
 #include <possumwood_sdk/app.h>
+
+#include "main_window.h"
 
 void Actions::createNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& data) {
 	possumwood::App::instance().graph().nodes().add(meta, name, data);
@@ -55,19 +58,42 @@ dependency_graph::Selection Actions::paste() {
 	dependency_graph::Selection selection;
 
 	try {
+		// we will need the Index instance to map between node IDs and their pointers
+		Index& index = dynamic_cast<MainWindow&>(*possumwood::App::instance().mainWindow()).adaptor().index();
+
 		// convert the selection to JSON object
 		auto json = dependency_graph::io::json::parse(QApplication::clipboard()->text().toStdString());
 
 		// import the clipboard
-		selection = dependency_graph::io::from_json(json, possumwood::App::instance().graph(), false);
+		dependency_graph::Graph graph;
+		dependency_graph::io::from_json(json, graph);
 
-		// and move all selected nodes by (10, 10)
-		for(dependency_graph::Node& n : selection.nodes()) {
+		// add all the nodes to the main graph
+		//  - each node has a unique ID (unique between all graphs), store that
+		for(auto& n : graph.nodes()) {
 			possumwood::NodeData d = n.blindData<possumwood::NodeData>();
 			d.setPosition(QPointF(20, 20) + d.position());
-			n.setBlindData(d);
+
+			createNode(n.metadata(), n.name(), d);
+
+			selection.addNode(*index[n.blindData<possumwood::NodeData>().id()].graphNode);
 		}
 
+		// add all connetions, based on "unique" IDs
+		for(auto& c : graph.connections()) {
+			possumwood::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
+			possumwood::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
+
+			dependency_graph::Node& n1 = *index[id1].graphNode;
+			dependency_graph::Node& n2 = *index[id2].graphNode;
+
+			dependency_graph::Port& p1 = n1.port(c.first.index());
+			dependency_graph::Port& p2 = n2.port(c.second.index());
+
+			connect(p1, p2);
+
+			selection.addConnection(p1, p2);
+		}
 	} catch(std::exception& e) {
 		// do nothing
 		// std::cout << e.what() << std::endl;
@@ -93,4 +119,5 @@ void Actions::move(dependency_graph::Node& n, const QPointF& pos) {
 	data.setPosition(pos);
 	n.setBlindData(data);
 }
+
 

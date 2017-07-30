@@ -407,3 +407,7 @@ void Adaptor::draw() {
 	}
 
 }
+
+Index& Adaptor::index() {
+	return m_index;
+}
