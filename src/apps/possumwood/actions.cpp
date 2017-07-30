@@ -12,8 +12,23 @@ void Actions::createNode(const dependency_graph::Metadata& meta, const std::stri
 	possumwood::App::instance().graph().nodes().add(meta, name, data);
 }
 
+void Actions::removeNode(dependency_graph::Node& node) {
+	auto& graph = possumwood::App::instance().graph();
+	auto it = std::find_if(graph.nodes().begin(), graph.nodes().end(), [&](const dependency_graph::Node& i){
+		return &i == &node;
+	});
+
+	assert(it != graph.nodes().end());
+
+	graph.nodes().erase(it);
+}
+
 void Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	p1.connect(p2);
+}
+
+void Actions::disconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
+	p1.disconnect(p2);
 }
 
 void Actions::cut(const dependency_graph::Selection& selection) {
@@ -66,19 +81,11 @@ void Actions::remove(const dependency_graph::Selection& selection) {
 		auto& n1 = e.from.get().node();
 		auto& n2 = e.to.get().node();
 
-		n1.port(e.from.get().index()).disconnect(n2.port(e.to.get().index()));
+		disconnect(n1.port(e.from.get().index()), n2.port(e.to.get().index()));
 	}
 
-	for(auto& n : selection.nodes()) {
-		auto& graph = possumwood::App::instance().graph();
-		auto it = std::find_if(graph.nodes().begin(), graph.nodes().end(), [&](const dependency_graph::Node& i){
-			return &i == &n.get();
-		});
-
-		assert(it != graph.nodes().end());
-
-		graph.nodes().erase(it);
-	}
+	for(auto& n : selection.nodes())
+		removeNode(n);
 }
 
 void Actions::move(dependency_graph::Node& n, const QPointF& pos) {
