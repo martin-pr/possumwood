@@ -21,6 +21,8 @@ class BaseData {
 
 		/// creates a new Data<T> instance based on type name
 		static std::unique_ptr<BaseData> create(const std::string& type);
+		/// clones an existing BaseData instance
+		virtual std::unique_ptr<BaseData> clone() const = 0;
 
 	protected:
 		template<typename T>
@@ -37,6 +39,7 @@ struct Data : public BaseData {
 	public:
 		Data(const T& v = T());
 		virtual ~Data();
+
 		virtual void assign(const BaseData& src) override;
 		virtual bool isEqual(const BaseData& src) const;
 
@@ -44,6 +47,8 @@ struct Data : public BaseData {
 		virtual void fromJson(const io::json& j) override;
 
 		virtual std::string type() const override;
+
+		std::unique_ptr<BaseData> clone() const override;
 
 		T value;
 
