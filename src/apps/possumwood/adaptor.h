@@ -36,9 +36,6 @@ class Adaptor : public QWidget {
 
 		node_editor::GraphWidget* graphWidget();
 
-		/// deletes all selected items in the associated graph
-		void deleteSelected();
-
 		/// returns current selection
 		dependency_graph::Selection selection() const;
 		void setSelection(const dependency_graph::Selection& selection);

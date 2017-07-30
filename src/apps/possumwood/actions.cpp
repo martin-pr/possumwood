@@ -4,11 +4,16 @@
 #include <QClipboard>
 
 #include <dependency_graph/io/graph.h>
+#include <dependency_graph/node.inl>
 
 #include <possumwood_sdk/app.h>
 
 void Actions::createNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& data) {
 	possumwood::App::instance().graph().nodes().add(meta, name, data);
+}
+
+void Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
+	p1.connect(p2);
 }
 
 void Actions::cut(const dependency_graph::Selection& selection) {
@@ -74,5 +79,11 @@ void Actions::remove(const dependency_graph::Selection& selection) {
 
 		graph.nodes().erase(it);
 	}
+}
+
+void Actions::move(dependency_graph::Node& n, const QPointF& pos) {
+	possumwood::NodeData data = n.blindData<possumwood::NodeData>();
+	data.setPosition(pos);
+	n.setBlindData(data);
 }
 

@@ -93,7 +93,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 
 		// and connect them in the graph as well
 		try {
-			n1.graphNode->port(p1.index()).connect(n2.graphNode->port(p2.index()));
+			Actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
 		}
 		catch(std::runtime_error& err) {
 			// something went wrong during connecting, undo it
@@ -106,9 +106,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_graphWidget->scene().setNodeMoveCallback([&](node_editor::Node& node) {
 		auto& n = m_index[&node];
 
-		possumwood::NodeData data = n.graphNode->blindData<possumwood::NodeData>();
-		data.setPosition(n.editorNode->pos());
-		n.graphNode->setBlindData(data);
+		Actions::move(*n.graphNode, n.editorNode->pos());
 	});
 
 	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
@@ -306,10 +304,6 @@ void Adaptor::onLog(dependency_graph::State::MessageType t, const std::string& m
 
 QPointF Adaptor::mapToScene(QPoint pos) const {
 	return m_graphWidget->mapToScene(pos);
-}
-
-void Adaptor::deleteSelected() {
-	Actions::remove(selection());
 }
 
 dependency_graph::Selection Adaptor::selection() const {
