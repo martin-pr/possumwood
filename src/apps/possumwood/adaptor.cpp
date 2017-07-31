@@ -174,7 +174,9 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_delete->setShortcut(QKeySequence::Delete);
 	m_delete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_delete, &QAction::triggered, [this](bool) {
-		Actions::remove(selection());
+		auto action = Actions::remove(selection());
+
+		possumwood::App::instance().undoStack().execute(action);
 	});
 	addAction(m_delete);
 

@@ -65,7 +65,7 @@ possumwood::UndoStack::Action Actions::createNode(const dependency_graph::Metada
 
 	possumwood::UndoStack::Action action;
 	action.addCommand(
-		std::bind(&doCreateNode, std::cref(meta), name, data, boost::optional<const dependency_graph::Datablock&>()),
+		std::bind(&doCreateNode, std::ref(meta), name, data, boost::optional<const dependency_graph::Datablock&>()),
 		std::bind(&doRemoveNode, data.id())
 	);
 
@@ -77,7 +77,7 @@ possumwood::UndoStack::Action Actions::removeNode(dependency_graph::Node& node) 
 
 	action.addCommand(
 		std::bind(&doRemoveNode, node.blindData<possumwood::NodeData>().id()),
-		std::bind(&doCreateNode, std::cref(node.metadata()), node.name(),
+		std::bind(&doCreateNode, std::ref(node.metadata()), node.name(),
 			node.blindData<possumwood::NodeData>(), node.datablock())
 	);
 
@@ -183,17 +183,32 @@ dependency_graph::Selection Actions::paste() {
 	return selection;
 }
 
-void Actions::remove(const dependency_graph::Selection& selection) {
-	for(auto& e : selection.connections()) {
-		auto& n1 = e.from.get().node();
-		auto& n2 = e.to.get().node();
+possumwood::UndoStack::Action Actions::remove(const dependency_graph::Selection& _selection) {
+	// add all connections to selected nodes - they'll be removed as well as the selected connections
+	//   with the removed nodes
+	dependency_graph::Selection selection = _selection;
+	for(auto& c : possumwood::App::instance().graph().connections()) {
+		auto& n1 = c.first.node();
+		auto& n2 = c.second.node();
 
-		doDisconnect(n1.blindData<possumwood::NodeData>().id(), e.from.get().index(),
-			n2.blindData<possumwood::NodeData>().id(), e.to.get().index());
+		if(selection.nodes().find(n1) != selection.nodes().end())
+			selection.addConnection(c.first, c.second);
+		if(selection.nodes().find(n2) != selection.nodes().end())
+			selection.addConnection(c.first, c.second);
 	}
 
+	// this will be the resulting action
+	possumwood::UndoStack::Action action;
+
+	// remove all connections
+	for(auto& e : selection.connections())
+		action.merge(disconnect(e.from, e.to));
+
+	/// and all nodes
 	for(auto& n : selection.nodes())
-		doRemoveNode(n.get().blindData<possumwood::NodeData>().id());
+		action.merge(removeNode(n));
+
+	return action;
 }
 
 void Actions::move(dependency_graph::Node& n, const QPointF& pos) {

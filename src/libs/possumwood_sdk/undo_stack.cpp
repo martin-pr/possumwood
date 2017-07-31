@@ -12,6 +12,14 @@ void UndoStack::Action::addCommand(const std::function<void()>& redo, const std:
 	m_redo.push_back(redo);
 }
 
+void UndoStack::Action::merge(const Action& a) {
+	for(auto& c : a.m_undo)
+		m_undo.push_back(c);
+
+	for(auto& c : a.m_redo)
+		m_redo.push_back(c);
+}
+
 void UndoStack::execute(const Action& action) {
 	assert(!action.m_undo.empty() && action.m_undo.size() == action.m_redo.size());
 
