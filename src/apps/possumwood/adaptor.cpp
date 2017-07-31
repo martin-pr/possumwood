@@ -18,6 +18,7 @@
 #include <qt_node_editor/connected_edge.h>
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/metadata.h>
+#include <possumwood_sdk/app.h>
 
 #include "actions.h"
 
@@ -174,6 +175,23 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		Actions::remove(selection());
 	});
 	addAction(m_delete);
+
+	m_undo = new QAction(QIcon(":icons/edit-undo.png"), "&Undo", this);
+	m_undo->setShortcut(QKeySequence::Undo);
+	m_undo->setShortcutContext(Qt::ApplicationShortcut);
+	connect(m_undo, &QAction::triggered, [this](bool) {
+		possumwood::App::instance().undoStack().undo();
+	});
+	addAction(m_undo);
+
+	m_redo = new QAction(QIcon(":icons/edit-redo.png"), "&Redo", this);
+	// m_redo->setShortcut(QKeySequence::Redo);
+	m_redo->setShortcut(Qt::CTRL + Qt::Key_Y);
+	m_redo->setShortcutContext(Qt::ApplicationShortcut);
+	connect(m_redo, &QAction::triggered, [this](bool) {
+		possumwood::App::instance().undoStack().redo();
+	});
+	addAction(m_redo);
 }
 
 Adaptor::~Adaptor() {
@@ -394,6 +412,14 @@ QAction* Adaptor::pasteAction() const {
 
 QAction* Adaptor::deleteAction() const {
 	return m_delete;
+}
+
+QAction* Adaptor::undoAction() const {
+	return m_undo;
+}
+
+QAction* Adaptor::redoAction() const {
+	return m_redo;
 }
 
 void Adaptor::draw() {

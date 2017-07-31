@@ -7,6 +7,7 @@
 #include <dependency_graph/graph.h>
 
 #include "config.h"
+#include "undo_stack.h"
 
 class QMainWindow;
 
@@ -39,6 +40,8 @@ class App : public boost::noncopyable {
 
 		Config& sceneConfig();
 
+		UndoStack& undoStack();
+
 	protected:
 	private:
 		static App* s_instance;
@@ -52,6 +55,8 @@ class App : public boost::noncopyable {
 		boost::signals2::signal<void(float)> m_timeChanged;
 
 		Config m_sceneConfig;
+
+		UndoStack m_undoStack;
 };
 
 }

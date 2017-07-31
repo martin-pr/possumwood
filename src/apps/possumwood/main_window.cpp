@@ -132,6 +132,13 @@ MainWindow::MainWindow() : QMainWindow() {
 		contextMenu->addAction(m_adaptor->cutAction());
 		contextMenu->addAction(m_adaptor->pasteAction());
 		contextMenu->addAction(m_adaptor->deleteAction());
+
+		QAction* separator2 = new QAction(m_adaptor);
+		separator2->setSeparator(true);
+		contextMenu->addAction(separator2);
+
+		contextMenu->addAction(m_adaptor->undoAction());
+		contextMenu->addAction(m_adaptor->redoAction());
 	}
 
 	// drawing callback
@@ -260,6 +267,11 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	{
 		QMenu* editMenu = menuBar()->addMenu("&Edit");
+
+		editMenu->addAction(m_adaptor->undoAction());
+		editMenu->addAction(m_adaptor->redoAction());
+
+		editMenu->addSeparator();
 
 		editMenu->addAction(m_adaptor->copyAction());
 		editMenu->addAction(m_adaptor->cutAction());

@@ -48,6 +48,9 @@ class Adaptor : public QWidget {
 		QAction* pasteAction() const;
 		QAction* deleteAction() const;
 
+		QAction* undoAction() const;
+		QAction* redoAction() const;
+
 		/// calls all existing Drawables
 		void draw();
 
@@ -82,5 +85,5 @@ class Adaptor : public QWidget {
 
 		QSize m_sizeHint;
 
-		QAction *m_copy, *m_paste, *m_cut, *m_delete;
+		QAction *m_copy, *m_paste, *m_cut, *m_delete, *m_undo, *m_redo;
 };

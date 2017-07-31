@@ -153,4 +153,8 @@ Config& App::sceneConfig() {
 	return m_sceneConfig;
 }
 
+UndoStack& App::undoStack() {
+	return m_undoStack;
+}
+
 }
