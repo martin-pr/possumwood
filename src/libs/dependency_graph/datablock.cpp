@@ -13,6 +13,8 @@ Datablock::Datablock(const Metadata& meta) : m_meta(&meta) {
 Datablock::Datablock(const Datablock& d) {
 	for(auto& a : d.m_data)
 		m_data.push_back(a->clone());
+
+	m_meta = d.m_meta;
 }
 
 Datablock& Datablock::operator = (const Datablock& d) {
@@ -20,6 +22,8 @@ Datablock& Datablock::operator = (const Datablock& d) {
 
 	for(auto& a : d.m_data)
 		m_data.push_back(a->clone());
+
+	m_meta = d.m_meta;
 
 	return *this;
 }
