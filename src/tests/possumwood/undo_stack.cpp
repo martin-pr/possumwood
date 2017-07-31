@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
-#include <possumwood/undo_stack.h>
+#include <possumwood_sdk/undo_stack.h>
 
 namespace std {
 	std::ostream& operator << (std::ostream& out, const std::vector<unsigned>& vals) {
@@ -11,10 +11,10 @@ namespace std {
 BOOST_AUTO_TEST_CASE(simple_undo_redo) {
 	std::vector<unsigned> values;
 
-	UndoStack stack;
+	possumwood::UndoStack stack;
 
 	{
-		UndoStack::Action a;
+		possumwood::UndoStack::Action a;
 		a.addCommand(
 			[&values]() {
 				values.push_back(10);
@@ -51,10 +51,10 @@ BOOST_AUTO_TEST_CASE(simple_undo_redo) {
 BOOST_AUTO_TEST_CASE(multi_command_undo_redo) {
 	std::vector<unsigned> values;
 
-	UndoStack stack;
+	possumwood::UndoStack stack;
 
 	{
-		UndoStack::Action a;
+		possumwood::UndoStack::Action a;
 		a.addCommand(
 			[&values]() {
 				values.push_back(10);
@@ -104,10 +104,10 @@ BOOST_AUTO_TEST_CASE(multi_command_undo_redo) {
 BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 	std::vector<unsigned> values;
 
-	UndoStack stack;
+	possumwood::UndoStack stack;
 
 	{
-		UndoStack::Action a;
+		possumwood::UndoStack::Action a;
 		a.addCommand(
 			[&values]() {
 				values.push_back(10);
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 	}
 
 	{
-		UndoStack::Action a;
+		possumwood::UndoStack::Action a;
 		a.addCommand(
 			[&values]() {
 				values.push_back(30);
@@ -205,13 +205,13 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 	const std::vector<unsigned> half_result{10, 20};
 	const std::vector<unsigned> empty_result{};
 
-	UndoStack stack;
+	possumwood::UndoStack stack;
 
 	BOOST_CHECK_EQUAL(values, empty_result);
 
 	{
 
-		UndoStack::Action a;
+		possumwood::UndoStack::Action a;
 		a.addCommand(
 			[&values]() {
 				values.push_back(10);
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 	BOOST_CHECK_EQUAL(values, half_result);
 
 	{
-		UndoStack::Action a;
+		possumwood::UndoStack::Action a;
 		a.addCommand(
 			[&values]() {
 				values.push_back(30);

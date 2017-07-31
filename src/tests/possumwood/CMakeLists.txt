@@ -2,7 +2,6 @@ include_directories(./)
 include_directories(../../apps)
 
 file(GLOB sources *.cpp)
-list(APPEND sources ../../apps/possumwood/undo_stack.cpp)
 
 message(${LIBS})
 

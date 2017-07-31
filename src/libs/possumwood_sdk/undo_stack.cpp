@@ -1,8 +1,11 @@
 #include "undo_stack.h"
 
 #include <cassert>
+#include <iostream>
 
 #include <boost/noncopyable.hpp>
+
+namespace possumwood {
 
 void UndoStack::Action::addCommand(const std::function<void()>& redo, const std::function<void()>& undo) {
 	m_undo.push_back(undo);
@@ -60,3 +63,4 @@ void UndoStack::redo() {
 	}
 }
 
+}

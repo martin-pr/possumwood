@@ -5,6 +5,8 @@
 
 #include <boost/noncopyable.hpp>
 
+namespace possumwood {
+
 /// A simple implementation of undo stack based on Command design pattern.
 /// Each command uses a vector of std::functors to store the actual code
 /// to be executed on each undo and redo.
@@ -44,3 +46,5 @@ class UndoStack : public boost::noncopyable {
 	private:
 		std::vector<Action> m_undoStack, m_redoStack;
 };
+
+}
