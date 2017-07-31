@@ -84,14 +84,34 @@ possumwood::UndoStack::Action Actions::removeNode(dependency_graph::Node& node) 
 	return action;
 }
 
-void Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
-	doConnect(p1.node().blindData<possumwood::NodeData>().id(), p1.index(),
-		p2.node().blindData<possumwood::NodeData>().id(), p2.index());
+possumwood::UndoStack::Action Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
+	possumwood::UndoStack::Action action;
+
+	action.addCommand(
+		std::bind(&doConnect,
+			p1.node().blindData<possumwood::NodeData>().id(), p1.index(),
+			p2.node().blindData<possumwood::NodeData>().id(), p2.index()),
+		std::bind(&doDisconnect,
+			p1.node().blindData<possumwood::NodeData>().id(), p1.index(),
+			p2.node().blindData<possumwood::NodeData>().id(), p2.index())
+	);
+
+	return action;
 }
 
-void Actions::disconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
-	doDisconnect(p1.node().blindData<possumwood::NodeData>().id(), p1.index(),
-		p2.node().blindData<possumwood::NodeData>().id(), p2.index());
+possumwood::UndoStack::Action Actions::disconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
+	possumwood::UndoStack::Action action;
+
+	action.addCommand(
+		std::bind(&doDisconnect,
+			p1.node().blindData<possumwood::NodeData>().id(), p1.index(),
+			p2.node().blindData<possumwood::NodeData>().id(), p2.index()),
+		std::bind(&doConnect,
+			p1.node().blindData<possumwood::NodeData>().id(), p1.index(),
+			p2.node().blindData<possumwood::NodeData>().id(), p2.index())
+	);
+
+	return action;
 }
 
 void Actions::cut(const dependency_graph::Selection& selection) {

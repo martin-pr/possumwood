@@ -94,7 +94,9 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 
 		// and connect them in the graph as well
 		try {
-			Actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
+			auto action = Actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
+
+			possumwood::App::instance().undoStack().execute(action);
 		}
 		catch(std::runtime_error& err) {
 			// something went wrong during connecting, undo it
