@@ -1,5 +1,7 @@
 #include "actions.h"
 
+#include <functional>
+
 #include <QApplication>
 #include <QClipboard>
 #include <QMainWindow>
@@ -57,12 +59,29 @@ void doDisconnect(const possumwood::UniqueId& fromNode, std::size_t fromPort, co
 
 /////////////////////////////////////////////////////////////////////
 
-void Actions::createNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& data) {
-	doCreateNode(meta, name, data);
+possumwood::UndoStack::Action Actions::createNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& _data) {
+	possumwood::NodeData data;
+	data.setPosition(_data.position());
+
+	possumwood::UndoStack::Action action;
+	action.addCommand(
+		std::bind(&doCreateNode, std::cref(meta), name, data, boost::optional<const dependency_graph::Datablock&>()),
+		std::bind(&doRemoveNode, data.id())
+	);
+
+	return action;
 }
 
-void Actions::removeNode(dependency_graph::Node& node) {
-	doRemoveNode(node.blindData<possumwood::NodeData>().id());
+possumwood::UndoStack::Action Actions::removeNode(dependency_graph::Node& node) {
+	possumwood::UndoStack::Action action;
+
+	action.addCommand(
+		std::bind(&doRemoveNode, node.blindData<possumwood::NodeData>().id()),
+		std::bind(&doCreateNode, std::cref(node.metadata()), node.name(),
+			node.blindData<possumwood::NodeData>(), node.datablock())
+	);
+
+	return action;
 }
 
 void Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {

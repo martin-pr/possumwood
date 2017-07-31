@@ -119,7 +119,9 @@ MainWindow::MainWindow() : QMainWindow() {
 				const std::string name = pieces.back();
 				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
 					QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(contextMenu->pos()));
-					Actions::createNode(m, name, pos);
+					auto action = Actions::createNode(m, name, pos);
+
+					possumwood::App::instance().undoStack().execute(action);
 				}, m_adaptor));
 			}
 		}
