@@ -134,9 +134,7 @@ void Actions::copy(const dependency_graph::Selection& selection) {
 	QApplication::clipboard()->setText(ss.str().c_str());
 }
 
-dependency_graph::Selection Actions::paste() {
-	dependency_graph::Selection selection;
-
+void Actions::paste(dependency_graph::Selection& selection) {
 	try {
 		// we will need the Index instance to map between node IDs and their pointers
 		Index& index = dynamic_cast<MainWindow&>(*possumwood::App::instance().mainWindow()).adaptor().index();
@@ -179,8 +177,6 @@ dependency_graph::Selection Actions::paste() {
 		// do nothing
 		// std::cout << e.what() << std::endl;
 	}
-
-	return selection;
 }
 
 possumwood::UndoStack::Action Actions::remove(const dependency_graph::Selection& _selection) {

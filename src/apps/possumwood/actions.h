@@ -14,7 +14,7 @@ struct Actions {
 
 	static void cut(const dependency_graph::Selection& selection);
 	static void copy(const dependency_graph::Selection& selection);
-	static dependency_graph::Selection paste();
+	static void paste(dependency_graph::Selection& selection);
 	static possumwood::UndoStack::Action remove(const dependency_graph::Selection& selection);
 
 	static void move(dependency_graph::Node& n, const QPointF& pos);

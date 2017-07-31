@@ -165,7 +165,8 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_paste->setShortcut(QKeySequence::Paste);
 	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_paste, &QAction::triggered, [this](bool) {
-		auto sel = Actions::paste();
+		dependency_graph::Selection sel;
+		Actions::paste(sel);
 		setSelection(sel);
 	});
 	addAction(m_paste);
