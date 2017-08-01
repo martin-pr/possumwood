@@ -197,15 +197,13 @@ void Actions::copy(const dependency_graph::Selection& selection) {
 void Actions::paste(dependency_graph::Selection& selection) {
 	possumwood::UndoStack::Action action;
 
-	try {
-		// we will need the Index instance to map between node IDs and their pointers
-		// Index& index = dynamic_cast<MainWindow&>(*possumwood::App::instance().mainWindow()).adaptor().index();
+	dependency_graph::Graph graph;
 
+	try {
 		// convert the selection to JSON object
 		auto json = dependency_graph::io::json::parse(QApplication::clipboard()->text().toStdString());
 
 		// import the clipboard
-		dependency_graph::Graph graph;
 		dependency_graph::io::from_json(json, graph);
 
 		// add all the nodes to the main graph
@@ -218,8 +216,6 @@ void Actions::paste(dependency_graph::Selection& selection) {
 				std::bind(&doCreateNode, std::ref(n.metadata()), n.name(), d, n.datablock()),
 				std::bind(&doRemoveNode, n.blindData<possumwood::NodeData>().id())
 			);
-
-			// selection.addNode(*index[n.blindData<possumwood::NodeData>().id()].graphNode);
 		}
 
 		// add all connetions, based on "unique" IDs
@@ -231,14 +227,6 @@ void Actions::paste(dependency_graph::Selection& selection) {
 				std::bind(&doConnect, id1, c.first.index(), id2, c.second.index()),
 				std::bind(&doDisconnect, id1, c.first.index(), id2, c.second.index())
 			);
-
-			// dependency_graph::Node& n1 = *index[id1].graphNode;
-			// dependency_graph::Node& n2 = *index[id2].graphNode;
-
-			// dependency_graph::Port& p1 = n1.port(c.first.index());
-			// dependency_graph::Port& p2 = n2.port(c.second.index());
-
-			// selection.addConnection(p1, p2);
 		}
 	}
 	catch(std::exception& e) {
@@ -246,9 +234,30 @@ void Actions::paste(dependency_graph::Selection& selection) {
 		// std::cout << e.what() << std::endl;
 	}
 
-	// execute the action
+	// execute the action (will actually make the nodes and connections)
 	possumwood::App::instance().undoStack().execute(action);
 
+	// and make the selection based on added nodes
+	{
+		// we will need the Index instance to map between node IDs and their pointers
+		Index& index = dynamic_cast<MainWindow&>(*possumwood::App::instance().mainWindow()).adaptor().index();
+
+		for(auto& n : graph.nodes())
+			selection.addNode(*index[n.blindData<possumwood::NodeData>().id()].graphNode);
+
+		for(auto& c : graph.connections()) {
+			possumwood::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
+			possumwood::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
+
+			dependency_graph::Node& n1 = *index[id1].graphNode;
+			dependency_graph::Node& n2 = *index[id2].graphNode;
+
+			dependency_graph::Port& p1 = n1.port(c.first.index());
+			dependency_graph::Port& p2 = n2.port(c.second.index());
+
+			selection.addConnection(p1, p2);
+		}
+	}
 }
 
 void Actions::move(dependency_graph::Node& n, const QPointF& pos) {
