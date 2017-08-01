@@ -160,11 +160,11 @@ possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _s
 
 	// remove all connections
 	for(auto& e : selection.connections())
-		action.merge(disconnectAction(e.from, e.to));
+		action.append(disconnectAction(e.from, e.to));
 
 	/// and all nodes
 	for(auto& n : selection.nodes())
-		action.merge(removeNodeAction(n));
+		action.append(removeNodeAction(n));
 
 	return action;
 }

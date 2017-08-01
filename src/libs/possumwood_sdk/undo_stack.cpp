@@ -15,7 +15,7 @@ void UndoStack::Action::addCommand(const std::function<void()>& redo, const std:
 	m_redo.push_back(redo);
 }
 
-void UndoStack::Action::merge(const Action& a) {
+void UndoStack::Action::append(const Action& a) {
 	for(auto& c : a.m_undo)
 		m_undo.push_back(c);
 

@@ -23,7 +23,7 @@ class UndoStack : public boost::noncopyable {
 				void addCommand(const std::function<void()>& redo, const std::function<void()>& undo);
 
 				/// appends all commands from action 'a' to this action
-				void merge(const Action& a);
+				void append(const Action& a);
 
 			private:
 				std::vector<std::function<void()>> m_redo, m_undo;
