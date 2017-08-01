@@ -94,9 +94,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 
 		// and connect them in the graph as well
 		try {
-			auto action = Actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
-
-			possumwood::App::instance().undoStack().execute(action);
+			Actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
 		}
 		catch(std::runtime_error& err) {
 			// something went wrong during connecting, undo it
@@ -157,9 +155,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_cut->setShortcut(QKeySequence::Cut);
 	m_cut->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_cut, &QAction::triggered, [this](bool) {
-		auto action = Actions::cut(selection());
-
-		possumwood::App::instance().undoStack().execute(action);
+		Actions::cut(selection());
 	});
 	addAction(m_cut);
 
@@ -168,9 +164,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_paste, &QAction::triggered, [this](bool) {
 		dependency_graph::Selection sel;
-		auto action = Actions::paste(sel);
-
-		possumwood::App::instance().undoStack().execute(action);
+		Actions::paste(sel);
 		setSelection(sel);
 	});
 	addAction(m_paste);
@@ -179,9 +173,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_delete->setShortcut(QKeySequence::Delete);
 	m_delete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_delete, &QAction::triggered, [this](bool) {
-		auto action = Actions::remove(selection());
-
-		possumwood::App::instance().undoStack().execute(action);
+		Actions::remove(selection());
 	});
 	addAction(m_delete);
 

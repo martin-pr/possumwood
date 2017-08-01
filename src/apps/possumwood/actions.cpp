@@ -59,7 +59,7 @@ void doDisconnect(const possumwood::UniqueId& fromNode, std::size_t fromPort, co
 
 /////////////////////////////////////////////////////////////////////
 
-possumwood::UndoStack::Action Actions::createNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& _data) {
+void Actions::createNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& _data) {
 	possumwood::NodeData data;
 	data.setPosition(_data.position());
 
@@ -69,10 +69,12 @@ possumwood::UndoStack::Action Actions::createNode(const dependency_graph::Metada
 		std::bind(&doRemoveNode, data.id())
 	);
 
-	return action;
+	possumwood::App::instance().undoStack().execute(action);
 }
 
-possumwood::UndoStack::Action Actions::removeNode(dependency_graph::Node& node) {
+namespace {
+
+possumwood::UndoStack::Action removeNodeAction(dependency_graph::Node& node) {
 	possumwood::UndoStack::Action action;
 
 	action.addCommand(
@@ -84,7 +86,15 @@ possumwood::UndoStack::Action Actions::removeNode(dependency_graph::Node& node) 
 	return action;
 }
 
-possumwood::UndoStack::Action Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
+}
+
+void Actions::removeNode(dependency_graph::Node& node) {
+	auto action =  removeNodeAction(node);
+
+	possumwood::App::instance().undoStack().execute(action);
+}
+
+void Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	possumwood::UndoStack::Action action;
 
 	action.addCommand(
@@ -96,10 +106,12 @@ possumwood::UndoStack::Action Actions::connect(dependency_graph::Port& p1, depen
 			p2.node().blindData<possumwood::NodeData>().id(), p2.index())
 	);
 
-	return action;
+	possumwood::App::instance().undoStack().execute(action);
 }
 
-possumwood::UndoStack::Action Actions::disconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
+namespace {
+
+possumwood::UndoStack::Action disconnectAction(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	possumwood::UndoStack::Action action;
 
 	action.addCommand(
@@ -114,12 +126,60 @@ possumwood::UndoStack::Action Actions::disconnect(dependency_graph::Port& p1, de
 	return action;
 }
 
-possumwood::UndoStack::Action Actions::cut(const dependency_graph::Selection& selection) {
+}
+
+void Actions::disconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
+	auto action = disconnectAction(p1, p2);
+
+	possumwood::App::instance().undoStack().execute(action);
+}
+
+namespace {
+
+possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _selection) {
+	// add all connections to selected nodes - they'll be removed as well as the selected connections
+	//   with the removed nodes
+	dependency_graph::Selection selection = _selection;
+	for(auto& c : possumwood::App::instance().graph().connections()) {
+		auto& n1 = c.first.node();
+		auto& n2 = c.second.node();
+
+		if(selection.nodes().find(n1) != selection.nodes().end())
+			selection.addConnection(c.first, c.second);
+		if(selection.nodes().find(n2) != selection.nodes().end())
+			selection.addConnection(c.first, c.second);
+	}
+
+	// this will be the resulting action
+	possumwood::UndoStack::Action action;
+
+	// remove all connections
+	for(auto& e : selection.connections())
+		action.merge(disconnectAction(e.from, e.to));
+
+	/// and all nodes
+	for(auto& n : selection.nodes())
+		action.merge(removeNodeAction(n));
+
+	return action;
+}
+
+}
+
+void Actions::remove(const dependency_graph::Selection& selection) {
+	auto action = removeAction(selection);
+
+	possumwood::App::instance().undoStack().execute(action);
+}
+
+void Actions::cut(const dependency_graph::Selection& selection) {
 	// trigger the copy action first
 	copy(selection);
 
 	// and delete selection
-	return remove(selection);
+	auto action = removeAction(selection);
+
+	possumwood::App::instance().undoStack().execute(action);
 }
 
 void Actions::copy(const dependency_graph::Selection& selection) {
@@ -134,7 +194,7 @@ void Actions::copy(const dependency_graph::Selection& selection) {
 	QApplication::clipboard()->setText(ss.str().c_str());
 }
 
-possumwood::UndoStack::Action Actions::paste(dependency_graph::Selection& selection) {
+void Actions::paste(dependency_graph::Selection& selection) {
 	possumwood::UndoStack::Action action;
 
 	try {
@@ -179,8 +239,6 @@ possumwood::UndoStack::Action Actions::paste(dependency_graph::Selection& select
 			// dependency_graph::Port& p2 = n2.port(c.second.index());
 
 			// selection.addConnection(p1, p2);
-
-			std::cout << "add connection" << std::endl;
 		}
 	}
 	catch(std::exception& e) {
@@ -188,35 +246,9 @@ possumwood::UndoStack::Action Actions::paste(dependency_graph::Selection& select
 		// std::cout << e.what() << std::endl;
 	}
 
-	return action;
-}
+	// execute the action
+	possumwood::App::instance().undoStack().execute(action);
 
-possumwood::UndoStack::Action Actions::remove(const dependency_graph::Selection& _selection) {
-	// add all connections to selected nodes - they'll be removed as well as the selected connections
-	//   with the removed nodes
-	dependency_graph::Selection selection = _selection;
-	for(auto& c : possumwood::App::instance().graph().connections()) {
-		auto& n1 = c.first.node();
-		auto& n2 = c.second.node();
-
-		if(selection.nodes().find(n1) != selection.nodes().end())
-			selection.addConnection(c.first, c.second);
-		if(selection.nodes().find(n2) != selection.nodes().end())
-			selection.addConnection(c.first, c.second);
-	}
-
-	// this will be the resulting action
-	possumwood::UndoStack::Action action;
-
-	// remove all connections
-	for(auto& e : selection.connections())
-		action.merge(disconnect(e.from, e.to));
-
-	/// and all nodes
-	for(auto& n : selection.nodes())
-		action.merge(removeNode(n));
-
-	return action;
 }
 
 void Actions::move(dependency_graph::Node& n, const QPointF& pos) {
