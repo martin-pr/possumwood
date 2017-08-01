@@ -8,6 +8,9 @@
 namespace possumwood {
 
 void UndoStack::Action::addCommand(const std::function<void()>& redo, const std::function<void()>& undo) {
+	assert(undo);
+	assert(redo);
+
 	m_undo.push_back(undo);
 	m_redo.push_back(redo);
 }
@@ -20,7 +23,20 @@ void UndoStack::Action::merge(const Action& a) {
 		m_redo.push_back(c);
 }
 
+UndoStack::UndoStack()
+#ifndef NDEBUG
+: m_executionInProgress(false)
+#endif
+{
+}
+
 void UndoStack::execute(const Action& action) {
+#ifndef NDEBUG
+	assert(!m_executionInProgress);
+
+	m_executionInProgress = true;
+#endif
+
 	if(!action.m_undo.empty()) {
 		assert(action.m_undo.size() == action.m_redo.size());
 
@@ -47,9 +63,19 @@ void UndoStack::execute(const Action& action) {
 		m_undoStack.push_back(action);
 		m_redoStack.clear();
 	}
+
+#ifndef NDEBUG
+	m_executionInProgress = false;
+#endif
 }
 
 void UndoStack::undo() {
+#ifndef NDEBUG
+	assert(!m_executionInProgress);
+
+	m_executionInProgress = true;
+#endif
+
 	// execute the last undo queue item
 	if(!m_undoStack.empty()) {
 		for(std::vector<std::function<void()>>::const_reverse_iterator it = m_undoStack.back().m_undo.rbegin(); it != m_undoStack.back().m_undo.rend(); ++it)
@@ -59,9 +85,19 @@ void UndoStack::undo() {
 		m_redoStack.push_back(m_undoStack.back());
 		m_undoStack.pop_back();
 	}
+
+#ifndef NDEBUG
+	m_executionInProgress = false;
+#endif
 }
 
 void UndoStack::redo() {
+#ifndef NDEBUG
+	assert(!m_executionInProgress);
+
+	m_executionInProgress = true;
+#endif
+
 	// execute the last redo queue item
 	if(!m_redoStack.empty()) {
 		for(std::vector<std::function<void()>>::const_iterator it = m_redoStack.back().m_redo.begin(); it != m_redoStack.back().m_redo.end(); ++it)
@@ -71,6 +107,10 @@ void UndoStack::redo() {
 		m_undoStack.push_back(m_redoStack.back());
 		m_redoStack.pop_back();
 	}
+
+#ifndef NDEBUG
+	m_executionInProgress = false;
+#endif
 }
 
 }

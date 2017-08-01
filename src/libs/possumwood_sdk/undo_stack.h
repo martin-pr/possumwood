@@ -12,6 +12,8 @@ namespace possumwood {
 /// to be executed on each undo and redo.
 class UndoStack : public boost::noncopyable {
 	public:
+		UndoStack();
+
 		/// Action implementation - stores a stack of "things to be done".
 		/// These are not executed on construction, but only after pushing onto
 		/// a stack. Each action is atomic - if an exception is thrown while
@@ -48,6 +50,10 @@ class UndoStack : public boost::noncopyable {
 	protected:
 	private:
 		std::vector<Action> m_undoStack, m_redoStack;
+
+#ifndef NDEBUG
+		bool m_executionInProgress;
+#endif
 };
 
 }
