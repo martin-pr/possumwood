@@ -50,13 +50,18 @@ void to_json(json& j, const ::dependency_graph::Graph& g, const Selection& selec
 
 	j["connections"] = "[]"_json;
 	for(auto& c : g.connections()) {
-		j["connections"].push_back("{}"_json);
+		auto itOut = nodeIds.find(&c.first.node());
+		auto itIn = nodeIds.find(&c.second.node());
+		if(itOut != nodeIds.end() && itIn != nodeIds.end()) {
+			j["connections"].push_back("{}"_json);
 
-		auto& connection = j["connections"].back();
-		connection["out_node"] = nodeIds[&c.first.node()];
-		connection["out_port"] = c.first.name();
-		connection["in_node"] = nodeIds[&c.second.node()];
-		connection["in_port"] = c.second.name();
+			auto& connection = j["connections"].back();
+
+			connection["out_node"] = itOut->second;
+			connection["out_port"] = c.first.name();
+			connection["in_node"] = itIn->second;
+			connection["in_port"] = c.second.name();
+		}
 	}
 }
 

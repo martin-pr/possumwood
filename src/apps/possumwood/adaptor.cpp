@@ -157,7 +157,9 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_cut->setShortcut(QKeySequence::Cut);
 	m_cut->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_cut, &QAction::triggered, [this](bool) {
-		Actions::cut(selection());
+		auto action = Actions::cut(selection());
+
+		possumwood::App::instance().undoStack().execute(action);
 	});
 	addAction(m_cut);
 
@@ -166,7 +168,9 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_paste, &QAction::triggered, [this](bool) {
 		dependency_graph::Selection sel;
-		Actions::paste(sel);
+		auto action = Actions::paste(sel);
+
+		possumwood::App::instance().undoStack().execute(action);
 		setSelection(sel);
 	});
 	addAction(m_paste);

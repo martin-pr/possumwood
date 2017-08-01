@@ -12,9 +12,9 @@ struct Actions {
 	static possumwood::UndoStack::Action connect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 	static possumwood::UndoStack::Action disconnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 
-	static void cut(const dependency_graph::Selection& selection);
+	static possumwood::UndoStack::Action cut(const dependency_graph::Selection& selection);
 	static void copy(const dependency_graph::Selection& selection);
-	static void paste(dependency_graph::Selection& selection);
+	static possumwood::UndoStack::Action paste(dependency_graph::Selection& selection);
 	static possumwood::UndoStack::Action remove(const dependency_graph::Selection& selection);
 
 	static void move(dependency_graph::Node& n, const QPointF& pos);

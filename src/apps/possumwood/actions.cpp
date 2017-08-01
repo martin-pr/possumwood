@@ -114,12 +114,12 @@ possumwood::UndoStack::Action Actions::disconnect(dependency_graph::Port& p1, de
 	return action;
 }
 
-void Actions::cut(const dependency_graph::Selection& selection) {
+possumwood::UndoStack::Action Actions::cut(const dependency_graph::Selection& selection) {
 	// trigger the copy action first
 	copy(selection);
 
 	// and delete selection
-	remove(selection);
+	return remove(selection);
 }
 
 void Actions::copy(const dependency_graph::Selection& selection) {
@@ -134,10 +134,12 @@ void Actions::copy(const dependency_graph::Selection& selection) {
 	QApplication::clipboard()->setText(ss.str().c_str());
 }
 
-void Actions::paste(dependency_graph::Selection& selection) {
+possumwood::UndoStack::Action Actions::paste(dependency_graph::Selection& selection) {
+	possumwood::UndoStack::Action action;
+
 	try {
 		// we will need the Index instance to map between node IDs and their pointers
-		Index& index = dynamic_cast<MainWindow&>(*possumwood::App::instance().mainWindow()).adaptor().index();
+		// Index& index = dynamic_cast<MainWindow&>(*possumwood::App::instance().mainWindow()).adaptor().index();
 
 		// convert the selection to JSON object
 		auto json = dependency_graph::io::json::parse(QApplication::clipboard()->text().toStdString());
@@ -152,9 +154,12 @@ void Actions::paste(dependency_graph::Selection& selection) {
 			possumwood::NodeData d = n.blindData<possumwood::NodeData>();
 			d.setPosition(QPointF(20, 20) + d.position());
 
-			doCreateNode(n.metadata(), n.name(), d, n.datablock());
+			action.addCommand(
+				std::bind(&doCreateNode, std::ref(n.metadata()), n.name(), d, n.datablock()),
+				std::bind(&doRemoveNode, n.blindData<possumwood::NodeData>().id())
+			);
 
-			selection.addNode(*index[n.blindData<possumwood::NodeData>().id()].graphNode);
+			// selection.addNode(*index[n.blindData<possumwood::NodeData>().id()].graphNode);
 		}
 
 		// add all connetions, based on "unique" IDs
@@ -162,21 +167,28 @@ void Actions::paste(dependency_graph::Selection& selection) {
 			possumwood::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
 			possumwood::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
 
-			doConnect(id1, c.first.index(), id2, c.second.index());
+			action.addCommand(
+				std::bind(&doConnect, id1, c.first.index(), id2, c.second.index()),
+				std::bind(&doDisconnect, id1, c.first.index(), id2, c.second.index())
+			);
 
-			dependency_graph::Node& n1 = *index[id1].graphNode;
-			dependency_graph::Node& n2 = *index[id2].graphNode;
+			// dependency_graph::Node& n1 = *index[id1].graphNode;
+			// dependency_graph::Node& n2 = *index[id2].graphNode;
 
-			dependency_graph::Port& p1 = n1.port(c.first.index());
-			dependency_graph::Port& p2 = n2.port(c.second.index());
+			// dependency_graph::Port& p1 = n1.port(c.first.index());
+			// dependency_graph::Port& p2 = n2.port(c.second.index());
 
-			selection.addConnection(p1, p2);
+			// selection.addConnection(p1, p2);
+
+			std::cout << "add connection" << std::endl;
 		}
 	}
 	catch(std::exception& e) {
 		// do nothing
 		// std::cout << e.what() << std::endl;
 	}
+
+	return action;
 }
 
 possumwood::UndoStack::Action Actions::remove(const dependency_graph::Selection& _selection) {

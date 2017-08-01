@@ -21,30 +21,32 @@ void UndoStack::Action::merge(const Action& a) {
 }
 
 void UndoStack::execute(const Action& action) {
-	assert(!action.m_undo.empty() && action.m_undo.size() == action.m_redo.size());
+	if(!action.m_undo.empty()) {
+		assert(action.m_undo.size() == action.m_redo.size());
 
-	// first, execute all commands in the undo part of the new action
-	for(std::size_t counter = 0; counter < action.m_redo.size(); ++counter) {
-		try {
-			// just run the command
-			action.m_redo[counter]();
-		}
-		catch(...) {
-			// an exception was caught during the last command - undo all previous commands
-			while(counter > 0) {
-				--counter;
-
-				action.m_undo[counter]();
+		// first, execute all commands in the undo part of the new action
+		for(std::size_t counter = 0; counter < action.m_redo.size(); ++counter) {
+			try {
+				// just run the command
+				action.m_redo[counter]();
 			}
+			catch(...) {
+				// an exception was caught during the last command - undo all previous commands
+				while(counter > 0) {
+					--counter;
 
-			// and rethrow the exception
-			throw;
+					action.m_undo[counter]();
+				}
+
+				// and rethrow the exception
+				throw;
+			}
 		}
-	}
 
-	// if no exception was thrown during the execution, add this command to the undo stack
-	m_undoStack.push_back(action);
-	m_redoStack.clear();
+		// if no exception was thrown during the execution, add this command to the undo stack
+		m_undoStack.push_back(action);
+		m_redoStack.clear();
+	}
 }
 
 void UndoStack::undo() {
