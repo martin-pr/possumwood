@@ -55,6 +55,11 @@ void doDisconnect(const possumwood::UniqueId& fromNode, std::size_t fromPort, co
 	from.port(fromPort).disconnect(to.port(toPort));
 }
 
+void doSetBlindData(const possumwood::UniqueId& node, const possumwood::NodeData& blindData) {
+	dependency_graph::Node& n = findNode(node);
+	n.setBlindData(blindData);
+}
+
 } // anonymous namespace
 
 /////////////////////////////////////////////////////////////////////
@@ -261,7 +266,18 @@ void Actions::paste(dependency_graph::Selection& selection) {
 }
 
 void Actions::move(dependency_graph::Node& n, const QPointF& pos) {
-	possumwood::NodeData data = n.blindData<possumwood::NodeData>();
-	data.setPosition(pos);
-	n.setBlindData(data);
+	const possumwood::NodeData originalData = n.blindData<possumwood::NodeData>();
+
+	if(originalData.position() != pos) {
+		possumwood::NodeData data = originalData;
+		data.setPosition(pos);
+
+		possumwood::UndoStack::Action action;
+		action.addCommand(
+			std::bind(&doSetBlindData, data.id(), data),
+			std::bind(&doSetBlindData, data.id(), n.blindData<possumwood::NodeData>())
+		);
+
+		possumwood::App::instance().undoStack().execute(action);
+	}
 }
