@@ -17,5 +17,5 @@ struct Actions {
 	static void paste(dependency_graph::Selection& selection);
 	static void remove(const dependency_graph::Selection& selection);
 
-	static void move(dependency_graph::Node& n, const QPointF& pos);
+	static void move(const std::map<dependency_graph::Node*, QPointF>& nodes);
 };

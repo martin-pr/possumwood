@@ -23,6 +23,8 @@ void UndoStack::Action::append(const Action& a) {
 		m_redo.push_back(c);
 }
 
+//////////////////////////
+
 UndoStack::UndoStack()
 #ifndef NDEBUG
 : m_executionInProgress(false)

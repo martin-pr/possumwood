@@ -86,7 +86,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
 
 	// connect the selection signal
-	m_adaptor->scene().setNodeSelectionCallback(
+	m_adaptor->scene().setSelectionCallback(
 	[&](const node_editor::GraphScene::Selection & selection) {
 		m_properties->show(m_adaptor->selection());
 	}

@@ -104,10 +104,15 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		}
 	});
 
-	m_graphWidget->scene().setNodeMoveCallback([&](node_editor::Node& node) {
-		auto& n = m_index[&node];
+	m_graphWidget->scene().setNodesMoveCallback([&](const std::set<node_editor::Node*>& nodes) {
+		std::map<dependency_graph::Node*, QPointF> positions;
+		for(auto& nptr : nodes) {
+			auto& n = m_index[nptr];
 
-		Actions::move(*n.graphNode, n.editorNode->pos());
+			positions[n.graphNode] = n.editorNode->pos();
+		}
+
+		Actions::move(positions);
 	});
 
 	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {

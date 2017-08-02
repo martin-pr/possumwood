@@ -265,19 +265,22 @@ void Actions::paste(dependency_graph::Selection& selection) {
 	}
 }
 
-void Actions::move(dependency_graph::Node& n, const QPointF& pos) {
-	const possumwood::NodeData originalData = n.blindData<possumwood::NodeData>();
+void Actions::move(const std::map<dependency_graph::Node*, QPointF>& nodes) {
+	possumwood::UndoStack::Action action;
 
-	if(originalData.position() != pos) {
-		possumwood::NodeData data = originalData;
-		data.setPosition(pos);
+	for(auto& n : nodes) {
+		const possumwood::NodeData originalData = n.first->blindData<possumwood::NodeData>();
 
-		possumwood::UndoStack::Action action;
-		action.addCommand(
-			std::bind(&doSetBlindData, data.id(), data),
-			std::bind(&doSetBlindData, data.id(), n.blindData<possumwood::NodeData>())
-		);
+		if(originalData.position() != n.second) {
+			possumwood::NodeData data = originalData;
+			data.setPosition(n.second);
 
-		possumwood::App::instance().undoStack().execute(action);
+			action.addCommand(
+				std::bind(&doSetBlindData, data.id(), data),
+				std::bind(&doSetBlindData, data.id(), n.first->blindData<possumwood::NodeData>())
+			);
+		}
 	}
+
+	possumwood::App::instance().undoStack().execute(action);
 }
