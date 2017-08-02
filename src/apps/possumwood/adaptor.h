@@ -34,9 +34,6 @@ class Adaptor : public QWidget {
 
 		node_editor::GraphWidget* graphWidget();
 
-		/// deletes all selected items in the associated graph
-		void deleteSelected();
-
 		/// returns current selection
 		dependency_graph::Selection selection() const;
 		void setSelection(const dependency_graph::Selection& selection);
@@ -48,6 +45,9 @@ class Adaptor : public QWidget {
 		QAction* copyAction() const;
 		QAction* pasteAction() const;
 		QAction* deleteAction() const;
+
+		QAction* undoAction() const;
+		QAction* redoAction() const;
 
 		/// calls all existing Drawables
 		void draw();
@@ -73,11 +73,7 @@ class Adaptor : public QWidget {
 
 		std::vector<boost::signals2::connection> m_signals;
 
-		boost::bimap<dependency_graph::Node*, node_editor::Node*> m_nodes;
-
-		std::map<dependency_graph::Node*, std::unique_ptr<possumwood::Drawable>> m_drawables;
-
 		QSize m_sizeHint;
 
-		QAction *m_copy, *m_paste, *m_cut, *m_delete;
+		QAction *m_copy, *m_paste, *m_cut, *m_delete, *m_undo, *m_redo;
 };

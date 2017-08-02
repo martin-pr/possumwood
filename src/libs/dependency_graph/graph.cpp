@@ -80,9 +80,14 @@ Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
 
 }
 
-Node& Graph::Nodes::add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData) {
+Node& Graph::Nodes::add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData, boost::optional<const dependency_graph::Datablock&> datablock) {
 	m_nodes.push_back(m_parent->makeNode(name, &type));
 	m_nodes.back()->m_blindData = std::move(blindData);
+
+	if(datablock) {
+		assert(&datablock->meta() == &m_nodes.back()->metadata());
+		m_nodes.back()->m_data = *datablock;
+	}
 
 	m_parent->m_onAddNode(*m_nodes.back());
 	m_parent->m_onDirty();

@@ -52,6 +52,14 @@ std::string Data<T>::type() const {
 }
 
 template<typename T>
+std::unique_ptr<BaseData> Data<T>::clone() const {
+	std::unique_ptr<BaseData> result = create(type());
+	result->assign(*this);
+
+	return result;
+}
+
+template<typename T>
 BaseData::Factory<T>::Factory() {
 	factories().insert(std::make_pair(unmangledTypeId<T>(), []() -> std::unique_ptr<BaseData> {
 		return std::unique_ptr<BaseData>(new Data<T>());

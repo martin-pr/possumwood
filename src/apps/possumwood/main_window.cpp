@@ -15,6 +15,8 @@
 
 #include <dependency_graph/values.inl>
 
+#include <qt_node_editor/connected_edge.h>
+
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/node_data.h>
@@ -22,6 +24,7 @@
 
 #include "adaptor.h"
 #include "config_dialog.h"
+#include "actions.h"
 
 namespace {
 
@@ -85,9 +88,23 @@ MainWindow::MainWindow() : QMainWindow() {
 	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
 
 	// connect the selection signal
-	m_adaptor->scene().setNodeSelectionCallback(
+	m_adaptor->scene().setSelectionCallback(
 	[&](const node_editor::GraphScene::Selection & selection) {
-		m_properties->show(m_adaptor->selection());
+		dependency_graph::Selection out;
+
+		auto& index = possumwood::App::instance().index();
+
+		for(auto& n : selection.nodes)
+			out.addNode(*index[n].graphNode);
+
+		for(auto& c : selection.connections) {
+			out.addConnection(
+				index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
+				index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index())
+			);
+		}
+
+		m_properties->show(out);
 	}
 	);
 
@@ -118,7 +135,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				const std::string name = pieces.back();
 				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
 					QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(contextMenu->pos()));
-					possumwood::App::instance().graph().nodes().add(m, name, possumwood::NodeData{pos});
+					Actions::createNode(m, name, pos);
 				}, m_adaptor));
 			}
 		}
@@ -131,6 +148,13 @@ MainWindow::MainWindow() : QMainWindow() {
 		contextMenu->addAction(m_adaptor->cutAction());
 		contextMenu->addAction(m_adaptor->pasteAction());
 		contextMenu->addAction(m_adaptor->deleteAction());
+
+		QAction* separator2 = new QAction(m_adaptor);
+		separator2->setSeparator(true);
+		contextMenu->addAction(separator2);
+
+		contextMenu->addAction(m_adaptor->undoAction());
+		contextMenu->addAction(m_adaptor->redoAction());
 	}
 
 	// drawing callback
@@ -260,6 +284,11 @@ MainWindow::MainWindow() : QMainWindow() {
 	{
 		QMenu* editMenu = menuBar()->addMenu("&Edit");
 
+		editMenu->addAction(m_adaptor->undoAction());
+		editMenu->addAction(m_adaptor->redoAction());
+
+		editMenu->addSeparator();
+
 		editMenu->addAction(m_adaptor->copyAction());
 		editMenu->addAction(m_adaptor->cutAction());
 		editMenu->addAction(m_adaptor->pasteAction());
@@ -319,4 +348,9 @@ void MainWindow::draw(float dt) {
 	// draw everything else
 	glEnable(GL_LIGHTING);
 	m_adaptor->draw();
+}
+
+Adaptor& MainWindow::adaptor() {
+	assert(m_adaptor != nullptr);
+	return *m_adaptor;
 }

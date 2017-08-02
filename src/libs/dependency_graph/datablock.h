@@ -18,6 +18,9 @@ class Datablock {
 	public:
 		Datablock(const Metadata& meta);
 
+		Datablock(const Datablock& d);
+		Datablock& operator = (const Datablock& d);
+
 		template<typename T>
 		const T& get(size_t index) const;
 
@@ -28,6 +31,8 @@ class Datablock {
 
 		const BaseData& data(size_t index) const;
 		BaseData& data(size_t index);
+
+		const Metadata& meta() const;
 
 	private:
 		std::vector<std::unique_ptr<BaseData>> m_data;

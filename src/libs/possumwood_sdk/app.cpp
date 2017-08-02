@@ -62,6 +62,7 @@ void App::loadFile(const boost::filesystem::path& filename) {
 	in >> json;
 
 	// read the graph
+	m_graph.clear();
 	dependency_graph::io::adl_serializer<dependency_graph::Graph>::from_json(json, m_graph);
 
 	// and read the scene config
@@ -150,6 +151,14 @@ boost::signals2::connection App::onTimeChanged(std::function<void(float)> fn) {
 
 Config& App::sceneConfig() {
 	return m_sceneConfig;
+}
+
+UndoStack& App::undoStack() {
+	return m_undoStack;
+}
+
+Index& App::index() {
+	return m_index;
 }
 
 }

@@ -46,10 +46,10 @@ class Graph : public boost::noncopyable {
 				iterator begin();
 				iterator end();
 
-				Node& add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>());
+				Node& add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>(), boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
 
 				template<typename T>
-				Node& add(const Metadata& type, const std::string& name, const T& blindData);
+				Node& add(const Metadata& type, const std::string& name, const T& blindData, boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
 
 				iterator erase(iterator i);
 				void clear();
@@ -178,11 +178,16 @@ class Graph : public boost::noncopyable {
 /////////
 
 template<typename T>
-Node& Graph::Nodes::add(const Metadata& type, const std::string& name, const T& blindData) {
+Node& Graph::Nodes::add(const Metadata& type, const std::string& name, const T& blindData, boost::optional<const dependency_graph::Datablock&> datablock) {
 	m_nodes.push_back(m_parent->makeNode(name, &type));
 
 	m_nodes.back()->m_blindData = std::unique_ptr<BaseData>(
 		new Data<T>{blindData});
+
+	if(datablock) {
+		assert(&datablock->meta() == &m_nodes.back()->metadata());
+		m_nodes.back()->m_data = *datablock;
+	}
 
 	m_parent->m_onAddNode(*m_nodes.back());
 	m_parent->m_onDirty();

@@ -109,10 +109,9 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant& value) {
 		for(auto& p : m_ports)
 			p->adjustEdges();
 
-		// and send a signal that the position has changed
+		// and register that the node position has changed
 		GraphScene* sc = dynamic_cast<GraphScene*>(scene());
-		if(sc && sc->m_nodeMoveCallback)
-			sc->m_nodeMoveCallback(*this);
+		sc->registerNodeMove(this);
 	}
 
 	return value;

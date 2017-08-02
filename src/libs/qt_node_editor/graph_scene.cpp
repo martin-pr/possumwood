@@ -12,7 +12,7 @@
 
 namespace node_editor {
 
-GraphScene::GraphScene(QGraphicsView* parent) : QGraphicsScene(parent) {
+GraphScene::GraphScene(QGraphicsView* parent) : QGraphicsScene(parent), m_leftMouseDown(false) {
 	m_editedEdge = new Edge(QPointF(0, 0), QPointF(0, 0));
 	m_editedEdge->setVisible(false);
 	addItem(m_editedEdge);
@@ -213,6 +213,8 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 		else {
 			m_editedEdge->setVisible(false);
 
+			m_leftMouseDown = true;
+
 			QGraphicsScene::mousePressEvent(mouseEvent);
 		}
 	}
@@ -272,8 +274,18 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 
 		mouseEvent->accept();
 	}
-	else
+	else {
+		if(mouseEvent->button() == Qt::LeftButton) {
+			assert(m_leftMouseDown);
+			m_leftMouseDown = false;
+
+			if(!m_movingNodes.empty() && m_nodesMoveCallback)
+				m_nodesMoveCallback(m_movingNodes);
+			m_movingNodes.clear();
+		}
+
 		QGraphicsScene::mouseReleaseEvent(mouseEvent);
+	}
 }
 
 bool GraphScene::isEdgeEditInProgress() const {
@@ -284,16 +296,16 @@ void GraphScene::setMouseConnectionCallback(std::function<void(Port&, Port&)> fn
 	m_connectionCallback = fn;
 }
 
-void GraphScene::setNodeMoveCallback(std::function<void(Node&)> fn) {
-	m_nodeMoveCallback = fn;
+void GraphScene::setNodesMoveCallback(std::function<void(const std::set<Node*>&)> fn) {
+	m_nodesMoveCallback = fn;
 }
 
-void GraphScene::setNodeSelectionCallback(std::function<void(const Selection& sel)> fn) {
-	m_nodeSelectionCallback = fn;
+void GraphScene::setSelectionCallback(std::function<void(const Selection& sel)> fn) {
+	m_selectionCallback = fn;
 }
 
 void GraphScene::onSelectionChanged() {
-	if(m_nodeSelectionCallback) {
+	if(m_selectionCallback) {
 		Selection selectionSet;
 
 		QList<QGraphicsItem*> selection = selectedItems();
@@ -307,13 +319,17 @@ void GraphScene::onSelectionChanged() {
 				selectionSet.connections.insert(edge);
 		}
 
-		if(m_nodeSelectionCallback)
-			m_nodeSelectionCallback(selectionSet);
+		m_selectionCallback(selectionSet);
 	}
 }
 
 void GraphScene::setNodeInfoCallback(std::function<std::string(const Node&)> fn) {
 	m_nodeInfoCallback = fn;
+}
+
+void GraphScene::registerNodeMove(Node* n) {
+	if(m_leftMouseDown)
+		m_movingNodes.insert(n);
 }
 
 }

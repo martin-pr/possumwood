@@ -44,13 +44,13 @@ class GraphScene : public QGraphicsScene {
 		///   out of the box)
 		void setMouseConnectionCallback(std::function<void(Port&, Port&)> fn);
 
-		void setNodeMoveCallback(std::function<void(Node&)> fn);
-
 		struct Selection {
 			std::set<Node*> nodes;
 			std::set<ConnectedEdge*> connections;
 		};
-		void setNodeSelectionCallback(std::function<void(const Selection&)> fn);
+		void setSelectionCallback(std::function<void(const Selection&)> fn);
+
+		void setNodesMoveCallback(std::function<void(const std::set<Node*>&)> fn);
 
 		void setNodeInfoCallback(std::function<std::string(const Node&)> fn);
 
@@ -79,9 +79,14 @@ class GraphScene : public QGraphicsScene {
 		QGraphicsRectItem* m_infoRect;
 
 		std::function<void(Port&, Port&)> m_connectionCallback;
-		std::function<void(Node&)> m_nodeMoveCallback;
-		std::function<void(const Selection&)> m_nodeSelectionCallback;
+		std::function<void(const std::set<Node*>&)> m_nodesMoveCallback;
+		std::function<void(const Selection&)> m_selectionCallback;
 		std::function<std::string(const Node&)> m_nodeInfoCallback;
+
+		void registerNodeMove(Node*);
+
+		bool m_leftMouseDown;
+		std::set<Node*> m_movingNodes;
 
 		friend class Edge;
 		friend class Node;
