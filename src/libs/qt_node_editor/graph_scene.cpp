@@ -319,8 +319,7 @@ void GraphScene::onSelectionChanged() {
 				selectionSet.connections.insert(edge);
 		}
 
-		if(m_selectionCallback)
-			m_selectionCallback(selectionSet);
+		m_selectionCallback(selectionSet);
 	}
 }
 

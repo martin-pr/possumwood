@@ -15,6 +15,8 @@
 
 #include <dependency_graph/values.inl>
 
+#include <qt_node_editor/connected_edge.h>
+
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/node_data.h>
@@ -88,7 +90,21 @@ MainWindow::MainWindow() : QMainWindow() {
 	// connect the selection signal
 	m_adaptor->scene().setSelectionCallback(
 	[&](const node_editor::GraphScene::Selection & selection) {
-		m_properties->show(m_adaptor->selection());
+		dependency_graph::Selection out;
+
+		auto& index = possumwood::App::instance().index();
+
+		for(auto& n : selection.nodes)
+			out.addNode(*index[n].graphNode);
+
+		for(auto& c : selection.connections) {
+			out.addConnection(
+				index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
+				index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index())
+			);
+		}
+
+		m_properties->show(out);
 	}
 	);
 
