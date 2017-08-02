@@ -5,9 +5,14 @@
 
 #include <QWidget>
 
-#include "factory.inl"
 #include <dependency_graph/node.inl>
 #include <dependency_graph/port.inl>
+
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/unique_id.h>
+
+#include "factory.inl"
+
 
 namespace possumwood { namespace properties {
 
@@ -64,15 +69,28 @@ class property : public property_base {
 		virtual void set(const T& value) = 0;
 
 	private:
+		static void doSetValue(const possumwood::UniqueId& id, unsigned portId, const T& value) {
+			auto& node = App::instance().index()[id];
+			node.graphNode->port(portId).set(value);
+		}
+
 		virtual void valueToPort(dependency_graph::Port& port) const override {
 			// transfer the templated value
 			if((flags() & kInput) && !(flags() & kDisabled)) {
 				// get the current value
-				T value = port.get<T>();
+				const T original = port.get<T>();
+				T value = original;
 				// allow the UI to change it (or a part of it)
 				get(value);
-				// and transfer it back to port
-				port.set(value);
+
+				// and transfer it back to port, via an undoable action
+				UndoStack::Action action;
+				action.addCommand(
+					std::bind(&doSetValue, port.node().blindData<NodeData>().id(), port.index(), value),
+					std::bind(&doSetValue, port.node().blindData<NodeData>().id(), port.index(), original)
+				);
+
+				App::instance().undoStack().execute(action);
 			}
 		}
 
