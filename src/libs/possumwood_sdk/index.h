@@ -8,6 +8,8 @@
 #include <dependency_graph/node.h>
 #include <qt_node_editor/node.h>
 
+namespace possumwood {
+
 /// an indexing structure, allowing to seamlessly switch between the UI classes,
 /// and connected data model classes. Data model uses UniqueId instances for
 /// indexing, while UI classes just use simple raw pointers to Qt elements.
@@ -46,3 +48,5 @@ class Index {
 
 		std::map<node_editor::Node*, possumwood::UniqueId> m_uiIndex;
 };
+
+}

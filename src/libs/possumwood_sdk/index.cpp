@@ -1,5 +1,9 @@
 #include "index.h"
 
+#include <dependency_graph/node.inl>
+
+namespace possumwood {
+
 void Index::add(Item&& item) {
 	const possumwood::UniqueId id = item.graphNode->blindData<possumwood::NodeData>().id();
 
@@ -57,4 +61,6 @@ Index::const_iterator Index::begin() const {
 
 Index::const_iterator Index::end() const {
 	return m_data.end();
+}
+
 }

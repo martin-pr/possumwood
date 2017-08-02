@@ -17,7 +17,7 @@ namespace {
 
 dependency_graph::Node& findNode(const possumwood::UniqueId& id) {
 	// we will need the Index instance to map between node IDs and their pointers
-	Index& index = dynamic_cast<MainWindow&>(*possumwood::App::instance().mainWindow()).adaptor().index();
+	possumwood::Index& index = possumwood::App::instance().index();
 
 	// and get the node reference
 	return *index[id].graphNode;
@@ -245,7 +245,7 @@ void Actions::paste(dependency_graph::Selection& selection) {
 	// and make the selection based on added nodes
 	{
 		// we will need the Index instance to map between node IDs and their pointers
-		Index& index = dynamic_cast<MainWindow&>(*possumwood::App::instance().mainWindow()).adaptor().index();
+		possumwood::Index& index = possumwood::App::instance().index();
 
 		for(auto& n : graph.nodes())
 			selection.addNode(*index[n.blindData<possumwood::NodeData>().id()].graphNode);

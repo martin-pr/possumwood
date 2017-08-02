@@ -8,6 +8,7 @@
 
 #include "config.h"
 #include "undo_stack.h"
+#include "index.h"
 
 class QMainWindow;
 
@@ -42,6 +43,8 @@ class App : public boost::noncopyable {
 
 		UndoStack& undoStack();
 
+		Index& index();
+
 	protected:
 	private:
 		static App* s_instance;
@@ -57,6 +60,10 @@ class App : public boost::noncopyable {
 		Config m_sceneConfig;
 
 		UndoStack m_undoStack;
+
+		/// Allows mapping back and forward between UI classes, and underlying data model.
+		/// Also stores the Drawable class instances (to be replaced with a scene graph, eventually).
+		Index m_index;
 };
 
 }

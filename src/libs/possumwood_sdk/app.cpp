@@ -157,4 +157,8 @@ UndoStack& App::undoStack() {
 	return m_undoStack;
 }
 
+Index& App::index() {
+	return m_index;
+}
+
 }
