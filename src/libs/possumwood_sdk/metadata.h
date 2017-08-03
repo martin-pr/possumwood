@@ -16,8 +16,13 @@ class Metadata : public dependency_graph::Metadata {
 		Metadata(const std::string& nodeType);
 		virtual ~Metadata();
 
-		/// compute method of this node
-		void setDrawableFactory(std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> drawableFactory);
+		/// drawable for this node type - sets the drawable to be of the type
+		///   passed as template argument
+		template<typename DRAWABLE>
+		void setDrawable();
+
+		/// drawable for this node type, as a simple functor
+		void setDrawable(std::function<void(const dependency_graph::Values&)> fn);
 
 		/// creates a new drawable instance for given value set
 		std::unique_ptr<Drawable> createDrawable(dependency_graph::Values&& values) const;
