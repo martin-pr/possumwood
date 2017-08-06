@@ -1,6 +1,7 @@
 #include "graph.h"
 
 #include "node.h"
+#include "io.h"
 
 namespace dependency_graph { namespace io {
 
@@ -81,7 +82,7 @@ void from_json(const json& j, Graph& g) {
 		if(!n["blind_data"].is_null()) {
 			blindData = BaseData::create(n["blind_data"]["type"].get<std::string>());
 			assert(blindData != nullptr);
-			blindData->fromJson(n["blind_data"]["value"]);
+			io::fromJson(n["blind_data"]["value"], *blindData);
 		}
 
 		Node& node = g.nodes().add(Metadata::instance(n["type"].get<std::string>()), n["name"].get<std::string>(), std::move(blindData));

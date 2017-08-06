@@ -37,16 +37,6 @@ bool Data<T>::isEqual(const BaseData& src) const {
 }
 
 template<typename T>
-void Data<T>::toJson(io::json& j) const {
-	j = value;
-}
-
-template<typename T>
-void Data<T>::fromJson(const io::json& j) {
-	DataTraits<T>::assignValue(value, j.get<T>());
-}
-
-template<typename T>
 std::string Data<T>::type() const {
 	return unmangledTypeId<T>();
 }
