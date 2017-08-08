@@ -34,6 +34,7 @@ struct Traits<DecimaterModule> {
 
 template<>
 struct Traits<std::vector<DecimaterModule>> {
+	static IO<std::vector<DecimaterModule>> io;
 };
 
 }
