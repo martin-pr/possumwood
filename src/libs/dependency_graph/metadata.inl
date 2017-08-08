@@ -2,6 +2,8 @@
 
 #include "metadata.h"
 
+#include "data.inl"
+
 namespace dependency_graph {
 
 template<typename T>
@@ -43,6 +45,31 @@ template<typename T>
 std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(const OutAttr<T>& out) const {
 	assert(out.isValid());
 	return influencedBy(out.offset());
+}
+
+template<typename T>
+void Metadata::setBlindData(const T& value) {
+	// create blind data if they're not present
+	if(m_blindData.get() == NULL)
+		m_blindData = std::unique_ptr<BaseData>(new Data<T>());
+
+	// retype
+	Data<T>& val = dynamic_cast<Data<T>&>(*m_blindData);
+
+	// set the value
+	if(val.value != value)
+		val.value = value;
+}
+
+/// blind per-node data, to be used by the client application
+///   to store visual information (e.g., node position, colour...)
+template<typename T>
+const T& Metadata::blindData() const {
+	// retype and return
+	assert(m_blindData != NULL);
+	assert(m_blindData->type() == unmangledTypeId<T>());
+	const Data<T>& val = dynamic_cast<const Data<T>&>(*m_blindData);
+	return val.value;
 }
 
 }
