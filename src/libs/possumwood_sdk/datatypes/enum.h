@@ -6,7 +6,10 @@
 #include <boost/filesystem/path.hpp>
 
 #include <dependency_graph/data_traits.h>
+#include <dependency_graph/io/json.h>
+
 #include "../io.h"
+#include "../traits.h"
 
 namespace possumwood {
 
@@ -30,6 +33,11 @@ class Enum {
 	private:
 		std::string m_value;
 		std::set<std::string> m_options;
+};
+
+template<>
+struct Traits<Enum> {
+	static IO<Enum> io;
 };
 
 }

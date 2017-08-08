@@ -4,6 +4,7 @@
 
 #include "io.h"
 #include "unique_id.h"
+#include "traits.h"
 
 namespace possumwood {
 
@@ -45,6 +46,11 @@ class NodeData {
 	private:
 		QPointF m_position;
 		UniqueId m_id;
+};
+
+template<>
+struct Traits<NodeData> {
+	static IO<NodeData> io;
 };
 
 }

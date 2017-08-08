@@ -41,4 +41,20 @@ void Enum::toJson(::dependency_graph::io::json& json) const {
 	json = value();
 }
 
+///////
+
+namespace {
+
+void toJson(::dependency_graph::io::json& json, const Enum& value) {
+	json = value.value();
+}
+
+void fromJson(const ::dependency_graph::io::json& json, Enum& value) {
+	value.setValue(json.get<std::string>());
+}
+
+}
+
+IO<Enum> Traits<Enum>::io(&toJson, &fromJson);
+
 }

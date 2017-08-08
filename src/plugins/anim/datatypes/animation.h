@@ -5,7 +5,7 @@
 #include "skeleton.h"
 
 namespace anim {
-	
+
 /// a placeholder structure for storing keyframed animation (until a proper one is implemented)
 struct Animation {
 	Skeleton base;
@@ -13,4 +13,13 @@ struct Animation {
 	float fps;
 };
 
+}
+
+namespace possumwood {
+
+template<>
+struct Traits<std::shared_ptr<const anim::Animation>> {
+	static IO<std::shared_ptr<const anim::Animation>> io;
 };
+
+}
