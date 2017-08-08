@@ -30,4 +30,8 @@ void toJson(json& j, const BaseData& data) {
 		assert(false);
 }
 
+bool isSaveable(const BaseData& data) {
+	return true;
+}
+
 } }

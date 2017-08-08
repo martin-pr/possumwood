@@ -82,6 +82,7 @@ void from_json(const json& j, Graph& g) {
 		if(!n["blind_data"].is_null()) {
 			blindData = BaseData::create(n["blind_data"]["type"].get<std::string>());
 			assert(blindData != nullptr);
+			assert(io::isSaveable(*blindData));
 			io::fromJson(n["blind_data"]["value"], *blindData);
 		}
 

@@ -61,4 +61,8 @@ void toJson(json& j, const BaseData& data) {
 	it->second(j, data);
 }
 
+bool isSaveable(const BaseData& data) {
+	return s_toFn().find(data.type()) != s_toFn().end();
+}
+
 } }

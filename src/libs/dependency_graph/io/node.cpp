@@ -14,12 +14,14 @@ void adl_serializer<Node>::to_json(json& j, const ::dependency_graph::Node& g) {
 
 		// only serialize unconnected inputs
 		if(p.category() == Attr::kInput && !g.graph().connections().connectedFrom(p))
-			io::toJson(j["ports"][p.name()], g.m_data.data(pi));
+			if(io::isSaveable(g.m_data.data(pi)))
+				io::toJson(j["ports"][p.name()], g.m_data.data(pi));
 	}
 
 	if(g.m_blindData == nullptr)
 		j["blind_data"] = nullptr;
 	else {
+		assert(io::isSaveable(*g.m_blindData));
 		io::toJson(j["blind_data"]["value"], *g.m_blindData);
 		j["blind_data"]["type"] = g.m_blindData->type();
 	}
@@ -34,6 +36,7 @@ void adl_serializer<Node>::from_json(const json& j, ::dependency_graph::Node& n)
 					if(n.port(a).name() == p.key())
 						pi = a;
 				if(pi >= 0) {
+					assert(io::isSaveable(n.m_data.data(pi)));
 					io::fromJson(p.value(), n.m_data.data(pi));
 					n.markAsDirty(pi);
 				}

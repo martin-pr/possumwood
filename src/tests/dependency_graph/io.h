@@ -6,5 +6,6 @@ namespace dependency_graph { namespace io {
 
 void fromJson(const json& j, BaseData& data);
 void toJson(json& j, const BaseData& data);
+bool isSaveable(const BaseData& data);
 
 } }
