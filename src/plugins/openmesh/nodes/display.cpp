@@ -8,7 +8,6 @@
 
 #include <GL/glut.h>
 
-#include "io/mesh.h"
 #include "openmesh.h"
 #include "om_log.h"
 

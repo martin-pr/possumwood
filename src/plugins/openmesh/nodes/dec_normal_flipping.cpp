@@ -11,9 +11,6 @@
 
 #include "datatypes/decimater_module.h"
 
-#include "io/decimater_module.h"
-#include "io/mesh.h"
-
 #include "openmesh.h"
 #include "om_log.h"
 

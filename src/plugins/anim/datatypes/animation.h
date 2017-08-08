@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include <possumwood_sdk/traits.h>
+
 #include "skeleton.h"
 
 namespace anim {
@@ -19,7 +21,6 @@ namespace possumwood {
 
 template<>
 struct Traits<std::shared_ptr<const anim::Animation>> {
-	static IO<std::shared_ptr<const anim::Animation>> io;
 };
 
 }

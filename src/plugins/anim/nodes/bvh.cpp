@@ -16,7 +16,6 @@
 #include <ImathMatrixAlgo.h>
 
 #include "datatypes/animation.h"
-#include "io/animation.h"
 #include "tokenizer.h"
 
 namespace {

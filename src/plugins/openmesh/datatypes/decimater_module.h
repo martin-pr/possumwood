@@ -30,12 +30,10 @@ namespace possumwood {
 
 template<>
 struct Traits<DecimaterModule> {
-	static IO<DecimaterModule> io;
 };
 
 template<>
 struct Traits<std::vector<DecimaterModule>> {
-	static IO<std::vector<DecimaterModule>> io;
 };
 
 }

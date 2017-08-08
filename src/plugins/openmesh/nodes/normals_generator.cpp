@@ -8,7 +8,6 @@
 
 #include "possumwood_sdk/datatypes/enum.h"
 
-#include "io/mesh.h"
 #include "openmesh.h"
 #include "om_log.h"
 

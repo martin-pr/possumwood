@@ -33,16 +33,6 @@ class NodeData {
 			return m_position != d.m_position || m_id != d.m_id;
 		}
 
-		void fromJson(const dependency_graph::io::json& json) {
-			m_position.setX(json["x"].get<float>());
-			m_position.setY(json["y"].get<float>());
-		}
-
-		void toJson(dependency_graph::io::json& json) const {
-			json["x"] = m_position.x();
-			json["y"] = m_position.y();
-		}
-
 	private:
 		QPointF m_position;
 		UniqueId m_id;

@@ -10,7 +10,8 @@
 
 #include <GL/glut.h>
 
-#include "io/animation.h"
+#include "datatypes/skeleton.h"
+#include "datatypes/animation.h"
 
 namespace {
 
