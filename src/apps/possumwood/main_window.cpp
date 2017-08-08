@@ -17,7 +17,7 @@
 
 #include <qt_node_editor/connected_edge.h>
 
-#include <possumwood_sdk/metadata.h>
+#include <possumwood_sdk/metadata.inl>
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/app.h>
@@ -120,7 +120,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		{
 			std::map<std::string, QMenu*> groups;
 
-			for(auto& m : possumwood::Metadata::instances()) {
+			for(auto& m : dependency_graph::Metadata::instances()) {
 				std::vector<std::string> pieces;
 				boost::split(pieces, m.type(), boost::algorithm::is_any_of("/"));
 

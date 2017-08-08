@@ -2,7 +2,8 @@
 
 namespace possumwood {
 
-Metadata::Metadata(const std::string& nodeType) : dependency_graph::Metadata(nodeType) {
+Metadata::Metadata(const std::string& nodeType) : m_meta(nodeType) {
+	m_meta.setBlindData<Metadata*>(this);
 }
 
 Metadata::~Metadata() {
@@ -20,6 +21,10 @@ std::unique_ptr<Drawable> Metadata::createDrawable(dependency_graph::Values&& va
 		return m_drawableFactory(std::move(values));
 
 	return std::unique_ptr<Drawable>();
+}
+
+void Metadata::setCompute(std::function<dependency_graph::State(dependency_graph::Values&)> compute) {
+	m_meta.setCompute(compute);
 }
 
 }

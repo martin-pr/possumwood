@@ -229,8 +229,8 @@ void Adaptor::onAddNode(dependency_graph::Node& node) {
 	}
 
 	// create a drawable (if factory returns anything)
-	const possumwood::Metadata& meta = dynamic_cast<const possumwood::Metadata&>(node.metadata());
-	std::unique_ptr<possumwood::Drawable> drawable = meta.createDrawable(dependency_graph::Values(node));
+	const possumwood::Metadata* meta = node.metadata().blindData<possumwood::Metadata*>();
+	std::unique_ptr<possumwood::Drawable> drawable = meta->createDrawable(dependency_graph::Values(node));
 
 	// and register the node in the internal index
 	getIndex().add(possumwood::Index::Item{
