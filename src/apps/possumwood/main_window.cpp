@@ -88,24 +88,24 @@ MainWindow::MainWindow() : QMainWindow() {
 	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
 
 	// connect the selection signal
-	m_adaptor->scene().setSelectionCallback(
-	[&](const node_editor::GraphScene::Selection & selection) {
-		dependency_graph::Selection out;
+	connect(&m_adaptor->scene(), &node_editor::GraphScene::selectionChanged,
+		[&](const node_editor::GraphScene::Selection & selection) {
+			dependency_graph::Selection out;
 
-		auto& index = possumwood::App::instance().index();
+			auto& index = possumwood::App::instance().index();
 
-		for(auto& n : selection.nodes)
-			out.addNode(*index[n].graphNode);
+			for(auto& n : selection.nodes)
+				out.addNode(*index[n].graphNode);
 
-		for(auto& c : selection.connections) {
-			out.addConnection(
-				index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
-				index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index())
-			);
+			for(auto& c : selection.connections) {
+				out.addConnection(
+					index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
+					index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index())
+				);
+			}
+
+			m_properties->show(out);
 		}
-
-		m_properties->show(out);
-	}
 	);
 
 	// create the context click menu

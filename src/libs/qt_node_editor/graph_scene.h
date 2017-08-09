@@ -48,11 +48,13 @@ class GraphScene : public QGraphicsScene {
 			std::set<Node*> nodes;
 			std::set<ConnectedEdge*> connections;
 		};
-		void setSelectionCallback(std::function<void(const Selection&)> fn);
 
 		void setNodesMoveCallback(std::function<void(const std::set<Node*>&)> fn);
 
 		void setNodeInfoCallback(std::function<std::string(const Node&)> fn);
+
+	signals:
+		void selectionChanged(const Selection&);
 
 	protected:
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
@@ -80,7 +82,6 @@ class GraphScene : public QGraphicsScene {
 
 		std::function<void(Port&, Port&)> m_connectionCallback;
 		std::function<void(const std::set<Node*>&)> m_nodesMoveCallback;
-		std::function<void(const Selection&)> m_selectionCallback;
 		std::function<std::string(const Node&)> m_nodeInfoCallback;
 
 		void registerNodeMove(Node*);
