@@ -10,6 +10,7 @@
 #include <dependency_graph/metadata.inl>
 
 #include "drawable.h"
+#include "editor.h"
 
 namespace possumwood {
 
@@ -41,6 +42,7 @@ class Metadata : public boost::noncopyable {
 		/// compute method of this node
 		void setCompute(std::function<dependency_graph::State(dependency_graph::Values&)> compute);
 
+
 		/// drawable for this node type - sets the drawable to be of the type
 		///   passed as template argument
 		template<typename DRAWABLE>
@@ -52,6 +54,17 @@ class Metadata : public boost::noncopyable {
 		/// creates a new drawable instance for given value set
 		std::unique_ptr<Drawable> createDrawable(dependency_graph::Values&& values) const;
 
+
+		/// set the type used as editor for this node type
+		template<typename EDITOR>
+		void setEditor();
+
+		/// returns true if this node type has an editor set
+		bool hasEditor() const;
+		/// create an editor for a node instance
+		std::unique_ptr<Editor> createEditor(dependency_graph::Node& node);
+
+
 		/// colour of an attribute, based on its index (derived from Traits instances)
 		const std::array<float, 3>& colour(unsigned attrId) const;
 
@@ -59,6 +72,7 @@ class Metadata : public boost::noncopyable {
 		dependency_graph::Metadata m_meta;
 
 		std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> m_drawableFactory;
+		std::function<std::unique_ptr<Editor>(dependency_graph::Node&)> m_editorFactory;
 
 		std::vector<std::array<float, 3>> m_colours;
 };

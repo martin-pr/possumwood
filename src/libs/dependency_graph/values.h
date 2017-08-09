@@ -12,6 +12,8 @@ class Values : public boost::noncopyable {
 
 		Values(Values&& vals);
 
+		Values& operator =(Values&& vals);
+
 		template<typename T>
 		bool isConnected(const InAttr<T>& attr) const;
 

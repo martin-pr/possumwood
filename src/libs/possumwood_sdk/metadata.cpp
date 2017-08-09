@@ -32,4 +32,14 @@ const std::array<float, 3>& Metadata::colour(unsigned attrId) const {
 	return m_colours[attrId];
 }
 
+bool Metadata::hasEditor() const {
+	return m_editorFactory.operator bool();
+}
+
+std::unique_ptr<Editor> Metadata::createEditor(dependency_graph::Node& node) {
+	assert(hasEditor());
+
+	return m_editorFactory(node);
+}
+
 }
