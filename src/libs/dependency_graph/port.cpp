@@ -135,7 +135,7 @@ void Port::disconnect(Port& p) {
 }
 
 boost::signals2::connection Port::valueCallback(const std::function<void()>& fn) {
-	return m_flagsCallbacks.connect(fn);
+	return m_valueCallbacks.connect(fn);
 }
 
 boost::signals2::connection Port::flagsCallback(const std::function<void()>& fn) {
