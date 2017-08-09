@@ -4,6 +4,7 @@
 #include <QtWidgets/QTreeWidget>
 
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/editor.h>
 
 #include "adaptor.h"
 #include "properties.h"
@@ -30,4 +31,5 @@ class MainWindow : public QMainWindow {
 		Properties* m_properties;
 		Log* m_log;
 		TimelineWidget* m_timeline;
+		std::unique_ptr<possumwood::Editor> m_editor;
 };

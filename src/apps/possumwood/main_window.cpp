@@ -12,6 +12,7 @@
 #include <QDesktopWidget>
 #include <QVBoxLayout>
 #include <QToolBar>
+#include <QLabel>
 
 #include <dependency_graph/values.inl>
 
@@ -70,6 +71,79 @@ MainWindow::MainWindow() : QMainWindow() {
 	geom.setWidth(QApplication::desktop()->screenGeometry().width() / 2 - 200);
 	m_adaptor->setSizeHint(geom);
 
+	QDockWidget* graphDock = new QDockWidget("Graph", this);
+	graphDock->setObjectName("graph");
+	graphDock->setWidget(m_adaptor);
+	graphDock->toggleViewAction()->setIcon(QIcon(":icons/dock_graph.png"));
+	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
+
+	QDockWidget* editorDock = new QDockWidget("Editor", this);
+	editorDock->setObjectName("editor");
+	QLabel* editorWidget = new QLabel("No editable node selected");
+	editorWidget->setAlignment(Qt::AlignCenter);
+	editorWidget->setMinimumHeight(100);
+	editorDock->setWidget(editorWidget);
+	editorDock->toggleViewAction()->setIcon(QIcon(":icons/dock_editor.png"));
+	addDockWidget(Qt::RightDockWidgetArea, editorDock);
+
+	// connect the selection signal
+	connect(&m_adaptor->scene(), &node_editor::GraphScene::selectionChanged,
+		[editorDock, this](const node_editor::GraphScene::Selection & selection) {
+			// convert the selection to the dependency graph selection, to pass to the
+			//   properties dock
+			dependency_graph::Selection out;
+			{
+				auto& index = possumwood::App::instance().index();
+
+				for(auto& n : selection.nodes)
+					out.addNode(*index[n].graphNode);
+
+				for(auto& c : selection.connections) {
+					out.addConnection(
+						index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
+						index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index())
+					);
+				}
+
+				m_properties->show(out);
+			}
+
+			// instantiate the editor
+			{
+				unsigned editorCounter = 0;
+				for(auto& n : out.nodes())
+					if(n.get().metadata().blindData<possumwood::Metadata*>()->hasEditor())
+						++editorCounter;
+
+				if(editorCounter == 0) {
+					QLabel* editorWidget = new QLabel("No editable node selected");
+					editorWidget->setAlignment(Qt::AlignCenter);
+					editorWidget->setMinimumHeight(100);
+					editorDock->setWidget(editorWidget);
+
+					m_editor.reset();
+				}
+				else if(editorCounter > 1) {
+					QLabel* editorWidget = new QLabel("More than one editable node selected");
+					editorWidget->setAlignment(Qt::AlignCenter);
+					editorWidget->setMinimumHeight(100);
+					editorDock->setWidget(editorWidget);
+
+					m_editor.reset();
+				}
+				else {
+					for(auto& n : out.nodes()) {
+						possumwood::Metadata* meta = n.get().metadata().blindData<possumwood::Metadata*>();
+						if(meta->hasEditor()) {
+							m_editor = meta->createEditor(n);
+							editorDock->setWidget(m_editor->widget());
+						}
+					}
+				}
+			}
+		}
+	);
+
 	m_log = new Log();
 	QDockWidget* logDock = new QDockWidget("Log", this);
 	logDock->setObjectName("log");
@@ -80,33 +154,6 @@ MainWindow::MainWindow() : QMainWindow() {
 	connect(m_adaptor, &Adaptor::logged, [this](QIcon icon, const QString & msg) {
 		m_log->addMessage(icon, msg);
 	});
-
-	QDockWidget* graphDock = new QDockWidget("Graph", this);
-	graphDock->setObjectName("graph");
-	graphDock->setWidget(m_adaptor);
-	graphDock->toggleViewAction()->setIcon(QIcon(":icons/dock_graph.png"));
-	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
-
-	// connect the selection signal
-	connect(&m_adaptor->scene(), &node_editor::GraphScene::selectionChanged,
-		[&](const node_editor::GraphScene::Selection & selection) {
-			dependency_graph::Selection out;
-
-			auto& index = possumwood::App::instance().index();
-
-			for(auto& n : selection.nodes)
-				out.addNode(*index[n].graphNode);
-
-			for(auto& c : selection.connections) {
-				out.addConnection(
-					index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
-					index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index())
-				);
-			}
-
-			m_properties->show(out);
-		}
-	);
 
 	// create the context click menu
 	m_adaptor->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -261,6 +308,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	docksToolbar->addAction(graphDock->toggleViewAction());
 	docksToolbar->addAction(propDock->toggleViewAction());
 	docksToolbar->addAction(logDock->toggleViewAction());
+	docksToolbar->addAction(editorDock->toggleViewAction());
 
 	////////////////////
 	// file menu
@@ -304,6 +352,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		viewMenu->addAction(propDock->toggleViewAction());
 		viewMenu->addAction(graphDock->toggleViewAction());
 		viewMenu->addAction(logDock->toggleViewAction());
+		viewMenu->addAction(editorDock->toggleViewAction());
 		viewMenu->addSeparator();
 		viewMenu->addAction(docksToolbar->toggleViewAction());
 	}
