@@ -1,5 +1,6 @@
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/metadata.inl>
 
 #include <dependency_graph/values.inl>
 #include <dependency_graph/attr.inl>
@@ -9,7 +10,8 @@
 
 #include <GL/glut.h>
 
-#include "io/animation.h"
+#include "datatypes/skeleton.h"
+#include "datatypes/animation.h"
 
 namespace {
 
@@ -73,10 +75,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_anim, "anim");
 	meta.addAttribute(a_showBase, "base_skeleton", true);
 
-	meta.setDrawableFactory([](dependency_graph::Values&& vals) {
-		return std::unique_ptr<possumwood::Drawable>(
-			new Drawable(std::move(vals)));
-	});
+	meta.setDrawable<Drawable>();
 }
 
 possumwood::NodeImplementation s_impl("anim/skeleton_display", init);

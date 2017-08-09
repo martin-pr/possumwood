@@ -4,6 +4,8 @@
 
 #include <OpenMesh/Tools/Decimater/DecimaterT.hh>
 
+#include <possumwood_sdk/traits.h>
+
 #include "openmesh.h"
 
 class DecimaterModule {
@@ -23,3 +25,20 @@ class DecimaterModule {
 		DecFn m_fn;
 		std::size_t m_id;
 };
+
+namespace possumwood {
+
+template<>
+struct Traits<DecimaterModule> {
+};
+
+template<>
+struct Traits<std::vector<DecimaterModule>> {
+	static IO<std::vector<DecimaterModule>> io;
+
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{0, 0.5, 0.5}};
+	}
+};
+
+}

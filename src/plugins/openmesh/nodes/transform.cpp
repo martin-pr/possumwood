@@ -10,8 +10,7 @@
 #include <OpenEXR/ImathEuler.h>
 
 #include "3d/io/vec3.h"
-
-#include "io/mesh.h"
+#include "datatypes/mesh.h"
 #include "openmesh.h"
 
 namespace {

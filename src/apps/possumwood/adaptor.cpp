@@ -24,25 +24,6 @@
 
 namespace {
 
-/// creates a unique colour for a datatype
-QColor colour(const std::string& datatype) {
-	static std::map<std::string, QColor> s_colours;
-	auto it = s_colours.find(datatype);
-	if(it != s_colours.end())
-		return it->second;
-
-	const unsigned hash = std::hash<std::string>()(datatype);
-	QColor result(
-		(unsigned char)hash,
-		(unsigned char)(hash >> 8),
-		(unsigned char)(hash >> 16)
-	);
-
-	s_colours.insert(std::make_pair(datatype, result));
-
-	return result;
-}
-
 possumwood::Index& getIndex() {
 	return possumwood::App::instance().index();
 }
@@ -210,6 +191,9 @@ Adaptor::~Adaptor() {
 }
 
 void Adaptor::onAddNode(dependency_graph::Node& node) {
+	// get the possumwood::Metadata pointer from the metadata's blind data
+	const possumwood::Metadata* meta = node.metadata().blindData<possumwood::Metadata*>();
+
 	// get the blind data, containing the node's position
 	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
@@ -221,16 +205,17 @@ void Adaptor::onAddNode(dependency_graph::Node& node) {
 	for(size_t a = 0; a < node.metadata().attributeCount(); ++a) {
 		const dependency_graph::Attr& attr = node.metadata().attr(a);
 
+		const std::array<float, 3> colour = meta->colour(a);
+
 		newNode.addPort(node_editor::Node::PortDefinition {
 			attr.name().c_str(),
 			attr.category() == dependency_graph::Attr::kInput ? node_editor::Port::kInput : node_editor::Port::kOutput,
-			colour(attr.type().name())
+			QColor(colour[0]*255, colour[1]*255, colour[2]*255)
 		});
 	}
 
 	// create a drawable (if factory returns anything)
-	const possumwood::Metadata& meta = dynamic_cast<const possumwood::Metadata&>(node.metadata());
-	std::unique_ptr<possumwood::Drawable> drawable = meta.createDrawable(dependency_graph::Values(node));
+	std::unique_ptr<possumwood::Drawable> drawable = meta->createDrawable(dependency_graph::Values(node));
 
 	// and register the node in the internal index
 	getIndex().add(possumwood::Index::Item{

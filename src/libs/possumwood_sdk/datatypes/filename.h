@@ -6,7 +6,9 @@
 #include <boost/filesystem/path.hpp>
 
 #include <dependency_graph/data_traits.h>
+
 #include "../io.h"
+#include "../traits.h"
 
 namespace possumwood {
 
@@ -24,12 +26,18 @@ class Filename {
 		bool operator == (const Filename& fn) const;
 		bool operator != (const Filename& fn) const;
 
-		void fromJson(const ::dependency_graph::io::json& json);
-		void toJson(::dependency_graph::io::json& json) const;
-
 	private:
 		boost::filesystem::path m_filename;
 		std::set<std::string> m_extensions;
+};
+
+template<>
+struct Traits<Filename> {
+	static IO<Filename> io;
+
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{1, 1, 0.5}};
+	}
 };
 
 }

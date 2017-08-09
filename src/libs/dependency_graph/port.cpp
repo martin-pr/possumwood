@@ -1,6 +1,7 @@
 #include "port.inl"
 
 #include "graph.h"
+#include "io.h"
 
 namespace dependency_graph {
 
@@ -112,7 +113,22 @@ void Port::connect(Port& p) {
 }
 
 void Port::disconnect(Port& p) {
+	// remove the connection
 	p.m_parent->m_parent->connections().remove(*this, p);
+
+	// disconnecting a non-saveable port should reset the data, otherwise
+	//   if the scene is saved, this data will not be in the file
+	if(!io::isSaveable(p.m_parent->m_data.data(p.m_id))) {
+		// set to default (i.e., reset)
+		p.m_parent->m_data.reset(p.m_id);
+
+		// explicitly setting a value makes it not dirty, but makes everything that
+		//   depends on it dirty
+		p.m_parent->markAsDirty(p.m_id);
+		setDirty(false);
+	}
+
+
 	// connect / disconnect - might change UI's appearance
 	m_flagsCallbacks();
 	p.m_flagsCallbacks();

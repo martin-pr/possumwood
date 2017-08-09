@@ -48,13 +48,20 @@ bool Filename::operator != (const Filename& fn) const {
 	return m_filename != fn.m_filename || m_extensions != fn.m_extensions;
 }
 
+/////////////////
 
-void Filename::fromJson(const ::dependency_graph::io::json& json) {
-	setFilename(json.get<std::string>());
+namespace {
+
+void toJson(::dependency_graph::io::json& json, const Filename& value) {
+	json = value.filename(false).string();
 }
 
-void Filename::toJson(::dependency_graph::io::json& json) const {
-	json = filename(false).string();
+void fromJson(const ::dependency_graph::io::json& json, Filename& value) {
+	value.setFilename(json.get<std::string>());
 }
+
+}
+
+IO<Filename> Traits<Filename>::io(&toJson, &fromJson);
 
 }

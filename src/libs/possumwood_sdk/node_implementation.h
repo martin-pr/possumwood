@@ -5,7 +5,7 @@
 
 #include <boost/noncopyable.hpp>
 
-#include "metadata.h"
+#include "metadata.inl"
 
 namespace possumwood {
 

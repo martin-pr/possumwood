@@ -2,14 +2,18 @@
 
 namespace possumwood {
 
-Metadata::Metadata(const std::string& nodeType) : dependency_graph::Metadata(nodeType) {
+Metadata::Metadata(const std::string& nodeType) : m_meta(nodeType) {
+	m_meta.setBlindData<Metadata*>(this);
 }
 
 Metadata::~Metadata() {
 }
 
-void Metadata::setDrawableFactory(std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> drawableFactory) {
-	m_drawableFactory = drawableFactory;
+void Metadata::setDrawable(std::function<void(const dependency_graph::Values&)> fn) {
+	m_drawableFactory = [fn](dependency_graph::Values&& vals) {
+		return std::unique_ptr<possumwood::Drawable>(
+			new possumwood::DrawableFunctor(std::move(vals), fn));
+	};
 }
 
 std::unique_ptr<Drawable> Metadata::createDrawable(dependency_graph::Values&& values) const {
@@ -17,6 +21,15 @@ std::unique_ptr<Drawable> Metadata::createDrawable(dependency_graph::Values&& va
 		return m_drawableFactory(std::move(values));
 
 	return std::unique_ptr<Drawable>();
+}
+
+void Metadata::setCompute(std::function<dependency_graph::State(dependency_graph::Values&)> compute) {
+	m_meta.setCompute(compute);
+}
+
+const std::array<float, 3>& Metadata::colour(unsigned attrId) const {
+	assert(attrId < m_colours.size());
+	return m_colours[attrId];
 }
 
 }
