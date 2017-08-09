@@ -1,6 +1,7 @@
 #pragma once
 
 #include "metadata.h"
+#include "traits.h"
 
 namespace possumwood {
 
@@ -15,11 +16,15 @@ void Metadata::setDrawable() {
 template<typename T>
 void Metadata::addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, const T& defaultValue) {
 	m_meta.addAttribute(in, name, defaultValue);
+
+	m_colours.push_back(Traits<T>::colour());
 }
 
 template<typename T>
 void Metadata::addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue) {
 	m_meta.addAttribute(out, name, defaultValue);
+
+	m_colours.push_back(Traits<T>::colour());
 }
 
 template<typename T, typename U>

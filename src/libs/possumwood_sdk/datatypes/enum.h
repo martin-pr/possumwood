@@ -38,6 +38,10 @@ class Enum {
 template<>
 struct Traits<Enum> {
 	static IO<Enum> io;
+
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{0, 0, 0}};
+	}
 };
 
 }

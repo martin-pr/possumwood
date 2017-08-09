@@ -24,6 +24,10 @@ struct Traits<T, typename std::enable_if< std::is_arithmetic<T>::value >::type> 
 	}
 
 	static IO<T> io;
+
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{0.2*sizeof(T), 0.2*sizeof(T), 0.2*sizeof(T)}};
+	}
 };
 
 template<typename T>

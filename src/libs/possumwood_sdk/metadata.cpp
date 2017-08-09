@@ -27,4 +27,9 @@ void Metadata::setCompute(std::function<dependency_graph::State(dependency_graph
 	m_meta.setCompute(compute);
 }
 
+const std::array<float, 3>& Metadata::colour(unsigned attrId) const {
+	assert(attrId < m_colours.size());
+	return m_colours[attrId];
+}
+
 }

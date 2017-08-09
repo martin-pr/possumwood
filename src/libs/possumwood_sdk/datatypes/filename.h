@@ -34,6 +34,10 @@ class Filename {
 template<>
 struct Traits<Filename> {
 	static IO<Filename> io;
+
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{1, 1, 0.5}};
+	}
 };
 
 }

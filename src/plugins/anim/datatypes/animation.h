@@ -21,6 +21,9 @@ namespace possumwood {
 
 template<>
 struct Traits<std::shared_ptr<const anim::Animation>> {
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{0, 1.0, 0}};
+	}
 };
 
 }

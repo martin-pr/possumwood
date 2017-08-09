@@ -1,6 +1,8 @@
 #pragma once
 
 #include <set>
+#include <vector>
+#include <array>
 
 #include <boost/range/iterator_range.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
@@ -50,10 +52,15 @@ class Metadata : public boost::noncopyable {
 		/// creates a new drawable instance for given value set
 		std::unique_ptr<Drawable> createDrawable(dependency_graph::Values&& values) const;
 
+		/// colour of an attribute, based on its index (derived from Traits instances)
+		const std::array<float, 3>& colour(unsigned attrId) const;
+
 	private:
 		dependency_graph::Metadata m_meta;
 
 		std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> m_drawableFactory;
+
+		std::vector<std::array<float, 3>> m_colours;
 };
 
 }

@@ -7,6 +7,7 @@
 #include <dependency_graph/port.inl>
 #include <dependency_graph/node.inl>
 
+#include "datatypes/mesh.h"
 #include "openmesh.h"
 #include "om_log.h"
 
