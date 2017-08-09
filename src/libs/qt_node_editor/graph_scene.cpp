@@ -276,12 +276,13 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 	}
 	else {
 		if(mouseEvent->button() == Qt::LeftButton) {
-			assert(m_leftMouseDown);
-			m_leftMouseDown = false;
+			if(m_leftMouseDown) {
+				m_leftMouseDown = false;
 
-			if(!m_movingNodes.empty() && m_nodesMoveCallback)
-				m_nodesMoveCallback(m_movingNodes);
-			m_movingNodes.clear();
+				if(!m_movingNodes.empty() && m_nodesMoveCallback)
+					m_nodesMoveCallback(m_movingNodes);
+				m_movingNodes.clear();
+			}
 		}
 
 		QGraphicsScene::mouseReleaseEvent(mouseEvent);
