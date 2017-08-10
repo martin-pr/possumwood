@@ -13,15 +13,17 @@ void Port::set(const T& value) {
 	assert(category() == Attr::kOutput || !m_parent->inputIsConnected(*this));
 
 	// set the value in the data block
+	const bool valueWasSet = m_parent->get<T>(m_id) != value;
 	m_parent->set<T>(m_id, value);
-
-	// call the values callback
-	m_valueCallbacks();
 
 	// explicitly setting a value makes it not dirty, but makes everything that
 	//   depends on it dirty
 	m_parent->markAsDirty(m_id);
 	setDirty(false);
+
+	// call the values callback
+	if(valueWasSet)
+		m_valueCallbacks();
 }
 
 template<typename T>

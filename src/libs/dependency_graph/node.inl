@@ -9,7 +9,7 @@ namespace dependency_graph {
 
 template<typename T>
 const T& Node::get(size_t index) const {
-	assert(!port(index).isDirty() || (port(index).category() == Attr::kInput && !inputIsConnected(port(index))));
+	// assert(!port(index).isDirty() || (port(index).category() == Attr::kInput && !inputIsConnected(port(index))));
 	return m_data.get<T>(index);
 }
 
