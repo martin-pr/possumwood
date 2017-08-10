@@ -276,12 +276,13 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 	}
 	else {
 		if(mouseEvent->button() == Qt::LeftButton) {
-			assert(m_leftMouseDown);
-			m_leftMouseDown = false;
+			if(m_leftMouseDown) {
+				m_leftMouseDown = false;
 
-			if(!m_movingNodes.empty() && m_nodesMoveCallback)
-				m_nodesMoveCallback(m_movingNodes);
-			m_movingNodes.clear();
+				if(!m_movingNodes.empty() && m_nodesMoveCallback)
+					m_nodesMoveCallback(m_movingNodes);
+				m_movingNodes.clear();
+			}
 		}
 
 		QGraphicsScene::mouseReleaseEvent(mouseEvent);
@@ -300,27 +301,21 @@ void GraphScene::setNodesMoveCallback(std::function<void(const std::set<Node*>&)
 	m_nodesMoveCallback = fn;
 }
 
-void GraphScene::setSelectionCallback(std::function<void(const Selection& sel)> fn) {
-	m_selectionCallback = fn;
-}
-
 void GraphScene::onSelectionChanged() {
-	if(m_selectionCallback) {
-		Selection selectionSet;
+	Selection selectionSet;
 
-		QList<QGraphicsItem*> selection = selectedItems();
-		for(auto& i : selection) {
-			Node* node = dynamic_cast<Node*>(i);
-			if(node)
-				selectionSet.nodes.insert(node);
+	QList<QGraphicsItem*> selection = selectedItems();
+	for(auto& i : selection) {
+		Node* node = dynamic_cast<Node*>(i);
+		if(node)
+			selectionSet.nodes.insert(node);
 
-			ConnectedEdge* edge = dynamic_cast<ConnectedEdge*>(i);
-			if(edge)
-				selectionSet.connections.insert(edge);
-		}
-
-		m_selectionCallback(selectionSet);
+		ConnectedEdge* edge = dynamic_cast<ConnectedEdge*>(i);
+		if(edge)
+			selectionSet.connections.insert(edge);
 	}
+
+	selectionChanged(selectionSet);
 }
 
 void GraphScene::setNodeInfoCallback(std::function<std::string(const Node&)> fn) {
