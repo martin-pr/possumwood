@@ -11,7 +11,7 @@
 
 #include <QGraphicsView>
 #include <QGraphicsScene>
-#include <QGraphicsPixmapWidget>
+#include <QGraphicsPixmapItem>
 
 #include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
@@ -41,9 +41,29 @@ float compare(const anim::Skeleton& s1, const anim::Skeleton& s2) {
 
 class Editor : public possumwood::Editor {
 	public:
-		Editor() : m_widget(new QLabel()) {
-			m_widget->setScaledContents(true);
-			m_widget->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
+		Editor() : m_widget(new QGraphicsView()) {
+			QGraphicsScene* scene = new QGraphicsScene();
+			m_widget->setScene(scene);
+
+			m_pixmap = new QGraphicsPixmapItem();
+			scene->addItem(m_pixmap);
+
+			m_lineX = new QGraphicsLineItem();
+			scene->addItem(m_lineX);
+			m_lineX->setPen(QPen(QColor(255,128,0)));
+
+			m_lineY = new QGraphicsLineItem();
+			scene->addItem(m_lineY);
+			m_lineY->setPen(QPen(QColor(255,128,0)));
+
+			m_timeConnection = possumwood::App::instance().onTimeChanged([this](float t) {
+				timeChanged(t);
+			});
+			timeChanged(possumwood::App::instance().time());
+		}
+
+		virtual ~Editor() {
+			m_timeConnection.disconnect();
 		}
 
 		virtual QWidget* widget() override {
@@ -51,9 +71,30 @@ class Editor : public possumwood::Editor {
 		}
 
 	protected:
+		void timeChanged(float t) {
+			if(m_animLength > 0.0f) {
+				float pos = t / m_animLength * m_pixmap->pixmap().width();
+				pos = std::min(pos, (float)m_pixmap->pixmap().width());
+
+				m_lineX->setLine(pos, 0, pos, m_pixmap->pixmap().height());
+				m_lineY->setLine(0, pos, m_pixmap->pixmap().width(), pos);
+
+				m_lineX->show();
+				m_lineY->show();
+			}
+			else {
+				m_lineX->setLine(0,0,0,0);
+				m_lineY->setLine(0,0,0,0);
+
+				m_lineX->hide();
+				m_lineY->hide();
+			}
+		}
+
 		virtual void valueChanged(const dependency_graph::Attr& attr) override {
 			if(attr == a_inAnim) {
 				QPixmap pixmap;
+				m_animLength = 0.0f;
 
 				std::shared_ptr<const anim::Animation> anim = values().get(a_inAnim);
 				if(anim != nullptr) {
@@ -84,14 +125,24 @@ class Editor : public possumwood::Editor {
 						}
 
 					pixmap = QPixmap::fromImage(img);
+
+					m_animLength = (float)anim->frames.size() / anim->fps;
 				}
 
-				m_widget->setPixmap(pixmap);
+				m_pixmap->setPixmap(pixmap);
+
+				timeChanged(possumwood::App::instance().time());
 			}
 		}
 
 	private:
-		QLabel* m_widget;
+		QGraphicsView* m_widget;
+
+		QGraphicsPixmapItem* m_pixmap;
+		QGraphicsLineItem *m_lineX, *m_lineY;
+
+		boost::signals2::connection m_timeConnection;
+		float m_animLength;
 };
 
 dependency_graph::State compute(dependency_graph::Values& values) {
