@@ -36,6 +36,9 @@ void Editor::setNodeReference(dependency_graph::Node& node) {
 			}
 		));
 	}
+
+	for(unsigned ai=0; ai<node.metadata().attributeCount(); ++ai)
+		valueChanged(node.metadata().attr(ai));
 }
 
 }
