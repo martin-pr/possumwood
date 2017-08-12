@@ -1,5 +1,7 @@
 #include <possumwood_sdk/node_implementation.h>
 
+#include <utility>
+
 #include <dependency_graph/values.inl>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/datablock.inl>
@@ -12,6 +14,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+#include <QGraphicsRectItem>
 
 #include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
@@ -19,6 +22,9 @@
 namespace {
 
 dependency_graph::InAttr<std::shared_ptr<const anim::Animation>> a_inAnim;
+dependency_graph::InAttr<unsigned> a_startFrame;
+dependency_graph::InAttr<unsigned> a_endFrame;
+
 dependency_graph::OutAttr<std::shared_ptr<const anim::Animation>> a_outAnim;
 
 float compare(const anim::Skeleton& s1, const anim::Skeleton& s2) {
@@ -39,6 +45,22 @@ float compare(const anim::Skeleton& s1, const anim::Skeleton& s2) {
 	return result;
 }
 
+std::pair<unsigned, unsigned> startAndEndFrame(const dependency_graph::Values& vals, unsigned frameCount) {
+	unsigned startFrame = vals.get(a_startFrame);
+	unsigned endFrame = vals.get(a_endFrame);
+
+	startFrame = std::max(0u, startFrame);
+	startFrame = std::min(startFrame, frameCount-1);
+
+	endFrame = std::max(0u, endFrame);
+	endFrame = std::min(endFrame, frameCount-1);
+
+	if(startFrame > endFrame)
+		std::swap(startFrame, endFrame);
+
+	return std::make_pair(startFrame, endFrame);
+}
+
 class Editor : public possumwood::Editor {
 	public:
 		Editor() : m_widget(new QGraphicsView()) {
@@ -55,6 +77,12 @@ class Editor : public possumwood::Editor {
 			m_lineY = new QGraphicsLineItem();
 			scene->addItem(m_lineY);
 			m_lineY->setPen(QPen(QColor(255,128,0)));
+
+			m_rect = new QGraphicsRectItem();
+			m_rect->setRect(0,0,0,0);
+			m_rect->setBrush(QColor(255,128,0,32));
+			m_rect->setPen(QPen(QColor(255,128,0,255)));
+			scene->addItem(m_rect);
 
 			m_timeConnection = possumwood::App::instance().onTimeChanged([this](float t) {
 				timeChanged(t);
@@ -133,6 +161,19 @@ class Editor : public possumwood::Editor {
 
 				timeChanged(possumwood::App::instance().time());
 			}
+
+			if(attr == a_startFrame || attr == a_endFrame || attr == a_inAnim) {
+				std::shared_ptr<const anim::Animation> anim = values().get(a_inAnim);
+				if(anim != nullptr) {
+					std::pair<unsigned, unsigned> interval = startAndEndFrame(values(), anim->frames.size());
+
+					m_rect->setRect(interval.first, interval.first, interval.second, interval.second);
+				}
+				else
+					m_rect->setRect(0,0,0,0);
+
+				timeChanged(possumwood::App::instance().time());
+			}
 		}
 
 	private:
@@ -140,6 +181,7 @@ class Editor : public possumwood::Editor {
 
 		QGraphicsPixmapItem* m_pixmap;
 		QGraphicsLineItem *m_lineX, *m_lineY;
+		QGraphicsRectItem* m_rect;
 
 		boost::signals2::connection m_timeConnection;
 		float m_animLength;
@@ -147,16 +189,34 @@ class Editor : public possumwood::Editor {
 
 dependency_graph::State compute(dependency_graph::Values& values) {
 	auto& anim = values.get(a_inAnim);
-	values.set(a_outAnim, anim);
+
+	if(anim != nullptr && anim->frames.size() > 0) {
+		std::pair<unsigned, unsigned> interval = startAndEndFrame(values, (unsigned)anim->frames.size());
+
+		std::unique_ptr<anim::Animation> out(new anim::Animation());
+		out->fps = anim->fps;
+		out->base = anim->base;
+		out->frames = std::vector<anim::Skeleton>(
+			anim->frames.begin() + interval.first,
+			anim->frames.begin() + interval.second);
+
+		values.set(a_outAnim, std::shared_ptr<const anim::Animation>(out.release()));
+	}
+	else
+		values.set(a_outAnim, std::shared_ptr<const anim::Animation>());
 
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inAnim, "in_anim");
+	meta.addAttribute(a_startFrame, "start_frame");
+	meta.addAttribute(a_endFrame, "end_frame");
 	meta.addAttribute(a_outAnim, "out_anim");
 
 	meta.addInfluence(a_inAnim, a_outAnim);
+	meta.addInfluence(a_startFrame, a_outAnim);
+	meta.addInfluence(a_endFrame, a_outAnim);
 
 	meta.setEditor<Editor>();
 	meta.setCompute(compute);
