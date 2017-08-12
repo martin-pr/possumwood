@@ -9,6 +9,12 @@
         {
             "in_node": "skeleton_display_0",
             "in_port": "anim",
+            "out_node": "periodic_0",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "periodic_0",
+            "in_port": "in_anim",
             "out_node": "transform_0",
             "out_port": "out_anim"
         }
@@ -28,12 +34,23 @@
             },
             "type": "anim/loader"
         },
+        "periodic_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 523.0,
+                    "y": 337.0
+                }
+            },
+            "name": "periodic",
+            "type": "anim/periodic"
+        },
         "skeleton_display_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 496.0,
-                    "y": 408.0
+                    "x": 551.0,
+                    "y": 580.0
                 }
             },
             "name": "skeleton_display",
@@ -76,5 +93,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADu/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADuwAAAFkA////AAAAAQAAASwAAAO7/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAADAgAAAFkA////+wAAAAYAbABvAGcBAAADVgAAALMAAABZAP///wAAAykAAAO7AAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAEAAAAaAGQAbwBjAGsAcwBfAHQAbwBvAGwAYgBhAHIBAAAAAP////8AAAAAAAAAAA=="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAASwAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAACmAAAAEkA////+wAAAAYAbABvAGcBAAAC3QAAAG4AAABJAP////sAAAAMAGUAZABpAHQAbwByAQAAA08AAAC6AAAAdQD///8AAAMtAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
