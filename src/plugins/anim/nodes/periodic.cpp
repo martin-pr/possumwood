@@ -24,6 +24,7 @@ namespace {
 dependency_graph::InAttr<std::shared_ptr<const anim::Animation>> a_inAnim;
 dependency_graph::InAttr<unsigned> a_startFrame;
 dependency_graph::InAttr<unsigned> a_endFrame;
+dependency_graph::InAttr<unsigned> a_repetitions;
 
 dependency_graph::OutAttr<std::shared_ptr<const anim::Animation>> a_outAnim;
 
@@ -87,7 +88,6 @@ class Editor : public possumwood::Editor {
 			m_timeConnection = possumwood::App::instance().onTimeChanged([this](float t) {
 				timeChanged(t);
 			});
-			timeChanged(possumwood::App::instance().time());
 		}
 
 		virtual ~Editor() {
@@ -100,8 +100,17 @@ class Editor : public possumwood::Editor {
 
 	protected:
 		void timeChanged(float t) {
-			if(m_animLength > 0.0f) {
-				float pos = t / m_animLength * m_pixmap->pixmap().width();
+			if(m_fps > 0.0f) {
+				const std::pair<float, float> interval = startAndEndFrame(values(), m_pixmap->pixmap().width());
+
+				float pos = t * m_fps;
+				if(pos < (float)((interval.second - interval.first)) * values().get(a_repetitions)) {
+					pos = fmodf(pos, fabs(interval.second - interval.first));
+					pos += interval.first;
+				}
+				else
+					pos = interval.second;
+
 				pos = std::min(pos, (float)m_pixmap->pixmap().width());
 
 				m_lineX->setLine(pos, 0, pos, m_pixmap->pixmap().height());
@@ -122,12 +131,13 @@ class Editor : public possumwood::Editor {
 		virtual void valueChanged(const dependency_graph::Attr& attr) override {
 			if(attr == a_inAnim) {
 				QPixmap pixmap;
-				m_animLength = 0.0f;
+				m_fps = 0.0f;
 
 				std::shared_ptr<const anim::Animation> anim = values().get(a_inAnim);
-				if(anim != nullptr) {
+				if(anim != nullptr && !anim->frames.empty()) {
 					std::vector<float> matrix(anim->frames.size() * anim->frames.size());
 					float maxVal = 0.0f;
+					float minVal = compare(anim->frames[0], anim->frames[0]);
 
 					for(unsigned a=0; a<anim->frames.size(); ++a)
 						for(unsigned b=a; b<anim->frames.size(); ++b) {
@@ -136,13 +146,15 @@ class Editor : public possumwood::Editor {
 
 							const float res = compare(f1, f2);
 							maxVal = std::max(res, maxVal);
+							minVal = std::min(res, minVal);
+
 							matrix[a + b*anim->frames.size()] = res;
 							matrix[b + a*anim->frames.size()] = res;
 						}
 
 					if(maxVal > 0.0f)
 						for(auto& f : matrix)
-							f /= maxVal / 255.0f;
+							f = (f - minVal) / (maxVal - minVal) * 255.0f;
 
 					QImage img = QImage(anim->frames.size(), anim->frames.size(), QImage::Format_RGB32);
 
@@ -154,7 +166,7 @@ class Editor : public possumwood::Editor {
 
 					pixmap = QPixmap::fromImage(img);
 
-					m_animLength = (float)anim->frames.size() / anim->fps;
+					m_fps = anim->fps;
 				}
 
 				m_pixmap->setPixmap(pixmap);
@@ -167,7 +179,7 @@ class Editor : public possumwood::Editor {
 				if(anim != nullptr) {
 					std::pair<unsigned, unsigned> interval = startAndEndFrame(values(), anim->frames.size());
 
-					m_rect->setRect(interval.first, interval.first, interval.second, interval.second);
+					m_rect->setRect(interval.first, interval.first, interval.second - interval.first, interval.second - interval.first);
 				}
 				else
 					m_rect->setRect(0,0,0,0);
@@ -184,21 +196,48 @@ class Editor : public possumwood::Editor {
 		QGraphicsRectItem* m_rect;
 
 		boost::signals2::connection m_timeConnection;
-		float m_animLength;
+		float m_fps;
 };
 
 dependency_graph::State compute(dependency_graph::Values& values) {
 	auto& anim = values.get(a_inAnim);
 
-	if(anim != nullptr && anim->frames.size() > 0) {
+	if(anim != nullptr && anim->frames.size() > 0 && anim->base.size() > 0) {
 		std::pair<unsigned, unsigned> interval = startAndEndFrame(values, (unsigned)anim->frames.size());
 
 		std::unique_ptr<anim::Animation> out(new anim::Animation());
 		out->fps = anim->fps;
 		out->base = anim->base;
-		out->frames = std::vector<anim::Skeleton>(
-			anim->frames.begin() + interval.first,
-			anim->frames.begin() + interval.second);
+
+		const anim::Transform periodRootTr = anim->frames[interval.second][0].tr() * anim->frames[interval.first][0].tr().inverse();
+
+		anim::Skeleton periotTr = anim->frames[interval.second];
+		for(unsigned bi=0;bi<periotTr.size();++bi)
+			periotTr[bi].tr() = periotTr[bi].tr() * anim->frames[interval.first][bi].tr().inverse();
+
+		anim::Transform rootTr;
+		const unsigned numFrames = (interval.second - interval.first)*values.get(a_repetitions);
+		for(unsigned a=0;a<=numFrames;++a) {
+			std::size_t frameId = a % (interval.second - interval.first) + interval.first;
+			frameId = std::min(frameId, anim->frames.size()-1);
+
+			anim::Skeleton fr = anim->frames[frameId];
+
+			const float weight = fmodf((float)a / (float)(interval.second - interval.first), 1.0f) - 0.5f;
+			for(unsigned bi=1;bi<periotTr.size();++bi) {
+				Imath::Quatf q = (Imath::Quatf::identity() * weight + periotTr[bi].tr().rotation * (1.0f - weight)).normalized();
+				Imath::V3f v = periotTr[bi].tr().translation * (1.0f - weight);
+
+				fr[bi].tr().rotation *= q;
+				fr[bi].tr().translation += v;
+			}
+
+			if(a % (interval.second - interval.first) == 0 && a > 0)
+				rootTr = rootTr * periodRootTr;
+			fr[0].tr() = rootTr * fr[0].tr();
+
+			out->frames.push_back(fr);
+		}
 
 		values.set(a_outAnim, std::shared_ptr<const anim::Animation>(out.release()));
 	}
@@ -212,11 +251,13 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inAnim, "in_anim");
 	meta.addAttribute(a_startFrame, "start_frame");
 	meta.addAttribute(a_endFrame, "end_frame");
+	meta.addAttribute(a_repetitions, "repetitions", 2u);
 	meta.addAttribute(a_outAnim, "out_anim");
 
 	meta.addInfluence(a_inAnim, a_outAnim);
 	meta.addInfluence(a_startFrame, a_outAnim);
 	meta.addInfluence(a_endFrame, a_outAnim);
+	meta.addInfluence(a_repetitions, a_outAnim);
 
 	meta.setEditor<Editor>();
 	meta.setCompute(compute);

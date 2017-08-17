@@ -1,12 +1,6 @@
 {
     "connections": [
         {
-            "in_node": "transform_0",
-            "in_port": "in_anim",
-            "out_node": "loader_0",
-            "out_port": "anim"
-        },
-        {
             "in_node": "skeleton_display_0",
             "in_port": "anim",
             "out_node": "periodic_0",
@@ -17,6 +11,12 @@
             "in_port": "in_anim",
             "out_node": "transform_0",
             "out_port": "out_anim"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_anim",
+            "out_node": "loader_0",
+            "out_port": "anim"
         }
     ],
     "nodes": {
@@ -43,6 +43,11 @@
                 }
             },
             "name": "periodic",
+            "ports": {
+                "end_frame": 450,
+                "repetitions": 50,
+                "start_frame": 80
+            },
             "type": "anim/periodic"
         },
         "skeleton_display_0": {
@@ -89,9 +94,9 @@
         }
     },
     "scene_config": {
-        "end_time": 3.0,
+        "end_time": 99.0,
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAASwAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAACmAAAAEkA////+wAAAAYAbABvAGcBAAAC3QAAAG4AAABJAP////sAAAAMAGUAZABpAHQAbwByAQAAA08AAAC6AAAAdQD///8AAAMtAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADyPwCAAAAAfwAAABBAAADyAAAAF8BAAAV+gAAAAABAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAOAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAAA4AP///wAAAAEAAAEsAAADyPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAAz4AAABJAP////sAAAAGAGwAbwBnAQAAA4MAAACGAAAASQD///8AAAMtAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
