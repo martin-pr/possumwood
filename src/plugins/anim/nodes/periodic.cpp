@@ -18,6 +18,7 @@
 
 #include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
+#include "ui/motion_map.h"
 
 namespace {
 
@@ -27,24 +28,6 @@ dependency_graph::InAttr<unsigned> a_endFrame;
 dependency_graph::InAttr<unsigned> a_repetitions;
 
 dependency_graph::OutAttr<std::shared_ptr<const anim::Animation>> a_outAnim;
-
-float compare(const anim::Skeleton& s1, const anim::Skeleton& s2) {
-	if(s1.size() != s2.size() || s1.size() == 0)
-		return 0.0f;
-
-	float result = 0.0f;
-	for(unsigned bi=1; bi<s1.size();++bi) {
-		const auto& b1 = s1[bi];
-		const auto& b2 = s2[bi];
-
-		if((b1.tr().rotation ^ b2.tr().rotation) > 0.0f)
-			result += (b1.tr().rotation * b2.tr().rotation.inverse()).angle();
-		else
-			result += (b1.tr().rotation * (-b2.tr().rotation).inverse()).angle();
-	}
-
-	return result;
-}
 
 std::pair<unsigned, unsigned> startAndEndFrame(const dependency_graph::Values& vals, unsigned frameCount) {
 	unsigned startFrame = vals.get(a_startFrame);
@@ -65,25 +48,22 @@ std::pair<unsigned, unsigned> startAndEndFrame(const dependency_graph::Values& v
 class Editor : public possumwood::Editor {
 	public:
 		Editor() : m_widget(new QGraphicsView()) {
-			QGraphicsScene* scene = new QGraphicsScene();
-			m_widget->setScene(scene);
-
-			m_pixmap = new QGraphicsPixmapItem();
-			scene->addItem(m_pixmap);
+			m_scene = new anim::MotionMap();
+			m_widget->setScene(m_scene);
 
 			m_lineX = new QGraphicsLineItem();
-			scene->addItem(m_lineX);
+			m_scene->addItem(m_lineX);
 			m_lineX->setPen(QPen(QColor(255,128,0)));
 
 			m_lineY = new QGraphicsLineItem();
-			scene->addItem(m_lineY);
+			m_scene->addItem(m_lineY);
 			m_lineY->setPen(QPen(QColor(255,128,0)));
 
 			m_rect = new QGraphicsRectItem();
 			m_rect->setRect(0,0,0,0);
 			m_rect->setBrush(QColor(255,128,0,32));
 			m_rect->setPen(QPen(QColor(255,128,0,255)));
-			scene->addItem(m_rect);
+			m_scene->addItem(m_rect);
 
 			m_timeConnection = possumwood::App::instance().onTimeChanged([this](float t) {
 				timeChanged(t);
@@ -101,7 +81,7 @@ class Editor : public possumwood::Editor {
 	protected:
 		void timeChanged(float t) {
 			if(m_fps > 0.0f) {
-				const std::pair<float, float> interval = startAndEndFrame(values(), m_pixmap->pixmap().width());
+				const std::pair<float, float> interval = startAndEndFrame(values(), m_scene->width());
 
 				float pos = t * m_fps;
 				if(pos < (float)((interval.second - interval.first)) * values().get(a_repetitions)) {
@@ -111,10 +91,10 @@ class Editor : public possumwood::Editor {
 				else
 					pos = interval.second;
 
-				pos = std::min(pos, (float)m_pixmap->pixmap().width());
+				pos = std::min(pos, (float)m_scene->width());
 
-				m_lineX->setLine(pos, 0, pos, m_pixmap->pixmap().height());
-				m_lineY->setLine(0, pos, m_pixmap->pixmap().width(), pos);
+				m_lineX->setLine(pos, 0, pos, m_scene->height());
+				m_lineY->setLine(0, pos, m_scene->width(), pos);
 
 				m_lineX->show();
 				m_lineY->show();
@@ -135,41 +115,10 @@ class Editor : public possumwood::Editor {
 
 				std::shared_ptr<const anim::Animation> anim = values().get(a_inAnim);
 				if(anim != nullptr && !anim->frames.empty()) {
-					std::vector<float> matrix(anim->frames.size() * anim->frames.size());
-					float maxVal = 0.0f;
-					float minVal = compare(anim->frames[0], anim->frames[0]);
-
-					for(unsigned a=0; a<anim->frames.size(); ++a)
-						for(unsigned b=a; b<anim->frames.size(); ++b) {
-							auto& f1 = anim->frames[a];
-							auto& f2 = anim->frames[b];
-
-							const float res = compare(f1, f2);
-							maxVal = std::max(res, maxVal);
-							minVal = std::min(res, minVal);
-
-							matrix[a + b*anim->frames.size()] = res;
-							matrix[b + a*anim->frames.size()] = res;
-						}
-
-					if(maxVal > 0.0f)
-						for(auto& f : matrix)
-							f = (f - minVal) / (maxVal - minVal) * 255.0f;
-
-					QImage img = QImage(anim->frames.size(), anim->frames.size(), QImage::Format_RGB32);
-
-					for(unsigned a=0; a<anim->frames.size(); ++a)
-						for(unsigned b=0; b<anim->frames.size(); ++b) {
-							const float val = matrix[a + b * anim->frames.size()];
-							img.setPixelColor(a, b, QColor(val, val, val));
-						}
-
-					pixmap = QPixmap::fromImage(img);
+					m_scene->init(*anim, *anim);
 
 					m_fps = anim->fps;
 				}
-
-				m_pixmap->setPixmap(pixmap);
 
 				timeChanged(possumwood::App::instance().time());
 			}
@@ -190,8 +139,8 @@ class Editor : public possumwood::Editor {
 
 	private:
 		QGraphicsView* m_widget;
+		anim::MotionMap* m_scene;
 
-		QGraphicsPixmapItem* m_pixmap;
 		QGraphicsLineItem *m_lineX, *m_lineY;
 		QGraphicsRectItem* m_rect;
 
