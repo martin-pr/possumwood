@@ -42,8 +42,33 @@ TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTim
 	m_playAction = new QAction(QIcon(":icons/player_play.png"), "Play/stop", this);
 	m_playAction->setShortcut(Qt::Key_Space);
 	connect(m_playAction, SIGNAL(triggered()), this, SLOT(onPlayAction()));
-
 	addAction(m_playAction);
+
+	m_frameFwdAction = new QAction(QIcon(":icons/player_fwd.png"), "One frame forward", this);
+	m_frameFwdAction->setShortcut(Qt::Key_Right);
+	m_frameFwdAction->setShortcutContext(Qt::ApplicationShortcut);
+	connect(m_frameFwdAction, &QAction::triggered, [this]() {
+		auto& app = possumwood::App::instance();
+
+		float t = app.time() + 1.0f/app.sceneConfig()["fps"].as<float>();
+		t = std::min(t, app.sceneConfig()["end_time"].as<float>());
+
+		app.setTime(t);
+	});
+	addAction(m_frameFwdAction);
+
+	m_frameBwdAction = new QAction(QIcon(":icons/player_rew.png"), "One frame backward", this);
+	m_frameBwdAction->setShortcut(Qt::Key_Left);
+	m_frameBwdAction->setShortcutContext(Qt::ApplicationShortcut);
+	connect(m_frameBwdAction, &QAction::triggered, [this]() {
+		auto& app = possumwood::App::instance();
+
+		float t = app.time() - 1.0f/app.sceneConfig()["fps"].as<float>();
+		t = std::max(t, app.sceneConfig()["start_time"].as<float>());
+
+		app.setTime(t);
+	});
+	addAction(m_frameBwdAction);
 
 	m_playbackTimer->setInterval(10);
 	connect(m_playbackTimer, SIGNAL(timeout()), this, SLOT(onTimer()));
