@@ -55,7 +55,7 @@ void MotionMap::init(const anim::Animation& ax, const anim::Animation& ay) {
 	for(unsigned a=0; a<ax.frames.size(); ++a)
 		for(unsigned b=0; b<ay.frames.size(); ++b) {
 			const float val = matrix[a + b * ax.frames.size()];
-			img.setPixelColor(a, b, QColor(val, val, val));
+			img.setPixel(a, b, qRgb(val, val, val));
 		}
 
 	m_pixmap->setPixmap(QPixmap::fromImage(img));
