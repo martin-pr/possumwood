@@ -30,6 +30,11 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 		"end_time", "timeline", 5.0f, Config::Item::kNoFlags,
 		"End of the timeline (seconds)"
 	));
+
+	m_sceneConfig.addItem(Config::Item(
+		"fps", "timeline", 24.0f, Config::Item::kNoFlags,
+		"Scene's frames-per-second value"
+	));
 }
 
 App::~App() {

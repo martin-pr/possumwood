@@ -69,6 +69,26 @@ class Editor : public possumwood::Editor {
 			m_timeConnection = possumwood::App::instance().onTimeChanged([this](float t) {
 				timeChanged(t);
 			});
+
+			QObject::connect(m_scene, &anim::MotionMap::mousePress, [this](QGraphicsSceneMouseEvent* event) {
+				if(event->scenePos().x() >= 0.0f && event->scenePos().x() < (float)m_scene->width() &&
+					event->scenePos().y() >= 0.0f && event->scenePos().y() < (float)m_scene->height()) {
+
+					values().set(a_startFrame, (unsigned)std::min(event->scenePos().x(), event->scenePos().y()));
+					values().set(a_endFrame, (unsigned)std::max(event->scenePos().x(), event->scenePos().y()));
+				}
+			});
+
+			QObject::connect(m_scene, &anim::MotionMap::mouseMove, [this](QGraphicsSceneMouseEvent* event) {
+				if(event->buttons() & Qt::LeftButton) {
+					if(event->scenePos().x() >= 0.0f && event->scenePos().x() < (float)m_scene->width() &&
+						event->scenePos().y() >= 0.0f && event->scenePos().y() < (float)m_scene->height()) {
+
+						values().set(a_startFrame, (unsigned)std::min(event->scenePos().x(), event->scenePos().y()));
+						values().set(a_endFrame, (unsigned)std::max(event->scenePos().x(), event->scenePos().y()));
+					}
+				}
+			});
 		}
 
 		virtual ~Editor() {

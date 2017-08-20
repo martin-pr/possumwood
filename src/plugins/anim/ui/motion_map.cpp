@@ -69,4 +69,16 @@ std::size_t MotionMap::height() const {
 	return m_pixmap->pixmap().height();
 }
 
+void MotionMap::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
+	emit mouseMove(mouseEvent);
+}
+
+void MotionMap::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
+	emit mousePress(mouseEvent);
+}
+
+void MotionMap::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
+	emit mouseRelease(mouseEvent);
+}
+
 }

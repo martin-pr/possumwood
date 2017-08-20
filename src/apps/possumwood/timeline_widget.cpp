@@ -41,6 +41,7 @@ TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTim
 
 	m_playAction = new QAction(QIcon(":icons/player_play.png"), "Play/stop", this);
 	m_playAction->setShortcut(Qt::Key_Space);
+	m_playAction->setShortcutContext(Qt::ApplicationShortcut);
 	connect(m_playAction, SIGNAL(triggered()), this, SLOT(onPlayAction()));
 	addAction(m_playAction);
 
