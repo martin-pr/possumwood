@@ -15,6 +15,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
+#include <QGraphicsSceneMouseEvent>
 
 #include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
@@ -80,9 +81,9 @@ class Editor : public possumwood::Editor {
 
 	protected:
 		void timeChanged(float t) {
-			if(m_fps > 0.0f) {
-				const std::pair<float, float> interval = startAndEndFrame(values(), m_scene->width());
+			const std::pair<float, float> interval = startAndEndFrame(values(), m_scene->width());
 
+			if(m_fps > 0.0f && interval.first != interval.second) {
 				float pos = t * m_fps;
 				if(pos < (float)((interval.second - interval.first)) * values().get(a_repetitions)) {
 					pos = fmodf(pos, fabs(interval.second - interval.first));
@@ -154,41 +155,80 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 	if(anim != nullptr && anim->frames.size() > 0 && anim->base.size() > 0) {
 		std::pair<unsigned, unsigned> interval = startAndEndFrame(values, (unsigned)anim->frames.size());
 
-		std::unique_ptr<anim::Animation> out(new anim::Animation());
-		out->fps = anim->fps;
-		out->base = anim->base;
+		// if the interval makes sense
+		if(interval.first != interval.second) {
+			// make a new animation instance
+			std::unique_ptr<anim::Animation> out(new anim::Animation());
+			out->fps = anim->fps;
+			out->base = anim->base;
 
-		const anim::Transform periodRootTr = anim->frames[interval.second][0].tr() * anim->frames[interval.first][0].tr().inverse();
+			// root transformation difference between first and last frame =
+			//   the "global delta" transformation between periods
+			const anim::Transform periodRootTr = anim->frames[interval.second][0].tr() * anim->frames[interval.first][0].tr().inverse();
 
-		anim::Skeleton periotTr = anim->frames[interval.second];
-		for(unsigned bi=0;bi<periotTr.size();++bi)
-			periotTr[bi].tr() = periotTr[bi].tr() * anim->frames[interval.first][bi].tr().inverse();
+			// the difference frame between first and last frame =
+			//   the "local transform difference"
+			//   (inverse multiplication order, because how transforms vs quats work)
+			anim::Skeleton periotTr = anim->frames[interval.second];
+			for(unsigned bi=0;bi<periotTr.size();++bi)
+				periotTr[bi].tr() = anim->frames[interval.first][bi].tr().inverse() * periotTr[bi].tr();
 
-		anim::Transform rootTr;
-		const unsigned numFrames = (interval.second - interval.first)*values.get(a_repetitions);
-		for(unsigned a=0;a<=numFrames;++a) {
-			std::size_t frameId = a % (interval.second - interval.first) + interval.first;
-			frameId = std::min(frameId, anim->frames.size()-1);
+			// iterate over the entire interval
+			anim::Transform rootTr;
+			const unsigned numFrames = (interval.second - interval.first)*values.get(a_repetitions);
+			for(unsigned a=0;a<=numFrames;++a) {
+				// compute a frame id inside a single period
+				std::size_t frameId = a % (interval.second - interval.first) + interval.first;
+				// just a safety when the input values are not correct
+				frameId = std::min(frameId, anim->frames.size()-1);
 
-			anim::Skeleton fr = anim->frames[frameId];
+				// get the source frame
+				anim::Skeleton fr = anim->frames[frameId];
 
-			const float weight = fmodf((float)a / (float)(interval.second - interval.first), 1.0f) - 0.5f;
-			for(unsigned bi=1;bi<periotTr.size();++bi) {
-				Imath::Quatf q = (Imath::Quatf::identity() * weight + periotTr[bi].tr().rotation * (1.0f - weight)).normalized();
-				Imath::V3f v = periotTr[bi].tr().translation * (1.0f - weight);
+				// the weight of how much of "delta" should be blended into the "local" frame
+				//   -> from 0.5f to -0.5f through each period, so first and last frame end up
+				//      the same with minimal adjustments
+				const float weight = 0.5f - fmodf((float)a / (float)(interval.second - interval.first), 1.0f);
 
-				fr[bi].tr().rotation *= q;
-				fr[bi].tr().translation += v;
+				// blend-in the local frame
+				for(unsigned bi=1;bi<periotTr.size();++bi) {
+					// "identity" part of the blend
+					Imath::Quatf q = Imath::Quatf::identity() * (1.0f - std::fabs(weight));
+
+					// antipodality handling - make sure the nlerp blend is done
+					//   on the same halfsphere in the 4D space
+					Imath::Quatf rot = periotTr[bi].tr().rotation;
+					if((q ^ rot) < 0.0f)
+						rot = -rot;
+
+					// do the NLERP blending (negative weights handled using quat inverse)
+					if(weight > 0.0f)
+						q = q + periotTr[bi].tr().rotation * weight;
+					else
+						q = q + periotTr[bi].tr().rotation.inverse() * (-weight);
+					q.normalize();
+					// and do the translational blending - NEEDS TESTING, THE SIGN MIGHT BE WRONG
+					//   (currently don't have anim examples that would highlight the difference)
+					Imath::V3f v = periotTr[bi].tr().translation * weight;
+
+					// and add the transform to the bone - reversed multiplication for quats
+					fr[bi].tr().rotation = fr[bi].tr().rotation * q;
+					fr[bi].tr().translation += v;
+				}
+
+				// for each full period, add the global transformation to "advance" the anim
+				if(a % (interval.second - interval.first) == 0 && a > 0)
+					rootTr = periodRootTr * rootTr;
+				fr[0].tr() = rootTr * fr[0].tr();
+
+				// and store the result
+				out->frames.push_back(fr);
 			}
 
-			if(a % (interval.second - interval.first) == 0 && a > 0)
-				rootTr = rootTr * periodRootTr;
-			fr[0].tr() = rootTr * fr[0].tr();
-
-			out->frames.push_back(fr);
+			values.set(a_outAnim, std::shared_ptr<const anim::Animation>(out.release()));
 		}
-
-		values.set(a_outAnim, std::shared_ptr<const anim::Animation>(out.release()));
+		else
+			values.set(a_outAnim, std::shared_ptr<const anim::Animation>());
 	}
 	else
 		values.set(a_outAnim, std::shared_ptr<const anim::Animation>());
