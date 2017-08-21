@@ -16,6 +16,7 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
 
 #include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
@@ -48,44 +49,47 @@ std::pair<unsigned, unsigned> startAndEndFrame(const dependency_graph::Values& v
 
 class Editor : public possumwood::Editor {
 	public:
-		Editor() : m_widget(new QGraphicsView()) {
-			m_scene = new anim::MotionMap();
-			m_widget->setScene(m_scene);
+		Editor() {
+			m_widget = new anim::MotionMap();
 
 			m_lineX = new QGraphicsLineItem();
-			m_scene->addItem(m_lineX);
+			m_widget->scene()->addItem(m_lineX);
 			m_lineX->setPen(QPen(QColor(255,128,0)));
 
 			m_lineY = new QGraphicsLineItem();
-			m_scene->addItem(m_lineY);
+			m_widget->scene()->addItem(m_lineY);
 			m_lineY->setPen(QPen(QColor(255,128,0)));
 
 			m_rect = new QGraphicsRectItem();
 			m_rect->setRect(0,0,0,0);
 			m_rect->setBrush(QColor(255,128,0,32));
 			m_rect->setPen(QPen(QColor(255,128,0,255)));
-			m_scene->addItem(m_rect);
+			m_widget->scene()->addItem(m_rect);
 
 			m_timeConnection = possumwood::App::instance().onTimeChanged([this](float t) {
 				timeChanged(t);
 			});
 
-			QObject::connect(m_scene, &anim::MotionMap::mousePress, [this](QGraphicsSceneMouseEvent* event) {
-				if(event->scenePos().x() >= 0.0f && event->scenePos().x() < (float)m_scene->width() &&
-					event->scenePos().y() >= 0.0f && event->scenePos().y() < (float)m_scene->height()) {
+			QObject::connect(m_widget, &anim::MotionMap::mousePress, [this](QMouseEvent* event) {
+				if(event->button() == Qt::LeftButton) {
+					const QPointF scenePos = m_widget->mapToScene(event->pos());
+					if(scenePos.x() >= 0.0f && scenePos.x() < (float)m_widget->width() &&
+						scenePos.y() >= 0.0f && scenePos.y() < (float)m_widget->height()) {
 
-					values().set(a_startFrame, (unsigned)std::min(event->scenePos().x(), event->scenePos().y()));
-					values().set(a_endFrame, (unsigned)std::max(event->scenePos().x(), event->scenePos().y()));
+						values().set(a_startFrame, (unsigned)std::min(scenePos.x(), scenePos.y()));
+						values().set(a_endFrame, (unsigned)std::max(scenePos.x(), scenePos.y()));
+					}
 				}
 			});
 
-			QObject::connect(m_scene, &anim::MotionMap::mouseMove, [this](QGraphicsSceneMouseEvent* event) {
+			QObject::connect(m_widget, &anim::MotionMap::mouseMove, [this](QMouseEvent* event) {
 				if(event->buttons() & Qt::LeftButton) {
-					if(event->scenePos().x() >= 0.0f && event->scenePos().x() < (float)m_scene->width() &&
-						event->scenePos().y() >= 0.0f && event->scenePos().y() < (float)m_scene->height()) {
+					const QPointF scenePos = m_widget->mapToScene(event->pos());
+					if(scenePos.x() >= 0.0f && scenePos.x() < (float)m_widget->width() &&
+						scenePos.y() >= 0.0f && scenePos.y() < (float)m_widget->height()) {
 
-						values().set(a_startFrame, (unsigned)std::min(event->scenePos().x(), event->scenePos().y()));
-						values().set(a_endFrame, (unsigned)std::max(event->scenePos().x(), event->scenePos().y()));
+						values().set(a_startFrame, (unsigned)std::min(scenePos.x(), scenePos.y()));
+						values().set(a_endFrame, (unsigned)std::max(scenePos.x(), scenePos.y()));
 					}
 				}
 			});
@@ -101,7 +105,7 @@ class Editor : public possumwood::Editor {
 
 	protected:
 		void timeChanged(float t) {
-			const std::pair<float, float> interval = startAndEndFrame(values(), m_scene->width());
+			const std::pair<float, float> interval = startAndEndFrame(values(), m_widget->width());
 
 			if(m_fps > 0.0f && interval.first != interval.second) {
 				float pos = t * m_fps;
@@ -112,10 +116,10 @@ class Editor : public possumwood::Editor {
 				else
 					pos = interval.second;
 
-				pos = std::min(pos, (float)m_scene->width());
+				pos = std::min(pos, (float)m_widget->width());
 
-				m_lineX->setLine(pos, 0, pos, m_scene->height());
-				m_lineY->setLine(0, pos, m_scene->width(), pos);
+				m_lineX->setLine(pos, 0, pos, m_widget->height());
+				m_lineY->setLine(0, pos, m_widget->width(), pos);
 
 				m_lineX->show();
 				m_lineY->show();
@@ -136,7 +140,7 @@ class Editor : public possumwood::Editor {
 
 				std::shared_ptr<const anim::Animation> anim = values().get(a_inAnim);
 				if(anim != nullptr && !anim->frames.empty()) {
-					m_scene->init(*anim, *anim);
+					m_widget->init(*anim, *anim);
 
 					m_fps = anim->fps;
 				}
@@ -159,8 +163,7 @@ class Editor : public possumwood::Editor {
 		}
 
 	private:
-		QGraphicsView* m_widget;
-		anim::MotionMap* m_scene;
+		anim::MotionMap* m_widget;
 
 		QGraphicsLineItem *m_lineX, *m_lineY;
 		QGraphicsRectItem* m_rect;

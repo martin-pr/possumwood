@@ -1,13 +1,13 @@
 #pragma once
 
-#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 
 #include "datatypes/animation.h"
 
 namespace anim {
 
-class MotionMap : public QGraphicsScene {
+class MotionMap : public QGraphicsView {
 	Q_OBJECT
 
 	public:
@@ -19,17 +19,21 @@ class MotionMap : public QGraphicsScene {
 		std::size_t height() const;
 
 	signals:
-		void mousePress(QGraphicsSceneMouseEvent* mouseEvent);
-		void mouseRelease(QGraphicsSceneMouseEvent* mouseEvent);
-		void mouseMove(QGraphicsSceneMouseEvent* mouseEvent);
+		void mousePress(QMouseEvent* mouseEvent);
+		void mouseRelease(QMouseEvent* mouseEvent);
+		void mouseMove(QMouseEvent* mouseEvent);
 
 	protected:
-		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent);
-		virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent);
-		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent);
+		virtual void mouseMoveEvent(QMouseEvent* mouseEvent) override;
+		virtual void mousePressEvent(QMouseEvent* mouseEvent) override;
+		virtual void mouseReleaseEvent(QMouseEvent* mouseEvent) override;
+		virtual void wheelEvent(QWheelEvent* mouseEvent) override;
 
 	private:
+		QGraphicsScene* m_scene;
 		QGraphicsPixmapItem* m_pixmap;
+
+		QPoint m_mousePos;
 };
 
 }
