@@ -3,6 +3,8 @@
 #include <cassert>
 #include <fstream>
 
+#include <boost/filesystem.hpp>
+
 #include <QMainWindow>
 
 #include <dependency_graph/io/graph.h>
@@ -61,6 +63,9 @@ void App::newFile() {
 }
 
 void App::loadFile(const boost::filesystem::path& filename) {
+	if(!boost::filesystem::exists(filename))
+		throw std::runtime_error("Cannot open " + filename.string() + " - file not found.");
+
 	// read the json file
 	std::ifstream in(filename.string());
 	dependency_graph::io::json json;
