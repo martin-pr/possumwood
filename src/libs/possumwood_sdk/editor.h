@@ -40,6 +40,8 @@ class Editor : public boost::noncopyable {
 		std::unique_ptr<dependency_graph::Values> m_values;
 		std::vector<boost::signals2::connection> m_connections;
 
+		std::set<unsigned> m_runningValueCallbacks;
+
 	friend class Metadata;
 };
 
