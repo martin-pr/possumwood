@@ -140,7 +140,7 @@ class Editor : public possumwood::Editor {
 
 				std::shared_ptr<const anim::Animation> anim = values().get(a_inAnim);
 				if(anim != nullptr && !anim->frames.empty()) {
-					m_widget->init(*anim, *anim);
+					m_widget->init(*anim);
 
 					m_fps = anim->fps;
 				}
