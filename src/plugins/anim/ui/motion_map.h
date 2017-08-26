@@ -13,6 +13,7 @@ class MotionMap : public QGraphicsView {
 	public:
 		MotionMap();
 
+		void init(const anim::Animation& a);
 		void init(const anim::Animation& ax, const anim::Animation& ay);
 
 		std::size_t width() const;
