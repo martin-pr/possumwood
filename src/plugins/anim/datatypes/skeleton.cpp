@@ -183,7 +183,12 @@ Skeleton::iterator Skeleton::end() {
 }
 
 bool Skeleton::isCompatibleWith(const Skeleton& s) const {
-	return m_hierarchy == s.m_hierarchy;
+	// easy case - the same shared pointer means the hierarchy is shared
+	if(m_hierarchy == s.m_hierarchy)
+		return true;
+
+	// more complex case - the hierarchies should be equal
+	return m_hierarchy->isCompatibleWith(*s.m_hierarchy);
 }
 
 Skeleton Skeleton::operator *(const Imath::M44f& m) const {
