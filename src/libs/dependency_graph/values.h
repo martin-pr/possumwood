@@ -24,6 +24,9 @@ class Values : public boost::noncopyable {
 		const T& get(const OutAttr<T>& attr) const;
 
 		template<typename T>
+		void set(const InAttr<T>& attr, const T& value);
+
+		template<typename T>
 		void set(const OutAttr<T>& attr, const T& value);
 
 	private:

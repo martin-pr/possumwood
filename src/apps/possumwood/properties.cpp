@@ -68,7 +68,7 @@ Properties::Property::Property(dependency_graph::Port& port) {
 	if(ui) {
 		possumwood::properties::property_base* prop = ui.get();
 
-		// chane of port value
+		// change of port value
 		graphValueConnection = port.valueCallback([prop, &port]() {
 			prop->valueFromPort(port);
 		});

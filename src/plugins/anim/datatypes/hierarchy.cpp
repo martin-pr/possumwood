@@ -116,4 +116,19 @@ const Attributes& Hierarchy::itemAttributes(std::size_t index) const {
 	return m_items[index].attrs;
 }
 
+bool Hierarchy::isCompatibleWith(const Hierarchy& h) const {
+	if(m_items.size() != h.m_items.size())
+		return false;
+
+	for(unsigned i=0; i<m_items.size(); ++i) {
+		auto& i1 = m_items[i];
+		auto& i2 = h.m_items[i];
+
+		if(i1.name != i2.name || i1.parent != i2.parent)
+			return false;
+	}
+
+	return true;
+}
+
 }

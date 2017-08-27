@@ -53,6 +53,8 @@ class Hierarchy {
 		Attributes& itemAttributes(std::size_t index);
 		const Attributes& itemAttributes(std::size_t index) const;
 
+		bool isCompatibleWith(const Hierarchy& h) const;
+
 	protected:
 	private:
 		std::size_t indexOf(const Item& j) const;

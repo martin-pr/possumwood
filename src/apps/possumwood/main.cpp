@@ -48,6 +48,7 @@ int main(int argc, char* argv[]) {
 	desc.add_options()
 	("help", "produce help message")
 	("plugin_directory", po::value<std::string>()->default_value(PLUGIN_DIR), "directory to search for plugins")
+	("scene", po::value<std::string>(), "open a scene file")
 	;
 
 	// process the options
@@ -91,6 +92,10 @@ int main(int argc, char* argv[]) {
 		MainWindow win;
 		win.setWindowIcon(QIcon(":icons/app.png"));
 		win.showMaximized();
+
+		// open the scene file, if specified on the command line
+		if(vm.count("scene"))
+			possumwood::App::instance().loadFile(vm["scene"].as<std::string>());
 
 		// and start the main application loop
 		app.exec();

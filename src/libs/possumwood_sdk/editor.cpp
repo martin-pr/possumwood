@@ -32,10 +32,28 @@ void Editor::setNodeReference(dependency_graph::Node& node) {
 	for(unsigned pi = 0; pi < node.portCount(); ++pi) {
 		m_connections.push_back(node.port(pi).valueCallback(
 			[&node, pi, this]() {
-				valueChanged(node.metadata().attr(pi));
+				if(m_runningValueCallbacks.find(pi) == m_runningValueCallbacks.end()) {
+					m_runningValueCallbacks.insert(pi);
+
+					try {
+						valueChanged(node.metadata().attr(pi));
+
+						auto it = m_runningValueCallbacks.find(pi);
+						m_runningValueCallbacks.erase(it);
+					}
+					catch(...) {
+						auto it = m_runningValueCallbacks.find(pi);
+						m_runningValueCallbacks.erase(it);
+
+						throw;
+					}
+				}
 			}
 		));
 	}
+
+	for(unsigned ai=0; ai<node.metadata().attributeCount(); ++ai)
+		valueChanged(node.metadata().attr(ai));
 }
 
 }

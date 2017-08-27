@@ -3,6 +3,8 @@
 #include <cassert>
 #include <fstream>
 
+#include <boost/filesystem.hpp>
+
 #include <QMainWindow>
 
 #include <dependency_graph/io/graph.h>
@@ -30,6 +32,11 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 		"end_time", "timeline", 5.0f, Config::Item::kNoFlags,
 		"End of the timeline (seconds)"
 	));
+
+	m_sceneConfig.addItem(Config::Item(
+		"fps", "timeline", 24.0f, Config::Item::kNoFlags,
+		"Scene's frames-per-second value"
+	));
 }
 
 App::~App() {
@@ -56,6 +63,9 @@ void App::newFile() {
 }
 
 void App::loadFile(const boost::filesystem::path& filename) {
+	if(!boost::filesystem::exists(filename))
+		throw std::runtime_error("Cannot open " + filename.string() + " - file not found.");
+
 	// read the json file
 	std::ifstream in(filename.string());
 	dependency_graph::io::json json;

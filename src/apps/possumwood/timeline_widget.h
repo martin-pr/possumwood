@@ -31,7 +31,7 @@ class TimelineWidget : public QWidget {
 	private:
 		Timeline* m_timeline;
 
-		QAction* m_playAction;
+		QAction *m_playAction, *m_frameFwdAction, *m_frameBwdAction;
 		QTimer* m_playbackTimer;
 
 		std::vector<boost::signals2::connection> m_connections;

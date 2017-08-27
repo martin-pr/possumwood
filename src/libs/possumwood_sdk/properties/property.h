@@ -58,6 +58,9 @@ class property : public property_base {
 		typedef T result_type;
 		typedef DERIVED derived_type;
 
+		property() : m_blockedSignals(false) {
+		}
+
 		virtual ~property() {
 			// make sure the factory is not optimized away
 			static factory_typed<DERIVED>* dummy;
@@ -76,7 +79,7 @@ class property : public property_base {
 
 		virtual void valueToPort(dependency_graph::Port& port) const override {
 			// transfer the templated value
-			if((flags() & kInput) && !(flags() & kDisabled)) {
+			if((flags() & kInput) && !(flags() & kDisabled) && !m_blockedSignals) {
 				// get the current value
 				const T original = port.get<T>();
 				T value = original;
@@ -96,8 +99,16 @@ class property : public property_base {
 
 		void valueFromPort(dependency_graph::Port& port) override {
 			// transfer the templated value
-			set(port.get<T>());
+			if(!m_blockedSignals) {
+				bool block = widget()->blockSignals(true);
+				m_blockedSignals = true;
+				set(port.get<T>());
+				widget()->blockSignals(block);
+				m_blockedSignals = false;
+			}
 		}
+
+		bool m_blockedSignals;
 
 		static factory_typed<DERIVED> s_pf;
 };
