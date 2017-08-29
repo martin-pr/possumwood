@@ -92,6 +92,14 @@ Transform Transform::inverse() const {
 	return result;
 }
 
+bool Transform::operator == (const Transform& t) const {
+	return translation == t.translation && rotation == t.rotation;
+}
+
+bool Transform::operator != (const Transform& t) const {
+	return translation != t.translation || rotation != t.rotation;
+}
+
 std::ostream& operator << (std::ostream& out, const Transform& tr) {
 	out << "(" << tr.rotation << "), (" << tr.translation << ")";
 
