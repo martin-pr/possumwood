@@ -8,6 +8,8 @@
 #include <QMainWindow>
 
 #include <dependency_graph/io/graph.h>
+#include <dependency_graph/port.inl>
+#include <dependency_graph/node.inl>
 
 #include "node_data.h"
 #include "config.inl"
@@ -148,6 +150,11 @@ void App::setTime(float time) {
 	if(m_time != time) {
 		m_time = time;
 		m_timeChanged(time);
+
+		// TERRIBLE HACK - a special node type that outputs time is handled here
+		for(auto& n : graph().nodes())
+			if(n.metadata().type() == "time")
+				n.port(0).set<float>(time);
 	}
 }
 

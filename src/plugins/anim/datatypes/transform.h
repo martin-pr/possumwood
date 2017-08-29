@@ -31,6 +31,9 @@ struct Transform {
 
 	void invert();
 	Transform inverse() const;
+
+	bool operator == (const Transform& t) const;
+	bool operator != (const Transform& t) const;
 };
 
 std::ostream& operator << (std::ostream& out, const Transform& tr);

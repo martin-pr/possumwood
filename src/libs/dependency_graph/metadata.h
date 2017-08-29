@@ -114,7 +114,7 @@ class Metadata : public boost::noncopyable {
 
 		std::unique_ptr<BaseData> m_blindData;
 
-		static std::set<Metadata*, Metadata::Comparator> s_instances;
+		static std::set<Metadata*, Metadata::Comparator>& instanceSet();
 
 		friend class Node;
 		friend class Port;

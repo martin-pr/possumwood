@@ -70,6 +70,14 @@ const Attributes& Skeleton::Joint::attributes() const {
 	return m_skeleton->m_hierarchy->itemAttributes(m_id);
 }
 
+bool Skeleton::Joint::operator == (const Joint& j) const {
+	return m_id == j.m_id && m_transformation == j.m_transformation;
+}
+
+bool Skeleton::Joint::operator != (const Joint& j) const {
+	return m_id != j.m_id || m_transformation != j.m_transformation;
+}
+
 ////////
 
 Skeleton::Skeleton() : m_hierarchy(new Hierarchy()) {
@@ -215,6 +223,13 @@ Skeleton& Skeleton::operator *=(Imath::M44f m) {
 	return *this;
 }
 
+bool Skeleton::operator == (const Skeleton& skel) const {
+	return m_hierarchy == skel.m_hierarchy && m_joints == skel.m_joints;
+}
+
+bool Skeleton::operator != (const Skeleton& skel) const {
+	return m_hierarchy != skel.m_hierarchy || m_joints != skel.m_joints;
+}
 
 ///
 

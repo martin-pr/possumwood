@@ -6,6 +6,8 @@
 
 #include <boost/noncopyable.hpp>
 
+#include <possumwood_sdk/traits.h>
+
 #include "hierarchy.h"
 #include "transform.h"
 
@@ -40,6 +42,9 @@ class Skeleton {
 				Attributes& attributes();
 				/// returns joint attributes (shared between all hierarchy instances)
 				const Attributes& attributes() const;
+
+				bool operator == (const Joint& j) const;
+				bool operator != (const Joint& j) const;
 
 			private:
 				Joint(std::size_t id, const Transform& transform, Skeleton* skel);
@@ -86,6 +91,9 @@ class Skeleton {
 		/// transforms this skeleton using a transformation matrix
 		Skeleton& operator *=(Imath::M44f m);
 
+		bool operator == (const Skeleton& skel) const;
+		bool operator != (const Skeleton& skel) const;
+
 	protected:
 	private:
 		// exists only so I can return references to joints, not instances
@@ -96,5 +104,16 @@ class Skeleton {
 };
 
 std::ostream& operator << (std::ostream& out, const Skeleton& skel);
+
+}
+
+namespace possumwood {
+
+template<>
+struct Traits<anim::Skeleton> {
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{0, 0.5, 0}};
+	}
+};
 
 }

@@ -4,17 +4,22 @@
 
 namespace dependency_graph {
 
-std::set<Metadata*, Metadata::Comparator> Metadata::s_instances;
+std::set<Metadata*, Metadata::Comparator>& Metadata::instanceSet() {
+	static std::unique_ptr<std::set<Metadata*, Metadata::Comparator>> s_instances;
+	if(s_instances == nullptr)
+		s_instances = std::unique_ptr<std::set<Metadata*, Metadata::Comparator>>(new std::set<Metadata*, Metadata::Comparator>());
+
+	return *s_instances;
+}
 
 Metadata::Metadata(const std::string& nodeType) : m_type(nodeType) {
-	s_instances.insert(this);
+	instanceSet().insert(this);
 }
 
 Metadata::~Metadata() {
-	auto it = s_instances.find(this);
-	assert(it != s_instances.end());
-
-	s_instances.erase(it);
+	auto it = instanceSet().find(this);
+	if(it != instanceSet().end())
+		instanceSet().erase(it);
 }
 
 bool Metadata::isValid() const {
@@ -67,14 +72,14 @@ std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(size_t in
 
 boost::iterator_range<Metadata::const_iterator> Metadata::instances() {
 	return boost::make_iterator_range(
-		s_instances.begin(),
-		s_instances.end()
+		instanceSet().begin(),
+		instanceSet().end()
 	);
 }
 
 const Metadata& Metadata::instance(const std::string& nodeType) {
 	/// TODO: improve efficiency of search
-	for(auto& i : s_instances)
+	for(auto& i : instanceSet())
 		if(i->type() == nodeType)
 			return *i;
 
