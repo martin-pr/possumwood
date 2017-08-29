@@ -241,6 +241,7 @@ namespace {
 /////
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
+dependency_graph::OutAttr<anim::Skeleton> a_skel;
 dependency_graph::OutAttr<std::shared_ptr<const anim::Animation>> a_anim;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -267,6 +268,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				throw std::runtime_error("unknown keyword " + tokenizer.current().value);
 		}
 
+		data.set(a_skel, result->base);
 		data.set(a_anim, std::shared_ptr<const anim::Animation>(result));
 	}
 	else {
@@ -282,8 +284,10 @@ void init(possumwood::Metadata& meta) {
 		"BVH files (*.bvh)",
 	}));
 	meta.addAttribute(a_anim, "anim");
+	meta.addAttribute(a_skel, "skeleton");
 
 	meta.addInfluence(a_filename, a_anim);
+	meta.addInfluence(a_filename, a_skel);
 
 	meta.setCompute(compute);
 }
