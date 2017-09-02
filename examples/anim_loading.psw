@@ -1,42 +1,6 @@
 {
     "connections": [
         {
-            "in_node": "periodic_1",
-            "in_port": "in_anim",
-            "out_node": "transform_1",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "transform_0",
-            "in_port": "in_anim",
-            "out_node": "loader_0",
-            "out_port": "anim"
-        },
-        {
-            "in_node": "transform_1",
-            "in_port": "in_anim",
-            "out_node": "loader_1",
-            "out_port": "anim"
-        },
-        {
-            "in_node": "anim_frame_0",
-            "in_port": "animation",
-            "out_node": "transition_0",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "skeleton_display_0",
-            "in_port": "skeleton",
-            "out_node": "anim_frame_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "transition_0",
-            "in_port": "anim_a",
-            "out_node": "periodic_1",
-            "out_port": "out_anim"
-        },
-        {
             "in_node": "anim_frame_0",
             "in_port": "time",
             "out_node": "mult_0",
@@ -49,16 +13,58 @@
             "out_port": "out_anim"
         },
         {
-            "in_node": "transition_0",
-            "in_port": "anim_b",
-            "out_node": "periodic_0",
-            "out_port": "out_anim"
-        },
-        {
             "in_node": "mult_0",
             "in_port": "a",
             "out_node": "time_0",
             "out_port": "time"
+        },
+        {
+            "in_node": "skeleton_display_1",
+            "in_port": "skeleton",
+            "out_node": "asf_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "skeleton_display_0",
+            "in_port": "skeleton",
+            "out_node": "anim_frame_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_anim",
+            "out_node": "bvh_0",
+            "out_port": "anim"
+        },
+        {
+            "in_node": "transition_0",
+            "in_port": "anim_a",
+            "out_node": "periodic_1",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "anim_frame_0",
+            "in_port": "animation",
+            "out_node": "transition_0",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_anim",
+            "out_node": "bvh_1",
+            "out_port": "anim"
+        },
+        {
+            "in_node": "periodic_1",
+            "in_port": "in_anim",
+            "out_node": "transform_1",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "transition_0",
+            "in_port": "anim_b",
+            "out_node": "periodic_0",
+            "out_port": "out_anim"
         }
     ],
     "nodes": {
@@ -73,33 +79,47 @@
             "name": "anim_frame",
             "type": "anim/anim_frame"
         },
-        "loader_0": {
+        "asf_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -136.0,
-                    "y": 811.0
+                    "x": 484.01953125,
+                    "y": 1034.17578125
                 }
             },
-            "name": "jump",
+            "name": "loader_asf",
             "ports": {
-                "filename": "141_04.bvh"
+                "filename": "/home/martin/Dropbox/Coding/possumwood/examples/141.asf"
             },
-            "type": "anim/loader"
+            "type": "anim/loaders/asf"
         },
-        "loader_1": {
+        "bvh_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -116.25,
-                    "y": 623.75
+                    "x": -156.9375,
+                    "y": 615.375
                 }
             },
-            "name": "run",
+            "name": "loader_bvh",
             "ports": {
-                "filename": "141_01.bvh"
+                "filename": "/home/martin/Dropbox/Coding/possumwood/examples/141_01.bvh"
             },
-            "type": "anim/loader"
+            "type": "anim/loaders/bvh"
+        },
+        "bvh_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -139.984375,
+                    "y": 819.4375
+                }
+            },
+            "name": "loader_bvh",
+            "ports": {
+                "filename": "/home/martin/Dropbox/Coding/possumwood/examples/141_04.bvh"
+            },
+            "type": "anim/loaders/bvh"
         },
         "mult_0": {
             "blind_data": {
@@ -153,6 +173,17 @@
                 "value": {
                     "x": 628.65625,
                     "y": 966.515625
+                }
+            },
+            "name": "skeleton_display",
+            "type": "anim/skeleton_display"
+        },
+        "skeleton_display_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 626.0,
+                    "y": 1099.0
                 }
             },
             "name": "skeleton_display",
