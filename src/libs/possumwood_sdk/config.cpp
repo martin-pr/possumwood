@@ -39,6 +39,7 @@ const std::string Config::Item::type() const {
 		return "float";
 	else
 		assert(false);
+	return "";
 }
 
 const std::string& Config::Item::description() const {

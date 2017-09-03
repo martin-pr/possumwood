@@ -56,7 +56,9 @@ void UndoStack::execute(const Action& action) {
 					action.m_undo[counter]();
 				}
 
+#ifndef NDEBUG
 				m_executionInProgress = false;
+#endif
 
 				// and rethrow the exception
 				throw;
