@@ -24,7 +24,7 @@ const Tokenizer::Token& Tokenizer::next() {
 		// add a new value to the future queue
 		m_future.push(Token());
 
-		// loop until emit is called, or until the end of file 
+		// loop until emit is called, or until the end of file
 		// (emit makes a new m_future item)
 		assert(m_active != NULL);
 		do {
@@ -32,8 +32,7 @@ const Tokenizer::Token& Tokenizer::next() {
 			// (accept() / reject() call get() to move on the next character;
 			// allows to switch states without reading anything)
 			m_active->m_parse(m_input.peek());
-		}
-		while(m_future.back().valid && (m_future.size() == 1) && (!eof()));
+		} while((m_future.size() == 1) && m_future.back().valid && (!eof()));
 
 		// cull out any remaining empty tokens that might appear when parser didn't produce
 		//   any token
@@ -44,7 +43,7 @@ const Tokenizer::Token& Tokenizer::next() {
 	// the queue of parsed tokens is not empty - use next future token
 	if(!m_future.empty()) {
 		m_current = m_future.front();
-		
+
 		// get rid of current value and any possible empty tokens
 		m_future.pop();
 		while(!m_future.empty() && !m_future.front().valid)
@@ -60,37 +59,43 @@ const Tokenizer::Token& Tokenizer::next() {
 }
 
 void Tokenizer::emit(bool acceptEmptyTokens) {
+	Token& back = m_future.back();
+
 	// emit only non-empty tokens
-	if(!m_future.back().value.empty() || acceptEmptyTokens) {
-		if(!m_future.back().valid)
-			m_future.back().line = m_line;
-		m_future.back().valid = true;
+	if(!back.value.empty() || acceptEmptyTokens) {
+		if(!back.valid)
+			back.line = m_line;
+		back.valid = true;
 
 		m_future.push(Token());
 	}
 }
 
 void Tokenizer::accept(char c) {
+	Token& back = m_future.back();
+
 	// remember the line the token started on
-	if(!m_future.back().valid)
-		m_future.back().line = m_line;
-	m_future.back().valid = true;
-	
+	if(!back.valid)
+		back.line = m_line;
+	back.valid = true;
+
 	// add the character to the future token
-	m_future.back().value += c;
+	back.value += c;
 
 	// and skip to the next character
 	reject();
 }
 
 void Tokenizer::accept(const std::string& s) {
+	Token& back = m_future.back();
+
 	// remember the line the token started on
-	if(!m_future.back().valid)
-		m_future.back().line = m_line;
-	m_future.back().valid = true;
-	
+	if(!back.valid)
+		back.line = m_line;
+	back.valid = true;
+
 	// add the character to the future token
-	m_future.back().value += s;
+	back.value += s;
 
 	// and skip to the next character
 	reject();
@@ -112,7 +117,7 @@ const std::string Tokenizer::currentToken() const {
 Tokenizer::State::State(Tokenizer* parent) : m_parent(parent) {
 }
 
-Tokenizer::State& Tokenizer::State::operator = (const std::function<void(char)>& parser) {
+Tokenizer::State& Tokenizer::State::operator=(const std::function<void(char)>& parser) {
 	m_parse = parser;
 
 	return *this;
@@ -122,5 +127,4 @@ void Tokenizer::State::setActive() {
 	assert(m_parent != NULL);
 	m_parent->m_active = this;
 }
-
 }

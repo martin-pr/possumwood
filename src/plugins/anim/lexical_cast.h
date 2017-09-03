@@ -30,6 +30,13 @@ struct LexicalCastHelper<boost::filesystem::path, std::string> {
 	}
 };
 
+template<>
+struct LexicalCastHelper<float, std::string> {
+	static float cast(const std::string& arg) {
+		return std::stof(arg);
+	}
+};
+
 template<typename T>
 struct LexicalCastHelper<std::string, std::vector<T>> {
 	static std::string cast(const std::vector<T>& arg) {
