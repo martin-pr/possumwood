@@ -1,0 +1,61 @@
+{
+    "connections": [
+        {
+            "in_node": "skeleton_display_0",
+            "in_port": "skeleton",
+            "out_node": "x_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "meshes_display_0",
+            "in_port": "meshes",
+            "out_node": "x_0",
+            "out_port": "meshes"
+        }
+    ],
+    "nodes": {
+        "meshes_display_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 537.0,
+                    "y": 464.0
+                }
+            },
+            "name": "meshes_display",
+            "type": "anim/meshes_display"
+        },
+        "skeleton_display_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 573.0,
+                    "y": 363.0
+                }
+            },
+            "name": "skeleton_display",
+            "type": "anim/skeleton_display"
+        },
+        "x_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 298.0,
+                    "y": 311.0
+                }
+            },
+            "name": "x",
+            "ports": {
+                "filename": "ishtarian-proog.x"
+            },
+            "type": "anim/loaders/x"
+        }
+    },
+    "scene_config": {
+        "end_time": 10.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALvAAADyPwCAAAAAfwAAABBAAADyAAAAIsBAAAV+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAlAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAAA4AP///wAAAAEAAAHJAAADyPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAA0cAAABJAP////sAAAAGAGwAbwBnAQAAA4wAAAB9AAAASQD///8AAALAAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+}
