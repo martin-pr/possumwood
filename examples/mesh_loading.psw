@@ -1,8 +1,8 @@
 {
     "connections": [
         {
-            "in_node": "skeleton_display_0",
-            "in_port": "skeleton",
+            "in_node": "frame_edit_0",
+            "in_port": "in_frame",
             "out_node": "x_0",
             "out_port": "skeleton"
         },
@@ -11,9 +11,33 @@
             "in_port": "meshes",
             "out_node": "x_0",
             "out_port": "meshes"
+        },
+        {
+            "in_node": "skeleton_display_0",
+            "in_port": "skeleton",
+            "out_node": "frame_edit_0",
+            "out_port": "out_frame"
         }
     ],
     "nodes": {
+        "frame_edit_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 402.0,
+                    "y": 222.0
+                }
+            },
+            "name": "frame_edit",
+            "ports": {
+                "root_translate": {
+                    "x": 3.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/frame_edit"
+        },
         "meshes_display_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -40,8 +64,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 298.0,
-                    "y": 311.0
+                    "x": 213.0,
+                    "y": 280.0
                 }
             },
             "name": "x",
@@ -56,6 +80,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALvAAADyPwCAAAAAfwAAABBAAADyAAAAIsBAAAV+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAlAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAAA4AP///wAAAAEAAAHJAAADyPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAA0cAAABJAP////sAAAAGAGwAbwBnAQAAA4wAAAB9AAAASQD///8AAALAAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALvAAADs/wCAAAAAfwAAABOAAADswAAAJIBAAAa+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAApwD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAABGAP///wAAAAEAAAHJAAADs/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAAzEAAABZAP////sAAAAGAGwAbwBnAQAAA4UAAAB8AAAAWQD///8AAAK8AAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
