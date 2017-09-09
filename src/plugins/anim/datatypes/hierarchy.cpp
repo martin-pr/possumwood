@@ -87,6 +87,7 @@ std::size_t Hierarchy::addChild(const Item& j, const std::string& name) {
 	m_items.insert(m_items.begin() + lastChild, Item{name, (int)currentIndex, childPos, childPos});
 
 	// and return the index of newly inserted Item
+	assert(lastChild < m_items.size());
 	return lastChild;
 }
 
