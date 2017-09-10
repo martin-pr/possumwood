@@ -149,16 +149,15 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 	// if anything goes wrong, just reset the output
 	values.set(a_outAnim, std::shared_ptr<const anim::Animation>());
 
-	if(anim_a != nullptr && anim_b != nullptr) {
-		if(not anim_a->base.isCompatibleWith(anim_b->base))
+	if(anim_a != nullptr && anim_b != nullptr && !anim_a->frames.empty() && !anim_b->frames.empty()) {
+		if(not anim_a->frames[0].isCompatibleWith(anim_b->frames[0]))
 			throw(std::runtime_error("Animation skeletons don't seem to be compatible."));
-		if((anim_a->base.size() == 0) || (anim_b->base.size() == 0))
+		if((anim_a->frames[0].size() == 0) || (anim_b->frames[0].size() == 0))
 			throw(std::runtime_error("Empty animations cannot be blended."));
 
 		// make a new animation instance
 		std::unique_ptr<anim::Animation> out(new anim::Animation());
 		out->fps = anim_a->fps;
-		out->base = anim_a->base;
 
 		const unsigned tr_a = values.get(a_trA);
 		const unsigned tr_b = values.get(a_trB);

@@ -175,7 +175,7 @@ class Editor : public possumwood::Editor {
 dependency_graph::State compute(dependency_graph::Values& values) {
 	auto& anim = values.get(a_inAnim);
 
-	if(anim != nullptr && anim->frames.size() > 0 && anim->base.size() > 0) {
+	if(anim != nullptr && anim->frames.size() > 0) {
 		std::pair<unsigned, unsigned> interval = startAndEndFrame(values, (unsigned)anim->frames.size());
 
 		// if the interval makes sense
@@ -183,7 +183,6 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 			// make a new animation instance
 			std::unique_ptr<anim::Animation> out(new anim::Animation());
 			out->fps = anim->fps;
-			out->base = anim->base;
 
 			// root transformation difference between first and last frame =
 			//   the "global delta" transformation between periods

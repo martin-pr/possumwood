@@ -180,14 +180,11 @@ std::unique_ptr<anim::Animation> doLoad(const boost::filesystem::path& filename,
 	std::string asfFilename;
 	tokenizer >> "#!OML:ASF" >> asfFilename;
 
-	// read the animation using the asf loader
-	result->base = skel;
-
 	// build an index on top of the skeleton, to make bone lookup faster
 	std::unordered_map<std::string, unsigned> jointIds;
-	for(unsigned a = 0; a < result->base.size(); ++a)
-		jointIds[result->base[a].name()] = a;
-	assert(result->base.size() == jointIds.size());
+	for(unsigned a = 0; a < skel.size(); ++a)
+		jointIds[skel[a].name()] = a;
+	assert(skel.size() == jointIds.size());
 
 	tokenizer >> ":FULLY-SPECIFIED";
 	tokenizer >> ":DEGREES";
@@ -200,7 +197,7 @@ std::unique_ptr<anim::Animation> doLoad(const boost::filesystem::path& filename,
 			throw std::runtime_error("expecting frame #" + boost::lexical_cast<std::string>(frameNo) + " but found #" + tokenizer.current().value);
 
 		// add a frame and read it
-		result->frames.push_back(result->base);
+		result->frames.push_back(skel);
 		readFrame(tokenizer, result->frames.back(), jointIds);
 
 		++frameNo;

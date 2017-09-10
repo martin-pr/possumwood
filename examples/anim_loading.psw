@@ -1,10 +1,10 @@
 {
     "connections": [
         {
-            "in_node": "mult_0",
-            "in_port": "a",
-            "out_node": "time_0",
-            "out_port": "time"
+            "in_node": "anim_frame_0",
+            "in_port": "animation",
+            "out_node": "transition_0",
+            "out_port": "out_anim"
         },
         {
             "in_node": "periodic_0",
@@ -13,40 +13,22 @@
             "out_port": "out_anim"
         },
         {
-            "in_node": "transition_0",
-            "in_port": "anim_a",
-            "out_node": "periodic_1",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "periodic_1",
-            "in_port": "in_anim",
-            "out_node": "transform_1",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "frame_edit_0",
-            "in_port": "in_frame",
-            "out_node": "anim_frame_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "transform_0",
-            "in_port": "in_anim",
-            "out_node": "amc_1",
-            "out_port": "animation"
-        },
-        {
-            "in_node": "transform_1",
-            "in_port": "in_anim",
-            "out_node": "amc_0",
-            "out_port": "animation"
+            "in_node": "mult_0",
+            "in_port": "a",
+            "out_node": "time_0",
+            "out_port": "time"
         },
         {
             "in_node": "anim_frame_0",
             "in_port": "time",
             "out_node": "mult_0",
             "out_port": "out"
+        },
+        {
+            "in_node": "frame_edit_0",
+            "in_port": "in_frame",
+            "out_node": "anim_frame_0",
+            "out_port": "frame"
         },
         {
             "in_node": "amc_0",
@@ -61,9 +43,9 @@
             "out_port": "skeleton"
         },
         {
-            "in_node": "transition_0",
-            "in_port": "anim_b",
-            "out_node": "periodic_0",
+            "in_node": "periodic_1",
+            "in_port": "in_anim",
+            "out_node": "transform_1",
             "out_port": "out_anim"
         },
         {
@@ -73,10 +55,28 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "anim_frame_0",
-            "in_port": "animation",
-            "out_node": "transition_0",
+            "in_node": "transform_1",
+            "in_port": "in_anim",
+            "out_node": "amc_0",
+            "out_port": "animation"
+        },
+        {
+            "in_node": "transition_0",
+            "in_port": "anim_b",
+            "out_node": "periodic_0",
             "out_port": "out_anim"
+        },
+        {
+            "in_node": "transition_0",
+            "in_port": "anim_a",
+            "out_node": "periodic_1",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_anim",
+            "out_node": "amc_1",
+            "out_port": "animation"
         }
     ],
     "nodes": {
@@ -147,9 +147,9 @@
                     [
                         0,
                         [
-                            0.866025388240814,
+                            0.906307756900787,
                             0.0,
-                            0.5,
+                            0.422618269920349,
                             0.0
                         ]
                     ]
@@ -246,7 +246,7 @@
                     "y": 0.0,
                     "z": 0.0
                 },
-                "scale": 0.5,
+                "scale": 0.100000001490116,
                 "translation": {
                     "x": 19.0,
                     "y": 0.0,

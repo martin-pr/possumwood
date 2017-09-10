@@ -13,12 +13,6 @@
             "out_port": "out_meshes"
         },
         {
-            "in_node": "amc_0",
-            "in_port": "skeleton",
-            "out_node": "asf_0",
-            "out_port": "skeleton"
-        },
-        {
             "in_node": "skeleton_display_0",
             "in_port": "skeleton",
             "out_node": "frame_edit_0",
@@ -38,40 +32,12 @@
         }
     ],
     "nodes": {
-        "amc_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 84.0,
-                    "y": 703.0
-                }
-            },
-            "name": "amc",
-            "ports": {
-                "filename": "/home/martin/Dropbox/Coding/possumwood/examples/141_01.amc"
-            },
-            "type": "anim/loaders/amc"
-        },
-        "asf_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 16.0,
-                    "y": 574.0
-                }
-            },
-            "name": "asf",
-            "ports": {
-                "filename": "/home/martin/Dropbox/Coding/possumwood/examples/141.asf"
-            },
-            "type": "anim/loaders/asf"
-        },
         "frame_edit_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 377.0,
-                    "y": 315.0
+                    "x": 385.0,
+                    "y": 443.0
                 }
             },
             "name": "frame_edit",
@@ -79,7 +45,7 @@
                 "rotations": null,
                 "scale": 1.0,
                 "translate": {
-                    "x": 0.0,
+                    "x": 2.0,
                     "y": 0.0,
                     "z": 0.0
                 }
