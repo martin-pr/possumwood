@@ -3,20 +3,8 @@
         {
             "in_node": "frame_edit_0",
             "in_port": "in_frame",
-            "out_node": "remove_unskinned_0",
+            "out_node": "skeleton_rename_0",
             "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "meshes_display_0",
-            "in_port": "meshes",
-            "out_node": "remove_unskinned_0",
-            "out_port": "out_meshes"
-        },
-        {
-            "in_node": "skeleton_display_0",
-            "in_port": "skeleton",
-            "out_node": "frame_edit_0",
-            "out_port": "out_frame"
         },
         {
             "in_node": "remove_unskinned_0",
@@ -29,6 +17,24 @@
             "in_port": "in_meshes",
             "out_node": "x_0",
             "out_port": "meshes"
+        },
+        {
+            "in_node": "skeleton_display_0",
+            "in_port": "skeleton",
+            "out_node": "frame_edit_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "skeleton_rename_0",
+            "in_port": "in_skeleton",
+            "out_node": "remove_unskinned_0",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "meshes_display_0",
+            "in_port": "meshes",
+            "out_node": "remove_unskinned_0",
+            "out_port": "out_meshes"
         }
     ],
     "nodes": {
@@ -36,16 +42,98 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 385.0,
-                    "y": 443.0
+                    "x": 484.0,
+                    "y": 304.0
                 }
             },
             "name": "frame_edit",
             "ports": {
-                "rotations": null,
+                "rotations": [
+                    [
+                        13,
+                        [
+                            0.887010812759399,
+                            0.461748600006104,
+                            0.0,
+                            0.0
+                        ]
+                    ],
+                    [
+                        17,
+                        [
+                            0.887010812759399,
+                            0.461748600006104,
+                            0.0,
+                            0.0
+                        ]
+                    ],
+                    [
+                        18,
+                        [
+                            0.887010812759399,
+                            0.461748600006104,
+                            0.0,
+                            0.0
+                        ]
+                    ],
+                    [
+                        23,
+                        [
+                            0.965925812721252,
+                            -0.258819043636322,
+                            0.0,
+                            0.0
+                        ]
+                    ],
+                    [
+                        24,
+                        [
+                            0.965925812721252,
+                            -0.258819043636322,
+                            0.0,
+                            0.0
+                        ]
+                    ],
+                    [
+                        25,
+                        [
+                            0.965925812721252,
+                            -0.258819043636322,
+                            0.0,
+                            0.0
+                        ]
+                    ],
+                    [
+                        56,
+                        [
+                            0.887010812759399,
+                            0.0,
+                            0.461748600006104,
+                            0.0
+                        ]
+                    ],
+                    [
+                        57,
+                        [
+                            0.887010812759399,
+                            0.0,
+                            0.461748600006104,
+                            0.0
+                        ]
+                    ],
+                    [
+                        58,
+                        [
+                            0.887010812759399,
+                            0.0,
+                            0.461748600006104,
+                            0.0
+                        ]
+                    ]
+                ],
                 "scale": 1.0,
                 "translate": {
-                    "x": 2.0,
+                    "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
                 }
@@ -70,8 +158,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 198.0,
-                    "y": 463.0
+                    "x": 169.0,
+                    "y": 232.0
                 }
             },
             "name": "remove_unskinned",
@@ -88,12 +176,26 @@
             "name": "skeleton_display",
             "type": "anim/skeleton_display"
         },
+        "skeleton_rename_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 325.0,
+                    "y": 251.0
+                }
+            },
+            "name": "skeleton_rename",
+            "ports": {
+                "regex": "(Root)|(ORG.*)|(DEF_.*)|(rig$)|(root$)$"
+            },
+            "type": "anim/skeleton_rename"
+        },
         "x_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 37.0,
-                    "y": 455.0
+                    "x": 42.0,
+                    "y": 208.0
                 }
             },
             "name": "x",
@@ -108,6 +210,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKIAAADyPwCAAAAAfwAAABBAAADyAAAAIsBAAAV+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAlAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAAA4AP///wAAAAEAAAJhAAADyPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAA1AAAABJAP////sAAAAGAGwAbwBnAQAAA5UAAAB0AAAASQD///8AAAKPAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKIAAADs/wCAAAAAfwAAABOAAADswAAAJIBAAAa+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAApwD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAABGAP///wAAAAEAAAJhAAADs/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAAzsAAABZAP////sAAAAGAGwAbwBnAQAAA48AAAByAAAAWQD///8AAAKLAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
