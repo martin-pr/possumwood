@@ -1,3 +1,5 @@
+#include <memory>
+
 #include <possumwood_sdk/node_implementation.h>
 
 #include <dependency_graph/values.inl>
@@ -61,8 +63,32 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		convert(inSkel[0], 0, outSkel);
 
+		// make a correspondence map between the old and the new skeleton
+		std::vector<unsigned> correspondence(inSkel.size(), 0);
+		{
+			std::map<std::string, unsigned> newBones;
+			for(auto& b : outSkel)
+				newBones.insert(std::make_pair(b.name(), b.index()));
+
+			for(auto& b : inSkel) {
+				auto it = newBones.find(b.name());
+				if(it != newBones.end())
+					correspondence[b.index()] = it->second;
+			}
+		}
+
+		// convert the skinning weights to correspond with the new skeleton
+		std::unique_ptr<std::vector<anim::SkinnedMesh>> outMeshes(new std::vector<anim::SkinnedMesh>());
+		for(auto& m : *inMeshes) {
+			outMeshes->push_back(m);
+
+			for(auto& v : outMeshes->back().vertices())
+				for(auto& w : v)
+					w.first = correspondence[w.first];
+		}
+
 		data.set(a_outSkel, outSkel);
-		data.set(a_outMeshes, inMeshes);
+		data.set(a_outMeshes, std::shared_ptr<const std::vector<anim::SkinnedMesh>>(outMeshes.release()));
 	}
 
 	return dependency_graph::State();
