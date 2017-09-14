@@ -1,6 +1,54 @@
 {
     "connections": [
         {
+            "in_node": "remove_unskinned_0",
+            "in_port": "in_skeleton",
+            "out_node": "x_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "remove_unskinned_0",
+            "in_port": "in_meshes",
+            "out_node": "x_0",
+            "out_port": "meshes"
+        },
+        {
+            "in_node": "meshes_display_1",
+            "in_port": "meshes",
+            "out_node": "skin_1",
+            "out_port": "posed_meshes"
+        },
+        {
+            "in_node": "frame_edit_3",
+            "in_port": "in_frame",
+            "out_node": "remove_unskinned_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "meshes_display_0",
+            "in_port": "meshes",
+            "out_node": "remove_unskinned_1",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "remove_unskinned_1",
+            "in_port": "in_meshes",
+            "out_node": "skin_0",
+            "out_port": "posed_meshes"
+        },
+        {
+            "in_node": "skin_0",
+            "in_port": "meshes",
+            "out_node": "skin_remapping_0",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "skin_1",
+            "in_port": "posed_skeleton",
+            "out_node": "frame_edit_2",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "skin_0",
             "in_port": "base_skeleton",
             "out_node": "skeleton_rename_0",
@@ -13,16 +61,16 @@
             "out_port": "out_skeleton"
         },
         {
-            "in_node": "remove_unskinned_0",
-            "in_port": "in_skeleton",
-            "out_node": "x_0",
-            "out_port": "skeleton"
+            "in_node": "skin_remapping_0",
+            "in_port": "skeleton",
+            "out_node": "skeleton_rename_0",
+            "out_port": "out_skeleton"
         },
         {
-            "in_node": "remove_unskinned_0",
-            "in_port": "in_meshes",
-            "out_node": "x_0",
-            "out_port": "meshes"
+            "in_node": "skin_1",
+            "in_port": "base_skeleton",
+            "out_node": "skeleton_rename_0",
+            "out_port": "out_skeleton"
         },
         {
             "in_node": "skin_0",
@@ -37,10 +85,22 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "meshes_display_0",
-            "in_port": "meshes",
-            "out_node": "skin_0",
-            "out_port": "posed_meshes"
+            "in_node": "frame_edit_2",
+            "in_port": "in_frame",
+            "out_node": "frame_edit_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "remove_unskinned_1",
+            "in_port": "in_skeleton",
+            "out_node": "frame_edit_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "skeleton_display_0",
+            "in_port": "skeleton",
+            "out_node": "frame_edit_1",
+            "out_port": "out_frame"
         },
         {
             "in_node": "skeleton_rename_0",
@@ -49,15 +109,21 @@
             "out_port": "out_skeleton"
         },
         {
-            "in_node": "skin_0",
+            "in_node": "skin_remapping_0",
+            "in_port": "in_meshes",
+            "out_node": "remove_unskinned_0",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "skin_1",
             "in_port": "meshes",
             "out_node": "remove_unskinned_0",
             "out_port": "out_meshes"
         },
         {
-            "in_node": "skeleton_display_0",
+            "in_node": "skeleton_display_1",
             "in_port": "skeleton",
-            "out_node": "frame_edit_1",
+            "out_node": "frame_edit_3",
             "out_port": "out_frame"
         }
     ],
@@ -70,7 +136,7 @@
                     "y": 199.25
                 }
             },
-            "name": "frame_edit",
+            "name": "frame_edit - pose",
             "ports": {
                 "rotations": [
                     [
@@ -103,8 +169,8 @@
                     [
                         17,
                         [
-                            1.0,
-                            0.0,
+                            0.887010812759399,
+                            -0.461748600006104,
                             0.0,
                             0.0
                         ]
@@ -112,8 +178,8 @@
                     [
                         18,
                         [
-                            1.0,
-                            0.0,
+                            0.887010812759399,
+                            -0.461748600006104,
                             0.0,
                             0.0
                         ]
@@ -121,8 +187,8 @@
                     [
                         23,
                         [
-                            0.887010812759399,
-                            -0.461748600006104,
+                            1.0,
+                            0.0,
                             0.0,
                             0.0
                         ]
@@ -130,8 +196,8 @@
                     [
                         24,
                         [
-                            0.887010812759399,
-                            -0.461748600006104,
+                            0.984807729721069,
+                            0.173648178577423,
                             0.0,
                             0.0
                         ]
@@ -139,8 +205,17 @@
                     [
                         25,
                         [
-                            0.887010812759399,
-                            -0.461748600006104,
+                            0.984807729721069,
+                            0.173648178577423,
+                            0.0,
+                            0.0
+                        ]
+                    ],
+                    [
+                        30,
+                        [
+                            0.984807729721069,
+                            0.173648178577423,
                             0.0,
                             0.0
                         ]
@@ -159,8 +234,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 706.187501788578,
-                    "y": 338.675780694924
+                    "x": 828.9375,
+                    "y": 451.61328125
                 }
             },
             "name": "frame_edit",
@@ -175,12 +250,66 @@
             },
             "type": "anim/frame_edit"
         },
+        "frame_edit_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 831.375,
+                    "y": 200.625
+                }
+            },
+            "name": "frame_edit",
+            "ports": {
+                "rotations": null,
+                "scale": 1.0,
+                "translate": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 1.0
+                }
+            },
+            "type": "anim/frame_edit"
+        },
+        "frame_edit_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 916.703111559924,
+                    "y": 905.671873971543
+                }
+            },
+            "name": "frame_edit",
+            "ports": {
+                "rotations": null,
+                "scale": 1.0,
+                "translate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/frame_edit"
+        },
         "meshes_display_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 812.625,
-                    "y": 595.75
+                    "x": 941.3125,
+                    "y": 745.28125
+                }
+            },
+            "name": "meshes_display",
+            "ports": {
+                "color_bones": true
+            },
+            "type": "anim/meshes_display"
+        },
+        "meshes_display_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1152.5625,
+                    "y": 372.125
                 }
             },
             "name": "meshes_display",
@@ -193,8 +322,19 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 169.0,
-                    "y": 232.0
+                    "x": 148.0,
+                    "y": 230.0
+                }
+            },
+            "name": "remove_unskinned",
+            "type": "anim/remove_unskinned"
+        },
+        "remove_unskinned_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 767.953113403943,
+                    "y": 814.421876020453
                 }
             },
             "name": "remove_unskinned",
@@ -204,8 +344,19 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 869.907592773437,
-                    "y": 471.1015625
+                    "x": 1035.53259277344,
+                    "y": 555.4765625
+                }
+            },
+            "name": "skeleton_display",
+            "type": "anim/skeleton_display"
+        },
+        "skeleton_display_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1065.45311155992,
+                    "y": 950.671873971543
                 }
             },
             "name": "skeleton_display",
@@ -215,8 +366,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 333.125,
-                    "y": 221.3125
+                    "x": 326.38671875,
+                    "y": 233.2265625
                 }
             },
             "name": "skeleton_rename",
@@ -229,18 +380,76 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 622.75,
-                    "y": 535.3125
+                    "x": 712.203125,
+                    "y": 628.671875
                 }
             },
             "name": "skin",
             "type": "anim/skin"
         },
+        "skin_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 984.91015625,
+                    "y": 338.28515625
+                }
+            },
+            "name": "skin",
+            "type": "anim/skin"
+        },
+        "skin_remapping_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 443.3125,
+                    "y": 538.125
+                }
+            },
+            "name": "skin_remapping",
+            "ports": {
+                "mapping": [
+                    [
+                        13,
+                        11
+                    ],
+                    [
+                        8,
+                        11
+                    ],
+                    [
+                        14,
+                        12
+                    ],
+                    [
+                        9,
+                        12
+                    ],
+                    [
+                        17,
+                        18
+                    ],
+                    [
+                        23,
+                        18
+                    ],
+                    [
+                        19,
+                        20
+                    ],
+                    [
+                        26,
+                        20
+                    ]
+                ]
+            },
+            "type": "anim/skin_remapping"
+        },
         "x_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 0.750000000000014,
+                    "x": 0.75,
                     "y": 209.25
                 }
             },
@@ -256,6 +465,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKIAAADs/wCAAAAAfwAAABOAAADswAAAJIBAAAa+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAApwD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAABGAP///wAAAAEAAAJhAAADs/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAAz8AAABZAP////sAAAAGAGwAbwBnAQAAA5MAAABuAAAAWQD///8AAAKLAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKIAAADyPwCAAAAAfwAAABBAAADyAAAAIsBAAAV+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAlAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAAA4AP///wAAAAEAAAJhAAADyPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAA1YAAABJAP////sAAAAGAGwAbwBnAQAAA5sAAABuAAAASQD///8AAAKPAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
