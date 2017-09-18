@@ -1,11 +1,11 @@
-#include "skin_mapping_editor.h"
+#include "joint_mapping_editor.h"
 
 #include <QComboBox>
 #include <QHeaderView>
 
 #include <ImathEuler.h>
 
-SkinMappingEditor::SkinMappingEditor() : m_widget(new QTreeWidget()), m_signalsBlocked(false) {
+JointMappingEditor::JointMappingEditor() : m_widget(new QTreeWidget()), m_signalsBlocked(false) {
 	m_widget->setRootIsDecorated(false);
 
 	m_widget->headerItem()->setText(0, "from");
@@ -16,10 +16,10 @@ SkinMappingEditor::SkinMappingEditor() : m_widget(new QTreeWidget()), m_signalsB
 	m_widget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
 }
 
-SkinMappingEditor::~SkinMappingEditor() {
+JointMappingEditor::~JointMappingEditor() {
 }
 
-void SkinMappingEditor::get(anim::SkinMappingEditorData& value) const {
+void JointMappingEditor::get(anim::JointMappingEditorData& value) const {
 	const bool signalsBlockedOrig = m_signalsBlocked;
 	m_signalsBlocked = true;
 
@@ -42,7 +42,7 @@ void SkinMappingEditor::get(anim::SkinMappingEditorData& value) const {
 	m_signalsBlocked = signalsBlockedOrig;
 }
 
-void SkinMappingEditor::set(const anim::SkinMappingEditorData& value) {
+void JointMappingEditor::set(const anim::JointMappingEditorData& value) {
 	const bool signalsBlockedOrig = m_signalsBlocked;
 	m_signalsBlocked = true;
 
@@ -78,12 +78,13 @@ void SkinMappingEditor::set(const anim::SkinMappingEditorData& value) {
 
 		cb1->clear();
 		cb1->addItem("-- unassigned --");
+		for(auto& b : value.sourceSkeleton())
+			cb1->addItem(b.name().c_str());
+
 		cb2->clear();
 		cb2->addItem("-- unassigned --");
-		for(auto& b : value.skeleton()) {
-			cb1->addItem(b.name().c_str());
+		for(auto& b : value.targetSkeleton())
 			cb2->addItem(b.name().c_str());
-		}
 	}
 
 	// transfer the data
@@ -120,11 +121,11 @@ void SkinMappingEditor::set(const anim::SkinMappingEditorData& value) {
 	m_signalsBlocked = signalsBlockedOrig;
 }
 
-QWidget* SkinMappingEditor::widget() {
+QWidget* JointMappingEditor::widget() {
 	return m_widget;
 }
 
-void SkinMappingEditor::onFlagsChanged(unsigned flags) {
+void JointMappingEditor::onFlagsChanged(unsigned flags) {
 	const bool signalsBlockedOrig = m_signalsBlocked;
 	m_signalsBlocked = true;
 
@@ -157,7 +158,7 @@ void SkinMappingEditor::onFlagsChanged(unsigned flags) {
 	m_signalsBlocked = signalsBlockedOrig;
 }
 
-void SkinMappingEditor::valueUpdatedSignal() {
+void JointMappingEditor::valueUpdatedSignal() {
 	if(!m_signalsBlocked) {
 		m_signalsBlocked = true;
 		callValueChangedCallbacks();

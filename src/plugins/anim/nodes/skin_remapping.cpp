@@ -7,22 +7,23 @@
 #include <dependency_graph/node.inl>
 
 #include "datatypes/skinned_mesh.h"
-#include "datatypes/skin_mapping_editor_data.h"
+#include "datatypes/joint_mapping_editor_data.h"
 
 namespace {
 
 dependency_graph::InAttr<anim::Skeleton> a_skeleton;
 dependency_graph::InAttr<std::shared_ptr<const std::vector<anim::SkinnedMesh>>> a_inMeshes;
-dependency_graph::InAttr<anim::SkinMappingEditorData> a_editorData;
+dependency_graph::InAttr<anim::JointMappingEditorData> a_editorData;
 dependency_graph::OutAttr<std::shared_ptr<const std::vector<anim::SkinnedMesh>>> a_outMeshes;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const anim::Skeleton& skeleton = data.get(a_skeleton);
 
 	// update a_editorData, if needed
-	if(data.get(a_editorData).skeleton() != skeleton) {
-		anim::SkinMappingEditorData editorData = data.get(a_editorData);
-		editorData.setSkeleton(skeleton);
+	if(data.get(a_editorData).sourceSkeleton() != skeleton) {
+		anim::JointMappingEditorData editorData = data.get(a_editorData);
+		editorData.setSourceSkeleton(skeleton);
+		editorData.setTargetSkeleton(skeleton);
 		data.set(a_editorData, editorData);
 	}
 

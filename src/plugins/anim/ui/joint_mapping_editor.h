@@ -7,17 +7,17 @@
 
 #include <possumwood_sdk/properties/property.h>
 
-#include "datatypes/skin_mapping_editor_data.h"
+#include "datatypes/joint_mapping_editor_data.h"
 
 class QComboBox;
 
-class SkinMappingEditor : public possumwood::properties::property<anim::SkinMappingEditorData, SkinMappingEditor> {
+class JointMappingEditor : public possumwood::properties::property<anim::JointMappingEditorData, JointMappingEditor> {
 	public:
-		SkinMappingEditor();
-		virtual ~SkinMappingEditor();
+		JointMappingEditor();
+		virtual ~JointMappingEditor();
 
-		virtual void get(anim::SkinMappingEditorData& value) const override;
-		virtual void set(const anim::SkinMappingEditorData& value) override;
+		virtual void get(anim::JointMappingEditorData& value) const override;
+		virtual void set(const anim::JointMappingEditorData& value) override;
 
 		virtual QWidget* widget() override;
 

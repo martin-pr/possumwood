@@ -5,10 +5,13 @@
 namespace anim {
 
 /// A simple data container for frame editor node - holds individual transformations for each bone.
-class SkinMappingEditorData {
+class JointMappingEditorData {
   public:
-	void setSkeleton(const Skeleton& s);
-	const Skeleton& skeleton() const;
+	void setSourceSkeleton(const Skeleton& s);
+	const Skeleton& sourceSkeleton() const;
+
+	void setTargetSkeleton(const Skeleton& s);
+	const Skeleton& targetSkeleton() const;
 
 	typedef std::vector<std::pair<int, int>>::const_iterator const_iterator;
 	typedef std::vector<std::pair<int, int>>::iterator iterator;
@@ -29,13 +32,13 @@ class SkinMappingEditorData {
 	bool empty() const;
 	std::size_t size() const;
 
-	bool operator==(const SkinMappingEditorData& d) const;
-	bool operator!=(const SkinMappingEditorData& d) const;
+	bool operator==(const JointMappingEditorData& d) const;
+	bool operator!=(const JointMappingEditorData& d) const;
 
   protected:
   private:
   	// this should be only a list of bones!
-	Skeleton m_skeleton;
+	Skeleton m_sourceSkeleton, m_targetSkeleton;
 	std::vector<std::pair<int, int>> m_mapping;
 };
 }
@@ -43,8 +46,8 @@ class SkinMappingEditorData {
 namespace possumwood {
 
 template<>
-struct Traits<anim::SkinMappingEditorData> {
-	static IO<anim::SkinMappingEditorData> io;
+struct Traits<anim::JointMappingEditorData> {
+	static IO<anim::JointMappingEditorData> io;
 
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0, 0.2, 0}};
