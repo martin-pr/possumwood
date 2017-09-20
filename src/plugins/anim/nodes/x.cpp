@@ -462,28 +462,20 @@ doLoad(const boost::filesystem::path& filename) {
 
 		// make the root
 		result->skeleton.addRoot(skeleton->name, convertMatrix(skeleton->tr));
-		// initialise the stack
-		std::queue<std::pair<std::string, std::unique_ptr<Frame>>> queue;
-		for(auto& c : skeleton->children)
-			queue.push(std::make_pair(skeleton->name, std::move(c)));
 
-		// recursively fill the skeleton structure
-		while(!queue.empty()) {
-			// find the parent joint
-			anim::Skeleton::Joint* parent = NULL;
-			for(auto& j : result->skeleton)
-				if(j.name() == queue.front().first)
-					parent = &j;
-			assert(parent != NULL);
+		// the BFS building functor
+		std::function<void(std::size_t, const Frame&)> fn = [&fn, &result](std::size_t jointIndex, const Frame& frame) {
+			// transfer all children
+			for(auto& c : frame.children)
+				result->skeleton.addChild(result->skeleton[jointIndex], convertMatrix(c->tr), c->name);
+			assert(result->skeleton[jointIndex].children().size() == frame.children.size());
 
-			// add the joint to the skeleton
-			result->skeleton.addChild(*parent, convertMatrix(queue.front().second->tr), queue.front().second->name);
-
-			// and add all children to the queue
-			for(auto& c : queue.front().second->children)
-				queue.push(std::make_pair(queue.front().second->name, std::move(c)));
-			queue.pop();
-		}
+			// recursive call
+			unsigned ctr = 0;
+			for(auto& c : frame.children)
+				fn(result->skeleton[jointIndex].children()[ctr++].index(), *c);
+		};
+		fn(0, *skeleton);
 
 		// and convert to local space
 		for(int b = result->skeleton.size() - 1; b > 0; --b)

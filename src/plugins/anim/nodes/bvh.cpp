@@ -169,8 +169,8 @@ namespace {
 			throw std::runtime_error("unknown channel type " + key);
 	}
 
-	void readMotion(anim::Tokenizer& tokenizer, anim::Animation& anim, const std::vector<Joint>& joints) {
-		assert(anim.base.size() == joints.size());
+	void readMotion(anim::Tokenizer& tokenizer, anim::Animation& anim, const std::vector<Joint>& joints, const anim::Skeleton& skeleton) {
+		assert(skeleton.size() == joints.size());
 
 		// number of frames
 		if(tokenizer.next().value != "Frames:")
@@ -187,7 +187,7 @@ namespace {
 		// read the frame data
 		for(unsigned f=0;f<frameCount;++f) {
 			// make a new frame
-			anim.frames.push_back(anim.base);
+			anim.frames.push_back(skeleton);
 
 			// reset it to identity
 			for(auto& j : anim.frames.back())
@@ -202,7 +202,7 @@ namespace {
 					tr *= makeTransform(boost::lexical_cast<float>(tokenizer.next().value), ch);
 
 				const unsigned targetId = joints[ji].targetId;
-				anim.frames.back()[targetId].tr() = anim.base[targetId].tr() * tr;
+				anim.frames.back()[targetId].tr() = skeleton[targetId].tr() * tr;
 
 				++ji;
 			}
@@ -254,21 +254,22 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		std::vector<Joint> joints;
 		std::shared_ptr<anim::Animation> result(new anim::Animation);
+		anim::Skeleton skeleton;
 
 		BvhTokenizer tokenizer(in);
 
 		while(!tokenizer.eof()) {
 			if(tokenizer.current().value == "HIERARCHY") {
 				readHierarchy(tokenizer, joints);
-				result->base = convertHierarchy(joints);
+				skeleton = convertHierarchy(joints);
 			}
 			else if(tokenizer.current().value == "MOTION")
-				readMotion(tokenizer, *result, joints);
+				readMotion(tokenizer, *result, joints, skeleton);
 			else
 				throw std::runtime_error("unknown keyword " + tokenizer.current().value);
 		}
 
-		data.set(a_skel, result->base);
+		data.set(a_skel, skeleton);
 		data.set(a_anim, std::shared_ptr<const anim::Animation>(result));
 	}
 	else {

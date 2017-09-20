@@ -89,14 +89,14 @@ template<typename JOINT, typename CONTAINER>
 JOINT& Children<JOINT, CONTAINER>::operator[](std::size_t index) {
 	assert(valid());
 	assert(index < m_joints->size());
-	return (*m_joints)[index];
+	return (*m_joints)[index+m_begin];
 }
 
 template<typename JOINT, typename CONTAINER>
 const JOINT& Children<JOINT, CONTAINER>::operator[](std::size_t index) const {
 	assert(valid());
 	assert(index < m_joints->size());
-	return (*m_joints)[index];
+	return (*m_joints)[index+m_begin];
 }
 
 }

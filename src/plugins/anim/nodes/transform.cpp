@@ -15,14 +15,15 @@
 namespace {
 
 dependency_graph::InAttr<std::shared_ptr<const anim::Animation>> a_inAnim;
-dependency_graph::InAttr<Imath::Vec3<float>> a_translation, a_rotation, a_scale;
+dependency_graph::InAttr<Imath::Vec3<float>> a_translation, a_rotation;
+dependency_graph::InAttr<float> a_scale;
 dependency_graph::OutAttr<std::shared_ptr<const anim::Animation>> a_outAnim;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const std::shared_ptr<const anim::Animation> anim = data.get(a_inAnim);
 	const Imath::Vec3<float> tr = data.get(a_translation);
 	const Imath::Vec3<float> rot = data.get(a_rotation);
-	const Imath::Vec3<float> sc = data.get(a_scale);
+	const float sc = data.get(a_scale);
 
 	if(anim) {
 		// assemble the transform
@@ -39,7 +40,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// and construct the new animation
 		std::unique_ptr<anim::Animation> newAnim(new anim::Animation(*anim));
-		newAnim->base *= matrix;
 		for(auto& f : newAnim->frames)
 			f *= matrix;
 
@@ -56,7 +56,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inAnim, "in_anim");
 	meta.addAttribute(a_translation, "translation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_rotation, "rotation", Imath::Vec3<float>(0, 0, 0));
-	meta.addAttribute(a_scale, "scale", Imath::Vec3<float>(1, 1, 1));
+	meta.addAttribute(a_scale, "scale", 1.0f);
 	meta.addAttribute(a_outAnim, "out_anim");
 
 	meta.addInfluence(a_inAnim, a_outAnim);

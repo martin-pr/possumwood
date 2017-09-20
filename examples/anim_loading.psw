@@ -1,9 +1,15 @@
 {
     "connections": [
         {
-            "in_node": "transition_0",
-            "in_port": "anim_a",
-            "out_node": "periodic_1",
+            "in_node": "anim_frame_0",
+            "in_port": "animation",
+            "out_node": "transition_0",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "periodic_0",
+            "in_port": "in_anim",
+            "out_node": "transform_0",
             "out_port": "out_anim"
         },
         {
@@ -19,6 +25,12 @@
             "out_port": "out"
         },
         {
+            "in_node": "frame_edit_0",
+            "in_port": "in_frame",
+            "out_node": "anim_frame_0",
+            "out_port": "frame"
+        },
+        {
             "in_node": "amc_0",
             "in_port": "skeleton",
             "out_node": "asf_0",
@@ -31,10 +43,16 @@
             "out_port": "skeleton"
         },
         {
-            "in_node": "transform_0",
+            "in_node": "periodic_1",
             "in_port": "in_anim",
-            "out_node": "amc_1",
-            "out_port": "animation"
+            "out_node": "transform_1",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "skeleton_display_0",
+            "in_port": "skeleton",
+            "out_node": "frame_edit_0",
+            "out_port": "out_frame"
         },
         {
             "in_node": "transform_1",
@@ -49,28 +67,16 @@
             "out_port": "out_anim"
         },
         {
-            "in_node": "skeleton_display_0",
-            "in_port": "skeleton",
-            "out_node": "anim_frame_0",
-            "out_port": "frame"
+            "in_node": "transition_0",
+            "in_port": "anim_a",
+            "out_node": "periodic_1",
+            "out_port": "out_anim"
         },
         {
-            "in_node": "periodic_0",
+            "in_node": "transform_0",
             "in_port": "in_anim",
-            "out_node": "transform_0",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "periodic_1",
-            "in_port": "in_anim",
-            "out_node": "transform_1",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "anim_frame_0",
-            "in_port": "animation",
-            "out_node": "transition_0",
-            "out_port": "out_anim"
+            "out_node": "amc_1",
+            "out_port": "animation"
         }
     ],
     "nodes": {
@@ -126,6 +132,36 @@
                 "filename": "141.asf"
             },
             "type": "anim/loaders/asf"
+        },
+        "frame_edit_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 737.15625,
+                    "y": 641.703125
+                }
+            },
+            "name": "frame_edit",
+            "ports": {
+                "rotations": [
+                    [
+                        0,
+                        [
+                            0.906307756900787,
+                            0.0,
+                            0.422618269920349,
+                            0.0
+                        ]
+                    ]
+                ],
+                "scale": 1.0,
+                "translate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/frame_edit"
         },
         "mult_0": {
             "blind_data": {
@@ -210,11 +246,7 @@
                     "y": 0.0,
                     "z": 0.0
                 },
-                "scale": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
+                "scale": 0.100000001490116,
                 "translation": {
                     "x": 19.0,
                     "y": 0.0,
@@ -234,17 +266,13 @@
             "name": "transform",
             "ports": {
                 "rotation": {
-                    "x": 0.0,
+                    "x": 45.0,
                     "y": 0.0,
                     "z": 0.0
                 },
-                "scale": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
+                "scale": 0.100000001490116,
                 "translation": {
-                    "x": 0.0,
+                    "x": 1.0,
                     "y": 0.0,
                     "z": 0.0
                 }
@@ -273,6 +301,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADs/wCAAAAAfwAAABOAAADswAAAJIBAAAa+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAApwD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAABGAP///wAAAAEAAAHJAAADs/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAAy4AAABZAP////sAAAAGAGwAbwBnAQAAA4IAAAB/AAAAWQD///8AAAKMAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADyPwCAAAAAfwAAABBAAADyAAAAIsBAAAV+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAlAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAAA4AP///wAAAAEAAAHJAAADyPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAA0UAAABJAP////sAAAAGAGwAbwBnAQAAA4oAAAB/AAAASQD///8AAAKQAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

@@ -11,3 +11,21 @@ void fooBar() {
 	possumwood::Traits<int>::io;
 	possumwood::Traits<unsigned>::io;
 }
+
+namespace possumwood {
+
+namespace {
+
+void stringToJson(dependency_graph::io::json& json, const std::string& f) {
+	json = f;
+}
+
+void stringFromJson(const dependency_graph::io::json& json, std::string& f) {
+	f = json.get<std::string>();
+}
+
+}
+
+IO<std::string> Traits<std::string>::io(&stringToJson, &stringFromJson);
+
+}
