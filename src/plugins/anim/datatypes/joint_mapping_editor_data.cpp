@@ -38,6 +38,18 @@ JointMappingEditorData::const_iterator JointMappingEditorData::end() const {
 	return m_mapping.end();
 }
 
+JointMappingEditorData::const_iterator JointMappingEditorData::findSource(int index) const {
+	return std::find_if(m_mapping.begin(), m_mapping.end(), [index](const std::pair<int, int>& p) {
+		return p.first == index;
+	});
+}
+
+JointMappingEditorData::const_iterator JointMappingEditorData::findTarget(int index) const {
+	return std::find_if(m_mapping.begin(), m_mapping.end(), [index](const std::pair<int, int>& p) {
+		return p.second == index;
+	});
+}
+
 JointMappingEditorData::iterator JointMappingEditorData::begin() {
 	return m_mapping.begin();
 }

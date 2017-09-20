@@ -25,6 +25,8 @@ class JointMappingEditorData {
 
 	const_iterator begin() const;
 	const_iterator end() const;
+	const_iterator findSource(int index) const;
+	const_iterator findTarget(int index) const;
 
 	iterator begin();
 	iterator end();
