@@ -40,13 +40,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// and compute transformations for the skinning itself
 		std::vector<Imath::M44f> transforms(baseSkeleton.size());
-		for(unsigned bi=0;bi<transforms.size();++bi)
-			transforms[bi] = (posedSkeleton[bi].tr().toMatrix44() * baseSkeleton[bi].tr().toMatrix44().inverse());
+		for(unsigned bi = 0; bi<transforms.size(); ++bi)
+			transforms[bi] =
+				(posedSkeleton[bi].tr().toMatrix44() *
+				 baseSkeleton[bi].tr().toMatrix44().inverse());
 
 		// and do the skinning
 		std::set<unsigned> missingBones;
 
-		std::unique_ptr<std::vector<anim::SkinnedMesh>> posedMeshes(new std::vector<anim::SkinnedMesh>());
+		std::unique_ptr<std::vector<anim::SkinnedMesh>> posedMeshes(
+			new std::vector<anim::SkinnedMesh>());
 		for(auto& m : *meshes) {
 			posedMeshes->push_back(m);
 			anim::SkinnedMesh& mesh = posedMeshes->back();
@@ -69,6 +72,34 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			}
 		}
 
+		// remove the translational component, and convert to normal matrix
+		for(auto& m : transforms) {
+			for(unsigned a=0;a<3;++a) {
+				m[a][3] = 0.0f;
+				m[3][a] = 0.0f;
+			}
+			m = m.inverse().transposed();
+		}
+
+		// and do the skinning on normals
+		for(auto& mesh : *posedMeshes) {
+			std::size_t normalIndex = 0;
+			for(auto& n : mesh.normals()) {
+				Imath::V3f norm(0,0,0);
+
+				const std::size_t vertexIndex =
+					mesh.polygons()[normalIndex / 3][normalIndex % 3];
+				for(auto& w : mesh.vertices()[vertexIndex])
+					if(w.first < transforms.size())
+						norm += (n * transforms[w.first].transposed()) * w.second;
+
+				if(norm.length2() > 0.0f)
+					n = norm.normalized();
+
+				++normalIndex;
+			}
+		}
+
 		if(!missingBones.empty()) {
 			std::stringstream err;
 			err << "Skinning uses a bone that is not included in the skeleton! Missing bone IDs:";
@@ -81,7 +112,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// move the output
 		data.set(a_posedMeshes, std::shared_ptr<const std::vector<anim::SkinnedMesh>>(
-			posedMeshes.release()));
+					 posedMeshes.release()));
 	}
 	else
 		data.set(a_posedMeshes, std::shared_ptr<const std::vector<anim::SkinnedMesh>>());
