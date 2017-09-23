@@ -11,6 +11,7 @@
 #include "viewport.h"
 #include "log.h"
 #include "timeline_widget.h"
+#include "searchable_menu.h"
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -33,5 +34,5 @@ class MainWindow : public QMainWindow {
 		TimelineWidget* m_timeline;
 		std::unique_ptr<possumwood::Editor> m_editor;
 
-		QMenu* m_newNodeMenu;
+		SearchableMenu* m_newNodeMenu;
 };

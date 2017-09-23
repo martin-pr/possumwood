@@ -161,11 +161,13 @@ MainWindow::MainWindow() : QMainWindow() {
 	{
 		QMenu* contextMenu = new QMenu(m_adaptor);
 		connect(m_adaptor, &Adaptor::customContextMenuRequested, [contextMenu, this](QPoint pos) {
+			contextMenu->move(m_adaptor->mapToGlobal(pos)); // to make sure pos() is right, which is
+			                                                // used for placing the new node
 			contextMenu->popup(m_adaptor->mapToGlobal(pos));
 		});
 
 		{
-			m_newNodeMenu = new QMenu("Create");
+			m_newNodeMenu = new SearchableMenu("Create");
 			m_newNodeMenu->menuAction()->setShortcut(Qt::Key_Tab);
 			contextMenu->addMenu(m_newNodeMenu);
 
@@ -175,8 +177,10 @@ MainWindow::MainWindow() : QMainWindow() {
 				m_adaptor->addAction(newNodeAction);
 
 				connect(newNodeAction, &QAction::triggered, [this]() {
-					if(m_adaptor->underMouse())
-						m_newNodeMenu->popup(QCursor::pos());
+					if(m_adaptor->underMouse()) {
+					    m_newNodeMenu->move(QCursor::pos());
+					    m_newNodeMenu->popup(QCursor::pos());
+					}
 				});
 			}
 
@@ -196,9 +200,9 @@ MainWindow::MainWindow() : QMainWindow() {
 
 				const std::string name = pieces.back();
 				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
-					QPointF pos =
-						m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
-					Actions::createNode(m, name, pos);
+					Actions::createNode(m, name,
+					                    m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu
+					                                                                   ->pos())));
 				}, m_adaptor));
 			}
 		}
