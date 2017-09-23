@@ -37,7 +37,7 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 		[fn](bool) {
 			fn();
 		}
-	);
+		);
 	return result;
 }
 
@@ -88,61 +88,61 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	// connect the selection signal
 	connect(&m_adaptor->scene(), &node_editor::GraphScene::selectionChanged,
-		[editorDock, this](const node_editor::GraphScene::Selection & selection) {
-			// convert the selection to the dependency graph selection, to pass to the
-			//   properties dock
-			dependency_graph::Selection out;
-			{
-				auto& index = possumwood::App::instance().index();
+	        [editorDock, this](const node_editor::GraphScene::Selection & selection) {
+		// convert the selection to the dependency graph selection, to pass to the
+		//   properties dock
+		dependency_graph::Selection out;
+		{
+		    auto& index = possumwood::App::instance().index();
 
-				for(auto& n : selection.nodes)
-					out.addNode(*index[n].graphNode);
+		    for(auto& n : selection.nodes)
+				out.addNode(*index[n].graphNode);
 
-				for(auto& c : selection.connections) {
-					out.addConnection(
-						index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
-						index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index())
+		    for(auto& c : selection.connections) {
+		        out.addConnection(
+					index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
+					index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index())
 					);
-				}
-
-				m_properties->show(out);
 			}
 
-			// instantiate the editor
-			{
-				unsigned editorCounter = 0;
-				for(auto& n : out.nodes())
-					if(n.get().metadata().blindData<possumwood::Metadata*>()->hasEditor())
-						++editorCounter;
+		    m_properties->show(out);
+		}
 
-				if(editorCounter == 0) {
-					QLabel* editorWidget = new QLabel("No editable node selected");
-					editorWidget->setAlignment(Qt::AlignCenter);
-					editorWidget->setMinimumHeight(100);
-					editorDock->setWidget(editorWidget);
+		// instantiate the editor
+		{
+		    unsigned editorCounter = 0;
+		    for(auto& n : out.nodes())
+				if(n.get().metadata().blindData<possumwood::Metadata*>()->hasEditor())
+					++editorCounter;
 
-					m_editor.reset();
-				}
-				else if(editorCounter > 1) {
-					QLabel* editorWidget = new QLabel("More than one editable node selected");
-					editorWidget->setAlignment(Qt::AlignCenter);
-					editorWidget->setMinimumHeight(100);
-					editorDock->setWidget(editorWidget);
+		    if(editorCounter == 0) {
+		        QLabel* editorWidget = new QLabel("No editable node selected");
+		        editorWidget->setAlignment(Qt::AlignCenter);
+		        editorWidget->setMinimumHeight(100);
+		        editorDock->setWidget(editorWidget);
 
-					m_editor.reset();
-				}
-				else {
-					for(auto& n : out.nodes()) {
-						possumwood::Metadata* meta = n.get().metadata().blindData<possumwood::Metadata*>();
-						if(meta->hasEditor()) {
-							m_editor = meta->createEditor(n);
-							editorDock->setWidget(m_editor->widget());
-						}
+		        m_editor.reset();
+			}
+		    else if(editorCounter > 1) {
+		        QLabel* editorWidget = new QLabel("More than one editable node selected");
+		        editorWidget->setAlignment(Qt::AlignCenter);
+		        editorWidget->setMinimumHeight(100);
+		        editorDock->setWidget(editorWidget);
+
+		        m_editor.reset();
+			}
+		    else {
+		        for(auto& n : out.nodes()) {
+		            possumwood::Metadata* meta = n.get().metadata().blindData<possumwood::Metadata*>();
+		            if(meta->hasEditor()) {
+		                m_editor = meta->createEditor(n);
+		                editorDock->setWidget(m_editor->widget());
 					}
 				}
 			}
 		}
-	);
+	}
+	        );
 
 	m_log = new Log();
 	QDockWidget* logDock = new QDockWidget("Log", this);
@@ -165,13 +165,28 @@ MainWindow::MainWindow() : QMainWindow() {
 		});
 
 		{
+			m_newNodeMenu = new QMenu("Create");
+			m_newNodeMenu->menuAction()->setShortcut(Qt::Key_Tab);
+			contextMenu->addMenu(m_newNodeMenu);
+
+			{
+				QAction* newNodeAction = new QAction("Create node");
+				newNodeAction->setShortcut(Qt::Key_Tab);
+				m_adaptor->addAction(newNodeAction);
+
+				connect(newNodeAction, &QAction::triggered, [this]() {
+					if(m_adaptor->underMouse())
+						m_newNodeMenu->popup(QCursor::pos());
+				});
+			}
+
 			std::map<std::string, QMenu*> groups;
 
 			for(auto& m : dependency_graph::Metadata::instances()) {
 				std::vector<std::string> pieces;
 				boost::split(pieces, m.type(), boost::algorithm::is_any_of("/"));
 
-				QMenu* current = contextMenu;
+				QMenu* current = m_newNodeMenu;
 				for(unsigned a = 0; a < pieces.size() - 1; ++a) {
 					if(groups[pieces[a]] == nullptr)
 						groups[pieces[a]] = current->addMenu(pieces[a].c_str());
@@ -181,7 +196,8 @@ MainWindow::MainWindow() : QMainWindow() {
 
 				const std::string name = pieces.back();
 				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
-					QPointF pos = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(contextMenu->pos()));
+					QPointF pos =
+						m_adaptor->mapToScene(m_adaptor->mapFromGlobal(QCursor::pos()));
 					Actions::createNode(m, name, pos);
 				}, m_adaptor));
 			}
@@ -220,10 +236,11 @@ MainWindow::MainWindow() : QMainWindow() {
 	QAction* newAct = new QAction(QIcon(":icons/filenew.png"), "&New...", this);
 	newAct->setShortcuts(QKeySequence::New);
 	connect(newAct, &QAction::triggered, [&](bool) {
-		QMessageBox::StandardButton res = QMessageBox::question(this, "New file...", "Do you want to clear the scene?");
+		QMessageBox::StandardButton res =
+			QMessageBox::question(this, "New file...", "Do you want to clear the scene?");
 		if(res == QMessageBox::Yes) {
-			m_properties->show({});
-			possumwood::App::instance().newFile();
+		    m_properties->show({});
+		    possumwood::App::instance().newFile();
 		}
 	});
 
@@ -231,19 +248,23 @@ MainWindow::MainWindow() : QMainWindow() {
 	openAct->setShortcuts(QKeySequence::Open);
 	connect(openAct, &QAction::triggered, [this](bool) {
 		QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),
-		                   possumwood::App::instance().filename().string().c_str(),
-		                   tr("Possumwood files (*.psw)"));
+		                                                possumwood::App::instance().filename().
+		                                                string().c_str(),
+		                                                tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty()) {
-			try {
-				m_properties->show({});
-				possumwood::App::instance().loadFile(filename.toStdString());
+		    try {
+		        m_properties->show({});
+		        possumwood::App::instance().loadFile(filename.toStdString());
 			}
-			catch(std::exception& err) {
-				QMessageBox::critical(this, "Error loading file...", "Error loading " + filename + ":\n" + err.what());
+		    catch(std::exception& err) {
+		        QMessageBox::critical(this, "Error loading file...",
+		                              "Error loading " + filename + ":\n" + err.what());
 			}
-			catch(...) {
-				QMessageBox::critical(this, "Error loading file...", "Error loading " + filename + ":\nUnhandled exception thrown during loading.");
+		    catch(...) {
+		        QMessageBox::critical(this, "Error loading file...",
+		                              "Error loading " + filename +
+		                              ":\nUnhandled exception thrown during loading.");
 			}
 		}
 	});
@@ -258,37 +279,56 @@ MainWindow::MainWindow() : QMainWindow() {
 			saveAsAct->triggered(true);
 
 		else {
-			try {
-				possumwood::App::instance().saveFile();
+		    try {
+		        possumwood::App::instance().saveFile();
 			}
-			catch(std::exception& err) {
-				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(possumwood::App::instance().filename().string().c_str()) + ":\n" + err.what());
+		    catch(std::exception& err) {
+		        QMessageBox::critical(this, "Error saving file...",
+		                              "Error saving " +
+		                              QString(possumwood::App::instance().filename().string().c_str())
+		                              +
+		                              ":\n" + err.what());
 			}
-			catch(...) {
-				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(possumwood::App::instance().filename().string().c_str()) + ":\nUnhandled exception thrown during saving.");
+		    catch(...) {
+		        QMessageBox::critical(this, "Error saving file...",
+		                              "Error saving " +
+		                              QString(possumwood::App::instance().filename().string().c_str())
+		                              +
+		                              ":\nUnhandled exception thrown during saving.");
 			}
 		}
 	});
 
 	connect(saveAsAct, &QAction::triggered, [saveAct, this](bool) {
 		QString filename = QFileDialog::getSaveFileName(this, tr("Save File"),
-		                   possumwood::App::instance().filename().string().c_str(),
-		                   tr("Possumwood files (*.psw)"));
+		                                                possumwood::App::instance().filename().
+		                                                string().c_str(),
+		                                                tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty()) {
-			try {
-				possumwood::App::instance().saveFile(filename.toStdString());
+		    try {
+		        possumwood::App::instance().saveFile(filename.toStdString());
 			}
-			catch(std::exception& err) {
-				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(possumwood::App::instance().filename().string().c_str()) + ":\n" + err.what());
+		    catch(std::exception& err) {
+		        QMessageBox::critical(this, "Error saving file...",
+		                              "Error saving " +
+		                              QString(possumwood::App::instance().filename().string().c_str())
+		                              +
+		                              ":\n" + err.what());
 			}
-			catch(...) {
-				QMessageBox::critical(this, "Error saving file...", "Error saving " + QString(possumwood::App::instance().filename().string().c_str()) + ":\nUnhandled exception thrown during saving.");
+		    catch(...) {
+		        QMessageBox::critical(this, "Error saving file...",
+		                              "Error saving " +
+		                              QString(possumwood::App::instance().filename().string().c_str())
+		                              +
+		                              ":\nUnhandled exception thrown during saving.");
 			}
 		}
 	});
 
-	QAction* sceneConfigAct = new QAction(QIcon(":icons/settings-scene.png"), "Scene &configuration...", this);
+	QAction* sceneConfigAct = new QAction(QIcon(
+											  ":icons/settings-scene.png"), "Scene &configuration...",
+	                                      this);
 	connect(sceneConfigAct, &QAction::triggered, [this](bool) {
 		ConfigDialog dialog(this, possumwood::App::instance().sceneConfig());
 		dialog.setWindowTitle("Scene configuration...");

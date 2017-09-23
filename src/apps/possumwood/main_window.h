@@ -32,4 +32,6 @@ class MainWindow : public QMainWindow {
 		Log* m_log;
 		TimelineWidget* m_timeline;
 		std::unique_ptr<possumwood::Editor> m_editor;
+
+		QMenu* m_newNodeMenu;
 };
