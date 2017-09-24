@@ -192,18 +192,23 @@ MainWindow::MainWindow() : QMainWindow() {
 
 				QMenu* current = m_newNodeMenu;
 				for(unsigned a = 0; a < pieces.size() - 1; ++a) {
-					if(groups[pieces[a]] == nullptr)
+					if(groups[pieces[a]] == nullptr) {
 						groups[pieces[a]] = current->addMenu(pieces[a].c_str());
+						groups[pieces[a]]->setIcon(QIcon(":icons/package.png"));
+					}
 
 					current = groups[pieces[a]];
 				}
 
 				const std::string name = pieces.back();
-				current->addAction(makeAction(name.c_str(), [&m, name, contextMenu, this]() {
+				QAction* addNode = makeAction(name.c_str(), [&m, name, contextMenu, this]() {
 					Actions::createNode(m, name,
 					                    m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu
 					                                                                   ->pos())));
-				}, m_adaptor));
+				}, m_adaptor);
+
+				current->addAction(addNode);
+				addNode->setIcon(QIcon(":icons/add-node.png"));
 			}
 		}
 
