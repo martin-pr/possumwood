@@ -24,6 +24,8 @@
 	<file>icons/player_rew.png</file>
 	<file>icons/player_start.png</file>
 	<file>icons/settings-scene.png</file>
+	<file>icons/add-node.png</file>
+	<file>icons/package.png</file>
 </qresource>
 </RCC>
 
