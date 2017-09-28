@@ -9,12 +9,17 @@ class SearchableMenu : public QMenu {
 	Q_OBJECT
 
 	public:
-		SearchableMenu(QWidget* parent = NULL);
 		SearchableMenu(const QString& name, QWidget* parent = NULL);
 
 	protected:
 		void showEvent(QShowEvent* event) override;
-		void hideEvent(QHideEvent* event) override;
+
+	private slots:
+		void onTextEdited(const QString& text);
 
 	private:
+		void init(QMenu* menu, const QString& path);
+		std::map<QString, QAction*> m_actions;
+
+		QMenu* m_menu;
 };

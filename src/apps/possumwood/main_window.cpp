@@ -172,7 +172,7 @@ MainWindow::MainWindow() : QMainWindow() {
 			contextMenu->addMenu(m_newNodeMenu);
 
 			{
-				QAction* newNodeAction = new QAction("Create node");
+				QAction* newNodeAction = new QAction("Create node", m_adaptor);
 				newNodeAction->setShortcut(Qt::Key_Tab);
 				m_adaptor->addAction(newNodeAction);
 
