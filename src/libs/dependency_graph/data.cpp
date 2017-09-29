@@ -9,7 +9,13 @@ std::map<std::string, std::function<std::unique_ptr<BaseData>()>>& BaseData::fac
 
 std::unique_ptr<BaseData> BaseData::create(const std::string& type) {
 	auto it = factories().find(type);
-	assert(it != factories().end());
+
+	if(it == factories().end()) {
+		std::stringstream err;
+		err << "Error instantiating type '" << type << "' - no registered factory found (plugin not loaded?)";
+
+		throw std::runtime_error(err.str());
+	}
 
 	return it->second();
 }
