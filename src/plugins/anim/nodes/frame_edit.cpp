@@ -12,7 +12,7 @@
 
 #include "datatypes/animation.h"
 #include "datatypes/frame_editor_data.h"
-#include "3d/io/vec3.h"
+#include "maths/io/vec3.h"
 
 namespace {
 

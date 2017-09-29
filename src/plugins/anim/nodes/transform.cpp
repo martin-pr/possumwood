@@ -10,7 +10,7 @@
 #include <OpenEXR/ImathEuler.h>
 
 #include "datatypes/animation.h"
-#include "3d/io/vec3.h"
+#include "maths/io/vec3.h"
 
 namespace {
 

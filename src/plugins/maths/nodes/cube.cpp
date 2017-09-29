@@ -43,6 +43,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setDrawable(&draw);
 }
 
-possumwood::NodeImplementation s_impl("3d/cube", init);
+possumwood::NodeImplementation s_impl("maths/cube", init);
 
 }

@@ -30,7 +30,7 @@
                     "z": 1.0
                 }
             },
-            "type": "3d/cube"
+            "type": "maths/cube"
         },
         "make_vec3_0": {
             "blind_data": {
@@ -45,7 +45,7 @@
                 "y": 0.0,
                 "z": 0.0
             },
-            "type": "3d/make_vec3"
+            "type": "maths/make_vec3"
         },
         "time_0": {
             "blind_data": {

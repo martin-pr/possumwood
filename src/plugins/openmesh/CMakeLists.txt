@@ -25,4 +25,4 @@ include_directories(./)
 
 add_library(openmesh SHARED ${sources})
 
-target_link_libraries(openmesh 3d ${LIBS})
+target_link_libraries(openmesh maths ${LIBS})

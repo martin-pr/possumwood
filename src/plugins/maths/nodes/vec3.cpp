@@ -38,6 +38,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("3d/make_vec3", init);
+possumwood::NodeImplementation s_impl("maths/make_vec3", init);
 
 }
