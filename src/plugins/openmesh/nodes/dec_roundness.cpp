@@ -1,11 +1,5 @@
 #include <possumwood_sdk/node_implementation.h>
 
-#include <dependency_graph/values.inl>
-#include <dependency_graph/attr.inl>
-#include <dependency_graph/datablock.inl>
-#include <dependency_graph/port.inl>
-#include <dependency_graph/node.inl>
-
 #include <OpenMesh/Core/Mesh/Traits.hh>
 #include <OpenMesh/Core/Utils/vector_traits.hh>
 #include <OpenMesh/Core/Utils/vector_cast.hh>

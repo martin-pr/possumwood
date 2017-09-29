@@ -2,12 +2,6 @@
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/metadata.inl>
 
-#include <dependency_graph/values.inl>
-#include <dependency_graph/attr.inl>
-#include <dependency_graph/datablock.inl>
-#include <dependency_graph/port.inl>
-#include <dependency_graph/node.inl>
-
 #include <GL/glut.h>
 
 #include "datatypes/skeleton.h"

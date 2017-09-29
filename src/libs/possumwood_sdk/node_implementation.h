@@ -5,6 +5,12 @@
 
 #include <boost/noncopyable.hpp>
 
+#include <dependency_graph/values.inl>
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/datablock.inl>
+#include <dependency_graph/port.inl>
+#include <dependency_graph/node.inl>
+
 #include "metadata.inl"
 
 namespace possumwood {

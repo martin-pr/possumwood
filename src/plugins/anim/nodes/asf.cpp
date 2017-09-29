@@ -13,12 +13,6 @@
 #include <possumwood_sdk/datatypes/filename.h>
 #include <possumwood_sdk/io.h>
 
-#include <dependency_graph/values.inl>
-#include <dependency_graph/attr.inl>
-#include <dependency_graph/datablock.inl>
-#include <dependency_graph/port.inl>
-#include <dependency_graph/node.inl>
-
 #include "datatypes/transform.h"
 #include "datatypes/attributes.h"
 #include "datatypes/skeleton.h"
