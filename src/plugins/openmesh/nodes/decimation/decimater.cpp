@@ -55,6 +55,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("openmesh/decimater/decimater", init);
+possumwood::NodeImplementation s_impl("openmesh/decimation/decimater", init);
 
 }

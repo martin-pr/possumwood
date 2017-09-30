@@ -86,7 +86,7 @@
             "ports": {
                 "collapse_count": 2300
             },
-            "type": "openmesh/decimater/decimater"
+            "type": "openmesh/decimation/decimater"
         },
         "decimater_1": {
             "blind_data": {
@@ -100,7 +100,7 @@
             "ports": {
                 "collapse_count": 2300
             },
-            "type": "openmesh/decimater/decimater"
+            "type": "openmesh/decimation/decimater"
         },
         "display_0": {
             "blind_data": {
@@ -164,7 +164,7 @@
                 "in_modules": [],
                 "max_deviation": 1000.0
             },
-            "type": "openmesh/decimater/module_normal_deviation"
+            "type": "openmesh/decimation/module_normal_deviation"
         },
         "module_quadric_0": {
             "blind_data": {
@@ -181,7 +181,7 @@
                 "in_modules": [],
                 "max_error": 0.200000002980232
             },
-            "type": "openmesh/decimater/module_quadric"
+            "type": "openmesh/decimation/module_quadric"
         },
         "normals_generator_0": {
             "blind_data": {
