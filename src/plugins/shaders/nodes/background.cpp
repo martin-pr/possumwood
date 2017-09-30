@@ -58,6 +58,7 @@ class Editor : public possumwood::Editor {
 		}
 
 	protected:
+
 		virtual void valueChanged(const dependency_graph::Attr& attr) override {
 			if(attr == a_src && !m_blockedSignals)
 				m_editor->setPlainText(values().get(a_src).c_str());
@@ -71,15 +72,66 @@ class Editor : public possumwood::Editor {
 		bool m_blockedSignals;
 };
 
+dependency_graph::State checkShaderState(GLuint& shaderId) {
+	dependency_graph::State state;
+
+	GLint isCompiled = 0;
+	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &isCompiled);
+
+	if(isCompiled == GL_FALSE) {
+		GLint maxLength = 0;
+		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &maxLength);
+
+		std::string error;
+		error.resize(maxLength);
+		glGetShaderInfoLog(shaderId, maxLength, &maxLength, &error[0]);
+
+		state.addError(error);
+
+		glDeleteShader(shaderId);
+		shaderId = 0;
+	}
+
+	return state;
+}
+
+dependency_graph::State checkProgramState(GLuint& programId) {
+	dependency_graph::State state;
+
+	GLint isLinked = 0;
+	glGetProgramiv(programId, GL_LINK_STATUS, &isLinked);
+
+	if(isLinked == GL_FALSE) {
+		GLint maxLength = 0;
+		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &maxLength);
+
+		std::string error;
+		error.resize(maxLength);
+		glGetProgramInfoLog(programId, maxLength, &maxLength, &error[0]);
+
+		state.addError(error);
+
+		glDeleteProgram(programId);
+		programId = 0;
+	}
+
+	return state;
+}
+
 struct Drawable : public possumwood::Drawable {
 	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)) {
 		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([this](float t) {
-		 refresh();
-		});
+				refresh();
+			});
 	}
 
 	~Drawable() {
 		m_timeChangedConnection.disconnect();
+
+		if(m_posBuffer != 0) {
+			glDeleteBuffers(1, &m_posBuffer);
+			m_posBuffer = 0;
+		}
 
 		if(m_programId != 0 && m_vertexShaderId) {
 			glDetachShader(m_programId, m_vertexShaderId);
@@ -100,26 +152,16 @@ struct Drawable : public possumwood::Drawable {
 
 		if(m_vertexShaderId == 0) {
 			m_vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
-			const GLchar* src = "void main() {gl_Position = ftransform();}";
+			const GLchar* src =
+				"#version 330                   \n"
+				"in vec3 position;              \n"
+				"void main() {                  \n"
+				"	gl_Position = vec4(position.x, position.y, position.z, 0.5); \n"
+				"}";
 			glShaderSource(m_vertexShaderId, 1, &src, 0);
 			glCompileShader(m_vertexShaderId);
 
-			GLint isCompiled = 0;
-			glGetShaderiv(m_vertexShaderId, GL_COMPILE_STATUS, &isCompiled);
-
-			if(isCompiled == GL_FALSE) {
-				GLint maxLength = 0;
-				glGetShaderiv(m_vertexShaderId, GL_INFO_LOG_LENGTH, &maxLength);
-
-				std::string error;
-				error.resize(maxLength);
-				glGetShaderInfoLog(m_vertexShaderId, maxLength, &maxLength, &error[0]);
-
-				state.addError(error);
-
-				glDeleteShader(m_vertexShaderId);
-				m_vertexShaderId = 0;
-			}
+			state.append(checkShaderState(m_vertexShaderId));
 		}
 
 		if(m_fragmentShaderId == 0)
@@ -131,24 +173,7 @@ struct Drawable : public possumwood::Drawable {
 			glShaderSource(m_fragmentShaderId, 1, &srcPtr, 0);
 			glCompileShader(m_fragmentShaderId);
 
-			{
-				GLint isCompiled = 0;
-				glGetShaderiv(m_fragmentShaderId, GL_COMPILE_STATUS, &isCompiled);
-
-				if(isCompiled == GL_FALSE) {
-					GLint maxLength = 0;
-					glGetShaderiv(m_fragmentShaderId, GL_INFO_LOG_LENGTH, &maxLength);
-
-					std::string error;
-					error.resize(maxLength);
-					glGetShaderInfoLog(m_fragmentShaderId, maxLength, &maxLength, &error[0]);
-
-					state.addError(error);
-
-					glDeleteShader(m_fragmentShaderId);
-					m_fragmentShaderId = 0;
-				}
-			}
+			state.append(checkShaderState(m_vertexShaderId));
 		}
 
 		if(m_programId == 0)
@@ -159,43 +184,53 @@ struct Drawable : public possumwood::Drawable {
 			glAttachShader(m_programId, m_fragmentShaderId);
 
 			glLinkProgram(m_programId);
-
-			GLint isLinked = 0;
-			glGetProgramiv(m_programId, GL_LINK_STATUS, &isLinked);
-
-			if(isLinked == GL_FALSE) {
-				GLint maxLength = 0;
-				glGetProgramiv(m_programId, GL_INFO_LOG_LENGTH, &maxLength);
-
-				std::string error;
-				error.resize(maxLength);
-				glGetProgramInfoLog(m_programId, maxLength, &maxLength, &error[0]);
-
-				state.addError(error);
-
-				glDeleteProgram(m_programId);
-				m_programId = 0;
-			}
+			state.append(checkProgramState(m_programId));
 
 			glDetachShader(m_programId, m_vertexShaderId);
 			glDetachShader(m_programId, m_fragmentShaderId);
-
 
 			m_currentFragmentSource = src;
 		}
 
 		if(!state.errored()) {
+			// setup - only once
+			if(m_vao == 0) {
+				// make a new vertex array, and bind it - everything here is now
+				//   stored inside that vertex array object
+				glGenVertexArrays(1, &m_vao);
+				glBindVertexArray(m_vao);
+
+				// make and fill the position buffer
+				assert(m_posBuffer == 0);
+				glGenBuffers(1, &m_posBuffer);
+
+				glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer);
+				static const float vertices[] = {
+					-1,-1,0,
+					1,-1,0,
+					1,1,0,
+					-1,1,0
+				};
+				glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+				// and tie it to the position attribute (will tie itself to CURRENT
+				//   GL_ARRAY_BUFFER)
+				GLuint positionAttr = glGetAttribLocation(m_programId, "position");
+				glEnableVertexAttribArray(positionAttr);
+				glVertexAttribPointer(positionAttr, 3, GL_FLOAT, 0, 0, 0);
+
+				glBindBuffer(GL_ARRAY_BUFFER, 0);// unnecessary?
+				glBindVertexArray(0);
+			}
+
+			// per-frame drawing - just bind the VAO, the program, and execute draw
+			glBindVertexArray(m_vao);
 
 			glUseProgram(m_programId);
-
-			glBegin(GL_QUADS);
-			glVertex3f(-1,-1,0);
-			glVertex3f(1,-1,0);
-			glVertex3f(1,1,0);
-			glVertex3f(-1,1,0);
-			glEnd();
-
+			glDrawArrays(GL_QUADS, 0, 4);
 			glUseProgram(0);
+
+			glBindVertexArray(0);
 		}
 
 		return state;
@@ -206,6 +241,9 @@ struct Drawable : public possumwood::Drawable {
 	GLuint m_programId = 0;
 	GLuint m_vertexShaderId = 0;
 	GLuint m_fragmentShaderId = 0;
+
+	GLuint m_vao = 0;
+	GLuint m_posBuffer = 0;
 
 	std::string m_currentFragmentSource;
 };

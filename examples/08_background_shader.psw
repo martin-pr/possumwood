@@ -1,0 +1,26 @@
+{
+    "connections": [],
+    "nodes": {
+        "background_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 329.0,
+                    "y": 300.0
+                }
+            },
+            "name": "background",
+            "ports": {
+                "source": "void main() {\n\tgl_FragColor = vec4(gl_FragCoord.x/500.0, gl_FragCoord.y/500.0,gl_FragCoord.z/500.0,1);\n\tgl_FragDepth = 1;\n}\n"
+            },
+            "type": "shaders/background"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAABPQAAABQAAAbcAAAEGAAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAI6AAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAxUAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAACFAAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAACWQAAAbAAAABuAP////sAAAAGAGwAbwBnAAAAArIAAAFXAAAASQD///8AAAIpAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+}
