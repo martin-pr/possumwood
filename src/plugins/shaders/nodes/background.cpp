@@ -4,9 +4,72 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 
+#include <QPlainTextEdit>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QStyle>
+
 namespace {
 
 dependency_graph::InAttr<std::string> a_src;
+
+class Editor : public possumwood::Editor {
+	public:
+		Editor() : m_blockedSignals(false) {
+			m_widget = new QWidget();
+
+			QVBoxLayout* layout = new QVBoxLayout(m_widget);
+
+			m_editor = new QPlainTextEdit();
+			layout->addWidget(m_editor, 1);
+
+			const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+			m_editor->setFont(fixedFont);
+
+			QFontMetrics fm(fixedFont);
+			m_editor->setTabStopWidth(fm.width("    "));
+
+			QHBoxLayout* buttonsLayout = new QHBoxLayout();
+			layout->addLayout(buttonsLayout, 0);
+
+			QWidget* spacer = new QWidget();
+			buttonsLayout->addWidget(spacer, 1);
+
+			QPushButton* apply = new QPushButton();
+			apply->setText("Apply (CTRL+Return)");
+			apply->setIcon(apply->style()->standardIcon(QStyle::SP_DialogOkButton));
+			apply->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Return));
+			buttonsLayout->addWidget(apply);
+
+			QObject::connect(apply, &QPushButton::pressed, [this]() {
+				m_blockedSignals = true;
+				values().set(a_src, m_editor->toPlainText().toStdString());
+				m_blockedSignals = false;
+			});
+
+		}
+
+		virtual ~Editor() {
+		}
+
+		virtual QWidget* widget() override {
+			return m_widget;
+		}
+
+	protected:
+		virtual void valueChanged(const dependency_graph::Attr& attr) override {
+			if(attr == a_src && !m_blockedSignals)
+				m_editor->setPlainText(values().get(a_src).c_str());
+		}
+
+	private:
+		QWidget* m_widget;
+
+		QPlainTextEdit* m_editor;
+
+		bool m_blockedSignals;
+};
 
 struct Drawable : public possumwood::Drawable {
 	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)) {
@@ -151,6 +214,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_src, "source", std::string("void main() {gl_FragColor = vec4(1,0,1,1);}"));
 
 	meta.setDrawable<Drawable>();
+	meta.setEditor<Editor>();
 }
 
 possumwood::NodeImplementation s_impl("shaders/background", init);
