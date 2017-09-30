@@ -26,6 +26,22 @@ void Drawable::refresh() {
 	s_refresh();
 }
 
+const dependency_graph::State& Drawable::drawState() const {
+	return m_drawState;
+}
+
+void Drawable::doDraw() {
+	try {
+		dependency_graph::State state = draw();
+		m_drawState = state;
+	}
+	catch(std::exception& err) {
+		dependency_graph::State state;
+		state.addError(err.what());
+		m_drawState = state;
+	}
+}
+
 //////////
 
 DrawableFunctor::DrawableFunctor(dependency_graph::Values&& vals, std::function<dependency_graph::State(const dependency_graph::Values&)> draw) : Drawable(std::move(vals)), m_draw(draw) {

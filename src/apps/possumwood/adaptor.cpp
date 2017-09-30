@@ -103,10 +103,14 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
 		auto& n = getIndex()[&node];
 
+		dependency_graph::State state = n.graphNode->state();
+		if(n.drawable)
+			state.append(n.drawable->drawState());
+
 		std::stringstream ss;
 		ss << "<span style=\"color:#fff;\">" << n.graphNode->name() << " (" << n.graphNode->metadata().type() << ")" << "</p>";
 		ss << "<br />" << std::endl;
-		for(auto& i : n.graphNode->state()) {
+		for(auto& i : state) {
 			switch(i.first) {
 				case dependency_graph::State::kInfo:
 					ss << "<br /><span style=\"color:#aaa\">";
@@ -280,6 +284,7 @@ void Adaptor::onStateChanged(const dependency_graph::Node& node) {
 
 	// count the different error messages
 	unsigned info = 0, warn = 0, err = 0;
+
 	for(auto& m : node.state()) {
 		switch(m.first) {
 			case dependency_graph::State::kInfo: ++info; break;
@@ -287,6 +292,16 @@ void Adaptor::onStateChanged(const dependency_graph::Node& node) {
 			case dependency_graph::State::kError: ++err; break;
 		}
 	}
+
+	possumwood::Drawable* drw = getIndex()[&node].drawable.get();
+	if(drw)
+		for(auto& m : drw->drawState()) {
+			switch(m.first) {
+				case dependency_graph::State::kInfo: ++info; break;
+				case dependency_graph::State::kWarning: ++warn; break;
+				case dependency_graph::State::kError: ++err; break;
+			}
+		}
 
 	if(err > 0)
 		n.editorNode->setState(node_editor::Node::kError);
@@ -421,8 +436,14 @@ void Adaptor::draw() {
 	for(auto& n : getIndex()) {
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-		if(n.second.drawable != nullptr)
-			n.second.drawable->draw();
+		if(n.second.drawable != nullptr) {
+			const auto currentDrawState = n.second.drawable->drawState();
+
+			n.second.drawable->doDraw();
+
+			if(n.second.drawable->drawState() != currentDrawState)
+				onStateChanged(*n.second.graphNode);
+		}
 
 		glPopAttrib();
 	}

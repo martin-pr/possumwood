@@ -22,6 +22,10 @@ bool State::errored() const {
 	return m_errored;
 }
 
+std::size_t State::size() const {
+	return m_messages.size();
+}
+
 State::const_iterator State::begin() const {
 	return m_messages.begin();
 }
@@ -36,6 +40,12 @@ bool State::operator == (const State& s) const {
 
 bool State::operator != (const State& s) const {
 	return m_errored != s.m_errored || m_messages != s.m_messages;
+}
+
+void State::append(const State& s) {
+	m_errored = m_errored | s.m_errored;
+	for(auto& m : s.m_messages)
+		m_messages.push_back(m);
 }
 
 std::ostream& operator << (std::ostream& out, const State& s) {

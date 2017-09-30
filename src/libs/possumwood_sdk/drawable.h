@@ -12,12 +12,18 @@ class Drawable : public boost::noncopyable {
 		Drawable(dependency_graph::Values&& vals);
 		virtual ~Drawable();
 
-		virtual dependency_graph::State draw() = 0;
+		/// calls draw() method, and processes the return state
+		void doDraw();
+
+		/// returns current drawing state
+		const dependency_graph::State& drawState() const;
 
 		/// a static signal for queuing a refresh - used by the Qt UI to actually do the queuing
 		static boost::signals2::connection onRefreshQueued(std::function<void()> fn);
 
 	protected:
+		virtual dependency_graph::State draw() = 0;
+
 		dependency_graph::Values& values();
 		const dependency_graph::Values& values() const;
 
@@ -27,12 +33,14 @@ class Drawable : public boost::noncopyable {
 	private:
 		dependency_graph::Values m_vals;
 		static boost::signals2::signal<void()> s_refresh;
+		dependency_graph::State m_drawState;
 };
 
 class DrawableFunctor : public Drawable {
 	public:
 		DrawableFunctor(dependency_graph::Values&& vals, std::function<dependency_graph::State(const dependency_graph::Values&)> draw);
 
+	protected:
 		virtual dependency_graph::State draw() override;
 
 	private:
