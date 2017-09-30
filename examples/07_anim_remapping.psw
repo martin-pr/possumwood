@@ -1,12 +1,6 @@
 {
     "connections": [
         {
-            "in_node": "display_1",
-            "in_port": "skeleton",
-            "out_node": "edit_4",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "remap_0",
             "in_port": "in_frame",
             "out_node": "edit_1",
@@ -19,10 +13,40 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "skin_remap_regex_1",
+            "in_port": "in_meshes",
+            "out_node": "skin_remap_regex_0",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "display_2",
+            "in_port": "skeleton",
+            "out_node": "edit_2",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "remove_unskinned_1",
             "in_port": "in_meshes",
             "out_node": "skin_remap_regex_1",
             "out_port": "out_meshes"
+        },
+        {
+            "in_node": "edit_1",
+            "in_port": "in_frame",
+            "out_node": "from_animation_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "display_3",
+            "in_port": "skeleton",
+            "out_node": "remap_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "skin_0",
+            "in_port": "posed_skeleton",
+            "out_node": "remap_0",
+            "out_port": "out_frame"
         },
         {
             "in_node": "skin_0",
@@ -43,30 +67,6 @@
             "out_port": "out_skeleton"
         },
         {
-            "in_node": "edit_1",
-            "in_port": "in_frame",
-            "out_node": "from_animation_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "display_0",
-            "in_port": "meshes",
-            "out_node": "skin_0",
-            "out_port": "posed_meshes"
-        },
-        {
-            "in_node": "amc_0",
-            "in_port": "skeleton",
-            "out_node": "asf_0",
-            "out_port": "skeleton"
-        },
-        {
-            "in_node": "edit_0",
-            "in_port": "in_frame",
-            "out_node": "asf_0",
-            "out_port": "skeleton"
-        },
-        {
             "in_node": "bone_rename_1",
             "in_port": "in_skeleton",
             "out_node": "remove_unskinned_1",
@@ -79,10 +79,22 @@
             "out_port": "out_meshes"
         },
         {
-            "in_node": "from_animation_0",
-            "in_port": "animation",
-            "out_node": "periodic_0",
-            "out_port": "out_anim"
+            "in_node": "remove_unskinned_0",
+            "in_port": "in_meshes",
+            "out_node": "subset_0",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "display_4",
+            "in_port": "skeleton",
+            "out_node": "edit_3",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "display_0",
+            "in_port": "meshes",
+            "out_node": "skin_0",
+            "out_port": "posed_meshes"
         },
         {
             "in_node": "from_animation_0",
@@ -91,40 +103,10 @@
             "out_port": "out"
         },
         {
-            "in_node": "display_3",
+            "in_node": "display_1",
             "in_port": "skeleton",
-            "out_node": "remap_0",
+            "out_node": "edit_4",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "skin_0",
-            "in_port": "posed_skeleton",
-            "out_node": "remap_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "bone_rename_0",
-            "in_port": "in_skeleton",
-            "out_node": "remove_unskinned_0",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "skin_remap_regex_0",
-            "in_port": "in_meshes",
-            "out_node": "remove_unskinned_0",
-            "out_port": "out_meshes"
-        },
-        {
-            "in_node": "remove_unskinned_0",
-            "in_port": "in_skeleton",
-            "out_node": "x_0",
-            "out_port": "skeleton"
-        },
-        {
-            "in_node": "subset_0",
-            "in_port": "in_meshes",
-            "out_node": "x_0",
-            "out_port": "meshes"
         },
         {
             "in_node": "skin_remap_regex_0",
@@ -145,6 +127,48 @@
             "out_port": "out_skeleton"
         },
         {
+            "in_node": "mult_0",
+            "in_port": "a",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "periodic_0",
+            "in_port": "in_anim",
+            "out_node": "amc_0",
+            "out_port": "animation"
+        },
+        {
+            "in_node": "from_animation_0",
+            "in_port": "animation",
+            "out_node": "periodic_0",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "amc_0",
+            "in_port": "skeleton",
+            "out_node": "asf_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "edit_0",
+            "in_port": "in_frame",
+            "out_node": "asf_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "remove_unskinned_0",
+            "in_port": "in_skeleton",
+            "out_node": "x_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "subset_0",
+            "in_port": "in_meshes",
+            "out_node": "x_0",
+            "out_port": "meshes"
+        },
+        {
             "in_node": "remap_0",
             "in_port": "source_skeleton",
             "out_node": "edit_0",
@@ -157,40 +181,16 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "display_2",
-            "in_port": "skeleton",
-            "out_node": "edit_2",
-            "out_port": "out_frame"
+            "in_node": "bone_rename_0",
+            "in_port": "in_skeleton",
+            "out_node": "remove_unskinned_0",
+            "out_port": "out_skeleton"
         },
         {
-            "in_node": "mult_0",
-            "in_port": "a",
-            "out_node": "time_0",
-            "out_port": "time"
-        },
-        {
-            "in_node": "skin_remap_regex_1",
+            "in_node": "skin_remap_regex_0",
             "in_port": "in_meshes",
-            "out_node": "skin_remap_regex_0",
+            "out_node": "remove_unskinned_0",
             "out_port": "out_meshes"
-        },
-        {
-            "in_node": "display_4",
-            "in_port": "skeleton",
-            "out_node": "edit_3",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "remove_unskinned_0",
-            "in_port": "in_meshes",
-            "out_node": "subset_0",
-            "out_port": "out_meshes"
-        },
-        {
-            "in_node": "periodic_0",
-            "in_port": "in_anim",
-            "out_node": "amc_0",
-            "out_port": "animation"
         }
     ],
     "nodes": {
@@ -198,8 +198,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 554.921875,
-                    "y": -271.375
+                    "x": 519.765625,
+                    "y": -412.0
                 }
             },
             "name": "amc",
@@ -212,8 +212,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 406.921875,
-                    "y": -336.875
+                    "x": 371.765625,
+                    "y": -404.2578125
                 }
             },
             "name": "asf",
@@ -254,8 +254,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1631.484375,
-                    "y": 345.390625
+                    "x": 1604.0185546875,
+                    "y": 272.1484375
                 }
             },
             "name": "meshes_display",
@@ -268,8 +268,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1430.296875,
-                    "y": 540.90625
+                    "x": 1103.734375,
+                    "y": 570.59375
                 }
             },
             "name": "skeleton_display",
@@ -279,8 +279,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1434.671875,
-                    "y": -74.8125
+                    "x": 1372.66015625,
+                    "y": -286.23828125
                 }
             },
             "name": "skeleton_display",
@@ -290,8 +290,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1437.796875,
-                    "y": 147.0625
+                    "x": 1395.31640625,
+                    "y": -44.8320312499999
                 }
             },
             "name": "skeleton_display",
@@ -301,8 +301,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 928.32080078125,
-                    "y": 186.211669921875
+                    "x": 906.83642578125,
+                    "y": 110.039794921875
                 }
             },
             "name": "skeleton_display",
@@ -312,8 +312,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 580.921875,
-                    "y": 86.125
+                    "x": 545.765625,
+                    "y": -113.09375
                 }
             },
             "name": "frame_edit - base pose match",
@@ -396,8 +396,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1064.671875,
-                    "y": -158.875
+                    "x": 1002.66015625,
+                    "y": -370.30078125
                 }
             },
             "name": "frame_edit",
@@ -416,8 +416,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1257.69580078125,
-                    "y": -155.663330078125
+                    "x": 1195.68408203125,
+                    "y": -367.089111328125
                 }
             },
             "name": "frame_edit",
@@ -436,8 +436,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 790.82080078125,
-                    "y": 110.274169921875
+                    "x": 769.33642578125,
+                    "y": 34.102294921875
                 }
             },
             "name": "frame_edit",
@@ -456,8 +456,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1266.44580078125,
-                    "y": 471.524169921875
+                    "x": 939.88330078125,
+                    "y": 501.211669921875
                 }
             },
             "name": "frame_edit",
@@ -476,8 +476,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 872.484375,
-                    "y": -159.500015258789
+                    "x": 837.328125,
+                    "y": -358.718765258789
                 }
             },
             "name": "anim_frame",
@@ -487,8 +487,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 803.109375,
-                    "y": -370.4375
+                    "x": 748.421875,
+                    "y": -222.9765625
                 }
             },
             "name": "mult",
@@ -501,8 +501,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 701.97265625,
-                    "y": -187.993896484375
+                    "x": 666.81640625,
+                    "y": -387.212646484375
                 }
             },
             "name": "periodic",
@@ -517,8 +517,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1234.984375,
-                    "y": 47.6874923706055
+                    "x": 1169.06640625,
+                    "y": -44.5976638793945
                 }
             },
             "name": "frame_remap",
@@ -646,8 +646,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1422.828125,
-                    "y": 302.96875
+                    "x": 1395.3623046875,
+                    "y": 229.7265625
                 }
             },
             "name": "skin",
@@ -709,8 +709,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 691.234375,
-                    "y": -366.6875
+                    "x": 636.546875,
+                    "y": -219.2265625
                 }
             },
             "name": "time",

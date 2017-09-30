@@ -1,18 +1,6 @@
 {
     "connections": [
         {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "decimater_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "transform_1",
-            "in_port": "in_mesh",
-            "out_node": "decimater_1",
-            "out_port": "output"
-        },
-        {
             "in_node": "decimater_1",
             "in_port": "input",
             "out_node": "loader_0",
@@ -31,16 +19,40 @@
             "out_port": "mesh"
         },
         {
-            "in_node": "decimater_0",
-            "in_port": "modules",
-            "out_node": "module_normal_deviation_0",
-            "out_port": "out_modules"
+            "in_node": "normals_generator_2",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
         },
         {
             "in_node": "decimater_1",
             "in_port": "modules",
             "out_node": "module_quadric_0",
             "out_port": "out_modules"
+        },
+        {
+            "in_node": "display_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_2",
+            "out_port": "output"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "decimater_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "normals_generator_1",
+            "in_port": "input",
+            "out_node": "transform_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_mesh",
+            "out_node": "decimater_1",
+            "out_port": "output"
         },
         {
             "in_node": "display_2",
@@ -55,22 +67,10 @@
             "out_port": "output"
         },
         {
-            "in_node": "display_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_2",
-            "out_port": "output"
-        },
-        {
-            "in_node": "normals_generator_2",
-            "in_port": "input",
-            "out_node": "transform_0",
-            "out_port": "out_mesh"
-        },
-        {
-            "in_node": "normals_generator_1",
-            "in_port": "input",
-            "out_node": "transform_1",
-            "out_port": "out_mesh"
+            "in_node": "decimater_0",
+            "in_port": "modules",
+            "out_node": "module_normal_deviation_0",
+            "out_port": "out_modules"
         }
     ],
     "nodes": {
@@ -281,5 +281,12 @@
             },
             "type": "openmesh/transform"
         }
-    }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAXAAAAEQAAB1IAAAP0AAAAGAAAACgAAAdRAAAD8AAAAAAAAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADiPwCAAAAAfwAAABBAAADiAAAAIsBAAAV+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAlAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAvgAAAA4AP///wAAAAEAAAEsAAADiPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAAe0AAABJAP////sAAAAGAGwAbwBnAQAAAjIAAAGXAAAASQD///8AAAMOAAADiAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

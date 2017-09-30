@@ -1,0 +1,108 @@
+{
+    "connections": [
+        {
+            "in_node": "from_animation_0",
+            "in_port": "time",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_anim",
+            "out_node": "bvh_0",
+            "out_port": "anim"
+        },
+        {
+            "in_node": "display_0",
+            "in_port": "skeleton",
+            "out_node": "from_animation_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "from_animation_0",
+            "in_port": "animation",
+            "out_node": "transform_0",
+            "out_port": "out_anim"
+        }
+    ],
+    "nodes": {
+        "bvh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 85.0,
+                    "y": 310.0
+                }
+            },
+            "name": "bvh",
+            "ports": {
+                "filename": "accad_mocap/Male1_B3_Walk.bvh"
+            },
+            "type": "anim/loaders/bvh"
+        },
+        "display_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 590.0,
+                    "y": 338.0
+                }
+            },
+            "name": "display",
+            "type": "anim/frame/display"
+        },
+        "from_animation_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 412.0,
+                    "y": 320.0
+                }
+            },
+            "name": "from_animation",
+            "type": "anim/frame/from_animation"
+        },
+        "time_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 279.0,
+                    "y": 498.0
+                }
+            },
+            "name": "time",
+            "type": "time"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 232.0,
+                    "y": 303.0
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 47.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": 0.00999999977648258,
+                "translation": {
+                    "x": 0.100000001490116,
+                    "y": -1.0,
+                    "z": -5.59999990463257
+                }
+            },
+            "type": "anim/animation/transform"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAASwAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAABVwAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABnAAAARIAAAB1AP////sAAAAGAGwAbwBnAQAAArIAAAFXAAAASQD///8AAANUAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+}
