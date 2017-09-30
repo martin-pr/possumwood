@@ -7,6 +7,7 @@
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
+#include <GL/glew.h>
 #include <GL/freeglut.h>
 
 #include <QApplication>
@@ -96,6 +97,13 @@ int main(int argc, char* argv[]) {
 		// open the scene file, if specified on the command line
 		if(vm.count("scene"))
 			possumwood::App::instance().loadFile(vm["scene"].as<std::string>());
+
+		// initialize GLEW
+		auto glewErr = glewInit();
+		if(glewErr != GLEW_OK) {
+			std::cout << "Error initialising GLEW - " << glewGetErrorString(glewErr) << std::endl;
+			exit(1);
+		}
 
 		// and start the main application loop
 		app.exec();
