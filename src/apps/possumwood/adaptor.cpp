@@ -101,7 +101,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	});
 
 	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
-		auto& n = getIndex()[const_cast<node_editor::Node*>(&node)]; // hack for bimap
+		auto& n = getIndex()[&node];
 
 		std::stringstream ss;
 		ss << "<span style=\"color:#fff;\">" << n.graphNode->name() << " (" << n.graphNode->metadata().type() << ")" << "</p>";
