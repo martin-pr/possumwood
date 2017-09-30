@@ -145,7 +145,7 @@
             },
             "name": "loader",
             "ports": {
-                "filename": "bunny.obj"
+                "filename": "stanford_models/bunny.obj"
             },
             "type": "openmesh/loader"
         },
