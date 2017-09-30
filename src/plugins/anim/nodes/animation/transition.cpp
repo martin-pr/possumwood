@@ -80,9 +80,11 @@ class Editor : public possumwood::Editor {
 		void timeChanged(float t) {
 			const unsigned tr_a = values().get(a_trA);
 			const unsigned tr_b = values().get(a_trB);
+			const unsigned len_a = m_widget->width();
+			const unsigned len_b = m_widget->height();
 
 			const float x_pos = t*m_fps;
-			if(x_pos > tr_a)
+			if(x_pos > tr_a || x_pos > len_a)
 				m_lineX->hide();
 			else {
 				m_lineX->show();
@@ -90,7 +92,7 @@ class Editor : public possumwood::Editor {
 			}
 
 			const float y_pos = t*m_fps - (float)tr_a + (float)tr_b;
-			if(y_pos < tr_b)
+			if(y_pos < tr_b || y_pos > len_b)
 				m_lineY->hide();
 			else {
 				m_lineY->show();
@@ -119,7 +121,11 @@ class Editor : public possumwood::Editor {
 				const unsigned b = values().get(a_trB);
 				const unsigned len = values().get(a_transitionLength);
 
-				m_lineTr->setLine(a - len / 2, b - len / 2, a + len / 2, b + len / 2);
+				m_lineTr->setLine(
+					a >= len / 2 ? a - len / 2 : 0,
+					b >= len / 2 ? b - len / 2 : 0,
+					a+len/2 < m_widget->width() ? a + len / 2 : m_widget->width(),
+					b+len/2 < m_widget->height() ? b + len / 2 : m_widget->height());
 
 				timeChanged(possumwood::App::instance().time());
 			}
@@ -160,13 +166,13 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 		const unsigned tr_start = tr_len / 2;
 		const unsigned tr_end = tr_len - tr_len / 2;
 
-		if(tr_a > tr_start) {
+		if(tr_a > tr_start && anim_a->frames.size() > tr_a + tr_end) {
 			// "before" transition - just copy animation frames from anim A
 			for(unsigned fi = 0; fi < tr_a - tr_start; ++fi)
 				out->frames.push_back(anim_a->frames[fi]);
 
 			// transition itself
-			if(tr_b > tr_start) {
+			if(tr_b > tr_start && anim_b->frames.size() > tr_b + tr_end) {
 				for(unsigned fi = 0; fi < tr_len; ++fi) {
 					// weight from 0..1 (excluding 0 and 1)
 					const float weight = (float)(fi+1) / (float)(tr_len + 1);
