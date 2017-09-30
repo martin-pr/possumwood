@@ -3,6 +3,7 @@
 #include <boost/noncopyable.hpp>
 
 #include <dependency_graph/values.h>
+#include <dependency_graph/state.h>
 
 namespace possumwood {
 
@@ -11,7 +12,7 @@ class Drawable : public boost::noncopyable {
 		Drawable(dependency_graph::Values&& vals);
 		virtual ~Drawable();
 
-		virtual void draw() = 0;
+		virtual dependency_graph::State draw() = 0;
 
 		/// a static signal for queuing a refresh - used by the Qt UI to actually do the queuing
 		static boost::signals2::connection onRefreshQueued(std::function<void()> fn);
@@ -30,12 +31,12 @@ class Drawable : public boost::noncopyable {
 
 class DrawableFunctor : public Drawable {
 	public:
-		DrawableFunctor(dependency_graph::Values&& vals, std::function<void(const dependency_graph::Values&)> draw);
+		DrawableFunctor(dependency_graph::Values&& vals, std::function<dependency_graph::State(const dependency_graph::Values&)> draw);
 
-		virtual void draw() override;
+		virtual dependency_graph::State draw() override;
 
 	private:
-		std::function<void(const dependency_graph::Values&)> m_draw;
+		std::function<dependency_graph::State(const dependency_graph::Values&)> m_draw;
 };
 
 }

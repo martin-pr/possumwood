@@ -32,7 +32,9 @@ struct Drawable : public possumwood::Drawable {
 			glDeleteProgram(m_programId);
 	}
 
-	void draw() {
+	dependency_graph::State draw() {
+		dependency_graph::State state;
+
 		if(m_vertexShaderId == 0) {
 			m_vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
 			const GLchar* src = "void main() {gl_Position = ftransform();}";
@@ -50,12 +52,10 @@ struct Drawable : public possumwood::Drawable {
 				error.resize(maxLength);
 				glGetShaderInfoLog(m_vertexShaderId, maxLength, &maxLength, &error[0]);
 
-				values().set(a_error, error);
+				state.addError(error);
 
 				glDeleteShader(m_vertexShaderId);
 				m_vertexShaderId = 0;
-
-				return;
 			}
 		}
 
@@ -76,12 +76,10 @@ struct Drawable : public possumwood::Drawable {
 				error.resize(maxLength);
 				glGetShaderInfoLog(m_vertexShaderId, maxLength, &maxLength, &error[0]);
 
-				values().set(a_error, error);
+				state.addError(error);
 
 				glDeleteShader(m_vertexShaderId);
 				m_vertexShaderId = 0;
-
-				return;
 			}
 		}
 
@@ -104,28 +102,31 @@ struct Drawable : public possumwood::Drawable {
 				error.resize(maxLength);
 				glGetProgramInfoLog(m_programId, maxLength, &maxLength, &error[0]);
 
-				values().set(a_error, error);
+				state.addError(error);
 
 				glDeleteProgram(m_programId);
 				m_programId = 0;
-
-				return;
 			}
 
 			glDetachShader(m_programId, m_vertexShaderId);
 			glDetachShader(m_programId, m_fragmentShaderId);
 		}
 
-		glUseProgram(m_programId);
+		if(!state.errored()) {
 
-		glBegin(GL_QUADS);
-		glVertex3f(-1,-1,0);
-		glVertex3f(1,-1,0);
-		glVertex3f(1,1,0);
-		glVertex3f(-1,1,0);
-		glEnd();
+			glUseProgram(m_programId);
 
-		glUseProgram(0);
+			glBegin(GL_QUADS);
+			glVertex3f(-1,-1,0);
+			glVertex3f(1,-1,0);
+			glVertex3f(1,1,0);
+			glVertex3f(-1,1,0);
+			glEnd();
+
+			glUseProgram(0);
+		}
+
+		return state;
 	}
 
 	boost::signals2::connection m_timeChangedConnection;

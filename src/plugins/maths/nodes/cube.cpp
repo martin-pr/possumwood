@@ -11,7 +11,7 @@ namespace {
 
 dependency_graph::InAttr<Imath::Vec3<float>> a_pos, a_size;
 
-void draw(const dependency_graph::Values& values) {
+dependency_graph::State draw(const dependency_graph::Values& values) {
 	const Imath::Vec3<float> pos = values.get(a_pos);
 	const Imath::Vec3<float> size = values.get(a_size);
 
@@ -26,6 +26,8 @@ void draw(const dependency_graph::Values& values) {
 	glEnable(GL_LIGHTING);
 
 	glPopMatrix();
+
+	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {

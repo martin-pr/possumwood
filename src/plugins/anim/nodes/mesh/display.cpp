@@ -69,7 +69,7 @@ struct Drawable : public possumwood::Drawable {
 	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)) {
 	}
 
-	void draw() {
+	dependency_graph::State draw() {
 		std::shared_ptr<const std::vector<anim::SkinnedMesh>> meshes = values().get(a_meshes);
 		bool colorBones = values().get(a_colorBones);
 
@@ -126,6 +126,8 @@ struct Drawable : public possumwood::Drawable {
 
 			glPopAttrib();
 		}
+
+		return dependency_graph::State();
 	}
 };
 

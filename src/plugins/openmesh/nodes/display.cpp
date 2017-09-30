@@ -10,7 +10,7 @@ namespace {
 
 dependency_graph::InAttr<std::shared_ptr<const Mesh>> a_mesh;
 
-void draw(const dependency_graph::Values& data) {
+dependency_graph::State draw(const dependency_graph::Values& data) {
 	const std::shared_ptr<const Mesh> mesh = data.get(a_mesh);
 
 	if(mesh) {
@@ -70,6 +70,8 @@ void draw(const dependency_graph::Values& data) {
 
 		glEnd();
 	}
+
+	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {

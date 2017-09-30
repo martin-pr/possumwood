@@ -28,12 +28,14 @@ void Drawable::refresh() {
 
 //////////
 
-DrawableFunctor::DrawableFunctor(dependency_graph::Values&& vals, std::function<void(const dependency_graph::Values&)> draw) : Drawable(std::move(vals)), m_draw(draw) {
+DrawableFunctor::DrawableFunctor(dependency_graph::Values&& vals, std::function<dependency_graph::State(const dependency_graph::Values&)> draw) : Drawable(std::move(vals)), m_draw(draw) {
 }
 
-void DrawableFunctor::draw() {
+dependency_graph::State DrawableFunctor::draw() {
 	if(m_draw)
-		m_draw(values());
+		return m_draw(values());
+
+	return dependency_graph::State();
 }
 
 }

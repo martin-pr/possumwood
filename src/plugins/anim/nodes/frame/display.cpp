@@ -21,7 +21,7 @@ struct Drawable : public possumwood::Drawable {
 		m_timeChangedConnection.disconnect();
 	}
 
-	void draw() {
+	dependency_graph::State draw() {
 		anim::Skeleton skel = values().get(a_skel);
 
 		if(!skel.empty()) {
@@ -47,6 +47,8 @@ struct Drawable : public possumwood::Drawable {
 
 			glEnable(GL_LIGHTING);
 		}
+
+		return dependency_graph::State();
 	}
 
 	boost::signals2::connection m_timeChangedConnection;
