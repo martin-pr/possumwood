@@ -102,6 +102,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("anim/remove_unskinned", init);
+possumwood::NodeImplementation s_impl("anim/mesh/remove_unskinned", init);
 
 }

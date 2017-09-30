@@ -48,6 +48,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("anim/skeleton_rename", init);
+possumwood::NodeImplementation s_impl("anim/frame/bone_rename", init);
 
 }

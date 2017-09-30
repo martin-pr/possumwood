@@ -60,6 +60,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("anim/frame_edit", init);
+possumwood::NodeImplementation s_impl("anim/frame/edit", init);
 
 }

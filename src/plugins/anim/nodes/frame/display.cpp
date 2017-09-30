@@ -58,6 +58,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setDrawable<Drawable>();
 }
 
-possumwood::NodeImplementation s_impl("anim/skeleton_display", init);
+possumwood::NodeImplementation s_impl("anim/frame/display", init);
 
 }

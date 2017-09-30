@@ -1,7 +1,7 @@
 {
     "connections": [
         {
-            "in_node": "anim_frame_0",
+            "in_node": "from_animation_0",
             "in_port": "animation",
             "out_node": "transition_0",
             "out_port": "out_anim"
@@ -13,22 +13,46 @@
             "out_port": "out_anim"
         },
         {
+            "in_node": "display_0",
+            "in_port": "skeleton",
+            "out_node": "edit_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "edit_0",
+            "in_port": "in_frame",
+            "out_node": "from_animation_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "from_animation_0",
+            "in_port": "time",
+            "out_node": "mult_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_anim",
+            "out_node": "amc_1",
+            "out_port": "animation"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_anim",
+            "out_node": "amc_0",
+            "out_port": "animation"
+        },
+        {
             "in_node": "mult_0",
             "in_port": "a",
             "out_node": "time_0",
             "out_port": "time"
         },
         {
-            "in_node": "anim_frame_0",
-            "in_port": "time",
-            "out_node": "mult_0",
-            "out_port": "out"
-        },
-        {
-            "in_node": "frame_edit_0",
-            "in_port": "in_frame",
-            "out_node": "anim_frame_0",
-            "out_port": "frame"
+            "in_node": "transition_0",
+            "in_port": "anim_b",
+            "out_node": "periodic_0",
+            "out_port": "out_anim"
         },
         {
             "in_node": "amc_0",
@@ -49,34 +73,10 @@
             "out_port": "out_anim"
         },
         {
-            "in_node": "skeleton_display_0",
-            "in_port": "skeleton",
-            "out_node": "frame_edit_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "transform_1",
-            "in_port": "in_anim",
-            "out_node": "amc_0",
-            "out_port": "animation"
-        },
-        {
-            "in_node": "transition_0",
-            "in_port": "anim_b",
-            "out_node": "periodic_0",
-            "out_port": "out_anim"
-        },
-        {
             "in_node": "transition_0",
             "in_port": "anim_a",
             "out_node": "periodic_1",
             "out_port": "out_anim"
-        },
-        {
-            "in_node": "transform_0",
-            "in_port": "in_anim",
-            "out_node": "amc_1",
-            "out_port": "animation"
         }
     ],
     "nodes": {
@@ -108,17 +108,6 @@
             },
             "type": "anim/loaders/amc"
         },
-        "anim_frame_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 605.765625,
-                    "y": 795.109375
-                }
-            },
-            "name": "anim_frame",
-            "type": "anim/anim_frame"
-        },
         "asf_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -133,7 +122,18 @@
             },
             "type": "anim/loaders/asf"
         },
-        "frame_edit_0": {
+        "display_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 783.265625,
+                    "y": 845.03125
+                }
+            },
+            "name": "skeleton_display",
+            "type": "anim/frame/display"
+        },
+        "edit_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -147,9 +147,9 @@
                     [
                         0,
                         [
-                            0.906307756900787,
+                            1.0,
                             0.0,
-                            0.422618269920349,
+                            0.0,
                             0.0
                         ]
                     ]
@@ -161,7 +161,18 @@
                     "z": 0.0
                 }
             },
-            "type": "anim/frame_edit"
+            "type": "anim/frame/edit"
+        },
+        "from_animation_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 605.765625,
+                    "y": 795.109375
+                }
+            },
+            "name": "anim_frame",
+            "type": "anim/frame/from_animation"
         },
         "mult_0": {
             "blind_data": {
@@ -191,7 +202,7 @@
                 "repetitions": 5,
                 "start_frame": 66
             },
-            "type": "anim/periodic"
+            "type": "anim/animation/periodic"
         },
         "periodic_1": {
             "blind_data": {
@@ -207,18 +218,7 @@
                 "repetitions": 5,
                 "start_frame": 7
             },
-            "type": "anim/periodic"
-        },
-        "skeleton_display_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 783.265625,
-                    "y": 845.03125
-                }
-            },
-            "name": "skeleton_display",
-            "type": "anim/skeleton_display"
+            "type": "anim/animation/periodic"
         },
         "time_0": {
             "blind_data": {
@@ -253,7 +253,7 @@
                     "z": -2.5
                 }
             },
-            "type": "anim/transform"
+            "type": "anim/animation/transform"
         },
         "transform_1": {
             "blind_data": {
@@ -277,7 +277,7 @@
                     "z": 0.0
                 }
             },
-            "type": "anim/transform"
+            "type": "anim/animation/transform"
         },
         "transition_0": {
             "blind_data": {
@@ -293,7 +293,7 @@
                 "transition_b": 151,
                 "transition_length": 10
             },
-            "type": "anim/transition"
+            "type": "anim/animation/transition"
         }
     },
     "scene_config": {

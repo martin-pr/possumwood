@@ -210,7 +210,7 @@
                     "z": 0.0
                 }
             },
-            "type": "anim/frame_edit"
+            "type": "anim/frame/edit"
         },
         "frame_edit_1": {
             "blind_data": {
@@ -230,7 +230,7 @@
                     "z": 0.0
                 }
             },
-            "type": "anim/frame_edit"
+            "type": "anim/frame/edit"
         },
         "meshes_display_0": {
             "blind_data": {
@@ -244,7 +244,7 @@
             "ports": {
                 "color_bones": false
             },
-            "type": "anim/meshes_display"
+            "type": "anim/mesh/display"
         },
         "meshes_subset_0": {
             "blind_data": {
@@ -266,7 +266,7 @@
                     "proogshoes"
                 ]
             },
-            "type": "anim/meshes_subset"
+            "type": "anim/mesh/subset"
         },
         "remove_unskinned_0": {
             "blind_data": {
@@ -277,7 +277,7 @@
                 }
             },
             "name": "remove_unskinned",
-            "type": "anim/remove_unskinned"
+            "type": "anim/mesh/remove_unskinned"
         },
         "remove_unskinned_1": {
             "blind_data": {
@@ -288,7 +288,7 @@
                 }
             },
             "name": "remove_unskinned",
-            "type": "anim/remove_unskinned"
+            "type": "anim/mesh/remove_unskinned"
         },
         "skeleton_display_0": {
             "blind_data": {
@@ -299,7 +299,7 @@
                 }
             },
             "name": "skeleton_display",
-            "type": "anim/skeleton_display"
+            "type": "anim/frame/display"
         },
         "skeleton_rename_0": {
             "blind_data": {
@@ -313,7 +313,7 @@
             "ports": {
                 "regex": "(Root)|(ORG.*)|(DEF_.*)|(rig$)|(root$)|(rig_jaw$)$"
             },
-            "type": "anim/skeleton_rename"
+            "type": "anim/frame/bone_rename"
         },
         "skeleton_rename_1": {
             "blind_data": {
@@ -327,7 +327,7 @@
             "ports": {
                 "regex": "(rig)|(root)|[a-z].*$"
             },
-            "type": "anim/skeleton_rename"
+            "type": "anim/frame/bone_rename"
         },
         "skin_0": {
             "blind_data": {
@@ -338,7 +338,7 @@
                 }
             },
             "name": "skin",
-            "type": "anim/skin"
+            "type": "anim/mesh/skin"
         },
         "skin_remapping_regex_0": {
             "blind_data": {
@@ -353,7 +353,7 @@
                 "regex": "^DEF_(.+)$",
                 "replacement": "ORG_$1"
             },
-            "type": "anim/skin_remapping_regex"
+            "type": "anim/mesh/skin_remap_regex"
         },
         "skin_remapping_regex_1": {
             "blind_data": {
@@ -368,7 +368,7 @@
                 "regex": "^DEF_(.+_[LR]).*$",
                 "replacement": "ORG_$1"
             },
-            "type": "anim/skin_remapping_regex"
+            "type": "anim/mesh/skin_remap_regex"
         },
         "x_0": {
             "blind_data": {

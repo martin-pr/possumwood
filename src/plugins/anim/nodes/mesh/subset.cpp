@@ -65,6 +65,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("anim/meshes_subset", init);
+possumwood::NodeImplementation s_impl("anim/mesh/subset", init);
 
 }

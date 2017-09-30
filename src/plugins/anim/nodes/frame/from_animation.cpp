@@ -44,6 +44,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("anim/anim_frame", init);
+possumwood::NodeImplementation s_impl("anim/frame/from_animation", init);
 
 }

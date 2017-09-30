@@ -136,6 +136,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setDrawable<Drawable>();
 }
 
-possumwood::NodeImplementation s_impl("anim/meshes_display", init);
+possumwood::NodeImplementation s_impl("anim/mesh/display", init);
 
 }

@@ -61,6 +61,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("anim/transform", init);
+possumwood::NodeImplementation s_impl("anim/animation/transform", init);
 
 }

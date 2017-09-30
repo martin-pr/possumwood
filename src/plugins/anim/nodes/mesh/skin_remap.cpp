@@ -62,6 +62,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("anim/skin_remapping", init);
+possumwood::NodeImplementation s_impl("anim/mesh/skin_remap", init);
 
 }
