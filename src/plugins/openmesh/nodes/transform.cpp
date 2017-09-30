@@ -1,15 +1,9 @@
 #include <possumwood_sdk/node_implementation.h>
 
-#include <dependency_graph/values.inl>
-#include <dependency_graph/attr.inl>
-#include <dependency_graph/datablock.inl>
-#include <dependency_graph/port.inl>
-#include <dependency_graph/node.inl>
-
 #include <OpenEXR/ImathVec.h>
 #include <OpenEXR/ImathEuler.h>
 
-#include "3d/io/vec3.h"
+#include "maths/io/vec3.h"
 #include "datatypes/mesh.h"
 #include "openmesh.h"
 

@@ -1,12 +1,12 @@
 ## Synopsis
 
-Possumwood (named after [Sandbox Tree](https://en.wikipedia.org/wiki/Hura_crepitans)) is a simple graph-based procedural authoring tool, in concept not dissimilar to popular CG packages like Houdini, Blender or Maya.
+![Possumwood UI](doc/possumwood_half.gif?raw=true)
 
-Its main strength is its **simplicity** - it is trivial to extend it to work with new libraries and data types, and allows free experimentation with parameters of each algorithm.
+Possumwood (named after [Sandbox Tree](https://en.wikipedia.org/wiki/Hura_crepitans)) is a graph-based procedural authoring tool, in concept not dissimilar to popular CG packages like Houdini, Blender or Maya. It is intended to serve as a **sandbox** for computer graphics algorithms and libraries, providing a user-friendly and coding-free UI for libraries that would otherwise be inaccessible for an average user.
 
-The core of the project is based on a [Qt-based node editor UI](https://github.com/martin-pr/qt_node_editor) and [Dependency Graph evaluation engine](https://github.com/martin-pr/dependency_graph).
+It is built on top of a simple graph-evaluation engine, and a Qt-based node graph editor, with an OpenGL viewport. Its main strength is its **extensibility** - it is trivial to implement new plugins supporting new libraries and data types, and allows free user-friendly experimentation with parameters of each algorithm.
 
-At the moment, it is in **very early stages of development** and as such it is not yet usable. Please stay tuned :)
+At the moment, the project is in its **prototype stage**, and any feedback or help is welcome. In particular, it is in dire need of **a MS Windows build**, preferably using **AppVeyor**. Any help in that area would be greatly appreciated!
 
 [![Build Status](https://travis-ci.org/martin-pr/possumwood.svg?branch=master)](https://travis-ci.org/martin-pr/possumwood)
 
@@ -16,11 +16,42 @@ There are many great computer graphics and computational libraries available (e.
 
 This project aims at creating a simple and extensible sandbox for experimentation with graphics libraries and algorithms. While it will probably not reach the heights of applications like Houdini or Fabric Engine, it is intended as a simple and approachable open alternative.
 
-Eventually, it will include a set of plugins containing the bindings for different libraries. At that stage, though, I would use some help :) Feel free to contact me!
-
 ## Code Example
 
-(to come)
+A simple node, allowing to add two numbers, would consist of a single C++ source file:
+
+```
+#include <possumwood_sdk/node_implementation.h>
+
+namespace {
+
+dependency_graph::InAttr<float> input1, input2;
+dependency_graph::OutAttr<float> output;
+
+dependency_graph::State compute(dependency_graph::Values& data) {
+	const float a = data.get(input1);
+	const float b = data.get(input2);
+
+	data.set(output, a + b);
+
+	return dependency_graph::State();
+}
+
+void init(possumwood::Metadata& meta) {
+	meta.addAttribute(input1, "a");
+	meta.addAttribute(input2, "b");
+	meta.addAttribute(output, "out");
+
+	meta.addInfluence(input1, output);
+	meta.addInfluence(input2, output);
+
+	meta.setCompute(compute);
+}
+
+possumwood::NodeImplementation s_impl("maths/add", init);
+
+}
+```
 
 ## Installation
 
@@ -36,7 +67,7 @@ The code does not use any architecture or OS-specific features or libraries, and
 
 ## API Reference
 
-(to come)
+An auto-generated Doxygen reference can be found [here](https://martin-pr.github.io/possumwood/annotated.html)
 
 ## Contributors
 

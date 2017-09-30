@@ -1,12 +1,6 @@
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
 
-#include <dependency_graph/values.inl>
-#include <dependency_graph/attr.inl>
-#include <dependency_graph/datablock.inl>
-#include <dependency_graph/port.inl>
-#include <dependency_graph/node.inl>
-
 namespace {
 
 dependency_graph::OutAttr<float> a_time;

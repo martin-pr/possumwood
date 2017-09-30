@@ -1,0 +1,66 @@
+{
+    "connections": [
+        {
+            "in_node": "mult_0",
+            "in_port": "a",
+            "out_node": "add_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "mult_0",
+            "in_port": "b",
+            "out_node": "add_1",
+            "out_port": "out"
+        }
+    ],
+    "nodes": {
+        "add_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 259.0,
+                    "y": 351.0
+                }
+            },
+            "name": "add",
+            "ports": {
+                "a": 1.0,
+                "b": 2.0
+            },
+            "type": "maths/add"
+        },
+        "add_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 259.0,
+                    "y": 505.0
+                }
+            },
+            "name": "add",
+            "ports": {
+                "a": 3.0,
+                "b": 4.0
+            },
+            "type": "maths/add"
+        },
+        "mult_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 389.0,
+                    "y": 426.0
+                }
+            },
+            "name": "mult",
+            "type": "maths/mult"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAASwAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAABVwAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABnAAAARIAAAB1AP////sAAAAGAGwAbwBnAQAAArIAAAFXAAAASQD///8AAANUAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+}
