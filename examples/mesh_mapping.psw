@@ -450,7 +450,7 @@
             },
             "name": "x",
             "ports": {
-                "filename": "ishtarian-proog.x"
+                "filename": "durian_project_models/ishtarian-proog.x"
             },
             "type": "anim/loaders/x"
         }
