@@ -6,7 +6,7 @@
 
 namespace {
 
-dependency_graph::OutAttr<std::string> a_error;
+dependency_graph::InAttr<std::string> a_src;
 
 struct Drawable : public possumwood::Drawable {
 	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)) {
@@ -59,33 +59,39 @@ struct Drawable : public possumwood::Drawable {
 			}
 		}
 
-		if(m_fragmentShaderId == 0) {
+		if(m_fragmentShaderId == 0)
 			m_fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-			const GLchar* src = "void main() {gl_FragColor = vec4(1,0,1,1);}";
-			glShaderSource(m_fragmentShaderId, 1, &src, 0);
+
+		const std::string& src = values().get(a_src);
+		if(src != m_currentFragmentSource) {
+			const char* srcPtr = src.c_str();
+			glShaderSource(m_fragmentShaderId, 1, &srcPtr, 0);
 			glCompileShader(m_fragmentShaderId);
 
-			GLint isCompiled = 0;
-			glGetShaderiv(m_vertexShaderId, GL_COMPILE_STATUS, &isCompiled);
+			{
+				GLint isCompiled = 0;
+				glGetShaderiv(m_fragmentShaderId, GL_COMPILE_STATUS, &isCompiled);
 
-			if(isCompiled == GL_FALSE) {
-				GLint maxLength = 0;
-				glGetShaderiv(m_vertexShaderId, GL_INFO_LOG_LENGTH, &maxLength);
+				if(isCompiled == GL_FALSE) {
+					GLint maxLength = 0;
+					glGetShaderiv(m_fragmentShaderId, GL_INFO_LOG_LENGTH, &maxLength);
 
-				std::string error;
-				error.resize(maxLength);
-				glGetShaderInfoLog(m_vertexShaderId, maxLength, &maxLength, &error[0]);
+					std::string error;
+					error.resize(maxLength);
+					glGetShaderInfoLog(m_fragmentShaderId, maxLength, &maxLength, &error[0]);
 
-				state.addError(error);
+					state.addError(error);
 
-				glDeleteShader(m_vertexShaderId);
-				m_vertexShaderId = 0;
+					glDeleteShader(m_fragmentShaderId);
+					m_fragmentShaderId = 0;
+				}
 			}
 		}
 
-		if(m_programId == 0) {
+		if(m_programId == 0)
 			m_programId = glCreateProgram();
 
+		if(src != m_currentFragmentSource && m_fragmentShaderId != 0 && m_vertexShaderId != 0) {
 			glAttachShader(m_programId, m_vertexShaderId);
 			glAttachShader(m_programId, m_fragmentShaderId);
 
@@ -110,6 +116,9 @@ struct Drawable : public possumwood::Drawable {
 
 			glDetachShader(m_programId, m_vertexShaderId);
 			glDetachShader(m_programId, m_fragmentShaderId);
+
+
+			m_currentFragmentSource = src;
 		}
 
 		if(!state.errored()) {
@@ -134,10 +143,12 @@ struct Drawable : public possumwood::Drawable {
 	GLuint m_programId = 0;
 	GLuint m_vertexShaderId = 0;
 	GLuint m_fragmentShaderId = 0;
+
+	std::string m_currentFragmentSource;
 };
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_error, "error");
+	meta.addAttribute(a_src, "source", std::string("void main() {gl_FragColor = vec4(1,0,1,1);}"));
 
 	meta.setDrawable<Drawable>();
 }
