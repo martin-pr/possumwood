@@ -90,7 +90,7 @@
             },
             "name": "amc",
             "ports": {
-                "filename": "141_01.amc"
+                "filename": "cmu_mocap/141_01.amc"
             },
             "type": "anim/loaders/amc"
         },
@@ -104,7 +104,7 @@
             },
             "name": "amc",
             "ports": {
-                "filename": "141_04.amc"
+                "filename": "cmu_mocap/141_04.amc"
             },
             "type": "anim/loaders/amc"
         },
@@ -118,7 +118,7 @@
             },
             "name": "loader_asf",
             "ports": {
-                "filename": "141.asf"
+                "filename": "cmu_mocap/141.asf"
             },
             "type": "anim/loaders/asf"
         },

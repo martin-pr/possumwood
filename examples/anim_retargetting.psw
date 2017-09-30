@@ -204,7 +204,7 @@
             },
             "name": "amc",
             "ports": {
-                "filename": "/home/martin/Dropbox/Coding/possumwood/examples/141_01.amc"
+                "filename": "cmu_mocap/141_01.amc"
             },
             "type": "anim/loaders/amc"
         },
@@ -229,7 +229,7 @@
             },
             "name": "asf",
             "ports": {
-                "filename": "/home/martin/Dropbox/Coding/possumwood/examples/141.asf"
+                "filename": "cmu_mocap/141.asf"
             },
             "type": "anim/loaders/asf"
         },
