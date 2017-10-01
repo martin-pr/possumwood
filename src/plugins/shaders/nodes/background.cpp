@@ -10,6 +10,8 @@
 #include <QPushButton>
 #include <QStyle>
 
+#include <OpenEXR/ImathMatrix.h>
+
 namespace {
 
 dependency_graph::InAttr<std::string> a_src;
@@ -145,6 +147,9 @@ struct Drawable : public possumwood::Drawable {
 
 		if(m_programId != 0)
 			glDeleteProgram(m_programId);
+
+		if(m_vao != 0)
+			glDeleteVertexArrays(1, &m_vao);
 	}
 
 	dependency_graph::State draw() {
@@ -190,18 +195,19 @@ struct Drawable : public possumwood::Drawable {
 			glDetachShader(m_programId, m_fragmentShaderId);
 
 			m_currentFragmentSource = src;
+
+			// VAO will need updating
+			if(m_vao != 0)
+				glDeleteVertexArrays(1, &m_vao);
+			m_vao = 0;
 		}
 
 		if(!state.errored()) {
+			//////////////////////
 			// setup - only once
-			if(m_vao == 0) {
-				// make a new vertex array, and bind it - everything here is now
-				//   stored inside that vertex array object
-				glGenVertexArrays(1, &m_vao);
-				glBindVertexArray(m_vao);
 
-				// make and fill the position buffer
-				assert(m_posBuffer == 0);
+			// first, the position buffer
+			if(m_posBuffer == 0) {
 				glGenBuffers(1, &m_posBuffer);
 
 				glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer);
@@ -213,23 +219,43 @@ struct Drawable : public possumwood::Drawable {
 				};
 				glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+			}
+
+			// vertex array object to tie it all together
+			if(m_vao == 0) {
+				// make a new vertex array, and bind it - everything here is now
+				//   stored inside that vertex array object
+				glGenVertexArrays(1, &m_vao);
+				glBindVertexArray(m_vao);
+
 				// and tie it to the position attribute (will tie itself to CURRENT
 				//   GL_ARRAY_BUFFER)
+				glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer);
+
 				GLuint positionAttr = glGetAttribLocation(m_programId, "position");
 				glEnableVertexAttribArray(positionAttr);
 				glVertexAttribPointer(positionAttr, 3, GL_FLOAT, 0, 0, 0);
 
 				glBindBuffer(GL_ARRAY_BUFFER, 0);// unnecessary?
+
 				glBindVertexArray(0);
 			}
 
-			// per-frame drawing - just bind the VAO, the program, and execute draw
+			//////////
+			// per-frame drawing
+
+			// bind the VAO
 			glBindVertexArray(m_vao);
 
+			// use the program
 			glUseProgram(m_programId);
-			glDrawArrays(GL_QUADS, 0, 4);
-			glUseProgram(0);
 
+			// and execute draw
+			glDrawArrays(GL_QUADS, 0, 4);
+
+			// disconnect everything
+			glUseProgram(0);
 			glBindVertexArray(0);
 		}
 
