@@ -30,8 +30,11 @@ const dependency_graph::State& Drawable::drawState() const {
 	return m_drawState;
 }
 
-void Drawable::doDraw() {
+void Drawable::doDraw(unsigned w, unsigned h) {
 	try {
+		m_width = w;
+		m_height = h;
+
 		dependency_graph::State state = draw();
 		m_drawState = state;
 	}
@@ -40,6 +43,14 @@ void Drawable::doDraw() {
 		state.addError(err.what());
 		m_drawState = state;
 	}
+}
+
+unsigned Drawable::width() const {
+	return m_width;
+}
+
+unsigned Drawable::height() const {
+	return m_height;
 }
 
 //////////

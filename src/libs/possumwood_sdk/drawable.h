@@ -13,7 +13,7 @@ class Drawable : public boost::noncopyable {
 		virtual ~Drawable();
 
 		/// calls draw() method, and processes the return state
-		void doDraw();
+		void doDraw(unsigned width, unsigned height);
 
 		/// returns current drawing state
 		const dependency_graph::State& drawState() const;
@@ -23,6 +23,9 @@ class Drawable : public boost::noncopyable {
 
 	protected:
 		virtual dependency_graph::State draw() = 0;
+
+		unsigned width() const;
+		unsigned height() const;
 
 		dependency_graph::Values& values();
 		const dependency_graph::Values& values() const;
@@ -34,6 +37,8 @@ class Drawable : public boost::noncopyable {
 		dependency_graph::Values m_vals;
 		static boost::signals2::signal<void()> s_refresh;
 		dependency_graph::State m_drawState;
+
+		unsigned m_width, m_height;
 };
 
 class DrawableFunctor : public Drawable {

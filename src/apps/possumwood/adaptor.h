@@ -50,7 +50,7 @@ class Adaptor : public QWidget {
 		QAction* redoAction() const;
 
 		/// calls all existing Drawables
-		void draw();
+		void draw(unsigned width, unsigned height);
 
 	signals:
 		void logged(QIcon, const QString&);

@@ -285,6 +285,14 @@ struct Drawable : public possumwood::Drawable {
 				}
 			}
 
+			{
+				GLint attr = glGetUniformLocation(m_programId, "iResolution");
+				if(attr >= 0) {
+					float res[2] = {(float)width(), (float)height()};
+					glUniform2fv(attr, 1, res);
+				}
+			}
+
 			// and execute draw
 			glDrawArrays(GL_QUADS, 0, 4);
 
@@ -314,6 +322,7 @@ void init(possumwood::Metadata& meta) {
 		"\n"
 		"uniform mat4 iProjectionMat;\n"
 		"uniform mat4 iProjectionMatInv;\n"
+		"uniform vec2 iResolution;\n"
 		"\n"
 		"layout(location=0) out vec4 color;\n"
 		"\n"

@@ -5,13 +5,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 329.0,
-                    "y": 300.0
+                    "x": 184.0,
+                    "y": 449.0
                 }
             },
             "name": "background",
             "ports": {
-                "source": "void main() {\n\tgl_FragColor = vec4(gl_FragCoord.x/500.0, gl_FragCoord.y/500.0,gl_FragCoord.z/500.0,1);\n\tgl_FragDepth = 1;\n}\n"
+                "source": "#version 330\n\nuniform mat4 iProjectionMat;\nuniform mat4 iProjectionMatInv;\nuniform vec2 iResolution;\n\nlayout(location=0) out vec4 color;\n\nvoid main() {\n\tvec2 param = \n\t\tgl_FragCoord.xy / (iResolution.xy / 2.0) + vec2(-1, -1);\n\n\tcolor = vec4(\n\t\tabs(param.x), \n\t\tabs(param.y), \n\t\t0,\n\t\t1);\n\tgl_FragDepth = 1;\n}\n"
             },
             "type": "shaders/background"
         }
@@ -21,6 +21,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAABPQAAABQAAAbcAAAEGAAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAI6AAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAxUAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAACFAAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAACWQAAAbAAAABuAP////sAAAAGAGwAbwBnAAAAArIAAAFXAAAASQD///8AAAIpAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAABOAAAAK8AAAVnAAADJQAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGvAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAnUAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAABdwAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABywAAAjYAAAB3AP////sAAAAGAGwAbwBnAAAAArIAAAFXAAAAWQD///8AAANQAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
