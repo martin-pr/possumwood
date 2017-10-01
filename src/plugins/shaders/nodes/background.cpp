@@ -158,10 +158,10 @@ struct Drawable : public possumwood::Drawable {
 		if(m_vertexShaderId == 0) {
 			m_vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
 			const GLchar* src =
-				"#version 330                   \n"
-				"in vec3 position;              \n"
-				"void main() {                  \n"
-				"	gl_Position = vec4(position.x, position.y, position.z, 0.5); \n"
+				"#version 330\n"
+				"in vec3 position;\n"
+				"void main() {\n"
+				"	gl_Position = vec4(position.x, position.y, position.z, 1); \n"
 				"}";
 			glShaderSource(m_vertexShaderId, 1, &src, 0);
 			glCompileShader(m_vertexShaderId);
@@ -212,10 +212,10 @@ struct Drawable : public possumwood::Drawable {
 
 				glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer);
 				static const float vertices[] = {
-					-1,-1,0,
-					1,-1,0,
-					1,1,0,
-					-1,1,0
+					-1,-1,1,
+					1,-1,1,
+					1,1,1,
+					-1,1,1
 				};
 				glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
@@ -251,6 +251,40 @@ struct Drawable : public possumwood::Drawable {
 			// use the program
 			glUseProgram(m_programId);
 
+			// feed in the uniforms
+			{
+				Imath::M44f model, projection;
+				{
+					float tmp[16];
+
+					glGetFloatv(GL_MODELVIEW_MATRIX, tmp);
+					for(unsigned a = 0; a<16; ++a)
+						model[a / 4][a % 4] = tmp[a];
+
+					glGetFloatv(GL_PROJECTION_MATRIX, tmp);
+					for(unsigned a = 0; a<16; ++a)
+						projection[a / 4][a % 4] = tmp[a];
+				}
+
+				Imath::M44f modelviewProjection = model * projection;
+				GLint projectionMatrixAttr = glGetUniformLocation(m_programId, "iProjectionMat");
+				if(projectionMatrixAttr >= 0) {
+					float tmp[16];
+					for(unsigned a = 0; a<16; ++a)
+						tmp[a] = projection[a / 4][a % 4];
+					glUniformMatrix4fv(projectionMatrixAttr, 1, GL_FALSE, tmp);
+				}
+
+				modelviewProjection.invert();
+				GLint projectionMatrixInvAttr = glGetUniformLocation(m_programId, "iProjectionMatInv");
+				if(projectionMatrixInvAttr >= 0) {
+					float tmp[16];
+					for(unsigned a = 0; a<16; ++a)
+						tmp[a] = projection[a / 4][a % 4];
+					glUniformMatrix4fv(projectionMatrixInvAttr, 1, GL_FALSE, tmp);
+				}
+			}
+
 			// and execute draw
 			glDrawArrays(GL_QUADS, 0, 4);
 
@@ -275,7 +309,17 @@ struct Drawable : public possumwood::Drawable {
 };
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_src, "source", std::string("void main() {gl_FragColor = vec4(1,0,1,1);}"));
+	meta.addAttribute(a_src, "source", std::string(
+		"#version 330\n"
+		"\n"
+		"uniform mat4 iProjectionMat;\n"
+		"uniform mat4 iProjectionMatInv;\n"
+		"\n"
+		"layout(location=0) out vec4 color;\n"
+		"\n"
+		"void main() {\n"
+		"	color = vec4(1,0,1,1);\n"
+		"}\n"));
 
 	meta.setDrawable<Drawable>();
 	meta.setEditor<Editor>();
