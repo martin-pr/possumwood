@@ -39,6 +39,7 @@ addons:
       - libxmu-dev
       - libxi-dev
       - cmake
+      - libglew-dev
 
 before_install:
   - sudo apt-get update -qq
