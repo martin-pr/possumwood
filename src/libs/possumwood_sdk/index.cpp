@@ -12,6 +12,9 @@ void Index::add(Item&& item) {
 
 	assert(m_uiIndex.find(it->second.editorNode) == m_uiIndex.end());
 	m_uiIndex.insert(std::make_pair(it->second.editorNode, id));
+
+	assert(m_nodeIndex.find(it->second.graphNode) == m_nodeIndex.end());
+	m_nodeIndex.insert(std::make_pair(it->second.graphNode, id));
 }
 
 void Index::remove(const possumwood::UniqueId& id) {
@@ -21,6 +24,10 @@ void Index::remove(const possumwood::UniqueId& id) {
 	auto uiIt = m_uiIndex.find(it->second.editorNode);
 	assert(uiIt != m_uiIndex.end());
 	m_uiIndex.erase(uiIt);
+
+	auto nodeIt = m_nodeIndex.find(it->second.graphNode);
+	assert(nodeIt != m_nodeIndex.end());
+	m_nodeIndex.erase(nodeIt);
 
 	m_data.erase(it);
 }
@@ -46,7 +53,7 @@ Index::Item& Index::operator[](node_editor::Node* ptr) {
 	return it->second;
 }
 
-const Index::Item& Index::operator[](node_editor::Node* ptr) const {
+const Index::Item& Index::operator[](const node_editor::Node* ptr) const {
 	auto uiIt = m_uiIndex.find(ptr);
 	assert(uiIt != m_uiIndex.end());
 
@@ -54,6 +61,25 @@ const Index::Item& Index::operator[](node_editor::Node* ptr) const {
 	assert(it != m_data.end());
 	return it->second;
 }
+
+Index::Item& Index::operator[](dependency_graph::Node* id) {
+	auto nodeIt = m_nodeIndex.find(id);
+	assert(nodeIt != m_nodeIndex.end());
+
+	auto it = m_data.find(nodeIt->second);
+	assert(it != m_data.end());
+	return it->second;
+}
+
+const Index::Item& Index::operator[](const dependency_graph::Node* id) const {
+	auto nodeIt = m_nodeIndex.find(id);
+	assert(nodeIt != m_nodeIndex.end());
+
+	auto it = m_data.find(nodeIt->second);
+	assert(it != m_data.end());
+	return it->second;
+}
+
 
 Index::const_iterator Index::begin() const {
 	return m_data.begin();

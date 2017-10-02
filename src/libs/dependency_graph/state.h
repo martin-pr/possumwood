@@ -21,6 +21,7 @@ class State {
 		void addError(const std::string& err);
 
 		bool errored() const;
+		std::size_t size() const;
 
 		typedef std::vector<std::pair<MessageType, std::string>>::const_iterator const_iterator;
 		const_iterator begin() const;
@@ -28,6 +29,8 @@ class State {
 
 		bool operator == (const State& s) const;
 		bool operator != (const State& s) const;
+
+		void append(const State& s);
 
 	protected:
 	private:

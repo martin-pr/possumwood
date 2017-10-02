@@ -445,7 +445,7 @@ void MainWindow::draw(float dt) {
 
 	// draw everything else
 	glEnable(GL_LIGHTING);
-	m_adaptor->draw();
+	m_adaptor->draw(m_viewport->width(), m_viewport->height());
 }
 
 Adaptor& MainWindow::adaptor() {

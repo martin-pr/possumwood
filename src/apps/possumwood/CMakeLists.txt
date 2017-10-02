@@ -24,4 +24,4 @@ include_directories(./)
 qt5_add_resources(resources resources/resources.qrc)
 add_executable(possumwood ${sources} ${headers_moc} ${resources})
 
-target_link_libraries(possumwood nodeeditor dependency_graph possumwood_sdk ${LIBS} dl)
+target_link_libraries(possumwood nodeeditor dependency_graph possumwood_sdk ${LIBS} dl GLEW)

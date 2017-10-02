@@ -35,7 +35,10 @@ class Index {
 		const Item& operator[](const possumwood::UniqueId& id) const;
 
 		Item& operator[](node_editor::Node* id);
-		const Item& operator[](node_editor::Node* id) const;
+		const Item& operator[](const node_editor::Node* id) const;
+
+		Item& operator[](dependency_graph::Node* id);
+		const Item& operator[](const dependency_graph::Node* id) const;
 
 		typedef std::map<possumwood::UniqueId, Item>::const_iterator const_iterator;
 		const_iterator begin() const;
@@ -46,7 +49,8 @@ class Index {
 		/// library seem a bit iffy in current version of boost.
 		std::map<possumwood::UniqueId, Item> m_data;
 
-		std::map<node_editor::Node*, possumwood::UniqueId> m_uiIndex;
+		std::map<const node_editor::Node*, possumwood::UniqueId> m_uiIndex;
+		std::map<const dependency_graph::Node*, possumwood::UniqueId> m_nodeIndex;
 };
 
 }

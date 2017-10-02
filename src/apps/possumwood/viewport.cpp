@@ -32,7 +32,7 @@ void Viewport::initializeGL() {
 	resizeGL(width(), height());
 
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LEQUAL);
 
 	float white[3] = {1,1,1};
 	float position[4] = {1,1,1,0};
