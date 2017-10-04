@@ -351,6 +351,13 @@ struct Drawable : public possumwood::Drawable {
 				}
 			}
 
+			{
+				// time
+				GLint attr = glGetUniformLocation(m_programId, "iTime");
+				if(attr >= 0)
+					glUniform1f(attr, possumwood::App::instance().time());
+			}
+
 			// and execute draw
 			glDrawArrays(GL_QUADS, 0, 4);
 
@@ -384,6 +391,7 @@ void init(possumwood::Metadata& meta) {
 		"uniform mat4 iProjection;  // projection matrix\n"
 		"uniform mat4 iModelView;   // modelview matrix\n"
 		"uniform vec2 iResolution;  // viewport resolution\n"
+		"uniform float iTime;       // current time from the timeline\n"
 		"\n"
 		"// attributes useable for raytracing\n"
 		"in vec3 iNearPosition;     // position of fragment-corresponding point on near plane\n"
