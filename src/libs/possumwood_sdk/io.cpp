@@ -36,9 +36,9 @@ IOBase::~IOBase() {
 
 /////////////////////////////////////
 
-namespace dependency_graph { namespace io {
+namespace {
 
-void fromJson(const json& j, BaseData& data) {
+void fromJson(const dependency_graph::io::json& j, dependency_graph::BaseData& data) {
 	auto it = s_fromFn().find(data.type());
 
 	#ifndef NDEBUG
@@ -50,7 +50,7 @@ void fromJson(const json& j, BaseData& data) {
 	it->second(j, data);
 }
 
-void toJson(json& j, const BaseData& data) {
+void toJson(dependency_graph::io::json& j, const dependency_graph::BaseData& data) {
 	auto it = s_toFn().find(data.type());
 	#ifndef NDEBUG
 	if(it == s_toFn().end())
@@ -61,8 +61,26 @@ void toJson(json& j, const BaseData& data) {
 	it->second(j, data);
 }
 
-bool isSaveable(const BaseData& data) {
+bool isSaveable(const dependency_graph::BaseData& data) {
 	return s_toFn().find(data.type()) != s_toFn().end();
 }
 
-} }
+struct Registrator {
+	Registrator() {
+		dependency_graph::io::Callbacks cb {
+			&fromJson,
+			&toJson,
+			&isSaveable
+		};
+
+		dependency_graph::io::setCallbacks(cb);
+	}
+
+	~Registrator() {
+		dependency_graph::io::setCallbacks(dependency_graph::io::Callbacks());
+	}
+};
+
+Registrator s_instance;
+
+}
