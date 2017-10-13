@@ -2,7 +2,7 @@
 #include <possumwood_sdk/app.h>
 
 #include <GL/glew.h>
-#include <GL/glut.h>
+#include <GL/gl.h>
 
 #include <QPlainTextEdit>
 #include <QHBoxLayout>

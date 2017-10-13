@@ -8,7 +8,6 @@
 #include <boost/filesystem.hpp>
 
 #include <GL/glew.h>
-#include <GL/freeglut.h>
 
 #include <QApplication>
 #include <QMainWindow>
@@ -82,9 +81,6 @@ int main(int argc, char* argv[]) {
 	{
 		// create the application object
 		QApplication app(argc, argv);
-
-		// initialise glut
-		glutInit(&argc, argv);
 
 		// create the possumwood application
 		possumwood::App papp;

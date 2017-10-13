@@ -3,7 +3,7 @@
 
 #include <OpenEXR/ImathVec.h>
 
-#include <GL/glut.h>
+#include <GL/gl.h>
 
 #include "io/vec3.h"
 
@@ -20,10 +20,35 @@ dependency_graph::State draw(const dependency_graph::Values& values) {
 	glTranslatef(pos.x, pos.y, pos.z);
 	glScalef(size.x, size.y, size.z);
 
-	glDisable(GL_LIGHTING);
+	// glDisable(GL_LIGHTING);
 	glColor3f(1, 0, 0);
-	glutWireCube(0.5f);
-	glEnable(GL_LIGHTING);
+
+	glEnable(GL_CULL_FACE);
+	// glCullFace(GL_BACK);
+
+	glBegin(GL_QUADS);
+
+	glNormal3f(1, 0, 0);
+	glVertex3f(1, 1, 1); glVertex3f(1, -1, 1); glVertex3f(1, -1, -1); glVertex3f(1, 1, -1);
+
+	glNormal3f(-1, 0, 0);
+	glVertex3f(-1, 1, 1); glVertex3f(-1, 1, -1); glVertex3f(-1, -1, -1); glVertex3f(-1, -1, 1);
+
+	glNormal3f(0, 1, 0);
+	glVertex3f(1, 1, 1); glVertex3f(1, 1, -1); glVertex3f(-1, 1, -1); glVertex3f(-1, 1, 1);
+
+	glNormal3f(0, -1, 0);
+	glVertex3f(1, -1, 1); glVertex3f(-1, -1, 1); glVertex3f(-1, -1, -1); glVertex3f(1, -1, -1);
+
+	glNormal3f(0, 0, 1);
+	glVertex3f(1, 1, 1); glVertex3f(-1, 1, 1); glVertex3f(-1, -1, 1); glVertex3f(1, -1, 1);
+
+	glNormal3f(0, 0, -1);
+	glVertex3f(1, 1, -1); glVertex3f(1, -1, -1); glVertex3f(-1, -1, -1); glVertex3f(-1, 1, -1);
+
+	glEnd();
+
+	// glEnable(GL_LIGHTING);
 
 	glPopMatrix();
 

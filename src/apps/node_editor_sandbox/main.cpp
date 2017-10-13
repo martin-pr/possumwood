@@ -4,8 +4,6 @@
 
 #include <boost/program_options.hpp>
 
-#include <GL/freeglut.h>
-
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>

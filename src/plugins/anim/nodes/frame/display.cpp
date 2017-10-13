@@ -2,7 +2,7 @@
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/metadata.inl>
 
-#include <GL/glut.h>
+#include <GL/gl.h>
 
 #include "datatypes/skeleton.h"
 

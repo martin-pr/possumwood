@@ -1,7 +1,7 @@
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
 
-#include <GL/glut.h>
+#include <GL/gl.h>
 
 #include "datatypes/animation.h"
 #include "datatypes/skeleton.h"
