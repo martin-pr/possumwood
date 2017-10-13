@@ -17,6 +17,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 add_definitions(-Wall -Werror -std=c++14 -g)
+set(CMAKE_CXX_FLAGS -Wl,--no-undefined)
 
 ###########################################################
 # DEPENDENCIES

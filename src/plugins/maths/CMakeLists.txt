@@ -9,4 +9,4 @@ include_directories(./)
 
 add_library(maths SHARED ${sources})
 
-target_link_libraries(maths ${LIBS})
+target_link_libraries(maths possumwood_sdk GL glut ${LIBS})
