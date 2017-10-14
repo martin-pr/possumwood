@@ -15,7 +15,8 @@
 
 namespace {
 
-dependency_graph::InAttr<std::shared_ptr<const possumwood::Shader>> a_fragmentShader;
+dependency_graph::InAttr<std::shared_ptr<const possumwood::FragmentShader>> a_fragmentShader;
+dependency_graph::InAttr<std::shared_ptr<const possumwood::VertexShader>> a_vertexShader;
 
 dependency_graph::State checkProgramState(GLuint& programId) {
 	dependency_graph::State state;
@@ -41,33 +42,10 @@ dependency_graph::State checkProgramState(GLuint& programId) {
 }
 
 struct Drawable : public possumwood::Drawable {
-	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)), m_vertexShader(GL_VERTEX_SHADER) {
+	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)) {
 		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([this](float t) {
 				refresh();
 			});
-
-		m_vertexShader.compile(
-			"#version 330\n"
-			"\n"
-			"// input position from the CPU\n"
-			"in vec3 position;\n"
-			"\n"
-			"// near and far per-vertex world positions, useable for raytracing in the fragment shader\n"
-			"in vec3 iNearPositionVert;\n"
-			"in vec3 iFarPositionVert;\n"
-			"out vec3 iNearPosition;\n"
-			"out vec3 iFarPosition;\n"
-			"\n"
-			"void main() {\n"
-			"	// do not do any transformation - this should lead to a single quad covering the whole viewport\n"
-			"	gl_Position = vec4(position.x, position.y, position.z, 1); \n"
-			"	// just pass the near and far positions - they'll get linearly interpolated\n"
-			"	iNearPosition = iNearPositionVert;\n"
-			"	iFarPosition = iFarPositionVert;\n"
-			"}"
-		);
-
-		assert(!m_vertexShader.state().errored());
 	}
 
 	~Drawable() {
@@ -88,34 +66,38 @@ struct Drawable : public possumwood::Drawable {
 	dependency_graph::State draw() {
 		dependency_graph::State state;
 
-		state.append(m_vertexShader.state());
+		std::shared_ptr<const possumwood::FragmentShader> fragmentShader = values().get(a_fragmentShader);
+		std::shared_ptr<const possumwood::VertexShader> vertexShader = values().get(a_vertexShader);
 
-		std::shared_ptr<const possumwood::Shader> fragmentShader = values().get(a_fragmentShader);
-
-		// no fragment shader at all - error
 		if(!fragmentShader)
 			state.addError("No fragment shader provided - cannot draw.");
 
-		// fragment shader is broken - error
+		else if(!vertexShader)
+			state.addError("No vertex shader provided - cannot draw.");
+
 		else if(fragmentShader->state().errored())
 			state.append(fragmentShader->state());
+
+		else if(vertexShader->state().errored())
+			state.append(vertexShader->state());
 
 		// use the provided fragment shader
 		else {
 			assert(fragmentShader->id() != 0);
+			assert(vertexShader->id() != 0);
 
 			if(m_programId == 0)
 				m_programId = glCreateProgram();
 
-			// HACK, for now
+			// HACK, for now - COMPILES ON EACH DRAW!
 			if(true) {
-				glAttachShader(m_programId, m_vertexShader.id());
+				glAttachShader(m_programId, vertexShader->id());
 				glAttachShader(m_programId, fragmentShader->id());
 
 				glLinkProgram(m_programId);
 				state.append(checkProgramState(m_programId));
 
-				glDetachShader(m_programId, m_vertexShader.id());
+				glDetachShader(m_programId, vertexShader->id());
 				glDetachShader(m_programId, fragmentShader->id());
 
 				// VAO will need updating
@@ -283,8 +265,6 @@ struct Drawable : public possumwood::Drawable {
 
 	GLuint m_programId = 0;
 
-	possumwood::Shader m_vertexShader;
-
 	GLuint m_vao = 0;
 	GLuint m_posBuffer = 0;
 	GLuint m_nearPosBuffer = 0;
@@ -293,6 +273,7 @@ struct Drawable : public possumwood::Drawable {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_fragmentShader, "fragment_shader");
+	meta.addAttribute(a_vertexShader, "vertex_shader");
 
 	meta.setDrawable<Drawable>();
 }

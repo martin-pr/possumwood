@@ -11,6 +11,8 @@
 
 namespace possumwood {
 
+/// Generic shader type - not to be used directly, but only via explicit concrete
+/// specialisations below. This allows to distinguish between shaders by their C++ type.
 class Shader : public boost::noncopyable {
 	public:
 		Shader(GLenum shaderType);
@@ -30,10 +32,32 @@ class Shader : public boost::noncopyable {
 		GLuint m_shaderId;
 };
 
+/// Concrete type for a Fragment shader - to allow explicit type checking
+class FragmentShader : public Shader {
+	public:
+		FragmentShader() : Shader(GL_FRAGMENT_SHADER) {
+		}
+};
+
+/// Concrete type for a Vertex shader - to allow explicit type checking
+class VertexShader : public Shader {
+	public:
+		VertexShader() : Shader(GL_VERTEX_SHADER) {
+		}
+};
+
 template<>
-struct Traits<std::shared_ptr<const Shader>> {
+struct Traits<std::shared_ptr<const FragmentShader>> {
 	static constexpr std::array<float, 3> colour() {
-		return std::array<float, 3>{{0.5, 0, 0.5}};
+		return std::array<float, 3>{{0.6, 0, 0.6}};
+	}
+
+};
+
+template<>
+struct Traits<std::shared_ptr<const VertexShader>> {
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{0.3, 0, 0.3}};
 	}
 
 };
