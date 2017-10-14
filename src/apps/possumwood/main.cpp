@@ -94,16 +94,16 @@ int main(int argc, char* argv[]) {
 		win.setWindowIcon(QIcon(":icons/app.png"));
 		win.showMaximized();
 
-		// open the scene file, if specified on the command line
-		if(vm.count("scene"))
-			possumwood::App::instance().loadFile(vm["scene"].as<std::string>());
-
 		// initialize GLEW
 		auto glewErr = glewInit();
 		if(glewErr != GLEW_OK) {
 			std::cout << "Error initialising GLEW - " << glewGetErrorString(glewErr) << std::endl;
 			exit(1);
 		}
+
+		// open the scene file, if specified on the command line
+		if(vm.count("scene"))
+			possumwood::App::instance().loadFile(vm["scene"].as<std::string>());
 
 		// and start the main application loop
 		app.exec();
