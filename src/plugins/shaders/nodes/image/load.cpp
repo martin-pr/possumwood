@@ -33,10 +33,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_filename, "filename", possumwood::Filename({{
-		"PNG images (*.png);;"
+	meta.addAttribute(a_filename, "filename", possumwood::Filename({
+		"All supported images (*.png *.jpg *.jpeg)",
+		"PNG images (*.png)",
 		"JPG images (*.jpg; *.jpeg)"
-	}}));
+	}));
 	meta.addAttribute(a_image, "image");
 
 	meta.addInfluence(a_filename, a_image);
