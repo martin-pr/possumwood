@@ -27,9 +27,6 @@ struct Drawable : public possumwood::Drawable {
 
 	~Drawable() {
 		m_timeChangedConnection.disconnect();
-
-		if(m_vao != 0)
-			glDeleteVertexArrays(1, &m_vao);
 	}
 
 	dependency_graph::State draw() {
@@ -57,23 +54,8 @@ struct Drawable : public possumwood::Drawable {
 				});
 			}
 
-			// vertex array object to tie it all together
-			if(m_vao == 0) {
-				// make a new vertex array, and bind it - everything here is now
-				//   stored inside that vertex array object
-				glGenVertexArrays(1, &m_vao);
-				glBindVertexArray(m_vao);
-
-				GLint positionAttr = glGetAttribLocation(program->id(), "position");
-				if(positionAttr >= 0)
-					m_posBuffer.use(positionAttr);
-			}
-
 			//////////
 			// per-frame drawing
-
-			// bind the VAO
-			glBindVertexArray(m_vao);
 
 			// use the program
 			glUseProgram(program->id());
@@ -107,6 +89,12 @@ struct Drawable : public possumwood::Drawable {
 				}
 			}
 
+			{
+				GLint positionAttr = glGetAttribLocation(program->id(), "position");
+				if(positionAttr >= 0)
+					m_posBuffer.use(positionAttr);
+			}
+
 			GLint viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
 
@@ -135,7 +123,6 @@ struct Drawable : public possumwood::Drawable {
 
 				m_farPosBuffer.init(farPosData, farPosData+4);
 
-
 				GLint iFarPosAttr = glGetAttribLocation(program->id(), "iFarPositionVert");
 				if(iFarPosAttr >= 0)
 					m_farPosBuffer.use(iFarPosAttr);
@@ -162,15 +149,12 @@ struct Drawable : public possumwood::Drawable {
 
 			// disconnect everything
 			glUseProgram(0);
-			glBindVertexArray(0);
 		}
 
 		return state;
 	}
 
 	boost::signals2::connection m_timeChangedConnection;
-
-	GLuint m_vao = 0;
 
 	possumwood::VBO<Imath::V3f> m_posBuffer;
 	possumwood::VBO<Imath::V3d> m_nearPosBuffer, m_farPosBuffer;
