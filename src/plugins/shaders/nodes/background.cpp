@@ -12,6 +12,7 @@
 #include <OpenEXR/ImathMatrix.h>
 
 #include "datatypes/program.h"
+#include "datatypes/vbo.inl"
 
 namespace {
 
@@ -26,11 +27,6 @@ struct Drawable : public possumwood::Drawable {
 
 	~Drawable() {
 		m_timeChangedConnection.disconnect();
-
-		if(m_posBuffer != 0) {
-			glDeleteBuffers(1, &m_posBuffer);
-			m_posBuffer = 0;
-		}
 
 		if(m_vao != 0)
 			glDeleteVertexArrays(1, &m_vao);
@@ -52,19 +48,13 @@ struct Drawable : public possumwood::Drawable {
 			// setup - only once
 
 			// first, the position buffer
-			if(m_posBuffer == 0) {
-				glGenBuffers(1, &m_posBuffer);
-
-				glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer);
-				static const float vertices[] = {
-					-1,-1,1,
-					1,-1,1,
-					1,1,1,
-					-1,1,1
-				};
-				glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
+			if(!m_posBuffer.isInitialised()) {
+				m_posBuffer.init({
+					Imath::V3f(-1,-1,1),
+					Imath::V3f(1,-1,1),
+					Imath::V3f(1,1,1),
+					Imath::V3f(-1,1,1)
+				});
 			}
 
 			// vertex array object to tie it all together
@@ -76,7 +66,7 @@ struct Drawable : public possumwood::Drawable {
 
 				// and tie it to the position attribute (will tie itself to CURRENT
 				//   GL_ARRAY_BUFFER)
-				glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer);
+				glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer.id());
 
 				GLuint positionAttr = glGetAttribLocation(program->id(), "position");
 				glEnableVertexAttribArray(positionAttr);
@@ -130,17 +120,15 @@ struct Drawable : public possumwood::Drawable {
 
 			{
 				// points on the near plane, corresponding to each fragment (useful for raytracing)
-				double nearPosData[12];
-				gluUnProject(0, 0, 0, modelview, projection, viewport, nearPosData, nearPosData+1, nearPosData+2);
-				gluUnProject(width(), 0, 0, modelview, projection, viewport, nearPosData+3, nearPosData+4, nearPosData+5);
-				gluUnProject(width(), height(), 0, modelview, projection, viewport, nearPosData+6, nearPosData+7, nearPosData+8);
-				gluUnProject(0, height(), 0, modelview, projection, viewport, nearPosData+9, nearPosData+10, nearPosData+11);
+				Imath::V3d nearPosData[4];
+				gluUnProject(0, 0, 0, modelview, projection, viewport, &nearPosData[0][0], &nearPosData[0][1], &nearPosData[0][2]);
+				gluUnProject(width(), 0, 0, modelview, projection, viewport, &nearPosData[1][0], &nearPosData[1][1], &nearPosData[1][2]);
+				gluUnProject(width(), height(), 0, modelview, projection, viewport, &nearPosData[2][0], &nearPosData[2][1], &nearPosData[2][2]);
+				gluUnProject(0, height(), 0, modelview, projection, viewport, &nearPosData[3][0], &nearPosData[3][1], &nearPosData[3][2]);
 
-				if(m_nearPosBuffer == 0)
-					glGenBuffers(1, &m_nearPosBuffer);
-				glBindBuffer(GL_ARRAY_BUFFER, m_nearPosBuffer);
+				m_nearPosBuffer.init(nearPosData, nearPosData+4);
 
-				glBufferData(GL_ARRAY_BUFFER, sizeof(nearPosData), nearPosData, GL_STATIC_DRAW);
+				glBindBuffer(GL_ARRAY_BUFFER, m_nearPosBuffer.id());
 
 				GLint iNearPosAttr = glGetAttribLocation(program->id(), "iNearPositionVert");
 				if(iNearPosAttr >= 0) {
@@ -153,17 +141,15 @@ struct Drawable : public possumwood::Drawable {
 
 			{
 				// points on the far plane, corresponding to each fragment (useful for raytracing)
-				double farPosData[12];
-				gluUnProject(0, 0, 1, modelview, projection, viewport, farPosData, farPosData+1, farPosData+2);
-				gluUnProject(width(), 0, 1, modelview, projection, viewport, farPosData+3, farPosData+4, farPosData+5);
-				gluUnProject(width(), height(), 1, modelview, projection, viewport, farPosData+6, farPosData+7, farPosData+8);
-				gluUnProject(0, height(), 1, modelview, projection, viewport, farPosData+9, farPosData+10, farPosData+11);
+				Imath::V3d farPosData[4];
+				gluUnProject(0, 0, 1, modelview, projection, viewport, &farPosData[0][0], &farPosData[0][1], &farPosData[0][2]);
+				gluUnProject(width(), 0, 1, modelview, projection, viewport, &farPosData[1][0], &farPosData[1][1], &farPosData[1][2]);
+				gluUnProject(width(), height(), 1, modelview, projection, viewport, &farPosData[2][0], &farPosData[2][1], &farPosData[2][2]);
+				gluUnProject(0, height(), 1, modelview, projection, viewport, &farPosData[3][0], &farPosData[3][1], &farPosData[3][2]);
 
-				if(m_farPosBuffer == 0)
-					glGenBuffers(1, &m_farPosBuffer);
-				glBindBuffer(GL_ARRAY_BUFFER, m_farPosBuffer);
+				m_farPosBuffer.init(farPosData, farPosData+4);
 
-				glBufferData(GL_ARRAY_BUFFER, sizeof(farPosData), farPosData, GL_STATIC_DRAW);
+				glBindBuffer(GL_ARRAY_BUFFER, m_farPosBuffer.id());
 
 				GLint iFarPosAttr = glGetAttribLocation(program->id(), "iFarPositionVert");
 				if(iFarPosAttr >= 0) {
@@ -204,9 +190,9 @@ struct Drawable : public possumwood::Drawable {
 	boost::signals2::connection m_timeChangedConnection;
 
 	GLuint m_vao = 0;
-	GLuint m_posBuffer = 0;
-	GLuint m_nearPosBuffer = 0;
-	GLuint m_farPosBuffer = 0;
+
+	possumwood::VBO<Imath::V3f> m_posBuffer;
+	possumwood::VBO<Imath::V3d> m_nearPosBuffer, m_farPosBuffer;
 };
 
 void init(possumwood::Metadata& meta) {
