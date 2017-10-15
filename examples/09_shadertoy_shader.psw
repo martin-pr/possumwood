@@ -1,16 +1,22 @@
 {
     "connections": [
         {
-            "in_node": "background_0",
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
             "out_port": "shader"
         },
         {
             "in_node": "background_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
         }
     ],
     "nodes": {
@@ -18,8 +24,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 160.0,
-                    "y": 377.0
+                    "x": 328.0,
+                    "y": 394.0
                 }
             },
             "name": "background",
@@ -30,7 +36,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 35.0,
-                    "y": 317.0
+                    "y": 451.0
                 }
             },
             "name": "shader",
@@ -39,12 +45,23 @@
             },
             "type": "shaders/fragment_shader"
         },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 155.0,
+                    "y": 373.0
+                }
+            },
+            "name": "program",
+            "type": "shaders/program"
+        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 34.0,
-                    "y": 433.0
+                    "x": 36.0,
+                    "y": 329.0
                 }
             },
             "name": "vertex_shader",
@@ -59,6 +76,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAADAAAACQAAB2AAAAQKAAAABAAAACAAAAdfAAAEBgAAAAAAAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAFXAAADmfwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADmQAAAFkA////AAAAAQAAAkYAAAOZ/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAABYwAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABtwAAAjAAAAB3AP////sAAAAGAGwAbwBnAAAAArIAAAFXAAAAWQD///8AAAOzAAADmQAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAACAAAAAAAAB18AAAQBAAAAAwAAABcAAAdeAAAD/QAAAAAAAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHUAAADmfwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADmQAAAFkA////AAAAAQAAAkYAAAOZ/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAABYwAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABtwAAAjAAAAB3AP////sAAAAGAGwAbwBnAAAAArIAAAFXAAAAWQD///8AAAM2AAADmQAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

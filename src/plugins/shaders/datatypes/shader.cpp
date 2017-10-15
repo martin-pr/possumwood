@@ -43,9 +43,6 @@ void Shader::compile(const std::string& source) {
 		glGetShaderInfoLog(m_shaderId, maxLength, &maxLength, &error[0]);
 
 		m_state.addError(error);
-
-		glDeleteShader(m_shaderId);
-		m_shaderId = 0;
 	}
 }
 

@@ -1,40 +1,58 @@
 {
     "connections": [
         {
-            "in_node": "background_2",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_2",
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
             "out_port": "shader"
         },
         {
-            "in_node": "background_1",
+            "in_node": "program_1",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_2",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_1",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_1",
             "out_port": "shader"
         },
         {
-            "in_node": "background_0",
+            "in_node": "background_1",
+            "in_port": "program",
+            "out_node": "program_1",
+            "out_port": "program"
+        },
+        {
+            "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
             "out_port": "shader"
         },
         {
-            "in_node": "background_2",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "background_1",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
+            "in_node": "program_2",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_2",
             "out_port": "shader"
         },
         {
             "in_node": "background_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "background_2",
+            "in_port": "program",
+            "out_node": "program_2",
+            "out_port": "program"
         }
     ],
     "nodes": {
@@ -42,8 +60,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 250.0,
-                    "y": 350.0
+                    "x": 436.0,
+                    "y": 417.0
                 }
             },
             "name": "ground_v2",
@@ -53,8 +71,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 252.0,
-                    "y": 443.0
+                    "x": 438.0,
+                    "y": 510.0
                 }
             },
             "name": "background_v2",
@@ -64,8 +82,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 253.0,
-                    "y": 547.0
+                    "x": 439.0,
+                    "y": 614.0
                 }
             },
             "name": "boxes_v2",
@@ -113,12 +131,45 @@
             },
             "type": "shaders/fragment_shader"
         },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 232.0,
+                    "y": 356.0
+                }
+            },
+            "name": "program",
+            "type": "shaders/program"
+        },
+        "program_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 222.0,
+                    "y": 472.0
+                }
+            },
+            "name": "program",
+            "type": "shaders/program"
+        },
+        "program_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 218.0,
+                    "y": 589.0
+                }
+            },
+            "name": "program",
+            "type": "shaders/program"
+        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 58.0,
-                    "y": 696.0
+                    "x": 63.0,
+                    "y": 135.0
                 }
             },
             "name": "vertex_shader",
@@ -134,5 +185,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABQAAAdwAAAEFAAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHNAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAlcAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAA6AAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABPAAAAWgAAACJAP////sAAAAGAGwAbwBnAQAAAqoAAAFXAAAAWQD///8AAANQAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAlcAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAA6AAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABPAAAAWgAAAB3AP////sAAAAGAGwAbwBnAQAAAqoAAAFXAAAAWQD///8AAALOAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
