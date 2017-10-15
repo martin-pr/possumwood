@@ -64,17 +64,9 @@ struct Drawable : public possumwood::Drawable {
 				glGenVertexArrays(1, &m_vao);
 				glBindVertexArray(m_vao);
 
-				// and tie it to the position attribute (will tie itself to CURRENT
-				//   GL_ARRAY_BUFFER)
-				glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer.id());
-
-				GLuint positionAttr = glGetAttribLocation(program->id(), "position");
-				glEnableVertexAttribArray(positionAttr);
-				glVertexAttribPointer(positionAttr, 3, GL_FLOAT, 0, 0, 0);
-
-				glBindBuffer(GL_ARRAY_BUFFER, 0);// unnecessary?
-
-				glBindVertexArray(0);
+				GLint positionAttr = glGetAttribLocation(program->id(), "position");
+				if(positionAttr >= 0)
+					m_posBuffer.use(positionAttr);
 			}
 
 			//////////
@@ -128,15 +120,9 @@ struct Drawable : public possumwood::Drawable {
 
 				m_nearPosBuffer.init(nearPosData, nearPosData+4);
 
-				glBindBuffer(GL_ARRAY_BUFFER, m_nearPosBuffer.id());
-
 				GLint iNearPosAttr = glGetAttribLocation(program->id(), "iNearPositionVert");
-				if(iNearPosAttr >= 0) {
-					glEnableVertexAttribArray(iNearPosAttr);
-					glVertexAttribPointer(iNearPosAttr, 3, GL_DOUBLE, 0, 0, 0);
-				}
-
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				if(iNearPosAttr >= 0)
+					m_nearPosBuffer.use(iNearPosAttr);
 			}
 
 			{
@@ -149,15 +135,10 @@ struct Drawable : public possumwood::Drawable {
 
 				m_farPosBuffer.init(farPosData, farPosData+4);
 
-				glBindBuffer(GL_ARRAY_BUFFER, m_farPosBuffer.id());
 
 				GLint iFarPosAttr = glGetAttribLocation(program->id(), "iFarPositionVert");
-				if(iFarPosAttr >= 0) {
-					glEnableVertexAttribArray(iFarPosAttr);
-					glVertexAttribPointer(iFarPosAttr, 3, GL_DOUBLE, 0, 0, 0);
-
-					glBindBuffer(GL_ARRAY_BUFFER, 0);
-				}
+				if(iFarPosAttr >= 0)
+					m_farPosBuffer.use(iFarPosAttr);
 			}
 
 			{

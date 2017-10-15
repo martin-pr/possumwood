@@ -1,8 +1,11 @@
 #pragma once
 
-#include <iostream>
-
 #include "vbo.h"
+
+#include <iostream>
+#include <cassert>
+
+#include "vbo_traits.h"
 
 namespace possumwood {
 
@@ -52,6 +55,18 @@ void VBO<T>::init(std::initializer_list<T> l) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	m_initialised = true;
+}
+
+template<typename T>
+void VBO<T>::use(GLint attribLocation) const {
+	assert(attribLocation >= 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, id());
+
+	glEnableVertexAttribArray(attribLocation);
+	glVertexAttribPointer(attribLocation, VBOTraits<T>::width(), VBOTraits<T>::type(), 0, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 template<typename T>

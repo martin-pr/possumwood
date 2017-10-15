@@ -38,6 +38,9 @@ class VBO : public VBOBase {
 
 		bool isInitialised() const;
 
+		/// use the VBO - glEnableVertexAttribArray and glVertexAttribPointer calls
+		void use(GLint attribLocation) const;
+
 		~VBO() final;
 
 	private:
