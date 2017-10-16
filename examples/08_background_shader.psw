@@ -1,22 +1,22 @@
 {
     "connections": [
         {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
+            "in_node": "background_2",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
         },
         {
-            "in_node": "program_1",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
+            "in_node": "background_1",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
         },
         {
-            "in_node": "program_2",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
+            "in_node": "background_0",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "program_1",
@@ -25,21 +25,21 @@
             "out_port": "shader"
         },
         {
-            "in_node": "background_1",
-            "in_port": "program",
-            "out_node": "program_1",
-            "out_port": "program"
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
         },
         {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
+            "in_node": "program_1",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
             "out_port": "shader"
         },
         {
             "in_node": "program_2",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_2",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
             "out_port": "shader"
         },
         {
@@ -49,10 +49,28 @@
             "out_port": "program"
         },
         {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
             "in_node": "background_2",
             "in_port": "program",
             "out_node": "program_2",
             "out_port": "program"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "program",
+            "out_node": "program_1",
+            "out_port": "program"
+        },
+        {
+            "in_node": "program_2",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_2",
+            "out_port": "shader"
         }
     ],
     "nodes": {
@@ -88,6 +106,17 @@
             },
             "name": "boxes_v2",
             "type": "shaders/background"
+        },
+        "background_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 232.0,
+                    "y": 712.0
+                }
+            },
+            "name": "background",
+            "type": "shaders/vertex_data/background"
         },
         "fragment_shader_0": {
             "blind_data": {
@@ -184,6 +213,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABQAAAdwAAAEFAAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAlcAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAA6AAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABPAAAAWgAAAB3AP////sAAAAGAGwAbwBnAQAAAqoAAAFXAAAAWQD///8AAALOAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABQAAAdwAAAEFAAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAlcAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAAA6gAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABLwAAAWsAAAB1AP////sAAAAGAGwAbwBnAQAAAp4AAAFrAAAASQD///8AAALSAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

@@ -13,10 +13,12 @@
 
 #include "datatypes/program.h"
 #include "datatypes/vbo.inl"
+#include "datatypes/vertex_data.inl"
 
 namespace {
 
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Program>> a_program;
+dependency_graph::InAttr<std::shared_ptr<const possumwood::VertexData>> a_vertexData;
 
 struct Drawable : public possumwood::Drawable {
 	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)) {
@@ -33,6 +35,7 @@ struct Drawable : public possumwood::Drawable {
 		dependency_graph::State state;
 
 		std::shared_ptr<const possumwood::Program> program = values().get(a_program);
+		std::shared_ptr<const possumwood::VertexData> vertexData = values().get(a_vertexData);
 
 		if(!program)
 			state.addError("No GLSL program provided - cannot draw.");
@@ -40,19 +43,10 @@ struct Drawable : public possumwood::Drawable {
 		else if(program->state().errored())
 			state.append(program->state());
 
-		else {
-			//////////////////////
-			// setup - only once
+		else if(!vertexData)
+			state.addError("No vertex data provided - cannot draw.");
 
-			// first, the position buffer
-			if(!m_posBuffer.isInitialised()) {
-				m_posBuffer.init({
-					Imath::V3f(-1,-1,1),
-					Imath::V3f(1,-1,1),
-					Imath::V3f(1,1,1),
-					Imath::V3f(-1,1,1)
-				});
-			}
+		else {
 
 			//////////
 			// per-frame drawing
@@ -61,11 +55,11 @@ struct Drawable : public possumwood::Drawable {
 			glUseProgram(program->id());
 
 			// feed in the uniforms
-			double modelview[16];
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-
 			{
 				// modelview matrix
+				double modelview[16];
+				glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+
 				GLint iModelViewAttr = glGetUniformLocation(program->id(), "iModelView");
 				if(iModelViewAttr >= 0) {
 					float modelviewf[16];
@@ -75,11 +69,11 @@ struct Drawable : public possumwood::Drawable {
 				}
 			}
 
-			double projection[16];
-			glGetDoublev(GL_PROJECTION_MATRIX, projection);
-
 			{
 				// projection matrix
+				double projection[16];
+				glGetDoublev(GL_PROJECTION_MATRIX, projection);
+
 				GLint iProjectionAttr = glGetUniformLocation(program->id(), "iProjection");
 				if(iProjectionAttr >= 0) {
 					float projectionf[16];
@@ -87,45 +81,6 @@ struct Drawable : public possumwood::Drawable {
 						projectionf[a] = projection[a];
 					glUniformMatrix4fv(iProjectionAttr, 1, false, projectionf);
 				}
-			}
-
-			{
-				GLint positionAttr = glGetAttribLocation(program->id(), "position");
-				if(positionAttr >= 0)
-					m_posBuffer.use(positionAttr);
-			}
-
-			GLint viewport[4];
-			glGetIntegerv(GL_VIEWPORT, viewport);
-
-			{
-				// points on the near plane, corresponding to each fragment (useful for raytracing)
-				Imath::V3d nearPosData[4];
-				gluUnProject(0, 0, 0, modelview, projection, viewport, &nearPosData[0][0], &nearPosData[0][1], &nearPosData[0][2]);
-				gluUnProject(width(), 0, 0, modelview, projection, viewport, &nearPosData[1][0], &nearPosData[1][1], &nearPosData[1][2]);
-				gluUnProject(width(), height(), 0, modelview, projection, viewport, &nearPosData[2][0], &nearPosData[2][1], &nearPosData[2][2]);
-				gluUnProject(0, height(), 0, modelview, projection, viewport, &nearPosData[3][0], &nearPosData[3][1], &nearPosData[3][2]);
-
-				m_nearPosBuffer.init(nearPosData, nearPosData+4);
-
-				GLint iNearPosAttr = glGetAttribLocation(program->id(), "iNearPositionVert");
-				if(iNearPosAttr >= 0)
-					m_nearPosBuffer.use(iNearPosAttr);
-			}
-
-			{
-				// points on the far plane, corresponding to each fragment (useful for raytracing)
-				Imath::V3d farPosData[4];
-				gluUnProject(0, 0, 1, modelview, projection, viewport, &farPosData[0][0], &farPosData[0][1], &farPosData[0][2]);
-				gluUnProject(width(), 0, 1, modelview, projection, viewport, &farPosData[1][0], &farPosData[1][1], &farPosData[1][2]);
-				gluUnProject(width(), height(), 1, modelview, projection, viewport, &farPosData[2][0], &farPosData[2][1], &farPosData[2][2]);
-				gluUnProject(0, height(), 1, modelview, projection, viewport, &farPosData[3][0], &farPosData[3][1], &farPosData[3][2]);
-
-				m_farPosBuffer.init(farPosData, farPosData+4);
-
-				GLint iFarPosAttr = glGetAttribLocation(program->id(), "iFarPositionVert");
-				if(iFarPosAttr >= 0)
-					m_farPosBuffer.use(iFarPosAttr);
 			}
 
 			{
@@ -144,8 +99,11 @@ struct Drawable : public possumwood::Drawable {
 					glUniform1f(attr, possumwood::App::instance().time());
 			}
 
+			// use the vertex data
+			vertexData->use(program->id());
+
 			// and execute draw
-			glDrawArrays(GL_QUADS, 0, 4);
+			glDrawArrays(vertexData->drawElementType(), 0, vertexData->size());
 
 			// disconnect everything
 			glUseProgram(0);
@@ -156,12 +114,13 @@ struct Drawable : public possumwood::Drawable {
 
 	boost::signals2::connection m_timeChangedConnection;
 
-	possumwood::VBO<Imath::V3f> m_posBuffer;
+	// possumwood::VBO<Imath::V3f> m_posBuffer;
 	possumwood::VBO<Imath::V3d> m_nearPosBuffer, m_farPosBuffer;
 };
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_program, "program");
+	meta.addAttribute(a_vertexData, "vertex_data");
 
 	meta.setDrawable<Drawable>();
 }
