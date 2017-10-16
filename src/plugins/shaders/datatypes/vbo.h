@@ -17,8 +17,20 @@ class VBOBase : public boost::noncopyable {
 
 		GLuint id() const;
 
+		bool isInitialised() const;
+
+		/// use the VBO - glEnableVertexAttribArray and glVertexAttribPointer calls
+		void use(GLint attribLocation) const;
+
+	protected:
+		void setInitialised(bool val);
+
+		virtual unsigned width() const = 0;
+		virtual GLenum type() const = 0;
+
 	private:
 		GLuint m_id;
+		bool m_initialised;
 };
 
 /// encapsulation of a single vertex data buffer
@@ -36,15 +48,11 @@ class VBO : public VBOBase {
 		/// builds a VBO out of an initializer list
 		void init(std::initializer_list<T> l);
 
-		bool isInitialised() const;
-
-		/// use the VBO - glEnableVertexAttribArray and glVertexAttribPointer calls
-		void use(GLint attribLocation) const;
-
 		~VBO() final;
 
-	private:
-		bool m_initialised;
+	protected:
+		virtual unsigned width() const override;
+		virtual GLenum type() const override;
 };
 
 }

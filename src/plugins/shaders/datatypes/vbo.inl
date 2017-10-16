@@ -10,7 +10,7 @@
 namespace possumwood {
 
 template<typename T>
-VBO<T>::VBO() : m_initialised(false) {
+VBO<T>::VBO() {
 }
 
 template<typename T>
@@ -36,7 +36,7 @@ void VBO<T>::init(ITERATOR begin, ITERATOR end) {
 	// unbind the buffer to work with
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	m_initialised = true;
+	setInitialised(true);
 }
 
 /// builds a VBO out of an initializer list
@@ -54,24 +54,17 @@ void VBO<T>::init(std::initializer_list<T> l) {
 	// unbind the buffer to work with
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	m_initialised = true;
+	setInitialised(true);
 }
 
 template<typename T>
-void VBO<T>::use(GLint attribLocation) const {
-	assert(attribLocation >= 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, id());
-
-	glEnableVertexAttribArray(attribLocation);
-	glVertexAttribPointer(attribLocation, VBOTraits<T>::width(), VBOTraits<T>::type(), 0, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+unsigned VBO<T>::width() const {
+	return VBOTraits<T>::width();
 }
 
 template<typename T>
-bool VBO<T>::isInitialised() const {
-	return m_initialised;
+GLenum VBO<T>::type() const {
+	return VBOTraits<T>::type();
 }
 
 }
