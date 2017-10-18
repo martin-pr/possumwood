@@ -7,6 +7,12 @@
             "out_port": "program"
         },
         {
+            "in_node": "background_2",
+            "in_port": "program",
+            "out_node": "program_2",
+            "out_port": "program"
+        },
+        {
             "in_node": "program_0",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
@@ -25,52 +31,34 @@
             "out_port": "shader"
         },
         {
-            "in_node": "background_2",
-            "in_port": "program",
-            "out_node": "program_2",
-            "out_port": "program"
-        },
-        {
-            "in_node": "background_2",
-            "in_port": "vertex_data",
-            "out_node": "background_3",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "background_1",
-            "in_port": "vertex_data",
-            "out_node": "background_3",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "background_0",
-            "in_port": "vertex_data",
-            "out_node": "background_3",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "background_2",
-            "in_port": "uniforms",
-            "out_node": "viewport_0",
-            "out_port": "uniforms"
-        },
-        {
-            "in_node": "background_1",
-            "in_port": "uniforms",
-            "out_node": "viewport_0",
-            "out_port": "uniforms"
-        },
-        {
-            "in_node": "background_0",
-            "in_port": "uniforms",
-            "out_node": "viewport_0",
-            "out_port": "uniforms"
-        },
-        {
             "in_node": "background_0",
             "in_port": "program",
             "out_node": "program_0",
             "out_port": "program"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "background_2",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
         },
         {
             "in_node": "program_1",
@@ -85,10 +73,34 @@
             "out_port": "shader"
         },
         {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
+            "in_node": "background_2",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "value",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "viewport_0",
+            "in_port": "in_uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
         }
     ],
     "nodes": {
@@ -135,6 +147,20 @@
             },
             "name": "background",
             "type": "shaders/vertex_data/background"
+        },
+        "float_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 91.9375,
+                    "y": 891.625
+                }
+            },
+            "name": "float",
+            "ports": {
+                "name": "iTime"
+            },
+            "type": "shaders/uniforms/float"
         },
         "fragment_shader_0": {
             "blind_data": {
@@ -211,6 +237,17 @@
             "name": "program",
             "type": "shaders/program"
         },
+        "time_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -24.3750046798959,
+                    "y": 920.687507194467
+                }
+            },
+            "name": "time",
+            "type": "time"
+        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -229,8 +266,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 236.0,
-                    "y": 822.0
+                    "x": 254.75,
+                    "y": 887.625
                 }
             },
             "name": "viewport",
@@ -243,5 +280,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABQAAAdwAAAEFAAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAlcAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAAA2AAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABHQAAAXQAAAB1AP////sAAAAGAGwAbwBnAQAAApUAAAF0AAAASQD///8AAALSAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAlcAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAAAzAAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABEQAAAXoAAAB1AP////sAAAAGAGwAbwBnAQAAAo8AAAF6AAAASQD///8AAALSAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

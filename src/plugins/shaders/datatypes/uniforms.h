@@ -13,7 +13,7 @@
 
 namespace possumwood {
 
-class Uniforms : public boost::noncopyable {
+class Uniforms {
 	public:
 		/// type of update - static, per drawing, per frame
 		enum UpdateType {

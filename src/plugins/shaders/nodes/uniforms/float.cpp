@@ -1,4 +1,5 @@
 #include <possumwood_sdk/node_implementation.h>
+#include <possumwood_sdk/app.h>
 
 #include <GL/glew.h>
 #include <GL/glu.h>
@@ -7,6 +8,8 @@
 
 namespace {
 
+dependency_graph::InAttr<std::string> a_name;
+dependency_graph::InAttr<float> a_value;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_inUniforms;
 dependency_graph::OutAttr<std::shared_ptr<const possumwood::Uniforms>> a_outUniforms;
 
@@ -21,36 +24,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	else
 		uniforms = std::unique_ptr<possumwood::Uniforms>(new possumwood::Uniforms());
 
-	uniforms->addUniform<std::array<double, 16>>(
-		"iProjection",
-		possumwood::Uniforms::kPerDraw,
-		[]() {
-			std::array<double, 16> projection;
-			glGetDoublev(GL_PROJECTION_MATRIX, projection.data());
+	const float value = data.get(a_value);
 
-			return projection;
-		}
-	);
-
-	uniforms->addUniform<std::array<double, 16>>(
-		"iModelView",
-		possumwood::Uniforms::kPerDraw,
-		[]() {
-			std::array<double, 16> modelview;
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview.data());
-
-			return modelview;
-		}
-	);
-
-	uniforms->addUniform<Imath::V2f>(
-		"iResolution",
-		possumwood::Uniforms::kPerDraw,
-		[]() {
-			GLint viewport[4];
-			glGetIntegerv(GL_VIEWPORT, viewport);
-
-			return Imath::V2f(viewport[2], viewport[3]);
+	uniforms->addUniform<float>(
+		data.get(a_name),
+		possumwood::Uniforms::kPerFrame,
+		[value]() {
+			return value;
 		}
 	);
 
@@ -60,14 +40,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
+	meta.addAttribute(a_name, "name", std::string("uniform_value"));
+	meta.addAttribute(a_value, "value", 0.0f);
 	meta.addAttribute(a_inUniforms, "in_uniforms");
 	meta.addAttribute(a_outUniforms, "out_uniforms");
 
+	meta.addInfluence(a_name, a_outUniforms);
+	meta.addInfluence(a_value, a_outUniforms);
 	meta.addInfluence(a_inUniforms, a_outUniforms);
 
 	meta.setCompute(&compute);
 }
 
-possumwood::NodeImplementation s_impl("shaders/uniforms/viewport", init);
+possumwood::NodeImplementation s_impl("shaders/uniforms/float", init);
 
 }
