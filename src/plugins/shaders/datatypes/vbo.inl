@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cassert>
 
-#include "vbo_traits.h"
+#include "glsl_traits.h"
 
 namespace possumwood {
 
@@ -59,12 +59,12 @@ void VBO<T>::init(std::initializer_list<T> l) {
 
 template<typename T>
 unsigned VBO<T>::width() const {
-	return VBOTraits<T>::width();
+	return GLSLTraits<T>::width();
 }
 
 template<typename T>
 GLenum VBO<T>::type() const {
-	return VBOTraits<T>::type();
+	return GLSLTraits<T>::type();
 }
 
 }

@@ -25,7 +25,8 @@ class VertexData : public boost::noncopyable {
 
 		/// adds a generic VBO with an update functor
 		template<typename T>
-		void addVBO(const std::string& name, std::size_t size, const UpdateType& updateType, std::function<void(T* begin, T* end)> updateFn);
+		void addVBO(const std::string& name, std::size_t size, const UpdateType& updateType,
+		            std::function<void(T* begin, T* end)> updateFn);
 
 		/// updates and uses the program
 		void use(GLuint programId) const;

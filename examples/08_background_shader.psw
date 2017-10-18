@@ -1,28 +1,10 @@
 {
     "connections": [
         {
-            "in_node": "background_2",
-            "in_port": "vertex_data",
-            "out_node": "background_3",
-            "out_port": "vertex_data"
-        },
-        {
             "in_node": "background_1",
-            "in_port": "vertex_data",
-            "out_node": "background_3",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "background_0",
-            "in_port": "vertex_data",
-            "out_node": "background_3",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "program_1",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_1",
-            "out_port": "shader"
+            "in_port": "program",
+            "out_node": "program_1",
+            "out_port": "program"
         },
         {
             "in_node": "program_0",
@@ -40,18 +22,6 @@
             "in_node": "program_2",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "background_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
             "out_port": "shader"
         },
         {
@@ -61,15 +31,63 @@
             "out_port": "program"
         },
         {
+            "in_node": "background_2",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
+        },
+        {
             "in_node": "background_1",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_2",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "uniforms"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "uniforms"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "uniforms"
+        },
+        {
+            "in_node": "background_0",
             "in_port": "program",
-            "out_node": "program_1",
+            "out_node": "program_0",
             "out_port": "program"
+        },
+        {
+            "in_node": "program_1",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_1",
+            "out_port": "shader"
         },
         {
             "in_node": "program_2",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_2",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
             "out_port": "shader"
         }
     ],
@@ -206,6 +224,17 @@
                 "source": "#version 330\n\n// input position from the CPU\nin vec3 position;\n\n// near and far per-vertex world positions, useable for raytracing in the fragment shader\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// do not do any transformation - this should lead to a single quad covering the whole viewport\n\tgl_Position = vec4(position.x, position.y, position.z, 1); \n\t// just pass the near and far positions - they'll get linearly interpolated\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n}\n"
             },
             "type": "shaders/vertex_shader"
+        },
+        "viewport_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 236.0,
+                    "y": 822.0
+                }
+            },
+            "name": "viewport",
+            "type": "shaders/uniforms/viewport"
         }
     },
     "scene_config": {
@@ -214,5 +243,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABQAAAdwAAAEFAAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAlcAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAAA6gAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABLwAAAWsAAAB1AP////sAAAAGAGwAbwBnAQAAAp4AAAFrAAAASQD///8AAALSAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAlcAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAAA2AAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABHQAAAXQAAAB1AP////sAAAAGAGwAbwBnAQAAApUAAAF0AAAASQD///8AAALSAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
