@@ -9,7 +9,11 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include <QPixmap>
+
 #include <possumwood_sdk/traits.h>
+
+#include "texture.h"
 
 namespace possumwood {
 
@@ -28,6 +32,8 @@ class Uniforms {
 		void addUniform(const std::string& name, const UpdateType& updateType,
 		                std::function<T()> updateFunctor);
 
+		void addTexture(const std::string& name, const QPixmap& pixmap);
+
 		void use(GLuint programId) const;
 
 	private:
@@ -42,6 +48,13 @@ class Uniforms {
 		};
 
 		std::vector<UniformHolder> m_uniforms;
+
+		struct TextureHolder {
+			std::string name;
+			std::shared_ptr<const Texture> texture;
+		};
+
+		std::vector<TextureHolder> m_textures;
 
 		mutable float m_currentTime;
 };
