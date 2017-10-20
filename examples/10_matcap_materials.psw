@@ -1,93 +1,15 @@
 {
     "connections": [
         {
-            "in_node": "float_0",
-            "in_port": "in_uniforms",
-            "out_node": "texture_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "background_0",
-            "in_port": "vertex_data",
-            "out_node": "openmesh_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "background_1",
-            "in_port": "vertex_data",
-            "out_node": "openmesh_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "background_2",
-            "in_port": "vertex_data",
-            "out_node": "openmesh_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "background_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "background_1",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "background_2",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "texture_0",
-            "in_port": "value",
-            "out_node": "load_0",
-            "out_port": "image"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "loader_0",
-            "out_port": "mesh"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
             "in_node": "background_0",
             "in_port": "uniforms",
             "out_node": "float_0",
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "texture_0",
-            "in_port": "in_uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "texture_1",
-            "in_port": "in_uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "texture_2",
-            "in_port": "in_uniforms",
-            "out_node": "viewport_0",
+            "in_node": "background_1",
+            "in_port": "uniforms",
+            "out_node": "float_1",
             "out_port": "out_uniforms"
         },
         {
@@ -97,21 +19,87 @@
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "float_1",
-            "in_port": "in_uniforms",
-            "out_node": "texture_1",
-            "out_port": "out_uniforms"
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_1",
+            "in_port": "value",
+            "out_node": "load_1",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_2",
+            "in_port": "value",
+            "out_node": "load_2",
+            "out_port": "image"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "loader_0",
+            "out_port": "mesh"
         },
         {
             "in_node": "openmesh_0",
             "in_port": "mesh",
-            "out_node": "transform_0",
-            "out_port": "out_mesh"
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "vertex_data",
+            "out_node": "openmesh_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "background_1",
-            "in_port": "uniforms",
-            "out_node": "float_1",
+            "in_port": "vertex_data",
+            "out_node": "openmesh_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_2",
+            "in_port": "vertex_data",
+            "out_node": "openmesh_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "background_2",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "in_uniforms",
+            "out_node": "texture_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_1",
+            "in_port": "in_uniforms",
+            "out_node": "texture_1",
             "out_port": "out_uniforms"
         },
         {
@@ -121,16 +109,34 @@
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "texture_2",
-            "in_port": "value",
-            "out_node": "load_2",
-            "out_port": "image"
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
         },
         {
             "in_node": "texture_1",
-            "in_port": "value",
-            "out_node": "load_1",
-            "out_port": "image"
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "texture_2",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
         }
     ],
     "nodes": {
@@ -171,8 +177,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 309.750001061708,
-                    "y": 712.24999679625
+                    "x": 309.75,
+                    "y": 712.25
                 }
             },
             "name": "offset",
@@ -222,7 +228,7 @@
             },
             "name": "fragment_shader",
             "ports": {
-                "source": "#version 330\n\nuniform sampler2D tex;\n\nlayout(location=0) out vec4 color;\n\nin vec3 worldPosition;\n\nvoid main() {\n\t/*// find the t parameter where Y = 0 (intersection with ground plane)\n\tfloat t = iNearPosition.y / (iNearPosition.y - iFarPosition.y);\n\n\t// not intersecting with ground plane at all - discard\n\tif(t < 0.0)\n\t\tdiscard;\n\n\t// find the intersecting position\n\tvec3 pos = iNearPosition + t * (iFarPosition - iNearPosition);\n\n\t// simple attenuation with distance\n\tfloat dist = sqrt(pos.x*pos.x + pos.z*pos.z);\n\tfloat dim = 1.0 - dist / (dist + 100.0);\n\n\t// output colour\n\tcolor = texture(tex, pos.xz, 10.0) * dim;\n\n\t// convert the world-space position to a depth value, to keep Z buffer working\n\tgl_FragDepth = computeDepth(pos);*/\n\n\tvec3 dx = normalize(dFdx(worldPosition));\n\tvec3 dy = normalize(dFdy(worldPosition));\n\n\tvec3 norm = normalize(cross(dx, dy));\n\n\tcolor = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n}\n"
+                "source": "#version 330\n\nuniform sampler2D tex;\n\nlayout(location=0) out vec4 color;\n\nin vec3 vertexNormal;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\tcolor = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n}\n"
             },
             "type": "shaders/fragment_shader"
         },
@@ -272,22 +278,36 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -77.75,
-                    "y": 454.0
+                    "x": -278.921875,
+                    "y": 436.421875
                 }
             },
             "name": "loader",
             "ports": {
-                "filename": "/home/martin/Dropbox/Coding/possumwood/examples/stanford_models/armadillo.obj"
+                "filename": "stanford_models/armadillo.obj"
             },
             "type": "openmesh/loader"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 59.7187652587891,
+                    "y": 446.25
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-halfedge normals"
+            },
+            "type": "openmesh/normals_generator"
         },
         "openmesh_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 296.0,
-                    "y": 464.0
+                    "x": 245.21875,
+                    "y": 456.1875
                 }
             },
             "name": "openmesh",
@@ -350,8 +370,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 96.0000034086406,
-                    "y": 432.249998714775
+                    "x": -116.890625,
+                    "y": 408.8125
                 }
             },
             "name": "transform",
@@ -384,7 +404,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 330\n\nin vec3 position;          // position attr from the openmesh vbo\n\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\n\nuniform float iOffset;      // offset in world space\n\nout vec3 worldPosition;     // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tworldPosition = (iModelView * vec4(position, 1)).xyz;\n}"
+                "source": "#version 330\n\nin vec3 position;          // position attr from the openmesh vbo\nin vec3 normal;            // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\n\nuniform float iOffset;     // offset in world space\n\nout vec3 vertexNormal;     // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normal, 0)).xyz;\n}"
             },
             "type": "shaders/vertex_shader"
         },
@@ -406,5 +426,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAZMAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAA4wAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABNwAAAsoAAAB3AP////sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAWQD///8AAAONAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAkEAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAA7wAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABQwAAAr4AAAB3AP////sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAWQD///8AAALfAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
