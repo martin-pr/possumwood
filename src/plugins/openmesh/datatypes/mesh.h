@@ -2,7 +2,7 @@
 
 #include <possumwood_sdk/traits.h>
 
-#include "openmesh.h"
+#include "../openmesh.h"
 
 namespace possumwood {
 
