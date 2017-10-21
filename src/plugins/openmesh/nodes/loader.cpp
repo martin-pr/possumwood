@@ -32,10 +32,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-		"All supported files (*.obj *.off *.stl)",
+		"All supported files (*.obj *.off *.stl *.ply)",
 		"OBJ files (*.obj)",
 		"OFF files (*.pff)",
 		"STL files (*.stl)",
+		"PLY files (*.ply)"
 	}));
 	meta.addAttribute(a_mesh, "mesh");
 

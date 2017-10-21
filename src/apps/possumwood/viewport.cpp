@@ -49,6 +49,12 @@ void Viewport::initializeGL() {
 
 void Viewport::paintGL() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45, (float)width() / (float)height(), m_sceneDistance*0.1f, std::max(m_sceneDistance*2.0f, 1000.0f));
+
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(0,0,m_sceneDistance, 0,0,0, 0,1,0);
 
@@ -67,11 +73,7 @@ void Viewport::paintGL() {
 void Viewport::resizeGL(int w, int h) {
 	QGLWidget::resizeGL(w,h);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
 	glViewport(0, 0, w, h);
-	gluPerspective(45, (float)w / (float)h, 0.01, 1000);
-	glMatrixMode(GL_MODELVIEW);
 }
 
 void Viewport::mouseMoveEvent(QMouseEvent* event) {

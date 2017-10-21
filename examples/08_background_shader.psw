@@ -1,47 +1,277 @@
 {
-    "connections": [],
+    "connections": [
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_1",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_2",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "background_2",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "program",
+            "out_node": "program_1",
+            "out_port": "program"
+        },
+        {
+            "in_node": "background_2",
+            "in_port": "program",
+            "out_node": "program_2",
+            "out_port": "program"
+        },
+        {
+            "in_node": "viewport_0",
+            "in_port": "in_uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "program_2",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_2",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "background_2",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "vertex_data",
+            "out_node": "background_3",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_1",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_1",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "value",
+            "out_node": "time_0",
+            "out_port": "time"
+        }
+    ],
     "nodes": {
         "background_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 193.44140625,
-                    "y": 527.0
+                    "x": 436.0,
+                    "y": 417.0
                 }
             },
-            "name": "background",
-            "ports": {
-                "source": "#version 330\n\n// generic attributes\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\nuniform vec2 iResolution;  // viewport resolution\nuniform float iTime;\n\n// attributes useable for raytracing\nin vec3 iNearPosition;     // position of fragment-corresponding point on near plane\nin vec3 iFarPosition;      // position of fragment-corresponding point on far plane\n\n// output colour\nlayout(location=0) out vec4 color;\n\n// Heavily inspired by cloudy sunset by miloszmaki\n// https://www.shadertoy.com/view/XlsXDB\n\n#define saturate(x) clamp(x,0.0,1.0)\n#define rgb(r,g,b) (vec3(r,g,b)/255.0)\n\nfloat rand(float x) { \n\treturn fract(sin(x) * 71523.5413291); \n}\n\n\nfloat rand(vec2 x) { \n\treturn rand(dot(x, vec2(13.4251, 15.5128))); \n}\n\nfloat noise(vec2 x) {\n    vec2 i = floor(x);\n    vec2 f = x - i;\n    f *= f*(3.-2.*f);\n    return mix(mix(rand(i), rand(i+vec2(1,0)), f.x),\n               mix(rand(i+vec2(0,1)), rand(i+vec2(1,1)), f.x), f.y);\n}\n\nfloat fbm(vec2 x) {\n    float r = 0.0, s = 1.0, w = 1.0;\n    for (int i=0; i<5; i++) {\n        s *= 2.0;\n        w *= 0.5;\n        r += w * noise(s * x);\n    }\n    return r;\n}\n\nfloat cloud(vec2 uv, float scalex, float scaley, float density, float sharpness, float speed) {\n    return pow(saturate(fbm(vec2(scalex,scaley)*(uv+vec2(speed,0)*iTime))-(1.0-density)), 1.0-sharpness);\n}\n\nvec3 render(vec2 uv) {\n    // sky\n    vec3 color = mix(rgb(166,212,255), rgb(204,235,255), uv.y);\n    // sun\n    vec2 spos = uv - vec2(0., 0.4);\n    float sun = exp(-20.*dot(spos,spos));\n    vec3 scol = rgb(255,155,102) * sun * 0.7;\n    color += scol;\n    // clouds\n    vec3 cl1 = mix(rgb(151,138,153), rgb(166,191,224),uv.y);\n    float d1 = mix(0.9,0.1,pow(uv.y, 0.7));\n    color = mix(color, cl1, cloud(uv,2.,8.,d1,0.4,0.04));\n    color = mix(color, vec3(0.9), 8.*cloud(uv,14.,18.,0.9,0.75,0.02) * cloud(uv,2.,5.,0.6,0.15,0.01)*uv.y);\n    color = mix(color, vec3(0.8), 5.*cloud(uv,12.,15.,0.9,0.75,0.03) * cloud(uv,2.,8.,0.5,0.0,0.02)*uv.y);\n    // post\n    color *= vec3(1.0,0.93,0.81)*1.04;\n    color = mix(0.75*rgb(255,205,161), color, smoothstep(-0.1,0.3,uv.y));\n    color = pow(color,vec3(1.3));\n    return color;\n}\n\nvoid main() {\n\tvec3 rd = normalize(iFarPosition - iNearPosition);\n\tcolor = vec4(render(vec2(atan(rd.x, rd.z) * 3.1415, rd.y)),1.0);\n}\n"
-            },
+            "name": "ground_v2",
             "type": "shaders/background"
         },
         "background_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 195.800003051758,
-                    "y": 440.799987792969
+                    "x": 438.0,
+                    "y": 510.0
                 }
             },
-            "name": "ground",
-            "ports": {
-                "source": "#version 330\n\n// generic attributes\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\nuniform vec2 iResolution;  // viewport resolution\n\n// attributes useable for raytracing\nin vec3 iNearPosition;     // position of fragment-corresponding point on near plane\nin vec3 iFarPosition;      // position of fragment-corresponding point on far plane\n\n// output colour\nlayout(location=0) out vec4 color;\n\n// a simple integer-based checkerboard pattern\nfloat tile(vec2 pos) {\n\treturn (\n\t\tint(pos.x + max(0.0, sign(pos.x))) + \n\t\tint(pos.y + max(0.0, sign(pos.y)))\n\t) % 2;\n}\n\n// computes Z-buffer depth value, and converts the range.\n// ref: https://stackoverflow.com/questions/10264949/glsl-gl-fragcoord-z-calculation-and-setting-gl-fragdepth\nfloat computeDepth(vec3 pos) {\n\t// get the clip-space coordinates\n\tvec4 eye_space_pos = iModelView * vec4(pos.xyz, 1.0);\n\tvec4 clip_space_pos = iProjection * eye_space_pos;\n\n\t// get the depth value in normalized device coordinates\n\tfloat ndc_depth = clip_space_pos.z / clip_space_pos.w;\n\n\t// and compute the range based on gl_DepthRange settings (usually not necessary, but still)\n\tfloat far = gl_DepthRange.far; \n\tfloat near = gl_DepthRange.near;\n\n\tfloat depth = (((far-near) * ndc_depth) + near + far) / 2.0;\n\n\t// and return the result\n\treturn depth;\n}\n\nvoid main() {\n\t// find the t parameter where Y = 0 (intersection with ground plane)\n\tfloat t = iNearPosition.y / (iNearPosition.y - iFarPosition.y);\n\n\t// not intersecting with ground plane at all - discard\n\tif(t < 0.0 || iFarPosition.y > iNearPosition.y)\n\t\tdiscard;\n\n\t// find the intersecting position\n\tvec3 pos = iNearPosition + t * (iFarPosition - iNearPosition);\n\n\t// and make the checkerboard pattern\n\tfloat col = tile(pos.xz) * 0.3;\n\tcol = col + tile(pos.xz / 10.0) * 0.15;\n\tcol = col + tile(pos.xz / 100.0) * 0.075;\n\n\t// simple attenuation with distance\n\tfloat dist = sqrt(pos.x*pos.x + pos.z*pos.z);\n\tfloat dim = max(0.0, 1.0 - dist/1000.0);\n\tcol = col * dim + 0.5 * (1.0 - dim);\n\n\t// output colour\n\tcolor = vec4(col, col*0.8, col*0.6, 1);\n\n\t// convert the world-space position to a depth value, to keep Z buffer working\n\tgl_FragDepth = computeDepth(pos + vec3(0,0.05,0));\n}\n"
-            },
+            "name": "background_v2",
             "type": "shaders/background"
         },
         "background_2": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 188.0,
-                    "y": 619.0
+                    "x": 439.0,
+                    "y": 614.0
                 }
             },
-            "name": "boxes",
-            "ports": {
-                "source": "#version 330\n\n// generic attributes\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\nuniform vec2 iResolution;  // viewport resolution\n\n// attributes useable for raytracing\nin vec3 iNearPosition;     // position of fragment-corresponding point on near plane\nin vec3 iFarPosition;      // position of fragment-corresponding point on far plane\n\n// output colour\nlayout(location=0) out vec4 color;\n\n////\n\n// computes Z-buffer depth value, and converts the range.\n// ref: https://stackoverflow.com/questions/10264949/glsl-gl-fragcoord-z-calculation-and-setting-gl-fragdepth\nfloat computeDepth(vec3 pos) {\n\t// get the clip-space coordinates\n\tvec4 eye_space_pos = iModelView * vec4(pos.xyz, 1.0);\n\tvec4 clip_space_pos = iProjection * eye_space_pos;\n\n\t// get the depth value in normalized device coordinates\n\tfloat ndc_depth = clip_space_pos.z / clip_space_pos.w;\n\n\t// and compute the range based on gl_DepthRange settings (usually not necessary, but still)\n\tfloat far = gl_DepthRange.far; \n\tfloat near = gl_DepthRange.near;\n\n\tfloat depth = (((far-near) * ndc_depth) + near + far) / 2.0;\n\n\t// and return the result\n\treturn depth;\n}\n\n////\n\n// based on http://iquilezles.org/www/articles/distfunctions/distfunctions.htm\n\nfloat distFnRoundedBox(vec3 pos, vec3 box, float radius) {\n\treturn length(max(abs(pos)-box,0.0))-radius;\n}\n\nfloat distFn(vec3 pos) {\n\treturn min(\n\t\tdistFnRoundedBox(pos + vec3(0, -4, -4), vec3(2,2,2), 1),\n\t\tdistFnRoundedBox(pos + vec3(0, -4, 4), vec3(2,2,2), 1)\n\t);\n}\n\n////\n\nfloat eps = 0.1;\nint maxIter = 50;\n\nvoid main() {\n\t// starting position and \n\tvec3 pos = iNearPosition;\n\tvec3 v = normalize(iFarPosition - iNearPosition);\n\n\t// limited raymarching with the help of distance function\n\tfloat d;\n\tfor(int i=0; i<maxIter; ++i) {\n\t\t// dest if we've reached a point close to an object\n\t\td = distFn(pos);\n\t\tif(d <= eps)\n\t\t\tbreak;\n\n\t\t// march on\n\t\tpos = pos + v * d;\n\t}\n\n\t// output colour\n\tif(d <= eps) {\n\t\t// compute a normal from the dist fn gradient\n\t\tvec3 norm = vec3(\n\t\t\tdistFn(pos + vec3(eps/10.0, 0, 0)) - d,\n\t\t\tdistFn(pos + vec3(0, eps/10.0, 0)) - d,\n\t\t\tdistFn(pos + vec3(0, 0, eps/10.0)) - d\n\t\t);\n\t\tnorm = normalize(norm);\n\n\t\t// a silly \"shading\"\n\t\tfloat col = -dot(norm, v);\n\n\t\tcolor = vec4(col, col, col, 1);\n\t\tgl_FragDepth = computeDepth(pos);\n\t}\n\telse\n\t\tdiscard;\n}\n"
-            },
+            "name": "boxes_v2",
             "type": "shaders/background"
+        },
+        "background_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 232.0,
+                    "y": 712.0
+                }
+            },
+            "name": "background",
+            "type": "shaders/vertex_data/background"
+        },
+        "float_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 91.9375,
+                    "y": 891.625
+                }
+            },
+            "name": "float",
+            "ports": {
+                "name": "iTime"
+            },
+            "type": "shaders/uniforms/float"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 57.0,
+                    "y": 322.0
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\n// generic attributes\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\nuniform vec2 iResolution;  // viewport resolution\n\n// attributes useable for raytracing\nin vec3 iNearPosition;     // position of fragment-corresponding point on near plane\nin vec3 iFarPosition;      // position of fragment-corresponding point on far plane\n\n// output colour\nout vec4 color;\n\n// a simple integer-based checkerboard pattern\nfloat tile(vec2 pos) {\n\treturn mod(\n\t\tint(pos.x + max(0.0, sign(pos.x))) + \n\t\tint(pos.y + max(0.0, sign(pos.y))),\n\t \t2.0);\n}\n\n// computes Z-buffer depth value, and converts the range.\n// ref: https://stackoverflow.com/questions/10264949/glsl-gl-fragcoord-z-calculation-and-setting-gl-fragdepth\nfloat computeDepth(vec3 pos) {\n\t// get the clip-space coordinates\n\tvec4 eye_space_pos = iModelView * vec4(pos.xyz, 1.0);\n\tvec4 clip_space_pos = iProjection * eye_space_pos;\n\n\t// get the depth value in normalized device coordinates\n\tfloat ndc_depth = clip_space_pos.z / clip_space_pos.w;\n\n\t// and compute the range based on gl_DepthRange settings (usually not necessary, but still)\n\tfloat far = gl_DepthRange.far; \n\tfloat near = gl_DepthRange.near;\n\n\tfloat depth = (((far-near) * ndc_depth) + near + far) / 2.0;\n\n\t// and return the result\n\treturn depth;\n}\n\nvoid main() {\n\t// find the t parameter where Y = 0 (intersection with ground plane)\n\tfloat t = iNearPosition.y / (iNearPosition.y - iFarPosition.y);\n\n\t// not intersecting with ground plane at all - discard\n\tif(t < 0.0 || iFarPosition.y > iNearPosition.y)\n\t\tdiscard;\n\n\t// find the intersecting position\n\tvec3 pos = iNearPosition + t * (iFarPosition - iNearPosition);\n\n\t// and make the checkerboard pattern\n\tfloat col = tile(pos.xz) * 0.3;\n\tcol = col + tile(pos.xz / 10.0) * 0.15;\n\tcol = col + tile(pos.xz / 100.0) * 0.075;\n\n\t// simple attenuation with distance\n\tfloat dist = sqrt(pos.x*pos.x + pos.z*pos.z);\n\tfloat dim = max(0.0, 1.0 - dist/1000.0);\n\tcol = col * dim + 0.5 * (1.0 - dim);\n\n\t// output colour\n\tcolor = vec4(col, col, col, 1);\n\n\t// convert the world-space position to a depth value, to keep Z buffer working\n\tgl_FragDepth = computeDepth(pos + vec3(0,0.05,0));\n}\n"
+            },
+            "type": "shaders/fragment_shader"
+        },
+        "fragment_shader_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 57.0,
+                    "y": 422.0
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\n// generic attributes\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\nuniform vec2 iResolution;  // viewport resolution\nuniform float iTime;\n\n// attributes useable for raytracing\nin vec3 iNearPosition;     // position of fragment-corresponding point on near plane\nin vec3 iFarPosition;      // position of fragment-corresponding point on far plane\n\n// output colour\nout vec4 color;\n\n// Heavily inspired by cloudy sunset by miloszmaki\n// https://www.shadertoy.com/view/XlsXDB\n\n#define saturate(x) clamp(x,0.0,1.0)\n#define rgb(r,g,b) (vec3(r,g,b)/255.0)\n\nfloat rand(float x) { \n\treturn fract(sin(x) * 71523.5413291); \n}\n\n\nfloat rand(vec2 x) { \n\treturn rand(dot(x, vec2(13.4251, 15.5128))); \n}\n\nfloat noise(vec2 x) {\n    vec2 i = floor(x);\n    vec2 f = x - i;\n    f *= f*(3.-2.*f);\n    return mix(mix(rand(i), rand(i+vec2(1,0)), f.x),\n               mix(rand(i+vec2(0,1)), rand(i+vec2(1,1)), f.x), f.y);\n}\n\nfloat fbm(vec2 x) {\n    float r = 0.0, s = 1.0, w = 1.0;\n    for (int i=0; i<5; i++) {\n        s *= 2.0;\n        w *= 0.5;\n        r += w * noise(s * x);\n    }\n    return r;\n}\n\nfloat cloud(vec2 uv, float scalex, float scaley, float density, float sharpness, float speed) {\n    return pow(saturate(fbm(vec2(scalex,scaley)*(uv+vec2(speed,0)*iTime))-(1.0-density)), 1.0-sharpness);\n}\n\nvec3 render(vec2 uv) {\n    // sky\n    vec3 color = mix(rgb(166,212,255), rgb(204,235,255), uv.y);\n    // sun\n    vec2 spos = uv - vec2(0., 0.4);\n    float sun = exp(-20.*dot(spos,spos));\n    vec3 scol = rgb(255,155,102) * sun * 0.7;\n    color += scol;\n    // clouds\n    vec3 cl1 = mix(rgb(151,138,153), rgb(166,191,224),uv.y);\n    float d1 = mix(0.9,0.1,pow(uv.y, 0.7));\n    color = mix(color, cl1, cloud(uv,2.,8.,d1,0.4,0.04));\n    color = mix(color, vec3(0.9), 8.*cloud(uv,14.,18.,0.9,0.75,0.02) * cloud(uv,2.,5.,0.6,0.15,0.01)*uv.y);\n    color = mix(color, vec3(0.8), 5.*cloud(uv,12.,15.,0.9,0.75,0.03) * cloud(uv,2.,8.,0.5,0.0,0.02)*uv.y);\n    // post\n    color *= vec3(1.0,0.93,0.81)*1.04;\n    color = mix(0.75*rgb(255,205,161), color, smoothstep(-0.1,0.3,uv.y));\n    color = pow(color,vec3(1.3));\n    return color;\n}\n\nvoid main() {\n\tvec3 rd = normalize(iFarPosition - iNearPosition);\n\tcolor = vec4(render(vec2(atan(rd.x, rd.z) * 3.1415, rd.y)),1.0);\n}\n"
+            },
+            "type": "shaders/fragment_shader"
+        },
+        "fragment_shader_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 54.0,
+                    "y": 525.0
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\n// generic attributes\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\nuniform vec2 iResolution;  // viewport resolution\n\n// attributes useable for raytracing\nin vec3 iNearPosition;     // position of fragment-corresponding point on near plane\nin vec3 iFarPosition;      // position of fragment-corresponding point on far plane\n\n// output colour\nout vec4 color;\n\n////\n\n// computes Z-buffer depth value, and converts the range.\n// ref: https://stackoverflow.com/questions/10264949/glsl-gl-fragcoord-z-calculation-and-setting-gl-fragdepth\nfloat computeDepth(vec3 pos) {\n\t// get the clip-space coordinates\n\tvec4 eye_space_pos = iModelView * vec4(pos.xyz, 1.0);\n\tvec4 clip_space_pos = iProjection * eye_space_pos;\n\n\t// get the depth value in normalized device coordinates\n\tfloat ndc_depth = clip_space_pos.z / clip_space_pos.w;\n\n\t// and compute the range based on gl_DepthRange settings (usually not necessary, but still)\n\tfloat far = gl_DepthRange.far; \n\tfloat near = gl_DepthRange.near;\n\n\tfloat depth = (((far-near) * ndc_depth) + near + far) / 2.0;\n\n\t// and return the result\n\treturn depth;\n}\n\n////\n\n// based on http://iquilezles.org/www/articles/distfunctions/distfunctions.htm\n\nfloat distFnRoundedBox(vec3 pos, vec3 box, float radius) {\n\treturn length(max(abs(pos)-box,0.0))-radius;\n}\n\nfloat distFn(vec3 pos) {\n\treturn min(\n\t\tdistFnRoundedBox(pos + vec3(0, -4, -4), vec3(2,2,2), 1),\n\t\tdistFnRoundedBox(pos + vec3(0, -4, 4), vec3(2,2,2), 1)\n\t);\n}\n\n////\n\nfloat eps = 0.1;\nint maxIter = 50;\n\nvoid main() {\n\t// starting position and \n\tvec3 pos = iNearPosition;\n\tvec3 v = normalize(iFarPosition - iNearPosition);\n\n\t// limited raymarching with the help of distance function\n\tfloat d;\n\tfor(int i=0; i<maxIter; ++i) {\n\t\t// dest if we've reached a point close to an object\n\t\td = distFn(pos);\n\t\tif(d <= eps)\n\t\t\tbreak;\n\n\t\t// march on\n\t\tpos = pos + v * d;\n\t}\n\n\t// output colour\n\tif(d <= eps) {\n\t\t// compute a normal from the dist fn gradient\n\t\tvec3 norm = vec3(\n\t\t\tdistFn(pos + vec3(eps/10.0, 0, 0)) - d,\n\t\t\tdistFn(pos + vec3(0, eps/10.0, 0)) - d,\n\t\t\tdistFn(pos + vec3(0, 0, eps/10.0)) - d\n\t\t);\n\t\tnorm = normalize(norm);\n\n\t\t// a silly \"shading\"\n\t\tfloat col = -dot(norm, v);\n\n\t\tcolor = vec4(col, col, col, 1);\n\t\tgl_FragDepth = computeDepth(pos);\n\t}\n\telse\n\t\tdiscard;\n}\n"
+            },
+            "type": "shaders/fragment_shader"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 232.0,
+                    "y": 356.0
+                }
+            },
+            "name": "program",
+            "type": "shaders/program"
+        },
+        "program_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 222.0,
+                    "y": 472.0
+                }
+            },
+            "name": "program",
+            "type": "shaders/program"
+        },
+        "program_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 218.0,
+                    "y": 589.0
+                }
+            },
+            "name": "program",
+            "type": "shaders/program"
+        },
+        "time_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -24.3750038146973,
+                    "y": 920.6875
+                }
+            },
+            "name": "time",
+            "type": "time"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 63.0,
+                    "y": 135.0
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130\n\n// input position from the CPU\nin vec3 position;\n\n// near and far per-vertex world positions, useable for raytracing in the fragment shader\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// do not do any transformation - this should lead to a single quad covering the whole viewport\n\tgl_Position = vec4(position.x, position.y, position.z, 1); \n\t// just pass the near and far positions - they'll get linearly interpolated\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n}\n"
+            },
+            "type": "shaders/vertex_shader"
+        },
+        "viewport_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 254.75,
+                    "y": 887.625
+                }
+            },
+            "name": "viewport",
+            "type": "shaders/uniforms/viewport"
         }
     },
     "scene_config": {
@@ -49,6 +279,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB3IAAAQbAAAAAQAAABcAAAdxAAAEFwAAAAAAAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHNAAADwPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADwAAAAEkA////AAAAAQAAAlcAAAPA/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAABfwAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABxAAAAj0AAAB1AP////sAAAAGAGwAbwBnAAAAArIAAAFXAAAASQD///8AAANFAAADwAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAA/////QAAB3AAAAQUAAAAAAAAABQAAAdwAAAEFAAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAlcAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAAzgAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABIgAAAX0AAAB3AP////sAAAAGAGwAbwBnAQAAAqUAAAFcAAAAWQD///8AAAK/AAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

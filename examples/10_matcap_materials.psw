@@ -1,0 +1,430 @@
+{
+    "connections": [
+        {
+            "in_node": "background_2",
+            "in_port": "uniforms",
+            "out_node": "float_2",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "uniforms",
+            "out_node": "float_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_1",
+            "in_port": "value",
+            "out_node": "load_1",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_2",
+            "in_port": "value",
+            "out_node": "load_2",
+            "out_port": "image"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "loader_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "openmesh_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "vertex_data",
+            "out_node": "openmesh_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "vertex_data",
+            "out_node": "openmesh_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_2",
+            "in_port": "vertex_data",
+            "out_node": "openmesh_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "background_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "background_1",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "background_2",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "in_uniforms",
+            "out_node": "texture_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_1",
+            "in_port": "in_uniforms",
+            "out_node": "texture_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_2",
+            "in_port": "in_uniforms",
+            "out_node": "texture_2",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "texture_1",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "texture_2",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        }
+    ],
+    "nodes": {
+        "background_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 508.5,
+                    "y": 474.5
+                }
+            },
+            "name": "draw",
+            "type": "shaders/background"
+        },
+        "background_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 528.5,
+                    "y": 609.734375
+                }
+            },
+            "name": "draw",
+            "type": "shaders/background"
+        },
+        "background_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 551.9375,
+                    "y": 765.984375
+                }
+            },
+            "name": "draw",
+            "type": "shaders/background"
+        },
+        "float_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 309.75,
+                    "y": 712.25
+                }
+            },
+            "name": "offset",
+            "ports": {
+                "name": "iOffset",
+                "value": 7.0
+            },
+            "type": "shaders/uniforms/float"
+        },
+        "float_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 303.96875,
+                    "y": 860.375
+                }
+            },
+            "name": "offset",
+            "ports": {
+                "name": "iOffset",
+                "value": 0.0
+            },
+            "type": "shaders/uniforms/float"
+        },
+        "float_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 300.53125,
+                    "y": 1005.375
+                }
+            },
+            "name": "offset",
+            "ports": {
+                "name": "iOffset",
+                "value": -7.0
+            },
+            "type": "shaders/uniforms/float"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 107.25,
+                    "y": 310.0
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nin vec3 vertexNormal;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\tcolor = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n}\n"
+            },
+            "type": "shaders/fragment_shader"
+        },
+        "load_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 7.75,
+                    "y": 615.0
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "matcap_textures/00028.png"
+            },
+            "type": "shaders/image/load"
+        },
+        "load_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1.96875,
+                    "y": 763.125
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "matcap_textures/00007.png"
+            },
+            "type": "shaders/image/load"
+        },
+        "load_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -1.46875,
+                    "y": 908.125
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "matcap_textures/00022.png"
+            },
+            "type": "shaders/image/load"
+        },
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -278.921875,
+                    "y": 436.421875
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "stanford_models/armadillo.obj"
+            },
+            "type": "openmesh/loader"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 59.7187652587891,
+                    "y": 446.25
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-halfedge normals"
+            },
+            "type": "openmesh/normals_generator"
+        },
+        "openmesh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 245.21875,
+                    "y": 456.1875
+                }
+            },
+            "name": "openmesh",
+            "type": "shaders/vertex_data/openmesh"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 304.25,
+                    "y": 259.0
+                }
+            },
+            "name": "program",
+            "type": "shaders/program"
+        },
+        "texture_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 142.75,
+                    "y": 710.75
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "tex"
+            },
+            "type": "shaders/uniforms/texture"
+        },
+        "texture_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 136.96875,
+                    "y": 858.875
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "tex"
+            },
+            "type": "shaders/uniforms/texture"
+        },
+        "texture_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 133.53125,
+                    "y": 1003.875
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "tex"
+            },
+            "type": "shaders/uniforms/texture"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -116.890625,
+                    "y": 408.8125
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 90.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.0500000007450581,
+                    "y": 0.0500000007450581,
+                    "z": 0.0500000007450581
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 2.70000004768372,
+                    "z": 0.0
+                }
+            },
+            "type": "openmesh/transform"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 109.5,
+                    "y": 180.25
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130\n\nin vec3 position;          // position attr from the openmesh vbo\nin vec3 normal;            // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\n\nuniform float iOffset;     // offset in world space\n\nout vec3 vertexNormal;     // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normal, 0)).xyz;\n}"
+            },
+            "type": "shaders/vertex_shader"
+        },
+        "viewport_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -288.984375,
+                    "y": 846.6875
+                }
+            },
+            "name": "viewport",
+            "type": "shaders/uniforms/viewport"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAkEAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAA9QAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABSQAAArgAAAB3AP////sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAWQD///8AAALfAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+}
