@@ -1,6 +1,12 @@
 {
     "connections": [
         {
+            "in_node": "background_2",
+            "in_port": "uniforms",
+            "out_node": "float_2",
+            "out_port": "out_uniforms"
+        },
+        {
             "in_node": "background_0",
             "in_port": "uniforms",
             "out_node": "float_0",
@@ -10,12 +16,6 @@
             "in_node": "background_1",
             "in_port": "uniforms",
             "out_node": "float_1",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "background_2",
-            "in_port": "uniforms",
-            "out_node": "float_2",
             "out_port": "out_uniforms"
         },
         {
@@ -222,13 +222,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 106.25,
+                    "x": 107.25,
                     "y": 310.0
                 }
             },
             "name": "fragment_shader",
             "ports": {
-                "source": "#version 330\n\nuniform sampler2D tex;\n\nlayout(location=0) out vec4 color;\n\nin vec3 vertexNormal;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\tcolor = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n}\n"
+                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nin vec3 vertexNormal;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\tcolor = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n}\n"
             },
             "type": "shaders/fragment_shader"
         },
@@ -404,7 +404,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 330\n\nin vec3 position;          // position attr from the openmesh vbo\nin vec3 normal;            // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\n\nuniform float iOffset;     // offset in world space\n\nout vec3 vertexNormal;     // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normal, 0)).xyz;\n}"
+                "source": "#version 130\n\nin vec3 position;          // position attr from the openmesh vbo\nin vec3 normal;            // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\n\nuniform float iOffset;     // offset in world space\n\nout vec3 vertexNormal;     // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normal, 0)).xyz;\n}"
             },
             "type": "shaders/vertex_shader"
         },
@@ -426,5 +426,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAkEAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAA7wAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABQwAAAr4AAAB3AP////sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAWQD///8AAALfAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAkEAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAA9QAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABSQAAArgAAAB3AP////sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAWQD///8AAALfAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
