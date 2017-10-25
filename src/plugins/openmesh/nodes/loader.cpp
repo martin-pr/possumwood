@@ -34,7 +34,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
 		"All supported files (*.obj *.off *.stl *.ply)",
 		"OBJ files (*.obj)",
-		"OFF files (*.pff)",
+		"OFF files (*.off)",
 		"STL files (*.stl)",
 		"PLY files (*.ply)"
 	}));
