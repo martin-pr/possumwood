@@ -11,13 +11,25 @@
 
 namespace {
 
+struct PointData {
+	Imath::V3f p;
+};
+
+std::istream& operator >> (std::istream& in, PointData& vec) {
+	in >> vec.p.x;
+	in >> vec.p.y;
+	in >> vec.p.z;
+
+	return in;
+}
+
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<std::shared_ptr<const possumwood::CGALPolyhedron>> a_polyhedron;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::Filename filename = data.get(a_filename);
 
-	std::vector<possumwood::CGALPolyhedron::Point> points;
+	std::vector<PointData> points;
 	std::vector<std::vector<std::size_t>> faces;
 
 	std::ifstream file(filename.filename().string().c_str());
@@ -29,7 +41,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::unique_ptr<possumwood::CGALPolyhedron> polyhedron(new possumwood::CGALPolyhedron());
 
 	for(auto& p : points)
-		polyhedron->add_vertex(p);
+		polyhedron->add_vertex(p.p);
 
 	for(auto& f : faces)
 		polyhedron->add_face(f);

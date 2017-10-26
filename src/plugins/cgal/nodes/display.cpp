@@ -28,10 +28,10 @@ dependency_graph::State draw(const dependency_graph::Values& data) {
 
 				while(it1 != vertices.end()) {
 					auto& p1 = mesh->point(*it1);
-					glVertex3f(p1.x(), p1.y(), p1.z());
+					glVertex3f(p1.x, p1.y, p1.z);
 
 					auto& p2 = mesh->point(*it2);
-					glVertex3f(p2.x(), p2.y(), p2.z());
+					glVertex3f(p2.x, p2.y, p2.z);
 
 					++it1;
 					++it2;
