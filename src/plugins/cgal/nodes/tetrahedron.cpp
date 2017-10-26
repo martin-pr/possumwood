@@ -17,10 +17,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const Imath::V3f& v2 = data.get(a_v2);
 	const Imath::V3f& v3 = data.get(a_v3);
 
-	auto u = polyhedron->add_vertex(v0);
-	auto v = polyhedron->add_vertex(v1);
-	auto w = polyhedron->add_vertex(v2);
-	auto x = polyhedron->add_vertex(v3);
+	auto u = polyhedron->add_vertex(possumwood::CGALKernel::Point_3(v0.x, v0.y, v0.z));
+	auto v = polyhedron->add_vertex(possumwood::CGALKernel::Point_3(v1.x, v1.y, v1.z));
+	auto w = polyhedron->add_vertex(possumwood::CGALKernel::Point_3(v2.x, v2.y, v2.z));
+	auto x = polyhedron->add_vertex(possumwood::CGALKernel::Point_3(v3.x, v3.y, v3.z));
 
 	polyhedron->add_face(u, v, w);
 	polyhedron->add_face(u, x, v);
