@@ -17,16 +17,28 @@ dependency_graph::State draw(const dependency_graph::Values& data) {
 		glDisable(GL_LIGHTING);
 
 		glBegin(GL_LINES);
-		for(auto it = mesh->facets_begin(); it != mesh->facets_end(); ++it) {
-			auto heIt = it->facet_begin();
-			for(unsigned a = 0; a < it->size(); ++a) {
-				auto& p1 = heIt->vertex()->point();
-				glVertex3f(p1.x(), p1.y(), p1.z());
+		for(auto it = mesh->faces_begin(); it != mesh->faces_end(); ++it) {
+			auto vertices = mesh->vertices_around_face(mesh->halfedge(*it));
 
-				++heIt;
+			if(vertices.size() >= 2) {
+				auto it1 = vertices.begin();
 
-				auto& p2 = heIt->vertex()->point();
-				glVertex3f(p2.x(), p2.y(), p2.z());
+				auto it2 = vertices.begin();
+				++it2;
+
+				while(it1 != vertices.end()) {
+					auto& p1 = mesh->point(*it1);
+					glVertex3f(p1.x(), p1.y(), p1.z());
+
+					auto& p2 = mesh->point(*it2);
+					glVertex3f(p2.x(), p2.y(), p2.z());
+
+					++it1;
+					++it2;
+
+					if(it2 == vertices.end())
+						it2 = vertices.begin();
+				}
 			}
 		}
 		glEnd();
