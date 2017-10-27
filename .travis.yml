@@ -40,6 +40,7 @@ addons:
       - libxi-dev
       - cmake
       - libglew-dev
+      - libmpfr-dev
 
 before_install:
   - sudo apt-get update -qq
@@ -47,6 +48,10 @@ before_install:
   - wget http://www.openmesh.org/media/Releases/6.3/OpenMesh-6.3.tar.gz
   - tar -xzvf OpenMesh-6.3.tar.gz
   - pushd OpenMesh-6.3 && mkdir build && pushd build && cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/usr && make && sudo make install && popd && popd
+
+  - wget https://github.com/CGAL/cgal/archive/releases/CGAL-4.11.tar.gz
+  - tar -xzvf CGAL-4.11.tar.gz
+  - pushd cgal-releases-CGAL-4.11 && mkdir build && pushd build && cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/usr && make && sudo make install && popd && popd
 
 # Run build
 script:

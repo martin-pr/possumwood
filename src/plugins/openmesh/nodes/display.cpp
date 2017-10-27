@@ -1,6 +1,6 @@
 #include <possumwood_sdk/node_implementation.h>
 
-#include <GL/glut.h>
+#include <GL/gl.h>
 
 #include "datatypes/mesh.h"
 #include "openmesh.h"
