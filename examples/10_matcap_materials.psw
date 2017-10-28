@@ -131,7 +131,7 @@
                 }
             },
             "name": "draw",
-            "type": "shaders/background"
+            "type": "shaders/draw"
         },
         "background_1": {
             "blind_data": {
@@ -142,7 +142,7 @@
                 }
             },
             "name": "draw",
-            "type": "shaders/background"
+            "type": "shaders/draw"
         },
         "cgal_0": {
             "blind_data": {

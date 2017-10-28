@@ -84,6 +84,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setDrawable<Drawable>();
 }
 
-possumwood::NodeImplementation s_impl("shaders/background", init);
+possumwood::NodeImplementation s_impl("shaders/draw", init);
 
 }

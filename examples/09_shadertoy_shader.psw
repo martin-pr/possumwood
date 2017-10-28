@@ -35,7 +35,7 @@
                 }
             },
             "name": "background",
-            "type": "shaders/background"
+            "type": "shaders/draw"
         },
         "background_1": {
             "blind_data": {

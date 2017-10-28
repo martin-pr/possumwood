@@ -113,7 +113,7 @@
                 }
             },
             "name": "ground_v2",
-            "type": "shaders/background"
+            "type": "shaders/draw"
         },
         "background_1": {
             "blind_data": {
@@ -124,7 +124,7 @@
                 }
             },
             "name": "background_v2",
-            "type": "shaders/background"
+            "type": "shaders/draw"
         },
         "background_2": {
             "blind_data": {
@@ -135,7 +135,7 @@
                 }
             },
             "name": "boxes_v2",
-            "type": "shaders/background"
+            "type": "shaders/draw"
         },
         "background_3": {
             "blind_data": {
