@@ -15,12 +15,28 @@
 #include "datatypes/vbo.inl"
 #include "datatypes/vertex_data.inl"
 #include "datatypes/uniforms.inl"
+#include "uniforms.h"
 
 namespace {
 
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Program>> a_program;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::VertexData>> a_vertexData;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_uniforms;
+
+namespace {
+	std::shared_ptr<const possumwood::Uniforms> defaultUniforms() {
+		static std::shared_ptr<const possumwood::Uniforms> s_uniforms;
+		if(s_uniforms == nullptr) {
+			std::unique_ptr<possumwood::Uniforms> newUniforms(new possumwood::Uniforms());
+
+			possumwood::addViewportUniforms(*newUniforms);
+
+			s_uniforms = std::shared_ptr<const possumwood::Uniforms>(newUniforms.release());
+		}
+
+		return s_uniforms;
+	}
+}
 
 struct Drawable : public possumwood::Drawable {
 	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)) {
@@ -54,8 +70,8 @@ struct Drawable : public possumwood::Drawable {
 			glUseProgram(program->id());
 
 			// feed in the uniforms
-			if(uniforms)
-				uniforms->use(program->id());
+			assert(uniforms);
+			uniforms->use(program->id());
 
 			// use the vertex data
 			vertexData->use(program->id());
@@ -71,15 +87,12 @@ struct Drawable : public possumwood::Drawable {
 	}
 
 	boost::signals2::connection m_timeChangedConnection;
-
-	// possumwood::VBO<Imath::V3f> m_posBuffer;
-	possumwood::VBO<Imath::V3d> m_nearPosBuffer, m_farPosBuffer;
 };
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_program, "program");
 	meta.addAttribute(a_vertexData, "vertex_data");
-	meta.addAttribute(a_uniforms, "uniforms");
+	meta.addAttribute(a_uniforms, "uniforms", defaultUniforms());
 
 	meta.setDrawable<Drawable>();
 }
