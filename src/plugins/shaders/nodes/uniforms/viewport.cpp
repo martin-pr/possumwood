@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <GL/glu.h>
 
+#include <ImathMatrix.h>
+
 #include "datatypes/uniforms.inl"
 
 namespace {
@@ -38,6 +40,27 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		[]() {
 			std::array<double, 16> modelview;
 			glGetDoublev(GL_MODELVIEW_MATRIX, modelview.data());
+
+			return modelview;
+		}
+	);
+
+	uniforms->addUniform<std::array<double, 16>>(
+		"iModelViewNormal",
+		possumwood::Uniforms::kPerDraw,
+		[]() {
+			std::array<double, 16> modelview;
+			glGetDoublev(GL_MODELVIEW_MATRIX, modelview.data());
+
+			// normal matrix has to be inverted and transposed
+			Imath::M44d mv;
+			for(unsigned a=0;a<16;++a)
+				mv[a/4][a%4] = modelview[a];
+
+			mv = mv.inverse().transposed();
+
+			for(unsigned a=0;a<16;++a)
+				modelview[a] = mv[a/4][a%4];
 
 			return modelview;
 		}
