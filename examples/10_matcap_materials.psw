@@ -1,9 +1,15 @@
 {
     "connections": [
         {
-            "in_node": "background_2",
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "background_1",
             "in_port": "uniforms",
-            "out_node": "float_2",
+            "out_node": "float_1",
             "out_port": "out_uniforms"
         },
         {
@@ -13,16 +19,10 @@
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "background_1",
-            "in_port": "uniforms",
-            "out_node": "float_1",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
+            "in_node": "background_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "texture_0",
@@ -37,16 +37,16 @@
             "out_port": "image"
         },
         {
-            "in_node": "texture_2",
-            "in_port": "value",
-            "out_node": "load_2",
-            "out_port": "image"
-        },
-        {
             "in_node": "transform_0",
             "in_port": "in_mesh",
             "out_node": "loader_0",
             "out_port": "mesh"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_mesh",
+            "out_node": "loader_1",
+            "out_port": "polyhedron"
         },
         {
             "in_node": "openmesh_0",
@@ -55,19 +55,13 @@
             "out_port": "output"
         },
         {
-            "in_node": "background_0",
-            "in_port": "vertex_data",
-            "out_node": "openmesh_0",
-            "out_port": "vertex_data"
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_1",
+            "out_port": "output"
         },
         {
             "in_node": "background_1",
-            "in_port": "vertex_data",
-            "out_node": "openmesh_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "background_2",
             "in_port": "vertex_data",
             "out_node": "openmesh_0",
             "out_port": "vertex_data"
@@ -80,12 +74,6 @@
         },
         {
             "in_node": "background_1",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "background_2",
             "in_port": "program",
             "out_node": "program_0",
             "out_port": "program"
@@ -103,15 +91,15 @@
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "float_2",
-            "in_port": "in_uniforms",
-            "out_node": "texture_2",
-            "out_port": "out_uniforms"
-        },
-        {
             "in_node": "normals_generator_0",
             "in_port": "input",
             "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "normals_generator_1",
+            "in_port": "input",
+            "out_node": "transform_1",
             "out_port": "out_mesh"
         },
         {
@@ -131,12 +119,6 @@
             "in_port": "in_uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "texture_2",
-            "in_port": "in_uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
         }
     ],
     "nodes": {
@@ -144,8 +126,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 508.5,
-                    "y": 474.5
+                    "x": 538.1875,
+                    "y": 263.5625
                 }
             },
             "name": "draw",
@@ -155,36 +137,36 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 528.5,
-                    "y": 609.734375
+                    "x": 525.375,
+                    "y": 464.421875
                 }
             },
             "name": "draw",
             "type": "shaders/background"
         },
-        "background_2": {
+        "cgal_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 551.9375,
-                    "y": 765.984375
+                    "x": 250.875,
+                    "y": 275.671875
                 }
             },
-            "name": "draw",
-            "type": "shaders/background"
+            "name": "cgal",
+            "type": "shaders/vertex_data/cgal"
         },
         "float_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 309.75,
-                    "y": 712.25
+                    "x": 270.6875,
+                    "y": 699.75
                 }
             },
             "name": "offset",
             "ports": {
                 "name": "iOffset",
-                "value": 7.0
+                "value": 4.0
             },
             "type": "shaders/uniforms/float"
         },
@@ -192,29 +174,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 303.96875,
-                    "y": 860.375
+                    "x": 264.59375,
+                    "y": 860.0625
                 }
             },
             "name": "offset",
             "ports": {
                 "name": "iOffset",
-                "value": 0.0
-            },
-            "type": "shaders/uniforms/float"
-        },
-        "float_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 300.53125,
-                    "y": 1005.375
-                }
-            },
-            "name": "offset",
-            "ports": {
-                "name": "iOffset",
-                "value": -7.0
+                "value": -4.0
             },
             "type": "shaders/uniforms/float"
         },
@@ -222,8 +189,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 107.25,
-                    "y": 310.0
+                    "x": 64.671875,
+                    "y": 91.953125
                 }
             },
             "name": "fragment_shader",
@@ -236,13 +203,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 7.75,
-                    "y": 615.0
+                    "x": -31.3125,
+                    "y": 602.5
                 }
             },
             "name": "load",
             "ports": {
-                "filename": "matcap_textures/00028.png"
+                "filename": "matcap_textures/00034.png"
             },
             "type": "shaders/image/load"
         },
@@ -250,22 +217,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1.96875,
-                    "y": 763.125
-                }
-            },
-            "name": "load",
-            "ports": {
-                "filename": "matcap_textures/00007.png"
-            },
-            "type": "shaders/image/load"
-        },
-        "load_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -1.46875,
-                    "y": 908.125
+                    "x": -37.40625,
+                    "y": 762.8125
                 }
             },
             "name": "load",
@@ -288,6 +241,20 @@
             },
             "type": "openmesh/loader"
         },
+        "loader_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -321.625,
+                    "y": 249.421875
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "stanford_models/armadillo.obj"
+            },
+            "type": "cgal/loader"
+        },
         "normals_generator_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -301,6 +268,20 @@
                 "mode": "Per-halfedge normals"
             },
             "type": "openmesh/normals_generator"
+        },
+        "normals_generator_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 73.3750076293945,
+                    "y": 241.921875
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
         },
         "openmesh_0": {
             "blind_data": {
@@ -317,8 +298,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 304.25,
-                    "y": 259.0
+                    "x": 261.671875,
+                    "y": 40.953125
                 }
             },
             "name": "program",
@@ -328,8 +309,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 142.75,
-                    "y": 710.75
+                    "x": 103.6875,
+                    "y": 698.25
                 }
             },
             "name": "texture",
@@ -342,22 +323,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 136.96875,
-                    "y": 858.875
-                }
-            },
-            "name": "texture",
-            "ports": {
-                "name": "tex"
-            },
-            "type": "shaders/uniforms/texture"
-        },
-        "texture_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 133.53125,
-                    "y": 1003.875
+                    "x": 97.59375,
+                    "y": 858.5625
                 }
             },
             "name": "texture",
@@ -394,12 +361,40 @@
             },
             "type": "openmesh/transform"
         },
+        "transform_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -126.624992370605,
+                    "y": 209.421875
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 90.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.0500000007450581,
+                    "y": 0.0500000007450581,
+                    "z": 0.0500000007450581
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 2.70000004768372,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/transform"
+        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 109.5,
-                    "y": 180.25
+                    "x": 66.921875,
+                    "y": -37.796875
                 }
             },
             "name": "vertex_shader",
@@ -412,8 +407,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -288.984375,
-                    "y": 846.6875
+                    "x": -274.921875,
+                    "y": 790.4375
                 }
             },
             "name": "viewport",
@@ -426,5 +421,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAkEAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAA9QAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABSQAAArgAAAB3AP////sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAWQD///8AAALfAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAkEAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAABBwAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABWwAAAqYAAAB3AP////sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAWQD///8AAALfAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

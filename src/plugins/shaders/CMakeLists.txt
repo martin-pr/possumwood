@@ -25,4 +25,4 @@ include_directories(./)
 
 add_library(shaders SHARED ${sources})
 
-target_link_libraries(shaders maths openmesh ${LIBS} GLEW)
+target_link_libraries(shaders maths openmesh cgal ${LIBS} GLEW)
