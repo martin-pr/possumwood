@@ -4,6 +4,7 @@
 
 #include "datatypes/shader.h"
 #include "ui/shader_editor.h"
+#include "default_shaders.h"
 
 namespace {
 
@@ -35,29 +36,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	return result;
 }
 
-static const std::string defaultSrc =
-	"#version 330\n"
-	"\n"
-	"// input position from the CPU\n"
-	"in vec3 position;\n"
-	"\n"
-	"// near and far per-vertex world positions, useable for raytracing in the fragment shader\n"
-	"in vec3 iNearPositionVert;\n"
-	"in vec3 iFarPositionVert;\n"
-	"out vec3 iNearPosition;\n"
-	"out vec3 iFarPosition;\n"
-	"\n"
-	"void main() {\n"
-	"	// do not do any transformation - this should lead to a single quad covering the whole viewport\n"
-	"	gl_Position = vec4(position.x, position.y, position.z, 1); \n"
-	"	// just pass the near and far positions - they'll get linearly interpolated\n"
-	"	iNearPosition = iNearPositionVert;\n"
-	"	iFarPosition = iFarPositionVert;\n"
-	"}";
-
-
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_src, "source", defaultSrc);
+	meta.addAttribute(a_src, "source", possumwood::defaultVertexShaderSrc());
 	meta.addAttribute(a_shader, "shader");
 
 	meta.addInfluence(a_src, a_shader);

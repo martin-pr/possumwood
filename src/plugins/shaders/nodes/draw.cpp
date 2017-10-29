@@ -77,7 +77,7 @@ struct Drawable : public possumwood::Drawable {
 		if(!program)
 			program = defaultProgram();
 
-		else if(program->state().errored())
+		if(program->state().errored())
 			state.append(program->state());
 
 		else if(!vertexData)
