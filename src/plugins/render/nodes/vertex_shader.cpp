@@ -9,7 +9,7 @@
 namespace {
 
 dependency_graph::InAttr<std::string> a_src;
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::FragmentShader>> a_shader;
+dependency_graph::OutAttr<std::shared_ptr<const possumwood::VertexShader>> a_shader;
 
 class Editor : public possumwood::ShaderEditor {
 	public:
@@ -23,21 +23,21 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	const std::string& src = data.get(a_src);
 
-	std::unique_ptr<possumwood::FragmentShader> shader(new possumwood::FragmentShader());
+	std::unique_ptr<possumwood::VertexShader> shader(new possumwood::VertexShader());
 
 	shader->compile(src);
 	result = shader->state();
 
 	if(!shader->state().errored())
-		data.set(a_shader, std::shared_ptr<const possumwood::FragmentShader>(shader.release()));
+		data.set(a_shader, std::shared_ptr<const possumwood::VertexShader>(shader.release()));
 	else
-		data.set(a_shader, std::shared_ptr<const possumwood::FragmentShader>());
+		data.set(a_shader, std::shared_ptr<const possumwood::VertexShader>());
 
 	return result;
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_src, "source", possumwood::defaultFragmentShaderSrc());
+	meta.addAttribute(a_src, "source", possumwood::defaultVertexShaderSrc());
 	meta.addAttribute(a_shader, "shader");
 
 	meta.addInfluence(a_src, a_shader);
@@ -46,6 +46,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setEditor<Editor>();
 }
 
-possumwood::NodeImplementation s_impl("shaders/fragment_shader", init);
+possumwood::NodeImplementation s_impl("render/vertex_shader", init);
 
 }

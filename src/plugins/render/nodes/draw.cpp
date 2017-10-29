@@ -115,6 +115,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setDrawable<Drawable>();
 }
 
-possumwood::NodeImplementation s_impl("shaders/draw", init);
+possumwood::NodeImplementation s_impl("render/draw", init);
 
 }

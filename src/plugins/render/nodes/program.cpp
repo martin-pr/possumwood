@@ -49,6 +49,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(&compute);
 }
 
-possumwood::NodeImplementation s_impl("shaders/program", init);
+possumwood::NodeImplementation s_impl("render/program", init);
 
 }

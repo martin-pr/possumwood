@@ -160,6 +160,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(&compute);
 }
 
-possumwood::NodeImplementation s_impl("shaders/vertex_data/cgal", init);
+possumwood::NodeImplementation s_impl("render/vertex_data/cgal", init);
 
 }

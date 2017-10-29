@@ -86,6 +86,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(&compute);
 }
 
-possumwood::NodeImplementation s_impl("shaders/vertex_data/background", init);
+possumwood::NodeImplementation s_impl("render/vertex_data/background", init);
 
 }

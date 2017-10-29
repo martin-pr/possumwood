@@ -129,7 +129,7 @@
                 }
             },
             "name": "draw",
-            "type": "shaders/draw"
+            "type": "render/draw"
         },
         "draw_1": {
             "blind_data": {
@@ -140,7 +140,7 @@
                 }
             },
             "name": "draw",
-            "type": "shaders/draw"
+            "type": "render/draw"
         },
         "draw_2": {
             "blind_data": {
@@ -151,7 +151,7 @@
                 }
             },
             "name": "draw",
-            "type": "shaders/draw"
+            "type": "render/draw"
         },
         "loader_0": {
             "blind_data": {
@@ -252,7 +252,7 @@
                 }
             },
             "name": "openmesh",
-            "type": "shaders/vertex_data/openmesh"
+            "type": "render/vertex_data/openmesh"
         },
         "openmesh_1": {
             "blind_data": {
@@ -263,7 +263,7 @@
                 }
             },
             "name": "openmesh",
-            "type": "shaders/vertex_data/openmesh"
+            "type": "render/vertex_data/openmesh"
         },
         "openmesh_2": {
             "blind_data": {
@@ -274,7 +274,7 @@
                 }
             },
             "name": "openmesh",
-            "type": "shaders/vertex_data/openmesh"
+            "type": "render/vertex_data/openmesh"
         },
         "transform_0": {
             "blind_data": {

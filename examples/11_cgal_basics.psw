@@ -71,7 +71,7 @@
                 }
             },
             "name": "display",
-            "type": "shaders/vertex_data/cgal"
+            "type": "render/vertex_data/cgal"
         },
         "cgal_1": {
             "blind_data": {
@@ -82,7 +82,7 @@
                 }
             },
             "name": "display",
-            "type": "shaders/vertex_data/cgal"
+            "type": "render/vertex_data/cgal"
         },
         "draw_0": {
             "blind_data": {
@@ -93,7 +93,7 @@
                 }
             },
             "name": "draw",
-            "type": "shaders/draw"
+            "type": "render/draw"
         },
         "draw_1": {
             "blind_data": {
@@ -104,7 +104,7 @@
                 }
             },
             "name": "draw",
-            "type": "shaders/draw"
+            "type": "render/draw"
         },
         "loader_0": {
             "blind_data": {
