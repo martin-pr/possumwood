@@ -14,6 +14,7 @@ void Uniforms::addUniform(const std::string& name, const UpdateType& updateType,
 	UniformHolder uniform;
 
 	uniform.name = name;
+	uniform.glslType = std::string("uniform ") + GLSLTraits<T>::typeString() + " " + name + ";";
 	uniform.updateType = updateType;
 
 	uniform.updateFunctor =

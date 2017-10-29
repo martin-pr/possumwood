@@ -36,9 +36,15 @@ class Uniforms {
 
 		void use(GLuint programId) const;
 
+		/// returns the number of uniforms and textures stored in this container
+		std::size_t size() const;
+
+		/// returns the GLSL declaration of all values in this container
+		std::string glslDeclaration() const;
+
 	private:
 		struct UniformHolder {
-			std::string name;
+			std::string name, glslType;
 			UpdateType updateType;
 
 			std::vector<unsigned char> data;
@@ -50,7 +56,7 @@ class Uniforms {
 		std::vector<UniformHolder> m_uniforms;
 
 		struct TextureHolder {
-			std::string name;
+			std::string name, glslType;
 			std::shared_ptr<const Texture> texture;
 		};
 
