@@ -17,6 +17,8 @@
 #include "datatypes/uniforms.inl"
 #include "uniforms.h"
 
+#include "default_shaders.h"
+
 namespace {
 
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Program>> a_program;
@@ -35,6 +37,22 @@ namespace {
 		}
 
 		return s_uniforms;
+	}
+
+	std::shared_ptr<const possumwood::Program> defaultProgram() {
+		static std::shared_ptr<const possumwood::Program> s_program;
+
+		if(s_program == nullptr) {
+			std::unique_ptr<possumwood::Program> program(new possumwood::Program());
+
+			program->link(possumwood::defaultVertexShader(), possumwood::defaultFragmentShader());
+
+			assert(!program->state().errored());
+
+			s_program = std::shared_ptr<const possumwood::Program>(program.release());
+		}
+
+		return s_program;
 	}
 }
 
@@ -57,7 +75,7 @@ struct Drawable : public possumwood::Drawable {
 		std::shared_ptr<const possumwood::Uniforms> uniforms = values().get(a_uniforms);
 
 		if(!program)
-			state.addError("No GLSL program provided - cannot draw.");
+			program = defaultProgram();
 
 		else if(program->state().errored())
 			state.append(program->state());
