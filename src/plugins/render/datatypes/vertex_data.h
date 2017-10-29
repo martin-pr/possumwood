@@ -37,9 +37,14 @@ class VertexData : public boost::noncopyable {
 		/// returns the size of this vertex data object (number of vertices to be drawn)
 		std::size_t size() const;
 
+		/// returns the GLSL declaration of data in this VertexData object
+		std::string glslDeclaration() const;
+		/// returns the number of VBOs in this object
+		std::size_t vboCount() const;
+
 	private:
 		struct VBOHolder {
-			std::string name;
+			std::string name, glslType;
 			std::unique_ptr<VBOBase> vbo;
 			std::size_t size;
 			UpdateType updateType;

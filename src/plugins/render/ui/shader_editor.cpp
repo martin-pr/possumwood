@@ -17,6 +17,7 @@ ShaderEditor::ShaderEditor(dependency_graph::InAttr<std::string>& src) : m_src(&
 
 	m_editor = new QPlainTextEdit();
 	layout->addWidget(m_editor, 1);
+	m_editor->setWordWrapMode(QTextOption::NoWrap);
 
 	const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
 	m_editor->setFont(fixedFont);

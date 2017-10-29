@@ -6,8 +6,9 @@
 
 namespace possumwood {
 
-template<typename T>
-void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateType& updateType, std::function<void(T* begin, T* end)> updateFn) {
+template <typename T>
+void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateType& updateType,
+                        std::function<void(T* begin, T* end)> updateFn) {
 	assert(size > 0);
 	assert(m_vbos.empty() || m_vbos[0].size == size);
 
@@ -15,6 +16,7 @@ void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateT
 
 	VBOHolder holder;
 	holder.name = name;
+	holder.glslType = std::string("in ") + GLSLTraits<T>::typeString() + " " + name + ";";
 	holder.size = size;
 	holder.updateType = updateType;
 	holder.data.resize(size * sizeof(T));
@@ -36,5 +38,4 @@ void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateT
 
 	m_vbos.push_back(std::move(holder));
 }
-
 }

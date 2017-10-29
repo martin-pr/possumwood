@@ -43,4 +43,17 @@ std::size_t VertexData::size() const {
 	return m_vbos[0].size;
 }
 
+std::string VertexData::glslDeclaration() const {
+	std::stringstream result;
+
+	for(auto& a : m_vbos)
+		result << a.glslType << std::endl;
+
+	return result.str();
+}
+
+std::size_t VertexData::vboCount() const {
+	return m_vbos.size();
+}
+
 }
