@@ -1,0 +1,209 @@
+{
+    "connections": [
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "tetrahedron_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "normals_generator_1",
+            "out_port": "output"
+        },
+        {
+            "in_node": "make_vec3_0",
+            "in_port": "x",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "make_vec3_0",
+            "in_port": "y",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "make_vec3_0",
+            "in_port": "z",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "cgal_1",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "tetrahedron_0",
+            "in_port": "v0",
+            "out_node": "make_vec3_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "normals_generator_1",
+            "in_port": "input",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        }
+    ],
+    "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 647.3125,
+                    "y": 411.5
+                }
+            },
+            "name": "display",
+            "type": "shaders/vertex_data/cgal"
+        },
+        "cgal_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 613.1875,
+                    "y": 557.625
+                }
+            },
+            "name": "display",
+            "type": "shaders/vertex_data/cgal"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 830.196891465856,
+                    "y": 381.568754286776
+                }
+            },
+            "name": "draw",
+            "type": "shaders/draw"
+        },
+        "draw_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 803.634391465856,
+                    "y": 550.318754286776
+                }
+            },
+            "name": "draw",
+            "type": "shaders/draw"
+        },
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 248.125,
+                    "y": 536.125
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "stanford_models/bunny.obj"
+            },
+            "type": "cgal/loader"
+        },
+        "make_vec3_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 236.0,
+                    "y": 379.0
+                }
+            },
+            "name": "make_vec3",
+            "type": "maths/make_vec3"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 480.0,
+                    "y": 399.0
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
+        },
+        "normals_generator_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 426.0,
+                    "y": 534.0
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
+        },
+        "tetrahedron_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 355.0,
+                    "y": 367.0
+                }
+            },
+            "name": "tetrahedron",
+            "ports": {
+                "v1": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "v2": {
+                    "x": 0.0,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "v3": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0
+                }
+            },
+            "type": "cgal/tetrahedron"
+        },
+        "time_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 117.0,
+                    "y": 400.0
+                }
+            },
+            "name": "time",
+            "type": "time"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAYAAAAAAAAB1MAAAPjAAAAGQAAABcAAAdSAAAD3wAAAAAAAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADe/wCAAAAAfwAAABOAAADewAAAJIBAAAa+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAApwD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAvgAAABGAP///wAAAAEAAAEsAAADe/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAAe0AAABZAP////sAAAAGAGwAbwBnAQAAAkEAAAGIAAAAWQD///8AAAMKAAADewAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+}
