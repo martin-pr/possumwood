@@ -1,12 +1,6 @@
 {
     "connections": [
         {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "openmesh_1",
-            "out_port": "vertex_data"
-        },
-        {
             "in_node": "transform_0",
             "in_port": "in_mesh",
             "out_node": "decimater_0",
@@ -20,12 +14,6 @@
         },
         {
             "in_node": "decimater_1",
-            "in_port": "input",
-            "out_node": "loader_0",
-            "out_port": "mesh"
-        },
-        {
-            "in_node": "normals_generator_0",
             "in_port": "input",
             "out_node": "loader_0",
             "out_port": "mesh"
@@ -55,15 +43,9 @@
             "out_port": "output"
         },
         {
-            "in_node": "openmesh_2",
-            "in_port": "mesh",
-            "out_node": "normals_generator_1",
-            "out_port": "output"
-        },
-        {
             "in_node": "openmesh_0",
             "in_port": "mesh",
-            "out_node": "normals_generator_2",
+            "out_node": "normals_generator_1",
             "out_port": "output"
         },
         {
@@ -73,25 +55,54 @@
             "out_port": "vertex_data"
         },
         {
-            "in_node": "draw_2",
+            "in_node": "draw_1",
             "in_port": "vertex_data",
-            "out_node": "openmesh_2",
+            "out_node": "openmesh_1",
             "out_port": "vertex_data"
         },
         {
-            "in_node": "normals_generator_2",
+            "in_node": "normals_generator_1",
             "in_port": "input",
             "out_node": "transform_0",
             "out_port": "out_mesh"
         },
         {
-            "in_node": "normals_generator_1",
+            "in_node": "normals_generator_0",
             "in_port": "input",
             "out_node": "transform_1",
             "out_port": "out_mesh"
+        },
+        {
+            "in_node": "simplification_0",
+            "in_port": "input",
+            "out_node": "loader_1",
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "draw_2",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "simplification_0",
+            "out_port": "output"
         }
     ],
     "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 593.51561841344,
+                    "y": 826.390618506208
+                }
+            },
+            "name": "cgal",
+            "type": "render/vertex_data/cgal"
+        },
         "decimater_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -135,8 +146,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1070.22242523215,
-                    "y": 302.955191024753
+                    "x": 1069.24584960938,
+                    "y": 494.849731445312
                 }
             },
             "name": "draw",
@@ -146,8 +157,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1069.24586273215,
-                    "y": 494.849722274752
+                    "x": 804.45311841344,
+                    "y": 816.624993506208
                 }
             },
             "name": "draw",
@@ -166,6 +177,20 @@
                 "filename": "stanford_models/bunny.obj"
             },
             "type": "openmesh/loader"
+        },
+        "loader_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 183.359376391527,
+                    "y": 812.718746660335
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "stanford_models/bunny.obj"
+            },
+            "type": "cgal/loader"
         },
         "module_normal_deviation_0": {
             "blind_data": {
@@ -205,20 +230,6 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 667.75,
-                    "y": 296.25
-                }
-            },
-            "name": "normals_generator",
-            "ports": {
-                "mode": "Per-face normals"
-            },
-            "type": "openmesh/normals_generator"
-        },
-        "normals_generator_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
                     "x": 664.25,
                     "y": 502.5
                 }
@@ -229,7 +240,7 @@
             },
             "type": "openmesh/normals_generator"
         },
-        "normals_generator_2": {
+        "normals_generator_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -258,23 +269,23 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 867.585706482145,
-                    "y": 312.720816024753
+                    "x": 870.027099609375,
+                    "y": 500.709106445312
                 }
             },
             "name": "openmesh",
             "type": "render/vertex_data/openmesh"
         },
-        "openmesh_2": {
+        "simplification_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 870.027112732145,
-                    "y": 500.709097274752
+                    "x": 416.17185876552,
+                    "y": 823.656248144631
                 }
             },
-            "name": "openmesh",
-            "type": "render/vertex_data/openmesh"
+            "name": "simplification",
+            "type": "cgal/simplification/simplification"
         },
         "transform_0": {
             "blind_data": {
@@ -339,5 +350,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAFwAAACgAAAdQAAAD8AAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADs/wCAAAAAvsAAAAKAGcAcgBhAHAAaAEAAABOAAADFwAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAADawAAAJYAAAB3AP///wAAAAEAAAEsAAADs/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAAZgAAABZAP////sAAAAGAGwAbwBnAQAAAewAAAIVAAAAWQD///8AAANQAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADs/wCAAAAAvsAAAAKAGcAcgBhAHAAaAEAAABOAAADDgAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAADYgAAAJ8AAAB3AP///wAAAAEAAAEsAAADs/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAAXYAAABZAP////sAAAAGAGwAbwBnAQAAAcoAAAI3AAAAWQD///8AAANQAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
