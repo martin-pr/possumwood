@@ -1,0 +1,195 @@
+#include <possumwood_sdk/node_implementation.h>
+#include <possumwood_sdk/app.h>
+
+#include <GL/glew.h>
+#include <GL/glu.h>
+
+#include <ImathVec.h>
+
+#include "openmesh/datatypes/mesh.h"
+
+#include "datatypes/vertex_data.inl"
+
+namespace {
+
+dependency_graph::OutAttr<std::shared_ptr<const possumwood::VertexData>> a_vd;
+dependency_graph::InAttr<std::shared_ptr<const Mesh>> a_mesh;
+
+dependency_graph::State compute(dependency_graph::Values& data) {
+	dependency_graph::State result;
+
+	std::shared_ptr<const Mesh> mesh = data.get(a_mesh);
+
+	if(!mesh)
+		throw std::runtime_error("No mesh provided.");
+
+	// we're drawing triangles
+	std::unique_ptr<possumwood::VertexData> vd(new possumwood::VertexData(GL_TRIANGLES));
+
+	// first, figure out how many triangles we have
+	//   there has to be a better way to do this, come on
+	std::size_t triangleCount = 0;
+	for(auto f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
+		auto it = mesh->cfh_iter(*f_it);
+
+		++it;
+		++it;
+
+		while(it.is_valid()) {
+			++it;
+			++triangleCount;
+		}
+	}
+
+	// and build the buffers
+	vd->addVBO<Imath::V3f>(
+		"position",
+		triangleCount * 3,
+		possumwood::VertexData::kStatic,
+		[mesh](Imath::V3f* iter, Imath::V3f* end) {
+			// iterate over faces
+			for(auto f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
+			    // get the face's half-edge iterator
+			    auto he_it = mesh->cfh_iter(*f_it);
+
+			    // remember first two vertices of the face
+			    const auto& pt1h = mesh->to_vertex_handle(*he_it);
+			    const auto& pt1 = mesh->point(pt1h);
+			    ++he_it;
+
+			    const auto& pt2h = mesh->to_vertex_handle(*he_it);
+			    const auto& pt2 = mesh->point(pt2h);
+			    ++he_it;
+
+			    // iterate over remaining halfedges on that face
+			    for(; he_it.is_valid(); ++he_it) {
+			        *(iter++) = Imath::V3f(pt1[0],pt1[1],pt1[2]);
+			        *(iter++) = Imath::V3f(pt2[0],pt2[1],pt2[2]);
+
+			        const auto& pth = mesh->to_vertex_handle(*he_it);
+			        const auto& pt = mesh->point(pth);
+			        *(iter++) = Imath::V3f(pt[0],pt[1],pt[2]);
+				}
+			}
+
+			assert(iter == end);
+		}
+		);
+
+	if(mesh->has_halfedge_normals()) {
+		vd->addVBO<Imath::V3f>(
+			"normal",
+			triangleCount * 3,
+			possumwood::VertexData::kStatic,
+			[mesh](Imath::V3f* iter, Imath::V3f* end) {
+				// iterate over faces
+				for(auto f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
+				    // get the face's half-edge iterator
+				    auto he_it = mesh->cfh_iter(*f_it);
+
+				    const auto& n1 = mesh->normal(*he_it);
+				    ++he_it;
+
+				    const auto& n2 = mesh->normal(*he_it);
+				    ++he_it;
+
+				    // iterate over remaining halfedges on that face
+				    for(; he_it.is_valid(); ++he_it) {
+				        *(iter++) = Imath::V3f(n1[0],n1[1],n1[2]);
+				        *(iter++) = Imath::V3f(n2[0],n2[1],n2[2]);
+
+				        const auto& n = mesh->normal(*he_it);
+				        *(iter++) = Imath::V3f(n[0],n[1],n[2]);
+					}
+				}
+
+				assert(iter == end);
+			}
+			);
+
+	}
+
+	else if(mesh->has_vertex_normals()) {
+		vd->addVBO<Imath::V3f>(
+			"normal",
+			triangleCount * 3,
+			possumwood::VertexData::kStatic,
+			[mesh](Imath::V3f* iter, Imath::V3f* end) {
+				// iterate over faces
+				for(auto f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
+				    // get the face's half-edge iterator
+				    auto he_it = mesh->cfh_iter(*f_it);
+
+				    const auto& n1h = mesh->to_vertex_handle(*he_it);
+				    const auto& n1 = mesh->normal(n1h);
+				    ++he_it;
+
+				    const auto& n2h = mesh->to_vertex_handle(*he_it);
+				    const auto& n2 = mesh->normal(n2h);
+				    ++he_it;
+
+				    // iterate over remaining halfedges on that face
+				    for(; he_it.is_valid(); ++he_it) {
+				        *(iter++) = Imath::V3f(n1[0],n1[1],n1[2]);
+				        *(iter++) = Imath::V3f(n2[0],n2[1],n2[2]);
+
+				        const auto& nh = mesh->to_vertex_handle(*he_it);
+				        const auto& n = mesh->normal(nh);
+				        *(iter++) = Imath::V3f(n[0],n[1],n[2]);
+					}
+				}
+
+				assert(iter == end);
+			}
+			);
+	}
+
+	else if(mesh->has_face_normals()) {
+		vd->addVBO<Imath::V3f>(
+			"normal",
+			triangleCount * 3,
+			possumwood::VertexData::kStatic,
+			[mesh](Imath::V3f* iter, Imath::V3f* end) {
+				// iterate over faces
+				for(auto f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
+				    // get the face's half-edge iterator
+				    auto he_it = mesh->cfh_iter(*f_it);
+
+				    // and the normal
+				    const auto& norm = mesh->normal(*f_it);
+
+				    // skip the first 2 vertices
+				    ++he_it;
+				    ++he_it;
+
+				    // iterate over remaining halfedges on that face, and use normal 3x,
+				    //   for each triangle
+				    for(; he_it.is_valid(); ++he_it) {
+				        *(iter++) = Imath::V3f(norm[0],norm[1],norm[2]);
+				        *(iter++) = Imath::V3f(norm[0],norm[1],norm[2]);
+				        *(iter++) = Imath::V3f(norm[0],norm[1],norm[2]);
+					}
+				}
+
+				assert(iter == end);
+			}
+			);
+	}
+
+	data.set(a_vd, std::shared_ptr<const possumwood::VertexData>(vd.release()));
+
+	return result;
+}
+
+void init(possumwood::Metadata& meta) {
+	meta.addAttribute(a_vd, "vertex_data");
+	meta.addAttribute(a_mesh, "mesh");
+
+	meta.addInfluence(a_mesh, a_vd);
+
+	meta.setCompute(&compute);
+}
+
+possumwood::NodeImplementation s_impl("render/vertex_data/openmesh", init);
+
+}

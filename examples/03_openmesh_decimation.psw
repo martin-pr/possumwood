@@ -1,6 +1,24 @@
 {
     "connections": [
         {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "openmesh_1",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "decimater_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_mesh",
+            "out_node": "decimater_1",
+            "out_port": "output"
+        },
+        {
             "in_node": "decimater_1",
             "in_port": "input",
             "out_node": "loader_0",
@@ -19,10 +37,10 @@
             "out_port": "mesh"
         },
         {
-            "in_node": "normals_generator_2",
-            "in_port": "input",
-            "out_node": "transform_0",
-            "out_port": "out_mesh"
+            "in_node": "decimater_0",
+            "in_port": "modules",
+            "out_node": "module_normal_deviation_0",
+            "out_port": "out_modules"
         },
         {
             "in_node": "decimater_1",
@@ -31,46 +49,46 @@
             "out_port": "out_modules"
         },
         {
-            "in_node": "display_0",
+            "in_node": "openmesh_1",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "openmesh_2",
+            "in_port": "mesh",
+            "out_node": "normals_generator_1",
+            "out_port": "output"
+        },
+        {
+            "in_node": "openmesh_0",
             "in_port": "mesh",
             "out_node": "normals_generator_2",
             "out_port": "output"
         },
         {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "decimater_0",
-            "out_port": "output"
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "openmesh_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_2",
+            "in_port": "vertex_data",
+            "out_node": "openmesh_2",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "normals_generator_2",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
         },
         {
             "in_node": "normals_generator_1",
             "in_port": "input",
             "out_node": "transform_1",
             "out_port": "out_mesh"
-        },
-        {
-            "in_node": "transform_1",
-            "in_port": "in_mesh",
-            "out_node": "decimater_1",
-            "out_port": "output"
-        },
-        {
-            "in_node": "display_2",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "display_1",
-            "in_port": "mesh",
-            "out_node": "normals_generator_1",
-            "out_port": "output"
-        },
-        {
-            "in_node": "decimater_0",
-            "in_port": "modules",
-            "out_node": "module_normal_deviation_0",
-            "out_port": "out_modules"
         }
     ],
     "nodes": {
@@ -102,38 +120,38 @@
             },
             "type": "openmesh/decimation/decimater"
         },
-        "display_0": {
+        "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 861.362487792969,
-                    "y": 101.962493896484
+                    "x": 1073.85546875,
+                    "y": 65.0351638793945
                 }
             },
-            "name": "display",
-            "type": "openmesh/display"
+            "name": "draw",
+            "type": "render/draw"
         },
-        "display_1": {
+        "draw_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 880.362487792969,
-                    "y": 527.962463378906
+                    "x": 1070.22242523215,
+                    "y": 302.955191024753
                 }
             },
-            "name": "display",
-            "type": "openmesh/display"
+            "name": "draw",
+            "type": "render/draw"
         },
-        "display_2": {
+        "draw_2": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 862.862487792969,
-                    "y": 333.962493896484
+                    "x": 1069.24586273215,
+                    "y": 494.849722274752
                 }
             },
-            "name": "display",
-            "type": "openmesh/display"
+            "name": "draw",
+            "type": "render/draw"
         },
         "loader_0": {
             "blind_data": {
@@ -225,6 +243,39 @@
             },
             "type": "openmesh/normals_generator"
         },
+        "openmesh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 871.21875,
+                    "y": 87.9843826293945
+                }
+            },
+            "name": "openmesh",
+            "type": "render/vertex_data/openmesh"
+        },
+        "openmesh_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 867.585706482145,
+                    "y": 312.720816024753
+                }
+            },
+            "name": "openmesh",
+            "type": "render/vertex_data/openmesh"
+        },
+        "openmesh_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 870.027112732145,
+                    "y": 500.709097274752
+                }
+            },
+            "name": "openmesh",
+            "type": "render/vertex_data/openmesh"
+        },
         "transform_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -287,6 +338,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAXAAAAEQAAB1IAAAP0AAAAGAAAACgAAAdRAAAD8AAAAAAAAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADiPwCAAAAAfwAAABBAAADiAAAAIsBAAAV+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAlAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAvgAAAA4AP///wAAAAEAAAEsAAADiPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAAe0AAABJAP////sAAAAGAGwAbwBnAQAAAjIAAAGXAAAASQD///8AAAMOAAADiAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAFwAAACgAAAdQAAAD8AAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADs/wCAAAAAvsAAAAKAGcAcgBhAHAAaAEAAABOAAADFwAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAADawAAAJYAAAB3AP///wAAAAEAAAEsAAADs/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAAZgAAABZAP////sAAAAGAGwAbwBnAQAAAewAAAIVAAAAWQD///8AAANQAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
