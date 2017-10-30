@@ -15,13 +15,9 @@
 enum_ui::enum_ui() {
 	m_combobox = new QComboBox(NULL);
 
-	m_changeConnection = QObject::connect(
-		m_combobox,
-		static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-		[this]() -> void {
-			callValueChangedCallbacks();
-		}
-	);
+	m_changeConnection =
+	    QObject::connect(m_combobox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+	                     [this]() -> void { callValueChangedCallbacks(); });
 }
 
 enum_ui::~enum_ui() {
@@ -39,12 +35,10 @@ void enum_ui::set(const possumwood::Enum& value) {
 
 	m_combobox->clear();
 
-	m_combobox->addItem("(empty)");
-
 	for(auto& o : value.options()) {
-		m_combobox->addItem(o.c_str());
-		if(value.value() == o)
-			m_combobox->setCurrentIndex(m_combobox->count()-1);
+		m_combobox->addItem(o.first.c_str());
+		if(value.value() == o.first)
+			m_combobox->setCurrentIndex(m_combobox->count() - 1);
 	}
 
 	m_combobox->blockSignals(bs);

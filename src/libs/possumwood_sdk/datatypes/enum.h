@@ -14,28 +14,30 @@
 namespace possumwood {
 
 class Enum {
-	public:
-		Enum(std::initializer_list<std::string> options = std::initializer_list<std::string>());
+  public:
+	Enum(std::initializer_list<std::string> options = std::initializer_list<std::string>());
+	Enum(std::initializer_list<std::pair<std::string, int>> options);
 
-		const std::string& value() const;
-		void setValue(const std::string& value);
+	const std::string& value() const;
+	int intValue() const;
+	void setValue(const std::string& value);
 
-		const std::set<std::string>& options() const;
+	const std::map<std::string, int>& options() const;
 
-		Enum& operator = (const Enum& fn);
+	Enum& operator=(const Enum& fn);
 
-		bool operator == (const Enum& fn) const;
-		bool operator != (const Enum& fn) const;
+	bool operator==(const Enum& fn) const;
+	bool operator!=(const Enum& fn) const;
 
-		void fromJson(const ::dependency_graph::io::json& json);
-		void toJson(::dependency_graph::io::json& json) const;
+	void fromJson(const ::dependency_graph::io::json& json);
+	void toJson(::dependency_graph::io::json& json) const;
 
-	private:
-		std::string m_value;
-		std::set<std::string> m_options;
+  private:
+	std::pair<std::string, int> m_value;
+	std::map<std::string, int> m_options;
 };
 
-template<>
+template <>
 struct Traits<Enum> {
 	static IO<Enum> io;
 
@@ -43,5 +45,4 @@ struct Traits<Enum> {
 		return std::array<float, 3>{{0, 0, 0}};
 	}
 };
-
 }
