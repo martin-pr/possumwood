@@ -22,7 +22,7 @@ class Enum {
 	int intValue() const;
 	void setValue(const std::string& value);
 
-	const std::map<std::string, int>& options() const;
+	const std::vector<std::pair<std::string, int>>& options() const;
 
 	Enum& operator=(const Enum& fn);
 
@@ -34,7 +34,7 @@ class Enum {
 
   private:
 	std::pair<std::string, int> m_value;
-	std::map<std::string, int> m_options;
+	std::vector<std::pair<std::string, int>> m_options;
 };
 
 template <>

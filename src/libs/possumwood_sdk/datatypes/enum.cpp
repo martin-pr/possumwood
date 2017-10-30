@@ -1,14 +1,21 @@
 #include "enum.h"
 
+#include <algorithm>
+
 namespace possumwood {
 
 Enum::Enum(std::initializer_list<std::string> options) {
 	int counter = 0;
 	for(auto& o : options)
-		m_options.insert(std::make_pair(o, counter++));
+		m_options.push_back(std::make_pair(o, counter++));
+
+	if(!m_options.empty())
+		m_value = m_options[0];
 }
 
 Enum::Enum(std::initializer_list<std::pair<std::string, int>> options) : m_options(options.begin(), options.end()) {
+	if(!m_options.empty())
+		m_value = m_options[0];
 }
 
 const std::string& Enum::value() const {
@@ -20,12 +27,12 @@ int Enum::intValue() const {
 }
 
 void Enum::setValue(const std::string& value) {
-	auto it = m_options.find(value);
+	auto it = std::find_if(m_options.begin(), m_options.end(), [&value](const std::pair<std::string, int>& val) {return val.first == value;});
 	assert(it != m_options.end());
 	m_value = *it;
 }
 
-const std::map<std::string, int>& Enum::options() const {
+const std::vector<std::pair<std::string, int>>& Enum::options() const {
 	return m_options;
 }
 
