@@ -114,6 +114,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 		}
 
+		mesh->collect_garbage();
+
 		data.set(a_outMesh, std::shared_ptr<const possumwood::CGALPolyhedron>(mesh.release()));
 	}
 	else

@@ -9,6 +9,8 @@ set(LIBS ${LIBS} Qt5::Widgets Qt5::OpenGL)
 
 ######################################
 
+add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
+
 file(GLOB_RECURSE sources *.cpp)
 
 include_directories(./)
