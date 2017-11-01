@@ -1,16 +1,16 @@
 {
     "connections": [
         {
-            "in_node": "draw_0",
+            "in_node": "draw_1",
             "in_port": "vertex_data",
-            "out_node": "cgal_0",
+            "out_node": "cgal_1",
             "out_port": "vertex_data"
         },
         {
-            "in_node": "cgal_1",
-            "in_port": "mesh",
-            "out_node": "simplification_1",
-            "out_port": "output"
+            "in_node": "draw_2",
+            "in_port": "vertex_data",
+            "out_node": "cgal_2",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "transform_0",
@@ -31,6 +31,24 @@
             "out_port": "polyhedron"
         },
         {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "cgal_2",
+            "in_port": "mesh",
+            "out_node": "simplification_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "simplification_1",
+            "out_port": "output"
+        },
+        {
             "in_node": "simplification_1",
             "in_port": "input",
             "out_node": "transform_0",
@@ -41,24 +59,6 @@
             "in_port": "input",
             "out_node": "transform_1",
             "out_port": "out_mesh"
-        },
-        {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "cgal_1",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "cgal_2",
-            "in_port": "mesh",
-            "out_node": "simplification_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "draw_2",
-            "in_port": "vertex_data",
-            "out_node": "cgal_2",
-            "out_port": "vertex_data"
         }
     ],
     "nodes": {
@@ -77,8 +77,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 878.542965838162,
-                    "y": 86.125001890294
+                    "x": 878.54296875,
+                    "y": 86.125
                 }
             },
             "name": "cgal",
@@ -110,8 +110,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1080.10546583816,
-                    "y": 59.562501890294
+                    "x": 1080.10546875,
+                    "y": 59.5625
                 }
             },
             "name": "draw",
@@ -121,8 +121,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1073.85546583816,
-                    "y": 490.812501890294
+                    "x": 1073.85546875,
+                    "y": 490.8125
                 }
             },
             "name": "draw",
@@ -164,7 +164,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 665.234375,
-                    "y": 16.1562500000001
+                    "y": 16.15625
                 }
             },
             "name": "simplification",
@@ -180,8 +180,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 462.917965838162,
-                    "y": 28.312501890294
+                    "x": 462.91796875,
+                    "y": 28.3125019073486
                 }
             },
             "name": "transform",
@@ -209,7 +209,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 479.79296875,
-                    "y": 474.875001907349
+                    "y": 474.875
                 }
             },
             "name": "transform",
@@ -239,5 +239,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAFwAAACgAAAdQAAAD8AAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADs/wCAAAAAvsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////+wAAAAwAZQBkAGkAdABvAHIAAAADQgAAAL8AAAB3AP///wAAAAEAAAEsAAADs/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAANgAAABZAP////sAAAAGAGwAbwBnAQAAASwAAALVAAAAWQD///8AAANQAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADs/wCAAAAAvsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////+wAAAAwAZQBkAGkAdABvAHIAAAADQgAAAL8AAAB3AP///wAAAAEAAAFjAAADs/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAATYAAABZAP////sAAAAGAGwAbwBnAQAAAYoAAAJ3AAAAWQD///8AAAMZAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
