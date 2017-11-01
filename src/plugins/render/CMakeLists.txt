@@ -25,4 +25,4 @@ include_directories(./)
 
 add_library(render SHARED ${sources})
 
-target_link_libraries(render maths openmesh cgal ${LIBS} GLEW)
+target_link_libraries(render maths cgal ${LIBS} GLEW)
