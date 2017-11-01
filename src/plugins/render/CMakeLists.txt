@@ -23,6 +23,6 @@ file(GLOB_RECURSE sources *.cpp)
 
 include_directories(./)
 
-add_library(shaders SHARED ${sources})
+add_library(render SHARED ${sources})
 
-target_link_libraries(shaders maths openmesh cgal ${LIBS} GLEW)
+target_link_libraries(render maths openmesh cgal ${LIBS} GLEW)
