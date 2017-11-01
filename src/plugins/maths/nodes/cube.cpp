@@ -3,7 +3,7 @@
 
 #include <OpenEXR/ImathVec.h>
 
-#include <GL/glut.h>
+#include <GL/gl.h>
 
 #include "io/vec3.h"
 
@@ -22,7 +22,26 @@ dependency_graph::State draw(const dependency_graph::Values& values) {
 
 	glDisable(GL_LIGHTING);
 	glColor3f(1, 0, 0);
-	glutWireCube(0.5f);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(-1, -1, -1); glVertex3f(1, -1, -1);
+	glVertex3f(1, -1, -1); glVertex3f(1, 1, -1);
+	glVertex3f(1, 1, -1); glVertex3f(-1, 1, -1);
+	glVertex3f(-1, 1, -1); glVertex3f(-1, -1, -1);
+
+	glVertex3f(-1, -1, 1); glVertex3f(1, -1, 1);
+	glVertex3f(1, -1, 1); glVertex3f(1, 1, 1);
+	glVertex3f(1, 1, 1); glVertex3f(-1, 1, 1);
+	glVertex3f(-1, 1, 1); glVertex3f(-1, -1, 1);
+
+	glVertex3f(-1, -1, 1); glVertex3f(-1, -1, -1);
+	glVertex3f(1, -1, 1); glVertex3f(1, -1, -1);
+	glVertex3f(1, 1, 1); glVertex3f(1, 1, -1);
+	glVertex3f(-1, 1, 1); glVertex3f(-1, 1, -1);
+
+	glEnd();
+
 	glEnable(GL_LIGHTING);
 
 	glPopMatrix();
