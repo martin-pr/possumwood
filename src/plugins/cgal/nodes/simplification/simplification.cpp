@@ -18,28 +18,33 @@
 
 #include "possumwood_sdk/datatypes/enum.h"
 
-#include "datatypes/polyhedron.h"
+#include "datatypes/meshes.h"
 
 #include "cgal.h"
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 using namespace std::placeholders;
 
+using possumwood::Meshes;
+using possumwood::CGALPolyhedron;
+
 namespace {
 
-dependency_graph::InAttr<std::shared_ptr<const possumwood::CGALPolyhedron>> a_inMesh;
+dependency_graph::InAttr<Meshes> a_inMesh;
 dependency_graph::InAttr<float> a_stopParam;
 dependency_graph::InAttr<possumwood::Enum> a_stopCondition, a_cost, a_placement;
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::CGALPolyhedron>> a_outMesh;
+dependency_graph::OutAttr<Meshes> a_outMesh;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	std::shared_ptr<const possumwood::CGALPolyhedron> inMesh = data.get(a_inMesh);
+	const Meshes& inMeshes = data.get(a_inMesh);
 	const float stopCondition = data.get(a_stopParam);
 	const unsigned algorithmId =
 	    data.get(a_stopCondition).intValue() + data.get(a_cost).intValue() + data.get(a_placement).intValue();
 
-	if(inMesh) {
-		std::unique_ptr<possumwood::CGALPolyhedron> mesh(new possumwood::CGALPolyhedron(*inMesh));
+	Meshes result;
+
+	for(auto inMesh : inMeshes) {
+		std::unique_ptr<possumwood::CGALPolyhedron> mesh(new possumwood::CGALPolyhedron(inMesh.mesh()));
 
 		// this is just horrible - need to find a better way
 		switch(algorithmId) {
@@ -116,10 +121,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		mesh->collect_garbage();
 
-		data.set(a_outMesh, std::shared_ptr<const possumwood::CGALPolyhedron>(mesh.release()));
+		result.addMesh(inMesh.name(), std::move(mesh));
 	}
-	else
-		data.set(a_outMesh, std::shared_ptr<const possumwood::CGALPolyhedron>());
+
+	data.set(a_outMesh, result);
 
 	return dependency_graph::State();
 }

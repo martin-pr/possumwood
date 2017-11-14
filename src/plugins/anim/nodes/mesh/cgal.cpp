@@ -4,41 +4,43 @@
 
 #include "datatypes/skeleton.h"
 #include "datatypes/skinned_mesh.h"
-#include "datatypes/polyhedron.h"
+#include "datatypes/meshes.h"
 #include "cgal.h"
 
 namespace {
 
-dependency_graph::InAttr<std::shared_ptr<const std::vector<anim::SkinnedMesh>>> a_inMeshes;
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::CGALPolyhedron>> a_outMeshes;
+using possumwood::Meshes;
+using possumwood::CGALPolyhedron;
+
+dependency_graph::InAttr<std::shared_ptr<const std::vector<anim::SkinnedMesh>>>
+    a_inMeshes;
+dependency_graph::OutAttr<Meshes> a_outMeshes;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	std::shared_ptr<const std::vector<anim::SkinnedMesh>> meshes = data.get(a_inMeshes);
+	std::shared_ptr<const std::vector<anim::SkinnedMesh>> meshes =
+	    data.get(a_inMeshes);
+
+	Meshes result;
 
 	if(meshes != nullptr) {
-		std::unique_ptr<possumwood::CGALPolyhedron> out(new possumwood::CGALPolyhedron());
-
-		std::size_t counter = 0;
 		for(auto& m : *meshes) {
+			std::unique_ptr<possumwood::CGALPolyhedron> out(
+			    new possumwood::CGALPolyhedron());
+
 			for(auto& v : m.vertices()) {
-				const possumwood::CGALKernel::Point_3 pt(v.pos().x, v.pos().y, v.pos().z);
+				const possumwood::CGALKernel::Point_3 pt(v.pos().x, v.pos().y,
+				                                         v.pos().z);
 				out->add_vertex(pt);
 			}
 
-			for(auto p : m.polygons()) {
-				for(auto& v : p)
-					v += counter;
-
+			for(auto& p : m.polygons())
 				out->add_face(p);
-			}
 
-			counter += m.vertices().size();
+			result.addMesh(m.name(), std::move(out));
 		}
-
-		data.set(a_outMeshes, std::shared_ptr<const possumwood::CGALPolyhedron>(out.release()));
 	}
-	else
-		data.set(a_outMeshes, std::shared_ptr<const possumwood::CGALPolyhedron>());
+
+	data.set(a_outMeshes, result);
 
 	return dependency_graph::State();
 }
@@ -53,5 +55,4 @@ void init(possumwood::Metadata& meta) {
 }
 
 possumwood::NodeImplementation s_impl("anim/mesh/to_cgal", init);
-
 }

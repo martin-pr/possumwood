@@ -2,29 +2,34 @@
 
 #include "possumwood_sdk/datatypes/enum.h"
 
-#include "datatypes/polyhedron.h"
+#include "datatypes/meshes.h"
 
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
 namespace {
 
+using possumwood::Meshes;
+using possumwood::CGALPolyhedron;
+
 typedef possumwood::CGALPolyhedron Mesh;
 
-dependency_graph::InAttr<std::shared_ptr<const Mesh>> a_inMesh;
-dependency_graph::OutAttr<std::shared_ptr<const Mesh>> a_outMesh;
+dependency_graph::InAttr<Meshes> a_inMesh;
+dependency_graph::OutAttr<Meshes> a_outMesh;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const std::shared_ptr<const Mesh> inMesh = data.get(a_inMesh);
+	const Meshes inMeshes = data.get(a_inMesh);
 
-	if(inMesh != nullptr) {
-		std::unique_ptr<Mesh> mesh(new Mesh(*inMesh));
+	Meshes result;
+
+	for(auto& inMesh : inMeshes) {
+		std::unique_ptr<Mesh> mesh(new Mesh(inMesh.mesh()));
 
 		CGAL::Polygon_mesh_processing::stitch_borders(*mesh);
 
-		data.set(a_outMesh, std::shared_ptr<const Mesh>(mesh.release()));
+		result.addMesh(inMesh.name(), std::move(mesh));
 	}
-	else
-		data.set(a_outMesh, std::shared_ptr<const Mesh>());
+
+	data.set(a_outMesh, result);
 
 	return dependency_graph::State();
 }

@@ -1,15 +1,45 @@
 {
     "connections": [
         {
-            "in_node": "draw_1",
+            "in_node": "simplification_0",
+            "in_port": "input",
+            "out_node": "transform_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "simplification_1",
+            "out_port": "output"
+        },
+        {
+            "in_node": "cgal_2",
+            "in_port": "mesh",
+            "out_node": "simplification_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "draw_0",
             "in_port": "vertex_data",
-            "out_node": "cgal_1",
+            "out_node": "cgal_0",
             "out_port": "vertex_data"
         },
         {
             "in_node": "draw_2",
             "in_port": "vertex_data",
             "out_node": "cgal_2",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "simplification_1",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "cgal_1",
             "out_port": "vertex_data"
         },
         {
@@ -29,36 +59,6 @@
             "in_port": "mesh",
             "out_node": "loader_0",
             "out_port": "polyhedron"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "cgal_2",
-            "in_port": "mesh",
-            "out_node": "simplification_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "cgal_1",
-            "in_port": "mesh",
-            "out_node": "simplification_1",
-            "out_port": "output"
-        },
-        {
-            "in_node": "simplification_1",
-            "in_port": "input",
-            "out_node": "transform_0",
-            "out_port": "out_mesh"
-        },
-        {
-            "in_node": "simplification_0",
-            "in_port": "input",
-            "out_node": "transform_1",
-            "out_port": "out_mesh"
         }
     ],
     "nodes": {
@@ -138,7 +138,8 @@
             },
             "name": "loader",
             "ports": {
-                "filename": "stanford_models/bunny.obj"
+                "filename": "stanford_models/bunny.obj",
+                "name": "mesh"
             },
             "type": "cgal/loader"
         },
@@ -154,8 +155,8 @@
             "ports": {
                 "cost": "LindstromTurk_cost",
                 "placement": "LindstromTurk_placement",
-                "stop_condition": "Count_ratio_stop_predicate",
-                "stop_parameter": 0.100000001490116
+                "stop_condition": "Count_stop_predicate",
+                "stop_parameter": 200.0
             },
             "type": "cgal/simplification/simplification"
         },
@@ -171,8 +172,8 @@
             "ports": {
                 "cost": "Edge_length_cost",
                 "placement": "Midpoint_placement",
-                "stop_condition": "Count_ratio_stop_predicate",
-                "stop_parameter": 0.100000001490116
+                "stop_condition": "Count_stop_predicate",
+                "stop_parameter": 200.0
             },
             "type": "cgal/simplification/simplification"
         },
@@ -238,6 +239,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAFwAAACgAAAdQAAAD8AAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADs/wCAAAAAvsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////+wAAAAwAZQBkAGkAdABvAHIAAAADQgAAAL8AAAB3AP///wAAAAEAAAFjAAADs/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAATYAAABZAP////sAAAAGAGwAbwBnAQAAAYoAAAJ3AAAAWQD///8AAAMZAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAFwAAACgAAAdQAAAD8AAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADyPwCAAAAAvsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////+wAAAAwAZQBkAGkAdABvAHIAAAADQgAAAL8AAAB1AP///wAAAAEAAAFjAAADyPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAASAAAABJAP////sAAAAGAGwAbwBnAQAAAWUAAAKkAAAASQD///8AAAMdAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
