@@ -12,6 +12,10 @@
 
 namespace {
 
+// void addVBO(possumwood::VertexData& vd) {
+
+// }
+
 using possumwood::Meshes;
 using possumwood::CGALPolyhedron;
 
@@ -42,9 +46,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// and build the buffers
 	if(triangleCount > 0) {
-		vd->addVBO<Imath::V3f>(
+		vd->addVBO<std::array<float, 3>>(
 		    "position", triangleCount * 3, possumwood::VertexData::kStatic,
-		    [mesh](Imath::V3f* iter, Imath::V3f* end) {
+		    [mesh](std::array<float, 3>* iter, std::array<float, 3>* end) {
 
 			    std::size_t ctr = 0;
 
@@ -67,9 +71,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 						    while(it != vertices.end()) {
 							    auto& p = m.mesh().point(*it);
 
-							    *(iter++) = Imath::V3f(p1[0], p1[1], p1[2]);
-							    *(iter++) = Imath::V3f(p2[0], p2[1], p2[2]);
-							    *(iter++) = Imath::V3f(p[0], p[1], p[2]);
+							    *(iter++) = std::array<float, 3>{{p1[0], p1[1], p1[2]}};
+							    *(iter++) = std::array<float, 3>{{p2[0], p2[1], p2[2]}};
+							    *(iter++) = std::array<float, 3>{{p[0], p[1], p[2]}};
 
 							    ++it;
 
@@ -103,9 +107,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			    "building the VBO.");
 
 		if(normalPropMapCounter == mesh.size()) {
-			vd->addVBO<Imath::V3f>(
+			vd->addVBO<std::array<float, 3>>(
 			    "normal", triangleCount * 3, possumwood::VertexData::kStatic,
-			    [mesh](Imath::V3f* iter, Imath::V3f* end) {
+			    [mesh](std::array<float, 3>* iter, std::array<float, 3>* end) {
 
 				    for(auto& m : mesh) {
 					    auto vertNormals =
@@ -137,9 +141,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 								    while(it != vertices.end()) {
 									    auto& n = vertNormals.first[*it];
 
-									    *(iter++) = Imath::V3f(n1[0], n1[1], n1[2]);
-									    *(iter++) = Imath::V3f(n2[0], n2[1], n2[2]);
-									    *(iter++) = Imath::V3f(n[0], n[1], n[2]);
+									    *(iter++) = std::array<float, 3>{{n1[0], n1[1], n1[2]}};
+									    *(iter++) = std::array<float, 3>{{n2[0], n2[1], n2[2]}};
+									    *(iter++) = std::array<float, 3>{{n[0], n[1], n[2]}};
 
 									    ++it;
 								    }
@@ -162,9 +166,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 								    ++it;
 
 								    while(it != vertices.end()) {
-									    *(iter++) = Imath::V3f(n[0], n[1], n[2]);
-									    *(iter++) = Imath::V3f(n[0], n[1], n[2]);
-									    *(iter++) = Imath::V3f(n[0], n[1], n[2]);
+									    *(iter++) = std::array<float, 3>{{n[0], n[1], n[2]}};
+									    *(iter++) = std::array<float, 3>{{n[0], n[1], n[2]}};
+									    *(iter++) = std::array<float, 3>{{n[0], n[1], n[2]}};
 
 									    ++it;
 								    }
