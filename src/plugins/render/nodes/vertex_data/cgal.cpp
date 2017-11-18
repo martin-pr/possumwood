@@ -130,12 +130,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					        m.mesh()
 					            .property_map<
 					                possumwood::CGALPolyhedron::Vertex_index,
-					                possumwood::CGALKernel::Vector_3>("normals");
+					                std::array<float, 3>>("normals");
 					    auto faceNormals =
 					        m.mesh()
 					            .property_map<
 					                possumwood::CGALPolyhedron::Face_index,
-					                possumwood::CGALKernel::Vector_3>("normals");
+					                std::array<float, 3>>("normals");
 
 					    if(vertNormals.second) {
 						    for(auto fit = m.mesh().faces_begin();
