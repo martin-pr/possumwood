@@ -12,9 +12,60 @@
 
 namespace {
 
-// void addVBO(possumwood::VertexData& vd) {
+template<std::size_t WIDTH, typename T>
+void assignArray(std::array<float, WIDTH>& arr, const T& val) {
+	for(std::size_t a=0;a<WIDTH;++a)
+		arr[a] = val[a];
+}
 
-// }
+template <std::size_t WIDTH, typename T>
+void addVBO(possumwood::VertexData& vd, const std::string& name, const std::string& propertyName,
+            std::size_t triangleCount,
+            const possumwood::Meshes& mesh) {
+
+	vd.addVBO<std::array<float, WIDTH>>(
+	    name, triangleCount * WIDTH, possumwood::VertexData::kStatic,
+	    [mesh, propertyName](std::array<float, WIDTH>* iter, std::array<float, WIDTH>* end) {
+
+		    std::size_t ctr = 0;
+
+		    // iterate over faces
+		    for(auto& m : mesh) {
+			    auto prop =
+			        m.mesh()
+			            .property_map<possumwood::CGALPolyhedron::Vertex_index,
+			                          T>(propertyName.c_str());
+
+			    for(auto it = m.mesh().faces_begin(); it != m.mesh().faces_end(); ++it) {
+				    auto vertices = m.mesh().vertices_around_face(m.mesh().halfedge(*it));
+
+				    if(vertices.size() >= 2) {
+					    auto it = vertices.begin();
+
+					    auto& val1 = prop.first[*it];
+					    ++it;
+
+					    auto& val2 = prop.first[*it];
+					    ++it;
+
+					    while(it != vertices.end()) {
+						    auto& val = prop.first[*it];
+
+						    assignArray(*(iter++), val1);
+						    assignArray(*(iter++), val2);
+						    assignArray(*(iter++), val);
+
+						    ++it;
+
+						    ++ctr;
+					    }
+				    }
+			    }
+			}
+
+		    assert(iter == end);
+		});
+}
 
 using possumwood::Meshes;
 using possumwood::CGALPolyhedron;
@@ -46,44 +97,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// and build the buffers
 	if(triangleCount > 0) {
-		vd->addVBO<std::array<float, 3>>(
-		    "position", triangleCount * 3, possumwood::VertexData::kStatic,
-		    [mesh](std::array<float, 3>* iter, std::array<float, 3>* end) {
-
-			    std::size_t ctr = 0;
-
-			    // iterate over faces
-			    for(auto& m : mesh)
-				    for(auto it = m.mesh().faces_begin();
-				        it != m.mesh().faces_end(); ++it) {
-					    auto vertices =
-					        m.mesh().vertices_around_face(m.mesh().halfedge(*it));
-
-					    if(vertices.size() >= 2) {
-						    auto it = vertices.begin();
-
-						    auto& p1 = m.mesh().point(*it);
-						    ++it;
-
-						    auto& p2 = m.mesh().point(*it);
-						    ++it;
-
-						    while(it != vertices.end()) {
-							    auto& p = m.mesh().point(*it);
-
-							    *(iter++) = std::array<float, 3>{{p1[0], p1[1], p1[2]}};
-							    *(iter++) = std::array<float, 3>{{p2[0], p2[1], p2[2]}};
-							    *(iter++) = std::array<float, 3>{{p[0], p[1], p[2]}};
-
-							    ++it;
-
-							    ++ctr;
-						    }
-					    }
-				    }
-
-			    assert(iter == end);
-			});
+		addVBO<3, possumwood::CGALKernel::Point_3>(*vd, "position", "v:point", triangleCount, mesh);
 
 		unsigned normalPropMapCounter = 0;
 		for(auto& m : mesh) {
