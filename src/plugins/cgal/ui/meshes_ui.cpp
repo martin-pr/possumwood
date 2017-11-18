@@ -1,7 +1,5 @@
 #include "meshes_ui.h"
 
-#include <boost/algorithm/string/join.hpp>
-
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QSizePolicy>

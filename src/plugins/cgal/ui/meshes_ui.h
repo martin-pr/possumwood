@@ -1,5 +1,9 @@
 #pragma once
 
+#include <boost/algorithm/string/join.hpp>
+
+#include <possumwood_sdk/properties/property.h>
+
 #include "cgal.h"
 
 #include <QMetaObject>
@@ -7,8 +11,6 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QDialog>
-
-#include <possumwood_sdk/properties/property.h>
 
 class QComboBox;
 
