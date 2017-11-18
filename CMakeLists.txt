@@ -15,8 +15,9 @@ set(LIBS "")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+set(CMAKE_CXX_STANDARD 14)
 
-add_definitions(-Wall -Werror -std=c++14 -g)
+add_definitions(-Wall -Werror -g)
 
 ###########################################################
 # DEPENDENCIES
