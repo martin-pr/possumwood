@@ -120,25 +120,25 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// remove any existing normals
 		{
-			auto vertNormals = mesh->property_map<CGALPolyhedron::Vertex_index, std::array<float, 3>>("normals");
+			auto vertNormals = mesh->property_map<CGALPolyhedron::Vertex_index, std::array<float, 3>>("vec3:normals");
 			if(vertNormals.second)
 				mesh->remove_property_map(vertNormals.first);
 
-			auto faceNormals = mesh->property_map<CGALPolyhedron::Face_index, std::array<float, 3>>("normals");
+			auto faceNormals = mesh->property_map<CGALPolyhedron::Face_index, std::array<float, 3>>("vec3:normals");
 			if(faceNormals.second)
 				mesh->remove_property_map(faceNormals.first);
 		}
 
 		// request for vertex normals
 		if(mode.value() == "Per-vertex normals") {
-			auto vertNormals = mesh->add_property_map<CGALPolyhedron::Vertex_index, std::array<float, 3>>("normals");
+			auto vertNormals = mesh->add_property_map<CGALPolyhedron::Vertex_index, std::array<float, 3>>("vec3:normals");
 			CGAL::Polygon_mesh_processing::compute_vertex_normals(*mesh, vertNormals.first,
 				CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
 		}
 
 		// request for half-edge (polygon-vertex) normals
 		else if(mode.value() == "Per-face normals") {
-			auto faceNormals = mesh->add_property_map<CGALPolyhedron::Face_index, std::array<float, 3>>("normals");
+			auto faceNormals = mesh->add_property_map<CGALPolyhedron::Face_index, std::array<float, 3>>("vec3:normals");
 			CGAL::Polygon_mesh_processing::compute_face_normals(*mesh, faceNormals.first,
 				CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
 		}

@@ -1,5 +1,7 @@
 #include "cgal/datatypes/meshes.h"
 
+#include <boost/algorithm/string/join.hpp>
+
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
 
@@ -12,56 +14,93 @@
 
 namespace {
 
-template<std::size_t WIDTH, typename T>
+template <std::size_t WIDTH, typename T>
 void assignArray(std::array<float, WIDTH>& arr, const T& val) {
-	for(std::size_t a=0;a<WIDTH;++a)
+	for(std::size_t a = 0; a < WIDTH; ++a)
 		arr[a] = val[a];
 }
 
 template <std::size_t WIDTH, typename T>
-void addVBO(possumwood::VertexData& vd, const std::string& name, const std::string& propertyName,
-            std::size_t triangleCount,
-            const possumwood::Meshes& mesh) {
-
+void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
+                    const std::string& propertyName, std::size_t triangleCount,
+                    const possumwood::Meshes& mesh) {
 	vd.addVBO<std::array<float, WIDTH>>(
 	    name, triangleCount * WIDTH, possumwood::VertexData::kStatic,
-	    [mesh, propertyName](std::array<float, WIDTH>* iter, std::array<float, WIDTH>* end) {
+	    [mesh, propertyName](std::array<float, WIDTH>* iter,
+	                         std::array<float, WIDTH>* end) {
 
 		    std::size_t ctr = 0;
 
-		    // iterate over faces
 		    for(auto& m : mesh) {
-			    auto prop =
-			        m.mesh()
-			            .property_map<possumwood::CGALPolyhedron::Vertex_index,
-			                          T>(propertyName.c_str());
+			    auto vertProp =
+			        m.mesh().property_map<possumwood::CGALPolyhedron::Vertex_index, T>(
+			            propertyName.c_str());
 
-			    for(auto it = m.mesh().faces_begin(); it != m.mesh().faces_end(); ++it) {
-				    auto vertices = m.mesh().vertices_around_face(m.mesh().halfedge(*it));
+			    auto faceProp =
+			        m.mesh().property_map<possumwood::CGALPolyhedron::Face_index, T>(
+			            propertyName.c_str());
 
-				    if(vertices.size() >= 2) {
-					    auto it = vertices.begin();
+			    // vertex props, handled by polygon-triangle
+			    if(vertProp.second) {
+				    for(auto it = m.mesh().faces_begin(); it != m.mesh().faces_end();
+				        ++it) {
+					    auto vertices =
+					        m.mesh().vertices_around_face(m.mesh().halfedge(*it));
 
-					    auto& val1 = prop.first[*it];
-					    ++it;
+					    if(vertices.size() >= 2) {
+						    auto it = vertices.begin();
 
-					    auto& val2 = prop.first[*it];
-					    ++it;
-
-					    while(it != vertices.end()) {
-						    auto& val = prop.first[*it];
-
-						    assignArray(*(iter++), val1);
-						    assignArray(*(iter++), val2);
-						    assignArray(*(iter++), val);
-
+						    auto& val1 = vertProp.first[*it];
 						    ++it;
 
-						    ++ctr;
+						    auto& val2 = vertProp.first[*it];
+						    ++it;
+
+						    while(it != vertices.end()) {
+							    auto& val = vertProp.first[*it];
+
+							    assignArray(*(iter++), val1);
+							    assignArray(*(iter++), val2);
+							    assignArray(*(iter++), val);
+
+							    ++it;
+
+							    ++ctr;
+						    }
 					    }
 				    }
 			    }
-			}
+
+			    // face props, constant for all triangles of a face
+			    else if(faceProp.second) {
+				    // iterate over faces
+				    for(auto fit = m.mesh().faces_begin(); fit != m.mesh().faces_end();
+				        ++fit) {
+					    auto vertices =
+					        m.mesh().vertices_around_face(m.mesh().halfedge(*fit));
+
+					    auto& n = faceProp.first[*fit];
+
+					    if(vertices.size() >= 2) {
+						    auto it = vertices.begin();
+
+						    ++it;
+						    ++it;
+
+						    while(it != vertices.end()) {
+							    assignArray(*(iter++), n);
+							    assignArray(*(iter++), n);
+							    assignArray(*(iter++), n);
+
+							    ++it;
+						    }
+					    }
+				    }
+			    }
+			    else
+				    throw std::runtime_error("Property " + propertyName +
+				                             " not found as vertex or face property.");
+		    }
 
 		    assert(iter == end);
 		});
@@ -69,6 +108,11 @@ void addVBO(possumwood::VertexData& vd, const std::string& name, const std::stri
 
 using possumwood::Meshes;
 using possumwood::CGALPolyhedron;
+
+// properties to be skipped during handling - either internal to CGAL, or handled
+// separately
+static const std::set<std::string> skipProperties{
+    {"f:connectivity", "f:removed", "v:connectivity", "v:removed", "v:point"}};
 
 dependency_graph::OutAttr<std::shared_ptr<const possumwood::VertexData>> a_vd;
 dependency_graph::InAttr<Meshes> a_mesh;
@@ -79,17 +123,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const Meshes mesh = data.get(a_mesh);
 
 	// we're drawing triangles
-	std::unique_ptr<possumwood::VertexData> vd(
-	    new possumwood::VertexData(GL_TRIANGLES));
+	std::unique_ptr<possumwood::VertexData> vd(new possumwood::VertexData(GL_TRIANGLES));
 
 	// first, figure out how many triangles we have
 	//   there has to be a better way to do this, come on
 	std::size_t triangleCount = 0;
 	for(auto& m : mesh)
-		for(auto it = m.mesh().faces_begin(); it != m.mesh().faces_end();
-		    ++it) {
-			auto vertices =
-			    m.mesh().vertices_around_face(m.mesh().halfedge(*it));
+		for(auto it = m.mesh().faces_begin(); it != m.mesh().faces_end(); ++it) {
+			auto vertices = m.mesh().vertices_around_face(m.mesh().halfedge(*it));
 
 			if(vertices.size() > 2)
 				triangleCount += (vertices.size() - 2);
@@ -97,103 +138,63 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// and build the buffers
 	if(triangleCount > 0) {
-		addVBO<3, possumwood::CGALKernel::Point_3>(*vd, "position", "v:point", triangleCount, mesh);
+		// transfer the position data
+		addPerPointVBO<3, possumwood::CGALKernel::Point_3>(*vd, "position", "v:point",
+		                                                   triangleCount, mesh);
 
-		unsigned normalPropMapCounter = 0;
+		// count the properties - only properties consistent between all meshes can be
+		// transfered. We don't care about the type of the properties, though - face or
+		// vertex are both fine
+		std::map<std::string, std::size_t> propertyCounters;
 		for(auto& m : mesh) {
 			auto vertPropList =
 			    m.mesh().properties<possumwood::CGALPolyhedron::Vertex_index>();
-			if(std::find(vertPropList.begin(), vertPropList.end(), "normals") !=
-			   vertPropList.end())
-				++normalPropMapCounter;
-			else {
-				auto facePropList =
-				    m.mesh().properties<possumwood::CGALPolyhedron::Face_index>();
-				if(std::find(facePropList.begin(), facePropList.end(), "normals") !=
-				   facePropList.end())
-					++normalPropMapCounter;
+			for(auto& vp : vertPropList)
+				++propertyCounters[vp];
+
+			auto facePropList =
+			    m.mesh().properties<possumwood::CGALPolyhedron::Face_index>();
+			for(auto& fp : facePropList)
+				++propertyCounters[fp];
+		}
+
+		// and transfer all properties that are common to all meshes
+		std::set<std::string> ignoredProperties, inconsistentProperties;
+		for(auto& pc : propertyCounters)
+			if(skipProperties.find(pc.first) == skipProperties.end()) {
+				if(pc.second == mesh.size()) {
+					// analyze the name - we have no better way of determining the
+					// datatype in the property
+					auto colonPos = pc.first.find(":");
+					if(colonPos != std::string::npos) {
+						const std::string type = pc.first.substr(0, colonPos);
+						const std::string name = pc.first.substr(colonPos + 1);
+
+						// yep, the types are hardcoded for now, sorry :(
+						if(type == "vec3")
+							addPerPointVBO<3, std::array<float, 3>>(*vd, name, pc.first,
+							                                        triangleCount, mesh);
+						else
+							ignoredProperties.insert(pc.first);
+					}
+					else if(pc.second < mesh.size())
+						ignoredProperties.insert(pc.first);
+				}
+				else
+					inconsistentProperties.insert(pc.first + "(" +
+					                              std::to_string(pc.second) + "/" +
+					                              std::to_string(mesh.size()) + ")");
 			}
-		}
 
-		if(normalPropMapCounter != 0 && normalPropMapCounter != mesh.size())
+		if(!inconsistentProperties.empty())
 			result.addWarning(
-			    "Inconsistent normals between meshes - normals are ignored when "
-			    "building the VBO.");
+			    "The following properties were not common to all meshes, and had to be "
+			    "ignored:\n" +
+			    boost::algorithm::join(inconsistentProperties, ", "));
 
-		if(normalPropMapCounter == mesh.size()) {
-			vd->addVBO<std::array<float, 3>>(
-			    "normal", triangleCount * 3, possumwood::VertexData::kStatic,
-			    [mesh](std::array<float, 3>* iter, std::array<float, 3>* end) {
-
-				    for(auto& m : mesh) {
-					    auto vertNormals =
-					        m.mesh()
-					            .property_map<
-					                possumwood::CGALPolyhedron::Vertex_index,
-					                std::array<float, 3>>("normals");
-					    auto faceNormals =
-					        m.mesh()
-					            .property_map<
-					                possumwood::CGALPolyhedron::Face_index,
-					                std::array<float, 3>>("normals");
-
-					    if(vertNormals.second) {
-						    for(auto fit = m.mesh().faces_begin();
-						        fit != m.mesh().faces_end(); ++fit) {
-							    auto vertices = m.mesh().vertices_around_face(
-							        m.mesh().halfedge(*fit));
-
-							    if(vertices.size() >= 2) {
-								    auto it = vertices.begin();
-
-								    auto& n1 = vertNormals.first[*it];
-								    ++it;
-
-								    auto& n2 = vertNormals.first[*it];
-								    ++it;
-
-								    while(it != vertices.end()) {
-									    auto& n = vertNormals.first[*it];
-
-									    *(iter++) = std::array<float, 3>{{n1[0], n1[1], n1[2]}};
-									    *(iter++) = std::array<float, 3>{{n2[0], n2[1], n2[2]}};
-									    *(iter++) = std::array<float, 3>{{n[0], n[1], n[2]}};
-
-									    ++it;
-								    }
-							    }
-						    }
-					    }
-					    else if(faceNormals.second) {
-						    // iterate over faces
-						    for(auto fit = m.mesh().faces_begin();
-						        fit != m.mesh().faces_end(); ++fit) {
-							    auto vertices = m.mesh().vertices_around_face(
-							        m.mesh().halfedge(*fit));
-
-							    auto& n = faceNormals.first[*fit];
-
-							    if(vertices.size() >= 2) {
-								    auto it = vertices.begin();
-
-								    ++it;
-								    ++it;
-
-								    while(it != vertices.end()) {
-									    *(iter++) = std::array<float, 3>{{n[0], n[1], n[2]}};
-									    *(iter++) = std::array<float, 3>{{n[0], n[1], n[2]}};
-									    *(iter++) = std::array<float, 3>{{n[0], n[1], n[2]}};
-
-									    ++it;
-								    }
-							    }
-						    }
-					    }
-				    }
-
-				    assert(iter == end);
-				});
-		}
+		if(!ignoredProperties.empty())
+			result.addWarning("The following property types were not recognized:\n" +
+			                  boost::algorithm::join(ignoredProperties, ", "));
 	}
 
 	data.set(a_vd, std::shared_ptr<const possumwood::VertexData>(vd.release()));

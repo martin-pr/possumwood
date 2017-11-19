@@ -1,16 +1,22 @@
 {
     "connections": [
         {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "tetrahedron_0",
-            "out_port": "mesh"
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
         },
         {
-            "in_node": "cgal_1",
-            "in_port": "mesh",
-            "out_node": "normals_generator_1",
-            "out_port": "output"
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "cgal_1",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "make_vec3_0",
@@ -31,16 +37,10 @@
             "out_port": "time"
         },
         {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "cgal_1",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "normals_generator_1",
+            "out_port": "output"
         },
         {
             "in_node": "tetrahedron_0",
@@ -49,10 +49,10 @@
             "out_port": "out"
         },
         {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "tetrahedron_0",
+            "out_port": "mesh"
         },
         {
             "in_node": "normals_generator_1",
@@ -88,8 +88,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 830.196891465856,
-                    "y": 381.568754286776
+                    "x": 830.196899414062,
+                    "y": 381.568756103516
                 }
             },
             "name": "draw",
@@ -99,8 +99,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 803.634391465856,
-                    "y": 550.318754286776
+                    "x": 803.634399414062,
+                    "y": 550.318725585938
                 }
             },
             "name": "draw",
@@ -116,7 +116,8 @@
             },
             "name": "loader",
             "ports": {
-                "filename": "stanford_models/bunny.obj"
+                "filename": "stanford_models/bunny.obj",
+                "name": "mesh"
             },
             "type": "cgal/loader"
         },
@@ -204,6 +205,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAYAAAAAAAAB1MAAAPjAAAAGQAAABcAAAdSAAAD3wAAAAAAAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADe/wCAAAAAfwAAABOAAADewAAAJIBAAAa+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAApwD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAvgAAABGAP///wAAAAEAAAEsAAADe/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAAe0AAABZAP////sAAAAGAGwAbwBnAQAAAkEAAAGIAAAAWQD///8AAAMKAAADewAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAXAAAAAAAAB1IAAAPjAAAAGAAAABcAAAdRAAAD3wAAAAAAAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADiPwCAAAAAfwAAABBAAADiAAAAIsBAAAV+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAlAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAvgAAAA4AP///wAAAAEAAAEsAAADiPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAAfUAAABJAP////sAAAAGAGwAbwBnAQAAAjoAAAGPAAAASQD///8AAAMOAAADiAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

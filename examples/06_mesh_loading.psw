@@ -1,52 +1,40 @@
 {
     "connections": [
         {
-            "in_node": "texture_0",
-            "in_port": "in_uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
+            "in_node": "skin_remap_regex_0",
+            "in_port": "skeleton",
+            "out_node": "bone_rename_0",
+            "out_port": "out_skeleton"
         },
         {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
+            "in_node": "skin_remap_regex_1",
+            "in_port": "skeleton",
+            "out_node": "bone_rename_0",
+            "out_port": "out_skeleton"
         },
         {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "to_cgal_0",
-            "out_port": "out_cgal"
+            "in_node": "remove_unskinned_1",
+            "in_port": "in_skeleton",
+            "out_node": "bone_rename_0",
+            "out_port": "out_skeleton"
         },
         {
-            "in_node": "remove_unskinned_0",
+            "in_node": "skin_remap_regex_1",
             "in_port": "in_meshes",
-            "out_node": "subset_0",
+            "out_node": "skin_remap_regex_0",
             "out_port": "out_meshes"
         },
         {
-            "in_node": "stitch_borders_0",
-            "in_port": "input",
-            "out_node": "transform_0",
-            "out_port": "out_mesh"
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
         },
         {
-            "in_node": "remove_unskinned_0",
-            "in_port": "in_skeleton",
-            "out_node": "x_0",
-            "out_port": "skeleton"
-        },
-        {
-            "in_node": "subset_0",
-            "in_port": "in_meshes",
-            "out_node": "x_0",
-            "out_port": "meshes"
-        },
-        {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "stitch_borders_0",
-            "out_port": "output"
+            "in_node": "float_0",
+            "in_port": "in_uniforms",
+            "out_node": "texture_0",
+            "out_port": "out_uniforms"
         },
         {
             "in_node": "to_cgal_0",
@@ -62,57 +50,15 @@
         },
         {
             "in_node": "draw_0",
-            "in_port": "uniforms",
-            "out_node": "float_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "remove_unskinned_1",
-            "in_port": "in_meshes",
-            "out_node": "skin_remap_regex_1",
-            "out_port": "out_meshes"
-        },
-        {
-            "in_node": "bone_rename_1",
-            "in_port": "in_skeleton",
-            "out_node": "remove_unskinned_1",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "skin_0",
-            "in_port": "meshes",
-            "out_node": "remove_unskinned_1",
-            "out_port": "out_meshes"
-        },
-        {
-            "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
             "out_port": "program"
         },
         {
-            "in_node": "texture_0",
-            "in_port": "value",
-            "out_node": "load_0",
-            "out_port": "image"
-        },
-        {
-            "in_node": "display_1",
-            "in_port": "skeleton",
-            "out_node": "edit_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "bone_rename_0",
-            "in_port": "in_skeleton",
-            "out_node": "remove_unskinned_0",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "skin_remap_regex_0",
-            "in_port": "in_meshes",
-            "out_node": "remove_unskinned_0",
-            "out_port": "out_meshes"
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
         },
         {
             "in_node": "skin_0",
@@ -127,9 +73,105 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "skin_remap_regex_1",
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "to_cgal_0",
+            "out_port": "out_cgal"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "stitch_borders_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "bone_rename_0",
+            "in_port": "in_skeleton",
+            "out_node": "remove_unskinned_0",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "skin_remap_regex_0",
             "in_port": "in_meshes",
-            "out_node": "skin_remap_regex_0",
+            "out_node": "remove_unskinned_0",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "remove_unskinned_0",
+            "in_port": "in_skeleton",
+            "out_node": "x_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "subset_0",
+            "in_port": "in_meshes",
+            "out_node": "x_0",
+            "out_port": "meshes"
+        },
+        {
+            "in_node": "remove_unskinned_0",
+            "in_port": "in_meshes",
+            "out_node": "subset_0",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "display_1",
+            "in_port": "skeleton",
+            "out_node": "edit_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "bone_rename_1",
+            "in_port": "in_skeleton",
+            "out_node": "remove_unskinned_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "skin_0",
+            "in_port": "meshes",
+            "out_node": "remove_unskinned_1",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "stitch_borders_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "remove_unskinned_1",
+            "in_port": "in_meshes",
+            "out_node": "skin_remap_regex_1",
             "out_port": "out_meshes"
         },
         {
@@ -142,48 +184,6 @@
             "in_node": "skin_0",
             "in_port": "base_skeleton",
             "out_node": "bone_rename_1",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "float_0",
-            "in_port": "in_uniforms",
-            "out_node": "texture_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "skin_remap_regex_0",
-            "in_port": "skeleton",
-            "out_node": "bone_rename_0",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "skin_remap_regex_1",
-            "in_port": "skeleton",
-            "out_node": "bone_rename_0",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "remove_unskinned_1",
-            "in_port": "in_skeleton",
-            "out_node": "bone_rename_0",
             "out_port": "out_skeleton"
         }
     ],
@@ -520,8 +520,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1328.75607749379,
-                    "y": 639.959531471657
+                    "x": 1328.75610351562,
+                    "y": 639.959533691406
                 }
             },
             "name": "stitch_borders",
@@ -612,7 +612,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normal;                // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normal, 0)).xyz;\n}"
+                "source": "#version 130\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n}"
             },
             "type": "render/vertex_shader"
         },
