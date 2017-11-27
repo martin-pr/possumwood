@@ -139,5 +139,13 @@ struct GLSLTraits<std::array<float, WIDTH>> {
 	static void applyUniform(GLint attr, const float& val) { Apply<WIDTH>::doApplyUniform(attr, val); };
 };
 
+template<std::size_t WIDTH>
+struct GLSLTraits<std::array<double, WIDTH>> {
+	constexpr static unsigned width() { return WIDTH; };
+	constexpr static GLenum type() { return GL_DOUBLE; };
+	constexpr static const char* typeString() { return Apply<WIDTH>::typeString(); };
+	static void applyUniform(GLint attr, const float& val) { Apply<WIDTH>::doApplyUniform(attr, val); };
+};
+
 
 }

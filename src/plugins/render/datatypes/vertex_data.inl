@@ -6,28 +6,28 @@
 
 namespace possumwood {
 
-template <typename T>
+template <typename T, std::size_t WIDTH>
 void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateType& updateType,
-                        std::function<void(T* begin, T* end)> updateFn) {
+                        std::function<void(Buffer<T, WIDTH>&)> updateFn) {
 	assert(size > 0);
 	assert(m_vbos.empty() || m_vbos[0].size == size);
 
-	std::unique_ptr<VBO<T>> vbo(new VBO<T>());
+	std::unique_ptr<VBO<T, WIDTH>> vbo(new VBO<T, WIDTH>(1, size));
 
 	VBOHolder holder;
 	holder.name = name;
-	holder.glslType = std::string("in ") + GLSLTraits<T>::typeString() + " " + name + ";";
+	holder.glslType = std::string("in ") + GLSLTraits<std::array<T, WIDTH>>::typeString() + " " + name + ";";
 	holder.size = size;
 	holder.updateType = updateType;
-	holder.data.resize(size * sizeof(T));
+	// holder.data.resize(size * sizeof(T));
 
-	T* beginPtr = (T*)&(holder.data[0]);
-	T* endPtr = beginPtr + size;
-	VBO<T>* vboPtr = vbo.get();
+	VBO<T, WIDTH>* vboPtr = vbo.get();
 
-	holder.update = [beginPtr, endPtr, vboPtr, updateFn]() {
-		updateFn(beginPtr, endPtr);
-		vboPtr->init(beginPtr, endPtr);
+	holder.update = [size, vboPtr, updateFn]() {
+		Buffer<T, WIDTH> buffer(1, size);
+
+		updateFn(buffer);
+		vboPtr->init(buffer);
 	};
 
 	holder.vbo = std::move(vbo);

@@ -8,6 +8,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include "buffer.h"
+
 namespace possumwood {
 
 class VBOBase : public boost::noncopyable {
@@ -25,7 +27,8 @@ class VBOBase : public boost::noncopyable {
 	protected:
 		void setInitialised(bool val);
 
-		virtual unsigned width() const = 0;
+		virtual std::size_t arraySize() const = 0;
+		virtual std::size_t width() const = 0;
 		virtual GLenum type() const = 0;
 
 	private:
@@ -33,26 +36,27 @@ class VBOBase : public boost::noncopyable {
 		bool m_initialised;
 };
 
-/// encapsulation of a single vertex data buffer
-template<typename T>
+/// encapsulation of a single vertex data buffer.
+/// Type T can be either float or int; WIDTH describes the number of elements per array item
+template<typename T, std::size_t WIDTH>
 class VBO : public VBOBase {
 	public:
-		VBO();
+		VBO(std::size_t arraySize, std::size_t vertexCount);
 
 		/// builds a buffer from begin and end iterator - copies the data into a
 		///   buffer that can be sent to the GPU. Iterator has to be dereferenceable
 		///   to T (i.e., ITERATOR::value type has to be T, or assignable to T)
-		template<typename ITERATOR>
-		void init(ITERATOR begin, ITERATOR end);
-
-		/// builds a VBO out of an initializer list
-		void init(std::initializer_list<T> l);
+		void init(Buffer<T, WIDTH>&);
 
 		~VBO() final;
 
 	protected:
-		virtual unsigned width() const override;
+		virtual std::size_t arraySize() const override;
+		virtual std::size_t width() const override;
 		virtual GLenum type() const override;
+
+	private:
+		std::size_t m_arraySize, m_vertexCount;
 };
 
 }

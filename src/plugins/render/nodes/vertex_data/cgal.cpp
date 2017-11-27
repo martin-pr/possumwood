@@ -15,21 +15,15 @@
 namespace {
 
 template <std::size_t WIDTH, typename T>
-void assignArray(std::array<float, WIDTH>& arr, const T& val) {
-	for(std::size_t a = 0; a < WIDTH; ++a)
-		arr[a] = val[a];
-}
-
-template <std::size_t WIDTH, typename T>
 void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
                     const std::string& propertyName, std::size_t triangleCount,
                     const possumwood::Meshes& mesh) {
-	vd.addVBO<std::array<float, WIDTH>>(
+	vd.addVBO<float, WIDTH>(
 	    name, triangleCount * WIDTH, possumwood::VertexData::kStatic,
-	    [mesh, propertyName](std::array<float, WIDTH>* iter,
-	                         std::array<float, WIDTH>* end) {
-
+	    [mesh, propertyName](possumwood::Buffer<float, WIDTH>& buffer) {
 		    std::size_t ctr = 0;
+
+		    auto iter = buffer.begin();
 
 		    for(auto& m : mesh) {
 			    auto vertProp =
@@ -42,10 +36,10 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 
 			    // vertex props, handled by polygon-triangle
 			    if(vertProp.second) {
-				    for(auto it = m.mesh().faces_begin(); it != m.mesh().faces_end();
-				        ++it) {
+				    for(auto fit = m.mesh().faces_begin(); fit != m.mesh().faces_end();
+				        ++fit) {
 					    auto vertices =
-					        m.mesh().vertices_around_face(m.mesh().halfedge(*it));
+					        m.mesh().vertices_around_face(m.mesh().halfedge(*fit));
 
 					    if(vertices.size() >= 2) {
 						    auto it = vertices.begin();
@@ -59,9 +53,9 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 						    while(it != vertices.end()) {
 							    auto& val = vertProp.first[*it];
 
-							    assignArray(*(iter++), val1);
-							    assignArray(*(iter++), val2);
-							    assignArray(*(iter++), val);
+							    (*(iter++))[0] = val1;
+							    (*(iter++))[0] = val2;
+							    (*(iter++))[0] = val;
 
 							    ++it;
 
@@ -88,9 +82,9 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 						    ++it;
 
 						    while(it != vertices.end()) {
-							    assignArray(*(iter++), n);
-							    assignArray(*(iter++), n);
-							    assignArray(*(iter++), n);
+							    (*(iter++))[0] = n;
+							    (*(iter++))[0] = n;
+							    (*(iter++))[0] = n;
 
 							    ++it;
 						    }
@@ -102,7 +96,7 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 				                             " not found as vertex or face property.");
 		    }
 
-		    assert(iter == end);
+		    assert(iter == buffer.end());
 		});
 }
 

@@ -6,8 +6,9 @@
 
 namespace possumwood {
 
-VertexData::VertexData(GLenum drawElementType) : m_drawElementType(drawElementType), m_currentTime(
-		std::numeric_limits<float>::infinity()) {
+VertexData::VertexData(GLenum drawElementType)
+    : m_drawElementType(drawElementType),
+      m_currentTime(std::numeric_limits<float>::infinity()) {
 }
 
 void VertexData::use(GLuint programId) const {
@@ -55,5 +56,4 @@ std::string VertexData::glslDeclaration() const {
 std::size_t VertexData::vboCount() const {
 	return m_vbos.size();
 }
-
 }

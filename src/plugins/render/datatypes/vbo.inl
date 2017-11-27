@@ -6,32 +6,25 @@
 #include <cassert>
 
 #include "glsl_traits.h"
+#include "buffer.inl"
 
 namespace possumwood {
 
-template<typename T>
-VBO<T>::VBO() {
+template<typename T, std::size_t WIDTH>
+VBO<T, WIDTH>::VBO(std::size_t arraySize, std::size_t vertexCount) : m_arraySize(arraySize), m_vertexCount(vertexCount) {
 }
 
-template<typename T>
-VBO<T>::~VBO() {
+template<typename T, std::size_t WIDTH>
+VBO<T, WIDTH>::~VBO() {
 }
 
-template<typename T>
-template<typename ITERATOR>
-void VBO<T>::init(ITERATOR begin, ITERATOR end) {
+template<typename T, std::size_t WIDTH>
+void VBO<T, WIDTH>::init(Buffer<T, WIDTH>& buffer) {
 	// bind the buffer to work with
 	glBindBuffer(GL_ARRAY_BUFFER, id());
 
-	// build a vector to hold the data
-	std::vector<T> data;
-	while(begin != end) {
-		data.push_back(*begin);
-		++begin;
-	}
-
 	// synchronously transfer these
-	glBufferData(GL_ARRAY_BUFFER, sizeof(T)*data.size(), &data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, buffer.size()*buffer.arraySize()*WIDTH*sizeof(T), &(buffer[0][0][0]), GL_STATIC_DRAW);
 
 	// unbind the buffer to work with
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -39,32 +32,19 @@ void VBO<T>::init(ITERATOR begin, ITERATOR end) {
 	setInitialised(true);
 }
 
-/// builds a VBO out of an initializer list
-template<typename T>
-void VBO<T>::init(std::initializer_list<T> l) {
-	// bind the buffer to work with
-	glBindBuffer(GL_ARRAY_BUFFER, id());
-
-	// build a vector to hold the data
-	std::vector<T> data(l);
-
-	// synchronously transfer these
-	glBufferData(GL_ARRAY_BUFFER, sizeof(T)*data.size(), &data[0], GL_STATIC_DRAW);
-
-	// unbind the buffer to work with
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	setInitialised(true);
+template<typename T, std::size_t WIDTH>
+std::size_t VBO<T, WIDTH>::arraySize() const {
+	return m_arraySize;
 }
 
-template<typename T>
-unsigned VBO<T>::width() const {
-	return GLSLTraits<T>::width();
+template<typename T, std::size_t WIDTH>
+std::size_t VBO<T, WIDTH>::width() const {
+	return WIDTH;
 }
 
-template<typename T>
-GLenum VBO<T>::type() const {
-	return GLSLTraits<T>::type();
+template<typename T, std::size_t WIDTH>
+GLenum VBO<T, WIDTH>::type() const {
+	return GLSLTraits<std::array<T, WIDTH>>::type();
 }
 
 }
