@@ -85,7 +85,9 @@ class Buffer : public boost::noncopyable {
 		typename std::vector<Item>::iterator m_it;
 		std::size_t m_rowSize;
 
-		friend class Buffer::iterator;
+		template<typename BASE, typename RESULT>
+		friend class iterator_base;
+
 		friend class Buffer;
 	};
 

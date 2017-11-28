@@ -6,6 +6,54 @@
 
 namespace possumwood {
 
+namespace {
+	template<typename T>
+	struct VertexDataTypeCommon {};
+
+	template<>
+	struct VertexDataTypeCommon<float> {
+		static constexpr GLenum type() { return GL_FLOAT; }
+		protected:
+			static constexpr const char* prefix() { return ""; }
+	};
+
+	template<>
+	struct VertexDataTypeCommon<double> {
+		static constexpr GLenum type() { return GL_DOUBLE; }
+		protected:
+			static constexpr const char* prefix() { return "" /*"d"*/; }
+	};
+
+
+	template<typename T, std::size_t WIDTH>
+	struct VertexDataType {};
+
+	template<>
+	struct VertexDataType<float, 1> : public VertexDataTypeCommon<float> {
+		static std::string glslType() { return "float"; }
+	};
+
+	template<>
+	struct VertexDataType<double, 1> : public VertexDataTypeCommon<double> {
+		static std::string glslType() { return "double"; }
+	};
+
+	template<typename T>
+	struct VertexDataType<T, 2> : public VertexDataTypeCommon<T> {
+		static std::string glslType() { return VertexDataTypeCommon<T>::prefix() + std::string("vec2"); }
+	};
+
+	template<typename T>
+	struct VertexDataType<T, 3> : public VertexDataTypeCommon<T> {
+		static std::string glslType() { return VertexDataTypeCommon<T>::prefix() + std::string("vec3"); }
+	};
+
+	template<typename T>
+	struct VertexDataType<T, 4> : public VertexDataTypeCommon<T> {
+		static std::string glslType() { return VertexDataTypeCommon<T>::prefix() + std::string("vec4"); }
+	};
+}
+
 template <typename T, std::size_t WIDTH>
 void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateType& updateType,
                         std::function<void(Buffer<T, WIDTH>&)> updateFn) {
@@ -16,10 +64,9 @@ void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateT
 
 	VBOHolder holder;
 	holder.name = name;
-	holder.glslType = std::string("in ") + GLSLTraits<std::array<T, WIDTH>>::typeString() + " " + name + ";";
+	holder.glslType = std::string("in ") + VertexDataType<T, WIDTH>::glslType() + " " + name + ";";
 	holder.size = size;
 	holder.updateType = updateType;
-	// holder.data.resize(size * sizeof(T));
 
 	VBO<T, WIDTH>* vboPtr = vbo.get();
 

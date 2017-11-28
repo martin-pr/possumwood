@@ -46,8 +46,6 @@ class VertexData : public boost::noncopyable {
 		std::size_t size;
 		UpdateType updateType;
 		std::function<void()> update;
-
-		// std::vector<unsigned char> data;
 	};
 
 	std::vector<VBOHolder> m_vbos;
