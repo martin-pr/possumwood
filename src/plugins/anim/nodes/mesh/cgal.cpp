@@ -23,6 +23,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	Meshes result;
 
 	if(meshes != nullptr) {
+		// compute the maximum number of skinning vertices
+		std::size_t boneCount = 0;
+		for(auto& m : *meshes)
+			boneCount = std::max(boneCount, m.boneCount());
+
 		for(auto& m : *meshes) {
 			std::unique_ptr<possumwood::CGALPolyhedron> out(
 			    new possumwood::CGALPolyhedron());
@@ -35,6 +40,23 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			for(auto& p : m.polygons())
 				out->add_face(p);
+
+			// make a vector property for skinning
+			const std::string skinPropName = "float[" + std::to_string(boneCount) + "]:skinning";
+
+			auto skinProp = out->add_property_map<CGALPolyhedron::Vertex_index, std::vector<float>>(skinPropName);
+
+			std::size_t vertexIndex = 0;
+			for(auto& v : out->vertices()) {
+				std::vector<float> tmp(boneCount, 0.0f);
+				for(auto& w : m.vertices()[vertexIndex])
+					tmp[w.first] = w.second;
+
+				skinProp.first[v] = tmp;
+
+				++vertexIndex;
+			}
+
 
 			result.addMesh(m.name(), std::move(out));
 		}
