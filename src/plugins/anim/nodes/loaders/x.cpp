@@ -225,7 +225,7 @@ void readSkinWeights(anim::Tokenizer& tokenizer, anim::SkinnedMesh& result, std:
 			else
 				tokenizer >> ";";
 
-			result.vertices()[vertices[v]].addWeight(boneId->second, weight);
+			result.vertices().addVertexWeight(vertices[v], boneId->second, weight);
 		}
 
 		// skip a matrix at the end

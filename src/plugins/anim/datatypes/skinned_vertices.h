@@ -22,9 +22,7 @@ class SkinnedVertices {
 		const Imath::V3f& pos() const;
 		void setPos(const Imath::V3f& p);
 
-		void addWeight(const std::size_t& bone, const float& w);
 		std::size_t size() const;
-		std::pair<std::size_t, float>& operator[](std::size_t weightIndex);
 		const std::pair<std::size_t, float>& operator[](std::size_t weightIndex) const;
 
 		typedef std::vector<std::pair<std::size_t, float>>::const_iterator const_iterator;
@@ -36,8 +34,12 @@ class SkinnedVertices {
 		iterator end();
 
 	  private:
+		void addWeight(const std::size_t& bone, const float& w);
+
 		Imath::V3f m_pos;
 		std::vector<std::pair<std::size_t, float>> m_weights;
+
+		friend class SkinnedVertices;
 	};
 
 	Vertex& add(const Imath::V3f& pos,
@@ -56,8 +58,13 @@ class SkinnedVertices {
 	iterator begin();
 	iterator end();
 
+	std::size_t boneCount() const;
+	/// a slightly weird API to allow boneCount update
+	void addVertexWeight(std::size_t vertexIndex, std::size_t boneIndex, float weight);
+
   protected:
   private:
 	std::vector<Vertex> m_vertices;
+	std::size_t m_boneCount;
 };
 }

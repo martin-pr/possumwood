@@ -1,8 +1,10 @@
 #include "skinned_vertices.h"
 
+#include <cassert>
+
 namespace anim {
 
-SkinnedVertices::SkinnedVertices() {
+SkinnedVertices::SkinnedVertices() : m_boneCount(0) {
 }
 
 SkinnedVertices::Vertex::Vertex(const Imath::V3f& pos,
@@ -24,10 +26,6 @@ void SkinnedVertices::Vertex::addWeight(const std::size_t& bone, const float& w)
 
 std::size_t SkinnedVertices::Vertex::size() const {
 	return m_weights.size();
-}
-
-std::pair<std::size_t, float>& SkinnedVertices::Vertex::operator[](std::size_t weightIndex) {
-	return m_weights[weightIndex];
 }
 
 const std::pair<std::size_t, float>& SkinnedVertices::Vertex::operator[](std::size_t weightIndex) const {
@@ -53,6 +51,10 @@ SkinnedVertices::Vertex::iterator SkinnedVertices::Vertex::end() {
 SkinnedVertices::Vertex& SkinnedVertices::add(const Imath::V3f& pos,
                                               const std::initializer_list<std::pair<std::size_t, float>>& weights) {
 	m_vertices.push_back(Vertex(pos, weights));
+
+	for(auto& w : m_vertices.back())
+		m_boneCount = std::max(m_boneCount, w.first + 1);
+
 	return m_vertices.back();
 }
 
@@ -83,4 +85,16 @@ SkinnedVertices::iterator SkinnedVertices::begin() {
 SkinnedVertices::iterator SkinnedVertices::end() {
 	return m_vertices.end();
 }
+
+std::size_t SkinnedVertices::boneCount() const {
+	return m_boneCount;
+}
+
+void SkinnedVertices::addVertexWeight(std::size_t vertexIndex, std::size_t boneIndex, float weight) {
+	assert(m_vertices.size() > vertexIndex);
+	m_vertices[vertexIndex].addWeight(boneIndex, weight);
+
+	m_boneCount = std::max(m_boneCount, boneIndex+1);
+}
+
 }
