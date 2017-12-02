@@ -44,6 +44,13 @@ std::size_t VertexData::size() const {
 	return m_vbos[0].size;
 }
 
+std::size_t VertexData::arraySize() const {
+	if(m_vbos.empty())
+		return 0;
+
+	return m_vbos[0].arraySize;
+}
+
 std::string VertexData::glslDeclaration() const {
 	std::stringstream result;
 

@@ -22,7 +22,7 @@ class VertexData : public boost::noncopyable {
 	/// adds a generic VBO with an update functor.
 	/// T can be either float or int, and WIDTH should be between 1 and 4
 	template <typename T, std::size_t WIDTH>
-	void addVBO(const std::string& name, std::size_t size, const UpdateType& updateType,
+	void addVBO(const std::string& name, std::size_t size, std::size_t arraySize, const UpdateType& updateType,
 	            std::function<void(Buffer<T, WIDTH>&)> updateFn);
 
 	/// updates and uses the program
@@ -33,6 +33,8 @@ class VertexData : public boost::noncopyable {
 
 	/// returns the size of this vertex data object (number of vertices to be drawn)
 	std::size_t size() const;
+	/// returns the number of array elements per vertex (1 = not using arrays)
+	std::size_t arraySize() const;
 
 	/// returns the GLSL declaration of data in this VertexData object
 	std::string glslDeclaration() const;
@@ -43,7 +45,7 @@ class VertexData : public boost::noncopyable {
 	struct VBOHolder {
 		std::string name, glslType;
 		std::unique_ptr<VBOBase> vbo;
-		std::size_t size;
+		std::size_t size, arraySize;
 		UpdateType updateType;
 		std::function<void()> update;
 	};

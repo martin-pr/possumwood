@@ -55,7 +55,7 @@ namespace {
 }
 
 template <typename T, std::size_t WIDTH>
-void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateType& updateType,
+void VertexData::addVBO(const std::string& name, std::size_t size, std::size_t arraySize, const UpdateType& updateType,
                         std::function<void(Buffer<T, WIDTH>&)> updateFn) {
 	assert(size > 0);
 	assert(m_vbos.empty() || m_vbos[0].size == size);
@@ -66,6 +66,7 @@ void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateT
 	holder.name = name;
 	holder.glslType = std::string("in ") + VertexDataType<T, WIDTH>::glslType() + " " + name + ";";
 	holder.size = size;
+	holder.arraySize = size;
 	holder.updateType = updateType;
 
 	VBO<T, WIDTH>* vboPtr = vbo.get();

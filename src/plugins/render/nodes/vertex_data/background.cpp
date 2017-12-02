@@ -20,7 +20,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	vd->addVBO<float, 3>(
 		"position",
-		4,
+		4, 1,
 		possumwood::VertexData::kStatic,
 		[](possumwood::Buffer<float, 3>& buffer) {
 			buffer[0][0] = Imath::V3f(-1,-1,1);
@@ -32,7 +32,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	vd->addVBO<double, 3>(
 		"iNearPositionVert",
-		4,
+		4, 1,
 		possumwood::VertexData::kPerDraw,
 		[](possumwood::Buffer<double, 3>& buffer) {
 			GLint viewport[4];
@@ -54,7 +54,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	vd->addVBO<double, 3>(
 		"iFarPositionVert",
-		4,
+		4, 1,
 		possumwood::VertexData::kPerDraw,
 		[](possumwood::Buffer<double, 3>& buffer) {
 			GLint viewport[4];

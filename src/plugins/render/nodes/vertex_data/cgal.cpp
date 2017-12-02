@@ -17,9 +17,9 @@ namespace {
 template <std::size_t WIDTH, typename T>
 void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
                     const std::string& propertyName, std::size_t triangleCount,
-                    const possumwood::Meshes& mesh) {
+                    std::size_t arraySize, const possumwood::Meshes& mesh) {
 	vd.addVBO<float, WIDTH>(
-	    name, triangleCount * WIDTH, possumwood::VertexData::kStatic,
+	    name, triangleCount * WIDTH, arraySize, possumwood::VertexData::kStatic,
 	    [mesh, propertyName](possumwood::Buffer<float, WIDTH>& buffer) {
 		    std::size_t ctr = 0;
 
@@ -134,7 +134,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(triangleCount > 0) {
 		// transfer the position data
 		addPerPointVBO<3, possumwood::CGALKernel::Point_3>(*vd, "position", "v:point",
-		                                                   triangleCount, mesh);
+		                                                   triangleCount, 1, mesh);
 
 		// count the properties - only properties consistent between all meshes can be
 		// transfered. We don't care about the type of the properties, though - face or
@@ -166,8 +166,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 						// yep, the types are hardcoded for now, sorry :(
 						if(type == "vec3")
-							addPerPointVBO<3, std::array<float, 3>>(*vd, name, pc.first,
-							                                        triangleCount, mesh);
+							addPerPointVBO<3, std::array<float, 3>>(
+							    *vd, name, pc.first, triangleCount, 1, mesh);
 						else
 							ignoredProperties.insert(pc.first);
 					}
