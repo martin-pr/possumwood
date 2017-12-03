@@ -16,13 +16,15 @@ class VertexData : public boost::noncopyable {
   public:
 	VertexData(GLenum drawElementType);
 
-	/// type of update - static, per drawing, per frame
-	enum UpdateType { kStatic = 1, kPerDraw = 2, kPerFrame = 3 };
+	/// type of update - static (updated with the DAG), per drawing (updated on each frame
+	/// - usable only for camera-dependent data)
+	enum UpdateType { kStatic = 1, kPerDraw = 2 };
 
 	/// adds a generic VBO with an update functor.
 	/// T can be either float or int, and WIDTH should be between 1 and 4
 	template <typename T, std::size_t WIDTH>
-	void addVBO(const std::string& name, std::size_t size, std::size_t arraySize, const UpdateType& updateType,
+	void addVBO(const std::string& name, std::size_t size, std::size_t arraySize,
+	            const UpdateType& updateType,
 	            std::function<void(Buffer<T, WIDTH>&)> updateFn);
 
 	/// updates and uses the program
@@ -52,7 +54,6 @@ class VertexData : public boost::noncopyable {
 
 	std::vector<VBOHolder> m_vbos;
 	GLenum m_drawElementType;
-	mutable float m_currentTime;
 };
 
 template <>
