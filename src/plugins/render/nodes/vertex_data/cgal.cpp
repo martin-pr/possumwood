@@ -96,6 +96,34 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 		});
 }
 
+struct VBOName {
+	std::string name, type;
+	std::size_t arraySize;
+};
+
+VBOName CGALType(const std::string& t) {
+	VBOName result;
+	result.arraySize = 0;
+
+	auto colonPos = t.find(":");
+	if(colonPos != std::string::npos) {
+		result.type = t.substr(0, colonPos);
+		result.name = t.substr(colonPos + 1);
+		result.arraySize = 1;
+
+		assert(colonPos > 0);
+		if(result.type.back() == ']') {
+			auto bracketPos = t.find("[");
+			assert(bracketPos != std::string::npos);
+
+			result.arraySize = std::stoi(result.type.substr(bracketPos+1, result.type.length()-bracketPos-2));
+			result.type = result.type.substr(0, bracketPos);
+		}
+	}
+
+	return result;
+}
+
 using possumwood::Meshes;
 using possumwood::CGALPolyhedron;
 
@@ -153,17 +181,22 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(auto& pc : propertyCounters)
 			if(skipProperties.find(pc.first) == skipProperties.end()) {
 				if(pc.second == mesh.size()) {
-					// analyze the name - we have no better way of determining the
-					// datatype in the property
-					auto colonPos = pc.first.find(":");
-					if(colonPos != std::string::npos) {
-						const std::string type = pc.first.substr(0, colonPos);
-						const std::string name = pc.first.substr(colonPos + 1);
-
+					// analyse the type
+					VBOName name = CGALType(pc.first);
+					if(name.arraySize > 0) {
 						// yep, the types are hardcoded for now, sorry :(
-						if(type == "vec3")
-							addPerPointVBO<3, std::array<float, 3>>(
-							    *vd, name, pc.first, triangleCount, 1, mesh);
+						if(name.type == "vec3" && name.arraySize == 1)
+ 							addPerPointVBO<3, std::array<float, 3>>(
+							    *vd, name.name, pc.first, triangleCount, name.arraySize, mesh);
+
+						else if(name.type == "float" && name.arraySize == 1)
+							addPerPointVBO<1, float>(
+							    *vd, name.name, pc.first, triangleCount, name.arraySize, mesh);
+
+						else if(name.type == "float")
+							addPerPointVBO<1, std::vector<float>>(
+							    *vd, name.name, pc.first, triangleCount, name.arraySize, mesh);
+
 						else
 							ignoredProperties.insert(pc.first);
 					}

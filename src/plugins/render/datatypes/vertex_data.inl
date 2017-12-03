@@ -39,6 +39,20 @@ namespace {
 			return "unknown";
 		}
 	};
+
+	template<typename T>
+	std::string makeVBOName(std::size_t arraySize, std::size_t width, const std::string& name) {
+		std::stringstream ss;
+		ss << "in " << VertexDataType<T>::glslType(width) + " " + name;
+
+		assert(arraySize > 0);
+		if(arraySize > 1)
+			ss << "[" << arraySize << "]";
+
+		ss << ";";
+
+		return ss.str();
+	}
 }
 
 template <typename T>
@@ -51,9 +65,9 @@ void VertexData::addVBO(const std::string& name, std::size_t size, std::size_t a
 
 	VBOHolder holder;
 	holder.name = name;
-	holder.glslType = std::string("in ") + VertexDataType<T>::glslType(width) + " " + name + ";";
+	holder.glslType = makeVBOName<T>(arraySize, width, name);
 	holder.size = size;
-	holder.arraySize = size;
+	holder.arraySize = arraySize;
 	holder.width = width;
 	holder.updateType = updateType;
 

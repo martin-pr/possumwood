@@ -27,6 +27,12 @@ class Buffer : public boost::noncopyable {
 			return *this;
 		};
 
+		Element& operator=(const float& src) {
+			*m_begin = src;
+
+			return *this;
+		};
+
 		T* ptr() {
 			return &(*m_begin);
 		}
