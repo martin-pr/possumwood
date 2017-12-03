@@ -18,12 +18,10 @@ template <std::size_t WIDTH, typename T>
 void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
                     const std::string& propertyName, std::size_t triangleCount,
                     std::size_t arraySize, const possumwood::Meshes& mesh) {
-	vd.addVBO<float, WIDTH>(
-	    name, triangleCount * WIDTH, arraySize, possumwood::VertexData::kStatic,
-	    [mesh, propertyName](possumwood::Buffer<float, WIDTH>& buffer) {
-		    std::size_t ctr = 0;
-
-		    auto iter = buffer.begin();
+	vd.addVBO<float>(
+	    name, triangleCount * 3, arraySize, WIDTH, possumwood::VertexData::kStatic,
+	    [mesh, propertyName](possumwood::Buffer<float>& buffer) {
+		    std::size_t index = 0;
 
 		    for(auto& m : mesh) {
 			    auto vertProp =
@@ -53,13 +51,11 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 						    while(it != vertices.end()) {
 							    auto& val = vertProp.first[*it];
 
-							    (*(iter++))[0] = val1;
-							    (*(iter++))[0] = val2;
-							    (*(iter++))[0] = val;
+							    buffer.element(index++, 0) = val1;
+							    buffer.element(index++, 0) = val2;
+							    buffer.element(index++, 0) = val;
 
 							    ++it;
-
-							    ++ctr;
 						    }
 					    }
 				    }
@@ -82,9 +78,9 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 						    ++it;
 
 						    while(it != vertices.end()) {
-							    (*(iter++))[0] = n;
-							    (*(iter++))[0] = n;
-							    (*(iter++))[0] = n;
+							    buffer.element(index++, 0) = n;
+							    buffer.element(index++, 0) = n;
+							    buffer.element(index++, 0) = n;
 
 							    ++it;
 						    }
@@ -96,7 +92,7 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 				                             " not found as vertex or face property.");
 		    }
 
-		    assert(iter == buffer.end());
+		    assert(index == buffer.vertexCount());
 		});
 }
 

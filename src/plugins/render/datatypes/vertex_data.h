@@ -22,10 +22,10 @@ class VertexData : public boost::noncopyable {
 
 	/// adds a generic VBO with an update functor.
 	/// T can be either float or int, and WIDTH should be between 1 and 4
-	template <typename T, std::size_t WIDTH>
-	void addVBO(const std::string& name, std::size_t size, std::size_t arraySize,
+	template <typename T>
+	void addVBO(const std::string& name, std::size_t size, std::size_t arraySize, std::size_t width,
 	            const UpdateType& updateType,
-	            std::function<void(Buffer<T, WIDTH>&)> updateFn);
+	            std::function<void(Buffer<T>&)> updateFn);
 
 	/// updates and uses the program
 	void use(GLuint programId) const;
@@ -47,7 +47,7 @@ class VertexData : public boost::noncopyable {
 	struct VBOHolder {
 		std::string name, glslType;
 		std::unique_ptr<VBOBase> vbo;
-		std::size_t size, arraySize;
+		std::size_t size, arraySize, width;
 		UpdateType updateType;
 		std::function<void()> update;
 	};

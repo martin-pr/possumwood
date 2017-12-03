@@ -8,71 +8,59 @@ namespace possumwood {
 
 namespace {
 	template<typename T>
-	struct VertexDataTypeCommon {};
-
-	template<>
-	struct VertexDataTypeCommon<float> {
-		static constexpr GLenum type() { return GL_FLOAT; }
-		protected:
-			static constexpr const char* prefix() { return ""; }
-	};
-
-	template<>
-	struct VertexDataTypeCommon<double> {
-		static constexpr GLenum type() { return GL_DOUBLE; }
-		protected:
-			static constexpr const char* prefix() { return "" /*"d"*/; }
-	};
-
-
-	template<typename T, std::size_t WIDTH>
 	struct VertexDataType {};
 
 	template<>
-	struct VertexDataType<float, 1> : public VertexDataTypeCommon<float> {
-		static std::string glslType() { return "float"; }
+	struct VertexDataType<float> {
+		static std::string glslType(std::size_t width) {
+			switch(width) {
+				case 1:	return "float";
+				case 2:	return "vec2";
+				case 3:	return "vec3";
+				case 4:	return "vec4";
+			};
+
+			assert(false);
+			return "unknown";
+		}
 	};
 
 	template<>
-	struct VertexDataType<double, 1> : public VertexDataTypeCommon<double> {
-		static std::string glslType() { return "double"; }
-	};
+	struct VertexDataType<double> {
+		static std::string glslType(std::size_t width) {
+			switch(width) {
+				case 1:	return "double";
+				case 2:	return "vec2" /*"dvec2"*/;
+				case 3:	return "vec3" /*"dvec3"*/;
+				case 4:	return "vec4" /*"dvec4"*/;
+			};
 
-	template<typename T>
-	struct VertexDataType<T, 2> : public VertexDataTypeCommon<T> {
-		static std::string glslType() { return VertexDataTypeCommon<T>::prefix() + std::string("vec2"); }
-	};
-
-	template<typename T>
-	struct VertexDataType<T, 3> : public VertexDataTypeCommon<T> {
-		static std::string glslType() { return VertexDataTypeCommon<T>::prefix() + std::string("vec3"); }
-	};
-
-	template<typename T>
-	struct VertexDataType<T, 4> : public VertexDataTypeCommon<T> {
-		static std::string glslType() { return VertexDataTypeCommon<T>::prefix() + std::string("vec4"); }
+			assert(false);
+			return "unknown";
+		}
 	};
 }
 
-template <typename T, std::size_t WIDTH>
-void VertexData::addVBO(const std::string& name, std::size_t size, std::size_t arraySize, const UpdateType& updateType,
-                        std::function<void(Buffer<T, WIDTH>&)> updateFn) {
+template <typename T>
+void VertexData::addVBO(const std::string& name, std::size_t size, std::size_t arraySize, std::size_t width, const UpdateType& updateType,
+                        std::function<void(Buffer<T>&)> updateFn) {
 	assert(size > 0);
 	assert(m_vbos.empty() || m_vbos[0].size == size);
 
-	std::unique_ptr<VBO<T, WIDTH>> vbo(new VBO<T, WIDTH>(1, size));
+	std::unique_ptr<VBO<T>> vbo(new VBO<T>(size, arraySize, width));
 
 	VBOHolder holder;
 	holder.name = name;
-	holder.glslType = std::string("in ") + VertexDataType<T, WIDTH>::glslType() + " " + name + ";";
+	holder.glslType = std::string("in ") + VertexDataType<T>::glslType(width) + " " + name + ";";
 	holder.size = size;
 	holder.arraySize = size;
+	holder.width = width;
 	holder.updateType = updateType;
 
-	VBO<T, WIDTH>* vboPtr = vbo.get();
+	VBO<T>* vboPtr = vbo.get();
 
-	holder.update = [size, vboPtr, updateFn]() {
-		Buffer<T, WIDTH> buffer(1, size);
+	holder.update = [width, arraySize, size, vboPtr, updateFn]() {
+		Buffer<T> buffer(width, arraySize, size);
 
 		updateFn(buffer);
 		vboPtr->init(buffer);

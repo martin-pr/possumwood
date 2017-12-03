@@ -18,23 +18,23 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// we're drawing quads
 	std::unique_ptr<possumwood::VertexData> vd(new possumwood::VertexData(GL_QUADS));
 
-	vd->addVBO<float, 3>(
+	vd->addVBO<float>(
 		"position",
-		4, 1,
+		4, 1, 3,
 		possumwood::VertexData::kStatic,
-		[](possumwood::Buffer<float, 3>& buffer) {
-			buffer[0][0] = Imath::V3f(-1,-1,1);
-			buffer[1][0] = Imath::V3f(1,-1,1);
-			buffer[2][0] = Imath::V3f(1,1,1);
-			buffer[3][0] = Imath::V3f(-1,1,1);
+		[](possumwood::Buffer<float>& buffer) {
+			buffer.element(0,0) = Imath::V3f(-1,-1,1);
+			buffer.element(1,0) = Imath::V3f(1,-1,1);
+			buffer.element(2,0) = Imath::V3f(1,1,1);
+			buffer.element(3,0) = Imath::V3f(-1,1,1);
 		}
 	);
 
-	vd->addVBO<double, 3>(
+	vd->addVBO<double>(
 		"iNearPositionVert",
-		4, 1,
+		4, 1, 3,
 		possumwood::VertexData::kPerDraw,
-		[](possumwood::Buffer<double, 3>& buffer) {
+		[](possumwood::Buffer<double>& buffer) {
 			GLint viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
 
@@ -45,18 +45,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			glGetDoublev(GL_PROJECTION_MATRIX, projection);
 
 			// points on the near plane, corresponding to each fragment (useful for raytracing)
-			gluUnProject(0, 0, 0, modelview, projection, viewport, &buffer[0][0][0], &buffer[0][0][1], &buffer[0][0][2]);
-			gluUnProject(viewport[2], 0, 0, modelview, projection, viewport, &buffer[1][0][0], &buffer[1][0][1], &buffer[1][0][2]);
-			gluUnProject(viewport[2], viewport[3], 0, modelview, projection, viewport, &buffer[2][0][0], &buffer[2][0][1], &buffer[2][0][2]);
-			gluUnProject(0, viewport[3], 0, modelview, projection, viewport, &buffer[3][0][0], &buffer[3][0][1], &buffer[3][0][2]);
+			double* ptr = buffer.element(0,0).ptr();
+			gluUnProject(0, 0, 0, modelview, projection, viewport, ptr, ptr+1, ptr+2);
+			gluUnProject(viewport[2], 0, 0, modelview, projection, viewport, ptr+3, ptr+4, ptr+5);
+			gluUnProject(viewport[2], viewport[3], 0, modelview, projection, viewport, ptr+6, ptr+7, ptr+8);
+			gluUnProject(0, viewport[3], 0, modelview, projection, viewport, ptr+9, ptr+10, ptr+11);
 		}
 	);
 
-	vd->addVBO<double, 3>(
+	vd->addVBO<double>(
 		"iFarPositionVert",
-		4, 1,
+		4, 1, 3,
 		possumwood::VertexData::kPerDraw,
-		[](possumwood::Buffer<double, 3>& buffer) {
+		[](possumwood::Buffer<double>& buffer) {
 			GLint viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
 
@@ -67,10 +68,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			glGetDoublev(GL_PROJECTION_MATRIX, projection);
 
 			// points on the near plane, corresponding to each fragment (useful for raytracing)
-			gluUnProject(0, 0, 1, modelview, projection, viewport, &buffer[0][0][0], &buffer[0][0][1], &buffer[0][0][2]);
-			gluUnProject(viewport[2], 0, 1, modelview, projection, viewport, &buffer[1][0][0], &buffer[1][0][1], &buffer[1][0][2]);
-			gluUnProject(viewport[2], viewport[3], 1, modelview, projection, viewport, &buffer[2][0][0], &buffer[2][0][1], &buffer[2][0][2]);
-			gluUnProject(0, viewport[3], 1, modelview, projection, viewport, &buffer[3][0][0], &buffer[3][0][1], &buffer[3][0][2]);
+			double* ptr = buffer.element(0,0).ptr();
+			gluUnProject(0, 0, 1, modelview, projection, viewport, ptr, ptr+1, ptr+2);
+			gluUnProject(viewport[2], 0, 1, modelview, projection, viewport, ptr+3, ptr+4, ptr+5);
+			gluUnProject(viewport[2], viewport[3], 1, modelview, projection, viewport, ptr+6, ptr+7, ptr+8);
+			gluUnProject(0, viewport[3], 1, modelview, projection, viewport, ptr+9, ptr+10, ptr+11);
 		}
 	);
 
