@@ -225,7 +225,9 @@ void readSkinWeights(anim::Tokenizer& tokenizer, anim::SkinnedMesh& result, std:
 			else
 				tokenizer >> ";";
 
-			result.vertices().addVertexWeight(vertices[v], boneId->second, weight);
+			anim::Skinning skin(result.vertices()[vertices[v]].skinning());
+			skin.addWeight(boneId->second, weight);
+			result.vertices()[vertices[v]].setSkinning(skin);
 		}
 
 		// skip a matrix at the end
@@ -492,9 +494,12 @@ doLoad(const boost::filesystem::path& filename) {
 
 		// and translate all skinning indices in all meshes to correspond to the Skeleton instance in result
 		for(auto& m : result->models)
-			for(auto& v : m.vertices())
-				for(auto& s : v)
-					s = std::make_pair(boneIndices[s.first], s.second);
+			for(auto& v : m.vertices()) {
+				anim::Skinning skin = v.skinning();
+				for(auto& s : skin)
+					s = anim::Skinning::Weight(boneIndices[s.bone], s.weight);
+				v.setSkinning(skin);
+			}
 	}
 
 	return result;

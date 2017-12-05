@@ -36,7 +36,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		frame[0].tr().translation += tr;
 
 		for(auto& i : data.get(a_editorData))
-			frame[i.first].tr() = frame[i.first].tr() * i.second;
+			if(i.first < frame.size())
+				frame[i.first].tr() = frame[i.first].tr() * i.second;
 	}
 
 	data.set(a_outFrame, frame);

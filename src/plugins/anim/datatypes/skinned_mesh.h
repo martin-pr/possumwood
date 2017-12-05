@@ -27,8 +27,6 @@ class SkinnedMesh {
 	Polygons& polygons();
 	const Polygons& polygons() const;
 
-	std::size_t boneCount() const;
-
   protected:
   private:
 	std::string m_name;

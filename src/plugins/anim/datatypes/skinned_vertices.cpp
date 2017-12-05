@@ -4,12 +4,8 @@
 
 namespace anim {
 
-SkinnedVertices::SkinnedVertices() : m_boneCount(0) {
-}
-
-SkinnedVertices::Vertex::Vertex(const Imath::V3f& pos,
-                                const std::initializer_list<std::pair<std::size_t, float>>& weights)
-    : m_pos(pos), m_weights(weights) {
+SkinnedVertices::Vertex::Vertex(const Imath::V3f& pos, const Skinning& skin)
+    : m_pos(pos), m_skinning(skin) {
 }
 
 const Imath::V3f& SkinnedVertices::Vertex::pos() const {
@@ -20,40 +16,17 @@ void SkinnedVertices::Vertex::setPos(const Imath::V3f& p) {
 	m_pos = p;
 }
 
-void SkinnedVertices::Vertex::addWeight(const std::size_t& bone, const float& w) {
-	m_weights.push_back(std::make_pair(bone, w));
+const Skinning& SkinnedVertices::Vertex::skinning() const {
+	return m_skinning;
 }
 
-std::size_t SkinnedVertices::Vertex::size() const {
-	return m_weights.size();
-}
-
-const std::pair<std::size_t, float>& SkinnedVertices::Vertex::operator[](std::size_t weightIndex) const {
-	return m_weights[weightIndex];
-}
-
-SkinnedVertices::Vertex::const_iterator SkinnedVertices::Vertex::begin() const {
-	return m_weights.begin();
-}
-
-SkinnedVertices::Vertex::const_iterator SkinnedVertices::Vertex::end() const {
-	return m_weights.end();
-}
-
-SkinnedVertices::Vertex::iterator SkinnedVertices::Vertex::begin() {
-	return m_weights.begin();
-}
-
-SkinnedVertices::Vertex::iterator SkinnedVertices::Vertex::end() {
-	return m_weights.end();
+void SkinnedVertices::Vertex::setSkinning(const Skinning& skin) {
+	m_skinning = skin;
 }
 
 SkinnedVertices::Vertex& SkinnedVertices::add(const Imath::V3f& pos,
-                                              const std::initializer_list<std::pair<std::size_t, float>>& weights) {
-	m_vertices.push_back(Vertex(pos, weights));
-
-	for(auto& w : m_vertices.back())
-		m_boneCount = std::max(m_boneCount, w.first + 1);
+                                              const Skinning& skin) {
+	m_vertices.push_back(Vertex(pos, skin));
 
 	return m_vertices.back();
 }
@@ -84,17 +57,6 @@ SkinnedVertices::iterator SkinnedVertices::begin() {
 
 SkinnedVertices::iterator SkinnedVertices::end() {
 	return m_vertices.end();
-}
-
-std::size_t SkinnedVertices::boneCount() const {
-	return m_boneCount;
-}
-
-void SkinnedVertices::addVertexWeight(std::size_t vertexIndex, std::size_t boneIndex, float weight) {
-	assert(m_vertices.size() > vertexIndex);
-	m_vertices[vertexIndex].addWeight(boneIndex, weight);
-
-	m_boneCount = std::max(m_boneCount, boneIndex+1);
 }
 
 }

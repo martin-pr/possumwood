@@ -14,6 +14,8 @@ using possumwood::CGALPolyhedron;
 
 dependency_graph::InAttr<std::shared_ptr<const std::vector<anim::SkinnedMesh>>>
     a_inMeshes;
+
+dependency_graph::InAttr<unsigned> a_skinningCount;
 dependency_graph::OutAttr<Meshes> a_outMeshes;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -23,11 +25,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	Meshes result;
 
 	if(meshes != nullptr) {
-		// compute the maximum number of skinning vertices
-		std::size_t boneCount = 0;
-		for(auto& m : *meshes)
-			boneCount = std::max(boneCount, m.boneCount());
-
 		for(auto& m : *meshes) {
 			std::unique_ptr<possumwood::CGALPolyhedron> out(
 			    new possumwood::CGALPolyhedron());
@@ -42,17 +39,31 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				out->add_face(p);
 
 			// make a vector property for skinning
-			const std::string skinPropName = "float[" + std::to_string(boneCount) + "]:skinning";
+			const std::string skinWeightsPropName = "float[" + std::to_string(data.get(a_skinningCount)) + "]:skinningWeights";
+			const std::string skinIndicesPropName = "int[" + std::to_string(data.get(a_skinningCount)) + "]:skinningIndices";
 
-			auto skinProp = out->add_property_map<CGALPolyhedron::Vertex_index, std::vector<float>>(skinPropName);
+			auto skinWeightsProp = out->add_property_map<CGALPolyhedron::Vertex_index, std::vector<float>>(skinWeightsPropName);
+			auto skinIndicesProp = out->add_property_map<CGALPolyhedron::Vertex_index, std::vector<std::size_t>>(skinIndicesPropName);
 
 			std::size_t vertexIndex = 0;
 			for(auto& v : out->vertices()) {
-				std::vector<float> tmp(boneCount, 0.0f);
-				for(auto& w : m.vertices()[vertexIndex])
-					tmp[w.first] = w.second;
+				std::vector<float> weights(data.get(a_skinningCount), 0.0f);
+				std::vector<std::size_t> indices(data.get(a_skinningCount), 0);
 
-				skinProp.first[v] = tmp;
+				anim::Skinning skin = m.vertices()[vertexIndex].skinning();
+				skin.limitInfluenceCount(data.get(a_skinningCount));
+				assert(skin.size() <= data.get(a_skinningCount));
+
+				std::size_t ctr = 0;
+				for(auto& w : skin) {
+					indices[ctr] = w.bone;
+					weights[ctr] = w.weight;
+
+					++ctr;
+				}
+
+				skinWeightsProp.first[v] = weights;
+				skinIndicesProp.first[v] = indices;
 
 				++vertexIndex;
 			}
@@ -69,9 +80,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inMeshes, "in_meshes");
+	meta.addAttribute(a_skinningCount, "skinning_count", 4u);
 	meta.addAttribute(a_outMeshes, "out_cgal");
 
 	meta.addInfluence(a_inMeshes, a_outMeshes);
+	meta.addInfluence(a_skinningCount, a_outMeshes);
 
 	meta.setCompute(compute);
 }

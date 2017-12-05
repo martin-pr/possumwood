@@ -37,8 +37,4 @@ const Polygons& SkinnedMesh::polygons() const {
 	return m_polygons;
 }
 
-std::size_t SkinnedMesh::boneCount() const {
-	return m_vertices.boneCount();
-}
-
 }
