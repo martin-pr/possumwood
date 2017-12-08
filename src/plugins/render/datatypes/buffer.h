@@ -10,10 +10,9 @@ namespace possumwood {
 template <typename T>
 class Buffer : public boost::noncopyable {
   public:
-	Buffer(std::size_t width, std::size_t arrSize, std::size_t vertexCount);
+	Buffer(std::size_t width, std::size_t vertexCount);
 
 	std::size_t vertexCount() const;
-	std::size_t arraySize() const;
 	std::size_t width() const;
 
 	/// A simple single-element assignable holder, providing a slightly nicer API
@@ -48,9 +47,9 @@ class Buffer : public boost::noncopyable {
 		friend class Buffer;
 	};
 
-	Element element(std::size_t vertexIndex, std::size_t arrayIndex) {
+	Element element(std::size_t vertexIndex) {
 		const std::size_t offset =
-		    vertexIndex * m_arraySize * m_width + arrayIndex * m_width;
+		    vertexIndex * m_width;
 		assert(offset < m_data.size());
 
 		auto it = m_data.begin() + offset;
@@ -59,7 +58,7 @@ class Buffer : public boost::noncopyable {
 
   protected:
   private:
-	std::size_t m_width, m_arraySize, m_vertexCount;
+	std::size_t m_width, m_vertexCount;
 	std::vector<T> m_data;
 };
 }

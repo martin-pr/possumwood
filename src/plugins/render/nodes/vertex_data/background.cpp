@@ -20,19 +20,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	vd->addVBO<float>(
 		"position",
-		4, 1, 3,
+		4, 3,
 		possumwood::VertexData::kStatic,
 		[](possumwood::Buffer<float>& buffer) {
-			buffer.element(0,0) = Imath::V3f(-1,-1,1);
-			buffer.element(1,0) = Imath::V3f(1,-1,1);
-			buffer.element(2,0) = Imath::V3f(1,1,1);
-			buffer.element(3,0) = Imath::V3f(-1,1,1);
+			buffer.element(0) = Imath::V3f(-1,-1,1);
+			buffer.element(1) = Imath::V3f(1,-1,1);
+			buffer.element(2) = Imath::V3f(1,1,1);
+			buffer.element(3) = Imath::V3f(-1,1,1);
 		}
 	);
 
 	vd->addVBO<double>(
 		"iNearPositionVert",
-		4, 1, 3,
+		4, 3,
 		possumwood::VertexData::kPerDraw,
 		[](possumwood::Buffer<double>& buffer) {
 			GLint viewport[4];
@@ -45,7 +45,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			glGetDoublev(GL_PROJECTION_MATRIX, projection);
 
 			// points on the near plane, corresponding to each fragment (useful for raytracing)
-			double* ptr = buffer.element(0,0).ptr();
+			double* ptr = buffer.element(0).ptr();
 			gluUnProject(0, 0, 0, modelview, projection, viewport, ptr, ptr+1, ptr+2);
 			gluUnProject(viewport[2], 0, 0, modelview, projection, viewport, ptr+3, ptr+4, ptr+5);
 			gluUnProject(viewport[2], viewport[3], 0, modelview, projection, viewport, ptr+6, ptr+7, ptr+8);
@@ -55,7 +55,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	vd->addVBO<double>(
 		"iFarPositionVert",
-		4, 1, 3,
+		4, 3,
 		possumwood::VertexData::kPerDraw,
 		[](possumwood::Buffer<double>& buffer) {
 			GLint viewport[4];
@@ -68,7 +68,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			glGetDoublev(GL_PROJECTION_MATRIX, projection);
 
 			// points on the near plane, corresponding to each fragment (useful for raytracing)
-			double* ptr = buffer.element(0,0).ptr();
+			double* ptr = buffer.element(0).ptr();
 			gluUnProject(0, 0, 1, modelview, projection, viewport, ptr, ptr+1, ptr+2);
 			gluUnProject(viewport[2], 0, 1, modelview, projection, viewport, ptr+3, ptr+4, ptr+5);
 			gluUnProject(viewport[2], viewport[3], 1, modelview, projection, viewport, ptr+6, ptr+7, ptr+8);

@@ -404,13 +404,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1462.845703125,
+                    "x": 1463.845703125,
                     "y": 405.5322265625
                 }
             },
             "name": "fragment_shader",
             "ports": {
-                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nin vec3 vertexNormal;\nin float skinning[87];\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\t//color = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n\tcolor = vec4(0,0,0,1);\n\tfor(int a=0;a<87;++a) {\n\t\tcolor[a%3] += skinning[a];\n\t}\n}\n"
+                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nin vec3 vertexNormal;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\tcolor = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n}\n"
             },
             "type": "render/fragment_shader"
         },
@@ -572,6 +572,9 @@
                 }
             },
             "name": "to_cgal",
+            "ports": {
+                "skinning_count": 4
+            },
             "type": "anim/mesh/to_cgal"
         },
         "transform_0": {
@@ -612,7 +615,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 150\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\n\nin float skinning[87];\nout float vertexSkinning[87];\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n\n\tvertexSkinning = skinning;\n}"
+                "source": "#version 150\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n}"
             },
             "type": "render/vertex_shader"
         },
@@ -648,5 +651,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALLAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAnsAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAABagAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABvgAAAkMAAAB3AP////sAAAAGAGwAbwBnAAAAAbMAAAJWAAAAWQD///8AAAIuAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALLAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAnsAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAABbwAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABwwAAAj4AAAB3AP////sAAAAGAGwAbwBnAAAAAbMAAAJWAAAAWQD///8AAAIuAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

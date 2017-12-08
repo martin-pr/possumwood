@@ -27,7 +27,6 @@ class VBOBase : public boost::noncopyable {
 	protected:
 		void setInitialised(bool val);
 
-		virtual std::size_t arraySize() const = 0;
 		virtual std::size_t width() const = 0;
 		virtual GLenum type() const = 0;
 
@@ -41,7 +40,7 @@ class VBOBase : public boost::noncopyable {
 template<typename T>
 class VBO : public VBOBase {
 	public:
-		VBO(std::size_t vertexCount, std::size_t arraySize, std::size_t width);
+		VBO(std::size_t vertexCount, std::size_t width);
 
 		/// builds a buffer from begin and end iterator - copies the data into a
 		///   buffer that can be sent to the GPU. Iterator has to be dereferenceable
@@ -51,12 +50,11 @@ class VBO : public VBOBase {
 		~VBO() final;
 
 	protected:
-		virtual std::size_t arraySize() const override;
 		virtual std::size_t width() const override;
 		virtual GLenum type() const override;
 
 	private:
-		std::size_t m_vertexCount, m_arraySize, m_width;
+		std::size_t m_vertexCount, m_width;
 };
 
 }

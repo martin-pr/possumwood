@@ -41,40 +41,33 @@ namespace {
 	};
 
 	template<typename T>
-	std::string makeVBOName(std::size_t arraySize, std::size_t width, const std::string& name) {
+	std::string makeVBOName(std::size_t width, const std::string& name) {
 		std::stringstream ss;
-		ss << "in " << VertexDataType<T>::glslType(width) + " " + name;
-
-		assert(arraySize > 0);
-		if(arraySize > 1)
-			ss << "[" << arraySize << "]";
-
-		ss << ";";
+		ss << "in " << VertexDataType<T>::glslType(width) + " " + name << ";";
 
 		return ss.str();
 	}
 }
 
 template <typename T>
-void VertexData::addVBO(const std::string& name, std::size_t size, std::size_t arraySize, std::size_t width, const UpdateType& updateType,
+void VertexData::addVBO(const std::string& name, std::size_t size, std::size_t width, const UpdateType& updateType,
                         std::function<void(Buffer<T>&)> updateFn) {
 	assert(size > 0);
 	assert(m_vbos.empty() || m_vbos[0].size == size);
 
-	std::unique_ptr<VBO<T>> vbo(new VBO<T>(size, arraySize, width));
+	std::unique_ptr<VBO<T>> vbo(new VBO<T>(size, width));
 
 	VBOHolder holder;
 	holder.name = name;
-	holder.glslType = makeVBOName<T>(arraySize, width, name);
+	holder.glslType = makeVBOName<T>(width, name);
 	holder.size = size;
-	holder.arraySize = arraySize;
 	holder.width = width;
 	holder.updateType = updateType;
 
 	VBO<T>* vboPtr = vbo.get();
 
-	holder.update = [width, arraySize, size, vboPtr, updateFn]() {
-		Buffer<T> buffer(width, arraySize, size);
+	holder.update = [width, size, vboPtr, updateFn]() {
+		Buffer<T> buffer(width, size);
 
 		updateFn(buffer);
 		vboPtr->init(buffer);

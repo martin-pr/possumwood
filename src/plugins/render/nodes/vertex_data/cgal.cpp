@@ -17,9 +17,9 @@ namespace {
 template <std::size_t WIDTH, typename T>
 void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
                     const std::string& propertyName, std::size_t triangleCount,
-                    std::size_t arraySize, const possumwood::Meshes& mesh) {
+                    const possumwood::Meshes& mesh) {
 	vd.addVBO<float>(
-	    name, triangleCount * 3, arraySize, WIDTH, possumwood::VertexData::kStatic,
+	    name, triangleCount * 3, WIDTH, possumwood::VertexData::kStatic,
 	    [mesh, propertyName](possumwood::Buffer<float>& buffer) {
 		    std::size_t index = 0;
 
@@ -51,9 +51,9 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 						    while(it != vertices.end()) {
 							    auto& val = vertProp.first[*it];
 
-							    buffer.element(index++, 0) = val1;
-							    buffer.element(index++, 0) = val2;
-							    buffer.element(index++, 0) = val;
+							    buffer.element(index++) = val1;
+							    buffer.element(index++) = val2;
+							    buffer.element(index++) = val;
 
 							    ++it;
 						    }
@@ -78,9 +78,9 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 						    ++it;
 
 						    while(it != vertices.end()) {
-							    buffer.element(index++, 0) = n;
-							    buffer.element(index++, 0) = n;
-							    buffer.element(index++, 0) = n;
+							    buffer.element(index++) = n;
+							    buffer.element(index++) = n;
+							    buffer.element(index++) = n;
 
 							    ++it;
 						    }
@@ -158,7 +158,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(triangleCount > 0) {
 		// transfer the position data
 		addPerPointVBO<3, possumwood::CGALKernel::Point_3>(*vd, "position", "v:point",
-		                                                   triangleCount, 1, mesh);
+		                                                   triangleCount, mesh);
 
 		// count the properties - only properties consistent between all meshes can be
 		// transfered. We don't care about the type of the properties, though - face or
@@ -187,15 +187,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 						// yep, the types are hardcoded for now, sorry :(
 						if(name.type == "vec3" && name.arraySize == 1)
  							addPerPointVBO<3, std::array<float, 3>>(
-							    *vd, name.name, pc.first, triangleCount, name.arraySize, mesh);
+							    *vd, name.name, pc.first, triangleCount, mesh);
 
 						else if(name.type == "float" && name.arraySize == 1)
 							addPerPointVBO<1, float>(
-							    *vd, name.name, pc.first, triangleCount, name.arraySize, mesh);
+							    *vd, name.name, pc.first, triangleCount, mesh);
 
-						else if(name.type == "float")
-							addPerPointVBO<1, std::vector<float>>(
-							    *vd, name.name, pc.first, triangleCount, name.arraySize, mesh);
+						// else if(name.type == "float")
+						// 	addPerPointVBO<1, std::vector<float>>(
+						// 	    *vd, name.name, pc.first, triangleCount, mesh);
 
 						else
 							ignoredProperties.insert(pc.first);
