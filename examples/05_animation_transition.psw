@@ -1,40 +1,16 @@
 {
     "connections": [
         {
-            "in_node": "periodic_1",
-            "in_port": "in_anim",
-            "out_node": "transform_0",
-            "out_port": "out_anim"
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
         },
         {
             "in_node": "transition_1",
             "in_port": "anim_b",
             "out_node": "periodic_0",
             "out_port": "out_anim"
-        },
-        {
-            "in_node": "transform_1",
-            "in_port": "in_anim",
-            "out_node": "bvh_1",
-            "out_port": "anim"
-        },
-        {
-            "in_node": "transition_1",
-            "in_port": "anim_a",
-            "out_node": "transition_0",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "periodic_0",
-            "in_port": "in_anim",
-            "out_node": "transform_1",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "transform_2",
-            "in_port": "in_anim",
-            "out_node": "bvh_2",
-            "out_port": "anim"
         },
         {
             "in_node": "transform_0",
@@ -49,9 +25,33 @@
             "out_port": "frame"
         },
         {
-            "in_node": "transition_0",
-            "in_port": "anim_b",
-            "out_node": "transform_2",
+            "in_node": "edit_0",
+            "in_port": "in_frame",
+            "out_node": "from_animation_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_anim",
+            "out_node": "bvh_1",
+            "out_port": "anim"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "from_animation_0",
+            "in_port": "time",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "periodic_1",
+            "in_port": "in_anim",
+            "out_node": "transform_0",
             "out_port": "out_anim"
         },
         {
@@ -61,19 +61,66 @@
             "out_port": "out_anim"
         },
         {
+            "in_node": "transition_1",
+            "in_port": "anim_a",
+            "out_node": "transition_0",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "transition_0",
+            "in_port": "anim_b",
+            "out_node": "transform_2",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "periodic_0",
+            "in_port": "in_anim",
+            "out_node": "transform_1",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "transform_2",
+            "in_port": "in_anim",
+            "out_node": "bvh_2",
+            "out_port": "anim"
+        },
+        {
             "in_node": "transition_0",
             "in_port": "anim_a",
             "out_node": "periodic_1",
             "out_port": "out_anim"
         },
         {
-            "in_node": "from_animation_0",
-            "in_port": "time",
-            "out_node": "time_0",
-            "out_port": "time"
+            "in_node": "anim_frame_0",
+            "in_port": "frame",
+            "out_node": "edit_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "anim_frame_0",
+            "out_port": "vertex_data"
         }
     ],
     "nodes": {
+        "anim_frame_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1308.7265625,
+                    "y": 82.3007812500001
+                }
+            },
+            "name": "anim_frame",
+            "type": "render/vertex_data/anim_frame"
+        },
         "bvh_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -127,6 +174,51 @@
             "name": "display",
             "type": "anim/frame/display"
         },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1497.09765625,
+                    "y": 57.5351562500001
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "edit_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 940.0820295811,
+                    "y": 351.78516186987
+                }
+            },
+            "name": "edit",
+            "ports": {
+                "rotations": null,
+                "scale": 1.0,
+                "translate": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/frame/edit"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1133.974609375,
+                    "y": -49.6357421874999
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nvoid main() {\n\tcolor = vec4(0,1,0,1);\n}\n"
+            },
+            "type": "render/fragment_shader"
+        },
         "from_animation_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -169,6 +261,17 @@
                 "start_frame": 24
             },
             "type": "anim/animation/periodic"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1305.09765625,
+                    "y": -98.9648513793944
+                }
+            },
+            "name": "program",
+            "type": "render/program"
         },
         "time_0": {
             "blind_data": {
@@ -284,6 +387,20 @@
                 "transition_length": 30
             },
             "type": "anim/animation/transition"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1128.59765625,
+                    "y": -173.964859008789
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nout vec3 vertexPosition;       // vertex position for the fragment shader \n \nvoid main() {\n\tvec4 pos4 = vec4(position.x, position.y, position.z, 1);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+            },
+            "type": "render/vertex_shader"
         }
     },
     "scene_config": {
@@ -292,5 +409,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADyPwCAAAAAfwAAABBAAADyAAAAIsBAAAV+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAlAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAAA4AP///wAAAAEAAAHJAAADyPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAQQAAA0UAAABJAP////sAAAAGAGwAbwBnAQAAA4oAAAB/AAAASQD///8AAAKQAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADu/wCAAAAAfwAAABOAAADuwAAAJIBAAAa+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAApwD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAABGAP///wAAAAEAAAHJAAADu/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAA0UAAABZAP////sAAAAGAGwAbwBnAQAAA5kAAABwAAAAWQD///8AAAKMAAADuwAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
