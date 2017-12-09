@@ -26,4 +26,4 @@ message(${LIBS})
 
 add_executable(anim_tests ${sources})
 
-target_link_libraries(anim_tests ${LIBS} anim dependency_graph)
+target_link_libraries(anim_tests ${LIBS} anim maths dependency_graph)

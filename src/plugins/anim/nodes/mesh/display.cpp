@@ -56,8 +56,8 @@ Color color(unsigned index) {
 Color makeColor(const anim::SkinnedVertices::Vertex& v) {
 	Color result{0,0,0};
 
-	for(auto& w : v)
-		result += color(w.first) * w.second;
+	for(auto& w : v.skinning())
+		result += color(w.bone) * w.weight;
 
 	return result;
 }

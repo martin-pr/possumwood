@@ -13,6 +13,8 @@ namespace anim {
 /// A slightly sloppy version of skinned mesh data representation
 class SkinnedMesh {
   public:
+  	SkinnedMesh();
+
 	const std::string& name() const;
 	void setName(const std::string& name);
 

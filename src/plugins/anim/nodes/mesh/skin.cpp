@@ -52,12 +52,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				Imath::V3f pos(0,0,0);
 				float sum = 0.0f;
 
-				for(auto& w : v) {
-					if(w.first >= transforms.size())
-						missingBones.insert(w.first);
+				for(auto& w : v.skinning()) {
+					if(w.bone >= transforms.size())
+						missingBones.insert(w.bone);
 					else {
-						pos += (v.pos() * transforms[w.first].transposed()) * w.second;
-						sum += w.second;
+						pos += (v.pos() * transforms[w.bone].transposed()) * w.weight;
+						sum += w.weight;
 					}
 				}
 
@@ -83,9 +83,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 				const std::size_t vertexIndex =
 					mesh.polygons()[normalIndex / 3][normalIndex % 3];
-				for(auto& w : mesh.vertices()[vertexIndex])
-					if(w.first < transforms.size())
-						norm += (n * transforms[w.first].transposed()) * w.second;
+				for(auto& w : mesh.vertices()[vertexIndex].skinning())
+					if(w.bone < transforms.size())
+						norm += (n * transforms[w.bone].transposed()) * w.weight;
 
 				if(norm.length2() > 0.0f)
 					n = norm.normalized();

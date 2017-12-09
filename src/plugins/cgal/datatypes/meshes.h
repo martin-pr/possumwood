@@ -7,7 +7,7 @@
 namespace possumwood {
 
 template<>
-struct Traits<std::shared_ptr<const CGALPolyhedron>> {
+struct Traits<Meshes> {
 	// static IO<std::shared_ptr<const Mesh>> io;
 
 	static constexpr std::array<float, 3> colour() {

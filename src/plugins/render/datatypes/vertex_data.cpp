@@ -6,8 +6,7 @@
 
 namespace possumwood {
 
-VertexData::VertexData(GLenum drawElementType) : m_drawElementType(drawElementType), m_currentTime(
-		std::numeric_limits<float>::infinity()) {
+VertexData::VertexData(GLenum drawElementType) : m_drawElementType(drawElementType) {
 }
 
 void VertexData::use(GLuint programId) const {
@@ -15,14 +14,6 @@ void VertexData::use(GLuint programId) const {
 	for(auto& v : m_vbos)
 		if(v.updateType == kPerDraw)
 			v.update();
-
-	if(m_currentTime != possumwood::App::instance().time()) {
-		m_currentTime = possumwood::App::instance().time();
-
-		for(auto& v : m_vbos)
-			if(v.updateType == kPerFrame)
-				v.update();
-	}
 
 	// and try to use each
 	for(auto& v : m_vbos) {
@@ -55,5 +46,4 @@ std::string VertexData::glslDeclaration() const {
 std::size_t VertexData::vboCount() const {
 	return m_vbos.size();
 }
-
 }

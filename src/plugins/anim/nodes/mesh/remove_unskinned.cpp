@@ -29,9 +29,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		std::set<std::size_t> skinnedBones;
 		for(auto& mesh : *inMeshes)
 			for(auto& vertex : mesh.vertices())
-				for(auto& weight : vertex)
-					if(weight.second > 0.0f)
-						skinnedBones.insert(weight.first);
+				for(auto& weight : vertex.skinning())
+					if(weight.weight > 0.0f)
+						skinnedBones.insert(weight.bone);
 
 		// from children to parents (backwards in the hierarchy), add recursively
 		//   the parents to the skinned bones set (even if parents themselves were
@@ -76,9 +76,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(auto& m : *inMeshes) {
 			outMeshes->push_back(m);
 
-			for(auto& v : outMeshes->back().vertices())
-				for(auto& w : v)
-					w.first = correspondence[w.first];
+			for(auto& v : outMeshes->back().vertices()) {
+				anim::Skinning skin = v.skinning();
+				for(auto& w : skin)
+					w.bone = correspondence[w.bone];
+				v.setSkinning(skin);
+			}
 		}
 
 		data.set(a_outSkel, outSkel);

@@ -37,10 +37,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			auto& mesh = result->back();
 
-			for(auto& v : mesh.vertices())
-				for(auto& w : v)
-					if(w.first < mapping.size() && mapping[w.first] >= 0)
-						w.first = mapping[w.first];
+			for(auto& v : mesh.vertices()) {
+				anim::Skinning skin = v.skinning();
+				for(auto& w : skin)
+					if(w.bone < mapping.size() && mapping[w.bone] >= 0)
+						w.bone = mapping[w.bone];
+				v.setSkinning(skin);
+			}
 		}
 
 	data.set(a_outMeshes, std::shared_ptr<const std::vector<anim::SkinnedMesh>>(result.release()));

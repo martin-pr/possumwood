@@ -2,6 +2,9 @@
 
 namespace anim {
 
+SkinnedMesh::SkinnedMesh() {
+}
+
 const std::string& SkinnedMesh::name() const {
 	return m_name;
 }
@@ -33,4 +36,5 @@ Polygons& SkinnedMesh::polygons() {
 const Polygons& SkinnedMesh::polygons() const {
 	return m_polygons;
 }
+
 }

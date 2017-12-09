@@ -21,14 +21,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State state;
 
 	// assemble the bone map
-	std::vector<unsigned> mapping(skeleton.size());
+	std::map<unsigned, unsigned> mapping;
 	unsigned mappedCount = 0;
 	for(std::size_t i=0;i<skeleton.size();++i) {
 		// try to match the regex, and perform replacement
 		const std::string result = std::regex_replace(skeleton[i].name(), regex, format);
-
-		// by default, just use identity
-		mapping[i] = i;
 
 		// if a replacement was done
 		if(result != skeleton[i].name()) {
@@ -78,10 +75,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			auto& mesh = result->back();
 
-			for(auto& v : mesh.vertices())
-				for(auto& w : v)
-					if(w.first < mapping.size() && mapping[w.first] >= 0)
-						w.first = mapping[w.first];
+			for(auto& v : mesh.vertices()) {
+				anim::Skinning skin = v.skinning();
+
+				for(auto& w : skin) {
+					auto it = mapping.find(w.bone);
+					if(it != mapping.end())
+						w.bone = it->second;
+				}
+
+				v.setSkinning(skin);
+			}
 		}
 
 	data.set(a_outMeshes, std::shared_ptr<const std::vector<anim::SkinnedMesh>>(result.release()));

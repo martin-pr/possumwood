@@ -23,8 +23,8 @@ file(GLOB_RECURSE sources *.cpp)
 file(GLOB_RECURSE headers *.h)
 
 QT5_WRAP_CPP(headers_moc ${headers})
-include_directories(./)
+include_directories(./ ../cgal)
 
 add_library(anim SHARED ${sources} ${headers_moc})
 
-target_link_libraries(anim ${LIBS} possumwood_sdk)
+target_link_libraries(anim cgal ${LIBS} possumwood_sdk)

@@ -6,65 +6,72 @@
 #include <cassert>
 
 #include "glsl_traits.h"
+#include "buffer.inl"
 
 namespace possumwood {
 
-template<typename T>
-VBO<T>::VBO() {
+template <typename T>
+VBO<T>::VBO(std::size_t vertexCount)
+    : m_vertexCount(vertexCount) {
 }
 
-template<typename T>
+template <typename T>
 VBO<T>::~VBO() {
 }
 
-template<typename T>
-template<typename ITERATOR>
-void VBO<T>::init(ITERATOR begin, ITERATOR end) {
+template <typename T>
+void VBO<T>::init(Buffer<typename VBOTraits<T>::element>& buffer) {
+	// just make sure everything is consistent
+	assert(m_vertexCount == buffer.vertexCount());
+
+	assert(VBOTraits<T>::width() == buffer.width());
+
 	// bind the buffer to work with
 	glBindBuffer(GL_ARRAY_BUFFER, id());
 
-	// build a vector to hold the data
-	std::vector<T> data;
-	while(begin != end) {
-		data.push_back(*begin);
-		++begin;
+	// synchronously transfer these, using raw pointer to the first element
+	glBufferData(GL_ARRAY_BUFFER, buffer.vertexCount() * buffer.width() * sizeof(T),
+	             buffer.element(0).ptr(), GL_STATIC_DRAW);
+
+	// unbind the buffer to work with
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	setInitialised(true);
+}
+
+template <typename T>
+std::size_t VBO<T>::width() const {
+	return VBOTraits<T>::width();
+}
+
+namespace {
+template <typename T>
+struct VBOType {};
+
+template <>
+struct VBOType<float> {
+	static constexpr GLenum type() {
+		return GL_FLOAT;
 	}
+};
 
-	// synchronously transfer these
-	glBufferData(GL_ARRAY_BUFFER, sizeof(T)*data.size(), &data[0], GL_STATIC_DRAW);
+template <>
+struct VBOType<double> {
+	static constexpr GLenum type() {
+		return GL_DOUBLE;
+	}
+};
 
-	// unbind the buffer to work with
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	setInitialised(true);
+template <>
+struct VBOType<int> {
+	static constexpr GLenum type() {
+		return GL_INT;
+	}
+};
 }
 
-/// builds a VBO out of an initializer list
-template<typename T>
-void VBO<T>::init(std::initializer_list<T> l) {
-	// bind the buffer to work with
-	glBindBuffer(GL_ARRAY_BUFFER, id());
-
-	// build a vector to hold the data
-	std::vector<T> data(l);
-
-	// synchronously transfer these
-	glBufferData(GL_ARRAY_BUFFER, sizeof(T)*data.size(), &data[0], GL_STATIC_DRAW);
-
-	// unbind the buffer to work with
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	setInitialised(true);
-}
-
-template<typename T>
-unsigned VBO<T>::width() const {
-	return GLSLTraits<T>::width();
-}
-
-template<typename T>
+template <typename T>
 GLenum VBO<T>::type() const {
-	return GLSLTraits<T>::type();
+	return VBOType<typename VBOTraits<T>::element>::type();
 }
-
 }
