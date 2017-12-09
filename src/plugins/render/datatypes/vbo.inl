@@ -11,8 +11,8 @@
 namespace possumwood {
 
 template <typename T>
-VBO<T>::VBO(std::size_t vertexCount, std::size_t width)
-    : m_vertexCount(vertexCount), m_width(width) {
+VBO<T>::VBO(std::size_t vertexCount)
+    : m_vertexCount(vertexCount) {
 }
 
 template <typename T>
@@ -20,10 +20,11 @@ VBO<T>::~VBO() {
 }
 
 template <typename T>
-void VBO<T>::init(Buffer<T>& buffer) {
+void VBO<T>::init(Buffer<typename VBOTraits<T>::element>& buffer) {
 	// just make sure everything is consistent
 	assert(m_vertexCount == buffer.vertexCount());
-	assert(m_width == buffer.width());
+
+	assert(VBOTraits<T>::width() == buffer.width());
 
 	// bind the buffer to work with
 	glBindBuffer(GL_ARRAY_BUFFER, id());
@@ -40,7 +41,7 @@ void VBO<T>::init(Buffer<T>& buffer) {
 
 template <typename T>
 std::size_t VBO<T>::width() const {
-	return m_width;
+	return VBOTraits<T>::width();
 }
 
 namespace {
@@ -64,6 +65,6 @@ struct VBOType<double> {
 
 template <typename T>
 GLenum VBO<T>::type() const {
-	return VBOType<T>::type();
+	return VBOType<typename VBOTraits<T>::element>::type();
 }
 }

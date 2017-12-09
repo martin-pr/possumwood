@@ -50,24 +50,23 @@ namespace {
 }
 
 template <typename T>
-void VertexData::addVBO(const std::string& name, std::size_t size, std::size_t width, const UpdateType& updateType,
-                        std::function<void(Buffer<T>&)> updateFn) {
+void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateType& updateType,
+                        std::function<void(Buffer<typename VBOTraits<T>::element>&)> updateFn) {
 	assert(size > 0);
 	assert(m_vbos.empty() || m_vbos[0].size == size);
 
-	std::unique_ptr<VBO<T>> vbo(new VBO<T>(size, width));
+	std::unique_ptr<VBO<T>> vbo(new VBO<T>(size));
 
 	VBOHolder holder;
 	holder.name = name;
-	holder.glslType = makeVBOName<T>(width, name);
+	holder.glslType = makeVBOName<typename VBOTraits<T>::element>(VBOTraits<T>::width(), name);
 	holder.size = size;
-	holder.width = width;
 	holder.updateType = updateType;
 
 	VBO<T>* vboPtr = vbo.get();
 
-	holder.update = [width, size, vboPtr, updateFn]() {
-		Buffer<T> buffer(width, size);
+	holder.update = [size, vboPtr, updateFn]() {
+		Buffer<typename VBOTraits<T>::element> buffer(VBOTraits<T>::width(), size);
 
 		updateFn(buffer);
 		vboPtr->init(buffer);

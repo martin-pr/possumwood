@@ -8,9 +8,9 @@ namespace possumwood {
 
 /// A simple non-copyable raw-data container for OpenGL buffers.
 template <typename T>
-class Buffer : public boost::noncopyable {
+class BufferBase : public boost::noncopyable {
   public:
-	Buffer(std::size_t width, std::size_t vertexCount);
+	BufferBase(std::size_t width, std::size_t vertexCount);
 
 	std::size_t vertexCount() const;
 	std::size_t width() const;
@@ -32,6 +32,12 @@ class Buffer : public boost::noncopyable {
 			return *this;
 		};
 
+		Element& operator=(const int& src) {
+			*m_begin = src;
+
+			return *this;
+		};
+
 		T* ptr() {
 			return &(*m_begin);
 		}
@@ -44,12 +50,11 @@ class Buffer : public boost::noncopyable {
 
 		typename std::vector<T>::iterator m_begin, m_end;
 
-		friend class Buffer;
+		friend class BufferBase;
 	};
 
 	Element element(std::size_t vertexIndex) {
-		const std::size_t offset =
-		    vertexIndex * m_width;
+		const std::size_t offset = vertexIndex * m_width;
 		assert(offset < m_data.size());
 		assert(offset + m_width <= m_data.size());
 
@@ -61,5 +66,28 @@ class Buffer : public boost::noncopyable {
   private:
 	std::size_t m_width, m_vertexCount;
 	std::vector<T> m_data;
+};
+
+// only float and int buffers supported at the moment
+
+template <typename T>
+class Buffer {};
+
+template <>
+class Buffer<float> : public BufferBase<float> {
+  public:
+	Buffer(std::size_t width, std::size_t vertexCount) : BufferBase(width, vertexCount){};
+};
+
+template <>
+class Buffer<double> : public BufferBase<double> {
+  public:
+	Buffer(std::size_t width, std::size_t vertexCount) : BufferBase(width, vertexCount){};
+};
+
+template <>
+class Buffer<int> : public BufferBase<int> {
+  public:
+	Buffer(std::size_t width, std::size_t vertexCount) : BufferBase(width, vertexCount){};
 };
 }

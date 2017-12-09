@@ -18,9 +18,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// we're drawing quads
 	std::unique_ptr<possumwood::VertexData> vd(new possumwood::VertexData(GL_QUADS));
 
-	vd->addVBO<float>(
+	vd->addVBO<Imath::V3f>(
 		"position",
-		4, 3,
+		4,
 		possumwood::VertexData::kStatic,
 		[](possumwood::Buffer<float>& buffer) {
 			buffer.element(0) = Imath::V3f(-1,-1,1);
@@ -30,9 +30,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 	);
 
-	vd->addVBO<double>(
+	vd->addVBO<Imath::V3d>(
 		"iNearPositionVert",
-		4, 3,
+		4,
 		possumwood::VertexData::kPerDraw,
 		[](possumwood::Buffer<double>& buffer) {
 			GLint viewport[4];
@@ -53,9 +53,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 	);
 
-	vd->addVBO<double>(
+	vd->addVBO<Imath::V3d>(
 		"iFarPositionVert",
-		4, 3,
+		4,
 		possumwood::VertexData::kPerDraw,
 		[](possumwood::Buffer<double>& buffer) {
 			GLint viewport[4];

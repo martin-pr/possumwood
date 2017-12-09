@@ -8,6 +8,7 @@
 #include <possumwood_sdk/traits.h>
 
 #include "vbo.h"
+#include "buffer.h"
 
 namespace possumwood {
 
@@ -21,11 +22,10 @@ class VertexData : public boost::noncopyable {
 	enum UpdateType { kStatic = 1, kPerDraw = 2 };
 
 	/// adds a generic VBO with an update functor.
-	/// T can be either float or int, and WIDTH should be between 1 and 4
 	template <typename T>
-	void addVBO(const std::string& name, std::size_t size, std::size_t width,
+	void addVBO(const std::string& name, std::size_t size,
 	            const UpdateType& updateType,
-	            std::function<void(Buffer<T>&)> updateFn);
+	            std::function<void(Buffer<typename VBOTraits<T>::element>&)> updateFn);
 
 	/// updates and uses the program
 	void use(GLuint programId) const;
@@ -45,7 +45,7 @@ class VertexData : public boost::noncopyable {
 	struct VBOHolder {
 		std::string name, glslType;
 		std::unique_ptr<VBOBase> vbo;
-		std::size_t size, width;
+		std::size_t size;
 		UpdateType updateType;
 		std::function<void()> update;
 	};

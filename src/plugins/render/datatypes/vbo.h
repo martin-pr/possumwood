@@ -9,6 +9,7 @@
 #include <GL/gl.h>
 
 #include "buffer.h"
+#include "vbo_traits.h"
 
 namespace possumwood {
 
@@ -40,12 +41,12 @@ class VBOBase : public boost::noncopyable {
 template<typename T>
 class VBO : public VBOBase {
 	public:
-		VBO(std::size_t vertexCount, std::size_t width);
+		VBO(std::size_t vertexCount);
 
 		/// builds a buffer from begin and end iterator - copies the data into a
 		///   buffer that can be sent to the GPU. Iterator has to be dereferenceable
 		///   to T (i.e., ITERATOR::value type has to be T, or assignable to T)
-		void init(Buffer<T>&);
+		void init(Buffer<typename VBOTraits<T>::element>&);
 
 		~VBO() final;
 
@@ -54,7 +55,7 @@ class VBO : public VBOBase {
 		virtual GLenum type() const override;
 
 	private:
-		std::size_t m_vertexCount, m_width;
+		std::size_t m_vertexCount;
 };
 
 }

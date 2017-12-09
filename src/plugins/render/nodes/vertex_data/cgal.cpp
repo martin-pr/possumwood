@@ -12,18 +12,39 @@
 
 #include "datatypes/vertex_data.inl"
 
+namespace possumwood {
+
+template<typename T>
+struct VBOTraits<CGAL::Point_3<CGAL::Simple_cartesian<T>>> {
+	typedef T element;
+	// typedef CGAL::Point_3<CGAL::Simple_cartesian<T>> element;
+	static constexpr std::size_t width() { return 3; };
+};
+
+template<typename T>
+struct VBOTraits<std::vector<T>> {
+	typedef T element;
+	// typedef CGAL::Point_3<CGAL::Simple_cartesian<T>> element;
+	static constexpr std::size_t width() { return 1; };
+};
+
+}
+
 namespace {
 
-template <std::size_t WIDTH, typename T, typename ELEM = T>
+template<typename T>
+T defaultExtract(const T& val) {
+	return val;
+}
+
+template <typename T, typename EXTRACT = std::function<T(const T&)>>
 void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
                     const std::string& propertyName, std::size_t triangleCount,
                     const possumwood::Meshes& mesh,
-                    std::function<ELEM(const T&)> extract = [](const T& val) {
-	                    return val;
-	                }) {
-	vd.addVBO<float>(
-	    name, triangleCount * 3, WIDTH, possumwood::VertexData::kStatic,
-	    [mesh, propertyName, extract](possumwood::Buffer<float>& buffer) {
+                    EXTRACT extract = &defaultExtract<T>) {
+	vd.addVBO<T>(
+	    name, triangleCount * 3, possumwood::VertexData::kStatic,
+	    [mesh, propertyName, extract](possumwood::Buffer<typename possumwood::VBOTraits<T>::element>& buffer) {
 		    std::size_t index = 0;
 
 		    for(auto& m : mesh) {
@@ -165,7 +186,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// and build the buffers
 	if(triangleCount > 0) {
 		// transfer the position data
-		addPerPointVBO<3, possumwood::CGALKernel::Point_3>(*vd, "position", "v:point",
+		addPerPointVBO<possumwood::CGALKernel::Point_3>(*vd, "position", "v:point",
 		                                                   triangleCount, mesh);
 
 		// count the properties - only properties consistent between all meshes can be
@@ -194,11 +215,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					if(name.recognized && name.arraySize > 0) {
 						// yep, the types are hardcoded for now, sorry :(
 						if(name.type == "vec3" && name.arraySize == 1)
-							addPerPointVBO<3, std::array<float, 3>>(
+							addPerPointVBO<std::array<float, 3>>(
 							    *vd, name.name, pc.first, triangleCount, mesh);
 
 						else if(name.type == "float" && name.arraySize == 1)
-							addPerPointVBO<1, float>(*vd, name.name, pc.first,
+							addPerPointVBO<float>(*vd, name.name, pc.first,
 							                         triangleCount, mesh);
 
 						else if(name.type == "float")
@@ -207,7 +228,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 									return v[i];
 								};
 
-								addPerPointVBO<1, std::vector<float>, float>(
+								addPerPointVBO<std::vector<float>>(
 								    *vd, name.name + "[" + std::to_string(i) + "]", pc.first, triangleCount, mesh, fn);
 							}
 
