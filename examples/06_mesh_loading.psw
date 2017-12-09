@@ -1,16 +1,16 @@
 {
     "connections": [
         {
+            "in_node": "display_1",
+            "in_port": "skeleton",
+            "out_node": "edit_1",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "texture_0",
             "in_port": "value",
             "out_node": "load_0",
             "out_port": "image"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
         },
         {
             "in_node": "draw_0",
@@ -25,22 +25,10 @@
             "out_port": "output"
         },
         {
-            "in_node": "edit_0",
-            "in_port": "in_frame",
-            "out_node": "bone_rename_1",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "skin_0",
-            "in_port": "base_skeleton",
-            "out_node": "bone_rename_1",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "display_1",
-            "in_port": "skeleton",
-            "out_node": "edit_1",
-            "out_port": "out_frame"
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
         },
         {
             "in_node": "skin_remap_regex_0",
@@ -61,10 +49,16 @@
             "out_port": "out_skeleton"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
+            "in_node": "edit_0",
+            "in_port": "in_frame",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "skin_0",
+            "in_port": "base_skeleton",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
         },
         {
             "in_node": "skin_0",
@@ -77,6 +71,12 @@
             "in_port": "in_frame",
             "out_node": "edit_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "draw_0",
@@ -237,7 +237,7 @@
             },
             "name": "meshes_display",
             "ports": {
-                "color_bones": false
+                "color_bones": true
             },
             "type": "anim/mesh/display"
         },
@@ -615,7 +615,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 150\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\n#define WEIGHT_COUNT 3\nin float skinningWeights[WEIGHT_COUNT];   // skinning weights\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\nout vec3 vertexColour;\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n\n\tvertexColour = vec3(0,0,0);\n\tfor(int a=0;a<WEIGHT_COUNT;++a)\n\t\tvertexColour[a] = skinningWeights[a];\n}"
+                "source": "#version 150\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\n#define WEIGHT_COUNT 3\nin float skinningWeights[WEIGHT_COUNT];   // skinning weights\nin int skinningIndices[WEIGHT_COUNT];     // skinning indices\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\nout vec3 vertexColour;\n\nvec3 boneToColour(int boneId) {\n\treturn vec3(\n\t\tfloat(mod(boneId, 6)) / 6.0,\n\t\tfloat(mod(boneId / 6, 6)) / 6.0,\n\t\tfloat(mod(boneId / 36, 6)) / 6.0\n\t);\n}\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n\n\tvertexColour = vec3(0,0,0);\n\tfor(int a=0;a<WEIGHT_COUNT;++a)\n\t\tvertexColour += boneToColour(skinningIndices[a]) * skinningWeights[a];\n}"
             },
             "type": "render/vertex_shader"
         },

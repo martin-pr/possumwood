@@ -61,6 +61,13 @@ struct VBOType<double> {
 		return GL_DOUBLE;
 	}
 };
+
+template <>
+struct VBOType<int> {
+	static constexpr GLenum type() {
+		return GL_INT;
+	}
+};
 }
 
 template <typename T>

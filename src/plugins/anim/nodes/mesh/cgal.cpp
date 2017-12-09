@@ -43,12 +43,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			const std::string skinIndicesPropName = "int[" + std::to_string(data.get(a_skinningCount)) + "]:skinningIndices";
 
 			auto skinWeightsProp = out->add_property_map<CGALPolyhedron::Vertex_index, std::vector<float>>(skinWeightsPropName);
-			auto skinIndicesProp = out->add_property_map<CGALPolyhedron::Vertex_index, std::vector<std::size_t>>(skinIndicesPropName);
+			auto skinIndicesProp = out->add_property_map<CGALPolyhedron::Vertex_index, std::vector<int>>(skinIndicesPropName);
 
 			std::size_t vertexIndex = 0;
 			for(auto& v : out->vertices()) {
 				std::vector<float> weights(data.get(a_skinningCount), 0.0f);
-				std::vector<std::size_t> indices(data.get(a_skinningCount), 0);
+				std::vector<int> indices(data.get(a_skinningCount), 0);
 
 				anim::Skinning skin = m.vertices()[vertexIndex].skinning();
 				skin.limitInfluenceCount(data.get(a_skinningCount));

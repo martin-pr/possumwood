@@ -17,14 +17,12 @@ namespace possumwood {
 template<typename T>
 struct VBOTraits<CGAL::Point_3<CGAL::Simple_cartesian<T>>> {
 	typedef T element;
-	// typedef CGAL::Point_3<CGAL::Simple_cartesian<T>> element;
 	static constexpr std::size_t width() { return 3; };
 };
 
 template<typename T>
 struct VBOTraits<std::vector<T>> {
 	typedef T element;
-	// typedef CGAL::Point_3<CGAL::Simple_cartesian<T>> element;
 	static constexpr std::size_t width() { return 1; };
 };
 
@@ -222,6 +220,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 							addPerPointVBO<float>(*vd, name.name, pc.first,
 							                         triangleCount, mesh);
 
+						else if(name.type == "int" && name.arraySize == 1)
+							addPerPointVBO<int>(*vd, name.name, pc.first,
+							                         triangleCount, mesh);
+
 						else if(name.type == "float")
 							for(std::size_t i=0;i<name.arraySize;++i) {
 								auto fn = [i](const std::vector<float>& v) -> float {
@@ -229,6 +231,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 								};
 
 								addPerPointVBO<std::vector<float>>(
+								    *vd, name.name + "[" + std::to_string(i) + "]", pc.first, triangleCount, mesh, fn);
+							}
+
+						else if(name.type == "int")
+							for(std::size_t i=0;i<name.arraySize;++i) {
+								auto fn = [i](const std::vector<int>& v) -> int {
+									return v[i];
+								};
+
+								addPerPointVBO<std::vector<int>>(
 								    *vd, name.name + "[" + std::to_string(i) + "]", pc.first, triangleCount, mesh, fn);
 							}
 

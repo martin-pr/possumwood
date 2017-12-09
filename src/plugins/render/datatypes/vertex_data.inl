@@ -40,6 +40,21 @@ namespace {
 		}
 	};
 
+	template<>
+	struct VertexDataType<int> {
+		static std::string glslType(std::size_t width) {
+			switch(width) {
+				case 1:	return "int";
+				case 2:	return "ivec2" /*"dvec2"*/;
+				case 3:	return "ivec3" /*"dvec3"*/;
+				case 4:	return "ivec4" /*"dvec4"*/;
+			};
+
+			assert(false);
+			return "unknown";
+		}
+	};
+
 	template<typename T>
 	std::string makeVBOName(std::size_t width, const std::string& name) {
 		std::stringstream ss;
@@ -65,7 +80,7 @@ void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateT
 
 	VBO<T>* vboPtr = vbo.get();
 
-	holder.update = [size, vboPtr, updateFn]() {
+	holder.update = [&holder, size, vboPtr, updateFn]() {
 		Buffer<typename VBOTraits<T>::element> buffer(VBOTraits<T>::width(), size);
 
 		updateFn(buffer);

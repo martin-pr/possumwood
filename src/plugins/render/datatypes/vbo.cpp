@@ -31,7 +31,12 @@ void VBOBase::use(GLint attribLocation) const {
 	glBindBuffer(GL_ARRAY_BUFFER, id());
 
 	glEnableVertexAttribArray(attribLocation);
-	glVertexAttribPointer(attribLocation, width(), type(), false, 0, nullptr);
+
+	// this might need changing to support all integer types
+	if(type() == GL_INT)
+		glVertexAttribIPointer(attribLocation, width(), type(), 0, nullptr);
+	else
+		glVertexAttribPointer(attribLocation, width(), type(), false, 0, nullptr);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
