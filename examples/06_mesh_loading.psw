@@ -1,10 +1,46 @@
 {
     "connections": [
         {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
             "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
+            "in_port": "uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "edit_0",
+            "in_port": "in_frame",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "skin_0",
+            "in_port": "base_skeleton",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "display_1",
+            "in_port": "skeleton",
+            "out_node": "edit_1",
+            "out_port": "out_frame"
         },
         {
             "in_node": "skin_remap_regex_0",
@@ -25,16 +61,10 @@
             "out_port": "out_skeleton"
         },
         {
-            "in_node": "edit_0",
-            "in_port": "in_frame",
-            "out_node": "bone_rename_1",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "skin_0",
-            "in_port": "base_skeleton",
-            "out_node": "bone_rename_1",
-            "out_port": "out_skeleton"
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "skin_0",
@@ -47,36 +77,6 @@
             "in_port": "in_frame",
             "out_node": "edit_0",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "display_1",
-            "in_port": "skeleton",
-            "out_node": "edit_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "uniforms",
-            "out_node": "float_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "texture_0",
-            "in_port": "value",
-            "out_node": "load_0",
-            "out_port": "image"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
         },
         {
             "in_node": "draw_0",
@@ -410,7 +410,7 @@
             },
             "name": "fragment_shader",
             "ports": {
-                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nin vec3 vertexNormal;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\tcolor = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n}\n"
+                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nin vec3 vertexNormal;\nin vec3 vertexColour;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\t//color = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n\tcolor = vec4(vertexColour, 1);\n}\n"
             },
             "type": "render/fragment_shader"
         },
@@ -573,7 +573,7 @@
             },
             "name": "to_cgal",
             "ports": {
-                "skinning_count": 4
+                "skinning_count": 3
             },
             "type": "anim/mesh/to_cgal"
         },
@@ -615,7 +615,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 150\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n}"
+                "source": "#version 150\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\n#define WEIGHT_COUNT 3\nin float skinningWeights[WEIGHT_COUNT];   // skinning weights\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\nout vec3 vertexColour;\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n\n\tvertexColour = vec3(0,0,0);\n\tfor(int a=0;a<WEIGHT_COUNT;++a)\n\t\tvertexColour[a] = skinningWeights[a];\n}"
             },
             "type": "render/vertex_shader"
         },
@@ -650,6 +650,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQXAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALLAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAnsAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAABbwAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABwwAAAj4AAAB3AP////sAAAAGAGwAbwBnAAAAAbMAAAJWAAAAWQD///8AAAIuAAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALLAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAnsAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAABhgAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABywAAAj4AAAB1AP////sAAAAGAGwAbwBnAAAAAbMAAAJWAAAASQD///8AAAIyAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

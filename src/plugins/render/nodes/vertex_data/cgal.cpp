@@ -14,13 +14,16 @@
 
 namespace {
 
-template <std::size_t WIDTH, typename T>
+template <std::size_t WIDTH, typename T, typename ELEM = T>
 void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
                     const std::string& propertyName, std::size_t triangleCount,
-                    const possumwood::Meshes& mesh) {
+                    const possumwood::Meshes& mesh,
+                    std::function<ELEM(const T&)> extract = [](const T& val) {
+	                    return val;
+	                }) {
 	vd.addVBO<float>(
 	    name, triangleCount * 3, WIDTH, possumwood::VertexData::kStatic,
-	    [mesh, propertyName](possumwood::Buffer<float>& buffer) {
+	    [mesh, propertyName, extract](possumwood::Buffer<float>& buffer) {
 		    std::size_t index = 0;
 
 		    for(auto& m : mesh) {
@@ -42,14 +45,14 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 					    if(vertices.size() >= 2) {
 						    auto it = vertices.begin();
 
-						    auto& val1 = vertProp.first[*it];
+						    auto val1 = extract(vertProp.first[*it]);
 						    ++it;
 
-						    auto& val2 = vertProp.first[*it];
+						    auto val2 = extract(vertProp.first[*it]);
 						    ++it;
 
 						    while(it != vertices.end()) {
-							    auto& val = vertProp.first[*it];
+							    auto val = extract(vertProp.first[*it]);
 
 							    buffer.element(index++) = val1;
 							    buffer.element(index++) = val2;
@@ -69,7 +72,7 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 					    auto vertices =
 					        m.mesh().vertices_around_face(m.mesh().halfedge(*fit));
 
-					    auto& n = faceProp.first[*fit];
+					    auto n = extract(faceProp.first[*fit]);
 
 					    if(vertices.size() >= 2) {
 						    auto it = vertices.begin();
@@ -97,26 +100,31 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 }
 
 struct VBOName {
+	VBOName() : arraySize(0), recognized(false) {
+	}
+
 	std::string name, type;
 	std::size_t arraySize;
+	bool recognized;
 };
 
 VBOName CGALType(const std::string& t) {
 	VBOName result;
-	result.arraySize = 0;
 
 	auto colonPos = t.find(":");
 	if(colonPos != std::string::npos) {
 		result.type = t.substr(0, colonPos);
 		result.name = t.substr(colonPos + 1);
 		result.arraySize = 1;
+		result.recognized = true;
 
 		assert(colonPos > 0);
 		if(result.type.back() == ']') {
 			auto bracketPos = t.find("[");
 			assert(bracketPos != std::string::npos);
 
-			result.arraySize = std::stoi(result.type.substr(bracketPos+1, result.type.length()-bracketPos-2));
+			result.arraySize = std::stoi(result.type.substr(
+			    bracketPos + 1, result.type.length() - bracketPos - 2));
 			result.type = result.type.substr(0, bracketPos);
 		}
 	}
@@ -183,19 +191,25 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				if(pc.second == mesh.size()) {
 					// analyse the type
 					VBOName name = CGALType(pc.first);
-					if(name.arraySize > 0) {
+					if(name.recognized && name.arraySize > 0) {
 						// yep, the types are hardcoded for now, sorry :(
 						if(name.type == "vec3" && name.arraySize == 1)
- 							addPerPointVBO<3, std::array<float, 3>>(
+							addPerPointVBO<3, std::array<float, 3>>(
 							    *vd, name.name, pc.first, triangleCount, mesh);
 
 						else if(name.type == "float" && name.arraySize == 1)
-							addPerPointVBO<1, float>(
-							    *vd, name.name, pc.first, triangleCount, mesh);
+							addPerPointVBO<1, float>(*vd, name.name, pc.first,
+							                         triangleCount, mesh);
 
-						// else if(name.type == "float")
-						// 	addPerPointVBO<1, std::vector<float>>(
-						// 	    *vd, name.name, pc.first, triangleCount, mesh);
+						else if(name.type == "float")
+							for(std::size_t i=0;i<name.arraySize;++i) {
+								auto fn = [i](const std::vector<float>& v) -> float {
+									return v[i];
+								};
+
+								addPerPointVBO<1, std::vector<float>, float>(
+								    *vd, name.name + "[" + std::to_string(i) + "]", pc.first, triangleCount, mesh, fn);
+							}
 
 						else
 							ignoredProperties.insert(pc.first);

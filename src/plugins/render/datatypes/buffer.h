@@ -51,6 +51,7 @@ class Buffer : public boost::noncopyable {
 		const std::size_t offset =
 		    vertexIndex * m_width;
 		assert(offset < m_data.size());
+		assert(offset + m_width <= m_data.size());
 
 		auto it = m_data.begin() + offset;
 		return Element(it, it + m_width);
