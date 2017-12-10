@@ -42,7 +42,7 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
                     EXTRACT extract = &defaultExtract<T>) {
 	vd.addVBO<T>(
 	    name, triangleCount * 3, possumwood::VertexData::kStatic,
-	    [mesh, propertyName, extract](possumwood::Buffer<typename possumwood::VBOTraits<T>::element>& buffer) {
+	    [&mesh, propertyName, extract](possumwood::Buffer<typename possumwood::VBOTraits<T>::element>& buffer) {
 		    std::size_t index = 0;
 
 		    for(auto& m : mesh) {

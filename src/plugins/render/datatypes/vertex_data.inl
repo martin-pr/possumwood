@@ -7,66 +7,79 @@
 namespace possumwood {
 
 namespace {
-	template<typename T>
-	struct VertexDataType {};
+template <typename T>
+struct VertexDataType {};
 
-	template<>
-	struct VertexDataType<float> {
-		static std::string glslType(std::size_t width) {
-			switch(width) {
-				case 1:	return "float";
-				case 2:	return "vec2";
-				case 3:	return "vec3";
-				case 4:	return "vec4";
-			};
+template <>
+struct VertexDataType<float> {
+	static std::string glslType(std::size_t width) {
+		switch(width) {
+			case 1:
+				return "float";
+			case 2:
+				return "vec2";
+			case 3:
+				return "vec3";
+			case 4:
+				return "vec4";
+		};
 
-			assert(false);
-			return "unknown";
-		}
-	};
-
-	template<>
-	struct VertexDataType<double> {
-		static std::string glslType(std::size_t width) {
-			switch(width) {
-				case 1:	return "double";
-				case 2:	return "vec2" /*"dvec2"*/;
-				case 3:	return "vec3" /*"dvec3"*/;
-				case 4:	return "vec4" /*"dvec4"*/;
-			};
-
-			assert(false);
-			return "unknown";
-		}
-	};
-
-	template<>
-	struct VertexDataType<int> {
-		static std::string glslType(std::size_t width) {
-			switch(width) {
-				case 1:	return "int";
-				case 2:	return "ivec2" /*"dvec2"*/;
-				case 3:	return "ivec3" /*"dvec3"*/;
-				case 4:	return "ivec4" /*"dvec4"*/;
-			};
-
-			assert(false);
-			return "unknown";
-		}
-	};
-
-	template<typename T>
-	std::string makeVBOName(std::size_t width, const std::string& name) {
-		std::stringstream ss;
-		ss << "in " << VertexDataType<T>::glslType(width) + " " + name << ";";
-
-		return ss.str();
+		assert(false);
+		return "unknown";
 	}
+};
+
+template <>
+struct VertexDataType<double> {
+	static std::string glslType(std::size_t width) {
+		switch(width) {
+			case 1:
+				return "double";
+			case 2:
+				return "vec2" /*"dvec2"*/;
+			case 3:
+				return "vec3" /*"dvec3"*/;
+			case 4:
+				return "vec4" /*"dvec4"*/;
+		};
+
+		assert(false);
+		return "unknown";
+	}
+};
+
+template <>
+struct VertexDataType<int> {
+	static std::string glslType(std::size_t width) {
+		switch(width) {
+			case 1:
+				return "int";
+			case 2:
+				return "ivec2" /*"dvec2"*/;
+			case 3:
+				return "ivec3" /*"dvec3"*/;
+			case 4:
+				return "ivec4" /*"dvec4"*/;
+		};
+
+		assert(false);
+		return "unknown";
+	}
+};
+
+template <typename T>
+std::string makeVBOName(std::size_t width, const std::string& name) {
+	std::stringstream ss;
+	ss << "in " << VertexDataType<T>::glslType(width) + " " + name << ";";
+
+	return ss.str();
+}
 }
 
 template <typename T>
-void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateType& updateType,
-                        std::function<void(Buffer<typename VBOTraits<T>::element>&)> updateFn) {
+void VertexData::addVBO(
+    const std::string& name, std::size_t size, const UpdateType& updateType,
+    std::function<void(Buffer<typename VBOTraits<T>::element>&)> updateFn) {
 	assert(size > 0);
 	assert(m_vbos.empty() || m_vbos[0].size == size);
 
@@ -74,17 +87,21 @@ void VertexData::addVBO(const std::string& name, std::size_t size, const UpdateT
 
 	VBOHolder holder;
 	holder.name = name;
-	holder.glslType = makeVBOName<typename VBOTraits<T>::element>(VBOTraits<T>::width(), name);
+	holder.glslType =
+	    makeVBOName<typename VBOTraits<T>::element>(VBOTraits<T>::width(), name);
 	holder.size = size;
 	holder.updateType = updateType;
 
 	VBO<T>* vboPtr = vbo.get();
 
 	holder.update = [&holder, size, vboPtr, updateFn]() {
-		Buffer<typename VBOTraits<T>::element> buffer(VBOTraits<T>::width(), size);
+		std::unique_ptr<Buffer<typename VBOTraits<T>::element>> buffer(
+		    new Buffer<typename VBOTraits<T>::element>(VBOTraits<T>::width(), size));
 
-		updateFn(buffer);
-		vboPtr->init(buffer);
+		updateFn(*buffer);
+		vboPtr->init(*buffer);
+
+		holder.buffer = std::move(buffer);
 	};
 
 	holder.vbo = std::move(vbo);
