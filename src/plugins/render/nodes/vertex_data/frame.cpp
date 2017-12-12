@@ -44,6 +44,24 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				assert(ctr == skeleton.size()*2);
 			}
 		);
+
+		// there will be one position vector per bone. Root will simply be zero-length
+		vd->addVBO<int>(
+			"bone_id",
+			skeleton.size() * 2,
+			possumwood::VertexData::kStatic,
+			[skeleton](possumwood::Buffer<int>& buffer) {
+				std::size_t ctr = 0;
+				for(auto& b : skeleton) {
+					buffer.element(ctr++) = (int)b.index();
+					if(b.hasParent())
+						buffer.element(ctr++) = (int)b.parent().index();
+					else
+						buffer.element(ctr++) = (int)b.index();
+				}
+				assert(ctr == skeleton.size()*2);
+			}
+		);
 	}
 
 	data.set(a_vd, std::shared_ptr<const possumwood::VertexData>(vd.release()));
