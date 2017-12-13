@@ -94,21 +94,21 @@ void VertexData::addVBO(
 
 	VBO<T>* vboPtr = vbo.get();
 
-	holder.update = [&holder, size, vboPtr, updateFn]() {
+	holder.update = [size, vboPtr, updateFn]() -> std::unique_ptr<BufferBase> {
 		std::unique_ptr<Buffer<typename VBOTraits<T>::element>> buffer(
 		    new Buffer<typename VBOTraits<T>::element>(VBOTraits<T>::width(), size));
 
 		updateFn(*buffer);
 		vboPtr->init(*buffer);
 
-		holder.buffer = std::move(buffer);
+		return buffer;
 	};
 
 	holder.vbo = std::move(vbo);
 
 	// update all buffers that are not per-draw
 	if(holder.updateType != kPerDraw)
-		holder.update();
+		holder.buffer = holder.update();
 
 	m_vbos.push_back(std::move(holder));
 }
