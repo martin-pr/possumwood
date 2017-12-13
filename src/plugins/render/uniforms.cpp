@@ -7,46 +7,39 @@
 namespace possumwood {
 
 void addViewportUniforms(possumwood::Uniforms& uniforms) {
-	uniforms.addUniform<std::array<double, 16>>(
+	uniforms.addUniform<Imath::M44d>(
 		"iProjection",
 		possumwood::Uniforms::kPerDraw,
 		[]() {
-			std::array<double, 16> projection;
-			glGetDoublev(GL_PROJECTION_MATRIX, projection.data());
+			Imath::M44d projection;
+			glGetDoublev(GL_PROJECTION_MATRIX, projection.getValue());
 
 			return projection;
 		}
 	);
 
-	uniforms.addUniform<std::array<double, 16>>(
+	uniforms.addUniform<Imath::M44d>(
 		"iModelView",
 		possumwood::Uniforms::kPerDraw,
 		[]() {
-			std::array<double, 16> modelview;
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview.data());
+			Imath::M44d modelview;
+			glGetDoublev(GL_MODELVIEW_MATRIX, modelview.getValue());
 
 			return modelview;
 		}
 	);
 
-	uniforms.addUniform<std::array<double, 16>>(
+	uniforms.addUniform<Imath::M44d>(
 		"iModelViewNormal",
 		possumwood::Uniforms::kPerDraw,
 		[]() {
-			std::array<double, 16> modelview;
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview.data());
+			Imath::M44d mv;
+			glGetDoublev(GL_MODELVIEW_MATRIX, mv.getValue());
 
 			// normal matrix has to be inverted and transposed
-			Imath::M44d mv;
-			for(unsigned a=0;a<16;++a)
-				mv[a/4][a%4] = modelview[a];
-
 			mv = mv.inverse().transposed();
 
-			for(unsigned a=0;a<16;++a)
-				modelview[a] = mv[a/4][a%4];
-
-			return modelview;
+			return mv;
 		}
 	);
 

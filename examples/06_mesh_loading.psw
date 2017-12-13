@@ -1,28 +1,16 @@
 {
     "connections": [
         {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "anim_frame_0",
-            "out_port": "vertex_data"
-        },
-        {
             "in_node": "anim_frame_0",
             "in_port": "frame",
             "out_node": "edit_2",
             "out_port": "out_frame"
         },
         {
-            "in_node": "display_1",
-            "in_port": "skeleton",
-            "out_node": "edit_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "edit_2",
-            "in_port": "in_frame",
-            "out_node": "edit_1",
-            "out_port": "out_frame"
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "anim_frame_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "skin_0",
@@ -37,22 +25,16 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "skin_remap_regex_0",
+            "in_node": "display_1",
             "in_port": "skeleton",
-            "out_node": "bone_rename_0",
-            "out_port": "out_skeleton"
+            "out_node": "edit_1",
+            "out_port": "out_frame"
         },
         {
-            "in_node": "skin_remap_regex_1",
-            "in_port": "skeleton",
-            "out_node": "bone_rename_0",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "remove_unskinned_1",
-            "in_port": "in_skeleton",
-            "out_node": "bone_rename_0",
-            "out_port": "out_skeleton"
+            "in_node": "edit_2",
+            "in_port": "in_frame",
+            "out_node": "edit_1",
+            "out_port": "out_frame"
         },
         {
             "in_node": "draw_0",
@@ -70,6 +52,24 @@
             "in_node": "skin_0",
             "in_port": "base_skeleton",
             "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "skin_remap_regex_0",
+            "in_port": "skeleton",
+            "out_node": "bone_rename_0",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "skin_remap_regex_1",
+            "in_port": "skeleton",
+            "out_node": "bone_rename_0",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "remove_unskinned_1",
+            "in_port": "in_skeleton",
+            "out_node": "bone_rename_0",
             "out_port": "out_skeleton"
         },
         {
@@ -661,6 +661,8 @@
             "name": "meshes_subset",
             "ports": {
                 "subset": [
+                    "GEO_eye_L",
+                    "GEO_eye_R",
                     "ProogCoat",
                     "ProogHead",
                     "ProogJumper",
