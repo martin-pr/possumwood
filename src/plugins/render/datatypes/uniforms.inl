@@ -33,7 +33,7 @@ void Uniforms::addUniform(const std::string& name, const UpdateType& updateType,
 				assert(raw.size() == sizeof(T));
 				const T* data = (const T*)(&raw[0]);
 
-				GLSLTraits<T>::applyUniform(attr, *data);
+				GLSLTraits<T>::applyUniform(attr, 1, data);
 			}
 		};
 
