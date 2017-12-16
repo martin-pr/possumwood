@@ -11,11 +11,11 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iProjection",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[]() {
+		[](Imath::M44d* data, std::size_t size) {
 			Imath::M44d projection;
 			glGetDoublev(GL_PROJECTION_MATRIX, projection.getValue());
 
-			return projection;
+			*data = projection;
 		}
 	);
 
@@ -23,11 +23,11 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iModelView",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[]() {
+		[](Imath::M44d* data, std::size_t size) {
 			Imath::M44d modelview;
 			glGetDoublev(GL_MODELVIEW_MATRIX, modelview.getValue());
 
-			return modelview;
+			*data = modelview;
 		}
 	);
 
@@ -35,14 +35,14 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iModelViewNormal",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[]() {
+		[](Imath::M44d* data, std::size_t size) {
 			Imath::M44d mv;
 			glGetDoublev(GL_MODELVIEW_MATRIX, mv.getValue());
 
 			// normal matrix has to be inverted and transposed
 			mv = mv.inverse().transposed();
 
-			return mv;
+			*data = mv;
 		}
 	);
 
@@ -50,11 +50,11 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iResolution",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[]() {
+		[](Imath::V2f* data, std::size_t size) {
 			GLint viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
 
-			return Imath::V2f(viewport[2], viewport[3]);
+			*data = Imath::V2f(viewport[2], viewport[3]);
 		}
 	);
 }

@@ -26,7 +26,7 @@ class Uniforms {
 
 	template <typename T>
 	void addUniform(const std::string& name, std::size_t size,
-	                const UpdateType& updateType, std::function<T()> updateFunctor);
+	                const UpdateType& updateType, std::function<void(T*, std::size_t)> updateFunctor);
 
 	void addTexture(const std::string& name, const QPixmap& pixmap);
 
@@ -38,16 +38,37 @@ class Uniforms {
 	/// returns the GLSL declaration of all values in this container
 	std::string glslDeclaration() const;
 
-  private:
-	struct UniformHolder {
-		std::string name, glslType;
-		UpdateType updateType;
+	private:
+		struct DataBase {
+			virtual ~DataBase() {};
+			virtual std::unique_ptr<DataBase> clone() const = 0;
+		};
 
-		std::vector<unsigned char> data;
-		std::function<void(std::vector<unsigned char>&)> updateFunctor;
-		std::function<void(GLuint, const std::string&, const std::vector<unsigned char>&)>
-		    useFunctor;
-	};
+		template<typename T>
+		struct Data : public DataBase {
+			virtual std::unique_ptr<DataBase> clone() const {
+				return std::unique_ptr<DataBase>(new Data<T>(*this));
+			}
+
+			std::vector<T> data;
+		};
+
+		struct UniformHolder {
+			UniformHolder() {};
+			UniformHolder(UniformHolder&&) = default;
+
+			UniformHolder(const UniformHolder& h) : name(h.name), glslType(h.glslType), updateType(h.updateType), updateFunctor(h.updateFunctor), useFunctor(h.useFunctor) {
+				data = h.data->clone();
+			}
+
+			std::string name, glslType;
+			UpdateType updateType;
+			std::unique_ptr<DataBase> data;
+
+			std::function<void(DataBase&)> updateFunctor;
+			std::function<void(GLuint, const std::string&,
+			                   const DataBase&)> useFunctor;
+		};
 
 	std::vector<UniformHolder> m_uniforms;
 
