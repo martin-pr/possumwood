@@ -28,6 +28,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	uniforms->addUniform<float>(
 		data.get(a_name),
+		1,
 		possumwood::Uniforms::kPerFrame,
 		[value]() {
 			return value;

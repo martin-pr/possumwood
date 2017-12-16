@@ -18,59 +18,53 @@
 namespace possumwood {
 
 class Uniforms {
-	public:
-		/// type of update - static, per drawing, per frame
-		enum UpdateType {
-			kStatic = 1,
-			kPerDraw = 2,
-			kPerFrame = 3
-		};
+  public:
+	/// type of update - static, per drawing, per frame
+	enum UpdateType { kStatic = 1, kPerDraw = 2, kPerFrame = 3 };
 
-		Uniforms();
+	Uniforms();
 
-		template<typename T>
-		void addUniform(const std::string& name, const UpdateType& updateType,
-		                std::function<T()> updateFunctor);
+	template <typename T>
+	void addUniform(const std::string& name, std::size_t size,
+	                const UpdateType& updateType, std::function<T()> updateFunctor);
 
-		void addTexture(const std::string& name, const QPixmap& pixmap);
+	void addTexture(const std::string& name, const QPixmap& pixmap);
 
-		void use(GLuint programId) const;
+	void use(GLuint programId) const;
 
-		/// returns the number of uniforms and textures stored in this container
-		std::size_t size() const;
+	/// returns the number of uniforms and textures stored in this container
+	std::size_t size() const;
 
-		/// returns the GLSL declaration of all values in this container
-		std::string glslDeclaration() const;
+	/// returns the GLSL declaration of all values in this container
+	std::string glslDeclaration() const;
 
-	private:
-		struct UniformHolder {
-			std::string name, glslType;
-			UpdateType updateType;
+  private:
+	struct UniformHolder {
+		std::string name, glslType;
+		UpdateType updateType;
 
-			std::vector<unsigned char> data;
-			std::function<void(std::vector<unsigned char>&)> updateFunctor;
-			std::function<void(GLuint, const std::string&,
-			                   const std::vector<unsigned char>&)> useFunctor;
-		};
+		std::vector<unsigned char> data;
+		std::function<void(std::vector<unsigned char>&)> updateFunctor;
+		std::function<void(GLuint, const std::string&, const std::vector<unsigned char>&)>
+		    useFunctor;
+	};
 
-		std::vector<UniformHolder> m_uniforms;
+	std::vector<UniformHolder> m_uniforms;
 
-		struct TextureHolder {
-			std::string name, glslType;
-			std::shared_ptr<const Texture> texture;
-		};
+	struct TextureHolder {
+		std::string name, glslType;
+		std::shared_ptr<const Texture> texture;
+	};
 
-		std::vector<TextureHolder> m_textures;
+	std::vector<TextureHolder> m_textures;
 
-		mutable float m_currentTime;
+	mutable float m_currentTime;
 };
 
-template<>
+template <>
 struct Traits<std::shared_ptr<const Uniforms>> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{1, 0.8, 1}};
 	}
-
 };
-
 }

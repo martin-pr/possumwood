@@ -8,39 +8,38 @@
 
 namespace possumwood {
 
-template<typename T>
-void Uniforms::addUniform(const std::string& name, const UpdateType& updateType,
+template <typename T>
+void Uniforms::addUniform(const std::string& name, std::size_t size,
+                          const UpdateType& updateType,
                           std::function<T()> updateFunctor) {
 	UniformHolder uniform;
 
 	uniform.name = name;
-	uniform.glslType = std::string("uniform ") + GLSLTraits<T>::typeString() + " " + name + ";";
+	uniform.glslType =
+	    std::string("uniform ") + GLSLTraits<T>::typeString() + " " + name + ";";
 	uniform.updateType = updateType;
 
-	uniform.updateFunctor =
-		[updateFunctor](std::vector<unsigned char>& raw) {
-			if(raw.empty())
-				raw.resize(sizeof(T));
+	uniform.data.resize(size * sizeof(T));
 
-			T* data = (T*)(&raw[0]);
-			*data = updateFunctor();
-		};
+	uniform.updateFunctor = [updateFunctor](std::vector<unsigned char>& raw) {
+		T* data = (T*)(&raw[0]);
+		*data = updateFunctor();
+	};
 
-	uniform.useFunctor =
-		[](GLuint programId, const std::string& name, const std::vector<unsigned char>& raw) {
-			GLint attr = glGetUniformLocation(programId, name.c_str());
-			if(attr >= 0) {
-				assert(raw.size() == sizeof(T));
-				const T* data = (const T*)(&raw[0]);
+	uniform.useFunctor = [size](GLuint programId, const std::string& name,
+	                            const std::vector<unsigned char>& raw) {
+		GLint attr = glGetUniformLocation(programId, name.c_str());
+		if(attr >= 0) {
+			assert(raw.size() == sizeof(T) * size);
+			const T* data = (const T*)(&raw[0]);
 
-				GLSLTraits<T>::applyUniform(attr, 1, data);
-			}
-		};
+			GLSLTraits<T>::applyUniform(attr, 1, data);
+		}
+	};
 
 	if(updateType != kPerDraw)
 		uniform.updateFunctor(uniform.data);
 
 	m_uniforms.push_back(uniform);
 }
-
 }

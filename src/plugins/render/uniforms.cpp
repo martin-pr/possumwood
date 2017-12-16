@@ -9,6 +9,7 @@ namespace possumwood {
 void addViewportUniforms(possumwood::Uniforms& uniforms) {
 	uniforms.addUniform<Imath::M44d>(
 		"iProjection",
+		1,
 		possumwood::Uniforms::kPerDraw,
 		[]() {
 			Imath::M44d projection;
@@ -20,6 +21,7 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 
 	uniforms.addUniform<Imath::M44d>(
 		"iModelView",
+		1,
 		possumwood::Uniforms::kPerDraw,
 		[]() {
 			Imath::M44d modelview;
@@ -31,6 +33,7 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 
 	uniforms.addUniform<Imath::M44d>(
 		"iModelViewNormal",
+		1,
 		possumwood::Uniforms::kPerDraw,
 		[]() {
 			Imath::M44d mv;
@@ -45,6 +48,7 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 
 	uniforms.addUniform<Imath::V2f>(
 		"iResolution",
+		1,
 		possumwood::Uniforms::kPerDraw,
 		[]() {
 			GLint viewport[4];
