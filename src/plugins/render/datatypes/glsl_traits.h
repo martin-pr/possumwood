@@ -36,11 +36,11 @@ struct GLSLTraits<double> {
 		// glUniformMatrix4dv(attr, size, false, val);
 
 		// glUniformMatrix4dv not supported on all platforms - need to use 4fv version instead
-		float tmp[16];
-		for(unsigned a=0;a<16;++a)
+		float tmp[16*size];
+		for(unsigned a=0;a<16*size;++a)
 			tmp[a] = val[a];
 
-		glUniformMatrix4fv(attr, 1, false, tmp);
+		glUniformMatrix4fv(attr, size, false, tmp);
 	};
 };
 
@@ -66,6 +66,14 @@ struct GLSLTraits<Imath::Matrix44<T>> {
 	constexpr static GLenum type() { return GLSLTraits<T>::type(); };
 	constexpr static const char* typeString() { return "mat4"; };
 	static void applyUniform(GLint attr, std::size_t size, const Imath::Matrix44<T>* val) { GLSLTraits<T>::applyUniformMat4(attr, size, val[0].getValue()); };
+};
+
+template<typename T>
+struct GLSLTraits<std::vector<Imath::Matrix44<T>>> {
+	constexpr static unsigned width() { return 16; };
+	constexpr static GLenum type() { return GLSLTraits<T>::type(); };
+	constexpr static const char* typeString() { return "mat4"; };
+	static void applyUniform(GLint attr, std::size_t size, const Imath::Matrix44<T>* val) { GLSLTraits<T>::applyUniformArrayMat4(attr, val.size(), val); };
 };
 
 }

@@ -15,8 +15,12 @@ void Uniforms::addUniform(const std::string& name, std::size_t size,
 	UniformHolder uniform;
 
 	uniform.name = name;
-	uniform.glslType =
-	    std::string("uniform ") + GLSLTraits<T>::typeString() + " " + name + ";";
+	uniform.glslType = std::string("uniform ") + GLSLTraits<T>::typeString() + " " + name;
+	if(size > 0)
+		uniform.glslType += "[" + std::to_string(size) + "];";
+	else
+		uniform.glslType += ";";
+
 	uniform.updateType = updateType;
 
 	{

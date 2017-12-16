@@ -1,18 +1,6 @@
 {
     "connections": [
         {
-            "in_node": "anim_frame_0",
-            "in_port": "frame",
-            "out_node": "edit_2",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "anim_frame_0",
-            "out_port": "vertex_data"
-        },
-        {
             "in_node": "skin_0",
             "in_port": "posed_skeleton",
             "out_node": "edit_0",
@@ -23,36 +11,6 @@
             "in_port": "in_frame",
             "out_node": "edit_0",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "display_1",
-            "in_port": "skeleton",
-            "out_node": "edit_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "edit_2",
-            "in_port": "in_frame",
-            "out_node": "edit_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "edit_0",
-            "in_port": "in_frame",
-            "out_node": "bone_rename_1",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "skin_0",
-            "in_port": "base_skeleton",
-            "out_node": "bone_rename_1",
-            "out_port": "out_skeleton"
         },
         {
             "in_node": "skin_remap_regex_0",
@@ -71,6 +29,66 @@
             "in_port": "in_skeleton",
             "out_node": "bone_rename_0",
             "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "edit_0",
+            "in_port": "in_frame",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "skin_0",
+            "in_port": "base_skeleton",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "anim_frame_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "uniforms",
+            "out_node": "anim_frame_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "in_uniforms",
+            "out_node": "anim_frame_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "display_1",
+            "in_port": "skeleton",
+            "out_node": "edit_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "edit_2",
+            "in_port": "in_frame",
+            "out_node": "edit_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "anim_frame_0",
+            "in_port": "frame",
+            "out_node": "edit_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "anim_frame_1",
+            "in_port": "frame",
+            "out_node": "edit_2",
+            "out_port": "out_frame"
         },
         {
             "in_node": "draw_0",
@@ -211,7 +229,7 @@
             "out_port": "shader"
         },
         {
-            "in_node": "texture_0",
+            "in_node": "anim_frame_1",
             "in_port": "in_uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
@@ -234,12 +252,23 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1420.85546875,
-                    "y": 67.88671875
+                    "x": 1815.51171875,
+                    "y": 43.87890625
                 }
             },
             "name": "anim_frame",
             "type": "render/vertex_data/anim_frame"
+        },
+        "anim_frame_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1812.15625,
+                    "y": 140.2421875
+                }
+            },
+            "name": "anim_frame",
+            "type": "render/uniforms/anim_frame"
         },
         "bone_rename_0": {
             "blind_data": {
@@ -273,8 +302,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1627.537109375,
-                    "y": 650.2119140625
+                    "x": 1767.91796875,
+                    "y": 775.333984375
                 }
             },
             "name": "cgal",
@@ -309,8 +338,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1803.533203125,
-                    "y": 645.2314453125
+                    "x": 2319.890625,
+                    "y": 699.552734375
                 }
             },
             "name": "draw",
@@ -320,8 +349,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1728.85546875,
-                    "y": 52.88671875
+                    "x": 2189.01171875,
+                    "y": 51.12890625
                 }
             },
             "name": "draw",
@@ -473,8 +502,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1580.970703125,
-                    "y": 885.8876953125
+                    "x": 2120.521484375,
+                    "y": 613.6708984375
                 }
             },
             "name": "offset",
@@ -488,8 +517,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1452.908203125,
-                    "y": 483.6572265625
+                    "x": 2096.06616210937,
+                    "y": 496.627197265625
                 }
             },
             "name": "fragment_shader",
@@ -502,13 +531,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1365.732421875,
-                    "y": -54.2841796875
+                    "x": 1826.888671875,
+                    "y": -54.0419921875
                 }
             },
             "name": "fragment_shader",
             "ports": {
-                "source": "#version 130\n\nuniform sampler2D tex;\n\nin vec3 vertexColour;\nout vec4 color;\n\nvoid main() {\n\tcolor = vec4(vertexColour,1);\n}\n"
+                "source": "#version 130\n\nin vec3 vertexColour;\nout vec4 color;\n\nvoid main() {\n\tcolor = vec4(vertexColour,1);\n}\n"
             },
             "type": "render/fragment_shader"
         },
@@ -516,8 +545,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1575.0,
-                    "y": 165.0
+                    "x": 2012.5234375,
+                    "y": 215.48828125
                 }
             },
             "name": "gl_parameters",
@@ -530,8 +559,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1278.970703125,
-                    "y": 788.6376953125
+                    "x": 1767.6181640625,
+                    "y": 521.42578125
                 }
             },
             "name": "load",
@@ -544,8 +573,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1465.99072265625,
-                    "y": 631.113037109375
+                    "x": 1606.37158203125,
+                    "y": 756.235107421875
                 }
             },
             "name": "normals_generator",
@@ -558,8 +587,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1592.755859375,
-                    "y": 457.0712890625
+                    "x": 2235.91381835937,
+                    "y": 470.041259765625
                 }
             },
             "name": "program",
@@ -569,8 +598,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1536.85546875,
-                    "y": -103.613288879395
+                    "x": 1997.01171875,
+                    "y": -105.371101379395
                 }
             },
             "name": "program",
@@ -643,8 +672,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1328.75610351562,
-                    "y": 639.959533691406
+                    "x": 1469.13696289062,
+                    "y": 765.081604003906
                 }
             },
             "name": "stitch_borders",
@@ -678,8 +707,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1413.970703125,
-                    "y": 884.3876953125
+                    "x": 1953.521484375,
+                    "y": 612.1708984375
                 }
             },
             "name": "texture",
@@ -692,8 +721,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1015.818359375,
-                    "y": 631.2470703125
+                    "x": 1156.19921875,
+                    "y": 756.369140625
                 }
             },
             "name": "to_cgal",
@@ -706,8 +735,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1174.0439453125,
-                    "y": 597.927734375
+                    "x": 1314.4248046875,
+                    "y": 723.0498046875
                 }
             },
             "name": "transform",
@@ -734,8 +763,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1461.158203125,
-                    "y": 353.9072265625
+                    "x": 2104.31616210937,
+                    "y": 366.877197265625
                 }
             },
             "name": "vertex_shader",
@@ -748,13 +777,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1360.35546875,
-                    "y": -178.613296508789
+                    "x": 1820.51171875,
+                    "y": -180.371109008789
                 }
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nin int bone_id;                // ID of the bone this vertex represents\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nout vec3 vertexPosition;       // vertex position for the fragment shader \nout vec3 vertexColour;         // vertex color for the fragment shader \n\n\nvec3 boneToColour(int boneId) {\n\treturn vec3(\n\t\tfloat(mod(boneId, 6)) / 6.0,\n\t\tfloat(mod(boneId / 6, 6)) / 6.0,\n\t\tfloat(mod(boneId / 36, 6)) / 6.0\n\t);\n}\n\nvoid main() {\n\tvec4 pos4 = vec4(position.x, position.y, position.z, 1);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tvertexColour = boneToColour(bone_id);\n} \n"
+                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nin int bone_id;                // ID of the bone this vertex represents\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nout vec3 vertexColour;         // vertex color for the fragment shader \n\nuniform mat4 frame[74];\n\nvec3 boneToColour(int boneId) {\n\treturn vec3(\n\t\tfloat(mod(boneId, 6)) / 6.0,\n\t\tfloat(mod(boneId / 6, 6)) / 6.0,\n\t\tfloat(mod(boneId / 36, 6)) / 6.0\n\t);\n}\n\nvoid main() {\n\t//vec4 pos4 = vec4(position.x, position.y, position.z, 1);\n\tvec4 pos4 = frame[bone_id] * vec4(0,0,0,1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tvertexColour = boneToColour(bone_id);\n} \n"
             },
             "type": "render/vertex_shader"
         },
@@ -762,8 +791,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1193.076171875,
-                    "y": 920.4228515625
+                    "x": 1644.69921875,
+                    "y": 235.1953125
                 }
             },
             "name": "viewport",
