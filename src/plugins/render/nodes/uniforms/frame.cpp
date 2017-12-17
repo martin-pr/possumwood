@@ -6,12 +6,14 @@
 
 #include <ImathMatrix.h>
 
+#include "possumwood_sdk/datatypes/enum.h"
 #include "datatypes/uniforms.inl"
 #include "anim/datatypes/skeleton.h"
 
 namespace {
 
-dependency_graph::InAttr<anim::Skeleton> a_skeleton;
+dependency_graph::InAttr<anim::Skeleton> a_frame, a_base;
+dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_inUniforms;
 dependency_graph::OutAttr<std::shared_ptr<const possumwood::Uniforms>> a_outUniforms;
 
@@ -26,14 +28,39 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	else
 		uniforms = std::unique_ptr<possumwood::Uniforms>(new possumwood::Uniforms());
 
-	anim::Skeleton frame = data.get(a_skeleton);
-
-	// convert to world space
-	for(auto& b : frame)
-		if(b.hasParent())
-			b.tr() = b.parent().tr() * b.tr();
-
+	anim::Skeleton frame = data.get(a_frame);
 	std::vector<Imath::M44f> matrices(frame.size());
+
+	if(data.get(a_mode).value() == "Skinning") {
+		anim::Skeleton base = data.get(a_base);
+
+		if(base.empty())
+			throw std::runtime_error("Base pose input required for skinning matrices computation");
+
+		if(not base.isCompatibleWith(frame))
+			throw std::runtime_error("Base and Frame hierarchies are not compatible");
+
+		// convert both to world space
+		for(auto& b : frame)
+			if(b.hasParent())
+				b.tr() = b.parent().tr() * b.tr();
+
+		for(auto& b : base)
+			if(b.hasParent())
+				b.tr() = b.parent().tr() * b.tr();
+
+		// and compute skinning transforms into frame
+		for(unsigned b=0;b<frame.size();++b)
+			frame[b].tr() = frame[b].tr() * base[b].tr().inverse();
+	}
+
+	else {
+		// convert to world space
+		for(auto& b : frame)
+			if(b.hasParent())
+				b.tr() = b.parent().tr() * b.tr();
+	}
+
 	for(unsigned a=0;a<frame.size();++a)
 		matrices[a] = frame[a].tr().toMatrix44();
 
@@ -54,11 +81,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_skeleton, "frame");
+	meta.addAttribute(a_frame, "frame");
+	meta.addAttribute(a_base, "base_pose");
+	meta.addAttribute(a_mode, "mode",
+	                  possumwood::Enum({"World-space", "Skinning"}));
 	meta.addAttribute(a_inUniforms, "in_uniforms");
 	meta.addAttribute(a_outUniforms, "out_uniforms");
 
-	meta.addInfluence(a_skeleton, a_outUniforms);
+	meta.addInfluence(a_frame, a_outUniforms);
+	meta.addInfluence(a_base, a_outUniforms);
+	meta.addInfluence(a_mode, a_outUniforms);
 	meta.addInfluence(a_inUniforms, a_outUniforms);
 
 	meta.setCompute(&compute);

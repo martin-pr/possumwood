@@ -85,6 +85,9 @@ struct Drawable : public possumwood::Drawable {
 		else if(!vertexData)
 			state.addError("No vertex data provided - cannot draw.");
 
+		else if(!uniforms)
+			state.addError("No uniform data provided - cannot draw.");
+
 		else {
 			// apply the parameters
 			glPushAttrib(GL_ALL_ATTRIB_BITS);

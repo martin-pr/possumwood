@@ -13,6 +13,24 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "display_1",
+            "in_port": "skeleton",
+            "out_node": "edit_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "edit_2",
+            "in_port": "in_frame",
+            "out_node": "edit_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "anim_frame_0",
+            "out_port": "vertex_data"
+        },
+        {
             "in_node": "skin_remap_regex_0",
             "in_port": "skeleton",
             "out_node": "bone_rename_0",
@@ -43,16 +61,16 @@
             "out_port": "out_skeleton"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
+            "in_node": "anim_frame_1",
+            "in_port": "base_pose",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
         },
         {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "anim_frame_0",
-            "out_port": "vertex_data"
+            "in_node": "anim_frame_0",
+            "in_port": "frame",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
         },
         {
             "in_node": "draw_1",
@@ -67,22 +85,10 @@
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "display_1",
-            "in_port": "skeleton",
-            "out_node": "edit_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "edit_2",
-            "in_port": "in_frame",
-            "out_node": "edit_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "anim_frame_0",
-            "in_port": "frame",
-            "out_node": "edit_2",
-            "out_port": "out_frame"
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "anim_frame_1",
@@ -268,6 +274,9 @@
                 }
             },
             "name": "anim_frame",
+            "ports": {
+                "mode": "Skinning"
+            },
             "type": "render/uniforms/anim_frame"
         },
         "bone_rename_0": {
@@ -517,7 +526,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2096.06616210937,
+                    "x": 2096.06616210938,
                     "y": 496.627197265625
                 }
             },
@@ -587,7 +596,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2235.91381835937,
+                    "x": 2235.91381835938,
                     "y": 470.041259765625
                 }
             },
@@ -763,7 +772,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2104.31616210937,
+                    "x": 2104.31616210938,
                     "y": 366.877197265625
                 }
             },
@@ -783,7 +792,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nin int bone_id;                // ID of the bone this vertex represents\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nout vec3 vertexColour;         // vertex color for the fragment shader \n\nuniform mat4 frame[74];\n\nvec3 boneToColour(int boneId) {\n\treturn vec3(\n\t\tfloat(mod(boneId, 6)) / 6.0,\n\t\tfloat(mod(boneId / 6, 6)) / 6.0,\n\t\tfloat(mod(boneId / 36, 6)) / 6.0\n\t);\n}\n\nvoid main() {\n\t//vec4 pos4 = vec4(position.x, position.y, position.z, 1);\n\tvec4 pos4 = frame[bone_id] * vec4(0,0,0,1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tvertexColour = boneToColour(bone_id);\n} \n"
+                "source": "#version 140 \n \nin vec3 position;              // position attr from the vbo \nin int bone_id;                // ID of the bone this vertex represents\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nout vec3 vertexColour;         // vertex color for the fragment shader \n\nuniform mat4 frame[74];\n\nvec3 boneToColour(int boneId) {\n\treturn vec3(\n\t\tfloat(mod(boneId, 6)) / 6.0,\n\t\tfloat(mod(boneId / 6, 6)) / 6.0,\n\t\tfloat(mod(boneId / 36, 6)) / 6.0\n\t);\n}\n\nvoid main() {\n\t//vec4 pos4 = vec4(position.x, position.y, position.z, 1);\n\t//vec4 pos4 = frame[bone_id] * vec4(0,0,0,1);\n\tvec4 pos4 = frame[bone_id] * vec4(position,1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tvertexColour = boneToColour(bone_id);\n} \n"
             },
             "type": "render/vertex_shader"
         },
