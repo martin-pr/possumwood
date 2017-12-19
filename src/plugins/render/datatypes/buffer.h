@@ -3,7 +3,7 @@
 #include <vector>
 
 #include <boost/noncopyable.hpp>
-#include <boost/align/aligned_allocator.hpp>
+//#include <boost/align/aligned_allocator.hpp>
 
 namespace possumwood {
 
@@ -15,7 +15,7 @@ public:
 /// A simple non-copyable raw-data container for OpenGL buffers.
 template <typename T>
 class BufferTemplated : public BufferBase {
-	typedef std::vector<T, boost::alignment::aligned_allocator<T, 64>> vector_t;
+	typedef std::vector<T /*, boost::alignment::aligned_allocator<T, 64>*/ > vector_t;
 
   public:
 	BufferTemplated(std::size_t width, std::size_t vertexCount);
