@@ -23,9 +23,9 @@ void Uniforms::use(GLuint programId) const {
 
 	for(auto& u : m_uniforms) {
 		if(u.updateType == kPerDraw || (timeUpdate && u.updateType == kPerFrame))
-			u.updateFunctor(const_cast<std::vector<unsigned char>&>(u.data));
+			u.updateFunctor(*u.data);
 
-		u.useFunctor(programId, u.name, u.data);
+		u.useFunctor(programId, u.name, *u.data);
 	}
 
 	for(unsigned tex = 0; tex < m_textures.size(); ++tex) {

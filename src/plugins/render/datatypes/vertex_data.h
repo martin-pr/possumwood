@@ -47,7 +47,8 @@ class VertexData : public boost::noncopyable {
 		std::unique_ptr<VBOBase> vbo;
 		std::size_t size;
 		UpdateType updateType;
-		std::function<void()> update;
+		std::function<std::unique_ptr<BufferBase>()> update;
+		mutable std::unique_ptr<BufferBase> buffer; // MESSY
 	};
 
 	std::vector<VBOHolder> m_vbos;

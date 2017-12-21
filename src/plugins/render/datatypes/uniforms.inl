@@ -8,39 +8,48 @@
 
 namespace possumwood {
 
-template<typename T>
-void Uniforms::addUniform(const std::string& name, const UpdateType& updateType,
-                          std::function<T()> updateFunctor) {
+template <typename T>
+void Uniforms::addUniform(const std::string& name, std::size_t size,
+                          const UpdateType& updateType,
+                          std::function<void(T*, std::size_t)> updateFunctor) {
 	UniformHolder uniform;
 
 	uniform.name = name;
-	uniform.glslType = std::string("uniform ") + GLSLTraits<T>::typeString() + " " + name + ";";
+	uniform.glslType = std::string("uniform ") + GLSLTraits<T>::typeString() + " " + name;
+	if(size > 0)
+		uniform.glslType += "[" + std::to_string(size) + "];";
+	else
+		uniform.glslType += ";";
+
 	uniform.updateType = updateType;
 
+	{
+		std::unique_ptr<Data<T>> data(new Data<T>());
+		data->data.resize(size);
+		uniform.data = std::move(data);
+	}
+
 	uniform.updateFunctor =
-		[updateFunctor](std::vector<unsigned char>& raw) {
-			if(raw.empty())
-				raw.resize(sizeof(T));
+		[updateFunctor, size](DataBase& baseData) {
+			Data<T>& data = dynamic_cast<Data<T>&>(baseData);
+			assert(data.data.size() == size);
 
-			T* data = (T*)(&raw[0]);
-			*data = updateFunctor();
+			updateFunctor(&(data.data[0]), size);
 		};
 
-	uniform.useFunctor =
-		[](GLuint programId, const std::string& name, const std::vector<unsigned char>& raw) {
-			GLint attr = glGetUniformLocation(programId, name.c_str());
-			if(attr >= 0) {
-				assert(raw.size() == sizeof(T));
-				const T* data = (const T*)(&raw[0]);
+	uniform.useFunctor = [size](GLuint programId, const std::string& name,
+	                            const DataBase& baseData) {
+		const Data<T>& data = dynamic_cast<const Data<T>&>(baseData);
+		assert(data.data.size() == size);
 
-				GLSLTraits<T>::applyUniform(attr, *data);
-			}
-		};
+		GLint attr = glGetUniformLocation(programId, name.c_str());
+		if(attr >= 0)
+			GLSLTraits<T>::applyUniform(attr, size, &(data.data[0]));
+	};
 
 	if(updateType != kPerDraw)
-		uniform.updateFunctor(uniform.data);
+		uniform.updateFunctor(*uniform.data);
 
-	m_uniforms.push_back(uniform);
+	m_uniforms.push_back(std::move(uniform));
 }
-
 }

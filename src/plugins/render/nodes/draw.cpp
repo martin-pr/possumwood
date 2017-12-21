@@ -15,6 +15,7 @@
 #include "datatypes/vbo.inl"
 #include "datatypes/vertex_data.inl"
 #include "datatypes/uniforms.inl"
+#include "datatypes/gl_parameters.h"
 #include "uniforms.h"
 
 #include "default_shaders.h"
@@ -24,6 +25,7 @@ namespace {
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Program>> a_program;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::VertexData>> a_vertexData;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_uniforms;
+dependency_graph::InAttr<possumwood::GLParameters> a_params;
 
 namespace {
 	std::shared_ptr<const possumwood::Uniforms> defaultUniforms() {
@@ -83,7 +85,14 @@ struct Drawable : public possumwood::Drawable {
 		else if(!vertexData)
 			state.addError("No vertex data provided - cannot draw.");
 
+		else if(!uniforms)
+			state.addError("No uniform data provided - cannot draw.");
+
 		else {
+			// apply the parameters
+			glPushAttrib(GL_ALL_ATTRIB_BITS);
+			values().get(a_params).apply();
+
 			// use the program
 			glUseProgram(program->id());
 
@@ -99,6 +108,9 @@ struct Drawable : public possumwood::Drawable {
 
 			// disconnect everything
 			glUseProgram(0);
+
+			// and undo the params
+			glPopAttrib();
 		}
 
 		return state;
@@ -111,6 +123,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_program, "program");
 	meta.addAttribute(a_vertexData, "vertex_data");
 	meta.addAttribute(a_uniforms, "uniforms", defaultUniforms());
+	meta.addAttribute(a_params, "gl_params");
 
 	meta.setDrawable<Drawable>();
 }

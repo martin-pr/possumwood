@@ -18,6 +18,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_CXX_STANDARD 14)
 
 add_definitions(-Wall -Werror -g)
+add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 ###########################################################
 # DEPENDENCIES

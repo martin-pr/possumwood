@@ -3,14 +3,22 @@
 #include <vector>
 
 #include <boost/noncopyable.hpp>
+//#include <boost/align/aligned_allocator.hpp>
 
 namespace possumwood {
 
+class BufferBase : public boost::noncopyable {
+public:
+	virtual ~BufferBase() {};
+};
+
 /// A simple non-copyable raw-data container for OpenGL buffers.
 template <typename T>
-class BufferBase : public boost::noncopyable {
+class BufferTemplated : public BufferBase {
+	typedef std::vector<T /*, boost::alignment::aligned_allocator<T, 64>*/ > vector_t;
+
   public:
-	BufferBase(std::size_t width, std::size_t vertexCount);
+	BufferTemplated(std::size_t width, std::size_t vertexCount);
 
 	std::size_t vertexCount() const;
 	std::size_t width() const;
@@ -43,14 +51,14 @@ class BufferBase : public boost::noncopyable {
 		}
 
 	  private:
-		Element(typename std::vector<T>::iterator begin,
-		        typename std::vector<T>::iterator end)
+		Element(typename vector_t::iterator begin,
+		        typename vector_t::iterator end)
 		    : m_begin(begin), m_end(end) {
 		}
 
-		typename std::vector<T>::iterator m_begin, m_end;
+		typename vector_t::iterator m_begin, m_end;
 
-		friend class BufferBase;
+		friend class BufferTemplated;
 	};
 
 	Element element(std::size_t vertexIndex) {
@@ -65,7 +73,7 @@ class BufferBase : public boost::noncopyable {
   protected:
   private:
 	std::size_t m_width, m_vertexCount;
-	std::vector<T> m_data;
+	vector_t m_data;
 };
 
 // only float and int buffers supported at the moment
@@ -74,20 +82,20 @@ template <typename T>
 class Buffer {};
 
 template <>
-class Buffer<float> : public BufferBase<float> {
+class Buffer<float> : public BufferTemplated<float> {
   public:
-	Buffer(std::size_t width, std::size_t vertexCount) : BufferBase(width, vertexCount){};
+	Buffer(std::size_t width, std::size_t vertexCount) : BufferTemplated(width, vertexCount){};
 };
 
 template <>
-class Buffer<double> : public BufferBase<double> {
+class Buffer<double> : public BufferTemplated<double> {
   public:
-	Buffer(std::size_t width, std::size_t vertexCount) : BufferBase(width, vertexCount){};
+	Buffer(std::size_t width, std::size_t vertexCount) : BufferTemplated(width, vertexCount){};
 };
 
 template <>
-class Buffer<int> : public BufferBase<int> {
+class Buffer<int> : public BufferTemplated<int> {
   public:
-	Buffer(std::size_t width, std::size_t vertexCount) : BufferBase(width, vertexCount){};
+	Buffer(std::size_t width, std::size_t vertexCount) : BufferTemplated(width, vertexCount){};
 };
 }

@@ -30,7 +30,7 @@ void VBO<T>::init(Buffer<typename VBOTraits<T>::element>& buffer) {
 	glBindBuffer(GL_ARRAY_BUFFER, id());
 
 	// synchronously transfer these, using raw pointer to the first element
-	glBufferData(GL_ARRAY_BUFFER, buffer.vertexCount() * buffer.width() * sizeof(T),
+	glBufferData(GL_ARRAY_BUFFER, buffer.vertexCount() * buffer.width() * sizeof(typename VBOTraits<T>::element),
 	             buffer.element(0).ptr(), GL_STATIC_DRAW);
 
 	// unbind the buffer to work with

@@ -45,12 +45,12 @@ addons:
 before_install:
   - sudo apt-get update -qq
 
-  - wget https://github.com/CGAL/cgal/archive/releases/CGAL-4.11.tar.gz
-  - tar -xzvf CGAL-4.11.tar.gz
-  - pushd cgal-releases-CGAL-4.11 && mkdir build && pushd build && cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/usr && make && sudo make install && popd && popd
-
 # Run build
 script:
+  - wget http://www.mprazak.info/cgal-releases-CGAL-4.11.tar.gz
+  - tar xzf cgal-releases-CGAL-4.11.tar.gz
+  - pushd cgal-releases-CGAL-4.11 && mkdir build && pushd build && cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/usr && make && sudo make install && popd && popd
+
   - export CXX=g++-5
   - export CC=gcc-5
   - cd $TRAVIS_BUILD_DIR

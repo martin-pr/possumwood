@@ -1,34 +1,22 @@
 {
     "connections": [
         {
-            "in_node": "display_1",
-            "in_port": "skeleton",
-            "out_node": "edit_1",
+            "in_node": "skin_0",
+            "in_port": "posed_skeleton",
+            "out_node": "edit_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "texture_0",
-            "in_port": "value",
-            "out_node": "load_0",
-            "out_port": "image"
+            "in_node": "edit_1",
+            "in_port": "in_frame",
+            "out_node": "edit_0",
+            "out_port": "out_frame"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "uniforms",
-            "out_node": "float_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "anim_frame_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "skin_remap_regex_0",
@@ -61,16 +49,52 @@
             "out_port": "out_skeleton"
         },
         {
-            "in_node": "skin_0",
-            "in_port": "posed_skeleton",
-            "out_node": "edit_0",
+            "in_node": "anim_frame_1",
+            "in_port": "base_pose",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "anim_frame_0",
+            "in_port": "frame",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "anim_frame_2",
+            "in_port": "base_pose",
+            "out_node": "bone_rename_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "display_1",
+            "in_port": "skeleton",
+            "out_node": "edit_1",
             "out_port": "out_frame"
         },
         {
-            "in_node": "edit_1",
+            "in_node": "edit_2",
             "in_port": "in_frame",
-            "out_node": "edit_0",
+            "out_node": "edit_1",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "uniforms",
+            "out_node": "anim_frame_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "in_uniforms",
+            "out_node": "anim_frame_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "stitch_borders_1",
+            "in_port": "input",
+            "out_node": "to_cgal_1",
+            "out_port": "out_cgal"
         },
         {
             "in_node": "draw_0",
@@ -79,9 +103,63 @@
             "out_port": "vertex_data"
         },
         {
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "normals_generator_1",
+            "out_port": "output"
+        },
+        {
+            "in_node": "anim_frame_1",
+            "in_port": "frame",
+            "out_node": "edit_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "edit_3",
+            "in_port": "in_frame",
+            "out_node": "edit_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_1",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_1",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "gl_params",
+            "out_node": "gl_parameters_0",
+            "out_port": "gl_params"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "program",
+            "out_node": "program_1",
             "out_port": "program"
         },
         {
@@ -105,6 +183,12 @@
         {
             "in_node": "skin_0",
             "in_port": "meshes",
+            "out_node": "remove_unskinned_1",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "to_cgal_1",
+            "in_port": "in_meshes",
             "out_node": "remove_unskinned_1",
             "out_port": "out_meshes"
         },
@@ -145,12 +229,6 @@
             "out_port": "out_meshes"
         },
         {
-            "in_node": "float_0",
-            "in_port": "in_uniforms",
-            "out_node": "texture_0",
-            "out_port": "out_uniforms"
-        },
-        {
             "in_node": "transform_0",
             "in_port": "in_mesh",
             "out_node": "to_cgal_0",
@@ -169,7 +247,13 @@
             "out_port": "shader"
         },
         {
-            "in_node": "texture_0",
+            "in_node": "program_1",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_1",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "anim_frame_1",
             "in_port": "in_uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
@@ -185,9 +269,102 @@
             "in_port": "in_meshes",
             "out_node": "x_0",
             "out_port": "meshes"
+        },
+        {
+            "in_node": "float_1",
+            "in_port": "in_uniforms",
+            "out_node": "anim_frame_2",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "draw_2",
+            "in_port": "program",
+            "out_node": "program_2",
+            "out_port": "program"
+        },
+        {
+            "in_node": "normals_generator_1",
+            "in_port": "input",
+            "out_node": "stitch_borders_1",
+            "out_port": "output"
+        },
+        {
+            "in_node": "draw_2",
+            "in_port": "uniforms",
+            "out_node": "float_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "draw_2",
+            "in_port": "vertex_data",
+            "out_node": "cgal_1",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_2",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_2",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_2",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_2",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "anim_frame_2",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "anim_frame_2",
+            "in_port": "frame",
+            "out_node": "edit_3",
+            "out_port": "out_frame"
         }
     ],
     "nodes": {
+        "anim_frame_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1815.51171875,
+                    "y": 43.87890625
+                }
+            },
+            "name": "anim_frame",
+            "type": "render/vertex_data/anim_frame"
+        },
+        "anim_frame_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1812.15625,
+                    "y": 140.2421875
+                }
+            },
+            "name": "anim_frame",
+            "ports": {
+                "mode": "Skinning"
+            },
+            "type": "render/uniforms/anim_frame"
+        },
+        "anim_frame_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1783.11882150606,
+                    "y": 517.42239271535
+                }
+            },
+            "name": "anim_frame",
+            "ports": {
+                "mode": "Skinning"
+            },
+            "type": "render/uniforms/anim_frame"
+        },
         "bone_rename_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -206,8 +383,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 655.0,
-                    "y": 149.4375
+                    "x": 659.8828125,
+                    "y": 151.87890625
                 }
             },
             "name": "skeleton_rename",
@@ -220,8 +397,19 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1627.537109375,
-                    "y": 650.2119140625
+                    "x": 1767.91796875,
+                    "y": 775.333984375
+                }
+            },
+            "name": "cgal",
+            "type": "render/vertex_data/cgal"
+        },
+        "cgal_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1623.85546875,
+                    "y": 1017.208984375
                 }
             },
             "name": "cgal",
@@ -245,8 +433,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1176.0,
-                    "y": 259.265625
+                    "x": 1195.33544921875,
+                    "y": -92.5363769531243
                 }
             },
             "name": "skeleton_display",
@@ -256,8 +444,30 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1803.533203125,
-                    "y": 645.2314453125
+                    "x": 2319.890625,
+                    "y": 699.552734375
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "draw_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 2189.01171875,
+                    "y": 51.12890625
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "draw_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 2068.328125,
+                    "y": 1233.927734375
                 }
             },
             "name": "draw",
@@ -267,8 +477,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 841.1611328125,
-                    "y": 145.734375
+                    "x": 825.90234375,
+                    "y": -29.7416992187498
                 }
             },
             "name": "frame_edit - pose",
@@ -369,8 +579,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1006.0625,
-                    "y": 189.171875
+                    "x": 1013.69189453125,
+                    "y": -5.37768554687477
                 }
             },
             "name": "frame_edit",
@@ -385,12 +595,67 @@
             },
             "type": "anim/frame/edit"
         },
+        "edit_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1347.27978515625,
+                    "y": -11.1572265624998
+                }
+            },
+            "name": "frame_edit",
+            "ports": {
+                "rotations": null,
+                "scale": 1.0,
+                "translate": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/frame/edit"
+        },
+        "edit_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1493.68359375,
+                    "y": 309.74609375
+                }
+            },
+            "name": "frame_edit",
+            "ports": {
+                "rotations": null,
+                "scale": 1.0,
+                "translate": {
+                    "x": -4.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/frame/edit"
+        },
         "float_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1580.970703125,
-                    "y": 885.8876953125
+                    "x": 2120.521484375,
+                    "y": 613.6708984375
+                }
+            },
+            "name": "offset",
+            "ports": {
+                "name": "iOffset",
+                "value": 0.0
+            },
+            "type": "render/uniforms/float"
+        },
+        "float_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1807.708984375,
+                    "y": 1251.7958984375
                 }
             },
             "name": "offset",
@@ -404,36 +669,78 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1463.845703125,
-                    "y": 405.5322265625
+                    "x": 2096.06616210938,
+                    "y": 496.627197265625
                 }
             },
             "name": "fragment_shader",
             "ports": {
-                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nin vec3 vertexNormal;\nin vec3 vertexColour;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\t//color = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n\tcolor = vec4(vertexColour, 1);\n}\n"
+                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nin vec3 vertexNormal;\nin vec3 vertexColour;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\t//color = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n\tcolor = vec4(vertexColour, 1) * norm.z;\n}\n"
             },
             "type": "render/fragment_shader"
         },
-        "load_0": {
+        "fragment_shader_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1278.970703125,
-                    "y": 788.6376953125
+                    "x": 1826.888671875,
+                    "y": -54.0419921875
                 }
             },
-            "name": "load",
+            "name": "fragment_shader",
             "ports": {
-                "filename": "matcap_textures/00021.png"
+                "source": "#version 130\n\nin vec3 vertexColour;\nout vec4 color;\n\nvoid main() {\n\tcolor = vec4(vertexColour,1);\n}\n"
             },
-            "type": "render/image/load"
+            "type": "render/fragment_shader"
+        },
+        "fragment_shader_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1844.50366210938,
+                    "y": 1031.00219726562
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nin vec3 vertexNormal;\nin vec3 vertexColour;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\t//color = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n\tcolor = vec4(vertexColour, 1) * norm.z;\n}\n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "gl_parameters_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 2012.5234375,
+                    "y": 215.48828125
+                }
+            },
+            "name": "gl_parameters",
+            "ports": {
+                "line_width": 3.0
+            },
+            "type": "render/gl_parameters"
         },
         "normals_generator_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1465.99072265625,
-                    "y": 631.113037109375
+                    "x": 1606.37158203125,
+                    "y": 756.235107421875
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
+        },
+        "normals_generator_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1462.30908203125,
+                    "y": 998.110107421875
                 }
             },
             "name": "normals_generator",
@@ -446,8 +753,30 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1603.693359375,
-                    "y": 378.9462890625
+                    "x": 2235.91381835938,
+                    "y": 470.041259765625
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "program_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1997.01171875,
+                    "y": -105.371101379395
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "program_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1984.35131835938,
+                    "y": 1004.41625976562
                 }
             },
             "name": "program",
@@ -520,8 +849,19 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1328.75610351562,
-                    "y": 639.959533691406
+                    "x": 1469.13696289062,
+                    "y": 765.081604003906
+                }
+            },
+            "name": "stitch_borders",
+            "type": "cgal/topology/stitch_borders"
+        },
+        "stitch_borders_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1325.07446289062,
+                    "y": 1006.95660400391
                 }
             },
             "name": "stitch_borders",
@@ -538,6 +878,8 @@
             "name": "meshes_subset",
             "ports": {
                 "subset": [
+                    "GEO_eye_L",
+                    "GEO_eye_R",
                     "ProogCoat",
                     "ProogHead",
                     "ProogJumper",
@@ -549,26 +891,12 @@
             },
             "type": "anim/mesh/subset"
         },
-        "texture_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 1413.970703125,
-                    "y": 884.3876953125
-                }
-            },
-            "name": "texture",
-            "ports": {
-                "name": "tex"
-            },
-            "type": "render/uniforms/texture"
-        },
         "to_cgal_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1015.818359375,
-                    "y": 631.2470703125
+                    "x": 1156.19921875,
+                    "y": 756.369140625
                 }
             },
             "name": "to_cgal",
@@ -577,12 +905,26 @@
             },
             "type": "anim/mesh/to_cgal"
         },
+        "to_cgal_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1127.859375,
+                    "y": 1006.349609375
+                }
+            },
+            "name": "to_cgal",
+            "ports": {
+                "skinning_count": 4
+            },
+            "type": "anim/mesh/to_cgal"
+        },
         "transform_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1174.0439453125,
-                    "y": 597.927734375
+                    "x": 1314.4248046875,
+                    "y": 723.0498046875
                 }
             },
             "name": "transform",
@@ -609,13 +951,41 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1472.095703125,
-                    "y": 275.7822265625
+                    "x": 2104.31616210938,
+                    "y": 366.877197265625
                 }
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 150\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\n#define WEIGHT_COUNT 3\nin float skinningWeights[WEIGHT_COUNT];   // skinning weights\nin int skinningIndices[WEIGHT_COUNT];     // skinning indices\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\nout vec3 vertexColour;\n\nvec3 boneToColour(int boneId) {\n\treturn vec3(\n\t\tfloat(mod(boneId, 6)) / 6.0,\n\t\tfloat(mod(boneId / 6, 6)) / 6.0,\n\t\tfloat(mod(boneId / 36, 6)) / 6.0\n\t);\n}\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n\n\tvertexColour = vec3(0,0,0);\n\tfor(int a=0;a<WEIGHT_COUNT;++a)\n\t\tvertexColour += boneToColour(skinningIndices[a]) * skinningWeights[a];\n}"
+                "source": "#version 130\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\n#define WEIGHT_COUNT 3\nin float skinningWeights[WEIGHT_COUNT];   // skinning weights\nin int skinningIndices[WEIGHT_COUNT];     // skinning indices\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\nout vec3 vertexColour;\n\nvec3 boneToColour(int boneId) {\n\treturn vec3(\n\t\tfloat(mod(boneId, 6)) / 6.0,\n\t\tfloat(mod(boneId / 6, 6)) / 6.0,\n\t\tfloat(mod(boneId / 36, 6)) / 6.0\n\t);\n}\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n\n\tvertexColour = vec3(0,0,0);\n\tfor(int a=0;a<WEIGHT_COUNT;++a)\n\t\tvertexColour += boneToColour(skinningIndices[a]) * skinningWeights[a];\n}"
+            },
+            "type": "render/vertex_shader"
+        },
+        "vertex_shader_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1820.51171875,
+                    "y": -180.371109008789
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nin int bone_id;                // ID of the bone this vertex represents\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nout vec3 vertexColour;         // vertex color for the fragment shader \n\nuniform mat4 frame[74];\n\nvec3 boneToColour(int boneId) {\n\treturn vec3(\n\t\tfloat(mod(boneId, 6)) / 6.0,\n\t\tfloat(mod(boneId / 6, 6)) / 6.0,\n\t\tfloat(mod(boneId / 36, 6)) / 6.0\n\t);\n}\n\nvoid main() {\n\t//vec4 pos4 = vec4(position.x, position.y, position.z, 1);\n\t//vec4 pos4 = frame[bone_id] * vec4(0,0,0,1);\n\tvec4 pos4 = frame[bone_id] * vec4(position,1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tvertexColour = boneToColour(bone_id);\n} \n"
+            },
+            "type": "render/vertex_shader"
+        },
+        "vertex_shader_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1852.75366210938,
+                    "y": 901.252197265624
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\n#define WEIGHT_COUNT 4\nin float skinningWeights[WEIGHT_COUNT];   // skinning weights\nin int skinningIndices[WEIGHT_COUNT];     // skinning indices\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nuniform mat4 frame[74];\n\nout vec3 vertexNormal;         // output to the fragment shader\nout vec3 vertexColour;\n\nvec3 boneToColour(int boneId) {\n\treturn vec3(\n\t\t1.0 - float(mod(boneId, 6)) / 6.0,\n\t\t1.0 - float(mod(boneId / 6, 6)) / 6.0,\n\t\t1.0 - float(mod(boneId / 36, 6)) / 6.0\n\t);\n}\n\nvoid main() {\n\t// skinning computation\n\tmat4 s = mat4(0.0);\n\tfor(int a=0;a<WEIGHT_COUNT;++a)\n\t\ts += frame[skinningIndices[a]] * skinningWeights[a];\n\t\n\t// projecting the result\n\tgl_Position = \n\t\tiProjection * iModelView * s * vec4(position, 1); \n\n\tvertexNormal = (iModelView * s * vec4(normals, 0)).xyz;\n\n\tvertexColour = vec3(0,0,0);\n\tfor(int a=0;a<WEIGHT_COUNT;++a)\n\t\tvertexColour += boneToColour(skinningIndices[a]) * skinningWeights[a];\n}"
             },
             "type": "render/vertex_shader"
         },
@@ -623,8 +993,19 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1193.076171875,
-                    "y": 920.4228515625
+                    "x": 1644.69921875,
+                    "y": 235.1953125
+                }
+            },
+            "name": "viewport",
+            "type": "render/uniforms/viewport"
+        },
+        "viewport_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1571.86698135202,
+                    "y": 567.504801558505
                 }
             },
             "name": "viewport",
@@ -650,6 +1031,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALLAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAnsAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAABhgAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABywAAAj4AAAB1AP////sAAAAGAGwAbwBnAAAAAbMAAAJWAAAASQD///8AAAIyAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAABoQAAAakAAAXMAAAECAAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAI6AAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAeoAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAABnwAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAAB5AAAAiUAAAB1AP////sAAAAGAGwAbwBnAAAAAbMAAAJWAAAASQD///8AAANUAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

@@ -13,7 +13,7 @@ void VertexData::use(GLuint programId) const {
 	// do the updates, if needed
 	for(auto& v : m_vbos)
 		if(v.updateType == kPerDraw)
-			v.update();
+			v.buffer = v.update();
 
 	// and try to use each
 	for(auto& v : m_vbos) {
