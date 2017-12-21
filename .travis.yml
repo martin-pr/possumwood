@@ -48,7 +48,7 @@ before_install:
 # Run build
 script:
   - wget http://www.mprazak.info/cgal-releases-CGAL-4.11.tar.gz
-  - tar -xzvf cgal-releases-CGAL-4.11.tar.gz
+  - tar xzf cgal-releases-CGAL-4.11.tar.gz
   - pushd cgal-releases-CGAL-4.11 && mkdir build && pushd build && cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/usr && make && sudo make install && popd && popd
 
   - export CXX=g++-5
