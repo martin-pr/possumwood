@@ -7,6 +7,8 @@
 
 #include <QtOpenGL/QGLWidget>
 
+#include <ImathVec.h>
+
 class Viewport : public QGLWidget, public boost::noncopyable {
 	Q_OBJECT
 
@@ -25,7 +27,7 @@ class Viewport : public QGLWidget, public boost::noncopyable {
 
   private:
 	float m_sceneDistance, m_sceneRotationX, m_sceneRotationY;
-	float m_originX, m_originY, m_originZ;
+	Imath::V3f m_origin;
 	int m_mouseX, m_mouseY;
 
 	boost::posix_time::ptime m_timer;

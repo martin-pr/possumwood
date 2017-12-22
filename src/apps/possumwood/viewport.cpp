@@ -6,7 +6,6 @@
 
 #include <QtGui/QMouseEvent>
 
-#include <ImathVec.h>
 #include <ImathMatrix.h>
 
 #include <GL/glu.h>
@@ -17,8 +16,8 @@ std::vector<Viewport*> s_instances;
 
 Viewport::Viewport(QWidget* parent)
     : QGLWidget(parent, (s_instances.size() > 0 ? s_instances[0] : NULL)),
-      m_sceneDistance(10), m_sceneRotationX(30), m_sceneRotationY(30), m_originX(0),
-      m_originY(0), m_originZ(0), m_mouseX(0), m_mouseY(0) {
+      m_sceneDistance(10), m_sceneRotationX(30), m_sceneRotationY(30), m_origin(0, 0, 0),
+      m_mouseX(0), m_mouseY(0) {
 	s_instances.push_back(this);
 
 	setMouseTracking(true);
@@ -115,9 +114,7 @@ void Viewport::paintGL() {
 	const Imath::V3f eye =
 	    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance);
 
-	const Imath::M44f m =
-	    lookAt(eye + Imath::V3f(m_originX, m_originY, m_originZ),
-	           Imath::V3f(m_originX, m_originY, m_originZ), Imath::V3f(0, 1, 0));
+	const Imath::M44f m = lookAt(eye + m_origin, m_origin, Imath::V3f(0, 1, 0));
 	glMultMatrixf(m.getValue());
 
 	const boost::posix_time::ptime t(boost::posix_time::microsec_clock::universal_time());
@@ -164,9 +161,7 @@ void Viewport::mouseMoveEvent(QMouseEvent* event) {
 		right = right * m_sceneDistance * dx;
 		up = up * m_sceneDistance * dy;
 
-		m_originX += right.x + up.x;
-		m_originY += right.y + up.y;
-		m_originZ += right.z + up.z;
+		m_origin += right + up;
 
 		update();
 	}
