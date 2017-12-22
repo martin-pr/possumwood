@@ -67,6 +67,38 @@ Imath::V3f eyePosition(float sceneRotX, float sceneRotY, float sceneDist) {
 
 	return eye;
 }
+
+Imath::M44f lookAt(const Imath::V3f& eyePosition, const Imath::V3f& lookAt,
+                   const Imath::V3f& upVector) {
+	Imath::V3f forward = lookAt - eyePosition;
+	forward.normalize();
+
+	Imath::V3f side = forward.cross(upVector);
+	side.normalize();
+
+	Imath::V3f up = side.cross(forward);
+	up.normalize();
+
+	Imath::M44f rotmat;
+	rotmat.makeIdentity();
+
+	rotmat[0][0] = side.x;
+	rotmat[1][0] = side.y;
+	rotmat[2][0] = side.z;
+
+	rotmat[0][1] = up.x;
+	rotmat[1][1] = up.y;
+	rotmat[2][1] = up.z;
+
+	rotmat[0][2] = -forward.x;
+	rotmat[1][2] = -forward.y;
+	rotmat[2][2] = -forward.z;
+
+	Imath::M44f transmat;
+	transmat.setTranslation(Imath::V3f(-eyePosition.x, -eyePosition.y, -eyePosition.z));
+
+	return transmat * rotmat;
+}
 }
 
 void Viewport::paintGL() {
@@ -83,8 +115,10 @@ void Viewport::paintGL() {
 	const Imath::V3f eye =
 	    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance);
 
-	gluLookAt(eye.x + m_originX, eye.y + m_originY, eye.z + m_originZ, m_originX,
-	          m_originY, m_originZ, 0, 1, 0);
+	const Imath::M44f m =
+	    lookAt(eye + Imath::V3f(m_originX, m_originY, m_originZ),
+	           Imath::V3f(m_originX, m_originY, m_originZ), Imath::V3f(0, 1, 0));
+	glMultMatrixf(m.getValue());
 
 	const boost::posix_time::ptime t(boost::posix_time::microsec_clock::universal_time());
 	const float dt = (float)(t - m_timer).total_microseconds() / 1e6f;
