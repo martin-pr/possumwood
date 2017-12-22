@@ -98,24 +98,38 @@ Imath::M44f lookAt(const Imath::V3f& eyePosition, const Imath::V3f& lookAt,
 
 	return transmat * rotmat;
 }
+
+Imath::M44f perspective(float fovyInDegrees, float aspectRatio, float znear, float zfar) {
+	const float f = 1.0 / tanf(fovyInDegrees * M_PI / 360.0);
+	const float A = (zfar + znear) / (znear - zfar);
+	const float B = 2.0 * zfar * znear / (znear - zfar);
+
+	return Imath::M44f(
+		f / aspectRatio, 0, 0, 0,
+		0, f, 0, 0,
+		0, 0, A, -1,
+		0, 0, B, 0);
+}
 }
 
 void Viewport::paintGL() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45, (float)width() / (float)height(), m_sceneDistance * 0.1f,
-	               std::max(m_sceneDistance * 2.0f, 1000.0f));
+	{
+		const Imath::M44f persp =
+		    perspective(45, (float)width() / (float)height(), m_sceneDistance * 0.1f,
+		                std::max(m_sceneDistance * 2.0f, 1000.0f));
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(persp.getValue());
+	}
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	const Imath::V3f eye =
-	    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance);
-
-	const Imath::M44f m = lookAt(eye + m_origin, m_origin, Imath::V3f(0, 1, 0));
-	glMultMatrixf(m.getValue());
+	{
+		const Imath::M44f m = lookAt(
+		    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance) + m_origin,
+		    m_origin, Imath::V3f(0, 1, 0));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(m.getValue());
+	}
 
 	const boost::posix_time::ptime t(boost::posix_time::microsec_clock::universal_time());
 	const float dt = (float)(t - m_timer).total_microseconds() / 1e6f;
