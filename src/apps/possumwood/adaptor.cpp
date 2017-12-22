@@ -432,14 +432,14 @@ QAction* Adaptor::redoAction() const {
 	return m_redo;
 }
 
-void Adaptor::draw(unsigned width, unsigned height) {
+void Adaptor::draw(const possumwood::Drawable::ViewportState& viewport) {
 	for(auto& n : getIndex()) {
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 
 		if(n.second.drawable != nullptr) {
 			const auto currentDrawState = n.second.drawable->drawState();
 
-			n.second.drawable->doDraw(width, height);
+			n.second.drawable->doDraw(viewport);
 
 			if(n.second.drawable->drawState() != currentDrawState)
 				onStateChanged(*n.second.graphNode);

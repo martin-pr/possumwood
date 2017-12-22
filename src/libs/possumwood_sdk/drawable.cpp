@@ -18,6 +18,10 @@ const dependency_graph::Values& Drawable::values() const {
 	return m_vals;
 }
 
+const possumwood::Drawable::ViewportState& Drawable::viewport() const {
+	return m_viewport;
+}
+
 boost::signals2::connection Drawable::onRefreshQueued(std::function<void()> fn) {
 	return s_refresh.connect(fn);
 }
@@ -30,10 +34,9 @@ const dependency_graph::State& Drawable::drawState() const {
 	return m_drawState;
 }
 
-void Drawable::doDraw(unsigned w, unsigned h) {
+void Drawable::doDraw(const ViewportState& viewport) {
 	try {
-		m_width = w;
-		m_height = h;
+		m_viewport = viewport;
 
 		dependency_graph::State state = draw();
 		m_drawState = state;
@@ -45,22 +48,14 @@ void Drawable::doDraw(unsigned w, unsigned h) {
 	}
 }
 
-unsigned Drawable::width() const {
-	return m_width;
-}
-
-unsigned Drawable::height() const {
-	return m_height;
-}
-
 //////////
 
-DrawableFunctor::DrawableFunctor(dependency_graph::Values&& vals, std::function<dependency_graph::State(const dependency_graph::Values&)> draw) : Drawable(std::move(vals)), m_draw(draw) {
+DrawableFunctor::DrawableFunctor(dependency_graph::Values&& vals, std::function<dependency_graph::State(const dependency_graph::Values&, const ViewportState&)> draw) : Drawable(std::move(vals)), m_draw(draw) {
 }
 
 dependency_graph::State DrawableFunctor::draw() {
 	if(m_draw)
-		return m_draw(values());
+		return m_draw(values(), viewport());
 
 	return dependency_graph::State();
 }

@@ -461,7 +461,12 @@ void MainWindow::draw(float dt) {
 
 	// draw everything else
 	glEnable(GL_LIGHTING);
-	m_adaptor->draw(m_viewport->width(), m_viewport->height());
+
+	possumwood::Drawable::ViewportState viewport;
+	viewport.width = m_viewport->width();
+	viewport.height = m_viewport->height();
+
+	m_adaptor->draw(viewport);
 }
 
 Adaptor& MainWindow::adaptor() {
