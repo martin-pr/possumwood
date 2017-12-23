@@ -6,6 +6,7 @@
 #include <boost/noncopyable.hpp>
 
 #include <possumwood_sdk/traits.h>
+#include <possumwood_sdk/drawable.h>
 
 #include "vbo.h"
 #include "buffer.h"
@@ -25,10 +26,10 @@ class VertexData : public boost::noncopyable {
 	template <typename T>
 	void addVBO(const std::string& name, std::size_t size,
 	            const UpdateType& updateType,
-	            std::function<void(Buffer<typename VBOTraits<T>::element>&)> updateFn);
+	            std::function<void(Buffer<typename VBOTraits<T>::element>&, const Drawable::ViewportState& viewport)> updateFn);
 
 	/// updates and uses the program
-	void use(GLuint programId) const;
+	void use(GLuint programId, const Drawable::ViewportState& vs) const;
 
 	/// returns the drawing element primitive type
 	GLenum drawElementType() const;
@@ -47,7 +48,7 @@ class VertexData : public boost::noncopyable {
 		std::unique_ptr<VBOBase> vbo;
 		std::size_t size;
 		UpdateType updateType;
-		std::function<std::unique_ptr<BufferBase>()> update;
+		std::function<std::unique_ptr<BufferBase>(const Drawable::ViewportState& vs)> update;
 		mutable std::unique_ptr<BufferBase> buffer; // MESSY
 	};
 

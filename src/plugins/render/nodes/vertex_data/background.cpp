@@ -22,7 +22,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		"position",
 		4,
 		possumwood::VertexData::kStatic,
-		[](possumwood::Buffer<float>& buffer) {
+		[](possumwood::Buffer<float>& buffer, const possumwood::Drawable::ViewportState& viewport) {
 			buffer.element(0) = Imath::V3f(-1,-1,1);
 			buffer.element(1) = Imath::V3f(1,-1,1);
 			buffer.element(2) = Imath::V3f(1,1,1);
@@ -34,7 +34,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		"iNearPositionVert",
 		4,
 		possumwood::VertexData::kPerDraw,
-		[](possumwood::Buffer<double>& buffer) {
+		[](possumwood::Buffer<double>& buffer, const possumwood::Drawable::ViewportState& vp) {
 			GLint viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
 
@@ -57,7 +57,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		"iFarPositionVert",
 		4,
 		possumwood::VertexData::kPerDraw,
-		[](possumwood::Buffer<double>& buffer) {
+		[](possumwood::Buffer<double>& buffer, const possumwood::Drawable::ViewportState& vp) {
 			GLint viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
 

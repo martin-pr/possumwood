@@ -69,7 +69,7 @@ struct Drawable : public possumwood::Drawable {
 		m_timeChangedConnection.disconnect();
 	}
 
-	dependency_graph::State draw() {
+	dependency_graph::State draw() override {
 		dependency_graph::State state;
 
 		std::shared_ptr<const possumwood::Program> program = values().get(a_program);
@@ -101,7 +101,7 @@ struct Drawable : public possumwood::Drawable {
 			uniforms->use(program->id());
 
 			// use the vertex data
-			vertexData->use(program->id());
+			vertexData->use(program->id(), viewport());
 
 			// and execute draw
 			glDrawArrays(vertexData->drawElementType(), 0, vertexData->size());
