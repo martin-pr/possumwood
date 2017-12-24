@@ -11,7 +11,7 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iProjection",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::M44d* data, std::size_t size) {
+		[](Imath::M44d* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
 			Imath::M44d projection;
 			glGetDoublev(GL_PROJECTION_MATRIX, projection.getValue());
 
@@ -23,7 +23,7 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iModelView",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::M44d* data, std::size_t size) {
+		[](Imath::M44d* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
 			Imath::M44d modelview;
 			glGetDoublev(GL_MODELVIEW_MATRIX, modelview.getValue());
 
@@ -35,7 +35,7 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iModelViewNormal",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::M44d* data, std::size_t size) {
+		[](Imath::M44d* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
 			Imath::M44d mv;
 			glGetDoublev(GL_MODELVIEW_MATRIX, mv.getValue());
 
@@ -50,7 +50,7 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iResolution",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::V2f* data, std::size_t size) {
+		[](Imath::V2f* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
 			GLint viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
 

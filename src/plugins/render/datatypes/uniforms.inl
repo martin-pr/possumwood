@@ -9,9 +9,9 @@
 namespace possumwood {
 
 template <typename T>
-void Uniforms::addUniform(const std::string& name, std::size_t size,
-                          const UpdateType& updateType,
-                          std::function<void(T*, std::size_t)> updateFunctor) {
+void Uniforms::addUniform(
+    const std::string& name, std::size_t size, const UpdateType& updateType,
+    std::function<void(T*, std::size_t, const Drawable::ViewportState&)> updateFunctor) {
 	UniformHolder uniform;
 
 	uniform.name = name;
@@ -29,13 +29,13 @@ void Uniforms::addUniform(const std::string& name, std::size_t size,
 		uniform.data = std::move(data);
 	}
 
-	uniform.updateFunctor =
-		[updateFunctor, size](DataBase& baseData) {
-			Data<T>& data = dynamic_cast<Data<T>&>(baseData);
-			assert(data.data.size() == size);
+	uniform.updateFunctor = [updateFunctor, size](DataBase& baseData,
+	                                              const Drawable::ViewportState& vs) {
+		Data<T>& data = dynamic_cast<Data<T>&>(baseData);
+		assert(data.data.size() == size);
 
-			updateFunctor(&(data.data[0]), size);
-		};
+		updateFunctor(&(data.data[0]), size, vs);
+	};
 
 	uniform.useFunctor = [size](GLuint programId, const std::string& name,
 	                            const DataBase& baseData) {
@@ -47,8 +47,8 @@ void Uniforms::addUniform(const std::string& name, std::size_t size,
 			GLSLTraits<T>::applyUniform(attr, size, &(data.data[0]));
 	};
 
-	if(updateType != kPerDraw)
-		uniform.updateFunctor(*uniform.data);
+	// if(updateType != kPerDraw)
+	// 	uniform.updateFunctor(*uniform.data, vs);
 
 	m_uniforms.push_back(std::move(uniform));
 }

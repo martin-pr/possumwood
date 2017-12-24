@@ -17,13 +17,15 @@ void Uniforms::addTexture(const std::string& name, const QPixmap& pixmap) {
 	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(pixmap));
 }
 
-void Uniforms::use(GLuint programId) const {
+void Uniforms::use(GLuint programId, const Drawable::ViewportState& vs) const {
 	const bool timeUpdate = m_currentTime != possumwood::App::instance().time();
 	m_currentTime = possumwood::App::instance().time();
 
 	for(auto& u : m_uniforms) {
-		if(u.updateType == kPerDraw || (timeUpdate && u.updateType == kPerFrame))
-			u.updateFunctor(*u.data);
+		if(u.updateType == kPerDraw || (timeUpdate && u.updateType == kPerFrame) || !u.initialised) {
+			u.updateFunctor(*u.data, vs);
+			u.initialised = true;
+		}
 
 		u.useFunctor(programId, u.name, *u.data);
 	}

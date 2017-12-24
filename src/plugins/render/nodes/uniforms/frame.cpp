@@ -68,7 +68,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		"frame",
 		frame.size(),
 		possumwood::Uniforms::kPerFrame,
-		[matrices](Imath::M44f* data, std::size_t size) {
+		[matrices](Imath::M44f* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
 			for(std::size_t i=0;i<matrices.size();++i)
 				/// OpenGL matrices are transposed (?!)
 				data[i] = matrices[i].transposed();

@@ -98,7 +98,7 @@ struct Drawable : public possumwood::Drawable {
 
 			// feed in the uniforms
 			assert(uniforms);
-			uniforms->use(program->id());
+			uniforms->use(program->id(), viewport());
 
 			// use the vertex data
 			vertexData->use(program->id(), viewport());
