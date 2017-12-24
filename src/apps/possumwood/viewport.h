@@ -8,6 +8,7 @@
 #include <QtOpenGL/QGLWidget>
 
 #include <ImathVec.h>
+#include <ImathMatrix.h>
 
 class Viewport : public QGLWidget, public boost::noncopyable {
 	Q_OBJECT
@@ -19,6 +20,9 @@ class Viewport : public QGLWidget, public boost::noncopyable {
 	Viewport(QWidget* parent = NULL);
 	virtual ~Viewport();
 
+	const Imath::M44f& projection() const;
+	const Imath::M44f& modelview() const;
+
   protected:
 	virtual void initializeGL();
 	virtual void paintGL();
@@ -29,6 +33,8 @@ class Viewport : public QGLWidget, public boost::noncopyable {
 	float m_sceneDistance, m_sceneRotationX, m_sceneRotationY;
 	Imath::V3f m_origin;
 	int m_mouseX, m_mouseY;
+
+	Imath::M44f m_projection, m_modelview;
 
 	boost::posix_time::ptime m_timer;
 };

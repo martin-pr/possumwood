@@ -6,8 +6,6 @@
 
 #include <QtGui/QMouseEvent>
 
-#include <ImathMatrix.h>
-
 #include <GL/glu.h>
 
 namespace {
@@ -104,32 +102,25 @@ Imath::M44f perspective(float fovyInDegrees, float aspectRatio, float znear, flo
 	const float A = (zfar + znear) / (znear - zfar);
 	const float B = 2.0 * zfar * znear / (znear - zfar);
 
-	return Imath::M44f(
-		f / aspectRatio, 0, 0, 0,
-		0, f, 0, 0,
-		0, 0, A, -1,
-		0, 0, B, 0);
+	return Imath::M44f(f / aspectRatio, 0, 0, 0, 0, f, 0, 0, 0, 0, A, -1, 0, 0, B, 0);
 }
 }
 
 void Viewport::paintGL() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	{
-		const Imath::M44f persp =
-		    perspective(45, (float)width() / (float)height(), m_sceneDistance * 0.1f,
-		                std::max(m_sceneDistance * 2.0f, 1000.0f));
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(persp.getValue());
-	}
+	// update the projection matrix
+	m_projection =
+	    perspective(45, (float)width() / (float)height(), m_sceneDistance * 0.1f,
+	                std::max(m_sceneDistance * 2.0f, 1000.0f));
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(m_projection.getValue());
 
-	{
-		const Imath::M44f m = lookAt(
-		    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance) + m_origin,
-		    m_origin, Imath::V3f(0, 1, 0));
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(m.getValue());
-	}
+	m_modelview = lookAt(
+	    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance) + m_origin,
+	    m_origin, Imath::V3f(0, 1, 0));
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(m_modelview.getValue());
 
 	const boost::posix_time::ptime t(boost::posix_time::microsec_clock::universal_time());
 	const float dt = (float)(t - m_timer).total_microseconds() / 1e6f;
@@ -183,3 +174,12 @@ void Viewport::mouseMoveEvent(QMouseEvent* event) {
 	m_mouseX = event->x();
 	m_mouseY = event->y();
 }
+
+const Imath::M44f& Viewport::projection() const {
+	return m_projection;
+}
+
+const Imath::M44f& Viewport::modelview() const {
+	return m_modelview;
+}
+

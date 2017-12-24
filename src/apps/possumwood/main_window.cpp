@@ -465,6 +465,8 @@ void MainWindow::draw(float dt) {
 	possumwood::Drawable::ViewportState viewport;
 	viewport.width = m_viewport->width();
 	viewport.height = m_viewport->height();
+	viewport.modelview = m_viewport->modelview();
+	viewport.projection = m_viewport->projection();
 
 	m_adaptor->draw(viewport);
 }

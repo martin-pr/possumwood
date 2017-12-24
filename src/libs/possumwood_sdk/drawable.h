@@ -2,6 +2,8 @@
 
 #include <boost/noncopyable.hpp>
 
+#include <ImathMatrix.h>
+
 #include <dependency_graph/values.h>
 #include <dependency_graph/state.h>
 
@@ -11,6 +13,7 @@ class Drawable : public boost::noncopyable {
 	public:
 		struct ViewportState {
 			unsigned width, height;
+			Imath::M44f projection, modelview;
 		};
 
 		Drawable(dependency_graph::Values&& vals);
