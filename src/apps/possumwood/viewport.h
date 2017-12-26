@@ -37,4 +37,6 @@ class Viewport : public QGLWidget, public boost::noncopyable {
 	Imath::M44f m_projection, m_modelview;
 
 	boost::posix_time::ptime m_timer;
+
+	GLuint m_groundVao, m_groundVbo;
 };
