@@ -8,6 +8,7 @@
 
 #include <QtGui/QMouseEvent>
 
+#include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
 
@@ -15,18 +16,16 @@ namespace {
 
 QGLFormat getGLFormat() {
 	QGLFormat format = QGLFormat::defaultFormat();
-	format.setVersion(4, 5); // currently the latest
+	// way higher than currently supported - will fall back to highest
+	format.setVersion(6, 0);
 	format.setProfile(QGLFormat::CoreProfile);
 	return format;
 }
-
 }
 
 Viewport::Viewport(QWidget* parent)
-    : QGLWidget(getGLFormat(), parent),
-      m_sceneDistance(10), m_sceneRotationX(30), m_sceneRotationY(30), m_origin(0, 0, 0),
-      m_mouseX(0), m_mouseY(0), m_groundVao(0), m_groundVbo(0) {
-
+    : QGLWidget(getGLFormat(), parent), m_sceneDistance(10), m_sceneRotationX(30),
+      m_sceneRotationY(30), m_origin(0, 0, 0), m_mouseX(0), m_mouseY(0) {
 	setMouseTracking(true);
 }
 
@@ -109,122 +108,9 @@ Imath::M44f perspective(float fovyInDegrees, float aspectRatio, float znear, flo
 
 	return Imath::M44f(f / aspectRatio, 0, 0, 0, 0, f, 0, 0, 0, 0, A, -1, 0, 0, B, 0);
 }
-
-static const GLchar* fragmentSrc = " \
-#version 150 \n \
-//out vec4 gl_FragColor; \n \
-\n \
-void main(void) { \n \
-    gl_FragColor = vec4(0,1,0,1.0); \n \
-}";
-
-static const GLchar* vertexSrc = " \
-#version 150 \n \
-in vec3 in_Position; \n \
-\n \
-void main(void) { \n \
-    gl_Position = vec4(in_Position, 1.0); \n \
-}";
-
-const std::vector<Imath::V3f>& makeGrid() {
-	static std::vector<Imath::V3f> result;
-
-	if(result.empty()) {
-		for(int a = -10; a <= 10; ++a) {
-			result.push_back(Imath::V3f((float)a / 10.0f, -10.0f, 0));
-			result.push_back(Imath::V3f((float)a / 10.0f, 10.0f, 0));
-			result.push_back(Imath::V3f(-10.0f, (float)a / 10.0f, 0));
-			result.push_back(Imath::V3f(10.0f, (float)a / 10.0f, 0));
-		}
-	}
-
-	return result;
-}
-
 }
 
 void Viewport::paintGL() {
-	// first initialisation
-	if(m_groundVao == 0) {
-		// make the vertex array object
-		glGenVertexArrays(1, &m_groundVao);
-		// and bind it to work in it now
-		glBindVertexArray(m_groundVao);
-
-		// allocate the vertex data buffer
-		glGenBuffers(1, &m_groundVbo);
-
-		// bind the buffer and transfer the data
-		glBindBuffer(GL_ARRAY_BUFFER, m_groundVbo);
-		const std::vector<Imath::V3f>& grid = makeGrid();
-		glBufferData(GL_ARRAY_BUFFER, grid.size() * 3 * sizeof(GLfloat), &grid[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glEnableVertexAttribArray(0);
-
-		GLuint vertexshader = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(vertexshader, 1, &vertexSrc, 0);
-		glCompileShader(vertexshader);
-
-		int IsCompiled_VS;
-		glGetShaderiv(vertexshader, GL_COMPILE_STATUS, &IsCompiled_VS);
-		if(IsCompiled_VS == false) {
-			GLint maxLength;
-			glGetShaderiv(vertexshader, GL_INFO_LOG_LENGTH, &maxLength);
-
-			std::string infoLog;
-			infoLog.resize(maxLength);
-
-			glGetShaderInfoLog(vertexshader, maxLength, &maxLength, &infoLog[0]);
-
-			throw std::runtime_error("VERTEX SHADER:\n" + infoLog);
-		}
-
-		GLuint fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(fragmentshader, 1, &fragmentSrc, 0);
-		glCompileShader(fragmentshader);
-
-		int IsCompiled_FS;
-		glGetShaderiv(fragmentshader, GL_COMPILE_STATUS, &IsCompiled_FS);
-		if(IsCompiled_FS == false) {
-			GLint maxLength;
-			glGetShaderiv(fragmentshader, GL_INFO_LOG_LENGTH, &maxLength);
-
-			std::string infoLog;
-			infoLog.resize(maxLength);
-
-			glGetShaderInfoLog(fragmentshader, maxLength, &maxLength, &infoLog[0]);
-
-			throw std::runtime_error("FRAGMENT SHADER:\n" + infoLog);
-		}
-
-		GLint shaderprogram = glCreateProgram();
-
-		/* Attach our shaders to our program */
-		glAttachShader(shaderprogram, vertexshader);
-		glAttachShader(shaderprogram, fragmentshader);
-
-		glBindAttribLocation(shaderprogram, 0, "in_Position");
-
-		glLinkProgram(shaderprogram);
-		GLint IsLinked;
-		glGetProgramiv(shaderprogram, GL_LINK_STATUS, (int*)&IsLinked);
-		if(IsLinked == false) {
-			GLint maxLength;
-			glGetProgramiv(shaderprogram, GL_INFO_LOG_LENGTH, &maxLength);
-
-			std::string infoLog;
-			infoLog.resize(maxLength);
-			glGetProgramInfoLog(shaderprogram, maxLength, &maxLength,
-			                    &infoLog[0]);
-
-			throw std::runtime_error(infoLog);
-		}
-
-		glUseProgram(shaderprogram);
-
-		glBindVertexArray(0);
-	}
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// update the projection matrix
@@ -241,17 +127,15 @@ void Viewport::paintGL() {
 	// glLoadMatrixf(m_modelview.getValue());
 
 	const boost::posix_time::ptime t(boost::posix_time::microsec_clock::universal_time());
-	// const float dt = (float)(t - m_timer).total_microseconds() / 1e6f;
+	const float dt = (float)(t - m_timer).total_microseconds() / 1e6f;
 	m_timer = t;
 
 	// glPushAttrib(GL_ALL_ATTRIB_BITS);
-	//emit render(dt);
+	emit render(dt);
 
-	glBindVertexArray(m_groundVao);
-
-	glDrawArrays(GL_LINES, 0, makeGrid().size());
-
-	glBindVertexArray(0);
+	if(m_grid == nullptr)
+		m_grid = std::unique_ptr<possumwood::Grid>(new possumwood::Grid());
+	m_grid->draw(m_projection, m_modelview);
 
 	// glPopAttrib();
 }
@@ -307,4 +191,3 @@ const Imath::M44f& Viewport::projection() const {
 const Imath::M44f& Viewport::modelview() const {
 	return m_modelview;
 }
-

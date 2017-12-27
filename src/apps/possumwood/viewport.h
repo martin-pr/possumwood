@@ -1,14 +1,20 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include <boost/noncopyable.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+
+#include <GL/glew.h>
+#include <GL/gl.h>
 
 #include <QtOpenGL/QGLWidget>
 
 #include <ImathVec.h>
 #include <ImathMatrix.h>
+
+#include "grid.h"
 
 class Viewport : public QGLWidget, public boost::noncopyable {
 	Q_OBJECT
@@ -38,5 +44,5 @@ class Viewport : public QGLWidget, public boost::noncopyable {
 
 	boost::posix_time::ptime m_timer;
 
-	GLuint m_groundVao, m_groundVbo;
+	std::unique_ptr<possumwood::Grid> m_grid;
 };
