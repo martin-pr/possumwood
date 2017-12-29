@@ -133,10 +133,6 @@ void Viewport::paintGL() {
 	// glPushAttrib(GL_ALL_ATTRIB_BITS);
 	emit render(dt);
 
-	if(m_grid == nullptr)
-		m_grid = std::unique_ptr<possumwood::Grid>(new possumwood::Grid());
-	m_grid->draw(m_projection, m_modelview);
-
 	// glPopAttrib();
 }
 

@@ -14,8 +14,6 @@
 #include <ImathVec.h>
 #include <ImathMatrix.h>
 
-#include "grid.h"
-
 class Viewport : public QGLWidget, public boost::noncopyable {
 	Q_OBJECT
 
@@ -43,6 +41,4 @@ class Viewport : public QGLWidget, public boost::noncopyable {
 	Imath::M44f m_projection, m_modelview;
 
 	boost::posix_time::ptime m_timer;
-
-	std::unique_ptr<possumwood::Grid> m_grid;
 };
