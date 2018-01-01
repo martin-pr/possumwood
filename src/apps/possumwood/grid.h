@@ -16,8 +16,5 @@ namespace possumwood {
 class Grid : public possumwood::GLRenderable {
   public:
 	Grid();
-
-	virtual const std::string& vertexShaderSource() const override;
-	virtual const std::string& fragmentShaderSource() const override;
 };
 }

@@ -34,8 +34,10 @@ GLuint compileShader(GLenum shaderType, const std::string& source) {
 }
 }
 
-GLRenderable::GLRenderable()
+GLRenderable::GLRenderable(const std::string& vertexShaderSrc,
+                           const std::string& fragmentShaderSrc)
     : m_vao(0), m_verticesVBO(0), m_vertexShader(0), m_fragmentShader(0), m_program(0),
+      m_vertexShaderSrc(vertexShaderSrc), m_fragmentShaderSrc(fragmentShaderSrc),
       m_needsVBOUpdate(true) {
 }
 
@@ -69,10 +71,10 @@ void GLRenderable::initialise() {
 	glBindVertexArray(m_vao);
 
 	// make and compile the vertex shader (throws on error)
-	m_vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource());
+	m_vertexShader = compileShader(GL_VERTEX_SHADER, m_vertexShaderSrc);
 
 	// make and compile the fragment shader (throws on error)
-	m_fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource());
+	m_fragmentShader = compileShader(GL_FRAGMENT_SHADER, m_fragmentShaderSrc);
 
 	// make a program and link the shaders
 	m_program = glCreateProgram();
@@ -138,6 +140,8 @@ void GLRenderable::draw(const Imath::M44f& projection, const Imath::M44f& modelv
 	// use the VAO
 	glBindVertexArray(m_vao);
 
+	glUseProgram(m_program);
+
 	// update the VBO, if needed
 	if(m_needsVBOUpdate)
 		updateVBO();
@@ -155,11 +159,13 @@ void GLRenderable::draw(const Imath::M44f& projection, const Imath::M44f& modelv
 	// do the drawing
 	glDrawArrays(m_drawType, 0, m_vboData.size());
 
+	glUseProgram(0);
+
 	// and unbind the vertex array
 	glBindVertexArray(0);
 }
 
-const std::string& GLRenderable::vertexShaderSource() const {
+const std::string& GLRenderable::defaultVertexShader() {
 	static const std::string s_source =
 	    " \
 		#version 150 \n \
@@ -174,7 +180,7 @@ const std::string& GLRenderable::vertexShaderSource() const {
 	return s_source;
 }
 
-const std::string& GLRenderable::fragmentShaderSource() const {
+const std::string& GLRenderable::defaultFragmentShader() {
 	static const std::string s_source =
 	    " \
 		#version 150 \n \

@@ -16,7 +16,11 @@ namespace possumwood {
 /// to use something similar to the old GL functionality.
 class GLRenderable : public boost::noncopyable {
   public:
-	GLRenderable();
+	static const std::string& defaultVertexShader();
+	static const std::string& defaultFragmentShader();
+
+	GLRenderable(const std::string& vertexShaderSrc = defaultVertexShader(),
+	             const std::string& fragmentShaderSrc = defaultFragmentShader());
 	virtual ~GLRenderable();
 
 	void draw(const Imath::M44f& projection, const Imath::M44f& modelview);
@@ -41,10 +45,6 @@ class GLRenderable : public boost::noncopyable {
 	/// destruction, the data are moved to be held by GLRenderable.
 	VBO updateVertexData();
 
-  protected:
-	virtual const std::string& vertexShaderSource() const;
-	virtual const std::string& fragmentShaderSource() const;
-
   private:
 	/// initialises the OpenGL setup (except VBO)
 	void initialise();
@@ -54,6 +54,8 @@ class GLRenderable : public boost::noncopyable {
 
 	GLuint m_vao, m_verticesVBO;
 	GLuint m_vertexShader, m_fragmentShader, m_program;
+
+	std::string m_vertexShaderSrc, m_fragmentShaderSrc;
 
 	bool m_needsVBOUpdate;
 	std::vector<Imath::V3f> m_vboData;

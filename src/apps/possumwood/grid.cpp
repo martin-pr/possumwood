@@ -21,16 +21,8 @@ const std::vector<Imath::V3f>& makeGrid() {
 
 	return result;
 }
-}
 
-Grid::Grid() {
-	possumwood::GLRenderable::VBO vbo = updateVertexData();
-
-	vbo.data = makeGrid();
-	vbo.drawType = GL_LINES;
-}
-
-const std::string& Grid::vertexShaderSource() const {
+const std::string& vertexShaderSource() {
 	static const std::string s_source =
 	    " \
 		#version 150 \n \
@@ -47,7 +39,7 @@ const std::string& Grid::vertexShaderSource() const {
 	return s_source;
 }
 
-const std::string& Grid::fragmentShaderSource() const {
+const std::string& fragmentShaderSource() {
 	static const std::string s_source =
 	    " \
 		#version 150 \n \
@@ -60,5 +52,13 @@ const std::string& Grid::fragmentShaderSource() const {
 		}";
 
 	return s_source;
+}
+}
+
+Grid::Grid() : GLRenderable(vertexShaderSource(), fragmentShaderSource()) {
+	possumwood::GLRenderable::VBO vbo = updateVertexData();
+
+	vbo.data = makeGrid();
+	vbo.drawType = GL_LINES;
 }
 }
