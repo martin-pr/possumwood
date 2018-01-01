@@ -9,7 +9,7 @@ namespace {
 GLuint compileShader(GLenum shaderType, const std::string& source) {
 	GLuint shaderId = glCreateShader(shaderType);
 
-	const GLchar* const src = &source[0];
+	const GLchar* src = &source[0];
 	glShaderSource(shaderId, 1, &src, 0);
 	glCompileShader(shaderId);
 
