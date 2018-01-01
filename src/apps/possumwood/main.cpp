@@ -80,11 +80,11 @@ int main(int argc, char* argv[]) {
 	///////////////////////////////
 
 	{
-		// create the application object
-		QApplication app(argc, argv);
-
 		// initialise glut
 		glutInit(&argc, argv);
+
+		// create the application object
+		QApplication app(argc, argv);
 
 		// create the possumwood application
 		possumwood::App papp;
@@ -93,6 +93,8 @@ int main(int argc, char* argv[]) {
 		MainWindow win;
 		win.setWindowIcon(QIcon(":icons/app.png"));
 		win.showMaximized();
+
+		std::cout << "OpenGL version supported by this platform is " << glGetString(GL_VERSION) << std::endl;
 
 		// initialize GLEW
 		auto glewErr = glewInit();

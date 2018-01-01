@@ -7,18 +7,17 @@
 
 #include <ImathMatrix.h>
 
+#include <possumwood_sdk/gl_renderable.h>
+
 namespace possumwood {
 
 /// A simple drawable grid, compatible with Core GL profile. To be created during a draw
 /// call, when a GL context is active.
-class Grid : public boost::noncopyable {
+class Grid : public possumwood::GLRenderable {
   public:
 	Grid();
 
-	void draw(const Imath::M44f& projection, const Imath::M44f& modelview);
-
-  private:
-  	GLuint m_vao, m_verticesVBO;
-  	GLuint m_vertexShader, m_fragmentShader, m_program;
+	virtual const std::string& vertexShaderSource() const override;
+	virtual const std::string& fragmentShaderSource() const override;
 };
 }
