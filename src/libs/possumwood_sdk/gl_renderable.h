@@ -13,7 +13,9 @@
 namespace possumwood {
 
 /// A very simple encapsulation of GL Core Profile renderable object, to simplify the API
-/// to use something similar to the old GL functionality.
+/// to use something similar to the old GL functionality. Not really intended to be used
+/// for complex objects - there are other ways of rendering more complex objects in the
+/// Render plugin.
 class GLRenderable : public boost::noncopyable {
   public:
 	static const std::string& defaultVertexShader();
