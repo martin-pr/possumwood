@@ -23,6 +23,7 @@
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/gl.h>
 
 #include "adaptor.h"
 #include "config_dialog.h"
@@ -438,6 +439,8 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::draw(float dt) {
+	GL_CHECK_ERR;
+
 	// draw the floor grid
 	static std::unique_ptr<possumwood::Grid> s_grid(new possumwood::Grid());
 	s_grid->draw(m_viewport->projection(), m_viewport->modelview());
@@ -449,7 +452,11 @@ void MainWindow::draw(float dt) {
 	viewport.modelview = m_viewport->modelview();
 	viewport.projection = m_viewport->projection();
 
+	GL_CHECK_ERR;
+
 	m_adaptor->draw(viewport);
+
+	GL_CHECK_ERR;
 }
 
 Adaptor& MainWindow::adaptor() {

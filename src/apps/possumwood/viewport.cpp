@@ -12,6 +12,8 @@
 #include <GL/glu.h>
 #include <GL/gl.h>
 
+#include <possumwood_sdk/gl.h>
+
 namespace {
 
 QGLFormat getGLFormat() {
@@ -33,25 +35,19 @@ Viewport::~Viewport() {
 }
 
 void Viewport::initializeGL() {
-	// glGetError
+	GL_CHECK_ERR;
 
+	// setup the viewport basics
 	glClearColor(0.1, 0, 0, 0);
 	resizeGL(width(), height());
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	// float white[3] = {1, 1, 1};
-	// float position[4] = {1, 1, 1, 0};
-
-	// glEnable(GL_LIGHT0);
-	// glLightfv(GL_LIGHT0, GL_AMBIENT, white);
-	// glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
-	// glLightfv(GL_LIGHT0, GL_POSITION, position);
-
-	// glEnable(GL_COLOR_MATERIAL);
-
+	// store current FPS timer value
 	m_timer = boost::posix_time::microsec_clock::universal_time();
+
+	GL_CHECK_ERR;
 }
 
 namespace {
@@ -111,29 +107,28 @@ Imath::M44f perspective(float fovyInDegrees, float aspectRatio, float znear, flo
 }
 
 void Viewport::paintGL() {
+	GL_CHECK_ERR;
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// update the projection matrix
 	m_projection =
 	    perspective(45, (float)width() / (float)height(), m_sceneDistance * 0.1f,
 	                std::max(m_sceneDistance * 2.0f, 1000.0f));
-	// glMatrixMode(GL_PROJECTION);
-	// glLoadMatrixf(m_projection.getValue());
 
 	m_modelview = lookAt(
 	    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance) + m_origin,
 	    m_origin, Imath::V3f(0, 1, 0));
-	// glMatrixMode(GL_MODELVIEW);
-	// glLoadMatrixf(m_modelview.getValue());
 
+	// record the time difference between frames, to determine current FPS
 	const boost::posix_time::ptime t(boost::posix_time::microsec_clock::universal_time());
 	const float dt = (float)(t - m_timer).total_microseconds() / 1e6f;
 	m_timer = t;
 
-	// glPushAttrib(GL_ALL_ATTRIB_BITS);
+	// emit the render signal, to render everything in the scene (implemented in Adaptor)
 	emit render(dt);
 
-	// glPopAttrib();
+	GL_CHECK_ERR;
 }
 
 void Viewport::resizeGL(int w, int h) {

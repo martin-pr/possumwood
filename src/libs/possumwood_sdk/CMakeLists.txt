@@ -13,4 +13,4 @@ add_definitions(${QT_DEFINITIONS})
 add_library(possumwood_sdk SHARED ${sources} ${headers_moc})
 
 # Final linking
-target_link_libraries(possumwood_sdk ${LIBS} GLEW)
+target_link_libraries(possumwood_sdk ${LIBS} GLEW GLU)
