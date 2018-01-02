@@ -7,8 +7,8 @@ namespace possumwood {
 GLParameters::GLParameters() : m_lineWidth(1.0f) {
 }
 
-void GLParameters::apply() const {
-	glLineWidth(m_lineWidth);
+std::unique_ptr<GLParameters::ScopedState> GLParameters::apply() const {
+	return std::unique_ptr<GLParameters::ScopedState>(new ScopedState(m_lineWidth));
 }
 
 void GLParameters::setLineWidth(float w) {
@@ -25,6 +25,18 @@ bool GLParameters::operator == (const GLParameters& p) const {
 
 bool GLParameters::operator != (const GLParameters& p) const {
 	return m_lineWidth != p.m_lineWidth;
+}
+
+///////
+
+GLParameters::ScopedState::ScopedState(float lineWidth) {
+	glGetFloatv(GL_LINE_WIDTH, &m_lineWidth);
+
+	glLineWidth(lineWidth);
+}
+
+GLParameters::ScopedState::~ScopedState() {
+	glLineWidth(m_lineWidth);
 }
 
 }

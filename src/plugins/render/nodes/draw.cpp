@@ -99,7 +99,7 @@ struct Drawable : public possumwood::Drawable {
 			assert(m_vao != 0);
 
 			// apply the parameters
-			values().get(a_params).apply();
+			auto scopedParams = values().get(a_params).apply();
 
 			// use the program
 			glUseProgram(program->id());
