@@ -31,7 +31,7 @@ class Cube : public possumwood::Drawable {
   public:
 	Cube(dependency_graph::Values&& vals)
 	    : possumwood::Drawable(std::move(vals)),
-	      m_renderable(possumwood::GLRenderable::defaultVertexShader(),
+	      m_renderable(GL_LINES, possumwood::GLRenderable::defaultVertexShader(),
 	                   fragmentShaderSource()) {
 		// just feed the vertex data of a unit cube into the VBO
 		auto vbo = m_renderable.updateVertexData();
@@ -62,8 +62,6 @@ class Cube : public possumwood::Drawable {
 		vbo.data.push_back(Imath::V3f(1, 1, -1));
 		vbo.data.push_back(Imath::V3f(-1, 1, 1));
 		vbo.data.push_back(Imath::V3f(-1, 1, -1));
-
-		vbo.drawType = GL_LINES;
 	}
 
   protected:

@@ -34,11 +34,11 @@ GLuint compileShader(GLenum shaderType, const std::string& source) {
 }
 }
 
-GLRenderable::GLRenderable(const std::string& vertexShaderSrc,
+GLRenderable::GLRenderable(GLenum drawType, const std::string& vertexShaderSrc,
                            const std::string& fragmentShaderSrc)
-    : m_vao(0), m_verticesVBO(0), m_vertexShader(0), m_fragmentShader(0), m_program(0),
+    : m_vao(0), m_vertexShader(0), m_fragmentShader(0), m_program(0),
       m_vertexShaderSrc(vertexShaderSrc), m_fragmentShaderSrc(fragmentShaderSrc),
-      m_needsVBOUpdate(true) {
+      m_drawType(drawType) {
 }
 
 GLRenderable::~GLRenderable() {
@@ -51,8 +51,9 @@ GLRenderable::~GLRenderable() {
 	if(m_program != 0)
 		glDeleteProgram(m_program);
 
-	if(m_verticesVBO != 0)
-		glDeleteBuffers(1, &m_verticesVBO);
+	for(auto& vbo : m_vbos)
+		if(vbo.second.VBOId != 0)
+			glDeleteBuffers(1, &vbo.second.VBOId);
 
 	if(m_vao != 0)
 		glDeleteVertexArrays(1, &m_vao);
@@ -64,7 +65,6 @@ void GLRenderable::initialise() {
 	assert(m_program == 0);
 	assert(m_vertexShader == 0);
 	assert(m_fragmentShader == 0);
-	assert(m_verticesVBO == 0);
 
 	// make an Vertex Array Object
 	glGenVertexArrays(1, &m_vao);
@@ -82,7 +82,13 @@ void GLRenderable::initialise() {
 	glAttachShader(m_program, m_vertexShader);
 	glAttachShader(m_program, m_fragmentShader);
 
-	glBindAttribLocation(m_program, 0, "in_Position");
+	{
+		GLuint counter = 0;
+		for(auto& vbo : m_vbos) {
+			glBindAttribLocation(m_program, counter, vbo.first.c_str());
+			++counter;
+		}
+	}
 
 	glLinkProgram(m_program);
 	GLint isLinked;
@@ -105,64 +111,75 @@ void GLRenderable::initialise() {
 	glBindVertexArray(0);
 }
 
-void GLRenderable::updateVBO() {
-	assert(m_needsVBOUpdate);
+void GLRenderable::updateVBO(GLuint index, VBOData& data) {
+	assert(data.needsUpdate);
 
 	// generate the buffer, if needed
-	if(m_verticesVBO == 0)
-		glGenBuffers(1, &m_verticesVBO);
+	if(data.VBOId == 0)
+		glGenBuffers(1, &data.VBOId);
 
 	// update the content
-	glBindBuffer(GL_ARRAY_BUFFER, m_verticesVBO);
-	glBufferData(GL_ARRAY_BUFFER, m_vboData.size() * 3 * sizeof(GLfloat), &m_vboData[0],
+	glBindBuffer(GL_ARRAY_BUFFER, data.VBOId);
+	glBufferData(GL_ARRAY_BUFFER, data.data.size() * 3 * sizeof(GLfloat), &data.data[0],
 	             GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(index);
 
-	m_needsVBOUpdate = false;
+	data.needsUpdate = false;
 }
 
-GLRenderable::VBO GLRenderable::updateVertexData() {
-	return GLRenderable::VBO(this);
+GLRenderable::VBO GLRenderable::updateVertexData(const std::string& attrName) {
+	return GLRenderable::VBO(this, attrName);
 }
 
 void GLRenderable::draw(const Imath::M44f& projection, const Imath::M44f& modelview) {
-	// initialisation, only to be done first time around
-	if(m_vao == 0) {
-		assert(m_program == 0);
-		assert(m_vertexShader == 0);
-		assert(m_fragmentShader == 0);
-		assert(m_verticesVBO == 0);
+	if(!m_vbos.empty()) {
+		// initialisation, only to be done first time around
+		if(m_vao == 0) {
+			assert(m_program == 0);
+			assert(m_vertexShader == 0);
+			assert(m_fragmentShader == 0);
 
-		initialise();
+			initialise();
+		}
+
+		// use the VAO
+		glBindVertexArray(m_vao);
+
+		glUseProgram(m_program);
+
+		// update the VBOs, if needed
+		const std::size_t size = m_vbos.begin()->second.data.size();
+		{
+			GLuint counter = 0;
+			for(auto& vbo : m_vbos) {
+				if(vbo.second.needsUpdate)
+					updateVBO(counter, vbo.second);
+				++counter;
+
+				assert(vbo.second.VBOId != 0);
+				assert(vbo.second.data.size() == size && "All VBOs should be the same size");
+			}
+			assert(counter == m_vbos.size());
+		}
+
+		// upload the projection and modelview uniforms
+		GLint projectionLoc = glGetUniformLocation(m_program, "in_Projection");
+		assert(projectionLoc != -1);
+		glUniformMatrix4fv(projectionLoc, 1, false, projection.getValue());
+
+		GLint modelviewLoc = glGetUniformLocation(m_program, "in_Modelview");
+		assert(modelviewLoc != -1);
+		glUniformMatrix4fv(modelviewLoc, 1, false, modelview.getValue());
+
+		// do the drawing
+		glDrawArrays(m_drawType, 0, size);
+
+		glUseProgram(0);
+
+		// and unbind the vertex array
+		glBindVertexArray(0);
 	}
-
-	// use the VAO
-	glBindVertexArray(m_vao);
-
-	glUseProgram(m_program);
-
-	// update the VBO, if needed
-	if(m_needsVBOUpdate)
-		updateVBO();
-	assert(m_verticesVBO != 0);
-
-	// upload the projection and modelview uniforms
-	GLint projectionLoc = glGetUniformLocation(m_program, "in_Projection");
-	assert(projectionLoc != -1);
-	glUniformMatrix4fv(projectionLoc, 1, false, projection.getValue());
-
-	GLint modelviewLoc = glGetUniformLocation(m_program, "in_Modelview");
-	assert(modelviewLoc != -1);
-	glUniformMatrix4fv(modelviewLoc, 1, false, modelview.getValue());
-
-	// do the drawing
-	glDrawArrays(m_drawType, 0, m_vboData.size());
-
-	glUseProgram(0);
-
-	// and unbind the vertex array
-	glBindVertexArray(0);
 }
 
 const std::string& GLRenderable::defaultVertexShader() {
@@ -195,22 +212,20 @@ const std::string& GLRenderable::defaultFragmentShader() {
 
 /////////
 
-GLRenderable::VBO::VBO(GLRenderable* parent)
-    : data(std::move(parent->m_vboData)), drawType(parent->m_drawType), m_parent(parent) {
+GLRenderable::VBO::VBO(GLRenderable* parent, const std::string& name)
+    : data(std::move(parent->m_vbos[name].data)), m_parent(parent), m_name(name) {
 	// lets make sure the vector in parent is useable after the move
-	parent->m_vboData = std::vector<Imath::V3f>();
+	parent->m_vbos[name].data = std::vector<Imath::V3f>();
 
-	parent->m_needsVBOUpdate = true;
+	parent->m_vbos[name].needsUpdate = true;
 }
 
-GLRenderable::VBO::VBO(VBO&& src)
-    : data(std::move(src.data)), drawType(src.drawType), m_parent(src.m_parent) {
+GLRenderable::VBO::VBO(VBO&& src) : data(std::move(src.data)), m_parent(src.m_parent) {
 }
 
 GLRenderable::VBO::~VBO() {
-	m_parent->m_vboData = std::move(data);
-	m_parent->m_drawType = drawType;
+	m_parent->m_vbos[m_name].data = std::move(data);
 
-	m_parent->m_needsVBOUpdate = true;
+	m_parent->m_vbos[m_name].needsUpdate = true;
 }
 }

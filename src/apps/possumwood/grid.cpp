@@ -55,10 +55,9 @@ const std::string& fragmentShaderSource() {
 }
 }
 
-Grid::Grid() : GLRenderable(vertexShaderSource(), fragmentShaderSource()) {
+Grid::Grid() : GLRenderable(GL_LINES, vertexShaderSource(), fragmentShaderSource()) {
 	possumwood::GLRenderable::VBO vbo = updateVertexData();
 
 	vbo.data = makeGrid();
-	vbo.drawType = GL_LINES;
 }
 }

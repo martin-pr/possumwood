@@ -28,7 +28,7 @@ class Skeleton : public possumwood::Drawable {
   public:
 	Skeleton(dependency_graph::Values&& vals)
 	    : possumwood::Drawable(std::move(vals)),
-	      m_renderable(possumwood::GLRenderable::defaultVertexShader(),
+	      m_renderable(GL_LINES, possumwood::GLRenderable::defaultVertexShader(),
 	                   fragmentShaderSource()) {
 		m_timeChangedConnection =
 		    possumwood::App::instance().onTimeChanged([this](float t) { refresh(); });
@@ -43,8 +43,6 @@ class Skeleton : public possumwood::Drawable {
 
 		{
 			auto vbo = m_renderable.updateVertexData();
-
-			vbo.drawType = GL_LINES;
 
 			if(skel.size() > 1) {
 				// convert to world space
