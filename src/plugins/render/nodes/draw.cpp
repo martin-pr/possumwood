@@ -1,5 +1,6 @@
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/gl.h>
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -59,7 +60,7 @@ namespace {
 }
 
 struct Drawable : public possumwood::Drawable {
-	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)) {
+	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)), m_vao(0) {
 		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([this](float t) {
 				refresh();
 			});
@@ -70,6 +71,8 @@ struct Drawable : public possumwood::Drawable {
 	}
 
 	dependency_graph::State draw() override {
+		GL_CHECK_ERR;
+
 		dependency_graph::State state;
 
 		std::shared_ptr<const possumwood::Program> program = values().get(a_program);
@@ -89,8 +92,13 @@ struct Drawable : public possumwood::Drawable {
 			state.addError("No uniform data provided - cannot draw.");
 
 		else {
+			GL_CHECK_ERR;
+
+			if(m_vao == 0)
+				glGenVertexArrays(1, &m_vao);
+			assert(m_vao != 0);
+
 			// apply the parameters
-			glPushAttrib(GL_ALL_ATTRIB_BITS);
 			values().get(a_params).apply();
 
 			// use the program
@@ -99,6 +107,8 @@ struct Drawable : public possumwood::Drawable {
 			// feed in the uniforms
 			assert(uniforms);
 			uniforms->use(program->id(), viewport());
+
+			glBindVertexArray(m_vao);
 
 			// use the vertex data
 			vertexData->use(program->id(), viewport());
@@ -109,12 +119,22 @@ struct Drawable : public possumwood::Drawable {
 			// disconnect everything
 			glUseProgram(0);
 
+			GL_CHECK_ERR;
+
+			glBindVertexArray(0);
+
+			GL_CHECK_ERR;
+
 			// and undo the params
-			glPopAttrib();
+			// glPopAttrib();
+
+			GL_CHECK_ERR;
 		}
 
 		return state;
 	}
+
+	GLuint m_vao;
 
 	boost::signals2::connection m_timeChangedConnection;
 };
