@@ -7,37 +7,30 @@
 namespace possumwood {
 
 void addViewportUniforms(possumwood::Uniforms& uniforms) {
-	uniforms.addUniform<Imath::M44d>(
+	uniforms.addUniform<Imath::M44f>(
 		"iProjection",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::M44d* data, std::size_t size) {
-			Imath::M44d projection;
-			glGetDoublev(GL_PROJECTION_MATRIX, projection.getValue());
-
-			*data = projection;
+		[](Imath::M44f* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
+			*data = vs.projection;
 		}
 	);
 
-	uniforms.addUniform<Imath::M44d>(
+	uniforms.addUniform<Imath::M44f>(
 		"iModelView",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::M44d* data, std::size_t size) {
-			Imath::M44d modelview;
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview.getValue());
-
-			*data = modelview;
+		[](Imath::M44f* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
+			*data = vs.modelview;
 		}
 	);
 
-	uniforms.addUniform<Imath::M44d>(
+	uniforms.addUniform<Imath::M44f>(
 		"iModelViewNormal",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::M44d* data, std::size_t size) {
-			Imath::M44d mv;
-			glGetDoublev(GL_MODELVIEW_MATRIX, mv.getValue());
+		[](Imath::M44f* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
+			Imath::M44f mv = vs.modelview;
 
 			// normal matrix has to be inverted and transposed
 			mv = mv.inverse().transposed();
@@ -50,11 +43,8 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iResolution",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::V2f* data, std::size_t size) {
-			GLint viewport[4];
-			glGetIntegerv(GL_VIEWPORT, viewport);
-
-			*data = Imath::V2f(viewport[2], viewport[3]);
+		[](Imath::V2f* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
+			*data = Imath::V2f(vs.width, vs.height);
 		}
 	);
 }

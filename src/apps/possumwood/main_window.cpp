@@ -23,10 +23,12 @@
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/gl.h>
 
 #include "adaptor.h"
 #include "config_dialog.h"
 #include "actions.h"
+#include "grid.h"
 
 namespace {
 
@@ -57,7 +59,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	propDock->setObjectName("properties");
 	propDock->setWidget(m_properties);
 	propDock->toggleViewAction()->setIcon(QIcon(":icons/dock_properties.png"));
-	m_properties->setMinimumWidth(300);
+	m_properties->setMinimumWidth(420);
 	addDockWidget(Qt::RightDockWidgetArea, propDock);
 
 	m_adaptor = new Adaptor(&possumwood::App::instance().graph());
@@ -437,31 +439,24 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::draw(float dt) {
+	GL_CHECK_ERR;
+
 	// draw the floor grid
-	glDisable(GL_LIGHTING);
-	glBegin(GL_LINES);
-
-	for(int a = -10; a <= 10; ++a) {
-		const float c = 0.3f + (float)(a % 10 == 0) * 0.2f;
-		glColor3f(c, c, c);
-
-		glVertex3f(a, 0, -10);
-		glVertex3f(a, 0, 10);
-	}
-
-	for(int a = -10; a <= 10; ++a) {
-		const float c = 0.3f + (float)(a % 10 == 0) * 0.2f;
-		glColor3f(c, c, c);
-
-		glVertex3f(-10, 0, a);
-		glVertex3f(10, 0, a);
-	}
-
-	glEnd();
+	static std::unique_ptr<possumwood::Grid> s_grid(new possumwood::Grid());
+	s_grid->draw(m_viewport->projection(), m_viewport->modelview());
 
 	// draw everything else
-	glEnable(GL_LIGHTING);
-	m_adaptor->draw(m_viewport->width(), m_viewport->height());
+	possumwood::Drawable::ViewportState viewport;
+	viewport.width = m_viewport->width();
+	viewport.height = m_viewport->height();
+	viewport.modelview = m_viewport->modelview();
+	viewport.projection = m_viewport->projection();
+
+	GL_CHECK_ERR;
+
+	m_adaptor->draw(viewport);
+
+	GL_CHECK_ERR;
 }
 
 Adaptor& MainWindow::adaptor() {

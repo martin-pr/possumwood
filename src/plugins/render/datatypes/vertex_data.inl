@@ -79,7 +79,7 @@ std::string makeVBOName(std::size_t width, const std::string& name) {
 template <typename T>
 void VertexData::addVBO(
     const std::string& name, std::size_t size, const UpdateType& updateType,
-    std::function<void(Buffer<typename VBOTraits<T>::element>&)> updateFn) {
+    std::function<void(Buffer<typename VBOTraits<T>::element>&, const Drawable::ViewportState& viewport)> updateFn) {
 	assert(size > 0);
 	assert(m_vbos.empty() || m_vbos[0].size == size);
 
@@ -94,21 +94,17 @@ void VertexData::addVBO(
 
 	VBO<T>* vboPtr = vbo.get();
 
-	holder.update = [size, vboPtr, updateFn]() -> std::unique_ptr<BufferBase> {
+	holder.update = [size, vboPtr, updateFn](const Drawable::ViewportState& vs) -> std::unique_ptr<BufferBase> {
 		std::unique_ptr<Buffer<typename VBOTraits<T>::element>> buffer(
 		    new Buffer<typename VBOTraits<T>::element>(VBOTraits<T>::width(), size));
 
-		updateFn(*buffer);
+		updateFn(*buffer, vs);
 		vboPtr->init(*buffer);
 
 		return buffer;
 	};
 
 	holder.vbo = std::move(vbo);
-
-	// update all buffers that are not per-draw
-	if(holder.updateType != kPerDraw)
-		holder.buffer = holder.update();
 
 	m_vbos.push_back(std::move(holder));
 }

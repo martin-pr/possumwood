@@ -49,7 +49,7 @@ class Metadata : public boost::noncopyable {
 		void setDrawable();
 
 		/// drawable for this node type, as a simple functor
-		void setDrawable(std::function<dependency_graph::State(const dependency_graph::Values&)> fn);
+		void setDrawable(std::function<dependency_graph::State(const dependency_graph::Values&, const possumwood::Drawable::ViewportState&)> fn);
 
 		/// creates a new drawable instance for given value set
 		std::unique_ptr<Drawable> createDrawable(dependency_graph::Values&& values) const;

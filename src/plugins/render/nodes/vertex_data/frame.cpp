@@ -32,7 +32,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			"position",
 			skeleton.size() * 2,
 			possumwood::VertexData::kStatic,
-			[skeleton](possumwood::Buffer<float>& buffer) {
+			[skeleton](possumwood::Buffer<float>& buffer, const possumwood::Drawable::ViewportState& vs) {
 				std::size_t ctr = 0;
 				for(auto& b : skeleton) {
 					buffer.element(ctr++) = b.tr().translation;
@@ -50,7 +50,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			"bone_id",
 			skeleton.size() * 2,
 			possumwood::VertexData::kStatic,
-			[skeleton](possumwood::Buffer<int>& buffer) {
+			[skeleton](possumwood::Buffer<int>& buffer, const possumwood::Drawable::ViewportState& vs) {
 				std::size_t ctr = 0;
 				for(auto& b : skeleton) {
 					buffer.element(ctr++) = (int)b.index();

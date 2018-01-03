@@ -19,6 +19,7 @@
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/gl.h>
 
 #include "actions.h"
 
@@ -432,20 +433,25 @@ QAction* Adaptor::redoAction() const {
 	return m_redo;
 }
 
-void Adaptor::draw(unsigned width, unsigned height) {
+void Adaptor::draw(const possumwood::Drawable::ViewportState& viewport) {
+	GL_CHECK_ERR;
+
 	for(auto& n : getIndex()) {
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		GL_CHECK_ERR;
 
 		if(n.second.drawable != nullptr) {
 			const auto currentDrawState = n.second.drawable->drawState();
 
-			n.second.drawable->doDraw(width, height);
+			GL_CHECK_ERR;
+			n.second.drawable->doDraw(viewport);
+			GL_CHECK_ERR;
 
 			if(n.second.drawable->drawState() != currentDrawState)
 				onStateChanged(*n.second.graphNode);
 		}
 
-		glPopAttrib();
+		GL_CHECK_ERR;
 	}
 
+	GL_CHECK_ERR;
 }

@@ -1,6 +1,7 @@
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/metadata.inl>
+#include <possumwood_sdk/gl_renderable.h>
 
 #include <GL/glut.h>
 
@@ -10,46 +11,67 @@ namespace {
 
 dependency_graph::InAttr<anim::Skeleton> a_skel;
 
-struct Drawable : public possumwood::Drawable {
-	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)) {
-		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([this](float t) {
-			refresh();
-		});
+const std::string& fragmentShaderSource() {
+	static const std::string s_source =
+	    " \
+		#version 150 \n \
+		out vec4 out_color; \n \
+		\n \
+		void main(void) { \n \
+		    out_color = vec4(1,0,0,1.0); \n \
+		}";
+
+	return s_source;
+}
+
+class Skeleton : public possumwood::Drawable {
+  public:
+	Skeleton(dependency_graph::Values&& vals)
+	    : possumwood::Drawable(std::move(vals)),
+	      m_renderable(GL_LINES, possumwood::GLRenderable::defaultVertexShader(),
+	                   fragmentShaderSource()) {
+		m_timeChangedConnection =
+		    possumwood::App::instance().onTimeChanged([this](float t) { refresh(); });
 	}
 
-	~Drawable() {
+	~Skeleton() {
 		m_timeChangedConnection.disconnect();
 	}
 
 	dependency_graph::State draw() {
 		anim::Skeleton skel = values().get(a_skel);
 
-		if(!skel.empty()) {
-			glColor3f(1, 0, 0);
+		{
+			auto vbo = m_renderable.updateVertexData();
 
-			glDisable(GL_LIGHTING);
+			if(skel.size() > 1) {
+				// convert to world space
+				for(auto& j : skel)
+					if(j.hasParent())
+						j.tr() = j.parent().tr() * j.tr();
 
-			glBegin(GL_LINES);
+				// and draw the result
+				vbo.data.resize((skel.size() - 1) * 2);
 
-			// convert to world space
-			for(auto& j : skel)
-				if(j.hasParent())
-					j.tr() = j.parent().tr() * j.tr();
-
-			// and draw the result
-			for(auto& j : skel)
-				if(j.hasParent()) {
-					glVertex3fv(j.parent().tr().translation.getValue());
-					glVertex3fv(j.tr().translation.getValue());
-				}
-
-			glEnd();
-
-			glEnable(GL_LIGHTING);
+				unsigned counter = 0;
+				for(auto& j : skel)
+					if(j.hasParent()) {
+						vbo.data[counter++] = j.parent().tr().translation;
+						vbo.data[counter++] = j.tr().translation;
+					}
+				assert(counter == (skel.size() - 1) * 2);
+			}
+			else
+				vbo.data.clear();
 		}
+
+		m_renderable.draw(viewport().projection, viewport().modelview);
 
 		return dependency_graph::State();
 	}
+
+  private:
+	possumwood::GLRenderable m_renderable;
 
 	boost::signals2::connection m_timeChangedConnection;
 };
@@ -57,9 +79,8 @@ struct Drawable : public possumwood::Drawable {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_skel, "skeleton");
 
-	meta.setDrawable<Drawable>();
+	meta.setDrawable<Skeleton>();
 }
 
 possumwood::NodeImplementation s_impl("anim/frame/display", init);
-
 }
