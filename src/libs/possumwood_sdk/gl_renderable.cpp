@@ -1,6 +1,10 @@
 #include "gl_renderable.h"
 
 #include <cassert>
+#include <stdexcept>
+
+#include <GL/glew.h>
+#include <GL/gl.h>
 
 namespace possumwood {
 

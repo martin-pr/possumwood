@@ -2,9 +2,6 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-
 #include <ImathMatrix.h>
 
 #include <possumwood_sdk/gl_renderable.h>

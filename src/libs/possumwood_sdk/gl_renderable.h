@@ -3,9 +3,6 @@
 #include <vector>
 #include <map>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-
 #include <boost/noncopyable.hpp>
 
 #include <ImathMatrix.h>
@@ -22,7 +19,7 @@ class GLRenderable : public boost::noncopyable {
 	static const std::string& defaultVertexShader();
 	static const std::string& defaultFragmentShader();
 
-	GLRenderable(GLenum drawType,
+	GLRenderable(unsigned drawType,
 	             const std::string& vertexShaderSrc = defaultVertexShader(),
 	             const std::string& fragmentShaderSrc = defaultFragmentShader());
 	virtual ~GLRenderable();
@@ -53,21 +50,21 @@ class GLRenderable : public boost::noncopyable {
 	struct VBOData {
 		bool needsUpdate = true;
 		std::vector<Imath::V3f> data;
-		GLuint VBOId = 0;
+		unsigned VBOId = 0;
 	};
 
 	/// initialises the OpenGL setup (except VBO)
 	void initialise();
 	/// initialises VBO data (assumes initialise() has been called beforehand, and a valid
 	/// VAO is bound)
-	void updateVBO(GLuint index, VBOData& data);
+	void updateVBO(unsigned index, VBOData& data);
 
-	GLuint m_vao;
-	GLuint m_vertexShader, m_fragmentShader, m_program;
+	unsigned m_vao;
+	unsigned m_vertexShader, m_fragmentShader, m_program;
 
 	std::string m_vertexShaderSrc, m_fragmentShaderSrc;
 
-	GLenum m_drawType;
+	unsigned m_drawType;
 
 	std::map<std::string, VBOData> m_vbos;
 

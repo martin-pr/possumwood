@@ -3,6 +3,9 @@
 #include <vector>
 #include <cassert>
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+
 namespace possumwood {
 
 namespace {
