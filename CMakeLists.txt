@@ -20,6 +20,9 @@ set(CMAKE_CXX_STANDARD 14)
 add_definitions(-Wall -Werror -g)
 add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
+# DNEG-specific hack, should have no impact for anything else
+include_directories($ENV{BOB_WORLD_SLOT_ilmbase}/include/OpenEXR)
+
 ###########################################################
 # DEPENDENCIES
 
