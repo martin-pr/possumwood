@@ -6,15 +6,12 @@
 #include <boost/noncopyable.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-
-#include <QtOpenGL/QGLWidget>
+#include <QtWidgets/QOpenGLWidget>
 
 #include <ImathVec.h>
 #include <ImathMatrix.h>
 
-class Viewport : public QGLWidget, public boost::noncopyable {
+class Viewport : public QOpenGLWidget, public boost::noncopyable {
 	Q_OBJECT
 
   signals:
@@ -28,10 +25,10 @@ class Viewport : public QGLWidget, public boost::noncopyable {
 	const Imath::M44f& modelview() const;
 
   protected:
-	virtual void initializeGL();
-	virtual void paintGL();
-	virtual void resizeGL(int w, int h);
-	virtual void mouseMoveEvent(QMouseEvent* event);
+	virtual void initializeGL() override;
+	virtual void paintGL() override;
+	virtual void resizeGL(int w, int h) override;
+	virtual void mouseMoveEvent(QMouseEvent* event) override;
 
   private:
 	float m_sceneDistance, m_sceneRotationX, m_sceneRotationY;

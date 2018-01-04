@@ -1,5 +1,3 @@
-#include <GL/glew.h>
-
 #include "viewport.h"
 
 #include <cassert>
@@ -8,27 +6,16 @@
 
 #include <QtGui/QMouseEvent>
 
-#include <GL/glew.h>
-#include <GL/glu.h>
-#include <GL/gl.h>
-
 #include <possumwood_sdk/gl.h>
 
-namespace {
-
-QGLFormat getGLFormat() {
-	QGLFormat format = QGLFormat::defaultFormat();
-	// way higher than currently supported - will fall back to highest
-	format.setVersion(6, 0);
-	format.setProfile(QGLFormat::CoreProfile);
-	return format;
-}
-}
+#include "gl_init.h"
 
 Viewport::Viewport(QWidget* parent)
-    : QGLWidget(getGLFormat(), parent), m_sceneDistance(10), m_sceneRotationX(30),
+    : QOpenGLWidget(parent), m_sceneDistance(10), m_sceneRotationX(30),
       m_sceneRotationY(30), m_origin(0, 0, 0), m_mouseX(0), m_mouseY(0) {
 	setMouseTracking(true);
+
+	GL_CHECK_ERR;
 }
 
 Viewport::~Viewport() {
@@ -37,8 +24,13 @@ Viewport::~Viewport() {
 void Viewport::initializeGL() {
 	GL_CHECK_ERR;
 
+	// initialize GLEW
+	doInitGlew();
+
+	GL_CHECK_ERR;
+
 	// setup the viewport basics
-	glClearColor(0.1, 0, 0, 0);
+	glClearColor(0, 0, 0, 0);
 	resizeGL(width(), height());
 
 	glEnable(GL_DEPTH_TEST);
@@ -132,9 +124,11 @@ void Viewport::paintGL() {
 }
 
 void Viewport::resizeGL(int w, int h) {
-	QGLWidget::resizeGL(w, h);
+	GL_CHECK_ERR;
+	QOpenGLWidget::resizeGL(w, h);
 
 	glViewport(0, 0, w, h);
+	GL_CHECK_ERR;
 }
 
 void Viewport::mouseMoveEvent(QMouseEvent* event) {
