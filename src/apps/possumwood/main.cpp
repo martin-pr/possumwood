@@ -13,8 +13,6 @@
 #include <QAction>
 #include <QKeyEvent>
 #include <QHBoxLayout>
-#include <QOpenGLContext>
-#include <QOpenGLFunctions>
 
 #include <dependency_graph/graph.h>
 #include <dependency_graph/node.inl>
@@ -47,10 +45,12 @@ using std::flush;
 int main(int argc, char* argv[]) {
 	// // Declare the supported options.
 	po::options_description desc("Allowed options");
-	desc.add_options()("help", "produce help message")(
-	    "plugin_directory", po::value<std::string>()->default_value(PLUGIN_DIR),
-	    "directory to search for plugins")("scene", po::value<std::string>(),
-	                                       "open a scene file");
+	desc.add_options()
+		("help", "produce help message")
+		("plugin_directory", po::value<std::string>()->default_value(PLUGIN_DIR),
+			"directory to search for plugins")
+		("scene", po::value<std::string>(), "open a scene file")
+	;
 
 	// process the options
 	po::variables_map vm;

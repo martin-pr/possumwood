@@ -25,20 +25,16 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 	////////////////////////
 	// scene configuration
 
-	m_sceneConfig.addItem(Config::Item(
-		"start_time", "timeline", 0.0f, Config::Item::kNoFlags,
-		"Start of the timeline (seconds)"
-	));
+	m_sceneConfig.addItem(Config::Item("start_time", "timeline", 0.0f,
+	                                   Config::Item::kNoFlags,
+	                                   "Start of the timeline (seconds)"));
 
-	m_sceneConfig.addItem(Config::Item(
-		"end_time", "timeline", 5.0f, Config::Item::kNoFlags,
-		"End of the timeline (seconds)"
-	));
+	m_sceneConfig.addItem(Config::Item("end_time", "timeline", 5.0f,
+	                                   Config::Item::kNoFlags,
+	                                   "End of the timeline (seconds)"));
 
-	m_sceneConfig.addItem(Config::Item(
-		"fps", "timeline", 24.0f, Config::Item::kNoFlags,
-		"Scene's frames-per-second value"
-	));
+	m_sceneConfig.addItem(Config::Item("fps", "timeline", 24.0f, Config::Item::kNoFlags,
+	                                   "Scene's frames-per-second value"));
 }
 
 App::~App() {
@@ -66,41 +62,54 @@ void App::newFile() {
 
 void App::loadFile(const boost::filesystem::path& filename) {
 	if(!boost::filesystem::exists(filename))
-		throw std::runtime_error("Cannot open " + filename.string() + " - file not found.");
+		throw std::runtime_error("Cannot open " + filename.string() +
+		                         " - file not found.");
 
 	// read the json file
 	std::ifstream in(filename.string());
 	dependency_graph::io::json json;
 	in >> json;
 
-	// read the graph
-	m_graph.clear();
-	dependency_graph::io::adl_serializer<dependency_graph::Graph>::from_json(json, m_graph);
-
-	// and read the scene config
-	auto& config = json["scene_config"];
-
-	for(auto it = config.begin(); it != config.end(); ++it) {
-		auto& item = possumwood::App::instance().sceneConfig()[it.key()];
-
-		if(item.is<int>())
-			item = it.value().get<int>();
-		else if(item.is<float>())
-			item = it.value().get<float>();
-		else if(item.is<std::string>())
-			item = it.value().get<std::string>();
-		else
-			assert(false);
-	}
-
-	// read the UI configuration
-	if(json.find("ui_geometry") != json.end())
-		mainWindow()->restoreGeometry(QByteArray::fromBase64(json["ui_geometry"].get<std::string>().c_str()));
-	if(json.find("ui_state") != json.end())
-		mainWindow()->restoreState(QByteArray::fromBase64(json["ui_state"].get<std::string>().c_str()));
-
-	// opened filename changed
+	// update the opened filename
+	const boost::filesystem::path oldFilename = m_filename;
 	m_filename = filename;
+
+	try {
+		// read the graph
+		m_graph.clear();
+		dependency_graph::io::adl_serializer<dependency_graph::Graph>::from_json(json,
+		                                                                         m_graph);
+
+		// and read the scene config
+		auto& config = json["scene_config"];
+
+		for(auto it = config.begin(); it != config.end(); ++it) {
+			auto& item = possumwood::App::instance().sceneConfig()[it.key()];
+
+			if(item.is<int>())
+				item = it.value().get<int>();
+			else if(item.is<float>())
+				item = it.value().get<float>();
+			else if(item.is<std::string>())
+				item = it.value().get<std::string>();
+			else
+				assert(false);
+		}
+
+		// read the UI configuration
+		if(json.find("ui_geometry") != json.end())
+			mainWindow()->restoreGeometry(
+			    QByteArray::fromBase64(json["ui_geometry"].get<std::string>().c_str()));
+		if(json.find("ui_state") != json.end())
+			mainWindow()->restoreState(
+			    QByteArray::fromBase64(json["ui_state"].get<std::string>().c_str()));
+	}
+	catch(...) {
+		// something bad happened - return back the filename value
+		m_filename = oldFilename;
+
+		throw;
+	}
 }
 
 void App::saveFile() {
@@ -142,7 +151,8 @@ QMainWindow* App::mainWindow() const {
 }
 
 void App::setMainWindow(QMainWindow* win) {
-	assert(m_mainWindow == NULL && "setMainWindow is called only once at the beginning of an application");
+	assert(m_mainWindow == NULL &&
+	       "setMainWindow is called only once at the beginning of an application");
 	m_mainWindow = win;
 }
 
@@ -177,5 +187,4 @@ UndoStack& App::undoStack() {
 Index& App::index() {
 	return m_index;
 }
-
 }
