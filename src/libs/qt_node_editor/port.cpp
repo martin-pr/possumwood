@@ -5,6 +5,7 @@
 
 #include <QBrush>
 #include <QPen>
+#include <QFont>
 
 #include "connected_edge.h"
 #include "node.h"
@@ -19,6 +20,10 @@ Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsign
 	m_name = new QGraphicsTextItem(name, this);
 	m_name->setPos(m_name->boundingRect().height(), 0);
 	m_name->setDefaultTextColor(QColor(192, 192, 192));
+
+	QFont font = m_name->font();
+	font.setPixelSize(12);
+	m_name->setFont(font);
 
 	if(t & kInput) {
 		m_in = new QGraphicsRectItem(

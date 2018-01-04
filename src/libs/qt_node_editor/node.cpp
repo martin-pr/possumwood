@@ -28,6 +28,11 @@ Node::Node(const QString& name, const QPointF& position, const std::initializer_
 	m_titleBackground->setPen(Qt::NoPen);
 	m_titleBackground->setBrush(QColor(64, 64, 64));
 	m_title->setDefaultTextColor(Qt::white);
+
+	QFont font = m_title->font();
+	font.setPixelSize(12);
+	m_title->setFont(font);
+
 	setPen(QPen(QColor(64, 64, 64), 3));
 }
 

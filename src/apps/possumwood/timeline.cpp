@@ -7,23 +7,30 @@
 
 #include <QPainter>
 #include <QMouseEvent>
+#include <QGuiApplication>
+#include <QScreen>
 
 using std::cout;
 using std::endl;
 
-Timeline::Timeline(QWidget* parent) : QWidget(parent), m_range(0, 10), m_value(0), m_tickDistance(13), m_labelDistance(80) {
-	setMinimumHeight(40);
+Timeline::Timeline(QWidget* parent)
+    : QWidget(parent), m_dpiScale(qGuiApp->primaryScreen()->logicalDotsPerInch() / 96.0f),
+      m_range(0, 10), m_value(0), m_tickDistance(13 * m_dpiScale),
+      m_labelDistance(80 * m_dpiScale) {
+	setMinimumHeight(40 * m_dpiScale);
 }
 
 Timeline::~Timeline() {
 }
 
 int Timeline::positionFromValue(float value) const {
-	return std::round((value - m_range.first) / (m_range.second - m_range.first)  * (float)width());
+	return std::round((value - m_range.first) / (m_range.second - m_range.first) *
+	                  (float)width());
 }
 
 float Timeline::valueFromPosition(int pos) const {
-	const float val = (float)pos / (float)width() * (m_range.second - m_range.first) + m_range.first;
+	const float val =
+	    (float)pos / (float)width() * (m_range.second - m_range.first) + m_range.first;
 	return std::max(std::min(val, m_range.second), m_range.first);
 }
 
@@ -44,7 +51,8 @@ void Timeline::paintEvent(QPaintEvent* event) {
 
 		const TickSkip skip = tickSkip(m_tickDistance);
 		unsigned end = std::floor(m_range.second / powf(10.0f, skip.exponent));
-		for(unsigned a = std::ceil(m_range.first / powf(10.0f, skip.exponent)); a < end; a += skip.mantissa) {
+		for(unsigned a = std::ceil(m_range.first / powf(10.0f, skip.exponent)); a < end;
+		    a += skip.mantissa) {
 			const int pos = positionFromValue(a * powf(10.0f, skip.exponent));
 			painter.drawLine(pos, metrics.height() + 6, pos, height());
 		}
@@ -56,7 +64,8 @@ void Timeline::paintEvent(QPaintEvent* event) {
 
 		const TickSkip skip = tickSkip(m_labelDistance);
 		unsigned end = std::floor(m_range.second / powf(10.0f, skip.exponent));
-		for(unsigned a = std::ceil(m_range.first / powf(10.0f, skip.exponent)); a < end; a += skip.mantissa) {
+		for(unsigned a = std::ceil(m_range.first / powf(10.0f, skip.exponent)); a < end;
+		    a += skip.mantissa) {
 			const int pos = positionFromValue(a * powf(10.0f, skip.exponent));
 			painter.drawLine(pos, metrics.height() + 2, pos, height());
 
@@ -144,7 +153,8 @@ Timeline::TickSkip Timeline::tickSkip(unsigned dist) const {
 		return TickSkip{1, 1};
 
 	// compute the mantissa and exponent
-	const float singleTickDist = (m_range.second - m_range.first) * (float)dist / (float)width();
+	const float singleTickDist =
+	    (m_range.second - m_range.first) * (float)dist / (float)width();
 	const int exponent = std::floor(log10(singleTickDist));
 	const float mantissa = singleTickDist / std::pow(10.0f, exponent);
 

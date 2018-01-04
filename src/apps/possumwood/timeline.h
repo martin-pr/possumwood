@@ -45,6 +45,8 @@ class Timeline : public QWidget {
 		/// compute tick skip based on m_tickDistance
 		TickSkip tickSkip(unsigned dist) const;
 
+		float m_dpiScale;
+
 		std::pair<float, float> m_range;
 		float m_value;
 
