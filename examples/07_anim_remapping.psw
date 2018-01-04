@@ -1,10 +1,148 @@
 {
     "connections": [
         {
-            "in_node": "display_3",
-            "in_port": "skeleton",
-            "out_node": "edit_3",
+            "in_node": "skin_remap_regex_1",
+            "in_port": "in_meshes",
+            "out_node": "skin_remap_regex_0",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "remap_0",
+            "in_port": "source_skeleton",
+            "out_node": "edit_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "edit_3",
+            "in_port": "in_frame",
+            "out_node": "edit_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "remove_unskinned_1",
+            "in_port": "in_meshes",
+            "out_node": "skin_remap_regex_1",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "stitch_borders_0",
+            "in_port": "input",
+            "out_node": "to_cgal_0",
+            "out_port": "out_cgal"
+        },
+        {
+            "in_node": "amc_0",
+            "in_port": "skeleton",
+            "out_node": "asf_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "edit_0",
+            "in_port": "in_frame",
+            "out_node": "asf_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "display_0",
+            "in_port": "skeleton",
+            "out_node": "edit_4",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "skin_remap_regex_0",
+            "in_port": "skeleton",
+            "out_node": "bone_rename_0",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "skin_remap_regex_1",
+            "in_port": "skeleton",
+            "out_node": "bone_rename_0",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "remove_unskinned_1",
+            "in_port": "in_skeleton",
+            "out_node": "bone_rename_0",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "from_animation_0",
+            "in_port": "time",
+            "out_node": "mult_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "from_animation_0",
+            "in_port": "animation",
+            "out_node": "periodic_0",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "bone_rename_1",
+            "in_port": "in_skeleton",
+            "out_node": "remove_unskinned_1",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "to_cgal_0",
+            "in_port": "in_meshes",
+            "out_node": "remove_unskinned_1",
+            "out_port": "out_meshes"
+        },
+        {
+            "in_node": "display_2",
+            "in_port": "skeleton",
+            "out_node": "remap_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "anim_frame_0",
+            "in_port": "frame",
+            "out_node": "remap_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "remove_unskinned_0",
+            "in_port": "in_skeleton",
+            "out_node": "x_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "subset_0",
+            "in_port": "in_meshes",
+            "out_node": "x_0",
+            "out_port": "meshes"
+        },
+        {
+            "in_node": "mult_0",
+            "in_port": "a",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "stitch_borders_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "anim_frame_0",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
         },
         {
             "in_node": "remap_0",
@@ -19,10 +157,34 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "display_1",
+            "in_node": "display_3",
             "in_port": "skeleton",
-            "out_node": "edit_2",
+            "out_node": "edit_3",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "edit_1",
+            "in_port": "in_frame",
+            "out_node": "from_animation_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "periodic_0",
+            "in_port": "in_anim",
+            "out_node": "amc_0",
+            "out_port": "animation"
         },
         {
             "in_node": "remap_0",
@@ -43,82 +205,16 @@
             "out_port": "out_skeleton"
         },
         {
-            "in_node": "skin_remap_regex_0",
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "display_1",
             "in_port": "skeleton",
-            "out_node": "bone_rename_0",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "skin_remap_regex_1",
-            "in_port": "skeleton",
-            "out_node": "bone_rename_0",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "remove_unskinned_1",
-            "in_port": "in_skeleton",
-            "out_node": "bone_rename_0",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "remap_0",
-            "in_port": "source_skeleton",
-            "out_node": "edit_0",
+            "out_node": "edit_2",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "edit_3",
-            "in_port": "in_frame",
-            "out_node": "edit_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "skin_remap_regex_1",
-            "in_port": "in_meshes",
-            "out_node": "skin_remap_regex_0",
-            "out_port": "out_meshes"
-        },
-        {
-            "in_node": "remove_unskinned_1",
-            "in_port": "in_meshes",
-            "out_node": "skin_remap_regex_1",
-            "out_port": "out_meshes"
-        },
-        {
-            "in_node": "periodic_0",
-            "in_port": "in_anim",
-            "out_node": "amc_0",
-            "out_port": "animation"
-        },
-        {
-            "in_node": "edit_1",
-            "in_port": "in_frame",
-            "out_node": "from_animation_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "display_2",
-            "in_port": "skeleton",
-            "out_node": "remap_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "anim_frame_0",
-            "in_port": "frame",
-            "out_node": "remap_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "amc_0",
-            "in_port": "skeleton",
-            "out_node": "asf_0",
-            "out_port": "skeleton"
-        },
-        {
-            "in_node": "edit_0",
-            "in_port": "in_frame",
-            "out_node": "asf_0",
-            "out_port": "skeleton"
         },
         {
             "in_node": "bone_rename_0",
@@ -133,111 +229,15 @@
             "out_port": "out_meshes"
         },
         {
-            "in_node": "bone_rename_1",
-            "in_port": "in_skeleton",
-            "out_node": "remove_unskinned_1",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "to_cgal_0",
-            "in_port": "in_meshes",
-            "out_node": "remove_unskinned_1",
-            "out_port": "out_meshes"
-        },
-        {
-            "in_node": "from_animation_0",
-            "in_port": "animation",
-            "out_node": "periodic_0",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "uniforms",
-            "out_node": "anim_frame_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "stitch_borders_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "stitch_borders_0",
-            "in_port": "input",
-            "out_node": "to_cgal_0",
-            "out_port": "out_cgal"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "display_0",
-            "in_port": "skeleton",
-            "out_node": "edit_4",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "remove_unskinned_0",
             "in_port": "in_meshes",
             "out_node": "subset_0",
             "out_port": "out_meshes"
         },
         {
-            "in_node": "mult_0",
-            "in_port": "a",
-            "out_node": "time_0",
-            "out_port": "time"
-        },
-        {
-            "in_node": "remove_unskinned_0",
-            "in_port": "in_skeleton",
-            "out_node": "x_0",
-            "out_port": "skeleton"
-        },
-        {
-            "in_node": "subset_0",
-            "in_port": "in_meshes",
-            "out_node": "x_0",
-            "out_port": "meshes"
-        },
-        {
-            "in_node": "from_animation_0",
-            "in_port": "time",
-            "out_node": "mult_0",
-            "out_port": "out"
-        },
-        {
-            "in_node": "anim_frame_0",
-            "in_port": "in_uniforms",
-            "out_node": "viewport_0",
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "anim_frame_0",
             "out_port": "out_uniforms"
         }
     ],
@@ -260,8 +260,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1551.54990380197,
-                    "y": 1001.87917553101
+                    "x": 1551.54992675781,
+                    "y": 1001.87915039062
                 }
             },
             "name": "anim_frame",
@@ -785,7 +785,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1205.79223632813,
+                    "x": 1205.79223632812,
                     "y": 811.380432128906
                 }
             },
@@ -849,7 +849,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\n#define WEIGHT_COUNT 4\nin float skinningWeights[WEIGHT_COUNT];   // skinning weights\nin int skinningIndices[WEIGHT_COUNT];     // skinning indices\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nuniform mat4 frame[74];\n\nout vec3 vertexNormal;         // output to the fragment shader\n\nvoid main() {\n\t// skinning computation\n\tmat4 s = mat4(0.0);\n\tfor(int a=0;a<WEIGHT_COUNT;++a)\n\t\ts += frame[skinningIndices[a]] * skinningWeights[a];\n\t\n\t// projecting the result\n\tgl_Position = \n\t\tiProjection * iModelView * s * vec4(position, 1); \n\n\tvertexNormal = (iModelView * s * vec4(normals, 0)).xyz;\n}"
+                "source": "#version 150\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;               // normal attr from the openmesh vbo\n\n#define WEIGHT_COUNT 4\nin float skinningWeights[WEIGHT_COUNT];   // skinning weights\nin int skinningIndices[WEIGHT_COUNT];     // skinning indices\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nuniform mat4 frame[74];\n\nout vec3 vertexNormal;         // output to the fragment shader\n\nvoid main() {\n\t// skinning computation\n\tmat4 s = mat4(0.0);\n\tfor(int a=0;a<WEIGHT_COUNT;++a)\n\t\ts += frame[skinningIndices[a]] * skinningWeights[a];\n\t\n\t// projecting the result\n\tgl_Position = \n\t\tiProjection * iModelView * s * vec4(position, 1); \n\n\tvertexNormal = (iModelView * s * vec4(normals, 0)).xyz;\n}"
             },
             "type": "render/vertex_shader"
         },
@@ -857,8 +857,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1371.86241623294,
-                    "y": 1109.30106602334
+                    "x": 1371.86242675781,
+                    "y": 1109.30102539062
                 }
             },
             "name": "viewport",
@@ -884,6 +884,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAABtgAAAbwAAAXhAAAEGwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGpAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAApkAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAABowAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAAB6AAAAiEAAAB1AP////sAAAAGAGwAbwBnAAAAAbMAAAJWAAAASQD///8AAAM2AAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAACf8AAAVrAAAAAgAAAC4AAAX1AAADEQAAAAACAAAACgA=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGpAAAEtvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAACIAAAEtgAAAKoA////AAAAAQAAApkAAAS2/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAACIAAACiQAAAKoA////+wAAAAwAZQBkAGkAdABvAHIBAAADHQAAAiEAAACEAP////sAAAAGAGwAbwBnAAAAAbMAAAJWAAAAqgD///8AAAWmAAAEtgAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
