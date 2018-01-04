@@ -101,7 +101,7 @@ void VertexData::addVBO(
 		updateFn(*buffer, vs);
 		vboPtr->init(*buffer);
 
-		return buffer;
+		return std::move(buffer);
 	};
 
 	holder.vbo = std::move(vbo);
