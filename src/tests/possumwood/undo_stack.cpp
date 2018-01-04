@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(simple_undo_redo) {
 				values.push_back(10);
 			},
 			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 10);
+				BOOST_CHECK_EQUAL(values.back(), 10u);
 				values.pop_back();
 			}
 		);
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(multi_command_undo_redo) {
 				values.push_back(10);
 			},
 			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 10);
+				BOOST_CHECK_EQUAL(values.back(), 10u);
 				values.pop_back();
 			}
 		);
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(multi_command_undo_redo) {
 				values.push_back(20);
 			},
 			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 20);
+				BOOST_CHECK_EQUAL(values.back(), 20u);
 				values.pop_back();
 			}
 		);
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 				values.push_back(10);
 			},
 			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 10);
+				BOOST_CHECK_EQUAL(values.back(), 10u);
 				values.pop_back();
 			}
 		);
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 				values.push_back(20);
 			},
 			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 20);
+				BOOST_CHECK_EQUAL(values.back(), 20u);
 				values.pop_back();
 			}
 		);
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 				values.push_back(30);
 			},
 			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 30);
+				BOOST_CHECK_EQUAL(values.back(), 30u);
 				values.pop_back();
 			}
 		);
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 				values.push_back(40);
 			},
 			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 40);
+				BOOST_CHECK_EQUAL(values.back(), 40u);
 				values.pop_back();
 			}
 		);
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 				values.push_back(10);
 			},
 			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 10);
+				BOOST_CHECK_EQUAL(values.back(), 10u);
 				values.pop_back();
 			}
 		);
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 				values.push_back(20);
 			},
 			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 20);
+				BOOST_CHECK_EQUAL(values.back(), 20u);
 				values.pop_back();
 			}
 		);
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 				BOOST_CHECK_EQUAL(values, tmp);
 			},
 			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 30);
+				BOOST_CHECK_EQUAL(values.back(), 30u);
 				values.pop_back();
 
 				const std::vector<unsigned> tmp{10, 20};

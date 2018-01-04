@@ -118,7 +118,7 @@ void strongTest(SKELETON& h, const SkeletonTest& test) {
 
 			const std::size_t pi = h.indexOf(c.parent());
 			const std::size_t ci = h.indexOf(c);
-			BOOST_CHECK_EQUAL(pi, flat[ci].parent);
+			BOOST_CHECK_EQUAL(pi, (unsigned)flat[ci].parent);
 		}
 	}
 }
