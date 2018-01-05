@@ -13,8 +13,8 @@ add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 file(GLOB_RECURSE sources *.cpp)
 
-include_directories(./)
+include_directories(./ ../anim)
 
 add_library(cgal SHARED ${sources})
 
-target_link_libraries(cgal maths ${LIBS})
+target_link_libraries(cgal maths anim ${LIBS})
