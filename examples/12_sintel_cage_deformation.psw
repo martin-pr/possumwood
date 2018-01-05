@@ -1,0 +1,359 @@
+{
+    "connections": [
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "gl_params",
+            "out_node": "gl_parameters_0",
+            "out_port": "gl_params"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "display_0",
+            "in_port": "skeleton",
+            "out_node": "remove_unskinned_0",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_mesh_2",
+            "out_node": "subset_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "subset_0",
+            "in_port": "in_mesh",
+            "out_node": "to_cgal_0",
+            "out_port": "out_cgal"
+        },
+        {
+            "in_node": "subset_1",
+            "in_port": "in_mesh",
+            "out_node": "to_cgal_0",
+            "out_port": "out_cgal"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "remove_unskinned_0",
+            "in_port": "in_skeleton",
+            "out_node": "x_0",
+            "out_port": "skeleton"
+        },
+        {
+            "in_node": "to_cgal_0",
+            "in_port": "in_meshes",
+            "out_node": "x_0",
+            "out_port": "meshes"
+        },
+        {
+            "in_node": "remove_unskinned_0",
+            "in_port": "in_meshes",
+            "out_node": "x_0",
+            "out_port": "meshes"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "subset_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "stitch_borders_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "stitch_borders_0",
+            "in_port": "input",
+            "out_node": "merge_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_mesh_1",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        }
+    ],
+    "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1224.8125,
+                    "y": 780.375
+                }
+            },
+            "name": "cgal",
+            "type": "render/vertex_data/cgal"
+        },
+        "display_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 77.328125,
+                    "y": 235.171875
+                }
+            },
+            "name": "display",
+            "type": "anim/frame/display"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1389.3125,
+                    "y": 871.5
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 892.8125,
+                    "y": 982.375
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130 \n \nout vec4 color; \n \nin vec3 vertexNormal; \n \nvoid main() { \n\tvec3 norm = normalize(vertexNormal); \n \n\tcolor = vec4(norm.z, norm.z, norm.z, 1); \n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "gl_parameters_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1196.64001464844,
+                    "y": 1137.07788085938
+                }
+            },
+            "name": "gl_parameters",
+            "ports": {
+                "line_width": 1.0
+            },
+            "type": "render/gl_parameters"
+        },
+        "merge_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 744.140620175749,
+                    "y": 682.109372522682
+                }
+            },
+            "name": "merge",
+            "type": "cgal/merge"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1055.28124996042,
+                    "y": 751.359372382983
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1074.8125,
+                    "y": 903.375
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "remove_unskinned_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -110.359375,
+                    "y": 206.796875
+                }
+            },
+            "name": "remove_unskinned",
+            "type": "anim/mesh/remove_unskinned"
+        },
+        "stitch_borders_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 917.390624960419,
+                    "y": 730.656247382984
+                }
+            },
+            "name": "stitch_borders",
+            "type": "cgal/topology/stitch_borders"
+        },
+        "subset_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 295.890625,
+                    "y": 640.609375
+                }
+            },
+            "name": "subset",
+            "ports": {
+                "subset": [
+                    "GEO_body",
+                    "GEO_boots",
+                    "GEO_eyeballs",
+                    "GEO_gloves",
+                    "GEO_hair_proxy",
+                    "GEO_pants",
+                    "GEO_shirt"
+                ]
+            },
+            "type": "cgal/subset"
+        },
+        "subset_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 297.953120175749,
+                    "y": 486.296872522682
+                }
+            },
+            "name": "subset",
+            "ports": {
+                "subset": [
+                    "GEO_eyeballs"
+                ]
+            },
+            "type": "cgal/subset"
+        },
+        "to_cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 42.0906372070312,
+                    "y": 584.209350585938
+                }
+            },
+            "name": "to_cgal",
+            "ports": {
+                "skinning_count": 4
+            },
+            "type": "anim/mesh/to_cgal"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 503.953120175749,
+                    "y": 476.296872522682
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": -1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/transform"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 907.8125,
+                    "y": 873.375
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec3 position;\nin vec3 normals;\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nout vec3 vertexNormal;\n\nvoid main() {\n\tvec4 pos4 = vec4(position.x, position.y, position.z, 1);\n\n\tvertexNormal = (iModelView * vec4(normals, 0.0)).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+            },
+            "type": "render/vertex_shader"
+        },
+        "viewport_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1096.64001464844,
+                    "y": 1041.07788085938
+                }
+            },
+            "name": "viewport",
+            "type": "render/uniforms/viewport"
+        },
+        "x_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -184.109375,
+                    "y": 488.609375
+                }
+            },
+            "name": "x",
+            "ports": {
+                "filename": "durian_project_models/bendansie_sintel_lite_257b.x"
+            },
+            "type": "anim/loaders/x"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAACf8AAAVrAAAB9AAAAWIAAAfnAAAERQAAAAACAAAACgA=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAO4AAAEtvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAACIAAAEtgAAAKoA////AAAAAQAAA08AAAS2/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAACIAAACUAAAAKoA////+wAAAAwAZQBkAGkAdABvAHIBAAAC5AAAAloAAACEAP////sAAAAGAGwAbwBnAAAAA7cAAAGHAAAAqgD///8AAALhAAAEtgAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+}
