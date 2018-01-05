@@ -30,7 +30,7 @@ class Mesh {
 
 	std::string m_name;
 	std::shared_ptr<CGALPolyhedron> m_polyhedron;
-	Properties m_vertexProperties, m_faceProperties, m_halfedgeProperties;
+	std::shared_ptr<Properties> m_vertexProperties, m_faceProperties, m_halfedgeProperties;
 
 	friend class Meshes;
 };

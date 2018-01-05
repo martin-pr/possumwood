@@ -7,6 +7,10 @@ Mesh& Meshes::addMesh(const std::string& name) {
 	return m_data.back();
 }
 
+void Meshes::addMesh(const Mesh& m) {
+	m_data.push_back(m);
+}
+
 Meshes::const_iterator Meshes::begin() const {
 	return m_data.begin();
 }
