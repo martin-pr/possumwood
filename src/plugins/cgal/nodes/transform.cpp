@@ -1,7 +1,11 @@
 #include <possumwood_sdk/node_implementation.h>
 
+#include <algorithm>
+
 #include <OpenEXR/ImathVec.h>
 #include <OpenEXR/ImathEuler.h>
+
+#include <CGAL/HalfedgeDS_decorator.h>
 
 #include "maths/io/vec3.h"
 #include "datatypes/meshes.h"
@@ -31,6 +35,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	const Imath::Matrix44<float> matrix = m1 * m2 * m3;
 
+	// if the scale values invert the mesh, we need to flip the polygons to make it display correctly
+	const bool meshNeedsFlipping = sc[0]*sc[1]*sc[2] < 0.0f;
+
 	Meshes result = data.get(a_inMesh);
 	for(auto& mesh : result) {
 		for(auto it = mesh.polyhedron().vertices_begin();
@@ -41,6 +48,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			p *= matrix;
 
 			pt = possumwood::CGALKernel::Point_3(p.x, p.y, p.z);
+		}
+
+		// turn the mesh inside out
+		if(meshNeedsFlipping) {
+			CGAL::HalfedgeDS_decorator<possumwood::CGALPolyhedron::HalfedgeDS> decorator(mesh.polyhedron().hds());
+			decorator.inside_out();
 		}
 	}
 

@@ -1,6 +1,48 @@
 {
     "connections": [
         {
+            "in_node": "merge_0",
+            "in_port": "in_mesh_2",
+            "out_node": "subset_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "subset_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "display_0",
+            "in_port": "skeleton",
+            "out_node": "remove_unskinned_0",
+            "out_port": "out_skeleton"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_mesh_1",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "stitch_borders_0",
+            "in_port": "input",
+            "out_node": "merge_0",
+            "out_port": "out_mesh"
+        },
+        {
             "in_node": "draw_0",
             "in_port": "vertex_data",
             "out_node": "cgal_0",
@@ -19,22 +61,10 @@
             "out_port": "gl_params"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "display_0",
-            "in_port": "skeleton",
-            "out_node": "remove_unskinned_0",
-            "out_port": "out_skeleton"
-        },
-        {
-            "in_node": "merge_0",
-            "in_port": "in_mesh_2",
-            "out_node": "subset_0",
-            "out_port": "out_mesh"
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "stitch_borders_0",
+            "out_port": "output"
         },
         {
             "in_node": "subset_0",
@@ -47,18 +77,6 @@
             "in_port": "in_mesh",
             "out_node": "to_cgal_0",
             "out_port": "out_cgal"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
         },
         {
             "in_node": "remove_unskinned_0",
@@ -79,34 +97,16 @@
             "out_port": "meshes"
         },
         {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
         },
         {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "subset_1",
-            "out_port": "out_mesh"
-        },
-        {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "stitch_borders_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "stitch_borders_0",
-            "in_port": "input",
-            "out_node": "merge_0",
-            "out_port": "out_mesh"
-        },
-        {
-            "in_node": "merge_0",
-            "in_port": "in_mesh_1",
-            "out_node": "transform_0",
-            "out_port": "out_mesh"
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
         }
     ],
     "nodes": {
@@ -175,8 +175,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 744.140620175749,
-                    "y": 682.109372522682
+                    "x": 744.140625,
+                    "y": 682.109375
                 }
             },
             "name": "merge",
@@ -186,8 +186,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1055.28124996042,
-                    "y": 751.359372382983
+                    "x": 1055.28125,
+                    "y": 751.359375
                 }
             },
             "name": "normals_generator",
@@ -222,8 +222,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 917.390624960419,
-                    "y": 730.656247382984
+                    "x": 917.390625,
+                    "y": 730.65625
                 }
             },
             "name": "stitch_borders",
@@ -255,8 +255,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 297.953120175749,
-                    "y": 486.296872522682
+                    "x": 297.953125,
+                    "y": 486.296875
                 }
             },
             "name": "subset",
@@ -285,8 +285,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 503.953120175749,
-                    "y": 476.296872522682
+                    "x": 503.953125,
+                    "y": 476.296875
                 }
             },
             "name": "transform",
@@ -354,6 +354,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAACf8AAAVrAAAB9AAAAWIAAAfnAAAERQAAAAACAAAACgA=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAO4AAAEtvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAACIAAAEtgAAAKoA////AAAAAQAAA08AAAS2/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAACIAAACUAAAAKoA////+wAAAAwAZQBkAGkAdABvAHIBAAAC5AAAAloAAACEAP////sAAAAGAGwAbwBnAAAAA7cAAAGHAAAAqgD///8AAALhAAAEtgAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAACf8AAAVfAAAAAAAAAAAAAAXzAAADBgAAAAACAAAACgA=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKCAAAEkPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAACWAAAEkAAAALEA////AAAAAQAAAhoAAASQ/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAACWAAACPwAAALEA////+wAAAAwAZQBkAGkAdABvAHIBAAAC4QAAAkUAAACLAP////sAAAAGAGwAbwBnAAAAA7cAAAGHAAAAsQD///8AAAVMAAAEkAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
