@@ -7,7 +7,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 #include "datatypes/meshes.h"
-#include "cgal.h"
+#include "meshes.h"
 
 namespace {
 

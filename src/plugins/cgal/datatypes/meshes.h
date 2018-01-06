@@ -2,7 +2,7 @@
 
 #include <possumwood_sdk/traits.h>
 
-#include "../cgal.h"
+#include "../meshes.h"
 
 namespace possumwood {
 
