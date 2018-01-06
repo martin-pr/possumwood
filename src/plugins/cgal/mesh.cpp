@@ -10,7 +10,7 @@ const std::string& Mesh::name() const {
 	return m_name;
 }
 
-const CGALPolyhedron& Mesh::mesh() const {
+const CGALPolyhedron& Mesh::polyhedron() const {
 	assert(m_mesh != nullptr);
 	return *m_mesh;
 }

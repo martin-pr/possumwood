@@ -22,7 +22,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	Meshes result;
 
 	for(auto& inMesh : inMeshes) {
-		std::unique_ptr<Mesh> mesh(new Mesh(inMesh.mesh()));
+		std::unique_ptr<Mesh> mesh(new Mesh(inMesh.polyhedron()));
 
 		CGAL::Polygon_mesh_processing::stitch_borders(*mesh);
 

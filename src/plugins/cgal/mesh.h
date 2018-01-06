@@ -7,7 +7,7 @@ namespace possumwood {
 class Mesh {
   public:
 	const std::string& name() const;
-	const CGALPolyhedron& mesh() const;
+	const CGALPolyhedron& polyhedron() const;
 
 	bool operator==(const Mesh& i) const;
 	bool operator!=(const Mesh& i) const;
