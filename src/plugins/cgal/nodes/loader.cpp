@@ -1,60 +1,91 @@
-// #include <possumwood_sdk/node_implementation.h>
-// #include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
+#include <possumwood_sdk/datatypes/filename.h>
 
-// #include <fstream>
+#include <fstream>
 
-// #include <CGAL/IO/OBJ_reader.h>
-// #include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/IO/OBJ_reader.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
 
-// #include "datatypes/meshes.h"
-// #include "cgal.h"
+#include "datatypes/meshes.h"
+#include "cgal.h"
 
-// namespace {
+namespace {
 
-// dependency_graph::InAttr<possumwood::Filename> a_filename;
-// dependency_graph::InAttr<std::string> a_name;
-// dependency_graph::OutAttr<possumwood::Meshes> a_polyhedron;
+dependency_graph::InAttr<possumwood::Filename> a_filename;
+dependency_graph::InAttr<std::string> a_name;
+dependency_graph::OutAttr<possumwood::Meshes> a_polyhedron;
 
-// dependency_graph::State compute(dependency_graph::Values& data) {
-// 	const possumwood::Filename filename = data.get(a_filename);
+template <class HDS, class POINTS, class FACES>
+class Builder : public CGAL::Modifier_base<HDS> {
+  public:
+	Builder(const POINTS& pts, const FACES& f) : m_points(&pts), m_faces(&f) {
+	}
+	void operator()(HDS& hds) {
+		// Postcondition: hds is a valid polyhedral surface.
+		CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
 
-// 	std::vector<possumwood::CGALKernel::Point_3> points;
-// 	std::vector<std::vector<std::size_t>> faces;
+		B.begin_surface(m_points->size(), m_faces->size());
 
-// 	std::ifstream file(filename.filename().string().c_str());
-// 	bool result = CGAL::read_OBJ(file, points, faces);
+		for(auto& v : *m_points)
+			B.add_vertex(v);
 
-// 	if(!result)
-// 		throw std::runtime_error("Error reading file '" + filename.filename().string() + "'");
+		for(auto& f : *m_faces) {
+			B.begin_facet();
 
-// 	std::unique_ptr<possumwood::CGALPolyhedron> polyhedron(new possumwood::CGALPolyhedron());
+			for(auto& i : f)
+				B.add_vertex_to_facet(i);
 
-// 	for(auto& p : points)
-// 		polyhedron->add_vertex(p);
+			B.end_facet();
+		}
 
-// 	for(auto& f : faces)
-// 		polyhedron->add_face(f);
+		B.end_surface();
+	}
 
-// 	possumwood::Meshes out;
-// 	out.addMesh(data.get(a_name), std::move(polyhedron));
+  private:
+	const POINTS* m_points;
+	const FACES* m_faces;
+};
 
-// 	data.set(a_polyhedron, out);
+dependency_graph::State compute(dependency_graph::Values& data) {
+	const possumwood::Filename filename = data.get(a_filename);
 
-// 	return dependency_graph::State();
-// }
+	std::vector<possumwood::CGALKernel::Point_3> points;
+	std::vector<std::vector<std::size_t>> faces;
 
-// void init(possumwood::Metadata& meta) {
-// 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-// 	                                              "OBJ files (*.obj)",
-// 	                                          }));
-// 	meta.addAttribute(a_name, "name", std::string("mesh"));
-// 	meta.addAttribute(a_polyhedron, "polyhedron");
+	std::ifstream file(filename.filename().string().c_str());
+	bool result = CGAL::read_OBJ(file, points, faces);
 
-// 	meta.addInfluence(a_name, a_polyhedron);
-// 	meta.addInfluence(a_filename, a_polyhedron);
+	if(!result)
+		throw std::runtime_error("Error reading file '" + filename.filename().string() +
+		                         "'");
 
-// 	meta.setCompute(compute);
-// }
+	std::unique_ptr<possumwood::CGALPolyhedron> polyhedron(
+	    new possumwood::CGALPolyhedron());
 
-// possumwood::NodeImplementation s_impl("cgal/loader", init);
-// }
+	Builder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(points), typeof(faces)>
+	    builder(points, faces);
+	polyhedron->delegate(builder);
+
+	possumwood::Meshes out;
+	out.addMesh(data.get(a_name), std::move(polyhedron));
+
+	data.set(a_polyhedron, out);
+
+	return dependency_graph::State();
+}
+
+void init(possumwood::Metadata& meta) {
+	meta.addAttribute(a_filename, "filename", possumwood::Filename({
+	                                              "OBJ files (*.obj)",
+	                                          }));
+	meta.addAttribute(a_name, "name", std::string("mesh"));
+	meta.addAttribute(a_polyhedron, "polyhedron");
+
+	meta.addInfluence(a_name, a_polyhedron);
+	meta.addInfluence(a_filename, a_polyhedron);
+
+	meta.setCompute(compute);
+}
+
+possumwood::NodeImplementation s_impl("cgal/loader", init);
+}

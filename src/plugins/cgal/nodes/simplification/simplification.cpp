@@ -119,7 +119,7 @@
 // 				break;
 // 		}
 
-// 		mesh->collect_garbage();
+// 		// mesh->collect_garbage();
 
 // 		result.addMesh(inMesh.name(), std::move(mesh));
 // 	}
