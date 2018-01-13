@@ -71,20 +71,17 @@ void MeshesUI::set(const possumwood::Meshes& value) {
 		    counter, 3,
 		    new QTableWidgetItem(std::to_string(m.polyhedron().size_of_halfedges()).c_str()));
 
-		// auto hepv = m.polyhedron().properties<possumwood::CGALPolyhedron::Halfedge_index>();
-		// const std::string hep = boost::algorithm::join(hepv, " ");
-		// m_detailsWidget->setItem(counter, 4, new QTableWidgetItem(hep.c_str()));
-		m_detailsWidget->setItem(counter, 4, new QTableWidgetItem("NOT IMPLEMENTED YET"));
+		auto hepv = m.halfedgeProperties().properties();
+		const std::string hep = boost::algorithm::join(hepv, " ");
+		m_detailsWidget->setItem(counter, 4, new QTableWidgetItem(hep.c_str()));
 
-		// auto vpv = m.polyhedron().properties<possumwood::CGALPolyhedron::Vertex_index>();
-		// const std::string vp = boost::algorithm::join(vpv, " ");
-		// m_detailsWidget->setItem(counter, 5, new QTableWidgetItem(vp.c_str()));
-		m_detailsWidget->setItem(counter, 5, new QTableWidgetItem("NOT IMPLEMENTED YET"));
+		auto vpv = m.vertexProperties().properties();
+		const std::string vp = boost::algorithm::join(vpv, " ");
+		m_detailsWidget->setItem(counter, 5, new QTableWidgetItem(vp.c_str()));
 
-		// auto fpv = m.polyhedron().properties<possumwood::CGALPolyhedron::Face_index>();
-		// const std::string fp = boost::algorithm::join(fpv, " ");
-		// m_detailsWidget->setItem(counter, 6, new QTableWidgetItem(fp.c_str()));
-		m_detailsWidget->setItem(counter, 6, new QTableWidgetItem("NOT IMPLEMENTED YET"));
+		auto fpv = m.faceProperties().properties();
+		const std::string fp = boost::algorithm::join(fpv, " ");
+		m_detailsWidget->setItem(counter, 6, new QTableWidgetItem(fp.c_str()));
 
 		++counter;
 	}
