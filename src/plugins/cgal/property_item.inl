@@ -8,7 +8,7 @@ namespace possumwood {
 
 template <typename T>
 const T& PropertyItem::get(std::size_t index) const {
-	assert(m_values.size() < index);
+	assert(m_values.size() > index);
 	const Value<T>& val = dynamic_cast<const Value<T>&>(*m_values[index]);
 
 	return *val;

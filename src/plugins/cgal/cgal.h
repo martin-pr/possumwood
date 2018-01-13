@@ -17,6 +17,10 @@ struct CGALFace : public CGAL::HalfedgeDS_face_base<Refs> {
 			return m_propKey;
 		}
 
+		const PropertyKey& property_key() const {
+			return m_propKey;
+		}
+
 	private:
 		PropertyKey m_propKey;
 };
@@ -37,6 +41,14 @@ class CGALVertex : public CGAL::HalfedgeDS_vertex_base<Refs> {
 			return m_point;
 		}
 
+		const PropertyKey& property_key() const {
+			return m_propKey;
+		}
+
+		const Point& point() const {
+			return m_point;
+		}
+
 	private:
 		Point m_point;
 		PropertyKey m_propKey;
@@ -46,6 +58,10 @@ template <class Refs>
 struct CGALHalfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
 	public:
 		PropertyKey& property_key() {
+			return m_propKey;
+		}
+
+		const PropertyKey& property_key() const {
 			return m_propKey;
 		}
 

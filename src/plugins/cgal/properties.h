@@ -65,6 +65,23 @@ Property<T>& Properties::addProperty(const std::string& name, const T& defaultVa
 
 	return dynamic_cast<Property<T>&>(*it->second);
 }
+
+template <typename T>
+Property<T>& Properties::property(const std::string& name) {
+	auto it = m_properties.find(name);
+	assert(it != m_properties.end());
+
+	return dynamic_cast<Property<T>&>(*it->second);
+}
+
+template <typename T>
+const Property<T>& Properties::property(const std::string& name) const {
+	auto it = m_properties.find(name);
+	assert(it != m_properties.end());
+
+	return dynamic_cast<const Property<T>&>(*it->second);
+}
+
 }
 
 #include "property.inl"
