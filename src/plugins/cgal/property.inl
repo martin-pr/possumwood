@@ -38,4 +38,11 @@ template<typename T>
 std::unique_ptr<PropertyItem::ValueBase> Property<T>::makeValue() const {
 	return std::unique_ptr<PropertyItem::ValueBase>(new PropertyItem::Value<T>(m_defaultValue));
 }
+
+template<typename T>
+bool Property<T>::isEqual(const PropertyBase& p) const {
+	const Property<T>* prop = dynamic_cast<const Property<T>*>(&p);
+	return prop != nullptr && m_defaultValue == prop->m_defaultValue;
+}
+
 }

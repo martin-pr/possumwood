@@ -25,7 +25,7 @@ class Properties {
 
 	template <typename T>
 	Property<T>& addProperty(const std::string& name, const T& defaultValue);
-	bool hasProperty(const std::string& name);
+	bool hasProperty(const std::string& name) const;
 	void removeProperty(const std::string& name);
 
 	template <typename T>

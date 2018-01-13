@@ -25,4 +25,11 @@ void PropertyBase::setIndex(std::size_t i) {
 	m_index = i;
 }
 
+bool PropertyBase::operator==(const PropertyBase& p) const {
+	return m_index == p.m_index && isEqual(p);
+}
+
+bool PropertyBase::operator!=(const PropertyBase& p) const {
+	return m_index != p.m_index || !isEqual(p);
+}
 }

@@ -50,4 +50,10 @@ template <typename T>
 std::unique_ptr<PropertyItem::ValueBase> PropertyItem::Value<T>::clone() const {
 	return std::unique_ptr<ValueBase>(new Value<T>(m_value));
 }
+
+template <typename T>
+bool PropertyItem::Value<T>::isEqual(const ValueBase& v) const {
+	const PropertyItem::Value<T>* ptr = dynamic_cast<const PropertyItem::Value<T>*>(&v);
+	return ptr && m_value == ptr->m_value;
+}
 }

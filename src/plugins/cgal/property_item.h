@@ -17,7 +17,12 @@ class PropertyItem {
 
 		virtual std::unique_ptr<ValueBase> clone() const = 0;
 
+		bool operator == (const ValueBase& v) const;
+		bool operator != (const ValueBase& v) const;
+
 	  protected:
+	  	virtual bool isEqual(const ValueBase& v) const = 0;
+
 		ValueBase();
 	};
 
@@ -32,6 +37,8 @@ class PropertyItem {
 
 	  protected:
 		virtual std::unique_ptr<ValueBase> clone() const override;
+
+		virtual bool isEqual(const ValueBase& v) const override;
 
 	  private:
 		T m_value;
@@ -53,6 +60,9 @@ class PropertyItem {
 	void addValue(std::unique_ptr<PropertyItem::ValueBase>&& value);
 
 	void removeValue(std::size_t index);
+
+	bool operator == (const PropertyItem& i) const;
+	bool operator != (const PropertyItem& i) const;
 
   private:
 	std::vector<std::unique_ptr<ValueBase>> m_values;

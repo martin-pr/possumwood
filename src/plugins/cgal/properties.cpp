@@ -31,7 +31,7 @@ Properties& Properties::operator=(const Properties& p) {
 	return *this;
 }
 
-bool Properties::hasProperty(const std::string& name) {
+bool Properties::hasProperty(const std::string& name) const {
 	auto it = m_properties.find(name);
 	return it != m_properties.end();
 }
@@ -44,11 +44,39 @@ std::set<std::string> Properties::properties() const {
 }
 
 bool Properties::operator==(const Properties& p) const {
-	return m_properties == p.m_properties;
+	if(m_properties.size() != p.m_properties.size())
+		return false;
+
+	auto it1 = m_properties.begin();
+	auto it2 = p.m_properties.begin();
+
+	while(it1 != m_properties.end()) {
+		if(it1->first != it2->first || *it1->second != *it2->second)
+			return false;
+
+		++it1;
+		++it2;
+	}
+
+	return true;
 }
 
 bool Properties::operator!=(const Properties& p) const {
-	return m_properties != p.m_properties;
+	if(m_properties.size() != p.m_properties.size())
+		return true;
+
+	auto it1 = m_properties.begin();
+	auto it2 = p.m_properties.begin();
+
+	while(it1 != m_properties.end()) {
+		if(it1->first != it2->first || *it1->second != *it2->second)
+			return true;
+
+		++it1;
+		++it2;
+	}
+
+	return false;
 }
 
 std::size_t Properties::addSingleItem() {
