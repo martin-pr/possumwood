@@ -17,17 +17,10 @@ dependency_graph::InAttr<Meshes> a_inMesh;
 dependency_graph::OutAttr<Meshes> a_outMesh;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const Meshes inMeshes = data.get(a_inMesh);
+	Meshes result = data.get(a_inMesh);
 
-	Meshes result;
-
-	for(auto& inMesh : inMeshes) {
-		std::unique_ptr<Mesh> mesh(new Mesh(inMesh.polyhedron()));
-
-		CGAL::Polygon_mesh_processing::stitch_borders(*mesh);
-
-		result.addMesh(inMesh.name(), std::move(mesh));
-	}
+	for(auto& mesh : result)
+		CGAL::Polygon_mesh_processing::stitch_borders(mesh.polyhedron());
 
 	data.set(a_outMesh, result);
 
