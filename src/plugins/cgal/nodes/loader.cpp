@@ -59,17 +59,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		throw std::runtime_error("Error reading file '" + filename.filename().string() +
 		                         "'");
 
-	std::unique_ptr<possumwood::CGALPolyhedron> polyhedron(
-	    new possumwood::CGALPolyhedron());
+	possumwood::Meshes meshes;
+	possumwood::Mesh& mesh = meshes.addMesh(data.get(a_name));
 
 	Builder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(points), typeof(faces)>
 	    builder(points, faces);
-	polyhedron->delegate(builder);
+	mesh.polyhedron().delegate(builder);
 
-	possumwood::Meshes out;
-	out.addMesh(data.get(a_name), std::move(polyhedron));
-
-	data.set(a_polyhedron, out);
+	data.set(a_polyhedron, meshes);
 
 	return dependency_graph::State();
 }

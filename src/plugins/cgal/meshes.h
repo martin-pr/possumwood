@@ -9,12 +9,15 @@ namespace possumwood {
 
 class Meshes {
   public:
-	void addMesh(const std::string& name, std::unique_ptr<CGALPolyhedron>&& mesh);
+	Mesh& addMesh(const std::string& name);
 
 	typedef std::vector<Mesh>::const_iterator const_iterator;
-
 	const_iterator begin() const;
 	const_iterator end() const;
+
+	typedef std::vector<Mesh>::iterator iterator;
+	iterator begin();
+	iterator end();
 
 	std::size_t size() const;
 	bool empty() const;

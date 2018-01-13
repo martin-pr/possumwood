@@ -2,10 +2,9 @@
 
 namespace possumwood {
 
-void Meshes::addMesh(const std::string& name, std::unique_ptr<CGALPolyhedron>&& mesh) {
-	assert(mesh != nullptr);
-
-	m_data.push_back(Mesh(name, std::move(mesh)));
+Mesh& Meshes::addMesh(const std::string& name) {
+	m_data.push_back(Mesh(name));
+	return m_data.back();
 }
 
 Meshes::const_iterator Meshes::begin() const {
@@ -13,6 +12,14 @@ Meshes::const_iterator Meshes::begin() const {
 }
 
 Meshes::const_iterator Meshes::end() const {
+	return m_data.end();
+}
+
+Meshes::iterator Meshes::begin() {
+	return m_data.begin();
+}
+
+Meshes::iterator Meshes::end() {
 	return m_data.end();
 }
 
