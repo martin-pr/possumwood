@@ -8,43 +8,13 @@
 
 #include "datatypes/meshes.h"
 #include "meshes.h"
+#include "builder.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::InAttr<std::string> a_name;
 dependency_graph::OutAttr<possumwood::Meshes> a_polyhedron;
-
-template <class HDS, class POINTS, class FACES>
-class Builder : public CGAL::Modifier_base<HDS> {
-  public:
-	Builder(const POINTS& pts, const FACES& f) : m_points(&pts), m_faces(&f) {
-	}
-	void operator()(HDS& hds) {
-		// Postcondition: hds is a valid polyhedral surface.
-		CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
-
-		B.begin_surface(m_points->size(), m_faces->size());
-
-		for(auto& v : *m_points)
-			B.add_vertex(v);
-
-		for(auto& f : *m_faces) {
-			B.begin_facet();
-
-			for(auto& i : f)
-				B.add_vertex_to_facet(i);
-
-			B.end_facet();
-		}
-
-		B.end_surface();
-	}
-
-  private:
-	const POINTS* m_points;
-	const FACES* m_faces;
-};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::Filename filename = data.get(a_filename);
@@ -62,7 +32,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::Meshes meshes;
 	possumwood::Mesh& mesh = meshes.addMesh(data.get(a_name));
 
-	Builder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(points), typeof(faces)>
+	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(points), typeof(faces)>
 	    builder(points, faces);
 	mesh.polyhedron().delegate(builder);
 
