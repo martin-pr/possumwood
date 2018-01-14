@@ -22,31 +22,26 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const Imath::Vec3<float> sc = data.get(a_scale);
 
 	Imath::Matrix44<float> m1, m2, m3;
-	m1 = Imath::Euler<float>(Imath::Vec3<float>(rot.x * M_PI / 180.0,
-	                                            rot.y * M_PI / 180.0,
-	                                            rot.z * M_PI / 180.0))
-	         .toMatrix44();
+	m1 =
+	    Imath::Euler<float>(Imath::Vec3<float>(rot.x * M_PI / 180.0, rot.y * M_PI / 180.0,
+	                                           rot.z * M_PI / 180.0))
+	        .toMatrix44();
 	m2.setScale(sc);
 	m3.setTranslation(tr);
 
 	const Imath::Matrix44<float> matrix = m1 * m2 * m3;
 
-	Meshes result;
-	for(auto& inMesh : data.get(a_inMesh)) {
-		std::unique_ptr<possumwood::CGALPolyhedron> newMesh(
-		    new possumwood::CGALPolyhedron(inMesh.mesh()));
-
-		for(auto it = newMesh->vertices_begin(); it != newMesh->vertices_end();
-		    ++it) {
-			possumwood::CGALPolyhedron::Point& pt = newMesh->point(*it);
+	Meshes result = data.get(a_inMesh);
+	for(auto& mesh : result) {
+		for(auto it = mesh.polyhedron().vertices_begin();
+		    it != mesh.polyhedron().vertices_end(); ++it) {
+			possumwood::CGALPolyhedron::Point& pt = it->point();;
 
 			Imath::Vec3<float> p(pt[0], pt[1], pt[2]);
 			p *= matrix;
 
 			pt = possumwood::CGALKernel::Point_3(p.x, p.y, p.z);
 		}
-
-		result.addMesh(inMesh.name(), std::move(newMesh));
 	}
 
 	data.set(a_outMesh, result);
@@ -56,8 +51,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inMesh, "in_mesh");
-	meta.addAttribute(a_translation, "translation",
-	                  Imath::Vec3<float>(0, 0, 0));
+	meta.addAttribute(a_translation, "translation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_rotation, "rotation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_scale, "scale", Imath::Vec3<float>(1, 1, 1));
 	meta.addAttribute(a_outMesh, "out_mesh");

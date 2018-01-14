@@ -7,7 +7,8 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 #include "datatypes/meshes.h"
-#include "cgal.h"
+#include "meshes.h"
+#include "builder.h"
 
 namespace {
 
@@ -25,20 +26,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	bool result = CGAL::read_OBJ(file, points, faces);
 
 	if(!result)
-		throw std::runtime_error("Error reading file '" + filename.filename().string() + "'");
+		throw std::runtime_error("Error reading file '" + filename.filename().string() +
+		                         "'");
 
-	std::unique_ptr<possumwood::CGALPolyhedron> polyhedron(new possumwood::CGALPolyhedron());
+	possumwood::Meshes meshes;
+	possumwood::Mesh& mesh = meshes.addMesh(data.get(a_name));
 
-	for(auto& p : points)
-		polyhedron->add_vertex(p);
+	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(points), typeof(faces)>
+	    builder(points, faces);
+	mesh.polyhedron().delegate(builder);
 
-	for(auto& f : faces)
-		polyhedron->add_face(f);
-
-	possumwood::Meshes out;
-	out.addMesh(data.get(a_name), std::move(polyhedron));
-
-	data.set(a_polyhedron, out);
+	data.set(a_polyhedron, meshes);
 
 	return dependency_graph::State();
 }

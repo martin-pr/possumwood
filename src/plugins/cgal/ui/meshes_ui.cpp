@@ -63,23 +63,23 @@ void MeshesUI::set(const possumwood::Meshes& value) {
 
 		m_detailsWidget->setItem(
 		    counter, 1,
-		    new QTableWidgetItem(std::to_string(m.mesh().num_faces()).c_str()));
+		    new QTableWidgetItem(std::to_string(m.polyhedron().size_of_facets()).c_str()));
 		m_detailsWidget->setItem(
 		    counter, 2,
-		    new QTableWidgetItem(std::to_string(m.mesh().num_vertices()).c_str()));
+		    new QTableWidgetItem(std::to_string(m.polyhedron().size_of_vertices()).c_str()));
 		m_detailsWidget->setItem(
 		    counter, 3,
-		    new QTableWidgetItem(std::to_string(m.mesh().num_halfedges()).c_str()));
+		    new QTableWidgetItem(std::to_string(m.polyhedron().size_of_halfedges()).c_str()));
 
-		auto hepv = m.mesh().properties<possumwood::CGALPolyhedron::Halfedge_index>();
+		auto hepv = m.halfedgeProperties().properties();
 		const std::string hep = boost::algorithm::join(hepv, " ");
 		m_detailsWidget->setItem(counter, 4, new QTableWidgetItem(hep.c_str()));
 
-		auto vpv = m.mesh().properties<possumwood::CGALPolyhedron::Vertex_index>();
+		auto vpv = m.vertexProperties().properties();
 		const std::string vp = boost::algorithm::join(vpv, " ");
 		m_detailsWidget->setItem(counter, 5, new QTableWidgetItem(vp.c_str()));
 
-		auto fpv = m.mesh().properties<possumwood::CGALPolyhedron::Face_index>();
+		auto fpv = m.faceProperties().properties();
 		const std::string fp = boost::algorithm::join(fpv, " ");
 		m_detailsWidget->setItem(counter, 6, new QTableWidgetItem(fp.c_str()));
 

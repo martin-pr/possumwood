@@ -4,7 +4,7 @@
 
 #include <possumwood_sdk/properties/property.h>
 
-#include "cgal.h"
+#include "meshes.h"
 
 #include <QMetaObject>
 #include <QTableWidget>

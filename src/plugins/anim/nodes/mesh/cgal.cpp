@@ -6,6 +6,7 @@
 #include "datatypes/skinned_mesh.h"
 #include "datatypes/meshes.h"
 #include "cgal.h"
+#include "builder.h"
 
 namespace {
 
@@ -26,27 +27,27 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	if(meshes != nullptr) {
 		for(auto& m : *meshes) {
-			std::unique_ptr<possumwood::CGALPolyhedron> out(
-			    new possumwood::CGALPolyhedron());
+			std::vector<possumwood::CGALKernel::Point_3> vertices;
+			for(auto& v : m.vertices())
+				vertices.push_back(possumwood::CGALKernel::Point_3(v.pos().x, v.pos().y, v.pos().z));
 
-			for(auto& v : m.vertices()) {
-				const possumwood::CGALKernel::Point_3 pt(v.pos().x, v.pos().y,
-				                                         v.pos().z);
-				out->add_vertex(pt);
+			possumwood::Mesh& out = result.addMesh(m.name());
+
+			{
+				possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(vertices), typeof(m.polygons())>
+			    	builder(vertices, m.polygons());
+				out.polyhedron().delegate(builder);
 			}
-
-			for(auto& p : m.polygons())
-				out->add_face(p);
 
 			// make a vector property for skinning
 			const std::string skinWeightsPropName = "float[" + std::to_string(data.get(a_skinningCount)) + "]:skinningWeights";
 			const std::string skinIndicesPropName = "int[" + std::to_string(data.get(a_skinningCount)) + "]:skinningIndices";
 
-			auto skinWeightsProp = out->add_property_map<CGALPolyhedron::Vertex_index, std::vector<float>>(skinWeightsPropName);
-			auto skinIndicesProp = out->add_property_map<CGALPolyhedron::Vertex_index, std::vector<int>>(skinIndicesPropName);
+			auto& skinWeightsProp = out.vertexProperties().addProperty(skinWeightsPropName, std::vector<float>());
+			auto& skinIndicesProp = out.vertexProperties().addProperty(skinIndicesPropName, std::vector<int>());
 
 			std::size_t vertexIndex = 0;
-			for(auto& v : out->vertices()) {
+			for(auto vi = out.polyhedron().vertices_begin(); vi != out.polyhedron().vertices_end(); ++vi) {
 				std::vector<float> weights(data.get(a_skinningCount), 0.0f);
 				std::vector<int> indices(data.get(a_skinningCount), 0);
 
@@ -62,14 +63,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					++ctr;
 				}
 
-				skinWeightsProp.first[v] = weights;
-				skinIndicesProp.first[v] = indices;
+				skinWeightsProp.set(vi->property_key(), weights);
+				skinIndicesProp.set(vi->property_key(), indices);
 
 				++vertexIndex;
 			}
-
-
-			result.addMesh(m.name(), std::move(out));
 		}
 	}
 

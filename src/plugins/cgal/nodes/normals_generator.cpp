@@ -15,10 +15,6 @@ dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::InAttr<Meshes> a_inMeshes;
 dependency_graph::OutAttr<Meshes> a_outMesh;
 
-// typename CGAL::Kernel_traits<
-//   typename boost::property_traits<
-//     typename boost::property_map<Mesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-
 namespace {
 	struct FakeKernel {
 		typedef float FT;
@@ -108,42 +104,41 @@ namespace {
 			};
 		}
 	};
+
+	template<typename PROPERTY, typename ITERATOR>
+	void put(PROPERTY& prop, const ITERATOR& target, const FakeKernel::Vector_3& norm) {
+		prop.set(target->property_key(), norm);
+	}
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::Enum mode = data.get(a_mode);
-	const Meshes& inMeshes = data.get(a_inMeshes);
 
-	Meshes result;
-	for(auto& inMesh : inMeshes) {
-		std::unique_ptr<CGALPolyhedron> mesh(new CGALPolyhedron(inMesh.mesh()));
-
-		// remove any existing normals
-		{
-			auto vertNormals = mesh->property_map<CGALPolyhedron::Vertex_index, std::array<float, 3>>("vec3:normals");
-			if(vertNormals.second)
-				mesh->remove_property_map(vertNormals.first);
-
-			auto faceNormals = mesh->property_map<CGALPolyhedron::Face_index, std::array<float, 3>>("vec3:normals");
-			if(faceNormals.second)
-				mesh->remove_property_map(faceNormals.first);
-		}
-
+	Meshes result = data.get(a_inMeshes);
+	for(auto& mesh : result) {
 		// request for vertex normals
 		if(mode.value() == "Per-vertex normals") {
-			auto vertNormals = mesh->add_property_map<CGALPolyhedron::Vertex_index, std::array<float, 3>>("vec3:normals");
-			CGAL::Polygon_mesh_processing::compute_vertex_normals(*mesh, vertNormals.first,
+			// remove face normals, if they exist
+			if(mesh.faceProperties().hasProperty("vec3:normals"))
+				mesh.faceProperties().removeProperty("vec3:normals");
+
+			auto& normals = mesh.vertexProperties().addProperty("vec3:normals", std::array<float, 3>{{0,0,0}});
+
+			CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh.polyhedron(), normals,
 				CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
 		}
 
-		// request for half-edge (polygon-vertex) normals
+		// request for face normals
 		else if(mode.value() == "Per-face normals") {
-			auto faceNormals = mesh->add_property_map<CGALPolyhedron::Face_index, std::array<float, 3>>("vec3:normals");
-			CGAL::Polygon_mesh_processing::compute_face_normals(*mesh, faceNormals.first,
+			// remove vertex normals, if they exist
+			if(mesh.vertexProperties().hasProperty("vec3:normals"))
+				mesh.vertexProperties().removeProperty("vec3:normals");
+
+			auto& normals = mesh.faceProperties().addProperty("vec3:normals", std::array<float, 3>{{0,0,0}});
+
+			CGAL::Polygon_mesh_processing::compute_face_normals(mesh.polyhedron(), normals,
 				CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
 		}
-
-		result.addMesh(inMesh.name(), std::move(mesh));
 	}
 
 	data.set(a_outMesh, result);
