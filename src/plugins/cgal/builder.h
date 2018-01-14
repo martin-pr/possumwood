@@ -14,7 +14,7 @@ class CGALBuilder : public CGAL::Modifier_base<HDS> {
 		B.begin_surface(m_points->size(), m_faces->size());
 
 		for(auto& v : *m_points)
-			B.add_vertex(v);
+			B.add_vertex(typename HDS::Traits::Point_3(v[0], v[1], v[2]));
 
 		for(auto& f : *m_faces) {
 			B.begin_facet();
