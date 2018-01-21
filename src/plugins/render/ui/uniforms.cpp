@@ -22,11 +22,18 @@ void Uniforms::set(const std::shared_ptr<const possumwood::Uniforms>& value) {
 		m_widget->setMaximumHeight(0);
 	}
 	else {
+		const std::string& glslDeclaration = value->glslDeclaration();
+
+		unsigned endlCount = 0;
+		for(const auto& c : glslDeclaration)
+			if(c == '\n')
+				++endlCount;
+
 		m_widget->setPlainText(value->glslDeclaration().c_str());
 
 		QFontMetrics fm(m_widget->font());
 		int h = m_widget->contentsMargins().bottom() + m_widget->contentsMargins().top() +
-		        fm.lineSpacing() * value->size() + m_widget->document()->documentMargin() * 2;
+		        fm.lineSpacing() * endlCount + m_widget->document()->documentMargin() * 2;
 
 		m_widget->setMinimumHeight(h);
 		m_widget->setMaximumHeight(h);

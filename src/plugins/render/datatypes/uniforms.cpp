@@ -1,6 +1,7 @@
 #include "uniforms.inl"
 
 #include <limits>
+#include <regex>
 
 #include <possumwood_sdk/app.h>
 
@@ -41,14 +42,53 @@ std::size_t Uniforms::size() const {
 	return m_uniforms.size() + m_textures.size();
 }
 
+namespace {
+	std::pair<std::string, std::size_t> glslVariableSplit(const std::string& var) {
+		assert(var.length() > 1);
+		assert(var.back() == ';');
+
+		static const std::regex s_regex("^([^[]+)\\[([0-9]+)\\];$");
+		std::smatch match;
+
+		if(std::regex_match(var, match, s_regex)) {
+			assert(match.size() == 3);
+			return std::make_pair(match[1], std::atoi(std::string(match[2]).c_str()));
+		}
+		else
+			// remove the last ;
+			return std::make_pair(var.substr(0, var.length()-1), 1);
+	}
+
+	template<typename CONTAINER>
+	void processGLSLNames(std::map<std::string, std::size_t>& vars, const CONTAINER& data) {
+		for(auto& item : data) {
+			auto split = glslVariableSplit(item.glslType);
+
+			auto it = vars.find(split.first);
+			if(it == vars.end())
+				vars.insert(split);
+			else
+				it->second = std::max(it->second, split.second);
+		}
+
+	}
+}
+
+
 std::string Uniforms::glslDeclaration() const {
+	// get a list of variables with their sizes
+	std::map<std::string, std::size_t> vars;
+
+	processGLSLNames(vars, m_uniforms);
+	processGLSLNames(vars, m_textures);
+
+	// and convert them into a string
 	std::stringstream result;
-
-	for(auto& u : m_uniforms)
-		result << u.glslType << std::endl;
-
-	for(auto& t : m_textures)
-		result << t.glslType << std::endl;
+	for(auto& a : vars)
+		if(a.second > 1)
+			result << a.first << "[" << a.second << "];" << std::endl;
+		else
+			result << a.first << ";" << std::endl;
 
 	return result.str();
 }
