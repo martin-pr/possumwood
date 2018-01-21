@@ -24,9 +24,14 @@ void VBO::set(const std::shared_ptr<const possumwood::VertexData>& value) {
 	else {
 		m_widget->setPlainText(value->glslDeclaration().c_str());
 
+		unsigned endlCount = 0;
+		for(const auto& c : value->glslDeclaration())
+			if(c == '\n')
+				++endlCount;
+
 		QFontMetrics fm(m_widget->font());
 		int h = m_widget->contentsMargins().bottom() + m_widget->contentsMargins().top() +
-		        fm.lineSpacing() * value->vboCount() + m_widget->document()->documentMargin() * 2;
+		        fm.lineSpacing() * endlCount + m_widget->document()->documentMargin() * 2;
 
 		m_widget->setMinimumHeight(h);
 		m_widget->setMaximumHeight(h);

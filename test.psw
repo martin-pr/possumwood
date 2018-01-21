@@ -1,0 +1,82 @@
+{
+    "connections": [
+        {
+            "in_node": 2,
+            "in_port": 0,
+            "out_node": 1,
+            "out_port": 2
+        },
+        {
+            "in_node": 2,
+            "in_port": 1,
+            "out_node": 1,
+            "out_port": 2
+        },
+        {
+            "in_node": 2,
+            "in_port": 2,
+            "out_node": 1,
+            "out_port": 2
+        },
+        {
+            "in_node": 0,
+            "in_port": 0,
+            "out_node": 2,
+            "out_port": 3
+        }
+    ],
+    "nodes": [
+        {
+            "blind_data": {
+                "type": "8NodeData",
+                "value": {
+                    "x": 522.0,
+                    "y": 387.0
+                }
+            },
+            "name": "cube",
+            "ports": [
+                null,
+                {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            ],
+            "type": "maths/cube"
+        },
+        {
+            "blind_data": {
+                "type": "8NodeData",
+                "value": {
+                    "x": 311.0,
+                    "y": 240.0
+                }
+            },
+            "name": "add",
+            "ports": [
+                1.0,
+                2.0,
+                null
+            ],
+            "type": "maths/add"
+        },
+        {
+            "blind_data": {
+                "type": "8NodeData",
+                "value": {
+                    "x": 373.0,
+                    "y": 479.0
+                }
+            },
+            "name": "make_vec3",
+            "ports": [
+                null,
+                null,
+                null,
+                null
+            ],
+            "type": "maths/make_vec3"
+        }
+    ]
+}

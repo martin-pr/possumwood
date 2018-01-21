@@ -3,6 +3,7 @@
 #include <possumwood_sdk/app.h>
 
 #include <limits>
+#include <regex>
 
 namespace possumwood {
 
@@ -34,11 +35,43 @@ std::size_t VertexData::size() const {
 	return m_vbos[0].size;
 }
 
-std::string VertexData::glslDeclaration() const {
-	std::stringstream result;
+namespace {
+	std::pair<std::string, std::size_t> glslVariableSplit(const std::string& var) {
+		assert(var.length() > 1);
+		assert(var.back() == ';');
 
-	for(auto& a : m_vbos)
-		result << a.glslType << std::endl;
+		static const std::regex s_regex("^([^[]+)\\[([0-9]+)\\];$");
+		std::smatch match;
+
+		if(std::regex_match(var, match, s_regex)) {
+			assert(match.size() == 3);
+			return std::make_pair(match[1], std::atoi(std::string(match[2]).c_str())+1);
+		}
+		else
+			// remove the last ;
+			return std::make_pair(var.substr(0, var.length()-1), 1);
+	}
+}
+
+std::string VertexData::glslDeclaration() const {
+	// get a list of variables with their sizes
+	std::map<std::string, std::size_t> vars;
+	for(auto& vbo : m_vbos) {
+		auto split = glslVariableSplit(vbo.glslType);
+
+		auto it = vars.find(split.first);
+		if(it == vars.end())
+			vars.insert(split);
+		else
+			it->second = std::max(it->second, split.second);
+	}
+
+	std::stringstream result;
+	for(auto& a : vars)
+		if(a.second > 1)
+			result << a.first << "[" << a.second << "];" << std::endl;
+		else
+			result << a.first << ";" << std::endl;
 
 	return result.str();
 }
