@@ -22,16 +22,12 @@ void Skinning::limitInfluenceCount(std::size_t count) {
 	assert(count > 0);
 
 	while(count < m_weights.size()) {
-		float minVal = 0.0f;
-		std::size_t minIndex = 0;
+		auto toErase = m_weights.begin();
+		for(auto it = m_weights.begin(); it != m_weights.end(); ++it)
+			if(toErase->weight > it->weight)
+				toErase = it;
 
-		for(std::size_t i = 0; i < m_weights.size(); ++i)
-			if(minVal > m_weights[i].weight) {
-				minVal = m_weights[i].weight;
-				minIndex = i;
-			}
-
-		m_weights.erase(m_weights.begin() + minIndex);
+		m_weights.erase(toErase);
 	}
 
 	normalize();
