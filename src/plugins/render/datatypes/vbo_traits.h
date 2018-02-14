@@ -19,6 +19,12 @@ struct VBOTraits<std::array<T, WIDTH>> {
 };
 
 template<typename T>
+struct VBOTraits<Imath::Vec2<T>> {
+	typedef T element;
+	static constexpr std::size_t width() { return 2; };
+};
+
+template<typename T>
 struct VBOTraits<Imath::Vec3<T>> {
 	typedef T element;
 	static constexpr std::size_t width() { return 3; };

@@ -1,22 +1,22 @@
 {
     "connections": [
         {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "text_0",
-            "out_port": "vertex_data"
-        },
-        {
             "in_node": "text_0",
             "in_port": "font",
             "out_node": "font_0",
             "out_port": "font"
         },
         {
-            "in_node": "texture_0",
-            "in_port": "value",
-            "out_node": "load_0",
-            "out_port": "image"
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "text_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
         },
         {
             "in_node": "draw_0",
@@ -25,10 +25,10 @@
             "out_port": "program"
         },
         {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
         },
         {
             "in_node": "viewport_0",
@@ -65,13 +65,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 12.5,
-                    "y": 335.5
+                    "x": 156.5,
+                    "y": 337.5
                 }
             },
             "name": "font",
             "ports": {
-                "font_def_file": "/home/martin/Dropbox/Coding/possumwood/examples/fonts/opensans.json"
+                "font_def_file": "fonts/opensans.json"
             },
             "type": "render/font"
         },
@@ -118,8 +118,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 202.0,
-                    "y": 321.0
+                    "x": 346.0,
+                    "y": 323.0
                 }
             },
             "name": "text",
