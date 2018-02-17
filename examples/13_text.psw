@@ -13,22 +13,28 @@
             "out_port": "vertex_data"
         },
         {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
             "out_port": "program"
         },
         {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
             "in_node": "texture_0",
             "in_port": "value",
             "out_node": "load_0",
             "out_port": "image"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "transform_0",
+            "out_port": "out_uniforms"
         },
         {
             "in_node": "viewport_0",
@@ -43,8 +49,8 @@
             "out_port": "shader"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "uniforms",
+            "in_node": "transform_0",
+            "in_port": "in_uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
         }
@@ -124,7 +130,9 @@
             },
             "name": "text",
             "ports": {
-                "text": "abcdefghijkl"
+                "horiz_align": "Center",
+                "text": "abcdefghijkl",
+                "vert_align": "Center"
             },
             "type": "render/vertex_data/text"
         },
@@ -142,6 +150,35 @@
             },
             "type": "render/uniforms/texture"
         },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 516.0,
+                    "y": 552.0
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "name": "transform",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "render/uniforms/transform"
+        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -152,7 +189,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n \nin vec2 position;\nin vec2 uv;\n \nuniform mat4 iProjection;\nuniform mat4 iModelView;\n\nout vec2 vertexUV;\n \nvoid main() {\n\tvec4 pos4 = vec4(position.x, position.y, 0, 1);\n\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tvertexUV = uv;\n} \n"
+                "source": "#version 130 \n \nin vec2 position;\nin vec2 uv;\n \nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 transform;\n\nout vec2 vertexUV;\n \nvoid main() {\n\tvec4 pos4 = vec4(position.x, position.y, 0, 1);\n\n   \tgl_Position = iProjection * iModelView * transform * pos4;\n\n\tvertexUV = uv;\n} \n"
             },
             "type": "render/vertex_shader"
         },
@@ -173,6 +210,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABQAAASjAAACcwAAAAACAAAAB4A=",
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAABpgAAAZ4AAAZJAAAD/QAAAAACAAAAB4A=",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALxAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAasAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAAAhwAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAAAzAAAANIAAAB1AP////sAAAAGAGwAbwBnAQAAAaIAAAJnAAAASQD///8AAALcAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }
