@@ -15,6 +15,7 @@ namespace dependency_graph {
 
 class Datablock;
 class Graph;
+class Nodes;
 
 class Node : public boost::noncopyable {
 	public:
@@ -79,6 +80,7 @@ class Node : public boost::noncopyable {
 
 		friend class Graph;
 		friend class Port;
+		friend class Nodes;
 
 		friend struct io::adl_serializer<Node>;
 };

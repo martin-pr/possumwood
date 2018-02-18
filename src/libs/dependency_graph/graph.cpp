@@ -17,11 +17,11 @@ void Graph::clear() {
 	m_nodes.clear();
 }
 
-Graph::Nodes& Graph::nodes() {
+Nodes& Graph::nodes() {
 	return m_nodes;
 }
 
-const Graph::Nodes& Graph::nodes() const {
+const Nodes& Graph::nodes() const {
 	return m_nodes;
 }
 
@@ -76,82 +76,7 @@ boost::signals2::connection Graph::onLog(std::function<void(State::MessageType, 
 
 //////////////
 
-Graph::Nodes::Nodes(Graph* parent) : m_parent(parent) {
 
-}
-
-Node& Graph::Nodes::add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData, boost::optional<const dependency_graph::Datablock&> datablock) {
-	m_nodes.push_back(m_parent->makeNode(name, &type));
-	m_nodes.back()->m_blindData = std::move(blindData);
-
-	if(datablock) {
-		assert(&datablock->meta() == &m_nodes.back()->metadata());
-		m_nodes.back()->m_data = *datablock;
-	}
-
-	m_parent->m_onAddNode(*m_nodes.back());
-	m_parent->m_onDirty();
-
-	return *m_nodes.back();
-}
-
-Graph::Nodes::iterator Graph::Nodes::erase(iterator i) {
-	m_parent->m_connections.purge(*i);
-
-	m_parent->m_onRemoveNode(*i);
-	m_parent->m_onDirty();
-
-	auto it = m_nodes.erase(i.base());
-	return boost::make_indirect_iterator(it);
-}
-
-void Graph::Nodes::clear() {
-	while(!m_nodes.empty())
-		erase(boost::make_indirect_iterator(m_nodes.end() - 1));
-}
-
-bool Graph::Nodes::empty() const {
-	return m_nodes.empty();
-}
-
-std::size_t Graph::Nodes::size() const {
-	return m_nodes.size();
-}
-
-Graph::Nodes::const_iterator Graph::Nodes::begin() const {
-	return boost::make_indirect_iterator(m_nodes.begin());
-}
-
-Graph::Nodes::const_iterator Graph::Nodes::end() const {
-	return boost::make_indirect_iterator(m_nodes.end());
-}
-
-Graph::Nodes::iterator Graph::Nodes::begin() {
-	return boost::make_indirect_iterator(m_nodes.begin());
-}
-
-Graph::Nodes::iterator Graph::Nodes::end() {
-	return boost::make_indirect_iterator(m_nodes.end());
-}
-
-Node& Graph::Nodes::operator[](std::size_t index) {
-	assert(index < m_nodes.size());
-	return *m_nodes[index];
-}
-
-const Node& Graph::Nodes::operator[](std::size_t index) const {
-	assert(index < m_nodes.size());
-	return *m_nodes[index];
-}
-
-size_t Graph::Nodes::findNodeIndex(const Node& n) const {
-	auto it = std::find_if(m_nodes.begin(), m_nodes.end(), [&](const std::unique_ptr<Node>& ptr) {
-		return ptr.get() == &n;
-	});
-
-	assert(it != m_nodes.end() && "node not found");
-	return it - m_nodes.begin();
-}
 
 //////////////
 
