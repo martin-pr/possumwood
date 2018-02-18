@@ -9,7 +9,6 @@
 
 namespace dependency_graph {
 
-class Graph;
 class Port;
 class Node;
 
@@ -31,6 +30,12 @@ class Connections : public boost::noncopyable {
 		/// returns the connections of an output port (result contains references
 		///   to input ports connected to this output)
 		std::vector<std::reference_wrapper<Port>> connectedTo(Port& p);
+
+		void add(Port& src, Port& dest);
+		void remove(Port& src, Port& dest);
+
+		/// remove all connections related to a node (both in and out)
+		void purge(const Node& n);
 
 		/// returns the total number of valid connections in this graph
 		size_t size() const;
@@ -71,21 +76,10 @@ class Connections : public boost::noncopyable {
 		boost::signals2::connection onDisconnect(std::function<void(Port&, Port&)> callback);
 
 	private:
-		Connections();
-
-		void add(Port& src, Port& dest);
-		void remove(Port& src, Port& dest);
-		/// remove all connections related to a node (both in and out)
-		void purge(const Node& n);
-
 		connections_container m_connections;
 
 		/// connect and disconnect signals - used by owner Graph to detect changes
 		boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
-
-		friend class Graph;
-		friend class Port;
-		friend class Nodes;
 };
 
 }

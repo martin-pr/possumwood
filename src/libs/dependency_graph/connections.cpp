@@ -5,9 +5,6 @@
 
 namespace dependency_graph {
 
-Connections::Connections() {
-}
-
 void Connections::add(Port& src, Port& dest) {
 	if(src.category() != Attr::kOutput)
 		throw std::runtime_error("Attempting to connect an input as the origin of a connection.");
