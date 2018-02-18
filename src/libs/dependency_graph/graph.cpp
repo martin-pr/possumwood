@@ -4,8 +4,15 @@
 
 namespace dependency_graph {
 
-Graph::Graph() : m_nodes(this), m_connections(this) {
+Graph::Graph() : m_nodes(this) {
+	// connect the signals from owned classes
+	m_connections.onConnect([this](Port& p1, Port& p2) {
+		connected(p1, p2);
+	});
 
+	m_connections.onDisconnect([this](Port& p1, Port& p2) {
+		disconnected(p1, p2);
+	});
 }
 
 bool Graph::empty() const {
@@ -68,6 +75,14 @@ boost::signals2::connection Graph::onDirty(std::function<void()> callback) {
 
 boost::signals2::connection Graph::onStateChanged(std::function<void(const Node&)> callback) {
 	return m_onStateChanged.connect(callback);
+}
+
+void Graph::connected(Port& p1, Port& p2) {
+	m_onConnect(p1, p2);
+}
+
+void Graph::disconnected(Port& p1, Port& p2) {
+	m_onDisconnect(p1, p2);
 }
 
 }

@@ -5,6 +5,7 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/signals2.hpp>
 
 namespace dependency_graph {
 
@@ -66,16 +67,21 @@ class Connections : public boost::noncopyable {
 		/// connections iteration
 		iterator end();
 
+		boost::signals2::connection onConnect(std::function<void(Port&, Port&)> callback);
+		boost::signals2::connection onDisconnect(std::function<void(Port&, Port&)> callback);
+
 	private:
-		Connections(Graph* parent);
+		Connections();
 
 		void add(Port& src, Port& dest);
 		void remove(Port& src, Port& dest);
 		/// remove all connections related to a node (both in and out)
 		void purge(const Node& n);
 
-		Graph* m_parent;
 		connections_container m_connections;
+
+		/// connect and disconnect signals - used by owner Graph to detect changes
+		boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
 
 		friend class Graph;
 		friend class Port;

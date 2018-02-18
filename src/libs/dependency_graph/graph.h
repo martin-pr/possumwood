@@ -51,6 +51,9 @@ class Graph : public boost::noncopyable {
 		boost::signals2::signal<void()> m_onDirty;
 		boost::signals2::signal<void(const Node&)> m_onStateChanged;
 
+		void connected(Port& p1, Port& p2);
+		void disconnected(Port& p1, Port& p2);
+
 		friend class Node;
 		friend class Nodes;
 		friend class Connections;
