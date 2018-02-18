@@ -70,17 +70,10 @@ void Node::markAsDirty(size_t index) {
 	}
 }
 
-bool Node::inputIsConnected(const Port& p) const {
-	assert(p.category() == Attr::kInput);
-
-	// return true if there are no connections leading to this input port
-	return static_cast<bool>(m_parent->connections().connectedFrom(p));
-}
-
 void Node::computeInput(size_t index) {
 	assert(port(index).category() == Attr::kInput && "computeInput can be only called on inputs");
 	assert(port(index).isDirty() && "input should be dirty for recomputation");
-	assert(inputIsConnected(port(index)) && "input has to be connected to be computed");
+	assert(port(index).isConnected() && "input has to be connected to be computed");
 
 	// pull on the single connected output if needed
 	boost::optional<Port&> out = m_parent->connections().connectedFrom(port(index));
@@ -111,7 +104,7 @@ void Node::computeOutput(size_t index) {
 	// pull on all inputs
 	for(const Attr& i : inputs) {
 		if(port(i.offset()).isDirty()) {
-			if(inputIsConnected(port(i.offset())))
+			if(port(i.offset()).isConnected())
 				computeInput(i.offset());
 			else
 				port(i.offset()).setDirty(false);

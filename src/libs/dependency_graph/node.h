@@ -62,8 +62,6 @@ class Node : public boost::noncopyable {
 		template<typename T>
 		void set(size_t index, const T& value);
 
-		bool inputIsConnected(const Port& p) const;
-
 	private:
 		void markAsDirty(size_t index);
 

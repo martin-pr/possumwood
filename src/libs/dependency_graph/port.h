@@ -47,6 +47,9 @@ class Port : public boost::noncopyable {
 		/// disconnects two connected ports
 		void disconnect(Port& p);
 
+		/// returns true if this port is connected to anything
+		bool isConnected() const;
+
 		/// adds a "value changed" callback - to be used by the UI
 		boost::signals2::connection valueCallback(const std::function<void()>& fn);
 		/// adds a "flags changed" callback - to be used by the UI

@@ -15,7 +15,7 @@ const T& Node::get(size_t index) const {
 
 template<typename T>
 void Node::set(size_t index, const T& value) {
-	assert(port(index).category() == Attr::kOutput || !inputIsConnected(port(index)));
+	assert(port(index).category() == Attr::kOutput || !port(index).isConnected());
 	m_data.set<T>(index, value);
 }
 

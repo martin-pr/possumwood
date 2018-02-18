@@ -134,6 +134,14 @@ void Port::disconnect(Port& p) {
 	p.m_flagsCallbacks();
 }
 
+bool Port::isConnected() const {
+	if(category() == Attr::kInput)
+		// return true if there are no connections leading to this input port
+		return static_cast<bool>(m_parent->graph().connections().connectedFrom(*this));
+	else
+		return not m_parent->graph().connections().connectedTo(*this).empty();
+}
+
 boost::signals2::connection Port::valueCallback(const std::function<void()>& fn) {
 	return m_valueCallbacks.connect(fn);
 }

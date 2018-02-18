@@ -3,6 +3,7 @@
 #include "port.h"
 
 #include "node.h"
+#include "graph.h"
 
 namespace dependency_graph {
 
@@ -10,7 +11,7 @@ template<typename T>
 void Port::set(const T& value) {
 	// setting a value in the middle of the graph might do
 	//   weird things, so lets assert it
-	assert(category() == Attr::kOutput || !m_parent->inputIsConnected(*this));
+	assert(category() == Attr::kOutput || !isConnected());
 
 	// set the value in the data block
 	const bool valueWasSet = m_parent->get<T>(m_id) != value;
@@ -31,7 +32,7 @@ const T& Port::get() {
 	// do the computation if needed, to get rid of the dirty flag
 	if(m_dirty) {
 		if(category() == Attr::kInput) {
-			if(m_parent->inputIsConnected(*this))
+			if(isConnected())
 				m_parent->computeInput(m_id);
 			else
 				setDirty(false);
