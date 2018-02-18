@@ -147,9 +147,6 @@ void Node::computeOutput(size_t index) {
 		m_state = result;
 
 		graph().m_onStateChanged(*this);
-
-		for(auto& l : result)
-			graph().m_onLog(l.first, l.second);
 	}
 }
 

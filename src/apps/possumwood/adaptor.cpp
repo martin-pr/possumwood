@@ -61,10 +61,6 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		[this](const dependency_graph::Node& n) { onStateChanged(n); }
 	));
 
-	m_signals.push_back(graph->onLog(
-		[this](dependency_graph::State::MessageType t, const std::string& msg) { onLog(t, msg); }
-	));
-
 	// instantiate the graph widget
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setContentsMargins(0,0,0,0);
@@ -312,23 +308,6 @@ void Adaptor::onStateChanged(const dependency_graph::Node& node) {
 		n.editorNode->setState(node_editor::Node::kInfo);
 	else
 		n.editorNode->setState(node_editor::Node::kOk);
-}
-
-void Adaptor::onLog(dependency_graph::State::MessageType t, const std::string& msg) {
-	switch(t) {
-		case dependency_graph::State::kInfo:
-			emit logged(style()->standardIcon(QStyle::SP_MessageBoxInformation), msg.c_str());
-			break;
-		case dependency_graph::State::kWarning:
-			emit logged(style()->standardIcon(QStyle::SP_MessageBoxWarning), msg.c_str());
-			break;
-		case dependency_graph::State::kError:
-			emit logged(style()->standardIcon(QStyle::SP_MessageBoxCritical), msg.c_str());
-			break;
-		default:
-			emit logged(style()->standardIcon(QStyle::SP_MessageBoxQuestion), msg.c_str());
-			break;
-	}
 }
 
 QPointF Adaptor::mapToScene(QPoint pos) const {

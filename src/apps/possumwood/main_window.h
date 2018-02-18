@@ -9,7 +9,6 @@
 #include "adaptor.h"
 #include "properties.h"
 #include "viewport.h"
-#include "log.h"
 #include "timeline_widget.h"
 #include "searchable_menu.h"
 
@@ -30,7 +29,6 @@ class MainWindow : public QMainWindow {
 		Viewport* m_viewport;
 		Adaptor* m_adaptor;
 		Properties* m_properties;
-		Log* m_log;
 		TimelineWidget* m_timeline;
 		std::unique_ptr<possumwood::Editor> m_editor;
 

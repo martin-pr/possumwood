@@ -52,9 +52,6 @@ class Adaptor : public QWidget {
 		/// calls all existing Drawables
 		void draw(const possumwood::Drawable::ViewportState& viewport);
 
-	signals:
-		void logged(QIcon, const QString&);
-
 	protected:
 	private:
 		void onAddNode(dependency_graph::Node& node);
@@ -66,7 +63,6 @@ class Adaptor : public QWidget {
 		void onBlindDataChanged(dependency_graph::Node& node);
 		void onNameChanged(dependency_graph::Node& node);
 		void onStateChanged(const dependency_graph::Node& node);
-		void onLog(dependency_graph::State::MessageType t, const std::string& msg);
 
 		dependency_graph::Graph* m_graph;
 		node_editor::GraphWidget* m_graphWidget;

@@ -39,8 +39,6 @@ class Graph : public boost::noncopyable {
 		boost::signals2::connection onDirty(std::function<void()> callback);
 		/// per-node state change callback
 		boost::signals2::connection onStateChanged(std::function<void(const Node&)> callback);
-		/// log callback
-		boost::signals2::connection onLog(std::function<void(State::MessageType, const std::string&)> callback);
 
 	private:
 		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
@@ -52,7 +50,6 @@ class Graph : public boost::noncopyable {
 		boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
 		boost::signals2::signal<void()> m_onDirty;
 		boost::signals2::signal<void(const Node&)> m_onStateChanged;
-		boost::signals2::signal<void(State::MessageType, const std::string&)> m_onLog;
 
 		friend class Node;
 		friend class Nodes;
