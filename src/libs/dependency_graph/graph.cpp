@@ -85,4 +85,23 @@ void Graph::disconnected(Port& p1, Port& p2) {
 	m_onDisconnect(p1, p2);
 }
 
+void Graph::nameChanged(Node& node) {
+	m_onNameChanged(node);
+}
+void Graph::stateChanged(Node& node) {
+	m_onStateChanged(node);
+}
+void Graph::dirtyChanged() {
+	m_onDirty();
+}
+void Graph::nodeAdded(Node& node) {
+	m_onAddNode(node);
+}
+void Graph::nodeRemoved(Node& node) {
+	m_onRemoveNode(node);
+}
+void Graph::blindDataChanged(Node& node) {
+	m_onBlindDataChanged(node);
+}
+
 }

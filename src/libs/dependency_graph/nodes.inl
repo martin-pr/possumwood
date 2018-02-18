@@ -18,8 +18,8 @@ Node& Nodes::add(const Metadata& type, const std::string& name, const T& blindDa
 		m_nodes.back()->m_data = *datablock;
 	}
 
-	m_parent->m_onAddNode(*m_nodes.back());
-	m_parent->m_onDirty();
+	m_parent->nodeAdded(*m_nodes.back());
+	m_parent->dirtyChanged();
 
 	return *m_nodes.back();
 }

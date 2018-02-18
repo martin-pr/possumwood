@@ -17,17 +17,17 @@ Node& Nodes::add(const Metadata& type, const std::string& name, std::unique_ptr<
 		m_nodes.back()->m_data = *datablock;
 	}
 
-	m_parent->m_onAddNode(*m_nodes.back());
-	m_parent->m_onDirty();
+	m_parent->nodeAdded(*m_nodes.back());
+	m_parent->dirtyChanged();
 
 	return *m_nodes.back();
 }
 
 Nodes::iterator Nodes::erase(iterator i) {
-	m_parent->m_connections.purge(*i);
+	m_parent->connections().purge(*i);
 
-	m_parent->m_onRemoveNode(*i);
-	m_parent->m_onDirty();
+	m_parent->nodeRemoved(*i);
+	m_parent->dirtyChanged();
 
 	auto it = m_nodes.erase(i.base());
 	return boost::make_indirect_iterator(it);

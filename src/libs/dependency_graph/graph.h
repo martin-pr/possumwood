@@ -41,6 +41,13 @@ class Graph : public boost::noncopyable {
 		boost::signals2::connection onStateChanged(std::function<void(const Node&)> callback);
 
 	private:
+		void nameChanged(Node& node);
+		void stateChanged(Node& node);
+		void dirtyChanged();
+		void nodeAdded(Node& node);
+		void nodeRemoved(Node& node);
+		void blindDataChanged(Node& node);
+
 		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
 
 		Nodes m_nodes;

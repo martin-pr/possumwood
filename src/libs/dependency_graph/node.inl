@@ -33,7 +33,7 @@ void Node::setBlindData(const T& value) {
 		val.value = value;
 
 		// and call the callback
-		m_parent->m_onBlindDataChanged(*this);
+		m_parent->blindDataChanged(*this);
 	}
 }
 

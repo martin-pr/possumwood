@@ -22,7 +22,7 @@ const std::string& Node::name() const {
 
 void Node::setName(const std::string& name) {
 	m_name = name;
-	graph().m_onNameChanged(*this);
+	graph().nameChanged(*this);
 }
 
 const Metadata& Node::metadata() const {
@@ -54,7 +54,7 @@ void Node::markAsDirty(size_t index) {
 	if(!p.isDirty()) {
 		p.setDirty(true);
 
-		graph().m_onDirty();
+		graph().dirtyChanged();
 
 		// recurse + handle each port type slightly differently
 		if(p.category() == Attr::kInput) {
@@ -139,7 +139,7 @@ void Node::computeOutput(size_t index) {
 	if(result != m_state) {
 		m_state = result;
 
-		graph().m_onStateChanged(*this);
+		graph().stateChanged(*this);
 	}
 }
 
