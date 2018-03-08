@@ -16,6 +16,7 @@ namespace dependency_graph {
 class Graph : public boost::noncopyable {
 	public:
 		Graph();
+		~Graph();
 
 		bool empty() const;
 		void clear();
@@ -53,10 +54,8 @@ class Graph : public boost::noncopyable {
 		Nodes m_nodes;
 		Connections m_connections;
 
-		boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode, m_onBlindDataChanged, m_onNameChanged;
-		boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
-		boost::signals2::signal<void()> m_onDirty;
-		boost::signals2::signal<void(const Node&)> m_onStateChanged;
+		struct Signals;
+		std::unique_ptr<Signals> m_signals;
 
 		void connected(Port& p1, Port& p2);
 		void disconnected(Port& p1, Port& p2);
