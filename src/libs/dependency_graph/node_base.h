@@ -14,6 +14,7 @@ class Metadata;
 class Datablock;
 class Node;
 class Nodes;
+class Network;
 
 class NodeBase : public boost::noncopyable {
 	public:
@@ -22,8 +23,8 @@ class NodeBase : public boost::noncopyable {
 		const std::string& name() const;
 		void setName(const std::string& name);
 
-		const Graph& graph() const;
-		Graph& graph();
+		const Network& network() const;
+		Network& network();
 
 		/// returns the unique numeric ID of this node, used for saving connections.
 		/// This ID can be used in Graph::operator[] to get this node from the graph.
@@ -43,11 +44,11 @@ class NodeBase : public boost::noncopyable {
 		const T& blindData() const;
 
 	protected:
-		NodeBase(const std::string& name, Graph* parent);
+		NodeBase(const std::string& name, Network* parent);
 
 	private:
 		std::string m_name;
-		Graph* m_graph;
+		Network* m_network;
 
 		std::unique_ptr<BaseData> m_blindData;
 

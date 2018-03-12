@@ -1,6 +1,7 @@
 #pragma once
 
 #include "node_base.h"
+#include "network.h"
 #include "rtti.h"
 
 namespace dependency_graph {
@@ -19,7 +20,7 @@ void NodeBase::setBlindData(const T& value) {
 		val.value = value;
 
 		// and call the callback
-		graph().blindDataChanged(*this);
+		network().graph().blindDataChanged(*this);
 	}
 }
 

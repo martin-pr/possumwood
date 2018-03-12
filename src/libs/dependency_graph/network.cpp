@@ -30,5 +30,12 @@ const Connections& Network::connections() const {
 	return m_connections;
 }
 
+const Graph& Network::graph() const {
+	return *m_graph;
+}
+
+Graph& Network::graph() {
+	return *m_graph;
+}
 
 }

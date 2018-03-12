@@ -17,6 +17,7 @@ namespace dependency_graph {
 class Datablock;
 class Graph;
 class Nodes;
+class Network;
 
 class Node : public NodeBase {
 	public:
@@ -32,7 +33,7 @@ class Node : public NodeBase {
 		const State& state() const;
 
 	protected:
-		Node(const std::string& name, const Metadata* def, Graph* parent);
+		Node(const std::string& name, const Metadata* def, Network* parent);
 
 		void computeInput(size_t index);
 		void computeOutput(size_t index);

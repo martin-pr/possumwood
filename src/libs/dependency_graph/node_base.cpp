@@ -4,7 +4,7 @@
 
 namespace dependency_graph {
 
-NodeBase::NodeBase(const std::string& name, Graph* parent) : m_name(name), m_graph(parent) {
+NodeBase::NodeBase(const std::string& name, Network* parent) : m_name(name), m_network(parent) {
 }
 
 NodeBase::~NodeBase() {
@@ -16,19 +16,19 @@ const std::string& NodeBase::name() const {
 
 void NodeBase::setName(const std::string& name) {
 	m_name = name;
-	graph().nameChanged(*this);
+	network().graph().nameChanged(*this);
 }
 
-const Graph& NodeBase::graph() const {
-	return *m_graph;
+const Network& NodeBase::network() const {
+	return *m_network;
 }
 
-Graph& NodeBase::graph() {
-	return *m_graph;
+Network& NodeBase::network() {
+	return *m_network;
 }
 
 size_t NodeBase::index() const {
-	return graph().network().nodes().findNodeIndex(*this);
+	return network().nodes().findNodeIndex(*this);
 }
 
 }

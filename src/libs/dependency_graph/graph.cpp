@@ -27,7 +27,7 @@ Graph::~Graph() {
 }
 
 std::unique_ptr<Node> Graph::makeNode(const std::string& name, const Metadata* md) {
-	return std::unique_ptr<Node>(new Node(name, md, this));
+	return std::unique_ptr<Node>(new Node(name, md, &network()));
 }
 
 boost::signals2::connection Graph::onAddNode(std::function<void(Node&)> callback) {
