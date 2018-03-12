@@ -43,13 +43,13 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 
 	Graph g;
 
-	Node& add1 = g.nodes().add(addition, "add_1");
-	Node& mult1 = g.nodes().add(multiplication, "mult_1");
-	Node& mult2 = g.nodes().add(multiplication, "mult_2");
-	Node& add2 = g.nodes().add(addition, "add_2");
+	Node& add1 = g.network().nodes().add(addition, "add_1");
+	Node& mult1 = g.network().nodes().add(multiplication, "mult_1");
+	Node& mult2 = g.network().nodes().add(multiplication, "mult_2");
+	Node& add2 = g.network().nodes().add(addition, "add_2");
 
 	// before anything is connected, only output ports are dirty (they need to be pulled on)
-	for(auto& n : g.nodes())
+	for(auto& n : g.network().nodes())
 		for(size_t pi = 0; pi < n.portCount(); ++pi)
 			BOOST_CHECK_EQUAL(n.port(pi).isDirty(), n.port(pi).category() == Attr::kOutput);
 
@@ -64,9 +64,9 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	// compute (2 + 3) * 4 + (2 + 3) * 5 = 20 + 25 = 45
 
 	// at the beginning before any evaluation, only non-connected inputs are not dirty
-	for(auto& n : g.nodes())
+	for(auto& n : g.network().nodes())
 		for(size_t pi = 0; pi < n.portCount(); ++pi)
-			BOOST_CHECK_EQUAL(n.port(pi).isDirty(), n.port(pi).category() == Attr::kOutput || g.connections().connectedFrom(n.port(pi)));
+			BOOST_CHECK_EQUAL(n.port(pi).isDirty(), n.port(pi).category() == Attr::kOutput || g.network().connections().connectedFrom(n.port(pi)));
 
 	// check we can get a value from input ports, if they're not connected
 	BOOST_REQUIRE_EQUAL(add1.port(0).get<float>(), 0.0f);
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 45.0f);
 
 	// at the end after any evaluation, everything is NOT dirty
-	for(auto& n : g.nodes())
+	for(auto& n : g.network().nodes())
 		for(size_t pi = 0; pi < n.portCount(); ++pi)
 			BOOST_CHECK(not n.port(pi).isDirty());
 

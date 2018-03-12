@@ -80,7 +80,7 @@ Properties::Property::Property(dependency_graph::Port& port) {
 
 			if(port.category() == dependency_graph::Attr::kInput) {
 				flags |= possumwood::properties::property_base::kInput;
-				if(port.node().graph().connections().connectedFrom(port))
+				if(port.node().graph().network().connections().connectedFrom(port))
 					flags |= possumwood::properties::property_base::kDisabled;
 			}
 

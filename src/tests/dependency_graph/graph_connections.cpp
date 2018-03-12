@@ -12,7 +12,7 @@ namespace {
 	bool checkConnections(const Graph& g, std::vector<std::pair<const Port*, const Port*>> connections) {
 		bool result = true;
 
-		for(auto c : g.connections()) {
+		for(auto c : g.network().connections()) {
 			std::pair<const Port*, const Port*> key(&c.first, &c.second);
 
 			auto it = std::find(connections.begin(), connections.end(), key);
@@ -40,15 +40,15 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	const Metadata& addition = additionNode();
 	const Metadata& multiplication = multiplicationNode();
 
-	Node& add1 = g.nodes().add(addition, "add_1");
-	Node& mult1 = g.nodes().add(multiplication, "mult_1");
-	Node& mult2 = g.nodes().add(multiplication, "mult_2");
-	Node& add2 = g.nodes().add(addition, "add_2");
+	Node& add1 = g.network().nodes().add(addition, "add_1");
+	Node& mult1 = g.network().nodes().add(multiplication, "mult_1");
+	Node& mult2 = g.network().nodes().add(multiplication, "mult_2");
+	Node& add2 = g.network().nodes().add(addition, "add_2");
 
 	// 4 nodes and no connections
-	BOOST_REQUIRE_EQUAL(g.nodes().size(), 4u);
-	BOOST_REQUIRE_EQUAL(g.connections().size(), 0u);
-	BOOST_REQUIRE(g.connections().begin() == g.connections().end());
+	BOOST_REQUIRE_EQUAL(g.network().nodes().size(), 4u);
+	BOOST_REQUIRE_EQUAL(g.network().connections().size(), 0u);
+	BOOST_REQUIRE(g.network().connections().begin() == g.network().connections().end());
 
 	BOOST_CHECK_EQUAL(s_connectionCount, 0u);
 
@@ -75,16 +75,16 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	// add a single connection
 	BOOST_CHECK_NO_THROW(add1.port(2).connect(mult1.port(1)));
 
-	BOOST_REQUIRE_EQUAL(g.connections().size(), 1u);
-	BOOST_REQUIRE(g.connections().begin() != g.connections().end());
+	BOOST_REQUIRE_EQUAL(g.network().connections().size(), 1u);
+	BOOST_REQUIRE(g.network().connections().begin() != g.network().connections().end());
 	{
-		auto it = g.connections().begin();
+		auto it = g.network().connections().begin();
 		++it;
-		BOOST_REQUIRE(it == g.connections().end());
+		BOOST_REQUIRE(it == g.network().connections().end());
 	}
 
-	BOOST_CHECK_EQUAL(&(g.connections().begin()->first), &add1.port(2));
-	BOOST_CHECK_EQUAL(&(g.connections().begin()->second), &mult1.port(1));
+	BOOST_CHECK_EQUAL(&(g.network().connections().begin()->first), &add1.port(2));
+	BOOST_CHECK_EQUAL(&(g.network().connections().begin()->second), &mult1.port(1));
 
 	BOOST_CHECK_EQUAL(s_connectionCount, 1u);
 
@@ -96,12 +96,12 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	// add another connection
 	BOOST_CHECK_NO_THROW(add1.port(2).connect(mult2.port(1)));
 
-	BOOST_REQUIRE_EQUAL(g.connections().size(), 2u);
-	BOOST_REQUIRE(g.connections().begin() != g.connections().end());
+	BOOST_REQUIRE_EQUAL(g.network().connections().size(), 2u);
+	BOOST_REQUIRE(g.network().connections().begin() != g.network().connections().end());
 	{
-		auto it = g.connections().begin();
+		auto it = g.network().connections().begin();
 		++it; ++it;
-		BOOST_REQUIRE(it == g.connections().end());
+		BOOST_REQUIRE(it == g.network().connections().end());
 	}
 	BOOST_REQUIRE(checkConnections(g, {{&add1.port(2), &mult1.port(1)}, {&add1.port(2), &mult2.port(1)}}));
 
@@ -111,12 +111,12 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	BOOST_CHECK_NO_THROW(mult1.port(2).connect(add2.port(0)));
 	BOOST_CHECK_NO_THROW(mult2.port(2).connect(add2.port(1)));
 
-	BOOST_REQUIRE_EQUAL(g.connections().size(), 4u);
-	BOOST_REQUIRE(g.connections().begin() != g.connections().end());
+	BOOST_REQUIRE_EQUAL(g.network().connections().size(), 4u);
+	BOOST_REQUIRE(g.network().connections().begin() != g.network().connections().end());
 	{
-		auto it = g.connections().begin();
+		auto it = g.network().connections().begin();
 		++it; ++it; ++it; ++it;
-		BOOST_REQUIRE(it == g.connections().end());
+		BOOST_REQUIRE(it == g.network().connections().end());
 	}
 	BOOST_REQUIRE(checkConnections(g, {
 		{&add1.port(2), &mult1.port(1)},
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	// try to remove a connection
 	BOOST_CHECK_NO_THROW(add1.port(2).disconnect(mult1.port(1)));
 
-	BOOST_REQUIRE_EQUAL(g.connections().size(), 3u);
+	BOOST_REQUIRE_EQUAL(g.network().connections().size(), 3u);
 	BOOST_REQUIRE(checkConnections(g, {
 		{&add1.port(2), &mult2.port(1)},
 		{&mult1.port(2), &add2.port(0)},
@@ -171,25 +171,25 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	BOOST_CHECK_EQUAL(s_connectionCount, 3u);
 
 	// remove mult2 node, which should also remove relevant connections
-	auto it = std::find_if(g.nodes().begin(), g.nodes().end(), [&](const Node& n) {
+	auto it = std::find_if(g.network().nodes().begin(), g.network().nodes().end(), [&](const Node& n) {
 		return n.name() == "mult_2";
 	});
-	BOOST_REQUIRE(it != g.nodes().end());
-	g.nodes().erase(it);
+	BOOST_REQUIRE(it != g.network().nodes().end());
+	g.network().nodes().erase(it);
 
 	// now all two connections of the mult2 node should be removed as well
-	BOOST_REQUIRE_EQUAL(g.connections().size(), 1u);
+	BOOST_REQUIRE_EQUAL(g.network().connections().size(), 1u);
 	BOOST_REQUIRE(checkConnections(g, {
 		{&mult1.port(2), &add2.port(0)}
 	}));
 
 	BOOST_CHECK_EQUAL(s_connectionCount, 1u);
 
-	// and clear() shold remove the rest
-	g.clear();
-	BOOST_REQUIRE_EQUAL(g.connections().size(), 0u);
-	BOOST_REQUIRE(g.connections().empty());
-	BOOST_REQUIRE(g.nodes().empty());
+	// and clear() should remove the rest
+	g.network().clear();
+	BOOST_REQUIRE_EQUAL(g.network().connections().size(), 0u);
+	BOOST_REQUIRE(g.network().connections().empty());
+	BOOST_REQUIRE(g.network().nodes().empty());
 
 	BOOST_CHECK_EQUAL(s_connectionCount, 0u);
 }

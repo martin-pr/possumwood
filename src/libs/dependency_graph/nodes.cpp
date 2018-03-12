@@ -24,7 +24,7 @@ Node& Nodes::add(const Metadata& type, const std::string& name, std::unique_ptr<
 }
 
 Nodes::iterator Nodes::erase(iterator i) {
-	m_parent->connections().purge(*i);
+	m_parent->network().connections().purge(*i);
 
 	m_parent->nodeRemoved(*i);
 	m_parent->dirtyChanged();

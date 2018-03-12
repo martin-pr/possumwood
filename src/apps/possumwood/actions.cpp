@@ -28,18 +28,18 @@ void doCreateNode(const dependency_graph::Metadata& meta, const std::string& nam
 	if(data)
 		assert(&data->meta() == &meta);
 
-	possumwood::App::instance().graph().nodes().add(meta, name, blindData, data);
+	possumwood::App::instance().graph().network().nodes().add(meta, name, blindData, data);
 }
 
 void doRemoveNode(const possumwood::UniqueId& id) {
 	auto& graph = possumwood::App::instance().graph();
-	auto it = std::find_if(graph.nodes().begin(), graph.nodes().end(), [&](const dependency_graph::Node & i) {
+	auto it = std::find_if(graph.network().nodes().begin(), graph.network().nodes().end(), [&](const dependency_graph::Node & i) {
 		return i.blindData<possumwood::NodeData>().id() == id;
 	});
 
-	assert(it != graph.nodes().end());
+	assert(it != graph.network().nodes().end());
 
-	graph.nodes().erase(it);
+	graph.network().nodes().erase(it);
 }
 
 void doConnect(const possumwood::UniqueId& fromNode, std::size_t fromPort, const possumwood::UniqueId& toNode, std::size_t toPort) {
@@ -146,7 +146,7 @@ possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _s
 	// add all connections to selected nodes - they'll be removed as well as the selected connections
 	//   with the removed nodes
 	dependency_graph::Selection selection = _selection;
-	for(auto& c : possumwood::App::instance().graph().connections()) {
+	for(auto& c : possumwood::App::instance().graph().network().connections()) {
 		auto& n1 = c.first.node();
 		auto& n2 = c.second.node();
 
@@ -214,7 +214,7 @@ void Actions::paste(dependency_graph::Selection& selection) {
 
 		// add all the nodes to the main graph
 		//  - each node has a unique ID (unique between all graphs), store that
-		for(auto& n : graph.nodes()) {
+		for(auto& n : graph.network().nodes()) {
 			possumwood::NodeData d = n.blindData<possumwood::NodeData>();
 			d.setPosition(QPointF(20, 20) + d.position());
 
@@ -225,7 +225,7 @@ void Actions::paste(dependency_graph::Selection& selection) {
 		}
 
 		// add all connetions, based on "unique" IDs
-		for(auto& c : graph.connections()) {
+		for(auto& c : graph.network().connections()) {
 			possumwood::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
 			possumwood::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
 
@@ -248,10 +248,10 @@ void Actions::paste(dependency_graph::Selection& selection) {
 		// we will need the Index instance to map between node IDs and their pointers
 		possumwood::Index& index = possumwood::App::instance().index();
 
-		for(auto& n : graph.nodes())
+		for(auto& n : graph.network().nodes())
 			selection.addNode(*index[n.blindData<possumwood::NodeData>().id()].graphNode);
 
-		for(auto& c : graph.connections()) {
+		for(auto& c : graph.network().connections()) {
 			possumwood::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
 			possumwood::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
 

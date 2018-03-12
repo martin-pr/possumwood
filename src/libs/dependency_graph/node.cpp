@@ -55,7 +55,7 @@ void Node::markAsDirty(size_t index) {
 		}
 		else {
 			// all inputs connected to this output are marked dirty
-			for(Port& o : graph().connections().connectedTo(port(index)))
+			for(Port& o : graph().network().connections().connectedTo(port(index)))
 				o.node().markAsDirty(o.m_id);
 		}
 	}
@@ -67,7 +67,7 @@ void Node::computeInput(size_t index) {
 	assert(port(index).isConnected() && "input has to be connected to be computed");
 
 	// pull on the single connected output if needed
-	boost::optional<Port&> out = graph().connections().connectedFrom(port(index));
+	boost::optional<Port&> out = graph().network().connections().connectedFrom(port(index));
 	assert(out);
 	if(out->isDirty())
 		out->node().computeOutput(out->m_id);

@@ -9,6 +9,7 @@
 #include "node.h"
 #include "nodes.h"
 #include "connections.h"
+#include "network.h"
 
 namespace dependency_graph {
 
@@ -18,14 +19,8 @@ class Graph : public boost::noncopyable {
 		Graph();
 		~Graph();
 
-		bool empty() const;
-		void clear();
-
-		Nodes& nodes();
-		const Nodes& nodes() const;
-
-		Connections& connections();
-		const Connections& connections() const;
+		Network& network();
+		const Network& network() const;
 
 		boost::signals2::connection onAddNode(std::function<void(Node&)> callback);
 		boost::signals2::connection onRemoveNode(std::function<void(Node&)> callback);
@@ -54,8 +49,7 @@ class Graph : public boost::noncopyable {
 
 		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
 
-		Nodes m_nodes;
-		Connections m_connections;
+		Network m_network;
 
 		struct Signals;
 		std::unique_ptr<Signals> m_signals;

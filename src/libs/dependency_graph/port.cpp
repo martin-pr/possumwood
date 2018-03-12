@@ -58,7 +58,7 @@ void Port::setDirty(bool d) {
 
 void Port::connect(Port& p) {
 	// test if the input is not connected already
-	if(p.node().graph().connections().connectedFrom(p)) {
+	if(p.node().graph().network().connections().connectedFrom(p)) {
 		std::stringstream msg;
 		msg << "Port " << node().name() << "/" << name() << " is already connected";
 
@@ -78,7 +78,7 @@ void Port::connect(Port& p) {
 					for(const Attr& i : current->node().metadata().influences(current->m_id))
 						newAddedPorts.insert(&current->node().port(i.offset()));
 				else {
-					for(Port& i : current->node().graph().connections().connectedTo(*current))
+					for(Port& i : current->node().graph().network().connections().connectedTo(*current))
 						newAddedPorts.insert(&i);
 				}
 			}
@@ -103,7 +103,7 @@ void Port::connect(Port& p) {
 	}
 
 	// add the connection
- 	p.m_parent->graph().connections().add(*this, p);
+ 	p.m_parent->graph().network().connections().add(*this, p);
 	// and mark the "connected to" as dirty - will most likely need recomputation
 	// TODO: compare values, before marking it dirty wholesale?
 	p.node().markAsDirty(p.index());
@@ -114,7 +114,7 @@ void Port::connect(Port& p) {
 
 void Port::disconnect(Port& p) {
 	// remove the connection
-	p.m_parent->graph().connections().remove(*this, p);
+	p.m_parent->graph().network().connections().remove(*this, p);
 
 	// disconnecting a non-saveable port should reset the data, otherwise
 	//   if the scene is saved, this data will not be in the file
@@ -137,9 +137,9 @@ void Port::disconnect(Port& p) {
 bool Port::isConnected() const {
 	if(category() == Attr::kInput)
 		// return true if there are no connections leading to this input port
-		return static_cast<bool>(m_parent->graph().connections().connectedFrom(*this));
+		return static_cast<bool>(m_parent->graph().network().connections().connectedFrom(*this));
 	else
-		return not m_parent->graph().connections().connectedTo(*this).empty();
+		return not m_parent->graph().network().connections().connectedTo(*this).empty();
 }
 
 boost::signals2::connection Port::valueCallback(const std::function<void()>& fn) {

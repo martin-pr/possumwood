@@ -8,6 +8,7 @@
 #include <boost/optional.hpp>
 
 #include "data.h"
+#include "node.h"
 
 namespace dependency_graph {
 
@@ -16,6 +17,7 @@ class NodeBase;
 class Node;
 class Metadata;
 class Datablock;
+class Network;
 
 /// Data structure holding node instances.
 /// Iterators are not guaranteed to remain valid after operations,
@@ -62,6 +64,7 @@ class Nodes : public boost::noncopyable {
 		friend class Graph;
 		friend class NodeBase;
 		friend class Node;
+		friend class Network;
 };
 
 }

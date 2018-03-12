@@ -12,43 +12,18 @@ struct Graph::Signals {
 	boost::signals2::signal<void(const Node&)> m_onStateChanged;
 };
 
-Graph::Graph() : m_nodes(this), m_signals(new Signals) {
+Graph::Graph() : m_network(this), m_signals(new Signals) {
 	// connect the signals from owned classes
-	m_connections.onConnect([this](Port& p1, Port& p2) {
+	m_network.connections().onConnect([this](Port& p1, Port& p2) {
 		connected(p1, p2);
 	});
 
-	m_connections.onDisconnect([this](Port& p1, Port& p2) {
+	m_network.connections().onDisconnect([this](Port& p1, Port& p2) {
 		disconnected(p1, p2);
 	});
 }
 
 Graph::~Graph() {
-}
-
-bool Graph::empty() const {
-	return m_nodes.empty();
-}
-
-void Graph::clear() {
-	// clear only nodes - connections will clear themselves with the nodes
-	m_nodes.clear();
-}
-
-Nodes& Graph::nodes() {
-	return m_nodes;
-}
-
-const Nodes& Graph::nodes() const {
-	return m_nodes;
-}
-
-Connections& Graph::connections() {
-	return m_connections;
-}
-
-const Connections& Graph::connections() const {
-	return m_connections;
 }
 
 std::unique_ptr<Node> Graph::makeNode(const std::string& name, const Metadata* md) {
@@ -113,6 +88,14 @@ void Graph::nodeRemoved(Node& node) {
 }
 void Graph::blindDataChanged(NodeBase& node) {
 	m_signals->m_onBlindDataChanged(node);
+}
+
+Network& Graph::network() {
+	return m_network;
+}
+
+const Network& Graph::network() const {
+	return m_network;
 }
 
 }

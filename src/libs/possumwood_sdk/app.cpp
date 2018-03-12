@@ -56,7 +56,7 @@ const boost::filesystem::path& App::filename() const {
 }
 
 void App::newFile() {
-	m_graph.clear();
+	m_graph.network().clear();
 	m_filename = "";
 }
 
@@ -76,7 +76,7 @@ void App::loadFile(const boost::filesystem::path& filename) {
 
 	try {
 		// read the graph
-		m_graph.clear();
+		m_graph.network().clear();
 		dependency_graph::io::adl_serializer<dependency_graph::Graph>::from_json(json,
 		                                                                         m_graph);
 
@@ -162,7 +162,7 @@ void App::setTime(float time) {
 		m_timeChanged(time);
 
 		// TERRIBLE HACK - a special node type that outputs time is handled here
-		for(auto& n : graph().nodes())
+		for(auto& n : graph().network().nodes())
 			if(n.metadata().type() == "time")
 				n.port(0).set<float>(time);
 	}

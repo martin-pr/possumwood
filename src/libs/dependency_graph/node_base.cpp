@@ -28,7 +28,7 @@ Graph& NodeBase::graph() {
 }
 
 size_t NodeBase::index() const {
-	return graph().nodes().findNodeIndex(*this);
+	return graph().network().nodes().findNodeIndex(*this);
 }
 
 }
