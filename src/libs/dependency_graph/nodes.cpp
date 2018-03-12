@@ -72,7 +72,7 @@ const Node& Nodes::operator[](std::size_t index) const {
 	return *m_nodes[index];
 }
 
-size_t Nodes::findNodeIndex(const Node& n) const {
+size_t Nodes::findNodeIndex(const NodeBase& n) const {
 	auto it = std::find_if(m_nodes.begin(), m_nodes.end(), [&](const std::unique_ptr<Node>& ptr) {
 		return ptr.get() == &n;
 	});

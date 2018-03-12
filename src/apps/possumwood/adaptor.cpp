@@ -50,11 +50,11 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	));
 
 	m_signals.push_back(graph->onBlindDataChanged(
-		[this](dependency_graph::Node& n) { onBlindDataChanged(n); }
+		[this](dependency_graph::NodeBase& n) { onBlindDataChanged(n); }
 	));
 
 	m_signals.push_back(graph->onNameChanged(
-		[this](dependency_graph::Node& n) { onNameChanged(n); }
+		[this](dependency_graph::NodeBase& n) { onNameChanged(n); }
 	));
 
 	m_signals.push_back(graph->onStateChanged(
@@ -262,7 +262,7 @@ void Adaptor::onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p
 	m_graphWidget->scene().disconnect(n1.editorNode->port(p1.index()), n2.editorNode->port(p2.index()));
 }
 
-void Adaptor::onBlindDataChanged(dependency_graph::Node& node) {
+void Adaptor::onBlindDataChanged(dependency_graph::NodeBase& node) {
 	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
 	auto& n = getIndex()[data.id()];
@@ -270,7 +270,7 @@ void Adaptor::onBlindDataChanged(dependency_graph::Node& node) {
 	n.editorNode->setPos(data.position());
 }
 
-void Adaptor::onNameChanged(dependency_graph::Node& node) {
+void Adaptor::onNameChanged(dependency_graph::NodeBase& node) {
 	auto& n = getIndex()[node.blindData<possumwood::NodeData>().id()];
 
 	n.editorNode->setName(node.name().c_str());

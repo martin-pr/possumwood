@@ -33,8 +33,8 @@ class Graph : public boost::noncopyable {
 		boost::signals2::connection onConnect(std::function<void(Port&, Port&)> callback);
 		boost::signals2::connection onDisconnect(std::function<void(Port&, Port&)> callback);
 
-		boost::signals2::connection onBlindDataChanged(std::function<void(Node&)> callback);
-		boost::signals2::connection onNameChanged(std::function<void(Node&)> callback);
+		boost::signals2::connection onBlindDataChanged(std::function<void(NodeBase&)> callback);
+		boost::signals2::connection onNameChanged(std::function<void(NodeBase&)> callback);
 
 		/// dirtiness callback - called when any dirty flag of any port changes (usable for viewport refresh)
 		boost::signals2::connection onDirty(std::function<void()> callback);
@@ -42,12 +42,15 @@ class Graph : public boost::noncopyable {
 		boost::signals2::connection onStateChanged(std::function<void(const Node&)> callback);
 
 	private:
-		void nameChanged(Node& node);
+		void nameChanged(NodeBase& node);
 		void stateChanged(Node& node);
 		void dirtyChanged();
 		void nodeAdded(Node& node);
 		void nodeRemoved(Node& node);
-		void blindDataChanged(Node& node);
+		void blindDataChanged(NodeBase& node);
+
+		void connected(Port& p1, Port& p2);
+		void disconnected(Port& p1, Port& p2);
 
 		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
 
@@ -57,9 +60,7 @@ class Graph : public boost::noncopyable {
 		struct Signals;
 		std::unique_ptr<Signals> m_signals;
 
-		void connected(Port& p1, Port& p2);
-		void disconnected(Port& p1, Port& p2);
-
+		friend class NodeBase;
 		friend class Node;
 		friend class Nodes;
 		friend class Connections;

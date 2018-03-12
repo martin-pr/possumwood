@@ -4,6 +4,8 @@
 
 #include "graph.h"
 
+#include "node_base.inl"
+
 namespace dependency_graph {
 
 template<typename T>

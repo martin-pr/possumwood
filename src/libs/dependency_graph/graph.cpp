@@ -5,7 +5,8 @@
 namespace dependency_graph {
 
 struct Graph::Signals {
-	boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode, m_onBlindDataChanged, m_onNameChanged;
+	boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode;
+	boost::signals2::signal<void(NodeBase&)> m_onNameChanged, m_onBlindDataChanged;
 	boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
 	boost::signals2::signal<void()> m_onDirty;
 	boost::signals2::signal<void(const Node&)> m_onStateChanged;
@@ -71,11 +72,11 @@ boost::signals2::connection Graph::onDisconnect(std::function<void(Port&, Port&)
 	return m_signals->m_onDisconnect.connect(callback);
 }
 
-boost::signals2::connection Graph::onBlindDataChanged(std::function<void(Node&)> callback) {
+boost::signals2::connection Graph::onBlindDataChanged(std::function<void(NodeBase&)> callback) {
 	return m_signals->m_onBlindDataChanged.connect(callback);
 }
 
-boost::signals2::connection Graph::onNameChanged(std::function<void(Node&)> callback) {
+boost::signals2::connection Graph::onNameChanged(std::function<void(NodeBase&)> callback) {
 	return m_signals->m_onNameChanged.connect(callback);
 }
 
@@ -95,7 +96,7 @@ void Graph::disconnected(Port& p1, Port& p2) {
 	m_signals->m_onDisconnect(p1, p2);
 }
 
-void Graph::nameChanged(Node& node) {
+void Graph::nameChanged(NodeBase& node) {
 	m_signals->m_onNameChanged(node);
 }
 void Graph::stateChanged(Node& node) {
@@ -110,7 +111,7 @@ void Graph::nodeAdded(Node& node) {
 void Graph::nodeRemoved(Node& node) {
 	m_signals->m_onRemoveNode(node);
 }
-void Graph::blindDataChanged(Node& node) {
+void Graph::blindDataChanged(NodeBase& node) {
 	m_signals->m_onBlindDataChanged(node);
 }
 

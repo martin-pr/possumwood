@@ -60,8 +60,8 @@ class Adaptor : public QWidget {
 		void onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 		void onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 
-		void onBlindDataChanged(dependency_graph::Node& node);
-		void onNameChanged(dependency_graph::Node& node);
+		void onBlindDataChanged(dependency_graph::NodeBase& node);
+		void onNameChanged(dependency_graph::NodeBase& node);
 		void onStateChanged(const dependency_graph::Node& node);
 
 		dependency_graph::Graph* m_graph;

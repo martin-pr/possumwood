@@ -103,7 +103,7 @@ void Port::connect(Port& p) {
 	}
 
 	// add the connection
- 	p.m_parent->m_parent->connections().add(*this, p);
+ 	p.m_parent->graph().connections().add(*this, p);
 	// and mark the "connected to" as dirty - will most likely need recomputation
 	// TODO: compare values, before marking it dirty wholesale?
 	p.node().markAsDirty(p.index());
@@ -114,7 +114,7 @@ void Port::connect(Port& p) {
 
 void Port::disconnect(Port& p) {
 	// remove the connection
-	p.m_parent->m_parent->connections().remove(*this, p);
+	p.m_parent->graph().connections().remove(*this, p);
 
 	// disconnecting a non-saveable port should reset the data, otherwise
 	//   if the scene is saved, this data will not be in the file

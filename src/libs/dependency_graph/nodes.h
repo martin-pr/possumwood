@@ -12,6 +12,7 @@
 namespace dependency_graph {
 
 class Graph;
+class NodeBase;
 class Node;
 class Metadata;
 class Datablock;
@@ -50,7 +51,7 @@ class Nodes : public boost::noncopyable {
 	private:
 		Nodes(Graph* parent);
 
-		size_t findNodeIndex(const Node& n) const;
+		size_t findNodeIndex(const NodeBase& n) const;
 
 		Graph* m_parent;
 
@@ -59,6 +60,7 @@ class Nodes : public boost::noncopyable {
 		std::vector<std::unique_ptr<Node>> m_nodes;
 
 		friend class Graph;
+		friend class NodeBase;
 		friend class Node;
 };
 
