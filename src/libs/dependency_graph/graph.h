@@ -14,13 +14,10 @@
 namespace dependency_graph {
 
 /// The graph data structure - holds node instances and connections.
-class Graph : public boost::noncopyable {
+class Graph : public Network {
 	public:
 		Graph();
 		~Graph();
-
-		Network& network();
-		const Network& network() const;
 
 		boost::signals2::connection onAddNode(std::function<void(Node&)> callback);
 		boost::signals2::connection onRemoveNode(std::function<void(Node&)> callback);
@@ -48,8 +45,6 @@ class Graph : public boost::noncopyable {
 		void disconnected(Port& p1, Port& p2);
 
 		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
-
-		Network m_network;
 
 		struct Signals;
 		std::unique_ptr<Signals> m_signals;

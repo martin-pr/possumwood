@@ -5,6 +5,9 @@ namespace dependency_graph {
 Network::Network(Graph* parent) : m_graph(parent), m_nodes(parent) {
 }
 
+Network::~Network() {
+}
+
 bool Network::empty() const {
 	return m_nodes.empty();
 }

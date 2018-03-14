@@ -7,6 +7,8 @@ namespace dependency_graph {
 
 class Network : public boost::noncopyable {
 	public:
+		virtual ~Network();
+
 		bool empty() const;
 		void clear();
 

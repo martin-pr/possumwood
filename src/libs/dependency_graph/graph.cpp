@@ -12,13 +12,13 @@ struct Graph::Signals {
 	boost::signals2::signal<void(const Node&)> m_onStateChanged;
 };
 
-Graph::Graph() : m_network(this), m_signals(new Signals) {
+Graph::Graph() : Network(this), m_signals(new Signals) {
 	// connect the signals from owned classes
-	m_network.connections().onConnect([this](Port& p1, Port& p2) {
+	connections().onConnect([this](Port& p1, Port& p2) {
 		connected(p1, p2);
 	});
 
-	m_network.connections().onDisconnect([this](Port& p1, Port& p2) {
+	connections().onDisconnect([this](Port& p1, Port& p2) {
 		disconnected(p1, p2);
 	});
 }
@@ -27,7 +27,7 @@ Graph::~Graph() {
 }
 
 std::unique_ptr<Node> Graph::makeNode(const std::string& name, const Metadata* md) {
-	return std::unique_ptr<Node>(new Node(name, md, &network()));
+	return std::unique_ptr<Node>(new Node(name, md, this));
 }
 
 boost::signals2::connection Graph::onAddNode(std::function<void(Node&)> callback) {
@@ -88,14 +88,6 @@ void Graph::nodeRemoved(Node& node) {
 }
 void Graph::blindDataChanged(NodeBase& node) {
 	m_signals->m_onBlindDataChanged(node);
-}
-
-Network& Graph::network() {
-	return m_network;
-}
-
-const Network& Graph::network() const {
-	return m_network;
 }
 
 }

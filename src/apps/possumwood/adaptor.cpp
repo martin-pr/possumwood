@@ -127,10 +127,10 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	});
 
 	// and instantiate the current graph state
-	for(auto& n : m_graph->network().nodes())
+	for(auto& n : m_graph->nodes())
 		onAddNode(n);
 
-	for(auto& c : m_graph->network().connections())
+	for(auto& c : m_graph->connections())
 		onConnect(c.first, c.second);
 
 	// setup copy+paste action
@@ -322,7 +322,7 @@ dependency_graph::Selection Adaptor::selection() const {
 		if(n.isSelected()) {
 			auto& node = getIndex()[&n];
 
-			auto nodeRef = std::find_if(m_graph->network().nodes().begin(), m_graph->network().nodes().end(),
+			auto nodeRef = std::find_if(m_graph->nodes().begin(), m_graph->nodes().end(),
 				[&](const dependency_graph::Node& n) {
 					return &n == node.graphNode;
 				}
@@ -330,7 +330,7 @@ dependency_graph::Selection Adaptor::selection() const {
 
 			// deselection happens during the Qt object destruction -> the original
 			//   node might not exist
-			if(nodeRef != m_graph->network().nodes().end())
+			if(nodeRef != m_graph->nodes().end())
 				result.addNode(*nodeRef);
 		}
 	}

@@ -45,12 +45,12 @@ void to_json(json& j, const ::dependency_graph::Graph& g, const Selection& selec
 
 	j["nodes"] = "{}"_json;
 	if(selection.empty())
-		writeNodes(j["nodes"], g.network().nodes(), uniqueIds, nodeIds);
+		writeNodes(j["nodes"], g.nodes(), uniqueIds, nodeIds);
 	else
 		writeNodes(j["nodes"], selection.nodes(), uniqueIds, nodeIds);
 
 	j["connections"] = "[]"_json;
-	for(auto& c : g.network().connections()) {
+	for(auto& c : g.connections()) {
 		auto itOut = nodeIds.find(&c.first.node());
 		auto itIn = nodeIds.find(&c.second.node());
 		if(itOut != nodeIds.end() && itIn != nodeIds.end()) {
@@ -86,15 +86,15 @@ void from_json(const json& j, Graph& g) {
 			io::fromJson(n["blind_data"]["value"], *blindData);
 		}
 
-		Node& node = g.network().nodes().add(Metadata::instance(n["type"].get<std::string>()), n["name"].get<std::string>(), std::move(blindData));
+		Node& node = g.nodes().add(Metadata::instance(n["type"].get<std::string>()), n["name"].get<std::string>(), std::move(blindData));
 		adl_serializer<Node>::from_json(n, node);
 
-		nodeIds[ni.key()] = g.network().nodes().size()-1;
+		nodeIds[ni.key()] = g.nodes().size()-1;
 	}
 
 	for(auto& c : j["connections"]) {
-		Node& n1 = g.network().nodes()[nodeIds[c["out_node"].get<std::string>()]];
-		Node& n2 = g.network().nodes()[nodeIds[c["in_node"].get<std::string>()]];
+		Node& n1 = g.nodes()[nodeIds[c["out_node"].get<std::string>()]];
+		Node& n2 = g.nodes()[nodeIds[c["in_node"].get<std::string>()]];
 
 		int p1 = -1;
 		for(unsigned p=0;p<n1.portCount();++p)

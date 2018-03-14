@@ -424,7 +424,7 @@ MainWindow::MainWindow() : QMainWindow() {
 }
 
 MainWindow::~MainWindow() {
-	possumwood::App::instance().graph().network().clear();
+	possumwood::App::instance().graph().clear();
 }
 
 void MainWindow::draw(float dt) {
