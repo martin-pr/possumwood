@@ -31,11 +31,11 @@ class Graph : public Network {
 		/// dirtiness callback - called when any dirty flag of any port changes (usable for viewport refresh)
 		boost::signals2::connection onDirty(std::function<void()> callback);
 		/// per-node state change callback
-		boost::signals2::connection onStateChanged(std::function<void(const Node&)> callback);
+		boost::signals2::connection onStateChanged(std::function<void(const NodeBase&)> callback);
 
 	private:
 		void nameChanged(NodeBase& node);
-		void stateChanged(Node& node);
+		void stateChanged(NodeBase& node);
 		void dirtyChanged();
 		void nodeAdded(NodeBase& node);
 		void nodeRemoved(NodeBase& node);

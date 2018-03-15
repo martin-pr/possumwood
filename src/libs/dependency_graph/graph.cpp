@@ -9,7 +9,7 @@ struct Graph::Signals {
 	boost::signals2::signal<void(NodeBase&)> m_onNameChanged, m_onBlindDataChanged;
 	boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
 	boost::signals2::signal<void()> m_onDirty;
-	boost::signals2::signal<void(const Node&)> m_onStateChanged;
+	boost::signals2::signal<void(const NodeBase&)> m_onStateChanged;
 };
 
 Graph::Graph() : Network(this), m_signals(new Signals) {
@@ -59,7 +59,7 @@ boost::signals2::connection Graph::onDirty(std::function<void()> callback) {
 	return m_signals->m_onDirty.connect(callback);
 }
 
-boost::signals2::connection Graph::onStateChanged(std::function<void(const Node&)> callback) {
+boost::signals2::connection Graph::onStateChanged(std::function<void(const NodeBase&)> callback) {
 	return m_signals->m_onStateChanged.connect(callback);
 }
 
@@ -74,7 +74,7 @@ void Graph::disconnected(Port& p1, Port& p2) {
 void Graph::nameChanged(NodeBase& node) {
 	m_signals->m_onNameChanged(node);
 }
-void Graph::stateChanged(Node& node) {
+void Graph::stateChanged(NodeBase& node) {
 	m_signals->m_onStateChanged(node);
 }
 void Graph::dirtyChanged() {

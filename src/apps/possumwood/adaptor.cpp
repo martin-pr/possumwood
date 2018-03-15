@@ -58,7 +58,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	));
 
 	m_signals.push_back(graph->onStateChanged(
-		[this](const dependency_graph::Node& n) { onStateChanged(n); }
+		[this](const dependency_graph::NodeBase& n) { onStateChanged(n); }
 	));
 
 	// instantiate the graph widget
