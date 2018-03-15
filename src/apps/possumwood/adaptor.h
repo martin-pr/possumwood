@@ -54,15 +54,15 @@ class Adaptor : public QWidget {
 
 	protected:
 	private:
-		void onAddNode(dependency_graph::Node& node);
-		void onRemoveNode(dependency_graph::Node& node);
+		void onAddNode(dependency_graph::NodeBase& node);
+		void onRemoveNode(dependency_graph::NodeBase& node);
 
 		void onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 		void onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 
 		void onBlindDataChanged(dependency_graph::NodeBase& node);
 		void onNameChanged(dependency_graph::NodeBase& node);
-		void onStateChanged(const dependency_graph::Node& node);
+		void onStateChanged(const dependency_graph::NodeBase& node);
 
 		dependency_graph::Graph* m_graph;
 		node_editor::GraphWidget* m_graphWidget;

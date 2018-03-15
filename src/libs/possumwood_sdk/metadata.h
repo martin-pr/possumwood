@@ -62,7 +62,7 @@ class Metadata : public boost::noncopyable {
 		/// returns true if this node type has an editor set
 		bool hasEditor() const;
 		/// create an editor for a node instance
-		std::unique_ptr<Editor> createEditor(dependency_graph::Node& node);
+		std::unique_ptr<Editor> createEditor(dependency_graph::NodeBase& node);
 
 
 		/// colour of an attribute, based on its index (derived from Traits instances)
@@ -72,7 +72,7 @@ class Metadata : public boost::noncopyable {
 		dependency_graph::Metadata m_meta;
 
 		std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> m_drawableFactory;
-		std::function<std::unique_ptr<Editor>(dependency_graph::Node&)> m_editorFactory;
+		std::function<std::unique_ptr<Editor>(dependency_graph::NodeBase&)> m_editorFactory;
 
 		std::vector<std::array<float, 3>> m_colours;
 };

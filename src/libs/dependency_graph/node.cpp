@@ -138,4 +138,8 @@ const State& Node::state() const {
 	return m_state;
 }
 
+void Node::setDatablock(const Datablock& data) {
+	m_data = data;
+}
+
 }

@@ -20,10 +20,12 @@ void NodeBase::setName(const std::string& name) {
 }
 
 const Network& NodeBase::network() const {
+	assert(m_network != nullptr);
 	return *m_network;
 }
 
 Network& NodeBase::network() {
+	assert(m_network != nullptr);
 	return *m_network;
 }
 

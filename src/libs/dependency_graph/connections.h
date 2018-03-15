@@ -10,7 +10,7 @@
 namespace dependency_graph {
 
 class Port;
-class Node;
+class NodeBase;
 
 /// A simple container class for all connections. It stores connections as pointers to related
 /// ports and does *not* ensure that these are valid in any way. An external mechanism needs
@@ -35,7 +35,7 @@ class Connections : public boost::noncopyable {
 		void remove(Port& src, Port& dest);
 
 		/// remove all connections related to a node (both in and out)
-		void purge(const Node& n);
+		void purge(const NodeBase& n);
 
 		/// returns the total number of valid connections in this graph
 		size_t size() const;

@@ -6,6 +6,7 @@
 #include <boost/noncopyable.hpp>
 
 #include "data.h"
+#include "state.h"
 
 namespace dependency_graph {
 
@@ -15,6 +16,7 @@ class Datablock;
 class Node;
 class Nodes;
 class Network;
+class Port;
 
 class NodeBase : public boost::noncopyable {
 	public:
@@ -25,6 +27,10 @@ class NodeBase : public boost::noncopyable {
 
 		const Network& network() const;
 		Network& network();
+
+		virtual Port& port(size_t index) = 0;
+		virtual const Port& port(size_t index) const = 0;
+		virtual const size_t portCount() const = 0;
 
 		/// returns the unique numeric ID of this node, used for saving connections.
 		/// This ID can be used in Graph::operator[] to get this node from the graph.
@@ -43,8 +49,12 @@ class NodeBase : public boost::noncopyable {
 		template<typename T>
 		const T& blindData() const;
 
+		virtual const State& state() const = 0;
+
 	protected:
 		NodeBase(const std::string& name, Network* parent);
+
+		virtual void setDatablock(const Datablock& data) = 0;
 
 	private:
 		std::string m_name;

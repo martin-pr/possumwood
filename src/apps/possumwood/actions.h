@@ -7,7 +7,7 @@
 
 struct Actions {
 	static void createNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& data);
-	static void removeNode(dependency_graph::Node& node);
+	static void removeNode(dependency_graph::NodeBase& node);
 
 	static void connect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 	static void disconnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
@@ -17,5 +17,5 @@ struct Actions {
 	static void paste(dependency_graph::Selection& selection);
 	static void remove(const dependency_graph::Selection& selection);
 
-	static void move(const std::map<dependency_graph::Node*, QPointF>& nodes);
+	static void move(const std::map<dependency_graph::NodeBase*, QPointF>& nodes);
 };

@@ -8,13 +8,13 @@ Nodes::Nodes(Graph* parent) : m_parent(parent) {
 
 }
 
-Node& Nodes::add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData, boost::optional<const dependency_graph::Datablock&> datablock) {
+NodeBase& Nodes::add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData, boost::optional<const dependency_graph::Datablock&> datablock) {
 	m_nodes.push_back(m_parent->makeNode(name, &type));
 	m_nodes.back()->m_blindData = std::move(blindData);
 
 	if(datablock) {
 		assert(&datablock->meta() == &m_nodes.back()->metadata());
-		m_nodes.back()->m_data = *datablock;
+		m_nodes.back()->setDatablock(*datablock);
 	}
 
 	m_parent->nodeAdded(*m_nodes.back());
@@ -62,18 +62,18 @@ Nodes::iterator Nodes::end() {
 	return boost::make_indirect_iterator(m_nodes.end());
 }
 
-Node& Nodes::operator[](std::size_t index) {
+NodeBase& Nodes::operator[](std::size_t index) {
 	assert(index < m_nodes.size());
 	return *m_nodes[index];
 }
 
-const Node& Nodes::operator[](std::size_t index) const {
+const NodeBase& Nodes::operator[](std::size_t index) const {
 	assert(index < m_nodes.size());
 	return *m_nodes[index];
 }
 
 size_t Nodes::findNodeIndex(const NodeBase& n) const {
-	auto it = std::find_if(m_nodes.begin(), m_nodes.end(), [&](const std::unique_ptr<Node>& ptr) {
+	auto it = std::find_if(m_nodes.begin(), m_nodes.end(), [&](const std::unique_ptr<NodeBase>& ptr) {
 		return ptr.get() == &n;
 	});
 

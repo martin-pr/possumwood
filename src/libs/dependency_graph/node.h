@@ -10,7 +10,6 @@
 #include "attr.h"
 #include "metadata.h"
 #include "port.h"
-#include "state.h"
 
 namespace dependency_graph {
 
@@ -25,15 +24,17 @@ class Node : public NodeBase {
 		/// only useful for copy-paste - needs to replicate a node with its data
 		virtual const Datablock& datablock() const override;
 
-		Port& port(size_t index);
-		const Port& port(size_t index) const;
-		const size_t portCount() const;
+		virtual Port& port(size_t index) override;
+		virtual const Port& port(size_t index) const override;
+		virtual const size_t portCount() const override;
 
 		/// returns the current state of the node (as returned by last compute() evaluation)
-		const State& state() const;
+		virtual const State& state() const override;
 
 	protected:
 		Node(const std::string& name, const Metadata* def, Network* parent);
+
+		virtual void setDatablock(const Datablock& data) override;
 
 		void computeInput(size_t index);
 		void computeOutput(size_t index);

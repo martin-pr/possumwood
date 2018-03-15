@@ -5,7 +5,7 @@
 namespace dependency_graph {
 
 struct Graph::Signals {
-	boost::signals2::signal<void(Node&)> m_onAddNode, m_onRemoveNode;
+	boost::signals2::signal<void(NodeBase&)> m_onAddNode, m_onRemoveNode;
 	boost::signals2::signal<void(NodeBase&)> m_onNameChanged, m_onBlindDataChanged;
 	boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
 	boost::signals2::signal<void()> m_onDirty;
@@ -30,11 +30,11 @@ std::unique_ptr<Node> Graph::makeNode(const std::string& name, const Metadata* m
 	return std::unique_ptr<Node>(new Node(name, md, this));
 }
 
-boost::signals2::connection Graph::onAddNode(std::function<void(Node&)> callback) {
+boost::signals2::connection Graph::onAddNode(std::function<void(NodeBase&)> callback) {
 	return m_signals->m_onAddNode.connect(callback);
 }
 
-boost::signals2::connection Graph::onRemoveNode(std::function<void(Node&)> callback) {
+boost::signals2::connection Graph::onRemoveNode(std::function<void(NodeBase&)> callback) {
 	return m_signals->m_onRemoveNode.connect(callback);
 }
 
@@ -80,10 +80,10 @@ void Graph::stateChanged(Node& node) {
 void Graph::dirtyChanged() {
 	m_signals->m_onDirty();
 }
-void Graph::nodeAdded(Node& node) {
+void Graph::nodeAdded(NodeBase& node) {
 	m_signals->m_onAddNode(node);
 }
-void Graph::nodeRemoved(Node& node) {
+void Graph::nodeRemoved(NodeBase& node) {
 	m_signals->m_onRemoveNode(node);
 }
 void Graph::blindDataChanged(NodeBase& node) {

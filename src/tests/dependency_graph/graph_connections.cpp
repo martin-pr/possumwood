@@ -40,10 +40,10 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	const Metadata& addition = additionNode();
 	const Metadata& multiplication = multiplicationNode();
 
-	Node& add1 = g.nodes().add(addition, "add_1");
-	Node& mult1 = g.nodes().add(multiplication, "mult_1");
-	Node& mult2 = g.nodes().add(multiplication, "mult_2");
-	Node& add2 = g.nodes().add(addition, "add_2");
+	NodeBase& add1 = g.nodes().add(addition, "add_1");
+	NodeBase& mult1 = g.nodes().add(multiplication, "mult_1");
+	NodeBase& mult2 = g.nodes().add(multiplication, "mult_2");
+	NodeBase& add2 = g.nodes().add(addition, "add_2");
 
 	// 4 nodes and no connections
 	BOOST_REQUIRE_EQUAL(g.nodes().size(), 4u);
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	BOOST_CHECK_EQUAL(s_connectionCount, 3u);
 
 	// remove mult2 node, which should also remove relevant connections
-	auto it = std::find_if(g.nodes().begin(), g.nodes().end(), [&](const Node& n) {
+	auto it = std::find_if(g.nodes().begin(), g.nodes().end(), [&](const NodeBase& n) {
 		return n.name() == "mult_2";
 	});
 	BOOST_REQUIRE(it != g.nodes().end());

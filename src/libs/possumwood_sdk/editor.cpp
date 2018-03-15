@@ -26,7 +26,7 @@ const dependency_graph::Values& Editor::values() const {
 	return *m_values;
 }
 
-void Editor::setNodeReference(dependency_graph::Node& node) {
+void Editor::setNodeReference(dependency_graph::NodeBase& node) {
 	m_values = std::unique_ptr<dependency_graph::Values>(new dependency_graph::Values(node));
 
 	for(unsigned pi = 0; pi < node.portCount(); ++pi) {

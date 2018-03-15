@@ -15,7 +15,7 @@
 
 using namespace dependency_graph;
 
-bool checkDirtyPorts(const Node& n, const std::set<size_t>& dirtyPorts) {
+bool checkDirtyPorts(const NodeBase& n, const std::set<size_t>& dirtyPorts) {
 	bool result = true;
 
 	for(size_t pi = 0; pi < n.portCount(); ++pi) {
@@ -43,10 +43,10 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 
 	Graph g;
 
-	Node& add1 = g.nodes().add(addition, "add_1");
-	Node& mult1 = g.nodes().add(multiplication, "mult_1");
-	Node& mult2 = g.nodes().add(multiplication, "mult_2");
-	Node& add2 = g.nodes().add(addition, "add_2");
+	NodeBase& add1 = g.nodes().add(addition, "add_1");
+	NodeBase& mult1 = g.nodes().add(multiplication, "mult_1");
+	NodeBase& mult2 = g.nodes().add(multiplication, "mult_2");
+	NodeBase& add2 = g.nodes().add(addition, "add_2");
 
 	// before anything is connected, only output ports are dirty (they need to be pulled on)
 	for(auto& n : g.nodes())

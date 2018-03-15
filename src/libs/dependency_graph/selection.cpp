@@ -15,14 +15,14 @@ bool Selection::Connection::operator < (const Connection& c) const {
 	return t1 < t2;
 }
 
-bool Selection::NodeComparator::operator()(const std::reference_wrapper<Node>& n1, const std::reference_wrapper<Node>& n2) const {
+bool Selection::NodeComparator::operator()(const std::reference_wrapper<NodeBase>& n1, const std::reference_wrapper<NodeBase>& n2) const {
 	return &(n1.get()) < &(n2.get());
 }
 
 
 ///////
 
-void Selection::addNode(Node& n) {
+void Selection::addNode(NodeBase& n) {
 	m_nodes.insert(std::ref(n));
 }
 
@@ -30,7 +30,7 @@ void Selection::addConnection(Port& from, Port& to) {
 	m_connections.insert(Connection{std::ref(from), std::ref(to)});
 }
 
-const std::set<std::reference_wrapper<Node>, Selection::NodeComparator>& Selection::nodes() const {
+const std::set<std::reference_wrapper<NodeBase>, Selection::NodeComparator>& Selection::nodes() const {
 	return m_nodes;
 }
 

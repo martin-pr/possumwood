@@ -34,11 +34,11 @@ possumwood::Index& getIndex() {
 Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(400,400) {
 	// register callbacks
 	m_signals.push_back(graph->onAddNode(
-		[this](dependency_graph::Node& node) { onAddNode(node); }
+		[this](dependency_graph::NodeBase& node) { onAddNode(node); }
 	));
 
 	m_signals.push_back(graph->onRemoveNode(
-		[this](dependency_graph::Node& node) { onRemoveNode(node); }
+		[this](dependency_graph::NodeBase& node) { onRemoveNode(node); }
 	));
 
 	m_signals.push_back(graph->onConnect(
@@ -87,7 +87,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	});
 
 	m_graphWidget->scene().setNodesMoveCallback([&](const std::set<node_editor::Node*>& nodes) {
-		std::map<dependency_graph::Node*, QPointF> positions;
+		std::map<dependency_graph::NodeBase*, QPointF> positions;
 		for(auto& nptr : nodes) {
 			auto& n = getIndex()[nptr];
 
@@ -191,7 +191,7 @@ Adaptor::~Adaptor() {
 		c.disconnect();
 }
 
-void Adaptor::onAddNode(dependency_graph::Node& node) {
+void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 	// get the possumwood::Metadata pointer from the metadata's blind data
 	const possumwood::Metadata* meta = node.metadata().blindData<possumwood::Metadata*>();
 
@@ -226,7 +226,7 @@ void Adaptor::onAddNode(dependency_graph::Node& node) {
 	});
 }
 
-void Adaptor::onRemoveNode(dependency_graph::Node& node) {
+void Adaptor::onRemoveNode(dependency_graph::NodeBase& node) {
 	// find the item to be deleted
 	const auto id = node.blindData<possumwood::NodeData>().id();
 	auto& it = getIndex()[id];
@@ -276,7 +276,7 @@ void Adaptor::onNameChanged(dependency_graph::NodeBase& node) {
 	n.editorNode->setName(node.name().c_str());
 }
 
-void Adaptor::onStateChanged(const dependency_graph::Node& node) {
+void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
 	auto& n = getIndex()[node.blindData<possumwood::NodeData>().id()];
 
 	// count the different error messages
@@ -323,7 +323,7 @@ dependency_graph::Selection Adaptor::selection() const {
 			auto& node = getIndex()[&n];
 
 			auto nodeRef = std::find_if(m_graph->nodes().begin(), m_graph->nodes().end(),
-				[&](const dependency_graph::Node& n) {
+				[&](const dependency_graph::NodeBase& n) {
 					return &n == node.graphNode;
 				}
 			);

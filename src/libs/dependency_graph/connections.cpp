@@ -38,7 +38,7 @@ void Connections::remove(Port& src, Port& dest) {
 	m_connections.right.erase(it);
 }
 
-void Connections::purge(const Node& n) {
+void Connections::purge(const NodeBase& n) {
 	// remove all connections related to a node
 	auto it = m_connections.left.begin();
 	while(it != m_connections.left.end())

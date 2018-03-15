@@ -19,8 +19,8 @@ class Graph : public Network {
 		Graph();
 		~Graph();
 
-		boost::signals2::connection onAddNode(std::function<void(Node&)> callback);
-		boost::signals2::connection onRemoveNode(std::function<void(Node&)> callback);
+		boost::signals2::connection onAddNode(std::function<void(NodeBase&)> callback);
+		boost::signals2::connection onRemoveNode(std::function<void(NodeBase&)> callback);
 
 		boost::signals2::connection onConnect(std::function<void(Port&, Port&)> callback);
 		boost::signals2::connection onDisconnect(std::function<void(Port&, Port&)> callback);
@@ -37,8 +37,8 @@ class Graph : public Network {
 		void nameChanged(NodeBase& node);
 		void stateChanged(Node& node);
 		void dirtyChanged();
-		void nodeAdded(Node& node);
-		void nodeRemoved(Node& node);
+		void nodeAdded(NodeBase& node);
+		void nodeRemoved(NodeBase& node);
 		void blindDataChanged(NodeBase& node);
 
 		void connected(Port& p1, Port& p2);

@@ -31,21 +31,21 @@ class Nodes : public boost::noncopyable {
 		bool empty() const;
 		std::size_t size() const;
 
-		Node& operator[](std::size_t index);
-		const Node& operator[](std::size_t index) const;
+		NodeBase& operator[](std::size_t index);
+		const NodeBase& operator[](std::size_t index) const;
 
-		typedef boost::indirect_iterator<std::vector<std::unique_ptr<Node>>::const_iterator> const_iterator;
+		typedef boost::indirect_iterator<std::vector<std::unique_ptr<NodeBase>>::const_iterator> const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
 
-		typedef boost::indirect_iterator<std::vector<std::unique_ptr<Node>>::iterator> iterator;
+		typedef boost::indirect_iterator<std::vector<std::unique_ptr<NodeBase>>::iterator> iterator;
 		iterator begin();
 		iterator end();
 
-		Node& add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>(), boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
+		NodeBase& add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>(), boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
 
 		template<typename T>
-		Node& add(const Metadata& type, const std::string& name, const T& blindData, boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
+		NodeBase& add(const Metadata& type, const std::string& name, const T& blindData, boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
 
 		iterator erase(iterator i);
 		void clear();
@@ -59,7 +59,7 @@ class Nodes : public boost::noncopyable {
 
 		// stored in a pointer container, to keep parent pointers
 		//   stable without too much effort (might change)
-		std::vector<std::unique_ptr<Node>> m_nodes;
+		std::vector<std::unique_ptr<NodeBase>> m_nodes;
 
 		friend class Graph;
 		friend class NodeBase;

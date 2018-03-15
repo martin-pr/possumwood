@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(json_io) {
 	}
 
 	// a single node, no connections, no blind data
-	Node& a = g.nodes().add(additionNode(), "add");
+	NodeBase& a = g.nodes().add(additionNode(), "add");
 	{
 		const io::json result(
 			{
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(json_io) {
 	}
 
 	// three nodes, a connection, blind data
-	Node& m = g.nodes().add(multiplicationNode(), "mult");
+	NodeBase& m = g.nodes().add(multiplicationNode(), "mult");
 	g.nodes().add(multiplicationNode(), "mult");
 	{
 		const io::json result(
