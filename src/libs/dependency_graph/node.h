@@ -35,19 +35,12 @@ class Node : public NodeBase {
 		Node(const std::string& name, const Metadata* def, Network* parent);
 
 		virtual void setDatablock(const Datablock& data) override;
+		virtual Datablock& datablock() override;
 
-		void computeInput(size_t index);
-		void computeOutput(size_t index);
-
-		template<typename T>
-		const T& get(size_t index) const;
-
-		template<typename T>
-		void set(size_t index, const T& value);
+		virtual void computeInput(size_t index) override;
+		virtual void computeOutput(size_t index) override;
 
 	private:
-		void markAsDirty(size_t index);
-
 		const Metadata* m_meta;
 		Datablock m_data;
 

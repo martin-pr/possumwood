@@ -24,6 +24,10 @@ const Datablock& Node::datablock() const {
 	return m_data;
 }
 
+Datablock& Node::datablock() {
+	return m_data;
+}
+
 Port& Node::port(size_t index) {
 	assert(index < m_ports.size());
 	return m_ports[index];
@@ -38,29 +42,6 @@ const size_t Node::portCount() const {
 	return m_ports.size();
 }
 
-void Node::markAsDirty(size_t index) {
-	Port& p = port(index);
-
-	// mark the port itself as dirty
-	if(!p.isDirty()) {
-		p.setDirty(true);
-
-		network().graph().dirtyChanged();
-
-		// recurse + handle each port type slightly differently
-		if(p.category() == Attr::kInput) {
-			// all outputs influenced by this input are marked dirty
-			for(const Attr& i : m_meta->influences(p.m_id))
-				markAsDirty(i.offset());
-		}
-		else {
-			// all inputs connected to this output are marked dirty
-			for(Port& o : network().connections().connectedTo(port(index)))
-				o.node().markAsDirty(o.m_id);
-		}
-	}
-}
-
 void Node::computeInput(size_t index) {
 	assert(port(index).category() == Attr::kInput && "computeInput can be only called on inputs");
 	assert(port(index).isDirty() && "input should be dirty for recomputation");
@@ -70,12 +51,12 @@ void Node::computeInput(size_t index) {
 	boost::optional<Port&> out = network().connections().connectedFrom(port(index));
 	assert(out);
 	if(out->isDirty())
-		out->node().computeOutput(out->m_id);
+		out->node().computeOutput(out->index());
 	assert(not out->isDirty());
 
 	// assign the value directly
-	m_data.data(index).assign(out->node().m_data.data(out->m_id));
-	assert(m_data.data(index).isEqual(out->node().m_data.data(out->m_id)));
+	m_data.data(index).assign(out->node().datablock().data(out->index()));
+	assert(m_data.data(index).isEqual(out->node().datablock().data(out->index())));
 
 	// run the watcher callbacks
 	m_ports[index].m_valueCallbacks();

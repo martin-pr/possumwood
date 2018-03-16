@@ -9,7 +9,7 @@
 
 namespace dependency_graph {
 
-class Node;
+class NodeBase;
 
 class Port : public boost::noncopyable {
 	public:
@@ -35,9 +35,9 @@ class Port : public boost::noncopyable {
 		bool isDirty() const;
 
 		/// returns a reference to the parent node
-		Node& node();
+		NodeBase& node();
 		/// returns a reference to the parent node
-		const Node& node() const;
+		const NodeBase& node() const;
 
 		/// creates a connection between this port an the port in argument.
 		/// The direction is always from *this port to p - only applicable
@@ -56,17 +56,18 @@ class Port : public boost::noncopyable {
 		boost::signals2::connection flagsCallback(const std::function<void()>& fn);
 
 	private:
-		Port(const std::string& name, unsigned id, Node* parent);
+		Port(const std::string& name, unsigned id, NodeBase* parent);
 
 		void setDirty(bool dirty);
 
 		std::string m_name;
 		unsigned m_id;
 		bool m_dirty;
-		Node* m_parent;
+		NodeBase* m_parent;
 		boost::signals2::signal<void()> m_valueCallbacks, m_flagsCallbacks;
 
 		friend class Node;
+		friend class NodeBase;
 };
 
 }

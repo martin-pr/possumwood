@@ -82,11 +82,12 @@ namespace {
 
 possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node) {
 	possumwood::UndoStack::Action action;
+	const dependency_graph::NodeBase& cnode = node;
 
 	action.addCommand(
 		std::bind(&doRemoveNode, node.blindData<possumwood::NodeData>().id()),
 		std::bind(&doCreateNode, std::ref(node.metadata()), node.name(),
-			node.blindData<possumwood::NodeData>(), node.datablock())
+			node.blindData<possumwood::NodeData>(), cnode.datablock())
 	);
 
 	return action;
@@ -218,8 +219,9 @@ void Actions::paste(dependency_graph::Selection& selection) {
 			possumwood::NodeData d = n.blindData<possumwood::NodeData>();
 			d.setPosition(QPointF(20, 20) + d.position());
 
+			const dependency_graph::NodeBase& cn = n;
 			action.addCommand(
-				std::bind(&doCreateNode, std::ref(n.metadata()), n.name(), d, n.datablock()),
+				std::bind(&doCreateNode, std::ref(n.metadata()), n.name(), d, cn.datablock()),
 				std::bind(&doRemoveNode, n.blindData<possumwood::NodeData>().id())
 			);
 		}

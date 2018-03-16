@@ -3,6 +3,7 @@
 #include "node_base.h"
 #include "network.h"
 #include "rtti.h"
+#include "graph.h"
 
 namespace dependency_graph {
 
@@ -33,6 +34,18 @@ const T& NodeBase::blindData() const {
 	assert(m_blindData->type() == unmangledTypeId<T>());
 	const Data<T>& val = dynamic_cast<const Data<T>&>(*m_blindData);
 	return val.value;
+}
+
+template<typename T>
+const T& NodeBase::get(size_t index) const {
+	// assert(!port(index).isDirty() || (port(index).category() == Attr::kInput && !inputIsConnected(port(index))));
+	return datablock().get<T>(index);
+}
+
+template<typename T>
+void NodeBase::set(size_t index, const T& value) {
+	assert(port(index).category() == Attr::kOutput || !port(index).isConnected());
+	datablock().set<T>(index, value);
 }
 
 }

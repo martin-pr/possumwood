@@ -33,4 +33,27 @@ size_t NodeBase::index() const {
 	return network().nodes().findNodeIndex(*this);
 }
 
+void NodeBase::markAsDirty(size_t index) {
+	Port& p = port(index);
+
+	// mark the port itself as dirty
+	if(!p.isDirty()) {
+		p.setDirty(true);
+
+		network().graph().dirtyChanged();
+
+		// recurse + handle each port type slightly differently
+		if(p.category() == Attr::kInput) {
+			// all outputs influenced by this input are marked dirty
+			for(const Attr& i : metadata().influences(p.index()))
+				markAsDirty(i.offset());
+		}
+		else {
+			// all inputs connected to this output are marked dirty
+			for(Port& o : network().connections().connectedTo(port(index)))
+				o.node().markAsDirty(o.index());
+		}
+	}
+}
+
 }

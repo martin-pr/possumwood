@@ -5,7 +5,7 @@
 
 namespace dependency_graph {
 
-Port::Port(const std::string& name, unsigned id, Node* parent) :
+Port::Port(const std::string& name, unsigned id, NodeBase* parent) :
 	m_name(name), m_id(id), m_parent(parent) {
 
 	m_dirty = category() == Attr::kOutput;
@@ -21,7 +21,7 @@ const std::string& Port::name() const {
 }
 
 const Attr::Category Port::category() const {
-	return m_parent->m_meta->attr(m_id).category();
+	return m_parent->metadata().attr(m_id).category();
 }
 
 const unsigned Port::index() const {
@@ -29,19 +29,19 @@ const unsigned Port::index() const {
 }
 
 const std::string Port::type() const {
-	return m_parent->m_meta->attr(m_id).type().name();
+	return m_parent->metadata().attr(m_id).type().name();
 }
 
 bool Port::isDirty() const {
 	return m_dirty;
 }
 
-Node& Port::node() {
+NodeBase& Port::node() {
 	assert(m_parent != NULL);
 	return *m_parent;
 }
 
-const Node& Port::node() const {
+const NodeBase& Port::node() const {
 	assert(m_parent != NULL);
 	return *m_parent;
 }
@@ -118,9 +118,9 @@ void Port::disconnect(Port& p) {
 
 	// disconnecting a non-saveable port should reset the data, otherwise
 	//   if the scene is saved, this data will not be in the file
-	if(!io::isSaveable(p.m_parent->m_data.data(p.m_id))) {
+	if(!io::isSaveable(p.m_parent->datablock().data(p.m_id))) {
 		// set to default (i.e., reset)
-		p.m_parent->m_data.reset(p.m_id);
+		p.m_parent->datablock().reset(p.m_id);
 
 		// explicitly setting a value makes it not dirty, but makes everything that
 		//   depends on it dirty

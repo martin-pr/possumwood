@@ -25,6 +25,7 @@ class Values;
 class Attr;
 
 class Node;
+class NodeBase;
 class Port;
 
 class Metadata : public boost::noncopyable {
@@ -123,6 +124,7 @@ class Metadata : public boost::noncopyable {
 		void doUnregister();
 
 		friend class Node;
+		friend class NodeBase;
 		friend class Port;
 };
 
