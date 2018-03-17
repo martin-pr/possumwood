@@ -16,8 +16,8 @@ BOOST_AUTO_TEST_CASE(graph_instantiation) {
 
 	//////
 	// connect callbacks
-	g.onAddNode([&](Node&) { ++s_nodeCount; });
-	g.onRemoveNode([&](Node&) { --s_nodeCount; });
+	g.onAddNode([&](NodeBase&) { ++s_nodeCount; });
+	g.onRemoveNode([&](NodeBase&) { --s_nodeCount; });
 
 	/////
 	// empty graph

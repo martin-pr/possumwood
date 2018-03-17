@@ -106,7 +106,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		        {
 			        unsigned editorCounter = 0;
 			        for(auto& n : out.nodes())
-				        if(n.get().metadata().blindData<possumwood::Metadata*>()->hasEditor())
+				        if(n.get().metadata().hasBlindData() && n.get().metadata().blindData<possumwood::Metadata*>()->hasEditor())
 					        ++editorCounter;
 
 			        if(editorCounter == 0) {
@@ -136,15 +136,6 @@ MainWindow::MainWindow() : QMainWindow() {
 			        }
 		        }
 		    });
-
-	m_log = new Log();
-	QDockWidget* logDock = new QDockWidget("Log", this);
-	logDock->setObjectName("log");
-	logDock->setWidget(m_log);
-	logDock->toggleViewAction()->setIcon(QIcon(":icons/dock_log.png"));
-	m_log->setMinimumWidth(300);
-	addDockWidget(Qt::RightDockWidgetArea, logDock);
-	connect(m_adaptor, &Adaptor::logged, [this](QIcon icon, const QString& msg) { m_log->addMessage(icon, msg); });
 
 	// create the context click menu
 	m_adaptor->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -375,7 +366,6 @@ MainWindow::MainWindow() : QMainWindow() {
 	docksToolbar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 	docksToolbar->addAction(graphDock->toggleViewAction());
 	docksToolbar->addAction(propDock->toggleViewAction());
-	docksToolbar->addAction(logDock->toggleViewAction());
 	docksToolbar->addAction(editorDock->toggleViewAction());
 
 	////////////////////
@@ -419,7 +409,6 @@ MainWindow::MainWindow() : QMainWindow() {
 
 		viewMenu->addAction(propDock->toggleViewAction());
 		viewMenu->addAction(graphDock->toggleViewAction());
-		viewMenu->addAction(logDock->toggleViewAction());
 		viewMenu->addAction(editorDock->toggleViewAction());
 		viewMenu->addSeparator();
 		viewMenu->addAction(docksToolbar->toggleViewAction());

@@ -52,21 +52,17 @@ class Adaptor : public QWidget {
 		/// calls all existing Drawables
 		void draw(const possumwood::Drawable::ViewportState& viewport);
 
-	signals:
-		void logged(QIcon, const QString&);
-
 	protected:
 	private:
-		void onAddNode(dependency_graph::Node& node);
-		void onRemoveNode(dependency_graph::Node& node);
+		void onAddNode(dependency_graph::NodeBase& node);
+		void onRemoveNode(dependency_graph::NodeBase& node);
 
 		void onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 		void onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 
-		void onBlindDataChanged(dependency_graph::Node& node);
-		void onNameChanged(dependency_graph::Node& node);
-		void onStateChanged(const dependency_graph::Node& node);
-		void onLog(dependency_graph::State::MessageType t, const std::string& msg);
+		void onBlindDataChanged(dependency_graph::NodeBase& node);
+		void onNameChanged(dependency_graph::NodeBase& node);
+		void onStateChanged(const dependency_graph::NodeBase& node);
 
 		dependency_graph::Graph* m_graph;
 		node_editor::GraphWidget* m_graphWidget;

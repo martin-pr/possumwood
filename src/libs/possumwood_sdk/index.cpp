@@ -62,7 +62,7 @@ const Index::Item& Index::operator[](const node_editor::Node* ptr) const {
 	return it->second;
 }
 
-Index::Item& Index::operator[](dependency_graph::Node* id) {
+Index::Item& Index::operator[](dependency_graph::NodeBase* id) {
 	auto nodeIt = m_nodeIndex.find(id);
 	assert(nodeIt != m_nodeIndex.end());
 
@@ -71,7 +71,7 @@ Index::Item& Index::operator[](dependency_graph::Node* id) {
 	return it->second;
 }
 
-const Index::Item& Index::operator[](const dependency_graph::Node* id) const {
+const Index::Item& Index::operator[](const dependency_graph::NodeBase* id) const {
 	auto nodeIt = m_nodeIndex.find(id);
 	assert(nodeIt != m_nodeIndex.end());
 

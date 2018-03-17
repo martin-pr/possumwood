@@ -32,5 +32,5 @@ class Properties : public QTreeWidget {
 		};
 
 		std::vector<Property> m_properties;
-		std::map<QTreeWidgetItem*, dependency_graph::Node*> m_nodes;
+		std::map<QTreeWidgetItem*, dependency_graph::NodeBase*> m_nodes;
 };

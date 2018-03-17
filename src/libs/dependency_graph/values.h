@@ -8,7 +8,7 @@ namespace dependency_graph {
 
 class Values : public boost::noncopyable {
 	public:
-		Values(Node& n);
+		Values(NodeBase& n);
 
 		Values(Values&& vals);
 
@@ -30,7 +30,7 @@ class Values : public boost::noncopyable {
 		void set(const OutAttr<T>& attr, const T& value);
 
 	private:
-		Node* m_node;
+		NodeBase* m_node;
 };
 
 }

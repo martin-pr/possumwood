@@ -36,7 +36,7 @@ bool Metadata::hasEditor() const {
 	return m_editorFactory.operator bool();
 }
 
-std::unique_ptr<Editor> Metadata::createEditor(dependency_graph::Node& node) {
+std::unique_ptr<Editor> Metadata::createEditor(dependency_graph::NodeBase& node) {
 	assert(hasEditor());
 
 	return m_editorFactory(node);

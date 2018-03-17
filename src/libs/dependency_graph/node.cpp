@@ -7,7 +7,7 @@
 
 namespace dependency_graph {
 
-Node::Node(const std::string& name, const Metadata* def, Graph* parent) : m_name(name), m_parent(parent), m_meta(def), m_data(*m_meta) {
+Node::Node(const std::string& name, const Metadata* def, Network* parent) : NodeBase(name, parent), m_meta(def), m_data(*m_meta) {
 	for(std::size_t a = 0; a < m_meta->attributeCount(); ++a) {
 		auto& meta = m_meta->attr(a);
 		assert(meta.offset() == a);
@@ -16,20 +16,15 @@ Node::Node(const std::string& name, const Metadata* def, Graph* parent) : m_name
 	}
 }
 
-const std::string& Node::name() const {
-	return m_name;
-}
-
-void Node::setName(const std::string& name) {
-	m_name = name;
-	graph().m_onNameChanged(*this);
-}
-
 const Metadata& Node::metadata() const {
 	return *m_meta;
 }
 
 const Datablock& Node::datablock() const {
+	return m_data;
+}
+
+Datablock& Node::datablock() {
 	return m_data;
 }
 
@@ -47,51 +42,21 @@ const size_t Node::portCount() const {
 	return m_ports.size();
 }
 
-void Node::markAsDirty(size_t index) {
-	Port& p = port(index);
-
-	// mark the port itself as dirty
-	if(!p.isDirty()) {
-		p.setDirty(true);
-
-		graph().m_onDirty();
-
-		// recurse + handle each port type slightly differently
-		if(p.category() == Attr::kInput) {
-			// all outputs influenced by this input are marked dirty
-			for(const Attr& i : m_meta->influences(p.m_id))
-				markAsDirty(i.offset());
-		}
-		else {
-			// all inputs connected to this output are marked dirty
-			for(Port& o : m_parent->connections().connectedTo(port(index)))
-				o.node().markAsDirty(o.m_id);
-		}
-	}
-}
-
-bool Node::inputIsConnected(const Port& p) const {
-	assert(p.category() == Attr::kInput);
-
-	// return true if there are no connections leading to this input port
-	return static_cast<bool>(m_parent->connections().connectedFrom(p));
-}
-
 void Node::computeInput(size_t index) {
 	assert(port(index).category() == Attr::kInput && "computeInput can be only called on inputs");
 	assert(port(index).isDirty() && "input should be dirty for recomputation");
-	assert(inputIsConnected(port(index)) && "input has to be connected to be computed");
+	assert(port(index).isConnected() && "input has to be connected to be computed");
 
 	// pull on the single connected output if needed
-	boost::optional<Port&> out = m_parent->connections().connectedFrom(port(index));
+	boost::optional<Port&> out = network().connections().connectedFrom(port(index));
 	assert(out);
 	if(out->isDirty())
-		out->node().computeOutput(out->m_id);
+		out->node().computeOutput(out->index());
 	assert(not out->isDirty());
 
 	// assign the value directly
-	m_data.data(index).assign(out->node().m_data.data(out->m_id));
-	assert(m_data.data(index).isEqual(out->node().m_data.data(out->m_id)));
+	m_data.data(index).assign(out->node().datablock().data(out->index()));
+	assert(m_data.data(index).isEqual(out->node().datablock().data(out->index())));
 
 	// run the watcher callbacks
 	m_ports[index].m_valueCallbacks();
@@ -111,7 +76,7 @@ void Node::computeOutput(size_t index) {
 	// pull on all inputs
 	for(const Attr& i : inputs) {
 		if(port(i.offset()).isDirty()) {
-			if(inputIsConnected(port(i.offset())))
+			if(port(i.offset()).isConnected())
 				computeInput(i.offset());
 			else
 				port(i.offset()).setDirty(false);
@@ -146,29 +111,16 @@ void Node::computeOutput(size_t index) {
 	if(result != m_state) {
 		m_state = result;
 
-		graph().m_onStateChanged(*this);
-
-		for(auto& l : result)
-			graph().m_onLog(l.first, l.second);
+		network().graph().stateChanged(*this);
 	}
-}
-
-const Graph& Node::graph() const {
-	assert(m_parent);
-	return *m_parent;
-}
-
-Graph& Node::graph() {
-	assert(m_parent);
-	return *m_parent;
-}
-
-size_t Node::index() const {
-	return graph().nodes().findNodeIndex(*this);
 }
 
 const State& Node::state() const {
 	return m_state;
+}
+
+void Node::setDatablock(const Datablock& data) {
+	m_data = data;
 }
 
 }

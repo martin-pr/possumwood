@@ -34,11 +34,11 @@ possumwood::Index& getIndex() {
 Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(400,400) {
 	// register callbacks
 	m_signals.push_back(graph->onAddNode(
-		[this](dependency_graph::Node& node) { onAddNode(node); }
+		[this](dependency_graph::NodeBase& node) { onAddNode(node); }
 	));
 
 	m_signals.push_back(graph->onRemoveNode(
-		[this](dependency_graph::Node& node) { onRemoveNode(node); }
+		[this](dependency_graph::NodeBase& node) { onRemoveNode(node); }
 	));
 
 	m_signals.push_back(graph->onConnect(
@@ -50,19 +50,15 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	));
 
 	m_signals.push_back(graph->onBlindDataChanged(
-		[this](dependency_graph::Node& n) { onBlindDataChanged(n); }
+		[this](dependency_graph::NodeBase& n) { onBlindDataChanged(n); }
 	));
 
 	m_signals.push_back(graph->onNameChanged(
-		[this](dependency_graph::Node& n) { onNameChanged(n); }
+		[this](dependency_graph::NodeBase& n) { onNameChanged(n); }
 	));
 
 	m_signals.push_back(graph->onStateChanged(
-		[this](const dependency_graph::Node& n) { onStateChanged(n); }
-	));
-
-	m_signals.push_back(graph->onLog(
-		[this](dependency_graph::State::MessageType t, const std::string& msg) { onLog(t, msg); }
+		[this](const dependency_graph::NodeBase& n) { onStateChanged(n); }
 	));
 
 	// instantiate the graph widget
@@ -91,7 +87,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	});
 
 	m_graphWidget->scene().setNodesMoveCallback([&](const std::set<node_editor::Node*>& nodes) {
-		std::map<dependency_graph::Node*, QPointF> positions;
+		std::map<dependency_graph::NodeBase*, QPointF> positions;
 		for(auto& nptr : nodes) {
 			auto& n = getIndex()[nptr];
 
@@ -195,9 +191,11 @@ Adaptor::~Adaptor() {
 		c.disconnect();
 }
 
-void Adaptor::onAddNode(dependency_graph::Node& node) {
+void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 	// get the possumwood::Metadata pointer from the metadata's blind data
-	const possumwood::Metadata* meta = node.metadata().blindData<possumwood::Metadata*>();
+	const possumwood::Metadata* meta = NULL;
+	if(node.metadata().hasBlindData())
+	 	meta = node.metadata().blindData<possumwood::Metadata*>();
 
 	// get the blind data, containing the node's position
 	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
@@ -210,7 +208,9 @@ void Adaptor::onAddNode(dependency_graph::Node& node) {
 	for(size_t a = 0; a < node.metadata().attributeCount(); ++a) {
 		const dependency_graph::Attr& attr = node.metadata().attr(a);
 
-		const std::array<float, 3> colour = meta->colour(a);
+		std::array<float, 3> colour{{1,1,1}};
+		if(meta)
+			colour = meta->colour(a);
 
 		newNode.addPort(node_editor::Node::PortDefinition {
 			attr.name().c_str(),
@@ -220,7 +220,9 @@ void Adaptor::onAddNode(dependency_graph::Node& node) {
 	}
 
 	// create a drawable (if factory returns anything)
-	std::unique_ptr<possumwood::Drawable> drawable = meta->createDrawable(dependency_graph::Values(node));
+	std::unique_ptr<possumwood::Drawable> drawable;
+	if(meta != nullptr)
+		drawable = meta->createDrawable(dependency_graph::Values(node));
 
 	// and register the node in the internal index
 	getIndex().add(possumwood::Index::Item{
@@ -230,7 +232,7 @@ void Adaptor::onAddNode(dependency_graph::Node& node) {
 	});
 }
 
-void Adaptor::onRemoveNode(dependency_graph::Node& node) {
+void Adaptor::onRemoveNode(dependency_graph::NodeBase& node) {
 	// find the item to be deleted
 	const auto id = node.blindData<possumwood::NodeData>().id();
 	auto& it = getIndex()[id];
@@ -266,7 +268,7 @@ void Adaptor::onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p
 	m_graphWidget->scene().disconnect(n1.editorNode->port(p1.index()), n2.editorNode->port(p2.index()));
 }
 
-void Adaptor::onBlindDataChanged(dependency_graph::Node& node) {
+void Adaptor::onBlindDataChanged(dependency_graph::NodeBase& node) {
 	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
 	auto& n = getIndex()[data.id()];
@@ -274,13 +276,13 @@ void Adaptor::onBlindDataChanged(dependency_graph::Node& node) {
 	n.editorNode->setPos(data.position());
 }
 
-void Adaptor::onNameChanged(dependency_graph::Node& node) {
+void Adaptor::onNameChanged(dependency_graph::NodeBase& node) {
 	auto& n = getIndex()[node.blindData<possumwood::NodeData>().id()];
 
 	n.editorNode->setName(node.name().c_str());
 }
 
-void Adaptor::onStateChanged(const dependency_graph::Node& node) {
+void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
 	auto& n = getIndex()[node.blindData<possumwood::NodeData>().id()];
 
 	// count the different error messages
@@ -314,23 +316,6 @@ void Adaptor::onStateChanged(const dependency_graph::Node& node) {
 		n.editorNode->setState(node_editor::Node::kOk);
 }
 
-void Adaptor::onLog(dependency_graph::State::MessageType t, const std::string& msg) {
-	switch(t) {
-		case dependency_graph::State::kInfo:
-			emit logged(style()->standardIcon(QStyle::SP_MessageBoxInformation), msg.c_str());
-			break;
-		case dependency_graph::State::kWarning:
-			emit logged(style()->standardIcon(QStyle::SP_MessageBoxWarning), msg.c_str());
-			break;
-		case dependency_graph::State::kError:
-			emit logged(style()->standardIcon(QStyle::SP_MessageBoxCritical), msg.c_str());
-			break;
-		default:
-			emit logged(style()->standardIcon(QStyle::SP_MessageBoxQuestion), msg.c_str());
-			break;
-	}
-}
-
 QPointF Adaptor::mapToScene(QPoint pos) const {
 	return m_graphWidget->mapToScene(pos);
 }
@@ -344,7 +329,7 @@ dependency_graph::Selection Adaptor::selection() const {
 			auto& node = getIndex()[&n];
 
 			auto nodeRef = std::find_if(m_graph->nodes().begin(), m_graph->nodes().end(),
-				[&](const dependency_graph::Node& n) {
+				[&](const dependency_graph::NodeBase& n) {
 					return &n == node.graphNode;
 				}
 			);

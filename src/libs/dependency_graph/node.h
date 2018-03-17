@@ -6,79 +6,52 @@
 #include <boost/noncopyable.hpp>
 #include <boost/signals2.hpp>
 
+#include "node_base.h"
 #include "attr.h"
 #include "metadata.h"
 #include "port.h"
-#include "state.h"
 
 namespace dependency_graph {
 
 class Datablock;
 class Graph;
+class Nodes;
+class Network;
 
-class Node : public boost::noncopyable {
+class Node : public NodeBase {
 	public:
-		const std::string& name() const;
-		void setName(const std::string& name);
-
-		const Metadata& metadata() const;
+		virtual const Metadata& metadata() const override;
 		/// only useful for copy-paste - needs to replicate a node with its data
-		const Datablock& datablock() const;
+		virtual const Datablock& datablock() const override;
 
-		/// blind per-node data, to be used by the client application
-		///   to store visual information (e.g., node position, colour...)
-		template<typename T>
-		void setBlindData(const T& value);
-
-		/// blind per-node data, to be used by the client application
-		///   to store visual information (e.g., node position, colour...)
-		template<typename T>
-		const T& blindData() const;
-
-		Port& port(size_t index);
-		const Port& port(size_t index) const;
-		const size_t portCount() const;
-
-		const Graph& graph() const;
-		Graph& graph();
+		virtual Port& port(size_t index) override;
+		virtual const Port& port(size_t index) const override;
+		virtual const size_t portCount() const override;
 
 		/// returns the current state of the node (as returned by last compute() evaluation)
-		const State& state() const;
-
-		/// returns the unique numeric ID of this node, used for saving connections.
-		/// This ID can be used in Graph::operator[] to get this node from the graph.
-		size_t index() const;
+		virtual const State& state() const override;
 
 	protected:
-		Node(const std::string& name, const Metadata* def, Graph* parent);
+		Node(const std::string& name, const Metadata* def, Network* parent);
 
-		void computeInput(size_t index);
-		void computeOutput(size_t index);
+		virtual void setDatablock(const Datablock& data) override;
+		virtual Datablock& datablock() override;
 
-		template<typename T>
-		const T& get(size_t index) const;
-
-		template<typename T>
-		void set(size_t index, const T& value);
-
-		bool inputIsConnected(const Port& p) const;
+		virtual void computeInput(size_t index) override;
+		virtual void computeOutput(size_t index) override;
 
 	private:
-		void markAsDirty(size_t index);
-
-		std::string m_name;
-		Graph* m_parent;
-
 		const Metadata* m_meta;
 		Datablock m_data;
-		std::unique_ptr<BaseData> m_blindData;
 
 		std::vector<Port> m_ports;
 
 		State m_state;
 
 		friend class Graph;
+		friend class Network;
 		friend class Port;
+		friend class Nodes;
 
 		friend struct io::adl_serializer<Node>;
 };

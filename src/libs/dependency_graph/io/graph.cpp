@@ -18,9 +18,9 @@ const T& dereference(const T& n) {
 }
 
 template<typename CONTAINER>
-void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>& uniqueIds, std::map<const ::dependency_graph::Node*, std::string>& nodeIds) {
+void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>& uniqueIds, std::map<const ::dependency_graph::NodeBase*, std::string>& nodeIds) {
 	for(auto& ni : nodes) {
-		const Node& n = dereference(ni);
+		const NodeBase& n = dereference(ni);
 
 		// figure out a unique name - type with a number appended
 		std::string name = n.metadata().type();
@@ -30,7 +30,8 @@ void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>
 		name += "_" + std::to_string(uniqueIds[name]++);
 
 		// and use this to save the node
-		j[name] = n;
+		const Node& _n = dynamic_cast<const Node&>(n); // temporary code
+		j[name] = _n;
 
 		// remember the assigned ID for connection saving
 		nodeIds[&n] = name;
@@ -41,7 +42,7 @@ void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>
 
 void to_json(json& j, const ::dependency_graph::Graph& g, const Selection& selection) {
 	std::map<std::string, unsigned> uniqueIds;
-	std::map<const ::dependency_graph::Node*, std::string> nodeIds;
+	std::map<const ::dependency_graph::NodeBase*, std::string> nodeIds;
 
 	j["nodes"] = "{}"_json;
 	if(selection.empty())
@@ -86,15 +87,19 @@ void from_json(const json& j, Graph& g) {
 			io::fromJson(n["blind_data"]["value"], *blindData);
 		}
 
-		Node& node = g.nodes().add(Metadata::instance(n["type"].get<std::string>()), n["name"].get<std::string>(), std::move(blindData));
-		adl_serializer<Node>::from_json(n, node);
+		NodeBase& node = g.nodes().add(Metadata::instance(n["type"].get<std::string>()), n["name"].get<std::string>(), std::move(blindData));
+
+		// temporary code
+		Node& _node = dynamic_cast<Node&>(node);
+
+		adl_serializer<Node>::from_json(n, _node);
 
 		nodeIds[ni.key()] = g.nodes().size()-1;
 	}
 
 	for(auto& c : j["connections"]) {
-		Node& n1 = g.nodes()[nodeIds[c["out_node"].get<std::string>()]];
-		Node& n2 = g.nodes()[nodeIds[c["in_node"].get<std::string>()]];
+		NodeBase& n1 = g.nodes()[nodeIds[c["out_node"].get<std::string>()]];
+		NodeBase& n2 = g.nodes()[nodeIds[c["in_node"].get<std::string>()]];
 
 		int p1 = -1;
 		for(unsigned p=0;p<n1.portCount();++p)
