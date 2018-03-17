@@ -43,7 +43,7 @@ void Metadata::doAddAttribute(dependency_graph::Attr& a) {
 	// just a silly workaround when the base addAttribute() gets called instead
 	//   of the derived class version
 	while(m_colours.size() < attributeCount())
-		m_colours.push_back(std::array<float, 3>{{1,1,1}});
+		m_colours.push_back(std::array<float, 3>{{1,0,1}});
 }
 
 }

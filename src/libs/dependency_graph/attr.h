@@ -3,6 +3,9 @@
 #include <string>
 #include <memory>
 #include <typeinfo>
+#include <functional>
+
+#include <boost/noncopyable.hpp>
 
 #include "datablock.h"
 
@@ -11,17 +14,20 @@ namespace dependency_graph {
 class Metadata;
 class Node;
 
-/// Common attribute base class
+/// Common attribute base class, with type erasure for its concrete Data instantiation.
+/// The instance itself is copyable, even only as a base class - derived classes
+/// TypedAttr, InAttr and OutAttr don't hold any data, and are intended mainly
+/// as an API layer.
 class Attr {
 	public:
 		enum Category { kInput, kOutput };
 
-		virtual ~Attr() = 0;
+		virtual ~Attr();
 
 		const std::string& name() const;
 		const Category& category() const;
 		const unsigned& offset() const;
-		virtual const std::type_info& type() const = 0;
+		const std::type_info& type() const;
 
 		bool isValid() const;
 
@@ -29,14 +35,13 @@ class Attr {
 		bool operator != (const Attr& a) const;
 
 	protected:
-		Attr(const std::string& name, unsigned offset, Category cat);
+		Attr(const std::string& name, unsigned offset, Category cat, const std::type_info& type, std::function<std::unique_ptr<BaseData>()> dataFactory);
 
-		virtual std::unique_ptr<BaseData> createData() const = 0;
+		std::unique_ptr<BaseData> createData() const;
 
 	private:
-		std::string m_name;
-		unsigned m_offset;
-		Category m_category;
+		struct AttrData;
+		std::shared_ptr<const AttrData> m_data;
 
 		friend class Datablock;
 		friend class Node;
@@ -44,21 +49,13 @@ class Attr {
 
 template<typename T>
 class TypedAttr : public Attr {
-	public:
-		virtual const std::type_info& type() const override;
-
 	protected:
 		TypedAttr(const std::string& name, unsigned offset, Category cat, const T& defaultValue);
-
-		virtual std::unique_ptr<BaseData> createData() const override;
-
-	private:
-		T m_defaultValue;
 };
 
 /// Input attribute type (constructed by Metadata class)
 template<typename T>
-class InAttr : public TypedAttr<T> {
+class InAttr final : public TypedAttr<T> {
 	public:
 		InAttr();
 
@@ -70,7 +67,7 @@ class InAttr : public TypedAttr<T> {
 
 /// Output attribute type (constructed by Metadata class)
 template<typename T>
-class OutAttr : public TypedAttr<T> {
+class OutAttr final : public TypedAttr<T> {
 	public:
 		OutAttr();
 
