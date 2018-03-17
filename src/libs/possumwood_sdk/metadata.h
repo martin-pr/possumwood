@@ -14,14 +14,29 @@
 
 namespace possumwood {
 
-class Metadata : public dependency_graph::Metadata {
+class Metadata : private dependency_graph::Metadata {
 	public:
 		Metadata(const std::string& nodeType);
 		virtual ~Metadata();
 
+		/// registers an input attribute.
+		/// Each attribute instance should be held statically in the
+		/// implementation of the "node" concept of the target application.
+		/// This call does *not* take ownership of the attribute, and assumes
+		/// that it will be available throughout the application run.
+		template<typename T>
+		void addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, const T& defaultValue = T());
 
-		/// compute method of this node
+		/// registers an output attribute.
+		/// Each attribute instance should be held statically in the
+		/// implementation of the "node" concept of the target application.
+		/// This call does *not* take ownership of the attribute, and assumes
+		/// that it will be available throughout the application run.
+		template<typename T>
+		void addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue = T());
 
+		using dependency_graph::Metadata::addInfluence;
+		using dependency_graph::Metadata::setCompute;
 
 		/// drawable for this node type - sets the drawable to be of the type
 		///   passed as template argument

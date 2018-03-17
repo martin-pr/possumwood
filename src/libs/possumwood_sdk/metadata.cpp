@@ -22,7 +22,6 @@ std::unique_ptr<Drawable> Metadata::createDrawable(dependency_graph::Values&& va
 	return std::unique_ptr<Drawable>();
 }
 
-
 const std::array<float, 3>& Metadata::colour(unsigned attrId) const {
 	assert(attrId < m_colours.size());
 	return m_colours[attrId];
@@ -41,7 +40,11 @@ std::unique_ptr<Editor> Metadata::createEditor(dependency_graph::NodeBase& node)
 void Metadata::doAddAttribute(dependency_graph::Attr& a) {
 	dependency_graph::Metadata::doAddAttribute(a);
 
-	m_colours.push_back(std::array<float, 3>{{1,1,1}});
+	// just a silly workaround when the base addAttribute() gets called instead
+	//   of the derived class version (which should never happen in private inheritance
+	//   model)
+	while(m_colours.size() < attributeCount())
+		m_colours.push_back(std::array<float, 3>{{1,1,1}});
 }
 
 }
