@@ -62,7 +62,7 @@ class Metadata : public boost::noncopyable {
 		/// returns true if this node type has an editor set
 		bool hasEditor() const;
 		/// create an editor for a node instance
-		std::unique_ptr<Editor> createEditor(dependency_graph::NodeBase& node);
+		std::unique_ptr<Editor> createEditor(dependency_graph::NodeBase& node) const;
 
 
 		/// colour of an attribute, based on its index (derived from Traits instances)
