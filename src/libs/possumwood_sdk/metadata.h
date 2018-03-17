@@ -14,7 +14,7 @@
 
 namespace possumwood {
 
-class Metadata : public boost::noncopyable {
+class Metadata : private dependency_graph::Metadata {
 	public:
 		Metadata(const std::string& nodeType);
 		virtual ~Metadata();
@@ -35,13 +35,8 @@ class Metadata : public boost::noncopyable {
 		template<typename T>
 		void addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue = T());
 
-		/// adds attribute influence - inputs required to compute outputs
-		template<typename T, typename U>
-		void addInfluence(const dependency_graph::InAttr<T>& in, const dependency_graph::OutAttr<U>& out);
-
-		/// compute method of this node
-		void setCompute(std::function<dependency_graph::State(dependency_graph::Values&)> compute);
-
+		using dependency_graph::Metadata::addInfluence;
+		using dependency_graph::Metadata::setCompute;
 
 		/// drawable for this node type - sets the drawable to be of the type
 		///   passed as template argument
@@ -62,15 +57,16 @@ class Metadata : public boost::noncopyable {
 		/// returns true if this node type has an editor set
 		bool hasEditor() const;
 		/// create an editor for a node instance
-		std::unique_ptr<Editor> createEditor(dependency_graph::NodeBase& node);
+		std::unique_ptr<Editor> createEditor(dependency_graph::NodeBase& node) const;
 
 
 		/// colour of an attribute, based on its index (derived from Traits instances)
 		const std::array<float, 3>& colour(unsigned attrId) const;
 
-	private:
-		dependency_graph::Metadata m_meta;
+	protected:
+		virtual void doAddAttribute(dependency_graph::Attr& a) override;
 
+	private:
 		std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> m_drawableFactory;
 		std::function<std::unique_ptr<Editor>(dependency_graph::NodeBase&)> m_editorFactory;
 

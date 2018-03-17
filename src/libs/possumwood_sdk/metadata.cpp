@@ -2,8 +2,7 @@
 
 namespace possumwood {
 
-Metadata::Metadata(const std::string& nodeType) : m_meta(nodeType) {
-	m_meta.setBlindData<Metadata*>(this);
+Metadata::Metadata(const std::string& nodeType) : dependency_graph::Metadata(nodeType) {
 }
 
 Metadata::~Metadata() {
@@ -23,10 +22,6 @@ std::unique_ptr<Drawable> Metadata::createDrawable(dependency_graph::Values&& va
 	return std::unique_ptr<Drawable>();
 }
 
-void Metadata::setCompute(std::function<dependency_graph::State(dependency_graph::Values&)> compute) {
-	m_meta.setCompute(compute);
-}
-
 const std::array<float, 3>& Metadata::colour(unsigned attrId) const {
 	assert(attrId < m_colours.size());
 	return m_colours[attrId];
@@ -36,10 +31,20 @@ bool Metadata::hasEditor() const {
 	return m_editorFactory.operator bool();
 }
 
-std::unique_ptr<Editor> Metadata::createEditor(dependency_graph::NodeBase& node) {
+std::unique_ptr<Editor> Metadata::createEditor(dependency_graph::NodeBase& node) const {
 	assert(hasEditor());
 
 	return m_editorFactory(node);
+}
+
+void Metadata::doAddAttribute(dependency_graph::Attr& a) {
+	dependency_graph::Metadata::doAddAttribute(a);
+
+	// just a silly workaround when the base addAttribute() gets called instead
+	//   of the derived class version (which should never happen in private inheritance
+	//   model)
+	while(m_colours.size() < attributeCount())
+		m_colours.push_back(std::array<float, 3>{{1,1,1}});
 }
 
 }
