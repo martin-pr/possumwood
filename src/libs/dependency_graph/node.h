@@ -49,6 +49,7 @@ class Node : public NodeBase {
 		State m_state;
 
 		friend class Graph;
+		friend class Network;
 		friend class Port;
 		friend class Nodes;
 

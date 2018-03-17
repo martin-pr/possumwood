@@ -29,6 +29,28 @@ Network& NodeBase::network() {
 	return *m_network;
 }
 
+bool NodeBase::hasParentNetwork() const {
+	return m_network != nullptr;
+}
+
+const Graph& NodeBase::graph() const {
+	if(hasParentNetwork())
+		return network().graph();
+
+	// TERRIBLE hacking, to be replaced with something more sensible at some point
+	const Graph& g = dynamic_cast<const Graph&>(*this);
+	return g;
+}
+
+Graph& NodeBase::graph() {
+	if(hasParentNetwork())
+		return network().graph();
+
+	// TERRIBLE hacking, to be replaced with something more sensible at some point
+	Graph& g = dynamic_cast<Graph&>(*this);
+	return g;
+}
+
 size_t NodeBase::index() const {
 	return network().nodes().findNodeIndex(*this);
 }
@@ -40,7 +62,7 @@ void NodeBase::markAsDirty(size_t index) {
 	if(!p.isDirty()) {
 		p.setDirty(true);
 
-		network().graph().dirtyChanged();
+		graph().dirtyChanged();
 
 		// recurse + handle each port type slightly differently
 		if(p.category() == Attr::kInput) {

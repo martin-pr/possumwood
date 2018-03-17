@@ -25,8 +25,12 @@ class NodeBase : public boost::noncopyable {
 		const std::string& name() const;
 		void setName(const std::string& name);
 
+		bool hasParentNetwork() const;
 		const Network& network() const;
 		Network& network();
+
+		const Graph& graph() const;
+		Graph& graph();
 
 		virtual Port& port(size_t index) = 0;
 		virtual const Port& port(size_t index) const = 0;

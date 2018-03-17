@@ -20,8 +20,8 @@ NodeBase& Nodes::add(const Metadata& type, const std::string& name, const T& bli
 		m_nodes.back()->setDatablock(*datablock);
 	}
 
-	m_parent->nodeAdded(*m_nodes.back());
-	m_parent->dirtyChanged();
+	m_parent->graph().nodeAdded(*m_nodes.back());
+	m_parent->graph().dirtyChanged();
 
 	return *m_nodes.back();
 }

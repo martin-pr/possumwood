@@ -51,11 +51,11 @@ class Nodes : public boost::noncopyable {
 		void clear();
 
 	private:
-		Nodes(Graph* parent);
+		Nodes(Network* parent);
 
 		size_t findNodeIndex(const NodeBase& n) const;
 
-		Graph* m_parent;
+		Network* m_parent;
 
 		// stored in a pointer container, to keep parent pointers
 		//   stable without too much effort (might change)

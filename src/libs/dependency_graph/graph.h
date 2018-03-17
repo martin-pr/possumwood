@@ -44,8 +44,6 @@ class Graph : public Network {
 		void connected(Port& p1, Port& p2);
 		void disconnected(Port& p1, Port& p2);
 
-		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
-
 		struct Signals;
 		std::unique_ptr<Signals> m_signals;
 

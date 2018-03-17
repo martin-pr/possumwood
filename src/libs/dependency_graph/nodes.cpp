@@ -1,10 +1,12 @@
 #include "nodes.inl"
 
+#include <cassert>
+
 #include "graph.h"
 
 namespace dependency_graph {
 
-Nodes::Nodes(Graph* parent) : m_parent(parent) {
+Nodes::Nodes(Network* parent) : m_parent(parent) {
 
 }
 
@@ -17,17 +19,17 @@ NodeBase& Nodes::add(const Metadata& type, const std::string& name, std::unique_
 		m_nodes.back()->setDatablock(*datablock);
 	}
 
-	m_parent->nodeAdded(*m_nodes.back());
-	m_parent->dirtyChanged();
+	m_parent->graph().nodeAdded(*m_nodes.back());
+	m_parent->graph().dirtyChanged();
 
 	return *m_nodes.back();
 }
 
 Nodes::iterator Nodes::erase(iterator i) {
-	m_parent->connections().purge(*i);
+	m_parent->graph().connections().purge(*i);
 
-	m_parent->nodeRemoved(*i);
-	m_parent->dirtyChanged();
+	m_parent->graph().nodeRemoved(*i);
+	m_parent->graph().dirtyChanged();
 
 	auto it = m_nodes.erase(i.base());
 	return boost::make_indirect_iterator(it);

@@ -1,8 +1,10 @@
 #include "network.h"
 
+#include "graph.h"
+
 namespace dependency_graph {
 
-Network::Network(Graph* parent) : m_graph(parent), m_nodes(parent) {
+Network::Network(Network* parent) : NodeBase("network", parent), m_nodes(this) {
 }
 
 Network::~Network() {
@@ -33,12 +35,57 @@ const Connections& Network::connections() const {
 	return m_connections;
 }
 
-const Graph& Network::graph() const {
-	return *m_graph;
+Port& Network::port(size_t index) {
+	assert(false);
+	throw std::runtime_error("Network has no ports, for now");
 }
 
-Graph& Network::graph() {
-	return *m_graph;
+const Port& Network::port(size_t index) const {
+	assert(false);
+	throw std::runtime_error("Network has no ports, for now");
+}
+
+const size_t Network::portCount() const {
+	return 0;
+}
+
+void Network::computeInput(size_t index) {
+	assert(false);
+	throw std::runtime_error("Network has no ports, for now");
+}
+
+void Network::computeOutput(size_t index) {
+	assert(false);
+	throw std::runtime_error("Network has no ports, for now");
+}
+
+Datablock& Network::datablock() {
+	assert(false);
+	throw std::runtime_error("Network has no ports, for now");
+}
+
+void Network::setDatablock(const Datablock& data) {
+	assert(false);
+	throw std::runtime_error("Network has no ports, for now");
+}
+
+const Metadata& Network::metadata() const {
+	static const Metadata s_meta("network");
+	return s_meta;
+}
+
+const Datablock& Network::datablock() const {
+	assert(false);
+	throw std::runtime_error("Network has no ports, for now");
+}
+
+const State& Network::state() const {
+	assert(false);
+	throw std::runtime_error("Network has no ports, for now");
+}
+
+std::unique_ptr<Node> Network::makeNode(const std::string& name, const Metadata* md) {
+	return std::unique_ptr<Node>(new Node(name, md, this));
 }
 
 }
