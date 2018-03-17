@@ -106,7 +106,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		        {
 			        unsigned editorCounter = 0;
 			        for(auto& n : out.nodes())
-				        if(n.get().metadata().blindData<possumwood::Metadata*>()->hasEditor())
+				        if(n.get().metadata().hasBlindData() && n.get().metadata().blindData<possumwood::Metadata*>()->hasEditor())
 					        ++editorCounter;
 
 			        if(editorCounter == 0) {

@@ -34,6 +34,8 @@ Node::Node(const QString& name, const QPointF& position, const std::initializer_
 	m_title->setFont(font);
 
 	setPen(QPen(QColor(64, 64, 64), 3));
+
+	updateRect();
 }
 
 Node::~Node() {

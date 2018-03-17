@@ -102,6 +102,7 @@ class Metadata : public boost::noncopyable {
 		template<typename T>
 		const T& blindData() const;
 
+		bool hasBlindData() const;
 
 	private:
 		std::vector<std::reference_wrapper<const Attr>> influences(size_t index) const;

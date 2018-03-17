@@ -69,9 +69,14 @@ void Network::setDatablock(const Datablock& data) {
 	throw std::runtime_error("Network has no ports, for now");
 }
 
+namespace {
+
+static Metadata s_networkMetadata("network");
+
+}
+
 const Metadata& Network::metadata() const {
-	static const Metadata s_meta("network");
-	return s_meta;
+	return s_networkMetadata;
 }
 
 const Datablock& Network::datablock() const {
@@ -84,8 +89,11 @@ const State& Network::state() const {
 	throw std::runtime_error("Network has no ports, for now");
 }
 
-std::unique_ptr<Node> Network::makeNode(const std::string& name, const Metadata* md) {
-	return std::unique_ptr<Node>(new Node(name, md, this));
+std::unique_ptr<NodeBase> Network::makeNode(const std::string& name, const Metadata* md) {
+	if(md != &s_networkMetadata)
+		return std::unique_ptr<NodeBase>(new Node(name, md, this));
+	else
+		return std::unique_ptr<NodeBase>(new Network(this));
 }
 
 }

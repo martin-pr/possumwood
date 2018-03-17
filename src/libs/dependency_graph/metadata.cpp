@@ -116,6 +116,10 @@ std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(size_t in
 	return result;
 }
 
+bool Metadata::hasBlindData() const {
+	return m_blindData != nullptr;
+}
+
 boost::iterator_range<Metadata::const_iterator> Metadata::instances() {
 	return boost::make_iterator_range(instanceSet().begin(), instanceSet().end());
 }
@@ -128,4 +132,5 @@ const Metadata& Metadata::instance(const std::string& nodeType) {
 
 	throw(std::runtime_error("node type " + nodeType + " is not registered"));
 }
+
 }

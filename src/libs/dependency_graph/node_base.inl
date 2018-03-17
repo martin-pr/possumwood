@@ -10,8 +10,11 @@ namespace dependency_graph {
 template<typename T>
 void NodeBase::setBlindData(const T& value) {
 	// create blind data if they're not present
-	if(m_blindData.get() == NULL)
+	bool newData = false;
+	if(m_blindData.get() == NULL) {
 		m_blindData = std::unique_ptr<BaseData>(new Data<T>());
+		newData = true;
+	}
 
 	// retype
 	Data<T>& val = dynamic_cast<Data<T>&>(*m_blindData);
@@ -21,7 +24,8 @@ void NodeBase::setBlindData(const T& value) {
 		val.value = value;
 
 		// and call the callback
-		network().graph().blindDataChanged(*this);
+		if(!newData)
+			network().graph().blindDataChanged(*this);
 	}
 }
 

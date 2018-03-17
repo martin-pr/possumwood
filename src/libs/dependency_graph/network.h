@@ -33,7 +33,7 @@ class Network : public NodeBase {
 		virtual Datablock& datablock() override;
 		virtual void setDatablock(const Datablock& data) override;
 
-		std::unique_ptr<Node> makeNode(const std::string& name, const Metadata* md);
+		std::unique_ptr<NodeBase> makeNode(const std::string& name, const Metadata* md);
 
 	private:
 		Network(Network* parent);
