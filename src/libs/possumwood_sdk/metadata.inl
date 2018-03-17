@@ -26,23 +26,9 @@ void Metadata::setEditor() {
 }
 
 
-template<typename T>
-void Metadata::addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, const T& defaultValue) {
-	m_meta.addAttribute(in, name, defaultValue);
 
-	m_colours.push_back(Traits<T>::colour());
-}
 
-template<typename T>
-void Metadata::addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue) {
-	m_meta.addAttribute(out, name, defaultValue);
 
-	m_colours.push_back(Traits<T>::colour());
-}
 
-template<typename T, typename U>
-void Metadata::addInfluence(const dependency_graph::InAttr<T>& in, const dependency_graph::OutAttr<U>& out) {
-	m_meta.addInfluence(in, out);
-}
 
 }

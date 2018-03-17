@@ -92,17 +92,10 @@ class Metadata : public boost::noncopyable {
 		template<typename T>
 		std::vector<std::reference_wrapper<const Attr>> influencedBy(const OutAttr<T>& out) const;
 
-		/// blind metadata's data, to be used by the client application
-		///   to store visual information (e.g., attribute position, colour...)
-		template<typename T>
-		void setBlindData(const T& value);
 
-		/// blind metadata's data, to be used by the client application
-		///   to store visual information (e.g., attribute position, colour...)
-		template<typename T>
-		const T& blindData() const;
 
-		bool hasBlindData() const;
+	protected:
+		virtual void doAddAttribute(Attr& attr);
 
 	private:
 		std::vector<std::reference_wrapper<const Attr>> influences(size_t index) const;
@@ -114,7 +107,6 @@ class Metadata : public boost::noncopyable {
 
 		boost::bimap<boost::bimaps::multiset_of<unsigned>, boost::bimaps::multiset_of<unsigned>> m_influences;
 
-		std::unique_ptr<BaseData> m_blindData;
 
 		class Register;
 

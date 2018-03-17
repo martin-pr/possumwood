@@ -193,9 +193,7 @@ Adaptor::~Adaptor() {
 
 void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 	// get the possumwood::Metadata pointer from the metadata's blind data
-	const possumwood::Metadata* meta = NULL;
-	if(node.metadata().hasBlindData())
-	 	meta = node.metadata().blindData<possumwood::Metadata*>();
+	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata());
 
 	// get the blind data, containing the node's position
 	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();

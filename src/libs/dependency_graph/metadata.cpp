@@ -94,6 +94,10 @@ const Attr& Metadata::attr(size_t index) const {
 	return *m_attrs[index];
 }
 
+void Metadata::doAddAttribute(Attr& attr) {
+	m_attrs.push_back(&attr);
+}
+
 std::vector<std::reference_wrapper<const Attr>> Metadata::influences(size_t index) const {
 	std::vector<std::reference_wrapper<const Attr>> result;
 
@@ -116,9 +120,6 @@ std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(size_t in
 	return result;
 }
 
-bool Metadata::hasBlindData() const {
-	return m_blindData != nullptr;
-}
 
 boost::iterator_range<Metadata::const_iterator> Metadata::instances() {
 	return boost::make_iterator_range(instanceSet().begin(), instanceSet().end());

@@ -105,9 +105,11 @@ MainWindow::MainWindow() : QMainWindow() {
 		        // instantiate the editor
 		        {
 			        unsigned editorCounter = 0;
-			        for(auto& n : out.nodes())
-				        if(n.get().metadata().hasBlindData() && n.get().metadata().blindData<possumwood::Metadata*>()->hasEditor())
+			        for(auto& n : out.nodes()) {
+			        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata());
+				        if(meta != nullptr && meta->hasEditor())
 					        ++editorCounter;
+			        }
 
 			        if(editorCounter == 0) {
 				        QLabel* editorWidget = new QLabel("No editable node selected");
@@ -127,8 +129,8 @@ MainWindow::MainWindow() : QMainWindow() {
 			        }
 			        else {
 				        for(auto& n : out.nodes()) {
-					        possumwood::Metadata* meta = n.get().metadata().blindData<possumwood::Metadata*>();
-					        if(meta->hasEditor()) {
+				        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata());
+					        if(meta != nullptr && meta->hasEditor()) {
 						        m_editor = meta->createEditor(n);
 						        editorDock->setWidget(m_editor->widget());
 					        }
