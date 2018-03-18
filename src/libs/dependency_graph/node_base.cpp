@@ -67,7 +67,7 @@ void NodeBase::markAsDirty(size_t index) {
 		// recurse + handle each port type slightly differently
 		if(p.category() == Attr::kInput) {
 			// all outputs influenced by this input are marked dirty
-			for(const Attr& i : metadata().influences(p.index()))
+			for(const Attr& i : metadata().metadata().influences(p.index()))
 				markAsDirty(i.offset());
 		}
 		else {

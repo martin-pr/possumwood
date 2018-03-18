@@ -9,14 +9,14 @@
 namespace dependency_graph {
 
 template<typename T>
-NodeBase& Nodes::add(const Metadata& type, const std::string& name, const T& blindData, boost::optional<const dependency_graph::Datablock&> datablock) {
-	std::unique_ptr<NodeBase> node = m_parent->makeNode(name, &type);
+NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, const T& blindData, boost::optional<const dependency_graph::Datablock&> datablock) {
+	std::unique_ptr<NodeBase> node = m_parent->makeNode(name, type);
 	node->setBlindData(blindData);
 
 	m_nodes.push_back(std::move(node));
 
 	if(datablock) {
-		assert(&datablock->meta() == &m_nodes.back()->metadata());
+		assert(datablock->meta() == m_nodes.back()->metadata());
 		m_nodes.back()->setDatablock(*datablock);
 	}
 

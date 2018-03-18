@@ -37,8 +37,8 @@ BOOST_AUTO_TEST_CASE(graph_connections) {
 	g.onDisconnect([&](Port&, Port&) { --s_connectionCount; });
 
 	// instantiate nodes from arithmetic.cpp
-	const Metadata& addition = additionNode();
-	const Metadata& multiplication = multiplicationNode();
+	const MetadataHandle& addition = additionNode();
+	const MetadataHandle& multiplication = multiplicationNode();
 
 	NodeBase& add1 = g.nodes().add(addition, "add_1");
 	NodeBase& mult1 = g.nodes().add(multiplication, "mult_1");

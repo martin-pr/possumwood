@@ -34,9 +34,9 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	// addition node
 
 	// metadata for a simple addition node
-	const Metadata& addition = additionNode();
+	const MetadataHandle& addition = additionNode();
 	// and for a simple multiplication node
-	const Metadata& multiplication = multiplicationNode();
+	const MetadataHandle& multiplication = multiplicationNode();
 
 	/////////////////////////////
 	// build a simple graph for (a + b) * c + (a + b) * d

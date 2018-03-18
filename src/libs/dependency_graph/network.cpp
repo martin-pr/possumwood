@@ -1,6 +1,7 @@
 #include "network.h"
 
 #include "graph.h"
+#include "metadata_register.h"
 
 namespace dependency_graph {
 
@@ -71,12 +72,22 @@ void Network::setDatablock(const Datablock& data) {
 
 namespace {
 
-static Metadata s_networkMetadata("network");
+const MetadataHandle& networkMetadata() {
+	static std::unique_ptr<MetadataHandle> s_handle;
+	if(s_handle == nullptr) {
+		std::unique_ptr<Metadata> meta(new Metadata("network"));
+		s_handle = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(meta)));
+
+		MetadataRegister::singleton().add(*s_handle);
+	}
+
+	return *s_handle;
+}
 
 }
 
-const Metadata& Network::metadata() const {
-	return s_networkMetadata;
+const MetadataHandle& Network::metadata() const {
+	return networkMetadata();
 }
 
 const Datablock& Network::datablock() const {
@@ -89,8 +100,8 @@ const State& Network::state() const {
 	throw std::runtime_error("Network has no ports, for now");
 }
 
-std::unique_ptr<NodeBase> Network::makeNode(const std::string& name, const Metadata* md) {
-	if(md != &s_networkMetadata)
+std::unique_ptr<NodeBase> Network::makeNode(const std::string& name, const MetadataHandle& md) {
+	if(md != networkMetadata())
 		return std::unique_ptr<NodeBase>(new Node(name, md, this));
 	else
 		return std::unique_ptr<NodeBase>(new Network(this));

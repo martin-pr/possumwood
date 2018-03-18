@@ -20,7 +20,7 @@ class Network;
 
 class Node : public NodeBase {
 	public:
-		virtual const Metadata& metadata() const override;
+		virtual const MetadataHandle& metadata() const override;
 		/// only useful for copy-paste - needs to replicate a node with its data
 		virtual const Datablock& datablock() const override;
 
@@ -32,7 +32,7 @@ class Node : public NodeBase {
 		virtual const State& state() const override;
 
 	protected:
-		Node(const std::string& name, const Metadata* def, Network* parent);
+		Node(const std::string& name, const MetadataHandle& def, Network* parent);
 
 		virtual void setDatablock(const Datablock& data) override;
 		virtual Datablock& datablock() override;
@@ -41,7 +41,7 @@ class Node : public NodeBase {
 		virtual void computeOutput(size_t index) override;
 
 	private:
-		const Metadata* m_meta;
+		MetadataHandle m_meta;
 		Datablock m_data;
 
 		std::vector<Port> m_ports;

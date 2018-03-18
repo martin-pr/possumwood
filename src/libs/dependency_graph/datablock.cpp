@@ -5,16 +5,14 @@
 
 namespace dependency_graph {
 
-Datablock::Datablock(const Metadata& meta) : m_meta(&meta) {
-	for(std::size_t a=0; a<meta.attributeCount(); ++a)
-		m_data.push_back(meta.attr(a).createData());
+Datablock::Datablock(const MetadataHandle& meta) : m_meta(meta) {
+	for(std::size_t a=0; a<meta.metadata().attributeCount(); ++a)
+		m_data.push_back(meta.metadata().attr(a).createData());
 }
 
-Datablock::Datablock(const Datablock& d) {
+Datablock::Datablock(const Datablock& d) : m_meta(d.m_meta) {
 	for(auto& a : d.m_data)
 		m_data.push_back(a->clone());
-
-	m_meta = d.m_meta;
 }
 
 Datablock& Datablock::operator = (const Datablock& d) {
@@ -41,11 +39,11 @@ BaseData& Datablock::data(size_t index) {
 
 void Datablock::reset(size_t index) {
 	assert(m_data.size() > index);
-	m_data[index] = m_meta->attr(index).createData();
+	m_data[index] = m_meta.metadata().attr(index).createData();
 }
 
-const Metadata& Datablock::meta() const {
-	return *m_meta;
+const MetadataHandle& Datablock::meta() const {
+	return m_meta;
 }
 
 }

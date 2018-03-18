@@ -22,7 +22,7 @@ class Network : public NodeBase {
 		virtual const Port& port(size_t index) const override;
 		virtual const size_t portCount() const override;
 
-		virtual const Metadata& metadata() const override;
+		virtual const MetadataHandle& metadata() const override;
 		virtual const Datablock& datablock() const override;
 
 		virtual const State& state() const override;
@@ -33,7 +33,7 @@ class Network : public NodeBase {
 		virtual Datablock& datablock() override;
 		virtual void setDatablock(const Datablock& data) override;
 
-		std::unique_ptr<NodeBase> makeNode(const std::string& name, const Metadata* md);
+		std::unique_ptr<NodeBase> makeNode(const std::string& name, const MetadataHandle& md);
 
 	private:
 		Network(Network* parent);

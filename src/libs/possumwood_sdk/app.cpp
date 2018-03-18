@@ -163,7 +163,7 @@ void App::setTime(float time) {
 
 		// TERRIBLE HACK - a special node type that outputs time is handled here
 		for(auto& n : graph().nodes())
-			if(n.metadata().type() == "time")
+			if(n.metadata().metadata().type() == "time")
 				n.port(0).set<float>(time);
 	}
 }

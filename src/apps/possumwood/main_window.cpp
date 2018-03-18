@@ -16,6 +16,7 @@
 #include <QLabel>
 
 #include <dependency_graph/values.inl>
+#include <dependency_graph/metadata_register.h>
 
 #include <qt_node_editor/connected_edge.h>
 
@@ -106,7 +107,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		        {
 			        unsigned editorCounter = 0;
 			        for(auto& n : out.nodes()) {
-			        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata());
+			        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
 				        if(meta != nullptr && meta->hasEditor())
 					        ++editorCounter;
 			        }
@@ -129,7 +130,7 @@ MainWindow::MainWindow() : QMainWindow() {
 			        }
 			        else {
 				        for(auto& n : out.nodes()) {
-				        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata());
+				        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
 					        if(meta != nullptr && meta->hasEditor()) {
 						        m_editor = meta->createEditor(n);
 						        editorDock->setWidget(m_editor->widget());
@@ -170,9 +171,9 @@ MainWindow::MainWindow() : QMainWindow() {
 
 			// first, create all "folders"
 			std::map<std::string, QMenu*> groups;
-			for(auto& m : dependency_graph::Metadata::instances()) {
+			for(auto& m : dependency_graph::MetadataRegister::singleton()) {
 				std::vector<std::string> pieces;
-				boost::split(pieces, m.type(), boost::algorithm::is_any_of("/"));
+				boost::split(pieces, m.metadata().type(), boost::algorithm::is_any_of("/"));
 				assert(pieces.size() >= 1);
 
 				for(unsigned a = 1; a < pieces.size(); ++a) {
@@ -189,12 +190,12 @@ MainWindow::MainWindow() : QMainWindow() {
 
 			// then create all items
 			std::map<std::string, QAction*> items;
-			for(auto& m : dependency_graph::Metadata::instances()) {
-				std::string itemName = m.type();
+			for(auto& m : dependency_graph::MetadataRegister::singleton()) {
+				std::string itemName = m.metadata().type();
 
-				auto it = m.type().rfind('/');
+				auto it = m.metadata().type().rfind('/');
 				if(it != std::string::npos)
-					itemName = m.type().substr(it + 1);
+					itemName = m.metadata().type().substr(it + 1);
 
 				QAction* addNode = makeAction(
 				    itemName.c_str(),
@@ -205,7 +206,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				    m_adaptor);
 				addNode->setIcon(QIcon(":icons/add-node.png"));
 
-				items.insert(std::make_pair(m.type(), addNode));
+				items.insert(std::make_pair(m.metadata().type(), addNode));
 			}
 
 			// then, assemble the menu

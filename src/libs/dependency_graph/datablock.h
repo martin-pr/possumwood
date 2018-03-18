@@ -6,17 +6,17 @@
 #include "io/json.h"
 
 #include "data.h"
+#include "metadata.h"
 
 namespace dependency_graph {
 
-class Metadata;
 class Node;
 
 /// A data storage class used by Node implementation.
 /// Each data value is strongly typed, and stored as base class pointer.
 class Datablock {
 	public:
-		Datablock(const Metadata& meta);
+		Datablock(const MetadataHandle& meta);
 
 		Datablock(const Datablock& d);
 		Datablock& operator = (const Datablock& d);
@@ -32,11 +32,11 @@ class Datablock {
 		const BaseData& data(size_t index) const;
 		BaseData& data(size_t index);
 
-		const Metadata& meta() const;
+		const MetadataHandle& meta() const;
 
 	private:
 		std::vector<std::unique_ptr<BaseData>> m_data;
-		const Metadata* m_meta;
+		MetadataHandle m_meta;
 };
 
 }

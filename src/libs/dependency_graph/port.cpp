@@ -21,7 +21,7 @@ const std::string& Port::name() const {
 }
 
 const Attr::Category Port::category() const {
-	return m_parent->metadata().attr(m_id).category();
+	return m_parent->metadata().metadata().attr(m_id).category();
 }
 
 const unsigned Port::index() const {
@@ -29,7 +29,7 @@ const unsigned Port::index() const {
 }
 
 const std::string Port::type() const {
-	return m_parent->metadata().attr(m_id).type().name();
+	return m_parent->metadata().metadata().attr(m_id).type().name();
 }
 
 bool Port::isDirty() const {
@@ -75,7 +75,7 @@ void Port::connect(Port& p) {
 			std::set<Port*> newAddedPorts;
 			for(auto& current : addedPorts) {
 				if(current->category() == Attr::kInput)
-					for(const Attr& i : current->node().metadata().influences(current->m_id))
+					for(const Attr& i : current->node().metadata().metadata().influences(current->m_id))
 						newAddedPorts.insert(&current->node().port(i.offset()));
 				else {
 					for(Port& i : current->node().network().connections().connectedTo(*current))

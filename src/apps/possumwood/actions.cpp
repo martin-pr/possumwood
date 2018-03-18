@@ -24,9 +24,9 @@ dependency_graph::NodeBase& findNode(const possumwood::UniqueId& id) {
 	return *index[id].graphNode;
 }
 
-void doCreateNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
+void doCreateNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
 	if(data)
-		assert(&data->meta() == &meta);
+		assert(data->meta() == meta);
 
 	possumwood::App::instance().graph().nodes().add(meta, name, blindData, data);
 }
@@ -65,7 +65,7 @@ void doSetBlindData(const possumwood::UniqueId& node, const possumwood::NodeData
 
 /////////////////////////////////////////////////////////////////////
 
-void Actions::createNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& _data) {
+void Actions::createNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data) {
 	possumwood::NodeData data;
 	data.setPosition(_data.position());
 

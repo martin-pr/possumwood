@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <string>
+#include <memory>
 
 #include <boost/noncopyable.hpp>
 
@@ -19,9 +20,10 @@ namespace possumwood {
 struct NodeImplementation : public boost::noncopyable {
 	public:
 		NodeImplementation(const std::string& nodeName, std::function<void(Metadata&)> init);
+		~NodeImplementation();
 
 	private:
-		Metadata m_meta;
+		dependency_graph::MetadataHandle m_meta;
 };
 
 }

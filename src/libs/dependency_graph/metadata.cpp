@@ -8,70 +8,14 @@
 
 namespace dependency_graph {
 
-class Metadata::Register {
-  public:
-	~Register() {
-		while(!instances.empty())
-			(*instances.begin())->doUnregister();
-	}
-
-	void add(Metadata* m) {
-		instances.insert(m);
-	}
-
-	void remove(Metadata* m) {
-		auto it = instances.find(m);
-		assert(it != instances.end());
-
-		instances.erase(it);
-	}
-
-	typedef boost::indirect_iterator<std::set<Metadata*, Metadata::Comparator>::iterator> iterator;
-
-	iterator begin() {
-		return boost::make_indirect_iterator(instances.begin());
-	}
-
-	iterator end() {
-		return boost::make_indirect_iterator(instances.end());
-	}
-
-  private:
-	std::set<Metadata*, Metadata::Comparator> instances;
-};
-
-Metadata::Register& Metadata::instanceSet() {
-	static std::unique_ptr<Register> s_instances;
-	if(s_instances == nullptr)
-		s_instances = std::unique_ptr<Register>(new Register());
-
-	return *s_instances;
-}
-
-void Metadata::doRegister() {
-	if(!m_registered) {
-		instanceSet().add(this);
-		m_registered = true;
-	}
-}
-
-void Metadata::doUnregister() {
-	if(m_registered) {
-		instanceSet().remove(this);
-		m_registered = false;
-	}
-}
-
-Metadata::Metadata(const std::string& nodeType) : m_type(nodeType), m_registered(false) {
-	doRegister();
+Metadata::Metadata(const std::string& nodeType) : m_type(nodeType) {
 }
 
 Metadata::~Metadata() {
-	doUnregister();
 }
 
 bool Metadata::isValid() const {
-	return !m_attrs.empty() && m_compute && m_registered;
+	return !m_attrs.empty() && m_compute;
 }
 
 const std::string& Metadata::type() const {
@@ -122,18 +66,23 @@ std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(size_t in
 	return result;
 }
 
-
-boost::iterator_range<Metadata::const_iterator> Metadata::instances() {
-	return boost::make_iterator_range(instanceSet().begin(), instanceSet().end());
+MetadataHandle::MetadataHandle(std::unique_ptr<Metadata> m) : m_meta(m.release()) {
 }
 
-const Metadata& Metadata::instance(const std::string& nodeType) {
-	/// TODO: improve efficiency of search
-	for(auto& i : instanceSet())
-		if(i.type() == nodeType)
-			return i;
+MetadataHandle::~MetadataHandle() {
+}
 
-	throw(std::runtime_error("node type " + nodeType + " is not registered"));
+const Metadata& MetadataHandle::metadata() const {
+	assert(m_meta != nullptr);
+	return *m_meta;
+}
+
+bool MetadataHandle::operator == (const MetadataHandle& h) const {
+	return m_meta == h.m_meta;
+}
+
+bool MetadataHandle::operator != (const MetadataHandle& h) const {
+	return m_meta != h.m_meta;
 }
 
 }

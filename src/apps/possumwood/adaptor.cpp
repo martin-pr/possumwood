@@ -105,7 +105,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 			state.append(n.drawable->drawState());
 
 		std::stringstream ss;
-		ss << "<span style=\"color:#fff;\">" << n.graphNode->name() << " (" << n.graphNode->metadata().type() << ")" << "</p>";
+		ss << "<span style=\"color:#fff;\">" << n.graphNode->name() << " (" << n.graphNode->metadata().metadata().type() << ")" << "</p>";
 		ss << "<br />" << std::endl;
 		for(auto& i : state) {
 			switch(i.first) {
@@ -193,7 +193,7 @@ Adaptor::~Adaptor() {
 
 void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 	// get the possumwood::Metadata pointer from the metadata's blind data
-	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata());
+	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata().metadata());
 
 	// get the blind data, containing the node's position
 	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
@@ -203,8 +203,8 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		node.name().c_str(), data.position());
 
 	// add all ports, based on the node's metadata
-	for(size_t a = 0; a < node.metadata().attributeCount(); ++a) {
-		const dependency_graph::Attr& attr = node.metadata().attr(a);
+	for(size_t a = 0; a < node.metadata().metadata().attributeCount(); ++a) {
+		const dependency_graph::Attr& attr = node.metadata().metadata().attr(a);
 
 		std::array<float, 3> colour{{1,1,1}};
 		if(meta)

@@ -11,7 +11,7 @@
 namespace dependency_graph {
 
 class Graph;
-class Metadata;
+class MetadataHandle;
 class Datablock;
 class Node;
 class Nodes;
@@ -40,7 +40,7 @@ class NodeBase : public boost::noncopyable {
 		/// This ID can be used in Graph::operator[] to get this node from the graph.
 		size_t index() const;
 
-		virtual const Metadata& metadata() const = 0;
+		virtual const MetadataHandle& metadata() const = 0;
 		virtual const Datablock& datablock() const = 0;
 
 		/// blind per-node data, to be used by the client application

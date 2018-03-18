@@ -2,6 +2,7 @@
 
 #include "node.h"
 #include "io.h"
+#include "../metadata_register.h"
 
 namespace dependency_graph { namespace io {
 
@@ -23,7 +24,7 @@ void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>
 		const NodeBase& n = dereference(ni);
 
 		// figure out a unique name - type with a number appended
-		std::string name = n.metadata().type();
+		std::string name = n.metadata().metadata().type();
 		auto slash = name.rfind('/');
 		if(slash != std::string::npos)
 			name = name.substr(slash+1);
@@ -87,7 +88,8 @@ void from_json(const json& j, Graph& g) {
 			io::fromJson(n["blind_data"]["value"], *blindData);
 		}
 
-		NodeBase& node = g.nodes().add(Metadata::instance(n["type"].get<std::string>()), n["name"].get<std::string>(), std::move(blindData));
+		const MetadataHandle& meta = MetadataRegister::singleton()[n["type"].get<std::string>()];
+		NodeBase& node = g.nodes().add(meta, n["name"].get<std::string>(), std::move(blindData));
 
 		// temporary code
 		Node& _node = dynamic_cast<Node&>(node);

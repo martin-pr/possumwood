@@ -10,8 +10,8 @@ Nodes::Nodes(Network* parent) : m_parent(parent) {
 
 }
 
-NodeBase& Nodes::add(const Metadata& type, const std::string& name, std::unique_ptr<BaseData>&& blindData, boost::optional<const dependency_graph::Datablock&> datablock) {
-	m_nodes.push_back(m_parent->makeNode(name, &type));
+NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, std::unique_ptr<BaseData>&& blindData, boost::optional<const dependency_graph::Datablock&> datablock) {
+	m_nodes.push_back(m_parent->makeNode(name, type));
 	m_nodes.back()->m_blindData = std::move(blindData);
 
 	if(datablock) {

@@ -7,17 +7,17 @@
 
 namespace dependency_graph {
 
-Node::Node(const std::string& name, const Metadata* def, Network* parent) : NodeBase(name, parent), m_meta(def), m_data(*m_meta) {
-	for(std::size_t a = 0; a < m_meta->attributeCount(); ++a) {
-		auto& meta = m_meta->attr(a);
+Node::Node(const std::string& name, const MetadataHandle& def, Network* parent) : NodeBase(name, parent), m_meta(def), m_data(m_meta) {
+	for(std::size_t a = 0; a < m_meta.metadata().attributeCount(); ++a) {
+		auto& meta = m_meta.metadata().attr(a);
 		assert(meta.offset() == a);
 
 		m_ports.push_back(Port(meta.name(), meta.offset(), this));
 	}
 }
 
-const Metadata& Node::metadata() const {
-	return *m_meta;
+const MetadataHandle& Node::metadata() const {
+	return m_meta;
 }
 
 const Datablock& Node::datablock() const {
@@ -71,7 +71,7 @@ void Node::computeOutput(size_t index) {
 	assert(port(index).isDirty() && "output should be dirty for recomputation");
 
 	// first, figure out which inputs need pulling, if any
-	std::vector<std::reference_wrapper<const Attr>> inputs = m_meta->influencedBy(index);
+	std::vector<std::reference_wrapper<const Attr>> inputs = m_meta.metadata().influencedBy(index);
 
 	// pull on all inputs
 	for(const Attr& i : inputs) {
@@ -90,7 +90,7 @@ void Node::computeOutput(size_t index) {
 	State result;
 	try {
 		Values vals(*this);
-		result = m_meta->m_compute(vals);
+		result = m_meta.metadata().m_compute(vals);
 	}
 	catch(std::exception& e) {
 		result.addError(e.what());

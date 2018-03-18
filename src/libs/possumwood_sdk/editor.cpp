@@ -36,7 +36,7 @@ void Editor::setNodeReference(dependency_graph::NodeBase& node) {
 					m_runningValueCallbacks.insert(pi);
 
 					try {
-						valueChanged(node.metadata().attr(pi));
+						valueChanged(node.metadata().metadata().attr(pi));
 
 						auto it = m_runningValueCallbacks.find(pi);
 						m_runningValueCallbacks.erase(it);
@@ -52,8 +52,8 @@ void Editor::setNodeReference(dependency_graph::NodeBase& node) {
 		));
 	}
 
-	for(unsigned ai=0; ai<node.metadata().attributeCount(); ++ai)
-		valueChanged(node.metadata().attr(ai));
+	for(unsigned ai=0; ai<node.metadata().metadata().attributeCount(); ++ai)
+		valueChanged(node.metadata().metadata().attr(ai));
 }
 
 }
