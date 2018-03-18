@@ -77,4 +77,6 @@ class OutAttr final : public TypedAttr<T> {
 		friend class Metadata;
 };
 
+std::ostream& operator << (std::ostream& out, const Attr& attr);
+
 }

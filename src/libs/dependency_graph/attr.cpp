@@ -55,4 +55,16 @@ bool Attr::operator!=(const Attr& a) const {
 	return name() != a.name() || category() != a.category() || offset() != a.offset() ||
 	       type() != a.type();
 }
+
+std::ostream& operator << (std::ostream& out, const Attr& attr) {
+	out << attr.name() << " (";
+	if(attr.category() == Attr::kInput)
+		out << "input, ";
+	else
+		out << "output, ";
+	out << attr.type().name() << ")";
+
+	return out;
+}
+
 }

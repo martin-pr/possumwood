@@ -62,9 +62,9 @@ const Metadata& additionNode() {
 		s_meta.addAttribute(additionOutput, "output");
 
 		BOOST_REQUIRE_EQUAL(s_meta.attributeCount(), 3u);
-		BOOST_CHECK_EQUAL(&s_meta.attr(0), &additionInput1);
-		BOOST_CHECK_EQUAL(&s_meta.attr(1), &additionInput2);
-		BOOST_CHECK_EQUAL(&s_meta.attr(2), &additionOutput);
+		BOOST_CHECK_EQUAL(s_meta.attr(0), additionInput1);
+		BOOST_CHECK_EQUAL(s_meta.attr(1), additionInput2);
+		BOOST_CHECK_EQUAL(s_meta.attr(2), additionOutput);
 
 		// setup influences
 		BOOST_CHECK_NO_THROW(s_meta.addInfluence(additionInput1, additionOutput));

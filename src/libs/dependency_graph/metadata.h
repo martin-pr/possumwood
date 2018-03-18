@@ -102,7 +102,7 @@ class Metadata : public boost::noncopyable {
 		std::vector<std::reference_wrapper<const Attr>> influencedBy(size_t index) const;
 
 		std::string m_type;
-		std::vector<Attr*> m_attrs; // not owning the attr instances
+		std::vector<Attr> m_attrs;
 		std::function<State(Values&)> m_compute;
 
 		boost::bimap<boost::bimaps::multiset_of<unsigned>, boost::bimaps::multiset_of<unsigned>> m_influences;

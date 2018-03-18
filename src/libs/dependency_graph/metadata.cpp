@@ -4,6 +4,8 @@
 
 #include <boost/iterator/indirect_iterator.hpp>
 
+#include "attr.h"
+
 namespace dependency_graph {
 
 class Metadata::Register {
@@ -86,16 +88,16 @@ size_t Metadata::attributeCount() const {
 
 Attr& Metadata::attr(size_t index) {
 	assert(index < m_attrs.size());
-	return *m_attrs[index];
+	return m_attrs[index];
 }
 
 const Attr& Metadata::attr(size_t index) const {
 	assert(index < m_attrs.size());
-	return *m_attrs[index];
+	return m_attrs[index];
 }
 
 void Metadata::doAddAttribute(Attr& attr) {
-	m_attrs.push_back(&attr);
+	m_attrs.push_back(attr);
 }
 
 std::vector<std::reference_wrapper<const Attr>> Metadata::influences(size_t index) const {

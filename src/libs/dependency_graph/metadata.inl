@@ -29,8 +29,8 @@ void Metadata::addAttribute(OutAttr<T>& out, const std::string& name, const T& d
 template<typename T, typename U>
 void Metadata::addInfluence(const InAttr<T>& in, const OutAttr<U>& out) {
 	assert(in.isValid() && out.isValid());
-	assert(std::find(m_attrs.begin(), m_attrs.end(), &in) != m_attrs.end());
-	assert(std::find(m_attrs.begin(), m_attrs.end(), &out) != m_attrs.end());
+	assert(std::find(m_attrs.begin(), m_attrs.end(), in) != m_attrs.end());
+	assert(std::find(m_attrs.begin(), m_attrs.end(), out) != m_attrs.end());
 
 	m_influences.left.insert(std::make_pair(in.offset(), out.offset()));
 }
