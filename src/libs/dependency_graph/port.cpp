@@ -75,8 +75,8 @@ void Port::connect(Port& p) {
 			std::set<Port*> newAddedPorts;
 			for(auto& current : addedPorts) {
 				if(current->category() == Attr::kInput)
-					for(const Attr& i : current->node().metadata().metadata().influences(current->m_id))
-						newAddedPorts.insert(&current->node().port(i.offset()));
+					for(std::size_t i : current->node().metadata().metadata().influences(current->m_id))
+						newAddedPorts.insert(&current->node().port(i));
 				else {
 					for(Port& i : current->node().network().connections().connectedTo(*current))
 						newAddedPorts.insert(&i);

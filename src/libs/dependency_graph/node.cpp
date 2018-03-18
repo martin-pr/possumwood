@@ -71,18 +71,18 @@ void Node::computeOutput(size_t index) {
 	assert(port(index).isDirty() && "output should be dirty for recomputation");
 
 	// first, figure out which inputs need pulling, if any
-	std::vector<std::reference_wrapper<const Attr>> inputs = m_meta.metadata().influencedBy(index);
+	std::vector<std::size_t> inputs = m_meta.metadata().influencedBy(index);
 
 	// pull on all inputs
-	for(const Attr& i : inputs) {
-		if(port(i.offset()).isDirty()) {
-			if(port(i.offset()).isConnected())
-				computeInput(i.offset());
+	for(std::size_t& i : inputs) {
+		if(port(i).isDirty()) {
+			if(port(i).isConnected())
+				computeInput(i);
 			else
-				port(i.offset()).setDirty(false);
+				port(i).setDirty(false);
 		}
 
-		assert(!port(i.offset()).isDirty());
+		assert(!port(i).isDirty());
 	}
 
 	// now run compute, as all inputs are fine

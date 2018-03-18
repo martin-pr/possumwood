@@ -44,24 +44,24 @@ void Metadata::doAddAttribute(Attr& attr) {
 	m_attrs.push_back(attr);
 }
 
-std::vector<std::reference_wrapper<const Attr>> Metadata::influences(size_t index) const {
-	std::vector<std::reference_wrapper<const Attr>> result;
+std::vector<std::size_t> Metadata::influences(size_t index) const {
+	std::vector<std::size_t> result;
 
 	auto i1 = m_influences.left.lower_bound(index);
 	auto i2 = m_influences.left.upper_bound(index);
 	for(auto i = i1; i != i2; ++i)
-		result.push_back(attr(i->second));
+		result.push_back(i->second);
 
 	return result;
 }
 
-std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(size_t index) const {
-	std::vector<std::reference_wrapper<const Attr>> result;
+std::vector<std::size_t> Metadata::influencedBy(size_t index) const {
+	std::vector<std::size_t> result;
 
 	auto i1 = m_influences.right.lower_bound(index);
 	auto i2 = m_influences.right.upper_bound(index);
 	for(auto i = i1; i != i2; ++i)
-		result.push_back(attr(i->second));
+		result.push_back(i->second);
 
 	return result;
 }

@@ -86,8 +86,8 @@ class Metadata : public boost::noncopyable {
 		virtual void doAddAttribute(Attr& attr);
 
 	private:
-		std::vector<std::reference_wrapper<const Attr>> influences(size_t index) const;
-		std::vector<std::reference_wrapper<const Attr>> influencedBy(size_t index) const;
+		std::vector<std::size_t> influences(size_t index) const;
+		std::vector<std::size_t> influencedBy(size_t index) const;
 
 		std::string m_type;
 		std::vector<Attr> m_attrs;

@@ -38,13 +38,23 @@ void Metadata::addInfluence(const InAttr<T>& in, const OutAttr<U>& out) {
 template<typename T>
 std::vector<std::reference_wrapper<const Attr>> Metadata::influences(const InAttr<T>& in) const {
 	assert(in.isValid());
-	return influences(in.offset());
+
+	std::vector<std::reference_wrapper<const Attr>> result;
+	for(std::size_t i : influences(in.offset()))
+		result.push_back(attr(i));
+
+	return result;
 }
 
 template<typename T>
 std::vector<std::reference_wrapper<const Attr>> Metadata::influencedBy(const OutAttr<T>& out) const {
 	assert(out.isValid());
-	return influencedBy(out.offset());
+
+	std::vector<std::reference_wrapper<const Attr>> result;
+	for(std::size_t i : influencedBy(out.offset()))
+		result.push_back(attr(i));
+
+	return result;
 }
 
 
