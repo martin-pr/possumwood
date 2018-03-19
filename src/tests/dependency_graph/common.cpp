@@ -7,6 +7,7 @@
 #include <dependency_graph/port.inl>
 #include <dependency_graph/metadata.inl>
 #include <dependency_graph/node.inl>
+#include <dependency_graph/metadata_register.h>
 
 using namespace dependency_graph;
 
@@ -76,12 +77,12 @@ const MetadataHandle& additionNode() {
 
 		BOOST_CHECK_NO_THROW(influences = meta->influences(additionInput1));
 		BOOST_REQUIRE_EQUAL(influences.size(), 1u);
-		BOOST_CHECK_EQUAL(&(influences.begin()->get()), &additionOutput);
+		BOOST_CHECK_EQUAL(influences.begin()->get(), additionOutput);
 
 		BOOST_CHECK_NO_THROW(influences = meta->influencedBy(additionOutput));
 		BOOST_REQUIRE_EQUAL(influences.size(), 2u);
-		BOOST_CHECK_EQUAL(&(influences[0].get()), &additionInput1);
-		BOOST_CHECK_EQUAL(&(influences[1].get()), &additionInput2);
+		BOOST_CHECK_EQUAL(influences[0].get(), additionInput1);
+		BOOST_CHECK_EQUAL(influences[1].get(), additionInput2);
 
 		std::function<State(Values&)> additionCompute = [&](Values& data) {
 			const float a = data.get(additionInput1);
@@ -94,6 +95,8 @@ const MetadataHandle& additionNode() {
 		meta->setCompute(additionCompute);
 
 		s_handle = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(meta)));
+
+		dependency_graph::MetadataRegister::singleton().add(*s_handle);
 	}
 
 	return *s_handle;
@@ -103,7 +106,7 @@ const MetadataHandle& multiplicationNode() {
 	static std::unique_ptr<MetadataHandle> s_handle;
 
 	if(s_handle == nullptr) {
-		std::unique_ptr<Metadata> meta(new Metadata("addition"));
+		std::unique_ptr<Metadata> meta(new Metadata("multiplication"));
 
 		static InAttr<float> multiplicationInput1, multiplicationInput2;
 		static OutAttr<float> multiplicationOutput;
@@ -126,6 +129,8 @@ const MetadataHandle& multiplicationNode() {
 		meta->setCompute(multiplicationCompute);
 
 		s_handle = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(meta)));
+
+		dependency_graph::MetadataRegister::singleton().add(*s_handle);
 	}
 
 	return *s_handle;

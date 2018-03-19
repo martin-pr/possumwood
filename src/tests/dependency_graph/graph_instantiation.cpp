@@ -11,6 +11,16 @@ unsigned s_nodeCount = 0;
 
 }
 
+namespace dependency_graph {
+
+static std::ostream& operator << (std::ostream& out, dependency_graph::MetadataHandle h) {
+	std::cout << "Metadata for " << h.metadata().type();
+
+	return out;
+}
+
+}
+
 BOOST_AUTO_TEST_CASE(graph_instantiation) {
 	Graph g;
 
@@ -37,10 +47,10 @@ BOOST_AUTO_TEST_CASE(graph_instantiation) {
 	BOOST_REQUIRE(g.nodes().begin() != g.nodes().end());
 	BOOST_REQUIRE(g.nodes().begin() + 1 == g.nodes().end());
 
-	BOOST_REQUIRE_EQUAL(&(g.nodes()[0].metadata()), &(additionNode()));
+	BOOST_REQUIRE_EQUAL(g.nodes()[0].metadata(), additionNode());
 	BOOST_REQUIRE_EQUAL(g.nodes()[0].name(), "add_1");
 
-	BOOST_REQUIRE_EQUAL(&(g.nodes().begin()->metadata()), &(additionNode()));
+	BOOST_REQUIRE_EQUAL(g.nodes().begin()->metadata(), additionNode());
 	BOOST_REQUIRE_EQUAL(g.nodes().begin()->name(), "add_1");
 
 	BOOST_CHECK_EQUAL(s_nodeCount, 1u);
@@ -59,11 +69,11 @@ BOOST_AUTO_TEST_CASE(graph_instantiation) {
 	for(size_t a = 0; a < 3; ++a)
 		BOOST_REQUIRE_EQUAL(&(g.nodes()[a]), &(*(g.nodes().begin() + a)));
 
-	BOOST_REQUIRE_EQUAL(&(g.nodes()[0].metadata()), &(additionNode()));
+	BOOST_REQUIRE_EQUAL(g.nodes()[0].metadata(), additionNode());
 	BOOST_REQUIRE_EQUAL(g.nodes()[0].name(), "add_1");
-	BOOST_REQUIRE_EQUAL(&(g.nodes()[1].metadata()), &(multiplicationNode()));
+	BOOST_REQUIRE_EQUAL(g.nodes()[1].metadata(), multiplicationNode());
 	BOOST_REQUIRE_EQUAL(g.nodes()[1].name(), "mult_1");
-	BOOST_REQUIRE_EQUAL(&(g.nodes()[2].metadata()), &(additionNode()));
+	BOOST_REQUIRE_EQUAL(g.nodes()[2].metadata(), additionNode());
 	BOOST_REQUIRE_EQUAL(g.nodes()[2].name(), "add_2");
 
 	BOOST_CHECK_EQUAL(s_nodeCount, 3u);
@@ -82,9 +92,9 @@ BOOST_AUTO_TEST_CASE(graph_instantiation) {
 	for(size_t a = 0; a < 2; ++a)
 		BOOST_REQUIRE_EQUAL(&(g.nodes()[a]), &(*(g.nodes().begin() + a)));
 
-	BOOST_REQUIRE_EQUAL(&(g.nodes()[0].metadata()), &(additionNode()));
+	BOOST_REQUIRE_EQUAL(g.nodes()[0].metadata(), additionNode());
 	BOOST_REQUIRE_EQUAL(g.nodes()[0].name(), "add_1");
-	BOOST_REQUIRE_EQUAL(&(g.nodes()[1].metadata()), &(additionNode()));
+	BOOST_REQUIRE_EQUAL(g.nodes()[1].metadata(), additionNode());
 	BOOST_REQUIRE_EQUAL(g.nodes()[1].name(), "add_2");
 
 	BOOST_CHECK_EQUAL(s_nodeCount, 2u);
