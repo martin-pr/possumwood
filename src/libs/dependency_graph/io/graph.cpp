@@ -75,7 +75,7 @@ void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g)
 //////////////
 
 void from_json(const json& j, Graph& g) {
-	std::map<std::string, size_t> nodeIds;
+	std::map<std::string, dependency_graph::UniqueId> nodeIds;
 
 	for(json::const_iterator ni = j["nodes"].begin(); ni != j["nodes"].end(); ++ni) {
 		const json& n = ni.value();
@@ -96,7 +96,8 @@ void from_json(const json& j, Graph& g) {
 
 		adl_serializer<Node>::from_json(n, _node);
 
-		nodeIds[ni.key()] = g.nodes().size()-1;
+		assert(nodeIds.find(ni.key()) == nodeIds.end());
+		nodeIds[ni.key()] = node.index();
 	}
 
 	for(auto& c : j["connections"]) {
