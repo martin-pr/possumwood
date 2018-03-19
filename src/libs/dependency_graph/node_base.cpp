@@ -51,8 +51,8 @@ Graph& NodeBase::graph() {
 	return g;
 }
 
-size_t NodeBase::index() const {
-	return network().nodes().findNodeIndex(*this);
+UniqueId NodeBase::index() const {
+	return m_index;
 }
 
 void NodeBase::markAsDirty(size_t index) {

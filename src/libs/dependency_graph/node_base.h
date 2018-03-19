@@ -7,6 +7,7 @@
 
 #include "data.h"
 #include "state.h"
+#include "unique_id.h"
 
 namespace dependency_graph {
 
@@ -38,7 +39,7 @@ class NodeBase : public boost::noncopyable {
 
 		/// returns the unique numeric ID of this node, used for saving connections.
 		/// This ID can be used in Graph::operator[] to get this node from the graph.
-		size_t index() const;
+		UniqueId index() const;
 
 		virtual const MetadataHandle& metadata() const = 0;
 		virtual const Datablock& datablock() const = 0;
@@ -75,6 +76,7 @@ class NodeBase : public boost::noncopyable {
 
 		std::string m_name;
 		Network* m_network;
+		UniqueId m_index;
 
 		std::unique_ptr<BaseData> m_blindData;
 
