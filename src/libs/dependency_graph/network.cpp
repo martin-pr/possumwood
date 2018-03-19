@@ -5,7 +5,7 @@
 
 namespace dependency_graph {
 
-Network::Network(Network* parent) : NodeBase("network", parent), m_nodes(this) {
+Network::Network(Network* parent) : NodeBase("network", parent), m_nodes(this), m_connections(this) {
 }
 
 Network::~Network() {
