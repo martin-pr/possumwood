@@ -2,7 +2,7 @@
 
 #include <atomic>
 
-namespace possumwood {
+namespace dependency_graph {
 
 UniqueId::UniqueId() {
 	static std::atomic<std::size_t> s_counter;

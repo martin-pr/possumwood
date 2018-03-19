@@ -7,9 +7,9 @@
 
 #include <dependency_graph/node.inl>
 #include <dependency_graph/port.inl>
+#include <dependency_graph/unique_id.h>
 
 #include <possumwood_sdk/app.h>
-#include <possumwood_sdk/unique_id.h>
 
 #include "factory.inl"
 
@@ -72,7 +72,7 @@ class property : public property_base {
 		virtual void set(const T& value) = 0;
 
 	private:
-		static void doSetValue(const possumwood::UniqueId& id, unsigned portId, const T& value) {
+		static void doSetValue(const dependency_graph::UniqueId& id, unsigned portId, const T& value) {
 			auto& node = App::instance().index()[id];
 			node.graphNode->port(portId).set(value);
 		}

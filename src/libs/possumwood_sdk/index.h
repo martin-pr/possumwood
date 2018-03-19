@@ -2,7 +2,7 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <possumwood_sdk/unique_id.h>
+#include <dependency_graph/unique_id.h>
 #include <possumwood_sdk/drawable.h>
 #include <possumwood_sdk/node_data.h>
 #include <dependency_graph/node.h>
@@ -29,10 +29,10 @@ class Index {
 
 		void add(Item&& item);
 
-		void remove(const possumwood::UniqueId& id);
+		void remove(const dependency_graph::UniqueId& id);
 
-		Item& operator[](const possumwood::UniqueId& id);
-		const Item& operator[](const possumwood::UniqueId& id) const;
+		Item& operator[](const dependency_graph::UniqueId& id);
+		const Item& operator[](const dependency_graph::UniqueId& id) const;
 
 		Item& operator[](node_editor::Node* id);
 		const Item& operator[](const node_editor::Node* id) const;
@@ -40,17 +40,17 @@ class Index {
 		Item& operator[](dependency_graph::NodeBase* id);
 		const Item& operator[](const dependency_graph::NodeBase* id) const;
 
-		typedef std::map<possumwood::UniqueId, Item>::const_iterator const_iterator;
+		typedef std::map<dependency_graph::UniqueId, Item>::const_iterator const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
 
 	private:
 		/// this should be implemented using multiindex, but the move semantics in multiindex
 		/// library seem a bit iffy in current version of boost.
-		std::map<possumwood::UniqueId, Item> m_data;
+		std::map<dependency_graph::UniqueId, Item> m_data;
 
-		std::map<const node_editor::Node*, possumwood::UniqueId> m_uiIndex;
-		std::map<const dependency_graph::NodeBase*, possumwood::UniqueId> m_nodeIndex;
+		std::map<const node_editor::Node*, dependency_graph::UniqueId> m_uiIndex;
+		std::map<const dependency_graph::NodeBase*, dependency_graph::UniqueId> m_nodeIndex;
 };
 
 }
