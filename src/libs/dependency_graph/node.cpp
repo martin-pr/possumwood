@@ -12,7 +12,7 @@ Node::Node(const std::string& name, const MetadataHandle& def, Network* parent) 
 		auto& meta = m_meta.metadata().attr(a);
 		assert(meta.offset() == a);
 
-		m_ports.push_back(Port(meta.name(), meta.offset(), this));
+		m_ports.push_back(Port(meta.offset(), this));
 	}
 }
 

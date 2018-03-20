@@ -56,14 +56,14 @@ class Port : public boost::noncopyable {
 		boost::signals2::connection flagsCallback(const std::function<void()>& fn);
 
 	private:
-		Port(const std::string& name, unsigned id, NodeBase* parent);
+		Port(unsigned id, NodeBase* parent);
 
 		void setDirty(bool dirty);
 
-		std::string m_name;
 		unsigned m_id;
 		bool m_dirty;
 		NodeBase* m_parent;
+
 		boost::signals2::signal<void()> m_valueCallbacks, m_flagsCallbacks;
 
 		friend class Node;
