@@ -6,18 +6,18 @@
 namespace dependency_graph {
 
 Port::Port(unsigned id, NodeBase* parent) : m_id(id),
-	m_dirty(parent->metadata().metadata().attr(id).category() == Attr::kOutput), m_parent(parent) {
+	m_dirty(parent->metadata().attr(id).category() == Attr::kOutput), m_parent(parent) {
 }
 
 Port::Port(Port&& p) : m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent) {
 }
 
 const std::string& Port::name() const {
-	return m_parent->metadata().metadata().attr(m_id).name();
+	return m_parent->metadata().attr(m_id).name();
 }
 
 const Attr::Category Port::category() const {
-	return m_parent->metadata().metadata().attr(m_id).category();
+	return m_parent->metadata().attr(m_id).category();
 }
 
 const unsigned Port::index() const {
@@ -25,7 +25,7 @@ const unsigned Port::index() const {
 }
 
 const std::string Port::type() const {
-	return m_parent->metadata().metadata().attr(m_id).type().name();
+	return m_parent->metadata().attr(m_id).type().name();
 }
 
 bool Port::isDirty() const {
@@ -71,7 +71,7 @@ void Port::connect(Port& p) {
 			std::set<Port*> newAddedPorts;
 			for(auto& current : addedPorts) {
 				if(current->category() == Attr::kInput)
-					for(std::size_t i : current->node().metadata().metadata().influences(current->m_id))
+					for(std::size_t i : current->node().metadata().influences(current->m_id))
 						newAddedPorts.insert(&current->node().port(i));
 				else {
 					for(Port& i : current->node().network().connections().connectedTo(*current))

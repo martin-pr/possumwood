@@ -4,7 +4,7 @@
 
 namespace dependency_graph {
 
-NodeBase::NodeBase(const std::string& name, Network* parent) : m_name(name), m_network(parent) {
+NodeBase::NodeBase(const std::string& name, const MetadataHandle& metadata, Network* parent) : m_name(name), m_network(parent), m_metadata(metadata) {
 }
 
 NodeBase::~NodeBase() {
@@ -67,7 +67,7 @@ void NodeBase::markAsDirty(size_t index) {
 		// recurse + handle each port type slightly differently
 		if(p.category() == Attr::kInput) {
 			// all outputs influenced by this input are marked dirty
-			for(std::size_t i : metadata().metadata().influences(p.index()))
+			for(std::size_t i : metadata().influences(p.index()))
 				markAsDirty(i);
 		}
 		else {
@@ -76,6 +76,10 @@ void NodeBase::markAsDirty(size_t index) {
 				o.node().markAsDirty(o.index());
 		}
 	}
+}
+
+const Metadata& NodeBase::metadata() const {
+	return m_metadata.metadata();
 }
 
 }

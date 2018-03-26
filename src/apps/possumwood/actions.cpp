@@ -221,7 +221,7 @@ void Actions::paste(dependency_graph::Selection& selection) {
 
 			const dependency_graph::NodeBase& cn = n;
 			action.addCommand(
-				std::bind(&doCreateNode, std::ref(n.metadata()), n.name(), d, cn.datablock()),
+				std::bind(&doCreateNode, dependency_graph::MetadataHandle(n.metadata()), n.name(), d, cn.datablock()),
 				std::bind(&doRemoveNode, n.blindData<possumwood::NodeData>().id())
 			);
 		}

@@ -17,7 +17,7 @@ NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, const 
 	auto it = m_nodes.insert(std::move(node)).first;
 
 	if(datablock) {
-		assert(datablock->meta() == (*it)->metadata());
+		assert(&datablock->meta().metadata() == &(*it)->metadata());
 		(*it)->setDatablock(*datablock);
 	}
 

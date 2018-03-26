@@ -69,6 +69,9 @@ std::vector<std::size_t> Metadata::influencedBy(size_t index) const {
 MetadataHandle::MetadataHandle(std::unique_ptr<Metadata> m) : m_meta(m.release()) {
 }
 
+MetadataHandle::MetadataHandle(const Metadata& meta) : m_meta(meta.shared_from_this()) {
+}
+
 MetadataHandle::~MetadataHandle() {
 }
 

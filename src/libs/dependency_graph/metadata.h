@@ -30,7 +30,7 @@ class Port;
 
 class MetadataHandle;
 
-class Metadata : public boost::noncopyable {
+class Metadata : public boost::noncopyable, public std::enable_shared_from_this<Metadata> {
 	public:
 		Metadata(const std::string& nodeType);
 		virtual ~Metadata();
@@ -105,6 +105,7 @@ class Metadata : public boost::noncopyable {
 class MetadataHandle {
 	public:
 		MetadataHandle(std::unique_ptr<Metadata> m);
+		MetadataHandle(const Metadata& meta);
 		~MetadataHandle();
 
 		const Metadata& metadata() const;

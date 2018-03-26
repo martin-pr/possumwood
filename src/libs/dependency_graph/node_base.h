@@ -8,11 +8,11 @@
 #include "data.h"
 #include "state.h"
 #include "unique_id.h"
+#include "metadata.h"
 
 namespace dependency_graph {
 
 class Graph;
-class MetadataHandle;
 class Datablock;
 class Node;
 class Nodes;
@@ -41,7 +41,7 @@ class NodeBase : public boost::noncopyable {
 		/// This ID can be used in Graph::operator[] to get this node from the graph.
 		UniqueId index() const;
 
-		virtual const MetadataHandle& metadata() const = 0;
+		const Metadata& metadata() const;
 		virtual const Datablock& datablock() const = 0;
 
 		/// blind per-node data, to be used by the client application
@@ -60,7 +60,7 @@ class NodeBase : public boost::noncopyable {
 		virtual void computeOutput(size_t index) = 0;
 
 	protected:
-		NodeBase(const std::string& name, Network* parent);
+		NodeBase(const std::string& name, const MetadataHandle& metadata, Network* parent);
 
 		virtual Datablock& datablock() = 0;
 		virtual void setDatablock(const Datablock& data) = 0;
@@ -79,6 +79,8 @@ class NodeBase : public boost::noncopyable {
 		UniqueId m_index;
 
 		std::unique_ptr<BaseData> m_blindData;
+
+		MetadataHandle m_metadata;
 
 		// blind data access
 		friend struct io::adl_serializer<Node>;

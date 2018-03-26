@@ -5,7 +5,23 @@
 
 namespace dependency_graph {
 
-Network::Network(Network* parent) : NodeBase("network", parent), m_nodes(this), m_connections(this) {
+namespace {
+
+const MetadataHandle& networkMetadata() {
+	static std::unique_ptr<MetadataHandle> s_handle;
+	if(s_handle == nullptr) {
+		std::unique_ptr<Metadata> meta(new Metadata("network"));
+		s_handle = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(meta)));
+
+		MetadataRegister::singleton().add(*s_handle);
+	}
+
+	return *s_handle;
+}
+
+}
+
+Network::Network(Network* parent) : NodeBase("network", networkMetadata(), parent), m_nodes(this), m_connections(this) {
 }
 
 Network::~Network() {
@@ -68,26 +84,6 @@ Datablock& Network::datablock() {
 void Network::setDatablock(const Datablock& data) {
 	assert(false);
 	throw std::runtime_error("Network has no ports, for now");
-}
-
-namespace {
-
-const MetadataHandle& networkMetadata() {
-	static std::unique_ptr<MetadataHandle> s_handle;
-	if(s_handle == nullptr) {
-		std::unique_ptr<Metadata> meta(new Metadata("network"));
-		s_handle = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(meta)));
-
-		MetadataRegister::singleton().add(*s_handle);
-	}
-
-	return *s_handle;
-}
-
-}
-
-const MetadataHandle& Network::metadata() const {
-	return networkMetadata();
 }
 
 const Datablock& Network::datablock() const {

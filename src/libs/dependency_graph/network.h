@@ -22,7 +22,6 @@ class Network : public NodeBase {
 		virtual const Port& port(size_t index) const override;
 		virtual const size_t portCount() const override;
 
-		virtual const MetadataHandle& metadata() const override;
 		virtual const Datablock& datablock() const override;
 
 		virtual const State& state() const override;
