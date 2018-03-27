@@ -4,7 +4,7 @@
 
 namespace dependency_graph {
 
-NodeBase::NodeBase(const std::string& name, const MetadataHandle& metadata, Network* parent) : m_name(name), m_network(parent), m_metadata(metadata) {
+NodeBase::NodeBase(const std::string& name, const MetadataHandle& metadata, Network* parent) : m_name(name), m_network(parent), m_metadata(metadata), m_data(metadata) {
 }
 
 NodeBase::~NodeBase() {
@@ -80,6 +80,19 @@ void NodeBase::markAsDirty(size_t index) {
 
 const Metadata& NodeBase::metadata() const {
 	return m_metadata.metadata();
+}
+
+const Datablock& NodeBase::datablock() const {
+	return m_data;
+}
+
+Datablock& NodeBase::datablock() {
+	return m_data;
+}
+
+void NodeBase::setDatablock(const Datablock& data) {
+	assert(data.meta() == metadata());
+	m_data = data;
 }
 
 }

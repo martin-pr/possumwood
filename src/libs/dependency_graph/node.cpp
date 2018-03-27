@@ -7,21 +7,13 @@
 
 namespace dependency_graph {
 
-Node::Node(const std::string& name, const MetadataHandle& def, Network* parent) : NodeBase(name, def, parent), m_data(def) {
+Node::Node(const std::string& name, const MetadataHandle& def, Network* parent) : NodeBase(name, def, parent) {
 	for(std::size_t a = 0; a < def.metadata().attributeCount(); ++a) {
 		auto& meta = def.metadata().attr(a);
 		assert(meta.offset() == a);
 
 		m_ports.push_back(Port(meta.offset(), this));
 	}
-}
-
-const Datablock& Node::datablock() const {
-	return m_data;
-}
-
-Datablock& Node::datablock() {
-	return m_data;
 }
 
 Port& Node::port(size_t index) {
@@ -51,8 +43,8 @@ void Node::computeInput(size_t index) {
 	assert(not out->isDirty());
 
 	// assign the value directly
-	m_data.data(index).assign(out->node().datablock().data(out->index()));
-	assert(m_data.data(index).isEqual(out->node().datablock().data(out->index())));
+	datablock().data(index).assign(out->node().datablock().data(out->index()));
+	assert(datablock().data(index).isEqual(out->node().datablock().data(out->index())));
 
 	// run the watcher callbacks
 	m_ports[index].m_valueCallbacks();
@@ -98,7 +90,7 @@ void Node::computeOutput(size_t index) {
 
 	// errored - reset the output to default value
 	if(result.errored())
-		m_data.reset(index);
+		datablock().reset(index);
 
 	// and run the watcher callbacks
 	m_ports[index].m_valueCallbacks();
@@ -113,10 +105,6 @@ void Node::computeOutput(size_t index) {
 
 const State& Node::state() const {
 	return m_state;
-}
-
-void Node::setDatablock(const Datablock& data) {
-	m_data = data;
 }
 
 }

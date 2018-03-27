@@ -76,21 +76,6 @@ void Network::computeOutput(size_t index) {
 	throw std::runtime_error("Network has no ports, for now");
 }
 
-Datablock& Network::datablock() {
-	assert(false);
-	throw std::runtime_error("Network has no ports, for now");
-}
-
-void Network::setDatablock(const Datablock& data) {
-	assert(false);
-	throw std::runtime_error("Network has no ports, for now");
-}
-
-const Datablock& Network::datablock() const {
-	assert(false);
-	throw std::runtime_error("Network has no ports, for now");
-}
-
 const State& Network::state() const {
 	assert(false);
 	throw std::runtime_error("Network has no ports, for now");

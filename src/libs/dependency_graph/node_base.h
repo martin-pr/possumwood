@@ -9,11 +9,11 @@
 #include "state.h"
 #include "unique_id.h"
 #include "metadata.h"
+#include "datablock.h"
 
 namespace dependency_graph {
 
 class Graph;
-class Datablock;
 class Node;
 class Nodes;
 class Network;
@@ -42,7 +42,7 @@ class NodeBase : public boost::noncopyable {
 		UniqueId index() const;
 
 		const Metadata& metadata() const;
-		virtual const Datablock& datablock() const = 0;
+		const Datablock& datablock() const;
 
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)
@@ -62,8 +62,8 @@ class NodeBase : public boost::noncopyable {
 	protected:
 		NodeBase(const std::string& name, const MetadataHandle& metadata, Network* parent);
 
-		virtual Datablock& datablock() = 0;
-		virtual void setDatablock(const Datablock& data) = 0;
+		Datablock& datablock();
+		void setDatablock(const Datablock& data);
 
 		template<typename T>
 		const T& get(size_t index) const;
@@ -81,6 +81,7 @@ class NodeBase : public boost::noncopyable {
 		std::unique_ptr<BaseData> m_blindData;
 
 		MetadataHandle m_metadata;
+		Datablock m_data;
 
 		// blind data access
 		friend struct io::adl_serializer<Node>;
