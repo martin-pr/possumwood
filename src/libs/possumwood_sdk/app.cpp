@@ -9,7 +9,8 @@
 
 #include <dependency_graph/io/graph.h>
 #include <dependency_graph/port.inl>
-#include <dependency_graph/node.inl>
+#include <dependency_graph/node.h>
+#include <dependency_graph/node_base.inl>
 
 #include "node_data.h"
 #include "config.inl"

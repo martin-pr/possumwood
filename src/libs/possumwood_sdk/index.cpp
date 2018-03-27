@@ -1,11 +1,11 @@
 #include "index.h"
 
-#include <dependency_graph/node.inl>
+#include <dependency_graph/node_base.inl>
 
 namespace possumwood {
 
 void Index::add(Item&& item) {
-	const possumwood::UniqueId id = item.graphNode->blindData<possumwood::NodeData>().id();
+	const dependency_graph::UniqueId id = item.graphNode->blindData<possumwood::NodeData>().id();
 
 	assert(m_data.find(id) == m_data.end());
 	auto it = m_data.insert(std::make_pair(id, std::move(item))).first;
@@ -17,7 +17,7 @@ void Index::add(Item&& item) {
 	m_nodeIndex.insert(std::make_pair(it->second.graphNode, id));
 }
 
-void Index::remove(const possumwood::UniqueId& id) {
+void Index::remove(const dependency_graph::UniqueId& id) {
 	auto it = m_data.find(id);
 	assert(it != m_data.end());
 
@@ -32,13 +32,13 @@ void Index::remove(const possumwood::UniqueId& id) {
 	m_data.erase(it);
 }
 
-Index::Item& Index::operator[](const possumwood::UniqueId& id) {
+Index::Item& Index::operator[](const dependency_graph::UniqueId& id) {
 	auto it = m_data.find(id);
 	assert(it != m_data.end());
 	return it->second;
 }
 
-const Index::Item& Index::operator[](const possumwood::UniqueId& id) const {
+const Index::Item& Index::operator[](const dependency_graph::UniqueId& id) const {
 	auto it = m_data.find(id);
 	assert(it != m_data.end());
 	return it->second;

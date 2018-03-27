@@ -5,19 +5,15 @@
 
 namespace dependency_graph {
 
-Port::Port(const std::string& name, unsigned id, NodeBase* parent) :
-	m_name(name), m_id(id), m_parent(parent) {
-
-	m_dirty = category() == Attr::kOutput;
-
+Port::Port(unsigned id, NodeBase* parent) : m_id(id),
+	m_dirty(parent->metadata().attr(id).category() == Attr::kOutput), m_parent(parent) {
 }
 
-Port::Port(Port&& p) : m_name(std::move(p.m_name)), m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent) {
-
+Port::Port(Port&& p) : m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent) {
 }
 
 const std::string& Port::name() const {
-	return m_name;
+	return m_parent->metadata().attr(m_id).name();
 }
 
 const Attr::Category Port::category() const {
@@ -75,8 +71,8 @@ void Port::connect(Port& p) {
 			std::set<Port*> newAddedPorts;
 			for(auto& current : addedPorts) {
 				if(current->category() == Attr::kInput)
-					for(const Attr& i : current->node().metadata().influences(current->m_id))
-						newAddedPorts.insert(&current->node().port(i.offset()));
+					for(std::size_t i : current->node().metadata().influences(current->m_id))
+						newAddedPorts.insert(&current->node().port(i));
 				else {
 					for(Port& i : current->node().network().connections().connectedTo(*current))
 						newAddedPorts.insert(&i);
@@ -85,7 +81,8 @@ void Port::connect(Port& p) {
 
 			if(newAddedPorts.find(this) != newAddedPorts.end()) {
 				std::stringstream msg;
-				msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() << " would cause a cyclical dependency";
+				msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
+				    " would cause a cyclical dependency";
 
 				throw(std::runtime_error(msg.str()));
 			}
@@ -97,13 +94,14 @@ void Port::connect(Port& p) {
 	// test for datatype
 	if(type() != p.type()) {
 		std::stringstream msg;
-		msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() << " does not connect the same datatype";
+		msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
+		    " does not connect the same datatype";
 
 		throw(std::runtime_error(msg.str()));
 	}
 
 	// add the connection
- 	p.m_parent->network().connections().add(*this, p);
+	p.m_parent->network().connections().add(*this, p);
 	// and mark the "connected to" as dirty - will most likely need recomputation
 	// TODO: compare values, before marking it dirty wholesale?
 	p.node().markAsDirty(p.index());

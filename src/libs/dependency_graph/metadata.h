@@ -28,22 +28,10 @@ class Node;
 class NodeBase;
 class Port;
 
-class Metadata : public boost::noncopyable {
-	private:
-		struct Comparator {
-			bool operator()(const Metadata* m1, const Metadata* m2) const {
-				return m1->type() < m2->type();
-			}
-		};
+class MetadataHandle;
 
+class Metadata : public boost::noncopyable, public std::enable_shared_from_this<Metadata> {
 	public:
-		typedef boost::indirect_iterator<std::set<Metadata*, Comparator>::const_iterator> const_iterator;
-
-		/// returns all existing instances. Used for enumerating all instantiable nodes.
-		static boost::iterator_range<const_iterator> instances();
-		/// returns a single metadata instance (throws if not found)
-		static const Metadata& instance(const std::string& nodeType);
-
 		Metadata(const std::string& nodeType);
 		virtual ~Metadata();
 
@@ -98,27 +86,35 @@ class Metadata : public boost::noncopyable {
 		virtual void doAddAttribute(Attr& attr);
 
 	private:
-		std::vector<std::reference_wrapper<const Attr>> influences(size_t index) const;
-		std::vector<std::reference_wrapper<const Attr>> influencedBy(size_t index) const;
+		std::vector<std::size_t> influences(size_t index) const;
+		std::vector<std::size_t> influencedBy(size_t index) const;
 
 		std::string m_type;
-		std::vector<Attr*> m_attrs; // not owning the attr instances
+		std::vector<Attr> m_attrs;
 		std::function<State(Values&)> m_compute;
 
 		boost::bimap<boost::bimaps::multiset_of<unsigned>, boost::bimaps::multiset_of<unsigned>> m_influences;
 
-
-		class Register;
-
-		static Register& instanceSet();
-		bool m_registered;
-
-		void doRegister();
-		void doUnregister();
-
 		friend class Node;
 		friend class NodeBase;
 		friend class Port;
+};
+
+/// Just a wrapper over an std::shared_ptr, which might eventually implement
+/// a variant of copy-on-write paradigm.
+class MetadataHandle {
+	public:
+		MetadataHandle(std::unique_ptr<Metadata> m);
+		MetadataHandle(const Metadata& meta);
+		~MetadataHandle();
+
+		const Metadata& metadata() const;
+
+		bool operator == (const MetadataHandle& h) const;
+		bool operator != (const MetadataHandle& h) const;
+
+	private:
+		std::shared_ptr<const Metadata> m_meta;
 };
 
 }

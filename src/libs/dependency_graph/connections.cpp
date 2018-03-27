@@ -5,6 +5,21 @@
 
 namespace dependency_graph {
 
+Connections::PortId Connections::getId(const Port& p) const {
+	return Connections::PortId{p.node().index(), p.index()};
+}
+
+const Port& Connections::getPort(const Connections::PortId& id) const {
+	return m_parent->nodes()[id.nodeIndex].port(id.portIndex);
+}
+
+Port& Connections::getPort(const Connections::PortId& id) {
+	return m_parent->nodes()[id.nodeIndex].port(id.portIndex);
+}
+
+Connections::Connections(Network* parent) : m_parent(parent) {
+}
+
 void Connections::add(Port& src, Port& dest) {
 	if(src.category() != Attr::kOutput)
 		throw std::runtime_error("Attempting to connect an input as the origin of a connection.");
@@ -13,7 +28,7 @@ void Connections::add(Port& src, Port& dest) {
 		throw std::runtime_error("Attempting to connect an output as the target of a connection.");
 
 	// make a new connection
-	m_connections.left.insert(std::make_pair(&src, &dest));
+	m_connections.left.insert(std::make_pair(getId(src), getId(dest)));
 
 	// and run the callback
 	m_onConnect(src, dest);
@@ -27,8 +42,8 @@ void Connections::remove(Port& src, Port& dest) {
 		throw std::runtime_error("Attempting to connect an output as the target of a connection.");
 
 	// try to find the connection (from right - only one connection allowed that way)
-	auto it = m_connections.right.find(&dest);
-	if((it == m_connections.right.end()) || (it->second != &src))
+	auto it = m_connections.right.find(getId(dest));
+	if((it == m_connections.right.end()) || (it->second != getId(src)))
 		throw std::runtime_error("Attempting to remove a non-existing connection.");
 
 	// run the callback
@@ -42,8 +57,8 @@ void Connections::purge(const NodeBase& n) {
 	// remove all connections related to a node
 	auto it = m_connections.left.begin();
 	while(it != m_connections.left.end())
-		if((&(it->first->node()) == &n) || (&(it->second->node()) == &n)) {
-			m_onDisconnect(*it->first, *it->second);
+		if(it->first.nodeIndex == n.index() || it->second.nodeIndex == n.index()) {
+			m_onDisconnect(getPort(it->first), getPort(it->second));
 
 			// remove the iterator
 			it = m_connections.left.erase(it);
@@ -57,13 +72,13 @@ boost::optional<const Port&> Connections::connectedFrom(const Port& p) const {
 		throw std::runtime_error("Connected From request can be only run on input ports.");
 
 	// ugly const casts, to keep const-correctness, ironically
-	auto it = m_connections.right.lower_bound(const_cast<Port*>(&p));
+	auto it = m_connections.right.lower_bound(getId(p));
 
-	if((it == m_connections.right.end()) || (it->first != &p))
+	if((it == m_connections.right.end()) || (it->first != getId(p)))
 		return boost::optional<const Port&>();
 	else {
-		assert(m_connections.right.count(const_cast<Port*>(&p)) == 1);
-		return *it->second;
+		assert(m_connections.right.count(getId(p)) == 1);
+		return getPort(it->second);
 	}
 }
 
@@ -72,12 +87,12 @@ std::vector<std::reference_wrapper<const Port>> Connections::connectedTo(const P
 		throw std::runtime_error("Connected To request can be only run on output ports.");
 
 	// ugly const casts, to keep const-correctness, ironically
-	auto it1 = m_connections.left.lower_bound(const_cast<Port*>(&p));
-	auto it2 = m_connections.left.upper_bound(const_cast<Port*>(&p));
+	auto it1 = m_connections.left.lower_bound(getId(p));
+	auto it2 = m_connections.left.upper_bound(getId(p));
 
 	std::vector<std::reference_wrapper<const Port>> result;
 	for(auto it = it1; it != it2; ++it)
-		result.push_back(std::cref(*it->second));
+		result.push_back(std::cref(getPort(it->second)));
 	return result;
 }
 
@@ -86,13 +101,13 @@ boost::optional<Port&> Connections::connectedFrom(Port& p) {
 		throw std::runtime_error("Connected From request can be only run on input ports.");
 
 	// ugly const casts, to keep const-correctness, ironically
-	auto it = m_connections.right.lower_bound(&p);
+	auto it = m_connections.right.lower_bound(getId(p));
 
-	if((it == m_connections.right.end()) || (it->first != &p))
+	if((it == m_connections.right.end()) || (it->first != getId(p)))
 		return boost::optional<Port&>();
 	else {
-		assert(m_connections.right.count(&p) == 1);
-		return *it->second;
+		assert(m_connections.right.count(getId(p)) == 1);
+		return getPort(it->second);
 	}
 }
 
@@ -100,12 +115,12 @@ std::vector<std::reference_wrapper<Port>> Connections::connectedTo(Port& p) {
 	if(p.category() != Attr::kOutput)
 		throw std::runtime_error("Connected To request can be only run on output ports.");
 
-	auto it1 = m_connections.left.lower_bound(&p);
-	auto it2 = m_connections.left.upper_bound(&p);
+	auto it1 = m_connections.left.lower_bound(getId(p));
+	auto it2 = m_connections.left.upper_bound(getId(p));
 
 	std::vector<std::reference_wrapper<Port>> result;
 	for(auto it = it1; it != it2; ++it)
-		result.push_back(std::ref(*it->second));
+		result.push_back(std::ref(getPort(it->second)));
 	return result;
 }
 
@@ -117,38 +132,48 @@ bool Connections::empty() const {
 	return m_connections.empty();
 }
 
-namespace {
-	/// dereferencing function to convert internal connection representation to a pair of port references
-	const std::pair<const Port&, const Port&> convert(const Connections::connections_container::left_value_type& val)	{
-		const Port& left = *val.first;
-		const Port& right = *val.second;
+/// dereferencing function to convert internal connection representation to a pair of port references
+const std::pair<const Port&, const Port&> Connections::convert(const Connections::connections_container::left_value_type& val) const {
+	const Port& left = getPort(val.first);
+	const Port& right = getPort(val.second);
 
-		return std::pair<const Port&, const Port&>(left, right);
-	}
+	return std::pair<const Port&, const Port&>(left, right);
+}
 
-	/// dereferencing function to convert internal connection representation to a pair of port references
-	const std::pair<Port&, Port&> convertConst(const Connections::connections_container::left_value_type& val)	{
-		Port& left = *val.first;
-		Port& right = *val.second;
+/// dereferencing function to convert internal connection representation to a pair of port references
+const std::pair<Port&, Port&> Connections::convertConst(const Connections::connections_container::left_value_type& val) {
+	Port& left = getPort(val.first);
+	Port& right = getPort(val.second);
 
-		return std::pair<Port&, Port&>(left, right);
-	}
+	return std::pair<Port&, Port&>(left, right);
 }
 
 Connections::const_iterator Connections::begin() const {
-	return const_iterator(m_connections.left.begin(), convert);
+	auto fn = [this](const Connections::connections_container::left_value_type& val) {
+		return convert(val);
+	};
+	return const_iterator(m_connections.left.begin(), fn);
 }
 
 Connections::const_iterator Connections::end() const {
-	return const_iterator(m_connections.left.end(), convert);
+	auto fn = [this](const Connections::connections_container::left_value_type& val) {
+		return convert(val);
+	};
+	return const_iterator(m_connections.left.end(), fn);
 }
 
 Connections::iterator Connections::begin() {
-	return iterator(m_connections.left.begin(), convertConst);
+	auto fn = [this](const Connections::connections_container::left_value_type& val) {
+		return convertConst(val);
+	};
+	return iterator(m_connections.left.begin(), fn);
 }
 
 Connections::iterator Connections::end() {
-	return iterator(m_connections.left.end(), convertConst);
+	auto fn = [this](const Connections::connections_container::left_value_type& val) {
+		return convertConst(val);
+	};
+	return iterator(m_connections.left.end(), fn);
 }
 
 boost::signals2::connection Connections::onConnect(std::function<void(Port&, Port&)> callback) {

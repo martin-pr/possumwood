@@ -14,7 +14,7 @@
 
 namespace possumwood {
 
-class Metadata : private dependency_graph::Metadata {
+class Metadata : public dependency_graph::Metadata {
 	public:
 		Metadata(const std::string& nodeType);
 		virtual ~Metadata();

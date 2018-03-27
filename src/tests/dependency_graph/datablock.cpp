@@ -29,19 +29,21 @@ using namespace dependency_graph;
 
 BOOST_AUTO_TEST_CASE(datablock_read_and_write) {
 	// construct the metadata
-	Metadata meta("test_type");
+	std::unique_ptr<Metadata> ptr(new Metadata("test_type"));
 
 	InAttr<float> in1;
-	meta.addAttribute(in1, "input_1");
+	ptr->addAttribute(in1, "input_1");
 
 	InAttr<TestStruct> in2;
-	meta.addAttribute(in2, "input_2");
+	ptr->addAttribute(in2, "input_2");
 
 	OutAttr<float> out1;
-	meta.addAttribute(out1, "output_1");
+	ptr->addAttribute(out1, "output_1");
 
 	OutAttr<TestStruct> out2;
-	meta.addAttribute(out2, "output_2");
+	ptr->addAttribute(out2, "output_2");
+
+	std::unique_ptr<MetadataHandle> meta = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(ptr)));
 
 
 	// check that the TestStructs work as expected
@@ -56,7 +58,7 @@ BOOST_AUTO_TEST_CASE(datablock_read_and_write) {
 
 
 	// get and set a few values
-	Datablock data(meta);
+	Datablock data(*meta);
 
 	{
 		BOOST_CHECK(data.get<float>(in1.offset()) != 33.0f);

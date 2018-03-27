@@ -7,39 +7,7 @@
 
 namespace dependency_graph {
 
-Node::Node(const std::string& name, const Metadata* def, Network* parent) : NodeBase(name, parent), m_meta(def), m_data(*m_meta) {
-	for(std::size_t a = 0; a < m_meta->attributeCount(); ++a) {
-		auto& meta = m_meta->attr(a);
-		assert(meta.offset() == a);
-
-		m_ports.push_back(Port(meta.name(), meta.offset(), this));
-	}
-}
-
-const Metadata& Node::metadata() const {
-	return *m_meta;
-}
-
-const Datablock& Node::datablock() const {
-	return m_data;
-}
-
-Datablock& Node::datablock() {
-	return m_data;
-}
-
-Port& Node::port(size_t index) {
-	assert(index < m_ports.size());
-	return m_ports[index];
-}
-
-const Port& Node::port(size_t index) const {
-	assert(index < m_ports.size());
-	return m_ports[index];
-}
-
-const size_t Node::portCount() const {
-	return m_ports.size();
+Node::Node(const std::string& name, const MetadataHandle& def, Network* parent) : NodeBase(name, def, parent) {
 }
 
 void Node::computeInput(size_t index) {
@@ -55,11 +23,13 @@ void Node::computeInput(size_t index) {
 	assert(not out->isDirty());
 
 	// assign the value directly
-	m_data.data(index).assign(out->node().datablock().data(out->index()));
-	assert(m_data.data(index).isEqual(out->node().datablock().data(out->index())));
+	const NodeBase& srcNode = out->node();
+	const Datablock& srcData = srcNode.datablock();
+	datablock().data(index).assign(srcData.data(out->index()));
+	assert(datablock().data(index).isEqual(srcData.data(out->index())));
 
 	// run the watcher callbacks
-	m_ports[index].m_valueCallbacks();
+	port(index).m_valueCallbacks();
 
 	// and mark as not dirty
 	port(index).setDirty(false);
@@ -71,18 +41,18 @@ void Node::computeOutput(size_t index) {
 	assert(port(index).isDirty() && "output should be dirty for recomputation");
 
 	// first, figure out which inputs need pulling, if any
-	std::vector<std::reference_wrapper<const Attr>> inputs = m_meta->influencedBy(index);
+	std::vector<std::size_t> inputs = metadata().influencedBy(index);
 
 	// pull on all inputs
-	for(const Attr& i : inputs) {
-		if(port(i.offset()).isDirty()) {
-			if(port(i.offset()).isConnected())
-				computeInput(i.offset());
+	for(std::size_t& i : inputs) {
+		if(port(i).isDirty()) {
+			if(port(i).isConnected())
+				computeInput(i);
 			else
-				port(i.offset()).setDirty(false);
+				port(i).setDirty(false);
 		}
 
-		assert(!port(i.offset()).isDirty());
+		assert(!port(i).isDirty());
 	}
 
 	// now run compute, as all inputs are fine
@@ -90,7 +60,7 @@ void Node::computeOutput(size_t index) {
 	State result;
 	try {
 		Values vals(*this);
-		result = m_meta->m_compute(vals);
+		result = metadata().m_compute(vals);
 	}
 	catch(std::exception& e) {
 		result.addError(e.what());
@@ -102,10 +72,10 @@ void Node::computeOutput(size_t index) {
 
 	// errored - reset the output to default value
 	if(result.errored())
-		m_data.reset(index);
+		datablock().reset(index);
 
 	// and run the watcher callbacks
-	m_ports[index].m_valueCallbacks();
+	port(index).m_valueCallbacks();
 
 	// if the state changed, run state changed callback
 	if(result != m_state) {
@@ -117,10 +87,6 @@ void Node::computeOutput(size_t index) {
 
 const State& Node::state() const {
 	return m_state;
-}
-
-void Node::setDatablock(const Datablock& data) {
-	m_data = data;
 }
 
 }

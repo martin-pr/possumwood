@@ -7,7 +7,7 @@
 #include <QMainWindow>
 
 #include <dependency_graph/io/graph.h>
-#include <dependency_graph/node.inl>
+#include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
 
 #include <possumwood_sdk/app.h>
@@ -16,7 +16,7 @@
 
 namespace {
 
-dependency_graph::NodeBase& findNode(const possumwood::UniqueId& id) {
+dependency_graph::NodeBase& findNode(const dependency_graph::UniqueId& id) {
 	// we will need the Index instance to map between node IDs and their pointers
 	possumwood::Index& index = possumwood::App::instance().index();
 
@@ -24,14 +24,14 @@ dependency_graph::NodeBase& findNode(const possumwood::UniqueId& id) {
 	return *index[id].graphNode;
 }
 
-void doCreateNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
+void doCreateNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
 	if(data)
-		assert(&data->meta() == &meta);
+		assert(data->meta() == meta);
 
 	possumwood::App::instance().graph().nodes().add(meta, name, blindData, data);
 }
 
-void doRemoveNode(const possumwood::UniqueId& id) {
+void doRemoveNode(const dependency_graph::UniqueId& id) {
 	auto& graph = possumwood::App::instance().graph();
 	auto it = std::find_if(graph.nodes().begin(), graph.nodes().end(), [&](const dependency_graph::NodeBase & i) {
 		return i.blindData<possumwood::NodeData>().id() == id;
@@ -42,21 +42,21 @@ void doRemoveNode(const possumwood::UniqueId& id) {
 	graph.nodes().erase(it);
 }
 
-void doConnect(const possumwood::UniqueId& fromNode, std::size_t fromPort, const possumwood::UniqueId& toNode, std::size_t toPort) {
+void doConnect(const dependency_graph::UniqueId& fromNode, std::size_t fromPort, const dependency_graph::UniqueId& toNode, std::size_t toPort) {
 	dependency_graph::NodeBase& from = findNode(fromNode);
 	dependency_graph::NodeBase& to = findNode(toNode);
 
 	from.port(fromPort).connect(to.port(toPort));
 }
 
-void doDisconnect(const possumwood::UniqueId& fromNode, std::size_t fromPort, const possumwood::UniqueId& toNode, std::size_t toPort) {
+void doDisconnect(const dependency_graph::UniqueId& fromNode, std::size_t fromPort, const dependency_graph::UniqueId& toNode, std::size_t toPort) {
 	dependency_graph::NodeBase& from = findNode(fromNode);
 	dependency_graph::NodeBase& to = findNode(toNode);
 
 	from.port(fromPort).disconnect(to.port(toPort));
 }
 
-void doSetBlindData(const possumwood::UniqueId& node, const possumwood::NodeData& blindData) {
+void doSetBlindData(const dependency_graph::UniqueId& node, const possumwood::NodeData& blindData) {
 	dependency_graph::NodeBase& n = findNode(node);
 	n.setBlindData(blindData);
 }
@@ -65,7 +65,7 @@ void doSetBlindData(const possumwood::UniqueId& node, const possumwood::NodeData
 
 /////////////////////////////////////////////////////////////////////
 
-void Actions::createNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& _data) {
+void Actions::createNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data) {
 	possumwood::NodeData data;
 	data.setPosition(_data.position());
 
@@ -221,15 +221,15 @@ void Actions::paste(dependency_graph::Selection& selection) {
 
 			const dependency_graph::NodeBase& cn = n;
 			action.addCommand(
-				std::bind(&doCreateNode, std::ref(n.metadata()), n.name(), d, cn.datablock()),
+				std::bind(&doCreateNode, dependency_graph::MetadataHandle(n.metadata()), n.name(), d, cn.datablock()),
 				std::bind(&doRemoveNode, n.blindData<possumwood::NodeData>().id())
 			);
 		}
 
 		// add all connetions, based on "unique" IDs
 		for(auto& c : graph.connections()) {
-			possumwood::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
-			possumwood::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
+			dependency_graph::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
+			dependency_graph::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
 
 			action.addCommand(
 				std::bind(&doConnect, id1, c.first.index(), id2, c.second.index()),
@@ -254,8 +254,8 @@ void Actions::paste(dependency_graph::Selection& selection) {
 			selection.addNode(*index[n.blindData<possumwood::NodeData>().id()].graphNode);
 
 		for(auto& c : graph.connections()) {
-			possumwood::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
-			possumwood::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
+			dependency_graph::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
+			dependency_graph::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
 
 			dependency_graph::NodeBase& n1 = *index[id1].graphNode;
 			dependency_graph::NodeBase& n2 = *index[id2].graphNode;

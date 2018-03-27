@@ -2,6 +2,7 @@
 
 #include "node.h"
 #include "io.h"
+#include "../metadata_register.h"
 
 namespace dependency_graph { namespace io {
 
@@ -74,7 +75,7 @@ void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g)
 //////////////
 
 void from_json(const json& j, Graph& g) {
-	std::map<std::string, size_t> nodeIds;
+	std::map<std::string, dependency_graph::UniqueId> nodeIds;
 
 	for(json::const_iterator ni = j["nodes"].begin(); ni != j["nodes"].end(); ++ni) {
 		const json& n = ni.value();
@@ -87,14 +88,16 @@ void from_json(const json& j, Graph& g) {
 			io::fromJson(n["blind_data"]["value"], *blindData);
 		}
 
-		NodeBase& node = g.nodes().add(Metadata::instance(n["type"].get<std::string>()), n["name"].get<std::string>(), std::move(blindData));
+		const MetadataHandle& meta = MetadataRegister::singleton()[n["type"].get<std::string>()];
+		NodeBase& node = g.nodes().add(meta, n["name"].get<std::string>(), std::move(blindData));
 
 		// temporary code
 		Node& _node = dynamic_cast<Node&>(node);
 
 		adl_serializer<Node>::from_json(n, _node);
 
-		nodeIds[ni.key()] = g.nodes().size()-1;
+		assert(nodeIds.find(ni.key()) == nodeIds.end());
+		nodeIds[ni.key()] = node.index();
 	}
 
 	for(auto& c : j["connections"]) {

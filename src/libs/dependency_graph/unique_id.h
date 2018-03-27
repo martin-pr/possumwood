@@ -1,8 +1,8 @@
 #pragma once
 
-#include <cstddef>
+#include <atomic>
 
-namespace possumwood {
+namespace dependency_graph {
 
 /// A simple unique ID class to replace raw pointers in the Adaptor class.
 /// Allows to re-create links between UI and the data model in an undo queue,

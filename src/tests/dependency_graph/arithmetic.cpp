@@ -6,7 +6,8 @@
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata.inl>
-#include <dependency_graph/node.inl>
+#include <dependency_graph/node.h>
+#include <dependency_graph/node_base.inl>
 #include <dependency_graph/values.inl>
 #include <dependency_graph/io/graph.h>
 #include <dependency_graph/port.inl>
@@ -34,9 +35,9 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	// addition node
 
 	// metadata for a simple addition node
-	const Metadata& addition = additionNode();
+	const MetadataHandle& addition = additionNode();
 	// and for a simple multiplication node
-	const Metadata& multiplication = multiplicationNode();
+	const MetadataHandle& multiplication = multiplicationNode();
 
 	/////////////////////////////
 	// build a simple graph for (a + b) * c + (a + b) * d

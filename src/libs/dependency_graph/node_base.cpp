@@ -4,7 +4,13 @@
 
 namespace dependency_graph {
 
-NodeBase::NodeBase(const std::string& name, Network* parent) : m_name(name), m_network(parent) {
+NodeBase::NodeBase(const std::string& name, const MetadataHandle& metadata, Network* parent) : m_name(name), m_network(parent), m_metadata(metadata), m_data(metadata) {
+	for(std::size_t a = 0; a < metadata.metadata().attributeCount(); ++a) {
+		auto& meta = metadata.metadata().attr(a);
+		assert(meta.offset() == a);
+
+		m_ports.push_back(Port(meta.offset(), this));
+	}
 }
 
 NodeBase::~NodeBase() {
@@ -51,8 +57,8 @@ Graph& NodeBase::graph() {
 	return g;
 }
 
-size_t NodeBase::index() const {
-	return network().nodes().findNodeIndex(*this);
+UniqueId NodeBase::index() const {
+	return m_index;
 }
 
 void NodeBase::markAsDirty(size_t index) {
@@ -67,8 +73,8 @@ void NodeBase::markAsDirty(size_t index) {
 		// recurse + handle each port type slightly differently
 		if(p.category() == Attr::kInput) {
 			// all outputs influenced by this input are marked dirty
-			for(const Attr& i : metadata().influences(p.index()))
-				markAsDirty(i.offset());
+			for(std::size_t i : metadata().influences(p.index()))
+				markAsDirty(i);
 		}
 		else {
 			// all inputs connected to this output are marked dirty
@@ -76,6 +82,37 @@ void NodeBase::markAsDirty(size_t index) {
 				o.node().markAsDirty(o.index());
 		}
 	}
+}
+
+const Metadata& NodeBase::metadata() const {
+	return m_metadata.metadata();
+}
+
+const Datablock& NodeBase::datablock() const {
+	return m_data;
+}
+
+Datablock& NodeBase::datablock() {
+	return m_data;
+}
+
+void NodeBase::setDatablock(const Datablock& data) {
+	assert(data.meta() == metadata());
+	m_data = data;
+}
+
+Port& NodeBase::port(size_t index) {
+	assert(index < m_ports.size());
+	return m_ports[index];
+}
+
+const Port& NodeBase::port(size_t index) const {
+	assert(index < m_ports.size());
+	return m_ports[index];
+}
+
+const size_t NodeBase::portCount() const {
+	return m_ports.size();
 }
 
 }

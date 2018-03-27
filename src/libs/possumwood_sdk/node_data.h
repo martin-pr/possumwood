@@ -3,14 +3,14 @@
 #include <QPoint>
 
 #include "io.h"
-#include "unique_id.h"
+#include <dependency_graph/unique_id.h>
 #include "traits.h"
 
 namespace possumwood {
 
 class NodeData {
 	public:
-		NodeData(const QPointF& p = QPointF(0, 0), const UniqueId& i = UniqueId()) : m_position(p), m_id(i) {
+		NodeData(const QPointF& p = QPointF(0, 0), const dependency_graph::UniqueId& i = dependency_graph::UniqueId()) : m_position(p), m_id(i) {
 		}
 
 		const QPointF& position() const {
@@ -21,7 +21,7 @@ class NodeData {
 			m_position = p;
 		}
 
-		const UniqueId& id() const {
+		const dependency_graph::UniqueId& id() const {
 			return m_id;
 		}
 
@@ -35,7 +35,7 @@ class NodeData {
 
 	private:
 		QPointF m_position;
-		UniqueId m_id;
+		dependency_graph::UniqueId m_id;
 };
 
 template<>

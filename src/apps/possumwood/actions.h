@@ -6,7 +6,7 @@
 #include <possumwood_sdk/undo_stack.h>
 
 struct Actions {
-	static void createNode(const dependency_graph::Metadata& meta, const std::string& name, const possumwood::NodeData& data);
+	static void createNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& data);
 	static void removeNode(dependency_graph::NodeBase& node);
 
 	static void connect(dependency_graph::Port& p1, dependency_graph::Port& p2);
