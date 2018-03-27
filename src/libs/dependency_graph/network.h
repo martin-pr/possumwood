@@ -18,10 +18,6 @@ class Network : public NodeBase {
 		Connections& connections();
 		const Connections& connections() const;
 
-		virtual Port& port(size_t index) override;
-		virtual const Port& port(size_t index) const override;
-		virtual const size_t portCount() const override;
-
 		virtual const State& state() const override;
 
 	protected:

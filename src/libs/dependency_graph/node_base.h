@@ -33,9 +33,9 @@ class NodeBase : public boost::noncopyable {
 		const Graph& graph() const;
 		Graph& graph();
 
-		virtual Port& port(size_t index) = 0;
-		virtual const Port& port(size_t index) const = 0;
-		virtual const size_t portCount() const = 0;
+		Port& port(size_t index);
+		const Port& port(size_t index) const;
+		const size_t portCount() const;
 
 		/// returns the unique numeric ID of this node, used for saving connections.
 		/// This ID can be used in Graph::operator[] to get this node from the graph.
@@ -82,11 +82,11 @@ class NodeBase : public boost::noncopyable {
 
 		MetadataHandle m_metadata;
 		Datablock m_data;
+		std::vector<Port> m_ports;
 
 		// blind data access
 		friend struct io::adl_serializer<Node>;
 		friend class Nodes;
-		friend class Node;
 		friend class Port;
 };
 

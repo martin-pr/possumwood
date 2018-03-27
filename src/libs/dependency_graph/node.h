@@ -20,10 +20,6 @@ class Network;
 
 class Node : public NodeBase {
 	public:
-		virtual Port& port(size_t index) override;
-		virtual const Port& port(size_t index) const override;
-		virtual const size_t portCount() const override;
-
 		/// returns the current state of the node (as returned by last compute() evaluation)
 		virtual const State& state() const override;
 
@@ -34,8 +30,6 @@ class Node : public NodeBase {
 		virtual void computeOutput(size_t index) override;
 
 	private:
-		std::vector<Port> m_ports;
-
 		State m_state;
 
 		friend class Graph;

@@ -5,6 +5,12 @@
 namespace dependency_graph {
 
 NodeBase::NodeBase(const std::string& name, const MetadataHandle& metadata, Network* parent) : m_name(name), m_network(parent), m_metadata(metadata), m_data(metadata) {
+	for(std::size_t a = 0; a < metadata.metadata().attributeCount(); ++a) {
+		auto& meta = metadata.metadata().attr(a);
+		assert(meta.offset() == a);
+
+		m_ports.push_back(Port(meta.offset(), this));
+	}
 }
 
 NodeBase::~NodeBase() {
@@ -93,6 +99,20 @@ Datablock& NodeBase::datablock() {
 void NodeBase::setDatablock(const Datablock& data) {
 	assert(data.meta() == metadata());
 	m_data = data;
+}
+
+Port& NodeBase::port(size_t index) {
+	assert(index < m_ports.size());
+	return m_ports[index];
+}
+
+const Port& NodeBase::port(size_t index) const {
+	assert(index < m_ports.size());
+	return m_ports[index];
+}
+
+const size_t NodeBase::portCount() const {
+	return m_ports.size();
 }
 
 }

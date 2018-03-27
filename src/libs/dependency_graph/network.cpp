@@ -52,20 +52,6 @@ const Connections& Network::connections() const {
 	return m_connections;
 }
 
-Port& Network::port(size_t index) {
-	assert(false);
-	throw std::runtime_error("Network has no ports, for now");
-}
-
-const Port& Network::port(size_t index) const {
-	assert(false);
-	throw std::runtime_error("Network has no ports, for now");
-}
-
-const size_t Network::portCount() const {
-	return 0;
-}
-
 void Network::computeInput(size_t index) {
 	assert(false);
 	throw std::runtime_error("Network has no ports, for now");
