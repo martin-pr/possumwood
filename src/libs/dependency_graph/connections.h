@@ -61,9 +61,6 @@ class Connections : public boost::noncopyable {
 		///   to input ports connected to this output)
 		std::vector<std::reference_wrapper<Port>> connectedTo(Port& p);
 
-		void add(Port& src, Port& dest);
-		void remove(Port& src, Port& dest);
-
 		/// remove all connections related to a node (both in and out)
 		void purge(const NodeBase& n);
 
@@ -108,6 +105,9 @@ class Connections : public boost::noncopyable {
 		const std::pair<const Port&, const Port&> convert(const Connections::connections_container::left_value_type& val) const;
 		const std::pair<Port&, Port&> convertConst(const Connections::connections_container::left_value_type& val);
 
+		void add(Port& src, Port& dest);
+		void remove(Port& src, Port& dest);
+
 		Network* m_parent;
 		connections_container m_connections;
 
@@ -115,6 +115,7 @@ class Connections : public boost::noncopyable {
 		boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
 
 	friend class Network;
+	friend class Port;
 };
 
 }
