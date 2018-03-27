@@ -6,7 +6,8 @@
 #include <dependency_graph/values.inl>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/metadata.inl>
-#include <dependency_graph/node.inl>
+#include <dependency_graph/node.h>
+#include <dependency_graph/node_base.inl>
 #include <dependency_graph/metadata_register.h>
 
 using namespace dependency_graph;

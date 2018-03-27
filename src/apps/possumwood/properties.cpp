@@ -2,7 +2,7 @@
 
 #include <QHeaderView>
 
-#include <dependency_graph/node.inl>
+#include <dependency_graph/node_base.inl>
 #include <dependency_graph/port.inl>
 
 Properties::Properties(QWidget* parent) : QTreeWidget(parent) {

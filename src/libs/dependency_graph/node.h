@@ -13,11 +13,6 @@
 
 namespace dependency_graph {
 
-class Datablock;
-class Graph;
-class Nodes;
-class Network;
-
 class Node : public NodeBase {
 	public:
 		/// returns the current state of the node (as returned by last compute() evaluation)
@@ -32,12 +27,7 @@ class Node : public NodeBase {
 	private:
 		State m_state;
 
-		friend class Graph;
-		friend class Network;
-		friend class Port;
-		friend class Nodes;
-
-		friend struct io::adl_serializer<Node>;
+	friend class Network;
 };
 
 }

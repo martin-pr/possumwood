@@ -1,6 +1,6 @@
 #include "index.h"
 
-#include <dependency_graph/node.inl>
+#include <dependency_graph/node_base.inl>
 
 namespace possumwood {
 

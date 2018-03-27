@@ -5,7 +5,7 @@
 
 #include <QWidget>
 
-#include <dependency_graph/node.inl>
+#include <dependency_graph/node_base.inl>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/unique_id.h>
 

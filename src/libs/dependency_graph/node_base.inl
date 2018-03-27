@@ -4,6 +4,7 @@
 #include "network.h"
 #include "rtti.h"
 #include "graph.h"
+#include "datablock.inl"
 
 namespace dependency_graph {
 
