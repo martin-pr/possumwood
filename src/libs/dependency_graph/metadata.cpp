@@ -40,6 +40,16 @@ const Attr& Metadata::attr(size_t index) const {
 	return m_attrs[index];
 }
 
+void Metadata::addAttribute(InAttr<void>& in, const std::string& name) {
+	assert(!in.isValid());
+
+	in = InAttr<void>(name, m_attrs.size());
+	doAddAttribute(in);
+
+	assert(in.isValid());
+}
+
+
 void Metadata::doAddAttribute(Attr& attr) {
 	m_attrs.push_back(attr);
 }

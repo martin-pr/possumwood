@@ -67,4 +67,18 @@ std::ostream& operator << (std::ostream& out, const Attr& attr) {
 	return out;
 }
 
+/////////
+
+TypedAttr<void>::TypedAttr(const std::string& name, unsigned offset, Category cat) :
+	Attr(name, offset, cat, typeid(void), []() {
+		return std::unique_ptr<BaseData>();
+	}) {
+}
+
+InAttr<void>::InAttr() : TypedAttr<void>("", unsigned(-1), Attr::kInput) {
+}
+
+InAttr<void>::InAttr(const std::string& name, unsigned offset) : TypedAttr<void>(name, offset, Attr::kInput) {
+}
+
 }

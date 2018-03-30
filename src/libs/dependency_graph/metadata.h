@@ -50,6 +50,8 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		template<typename T>
 		void addAttribute(InAttr<T>& in, const std::string& name, const T& defaultValue = T());
 
+		void addAttribute(InAttr<void>& in, const std::string& name);
+
 		/// registers an output attribute.
 		/// Each attribute instance should be held statically in the
 		/// implementation of the "node" concept of the target application.
