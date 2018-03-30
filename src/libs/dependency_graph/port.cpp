@@ -35,6 +35,11 @@ const std::string Port::type() const {
 			if(out)
 				t = out->type();
 		}
+		else if(category() == Attr::kOutput) {
+			auto in = node().network().connections().connectedTo(*this);
+			if(!in.empty())
+				t = in[0].get().type();
+		}
 	}
 
 	return t;

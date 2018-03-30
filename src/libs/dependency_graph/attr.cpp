@@ -81,4 +81,10 @@ InAttr<void>::InAttr() : TypedAttr<void>("", unsigned(-1), Attr::kInput) {
 InAttr<void>::InAttr(const std::string& name, unsigned offset) : TypedAttr<void>(name, offset, Attr::kInput) {
 }
 
+OutAttr<void>::OutAttr() : TypedAttr<void>("", unsigned(-1), Attr::kOutput) {
+}
+
+OutAttr<void>::OutAttr(const std::string& name, unsigned offset) : TypedAttr<void>(name, offset, Attr::kOutput) {
+}
+
 }

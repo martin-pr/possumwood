@@ -94,6 +94,17 @@ class OutAttr final : public TypedAttr<T> {
 		friend class Metadata;
 };
 
+template<>
+class OutAttr<void> final : public TypedAttr<void> {
+	public:
+		OutAttr();
+
+	protected:
+		OutAttr(const std::string& name, unsigned offset);
+
+		friend class Metadata;
+};
+
 std::ostream& operator << (std::ostream& out, const Attr& attr);
 
 }

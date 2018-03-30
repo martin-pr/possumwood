@@ -60,6 +60,8 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		template<typename T>
 		void addAttribute(OutAttr<T>& out, const std::string& name, const T& defaultValue = T());
 
+		void addAttribute(OutAttr<void>& in, const std::string& name);
+
 		/// compute method of this node
 		void setCompute(std::function<State(Values&)> compute);
 

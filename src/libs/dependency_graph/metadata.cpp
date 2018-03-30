@@ -49,6 +49,14 @@ void Metadata::addAttribute(InAttr<void>& in, const std::string& name) {
 	assert(in.isValid());
 }
 
+void Metadata::addAttribute(OutAttr<void>& out, const std::string& name) {
+	assert(!out.isValid());
+
+	out = OutAttr<void>(name, m_attrs.size());
+	doAddAttribute(out);
+
+	assert(out.isValid());
+}
 
 void Metadata::doAddAttribute(Attr& attr) {
 	m_attrs.push_back(attr);
