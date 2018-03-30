@@ -159,10 +159,33 @@ BOOST_AUTO_TEST_CASE(void_output_ports) {
 	BOOST_CHECK_THROW(void1.port(0).get<float>(), std::runtime_error);
 }
 
+// it should not be possible to connect void out to void in
+BOOST_AUTO_TEST_CASE(void_to_void_connection) {
+	Graph g;
+
+	// make 2 nodes - add and void
+	const MetadataHandle& inHandle = voidInput();
+	const MetadataHandle& outHandle = voidOutput();
+
+	NodeBase& in = g.nodes().add(inHandle, "in_void");
+	NodeBase& out = g.nodes().add(outHandle, "out_void");
+
+	BOOST_CHECK(in.portCount() == 1);
+	BOOST_CHECK(out.portCount() == 1);
+
+	BOOST_REQUIRE_EQUAL(out.port(0).type(), unmangledTypeId<void>());
+	BOOST_REQUIRE_EQUAL(out.port(0).category(), dependency_graph::Attr::kOutput);
+
+	BOOST_REQUIRE_EQUAL(in.port(0).type(), unmangledTypeId<void>());
+	BOOST_REQUIRE_EQUAL(in.port(0).category(), dependency_graph::Attr::kInput);
+
+	BOOST_CHECK_THROW(out.port(0).connect(in.port(0)), std::runtime_error);
+}
+
 // void output port can be connected to multiple different inputs, with different types
 //   -> this should throw an error
 
-// it should not be possible to connect void out to void in
+
 
 // untyped OUTPUT port evaluation:
 //   - simple - compute() produces float coming from input

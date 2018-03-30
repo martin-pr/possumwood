@@ -109,12 +109,15 @@ void Port::connect(Port& p) {
 	}
 
 	// test for datatype
-	if(type() != p.type() && not ((type() == unmangledTypeId<void>()) xor (p.type() == unmangledTypeId<void>()))) {
-		std::stringstream msg;
-		msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
-		    " does not connect the same datatype";
+	{
+		const unsigned voidCount = (type() == unmangledTypeId<void>()) + (p.type() == unmangledTypeId<void>());
+		if((type() != p.type() && (voidCount != 1)) || voidCount == 2) {
+			std::stringstream msg;
+			msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
+			    " does not connect the same datatype";
 
-		throw(std::runtime_error(msg.str()));
+			throw(std::runtime_error(msg.str()));
+		}
 	}
 
 	// if the "input" is void, we need to initialise its datablock
