@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <functional>
+#include <type_traits>
 
 #include "io/json.h"
 
@@ -48,6 +49,11 @@ struct Data : public BaseData {
 
 	private:
 		static Factory<T> m_factory;
+};
+
+template<>
+struct Data<void> {
+	// invalid
 };
 
 }

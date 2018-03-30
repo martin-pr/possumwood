@@ -2,6 +2,7 @@
 
 #include "graph.h"
 #include "io.h"
+#include "rtti.h"
 
 namespace dependency_graph {
 
@@ -25,7 +26,18 @@ const unsigned Port::index() const {
 }
 
 const std::string Port::type() const {
-	return m_parent->metadata().attr(m_id).type().name();
+	std::string t = unmangledName(m_parent->metadata().attr(m_id).type().name());
+
+	// void port "type" can be determined by any connected other ports
+	if(t == unmangledTypeId<void>()) {
+		if(category() == Attr::kInput) {
+			auto out = node().network().connections().connectedFrom(*this);
+			if(out)
+				t = out->type();
+		}
+	}
+
+	return t;
 }
 
 bool Port::isDirty() const {
@@ -92,7 +104,7 @@ void Port::connect(Port& p) {
 	}
 
 	// test for datatype
-	if(type() != p.type()) {
+	if(type() != p.type() && not ((type() == unmangledTypeId<void>()) xor (p.type() == unmangledTypeId<void>()))) {
 		std::stringstream msg;
 		msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
 		    " does not connect the same datatype";
@@ -100,8 +112,13 @@ void Port::connect(Port& p) {
 		throw(std::runtime_error(msg.str()));
 	}
 
+	// if the "input" is void, we need to initialise its datablock
+	if(p.type() == unmangledTypeId<void>())
+		p.node().datablock().set(p.index(), *this);
+
 	// add the connection
 	p.m_parent->network().connections().add(*this, p);
+	assert(p.type() == type() && "at this stage, the types should match");
 	// and mark the "connected to" as dirty - will most likely need recomputation
 	// TODO: compare values, before marking it dirty wholesale?
 	p.node().markAsDirty(p.index());
@@ -114,9 +131,9 @@ void Port::disconnect(Port& p) {
 	// remove the connection
 	p.m_parent->network().connections().remove(*this, p);
 
-	// disconnecting a non-saveable port should reset the data, otherwise
+	// disconnecting a non-saveable or untyped port should reset the data, otherwise
 	//   if the scene is saved, this data will not be in the file
-	if(!io::isSaveable(p.m_parent->datablock().data(p.m_id))) {
+	if(p.type() == unmangledTypeId<void>() || !io::isSaveable(p.m_parent->datablock().data(p.m_id))) {
 		// set to default (i.e., reset)
 		p.m_parent->datablock().reset(p.m_id);
 
