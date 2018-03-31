@@ -233,19 +233,3 @@ BOOST_AUTO_TEST_CASE(multi_typed_to_void_connection) {
 
 	BOOST_CHECK_EQUAL(out.port(0).type(), unmangledTypeId<int>());
 }
-
-
-// untyped OUTPUT port evaluation:
-//   - simple - compute() produces float coming from input
-//   - more complex - if output is connected to a float, produce float; if to int, produce int; error otherwise
-
-// untyped INPUT port evaluation:
-//   - simple - compute() takes a float; connecting an int errors on evaluation on type test
-//   - more complex - based on the input type, do evaluation with the right type, always return a float
-
-// test error with a void pointer - reset() of an out port with void type
-//   after compute() throws an exception
-
-// need to add dirty querying on dependency_graph::Values, to allow partial evaluation
-//   -> allows to do a multiple-output multiple-input complex node (or NETWORK)
-//   + TESTS

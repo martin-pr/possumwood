@@ -1,0 +1,139 @@
+#include <boost/test/unit_test.hpp>
+
+#include <dependency_graph/graph.h>
+#include <dependency_graph/node.h>
+#include <dependency_graph/node_base.inl>
+#include <dependency_graph/port.inl>
+#include <dependency_graph/datablock.inl>
+#include <dependency_graph/metadata_register.h>
+#include <dependency_graph/values.inl>
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/metadata.inl>
+
+#include "common.h"
+
+using namespace dependency_graph;
+
+namespace {
+
+// creates a very simple generic one-in-one-out node
+template<typename INPUT, typename OUTPUT>
+const dependency_graph::MetadataHandle typedNode(
+	std::function<void(dependency_graph::Values& val, const InAttr<INPUT>& in, const OutAttr<OUTPUT>& out)> compute) {
+
+	std::unique_ptr<MetadataHandle> handle;
+
+	{
+		std::unique_ptr<Metadata> meta(new Metadata(std::string(typeid(INPUT).name()) + "_" + typeid(OUTPUT).name()));
+
+		// create attributes
+		InAttr<INPUT> input;
+		meta->addAttribute(input, "input");
+
+		OutAttr<OUTPUT> output;
+		meta->addAttribute(output, "output");
+
+		meta->addInfluence(input, output);
+
+		meta->setCompute([compute, input, output](dependency_graph::Values& vals) {
+			compute(vals, input, output);
+
+			return dependency_graph::State();
+		});
+
+		handle = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(meta)));
+
+		dependency_graph::MetadataRegister::singleton().add(*handle);
+	}
+
+	return *handle;
+}
+
+// a trivial templated compute method, to allow swapping void and non-void inputs/outputs
+template<typename INPUT, typename OUTPUT, typename TYPE = float>
+struct Assign {
+	static void compute(dependency_graph::Values& val, const InAttr<INPUT>& in, const OutAttr<OUTPUT>& out) {
+		val.set<TYPE>(out, val.get<TYPE>(in));
+	}
+};
+
+}
+
+// untyped OUTPUT port evaluation:
+//   - simple - compute() produces float coming from input
+//   - untyped port's type determine via a value connection (not readable otherwise)
+//       - (float, void) -> (float, float)
+//   - should evaluate correctly both on the output itself, and indirectly
+BOOST_AUTO_TEST_CASE(void_simple_out) {
+	Graph g;
+
+	// make a simple assignment node handle, float "float" to "untyped"
+	const MetadataHandle& voidHandle = typedNode<float, void>(Assign<float, void>::compute);
+	const MetadataHandle& floatHandle = typedNode<float, float>(Assign<float, float>::compute);
+
+	NodeBase& voidNode = g.nodes().add(voidHandle, "void_node");
+	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
+
+	BOOST_REQUIRE(voidNode.portCount() == 2);
+	BOOST_REQUIRE(voidNode.port(0).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(voidNode.port(1).type() == unmangledTypeId<void>());
+
+	BOOST_REQUIRE(floatNode.portCount() == 2);
+	BOOST_REQUIRE(floatNode.port(0).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(floatNode.port(1).type() == unmangledTypeId<float>());
+
+
+	// what about getting a value BEFORE connection, should that work?
+	// can compute() decide on the output type? NO! Because that would
+	// mean that it can render connections invalid by changing type,
+	// and that would be sad.
+
+
+	// the void output doesn't have a type yet as its not connected - reading should throw
+	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
+
+	// connect the two nodes together, to "assign a type" to the void node output
+	BOOST_REQUIRE_NO_THROW(voidNode.port(1).connect(floatNode.port(0)));
+
+	// the void output now has a type and can be read
+	BOOST_CHECK_NO_THROW(voidNode.port(1).get<float>());
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+
+	// pull on the float node output (this should just work)
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 0.0f);
+
+	// assign a new value to the void node input
+	BOOST_REQUIRE_NO_THROW(voidNode.port(0).set(5.0f));
+	// check dirty propagation
+	BOOST_CHECK(voidNode.port(1).isDirty());
+	BOOST_CHECK(floatNode.port(0).isDirty());
+	BOOST_CHECK(floatNode.port(1).isDirty());
+
+	// and check the output on both nodes (i.e., via pull, both directly and indirectly)
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 5.0f);
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 5.0f);
+	// and check nothing stayed dirty after evaluation
+	BOOST_CHECK(not voidNode.port(0).isDirty());
+	BOOST_CHECK(not voidNode.port(1).isDirty());
+	BOOST_CHECK(not floatNode.port(0).isDirty());
+	BOOST_CHECK(not floatNode.port(1).isDirty());
+}
+
+// untyped OUTPUT port evaluation:
+//   - more complex - if output is connected to a float, produce float; if to int, produce int; error otherwise
+
+// untyped INPUT port evaluation:
+//   - simple - compute() takes a float
+
+// untyped INPUT connection with compute() having wrong type
+//   - connecting an int errors on evaluation on type test, when compute() requests a float
+
+// untyped INPUT port evaluation:
+// same as above, but via a connected node: (float, float) -> (void, float)
+
+// untyped INPUT port evaluation:
+//   - more complex - based on the input type, do evaluation with the right type, always return a float
+
+// test error with a void pointer - reset() of an out port with void type
+//   after compute() throws an exception
+
