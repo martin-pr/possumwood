@@ -34,6 +34,7 @@ class Datablock {
 
 		const BaseData& data(size_t index) const;
 		BaseData& data(size_t index);
+		bool isNull(std::size_t index) const;
 
 		const MetadataHandle& meta() const;
 

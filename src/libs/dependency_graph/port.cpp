@@ -120,13 +120,27 @@ void Port::connect(Port& p) {
 		}
 	}
 
-	// if the "input" is void, we need to initialise its datablock
-	if(p.type() == unmangledTypeId<void>())
-		p.node().datablock().set(p.index(), *this);
 
 	// add the connection
 	p.m_parent->network().connections().add(*this, p);
 	assert(p.type() == type() && "at this stage, the types should match");
+
+	// datablock initialisation handling for untyped ports
+	{
+		// at least one side of the connection has to be not null
+		assert(not node().datablock().isNull(index()) || not p.node().datablock().isNull(p.index()));
+
+		// if the "input" is void acc to the metadata, we need to initialise its datablock
+		if(p.node().metadata().attr(p.index()).type() == typeid(void))
+			p.node().datablock().set(p.index(), *this);
+		assert(not p.node().datablock().isNull(p.index()));
+
+		// or, if the "output" is void, we need to initialise its datablock
+		if(node().metadata().attr(index()).type() == typeid(void))
+			node().datablock().set(index(), p);
+		assert(not node().datablock().isNull(index()));
+	}
+
 	// and mark the "connected to" as dirty - will most likely need recomputation
 	// TODO: compare values, before marking it dirty wholesale?
 	p.node().markAsDirty(p.index());
@@ -139,7 +153,7 @@ void Port::disconnect(Port& p) {
 	// remove the connection
 	p.m_parent->network().connections().remove(*this, p);
 
-	// disconnecting a non-saveable or untyped port should reset the data, otherwise
+	// disconnecting a non-saveable or untyped input port should reset the data, otherwise
 	//   if the scene is saved, this data will not be in the file
 	if(p.type() == unmangledTypeId<void>() || !io::isSaveable(p.m_parent->datablock().data(p.m_id))) {
 		// set to default (i.e., reset)
@@ -151,6 +165,10 @@ void Port::disconnect(Port& p) {
 		setDirty(false);
 	}
 
+	// disconnecting an untyped output port should reset the data, to keep the behaviour consistent
+	if(type() == unmangledTypeId<void>())
+		// set to default (i.e., reset)
+		m_parent->datablock().reset(m_id);
 
 	// connect / disconnect - might change UI's appearance
 	m_flagsCallbacks();

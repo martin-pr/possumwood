@@ -45,6 +45,7 @@ void Datablock::set(size_t index, const Port& port) {
 	// void instances handling - make a new instance if needed
 	if(m_data[index] == nullptr)
 		m_data[index] = port.node().datablock().data(port.index()).clone();
+	assert(m_data[index] != nullptr);
 
 	// and assign the value
 	assert(m_data[index]->type() == port.type());
@@ -58,6 +59,11 @@ void Datablock::reset(size_t index) {
 
 const MetadataHandle& Datablock::meta() const {
 	return m_meta;
+}
+
+bool Datablock::isNull(std::size_t index) const {
+	assert(m_data.size() > index);
+	return m_data[index].get() == nullptr;
 }
 
 }
