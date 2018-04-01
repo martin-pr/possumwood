@@ -134,18 +134,17 @@ BOOST_AUTO_TEST_CASE(void_simple_out) {
 	BOOST_CHECK(not floatNode.port(1).isDirty());
 }
 
-
-// untyped OUTPUT port evaluation on error:
+// 1. untyped OUTPUT port evaluation on error:
 // 	 throw an exception during evaluation (pulling on a connected output should work)
-BOOST_AUTO_TEST_CASE(void_error_out) {
+
+// 2. untyped OUTPUT incorrect type request:
+//   assign incorrect datatype (should throw an exception, but pulling on the connected out should work)
+
+namespace {
+
+void untyped_handle_error_test(const HandleRegistrar& voidHandle) {
 	Graph g;
 
-	// make a simple assignment node handle, float "float" to "untyped"
-	const HandleRegistrar& voidHandle = typedNode<float, void>(
-		[](dependency_graph::Values& val, const InAttr<float>& in, const OutAttr<void>& out) {
-			throw std::runtime_error("error");
-		}
-	);
 	const HandleRegistrar& floatHandle = typedNode<float, float>(Assign<float, float>::compute);
 
 	NodeBase& voidNode = g.nodes().add(voidHandle, "void_node");
@@ -191,8 +190,34 @@ BOOST_AUTO_TEST_CASE(void_error_out) {
 	BOOST_CHECK(not floatNode.port(1).isDirty());
 }
 
-// untyped OUTPUT incorrect type request:
+}
+
+// 1. untyped OUTPUT port evaluation on error:
+// 	 throw an exception during evaluation (pulling on a connected output should work)
+BOOST_AUTO_TEST_CASE(void_error_out) {
+	// make a simple assignment node handle, float "float" to "untyped"
+	const HandleRegistrar& voidHandle = typedNode<float, void>(
+		[](dependency_graph::Values& val, const InAttr<float>& in, const OutAttr<void>& out) {
+			throw std::runtime_error("error");
+		}
+	);
+
+	untyped_handle_error_test(voidHandle);
+}
+
+// 2. untyped OUTPUT incorrect type request:
 //   assign incorrect datatype (should throw an exception, but pulling on the connected out should work)
+BOOST_AUTO_TEST_CASE(void_error_assignment_out) {
+	// make a simple assignment node handle, float "float" to "untyped"
+	const HandleRegistrar& voidHandle = typedNode<float, void>(
+		[](dependency_graph::Values& val, const InAttr<float>& in, const OutAttr<void>& out) {
+			// assigns an integer - assuming connected node is float, this should throw an exception
+			val.set(out, (int)val.get(in));
+		}
+	);
+
+	untyped_handle_error_test(voidHandle);
+}
 
 // untyped OUTPUT port evaluation:
 //   - more complex - if output is connected to a float, produce float; if to int, produce int; error otherwise
