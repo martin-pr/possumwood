@@ -71,8 +71,32 @@ void Node::computeOutput(size_t index) {
 	assert(not port(index).isDirty());
 
 	// errored - reset the output to default value
-	if(result.errored())
-		datablock().reset(index);
+	std::string error_to_throw;
+	if(result.errored()) {
+		// non-void - default value comes from metadata
+		if(metadata().attr(index).type() != typeid(void))
+			datablock().reset(index);
+		// void - default comes from the default of the connected port
+		else {
+			auto conn = network().connections().connectedTo(port(index));
+			if(conn.empty()) {
+				std::stringstream err;
+				err << "Error evaluating " << name() << "/" << port(index).name() << " - untyped port without a connection cannot be evaluated." << std::endl;
+
+				// throw an exception later, after all other state handling is finished
+				error_to_throw = err.str();
+
+				// WARNING - as no default value can be set at this stage, the ORIGINAL value
+				// on the port is kept. As this exception should not be thrown during normal
+				// runtime (it is used in tests, and can be triggered with bad graph handling),
+				// this should not pose a problem. Famous last words.
+			}
+
+			// initialise using default of the FIRST connected port (arbitrary choice, but whatever)
+			else
+				datablock().set(index, conn.begin()->get());
+		}
+	}
 
 	// and run the watcher callbacks
 	port(index).m_valueCallbacks();
@@ -83,6 +107,10 @@ void Node::computeOutput(size_t index) {
 
 		network().graph().stateChanged(*this);
 	}
+
+	// throw an exception if errored and no reset could be done
+	if(!error_to_throw.empty())
+		throw std::runtime_error(error_to_throw);
 }
 
 const State& Node::state() const {

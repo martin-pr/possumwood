@@ -134,11 +134,77 @@ BOOST_AUTO_TEST_CASE(void_simple_out) {
 	BOOST_CHECK(not floatNode.port(1).isDirty());
 }
 
+
+// untyped OUTPUT port evaluation on error:
+// 	 throw an exception during evaluation (pulling on a connected output should work)
+BOOST_AUTO_TEST_CASE(void_error_out) {
+	Graph g;
+
+	// make a simple assignment node handle, float "float" to "untyped"
+	const HandleRegistrar& voidHandle = typedNode<float, void>(
+		[](dependency_graph::Values& val, const InAttr<float>& in, const OutAttr<void>& out) {
+			throw std::runtime_error("error");
+		}
+	);
+	const HandleRegistrar& floatHandle = typedNode<float, float>(Assign<float, float>::compute);
+
+	NodeBase& voidNode = g.nodes().add(voidHandle, "void_node");
+	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
+
+	BOOST_REQUIRE(voidNode.portCount() == 2);
+	BOOST_REQUIRE(voidNode.port(0).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(voidNode.port(1).type() == unmangledTypeId<void>());
+
+	BOOST_REQUIRE(floatNode.portCount() == 2);
+	BOOST_REQUIRE(floatNode.port(0).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(floatNode.port(1).type() == unmangledTypeId<float>());
+
+	// the void output doesn't have a type yet as its not connected - reading should throw
+	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
+
+	// connect the two nodes together, to "assign a type" to the void node output
+	BOOST_REQUIRE_NO_THROW(voidNode.port(1).connect(floatNode.port(0)));
+
+	// the void output now has a type and can be read
+	BOOST_CHECK_NO_THROW(voidNode.port(1).get<float>());
+	// pull on the float node output (this should work, but return default-constructed float)
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 0.0f);
+
+	// but compute() thrown an exception, so the state of the node should be invalid
+	BOOST_CHECK(voidNode.state().errored());
+	BOOST_CHECK(not floatNode.state().errored());
+
+	// assign a new value to the void node input
+	BOOST_REQUIRE_NO_THROW(voidNode.port(0).set(5.0f));
+	// check dirty propagation
+	BOOST_CHECK(voidNode.port(1).isDirty());
+	BOOST_CHECK(floatNode.port(0).isDirty());
+	BOOST_CHECK(floatNode.port(1).isDirty());
+
+	// and check the output on both nodes (i.e., via pull, both directly and indirectly)
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	// // and check nothing stayed dirty after evaluation
+	BOOST_CHECK(not voidNode.port(0).isDirty());
+	BOOST_CHECK(not voidNode.port(1).isDirty());
+	BOOST_CHECK(not floatNode.port(0).isDirty());
+	BOOST_CHECK(not floatNode.port(1).isDirty());
+}
+
+// untyped OUTPUT incorrect type request:
+//   assign incorrect datatype (should throw an exception, but pulling on the connected out should work)
+
 // untyped OUTPUT port evaluation:
 //   - more complex - if output is connected to a float, produce float; if to int, produce int; error otherwise
 
 // untyped INPUT port evaluation:
 //   - simple - compute() takes a float
+
+// untyped INPUT port evaluation on error:
+// 	 throw an exception during evaluation
+
+// untyped INPUT incorrect type request:
+//   get() incorrect datatype (should throw an exception, but pulling on the connected out should work)
 
 // untyped INPUT connection with compute() having wrong type
 //   - connecting an int errors on evaluation on type test, when compute() requests a float
