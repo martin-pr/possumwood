@@ -16,37 +16,52 @@ using namespace dependency_graph;
 
 namespace {
 
+/// scoped handle registration, to allow name and node re-use between tests
+class HandleRegistrar : public boost::noncopyable {
+	public:
+		HandleRegistrar(std::unique_ptr<Metadata>&& meta) : m_handle(new MetadataHandle(std::move(meta))) {
+			dependency_graph::MetadataRegister::singleton().add(*m_handle);
+		}
+
+		HandleRegistrar(HandleRegistrar&& reg) : m_handle(std::move(reg.m_handle)) {
+		}
+
+		~HandleRegistrar() {
+			if(m_handle != nullptr)
+				dependency_graph::MetadataRegister::singleton().remove(*m_handle);
+		}
+
+		operator const MetadataHandle&() const {
+			return *m_handle;
+		}
+
+	private:
+		std::unique_ptr<MetadataHandle> m_handle;
+};
+
 // creates a very simple generic one-in-one-out node
 template<typename INPUT, typename OUTPUT>
-const dependency_graph::MetadataHandle typedNode(
+const HandleRegistrar typedNode(
 	std::function<void(dependency_graph::Values& val, const InAttr<INPUT>& in, const OutAttr<OUTPUT>& out)> compute) {
 
-	std::unique_ptr<MetadataHandle> handle;
+	std::unique_ptr<Metadata> meta(new Metadata(std::string(typeid(INPUT).name()) + "_" + typeid(OUTPUT).name()));
 
-	{
-		std::unique_ptr<Metadata> meta(new Metadata(std::string(typeid(INPUT).name()) + "_" + typeid(OUTPUT).name()));
+	// create attributes
+	InAttr<INPUT> input;
+	meta->addAttribute(input, "input");
 
-		// create attributes
-		InAttr<INPUT> input;
-		meta->addAttribute(input, "input");
+	OutAttr<OUTPUT> output;
+	meta->addAttribute(output, "output");
 
-		OutAttr<OUTPUT> output;
-		meta->addAttribute(output, "output");
+	meta->addInfluence(input, output);
 
-		meta->addInfluence(input, output);
+	meta->setCompute([compute, input, output](dependency_graph::Values& vals) {
+		compute(vals, input, output);
 
-		meta->setCompute([compute, input, output](dependency_graph::Values& vals) {
-			compute(vals, input, output);
+		return dependency_graph::State();
+	});
 
-			return dependency_graph::State();
-		});
-
-		handle = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(meta)));
-
-		dependency_graph::MetadataRegister::singleton().add(*handle);
-	}
-
-	return *handle;
+	return HandleRegistrar(std::move(meta));
 }
 
 // a trivial templated compute method, to allow swapping void and non-void inputs/outputs
@@ -68,8 +83,8 @@ BOOST_AUTO_TEST_CASE(void_simple_out) {
 	Graph g;
 
 	// make a simple assignment node handle, float "float" to "untyped"
-	const MetadataHandle& voidHandle = typedNode<float, void>(Assign<float, void>::compute);
-	const MetadataHandle& floatHandle = typedNode<float, float>(Assign<float, float>::compute);
+	const HandleRegistrar& voidHandle = typedNode<float, void>(Assign<float, void>::compute);
+	const HandleRegistrar& floatHandle = typedNode<float, float>(Assign<float, float>::compute);
 
 	NodeBase& voidNode = g.nodes().add(voidHandle, "void_node");
 	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
