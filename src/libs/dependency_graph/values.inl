@@ -1,6 +1,7 @@
 #pragma once
 
 #include "values.h"
+#include "rtti.h"
 
 namespace dependency_graph {
 
@@ -32,6 +33,11 @@ void Values::set(const OutAttr<T>& attr, const T& value) {
 template<typename T>
 void Values::set(const OutAttr<void>& attr, const T& value) {
 	m_node->port(attr.offset()).set(value);
+}
+
+template<typename T>
+bool Values::is(const OutAttr<void>& attr) const {
+	return m_node->port(attr.offset()).type() == unmangledTypeId<T>();
 }
 
 }

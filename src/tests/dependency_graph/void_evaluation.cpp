@@ -234,6 +234,86 @@ BOOST_AUTO_TEST_CASE(void_error_assignment_out) {
 
 // untyped OUTPUT port evaluation:
 //   - more complex - if output is connected to a float, produce float; if to int, produce int; error otherwise
+BOOST_AUTO_TEST_CASE(void_complex_out) {
+	Graph g;
+
+	// apart from simple assignment nodes, make one node that can handle both
+	//   float and int, depending on what is connected to it (and throws an exception
+	//   on an unknown type)
+	const MetadataHandle voidHandle = typedNode<float, void>(
+		[](dependency_graph::Values& val, const InAttr<float>& in, const OutAttr<void>& out) {
+			// based on type, do the right thing or throw
+			if(val.is<float>(out))
+				val.set(out, val.get(in));
+			else if(val.is<int>(out))
+				val.set(out, (int)val.get(in));
+			else
+				throw std::runtime_error("unknown");
+		}
+	);
+	const MetadataHandle floatHandle = typedNode<float, float>(Assign<float, float>::compute);
+	const MetadataHandle intHandle = typedNode<int, int>(Assign<int, int, int>::compute);
+	const MetadataHandle unsignedHandle = typedNode<unsigned, unsigned>(Assign<unsigned, unsigned, unsigned>::compute);
+
+	NodeBase& voidNode = g.nodes().add(voidHandle, "void_node");
+	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
+	NodeBase& intNode = g.nodes().add(intHandle, "int_node");
+	NodeBase& unsignedNode = g.nodes().add(unsignedHandle, "unsigned_node");
+
+	// first, lets try the void node on its own, with no connections
+	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
+
+	// connect float, try to pull
+	BOOST_REQUIRE_NO_THROW(voidNode.port(1).connect(floatNode.port(0)));
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK(not voidNode.state().errored());
+	// try to set data and then pull
+	BOOST_REQUIRE_NO_THROW(voidNode.port(0).set<float>(2.0f));
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 2.0f);
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 2.0f);
+	BOOST_CHECK(not voidNode.state().errored());
+	// disconnect and test the value + throw on pull
+	BOOST_REQUIRE_NO_THROW(voidNode.port(1).disconnect(floatNode.port(0)));
+	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 2.0f);
+	BOOST_CHECK(not voidNode.state().errored());
+
+
+	// connect int, try to pull
+	BOOST_REQUIRE_NO_THROW(voidNode.port(1).connect(intNode.port(0)));
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<int>(), 2);
+	BOOST_CHECK_EQUAL(intNode.port(1).get<int>(), 2);
+	BOOST_CHECK(not voidNode.state().errored());
+	// try to set data and then pull
+	BOOST_REQUIRE_NO_THROW(voidNode.port(0).set<float>(2));
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<int>(), 2);
+	BOOST_CHECK_EQUAL(intNode.port(1).get<int>(), 2);
+	BOOST_CHECK(not voidNode.state().errored());
+	// disconnect and test the default value + throw on pull
+	BOOST_REQUIRE_NO_THROW(voidNode.port(1).disconnect(intNode.port(0)));
+	BOOST_CHECK_THROW(voidNode.port(1).get<int>(), std::runtime_error);
+	BOOST_CHECK_EQUAL(intNode.port(1).get<int>(), 2);
+	BOOST_CHECK(not voidNode.state().errored());
+
+
+	// connect unsigned, try to pull (and get an exception)
+	BOOST_REQUIRE_NO_THROW(voidNode.port(1).connect(unsignedNode.port(0)));
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<unsigned>(), 0);
+	BOOST_CHECK_EQUAL(unsignedNode.port(1).get<unsigned>(), 0);
+	BOOST_CHECK(voidNode.state().errored());
+	// try to set data and then pull
+	BOOST_REQUIRE_NO_THROW(voidNode.port(0).set<float>(2));
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<unsigned>(), 0u);
+	BOOST_CHECK_EQUAL(unsignedNode.port(1).get<unsigned>(), 0u);
+	BOOST_CHECK(voidNode.state().errored());
+	// disconnect and test the default value + throw on pull
+	BOOST_REQUIRE_NO_THROW(voidNode.port(1).disconnect(unsignedNode.port(0)));
+	BOOST_CHECK_THROW(voidNode.port(1).get<unsigned>(), std::runtime_error);
+	BOOST_CHECK_EQUAL(unsignedNode.port(1).get<unsigned>(), 0u);
+	BOOST_CHECK(voidNode.state().errored());
+}
+
 
 // untyped INPUT port evaluation:
 //   - simple - compute() takes a float
