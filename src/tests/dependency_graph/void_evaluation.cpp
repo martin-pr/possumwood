@@ -41,7 +41,7 @@ class HandleRegistrar : public boost::noncopyable {
 
 // creates a very simple generic one-in-one-out node
 template<typename INPUT, typename OUTPUT>
-const HandleRegistrar typedNode(
+HandleRegistrar typedNode(
 	std::function<void(dependency_graph::Values& val, const InAttr<INPUT>& in, const OutAttr<OUTPUT>& out)> compute) {
 
 	std::unique_ptr<Metadata> meta(new Metadata(std::string(typeid(INPUT).name()) + "_" + typeid(OUTPUT).name()));
@@ -113,25 +113,31 @@ BOOST_AUTO_TEST_CASE(void_simple_out) {
 	// the void output now has a type and can be read
 	BOOST_CHECK_NO_THROW(voidNode.port(1).get<float>());
 	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK(not voidNode.state().errored());
 
 	// pull on the float node output (this should just work)
 	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK(not voidNode.state().errored());
 
 	// assign a new value to the void node input
 	BOOST_REQUIRE_NO_THROW(voidNode.port(0).set(5.0f));
+	BOOST_CHECK(not voidNode.state().errored());
 	// check dirty propagation
 	BOOST_CHECK(voidNode.port(1).isDirty());
 	BOOST_CHECK(floatNode.port(0).isDirty());
 	BOOST_CHECK(floatNode.port(1).isDirty());
+	BOOST_CHECK(not voidNode.state().errored());
 
 	// and check the output on both nodes (i.e., via pull, both directly and indirectly)
 	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 5.0f);
 	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 5.0f);
+	BOOST_CHECK(not voidNode.state().errored());
 	// and check nothing stayed dirty after evaluation
 	BOOST_CHECK(not voidNode.port(0).isDirty());
 	BOOST_CHECK(not voidNode.port(1).isDirty());
 	BOOST_CHECK(not floatNode.port(0).isDirty());
 	BOOST_CHECK(not floatNode.port(1).isDirty());
+	BOOST_CHECK(not voidNode.state().errored());
 }
 
 // 1. untyped OUTPUT port evaluation on error:
@@ -160,6 +166,7 @@ void untyped_handle_error_test(const HandleRegistrar& voidHandle) {
 
 	// the void output doesn't have a type yet as its not connected - reading should throw
 	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
+	BOOST_CHECK(voidNode.state().errored());
 
 	// connect the two nodes together, to "assign a type" to the void node output
 	BOOST_REQUIRE_NO_THROW(voidNode.port(1).connect(floatNode.port(0)));
@@ -179,15 +186,21 @@ void untyped_handle_error_test(const HandleRegistrar& voidHandle) {
 	BOOST_CHECK(voidNode.port(1).isDirty());
 	BOOST_CHECK(floatNode.port(0).isDirty());
 	BOOST_CHECK(floatNode.port(1).isDirty());
+	BOOST_CHECK(not floatNode.state().errored());
+	BOOST_CHECK(voidNode.state().errored());
 
 	// and check the output on both nodes (i.e., via pull, both directly and indirectly)
 	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 0.0f);
 	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK(not floatNode.state().errored());
+	BOOST_CHECK(voidNode.state().errored());
 	// // and check nothing stayed dirty after evaluation
 	BOOST_CHECK(not voidNode.port(0).isDirty());
 	BOOST_CHECK(not voidNode.port(1).isDirty());
 	BOOST_CHECK(not floatNode.port(0).isDirty());
 	BOOST_CHECK(not floatNode.port(1).isDirty());
+	BOOST_CHECK(not floatNode.state().errored());
+	BOOST_CHECK(voidNode.state().errored());
 }
 
 }

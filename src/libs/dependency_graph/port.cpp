@@ -143,7 +143,17 @@ void Port::connect(Port& p) {
 
 	// and mark the "connected to" as dirty - will most likely need recomputation
 	// TODO: compare values, before marking it dirty wholesale?
+
+	// If the state of this node is error, try to re-evaluate the errored output.
+	// Adding a connection might have changed something, and the error might
+	// go away.
+
+	// This would be making a lot of assumptions about how the node is implemented.
+	// Not good. Lets just dirty the whole thing, and force reevaluation independently
+	// of the current state.
+	node().markAsDirty(index());
 	p.node().markAsDirty(p.index());
+
 	// connect / disconnect - might change UI's appearance
 	m_flagsCallbacks();
 	p.m_flagsCallbacks();
