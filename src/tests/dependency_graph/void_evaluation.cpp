@@ -473,7 +473,89 @@ BOOST_AUTO_TEST_CASE(void_error_assignment_in) {
 
 // untyped INPUT port evaluation:
 //   - more complex - based on the input type, do evaluation with the right type, always return a float
+BOOST_AUTO_TEST_CASE(void_complex_in) {
+	Graph g;
 
+	// apart from simple assignment nodes, make one node that can handle both
+	//   float and int, depending on what is connected to it (and throws an exception
+	//   on an unknown type)
+	const MetadataHandle voidHandle = typedNode<void, float>(
+		[](dependency_graph::Values& val, const InAttr<void>& in, const OutAttr<float>& out) {
+			// based on type, do the right thing or throw
+			if(val.is<float>(in))
+				val.set(out, val.get<float>(in));
+			else if(val.is<int>(in))
+				val.set(out, (float)val.get<int>(in));
+			else
+				throw std::runtime_error("unknown");
+		}
+	);
+	const MetadataHandle floatHandle = typedNode<float, float>(Assign<float, float>::compute);
+	const MetadataHandle intHandle = typedNode<int, int>(Assign<int, int, int>::compute);
+	const MetadataHandle unsignedHandle = typedNode<unsigned, unsigned>(Assign<unsigned, unsigned, unsigned>::compute);
+
+	NodeBase& voidNode = g.nodes().add(voidHandle, "void_node");
+	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
+	NodeBase& intNode = g.nodes().add(intHandle, "int_node");
+	NodeBase& unsignedNode = g.nodes().add(unsignedHandle, "unsigned_node");
+
+	// first, lets try the void node on its own, with no connections
+	BOOST_CHECK_THROW(voidNode.port(0).get<float>(), std::runtime_error);
+
+	// connect float, try to pull
+	BOOST_REQUIRE_NO_THROW(floatNode.port(1).connect(voidNode.port(0)));
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK(not voidNode.state().errored());
+	// try to set data and then pull
+	BOOST_REQUIRE_NO_THROW(floatNode.port(0).set<float>(2.0f));
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 2.0f);
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 2.0f);
+	BOOST_CHECK(not voidNode.state().errored());
+	// disconnect and test the value + throw on pull
+	BOOST_REQUIRE_NO_THROW(floatNode.port(1).disconnect(voidNode.port(0)));
+	BOOST_CHECK_NO_THROW(voidNode.port(1).get<float>());
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 2.0f);
+	BOOST_CHECK(voidNode.state().errored());
+
+
+	// connect int, try to pull
+	BOOST_REQUIRE_NO_THROW(intNode.port(1).connect(voidNode.port(0)));
+	BOOST_CHECK_EQUAL(intNode.port(1).get<int>(), 0);
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK(not voidNode.state().errored());
+	// try to set data and then pull
+	BOOST_REQUIRE_NO_THROW(intNode.port(0).set<int>(2));
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 2.0f);
+	BOOST_CHECK_EQUAL(intNode.port(1).get<int>(), 2);
+	BOOST_CHECK(not voidNode.state().errored());
+	// disconnect and test the default value + throw on pull
+	BOOST_REQUIRE_NO_THROW(intNode.port(1).disconnect(voidNode.port(0)));
+	BOOST_CHECK_THROW(voidNode.port(0).get<int>(), std::runtime_error);
+	BOOST_CHECK_EQUAL(intNode.port(1).get<int>(), 2);
+	BOOST_CHECK(not voidNode.state().errored());
+
+
+	// connect unsigned, try to pull
+	BOOST_REQUIRE_NO_THROW(unsignedNode.port(1).connect(voidNode.port(0)));
+	BOOST_CHECK_EQUAL(voidNode.port(0).get<unsigned>(), 0);
+	BOOST_CHECK_EQUAL(unsignedNode.port(1).get<unsigned>(), 0);
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK(voidNode.state().errored());
+	// try to set data and then pull
+	BOOST_REQUIRE_NO_THROW(unsignedNode.port(0).set<unsigned>(2));
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK_EQUAL(unsignedNode.port(1).get<unsigned>(), 2u);
+	BOOST_CHECK(voidNode.state().errored());
+	// disconnect and test the default value + throw on pull
+	BOOST_REQUIRE_NO_THROW(unsignedNode.port(1).disconnect(voidNode.port(0)));
+	BOOST_CHECK_THROW(voidNode.port(0).get<unsigned>(), std::runtime_error);
+	BOOST_CHECK_EQUAL(unsignedNode.port(1).get<unsigned>(), 2u);
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK(voidNode.state().errored());
+}
+
+// TODO
 // test error with a void pointer - reset() of an out port with void type
 //   after compute() throws an exception
 

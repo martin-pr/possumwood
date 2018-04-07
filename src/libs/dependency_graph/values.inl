@@ -41,7 +41,7 @@ void Values::set(const OutAttr<void>& attr, const T& value) {
 }
 
 template<typename T>
-bool Values::is(const OutAttr<void>& attr) const {
+bool Values::is(const TypedAttr<void>& attr) const {
 	return m_node->port(attr.offset()).type() == unmangledTypeId<T>();
 }
 

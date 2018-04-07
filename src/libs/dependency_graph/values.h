@@ -40,7 +40,7 @@ class Values : public boost::noncopyable {
 		/// untyped attribute type testing.
 		/// Only useful for untyped attributes - typed attribute have an explicit T
 		template<typename T>
-		bool is(const OutAttr<void>& attr) const;
+		bool is(const TypedAttr<void>& attr) const;
 
 	private:
 		NodeBase* m_node;
