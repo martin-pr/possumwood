@@ -20,6 +20,10 @@ class Values : public boost::noncopyable {
 		template<typename T>
 		const T& get(const OutAttr<T>& attr) const;
 
+		/// untyped attribute "get" - has to be accessible from inside compute()
+		template<typename T>
+		const T& get(const InAttr<void>& attr) const;
+
 		template<typename T>
 		bool isDirty(const OutAttr<T>& attr) const;
 

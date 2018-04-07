@@ -315,20 +315,161 @@ BOOST_AUTO_TEST_CASE(void_complex_out) {
 }
 
 
+/////////////////
+
+
 // untyped INPUT port evaluation:
 //   - simple - compute() takes a float
+BOOST_AUTO_TEST_CASE(void_simple_in) {
+	Graph g;
 
-// untyped INPUT port evaluation on error:
+	// make a simple assignment node handle, float "float" to "untyped"
+	const HandleRegistrar& voidHandle = typedNode<void, float>(Assign<void, float>::compute);
+	const HandleRegistrar& floatHandle = typedNode<float, float>(Assign<float, float>::compute);
+
+	NodeBase& voidNode = g.nodes().add(voidHandle, "void_node");
+	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
+
+	BOOST_REQUIRE(voidNode.portCount() == 2);
+	BOOST_REQUIRE(voidNode.port(0).type() == unmangledTypeId<void>());
+	BOOST_REQUIRE(voidNode.port(1).type() == unmangledTypeId<float>());
+
+	BOOST_REQUIRE(floatNode.portCount() == 2);
+	BOOST_REQUIRE(floatNode.port(0).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(floatNode.port(1).type() == unmangledTypeId<float>());
+
+	// the void input doesn't have a type yet as its not connected - reading should throw
+	BOOST_CHECK_THROW(voidNode.port(0).get<float>(), std::runtime_error);
+	BOOST_CHECK(not voidNode.state().errored());
+
+	// pulling on output will work, but will error because the void input has no type
+	BOOST_CHECK_NO_THROW(voidNode.port(1).get<float>());
+	BOOST_CHECK(voidNode.state().errored());
+
+	// connect the two nodes together, to "assign a type" to the void node output
+	BOOST_REQUIRE_NO_THROW(floatNode.port(1).connect(voidNode.port(0)));
+
+	// the void input now has a type and can be read
+	BOOST_CHECK_NO_THROW(voidNode.port(0).get<float>());
+	BOOST_CHECK_EQUAL(voidNode.port(0).get<float>(), 0.0f);
+	// but no evaluation was triggered, so the state of the node stays
+	BOOST_CHECK(voidNode.state().errored());
+
+	// pull on the void node output (this should now work and not error)
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK(not voidNode.state().errored());
+
+	// assign a new value to the float node input
+	BOOST_REQUIRE_NO_THROW(floatNode.port(0).set(5.0f));
+	BOOST_CHECK(not voidNode.state().errored());
+	// // check dirty propagation
+	BOOST_CHECK(voidNode.port(0).isDirty());
+	BOOST_CHECK(voidNode.port(1).isDirty());
+	BOOST_CHECK(floatNode.port(1).isDirty());
+	BOOST_CHECK(not voidNode.state().errored());
+
+	// and check the output on both nodes (i.e., via pull, both directly and indirectly)
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 5.0f);
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 5.0f);
+	BOOST_CHECK(not voidNode.state().errored());
+	// and check nothing stayed dirty after evaluation
+	BOOST_CHECK(not voidNode.port(0).isDirty());
+	BOOST_CHECK(not voidNode.port(1).isDirty());
+	BOOST_CHECK(not floatNode.port(0).isDirty());
+	BOOST_CHECK(not floatNode.port(1).isDirty());
+	BOOST_CHECK(not voidNode.state().errored());
+}
+
+
+// 1. untyped INPUT port evaluation on error:
 // 	 throw an exception during evaluation
-
-// untyped INPUT incorrect type request:
+// 2. untyped INPUT incorrect type request:
 //   get() incorrect datatype (should throw an exception, but pulling on the connected out should work)
+namespace {
 
-// untyped INPUT connection with compute() having wrong type
-//   - connecting an int errors on evaluation on type test, when compute() requests a float
+void untyped_input_handle_error_test(const HandleRegistrar& voidHandle) {
+	Graph g;
 
-// untyped INPUT port evaluation:
-// same as above, but via a connected node: (float, float) -> (void, float)
+	const HandleRegistrar& floatHandle = typedNode<float, float>(Assign<float, float>::compute);
+
+	NodeBase& voidNode = g.nodes().add(voidHandle, "void_node");
+	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
+
+	BOOST_REQUIRE(voidNode.portCount() == 2);
+	BOOST_REQUIRE(voidNode.port(0).type() == unmangledTypeId<void>());
+	BOOST_REQUIRE(voidNode.port(1).type() == unmangledTypeId<float>());
+
+	BOOST_REQUIRE(floatNode.portCount() == 2);
+	BOOST_REQUIRE(floatNode.port(0).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(floatNode.port(1).type() == unmangledTypeId<float>());
+
+	// the void intpu doesn't have a type yet as its not connected - reading should error, but not throw
+	BOOST_CHECK_NO_THROW(voidNode.port(1).get<float>());
+	BOOST_CHECK(voidNode.state().errored());
+
+	// connect the two nodes together, to "assign a type" to the void node intpu
+	BOOST_REQUIRE_NO_THROW(floatNode.port(1).connect(voidNode.port(0)));
+
+	// the void input now has a type and can be read
+	BOOST_CHECK_NO_THROW(voidNode.port(0).get<float>());
+	// pull on the void node output (this should work, but return default-constructed float)
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+
+	// but compute() thrown an exception, so the state of the node should be invalid
+	BOOST_CHECK(voidNode.state().errored());
+	BOOST_CHECK(not floatNode.state().errored());
+
+	// assign a new value to the float node input
+	BOOST_REQUIRE_NO_THROW(floatNode.port(0).set(5.0f));
+	// check dirty propagation
+	BOOST_CHECK(voidNode.port(1).isDirty());
+	BOOST_CHECK(not floatNode.port(0).isDirty());
+	BOOST_CHECK(floatNode.port(1).isDirty());
+	BOOST_CHECK(not floatNode.state().errored());
+	BOOST_CHECK(voidNode.state().errored());
+
+	// and check the output on both nodes (i.e., via pull, both directly and indirectly)
+	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 5.0f);
+	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
+	BOOST_CHECK(not floatNode.state().errored());
+	BOOST_CHECK(voidNode.state().errored());
+	// and check nothing stayed dirty after evaluation
+	BOOST_CHECK(not voidNode.port(0).isDirty());
+	BOOST_CHECK(not voidNode.port(1).isDirty());
+	BOOST_CHECK(not floatNode.port(0).isDirty());
+	BOOST_CHECK(not floatNode.port(1).isDirty());
+	BOOST_CHECK(not floatNode.state().errored());
+	BOOST_CHECK(voidNode.state().errored());
+}
+
+}
+
+// 1. untyped INPUT port evaluation on error:
+// 	 throw an exception during evaluation
+BOOST_AUTO_TEST_CASE(void_error_in) {
+	// make a simple assignment node handle, "untyped" to "float"
+	const HandleRegistrar& voidHandle = typedNode<void, float>(
+		[](dependency_graph::Values& val, const InAttr<void>& in, const OutAttr<float>& out) {
+			throw std::runtime_error("error");
+		}
+	);
+
+	untyped_input_handle_error_test(voidHandle);
+}
+
+// 2. untyped INPUT incorrect type request:
+//   get() incorrect datatype (should throw an exception, but pulling on the connected out should work)
+BOOST_AUTO_TEST_CASE(void_error_assignment_in) {
+	// make a simple assignment node handle, float "float" to "untyped"
+	const HandleRegistrar& voidHandle = typedNode<void, float>(
+		[](dependency_graph::Values& val, const InAttr<void>& in, const OutAttr<float>& out) {
+			// assigns an integer - assuming connected node is float, this should throw an exception
+			val.set(out, (float)val.get<int>(in));
+		}
+	);
+
+	untyped_input_handle_error_test(voidHandle);
+}
 
 // untyped INPUT port evaluation:
 //   - more complex - based on the input type, do evaluation with the right type, always return a float
