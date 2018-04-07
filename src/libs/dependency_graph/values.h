@@ -15,19 +15,32 @@ class Values : public boost::noncopyable {
 		Values& operator =(Values&& vals);
 
 		template<typename T>
-		bool isConnected(const InAttr<T>& attr) const;
-
-		template<typename T>
 		const T& get(const InAttr<T>& attr) const;
 
 		template<typename T>
 		const T& get(const OutAttr<T>& attr) const;
+
+		/// untyped attribute "get" - has to be accessible from inside compute()
+		template<typename T>
+		const T& get(const InAttr<void>& attr) const;
+
+		template<typename T>
+		bool isDirty(const OutAttr<T>& attr) const;
 
 		template<typename T>
 		void set(const InAttr<T>& attr, const T& value);
 
 		template<typename T>
 		void set(const OutAttr<T>& attr, const T& value);
+
+		/// untyped attribute "set" - has to be accessible from inside compute()
+		template<typename T>
+		void set(const OutAttr<void>& attr, const T& value);
+
+		/// untyped attribute type testing.
+		/// Only useful for untyped attributes - typed attribute have an explicit T
+		template<typename T>
+		bool is(const TypedAttr<void>& attr) const;
 
 	private:
 		NodeBase* m_node;

@@ -50,6 +50,8 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		template<typename T>
 		void addAttribute(InAttr<T>& in, const std::string& name, const T& defaultValue = T());
 
+		void addAttribute(InAttr<void>& in, const std::string& name);
+
 		/// registers an output attribute.
 		/// Each attribute instance should be held statically in the
 		/// implementation of the "node" concept of the target application.
@@ -57,6 +59,8 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		/// that it will be available throughout the application run.
 		template<typename T>
 		void addAttribute(OutAttr<T>& out, const std::string& name, const T& defaultValue = T());
+
+		void addAttribute(OutAttr<void>& in, const std::string& name);
 
 		/// compute method of this node
 		void setCompute(std::function<State(Values&)> compute);

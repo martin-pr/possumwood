@@ -53,6 +53,12 @@ class TypedAttr : public Attr {
 		TypedAttr(const std::string& name, unsigned offset, Category cat, const T& defaultValue);
 };
 
+template<>
+class TypedAttr<void> : public Attr {
+	public:
+		TypedAttr(const std::string& name, unsigned offset, Category cat);
+};
+
 /// Input attribute type (constructed by Metadata class)
 template<typename T>
 class InAttr final : public TypedAttr<T> {
@@ -65,6 +71,17 @@ class InAttr final : public TypedAttr<T> {
 		friend class Metadata;
 };
 
+template<>
+class InAttr<void> final : public TypedAttr<void> {
+	public:
+		InAttr();
+
+	protected:
+		InAttr(const std::string& name, unsigned offset);
+
+		friend class Metadata;
+};
+
 /// Output attribute type (constructed by Metadata class)
 template<typename T>
 class OutAttr final : public TypedAttr<T> {
@@ -73,6 +90,17 @@ class OutAttr final : public TypedAttr<T> {
 
 	protected:
 		OutAttr(const std::string& name, unsigned offset, const T& defaultValue);
+
+		friend class Metadata;
+};
+
+template<>
+class OutAttr<void> final : public TypedAttr<void> {
+	public:
+		OutAttr();
+
+	protected:
+		OutAttr(const std::string& name, unsigned offset);
 
 		friend class Metadata;
 };

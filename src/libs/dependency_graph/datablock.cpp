@@ -2,6 +2,8 @@
 
 #include "metadata.h"
 #include "attr.h"
+#include "port.h"
+#include "node_base.h"
 
 namespace dependency_graph {
 
@@ -37,6 +39,19 @@ BaseData& Datablock::data(size_t index) {
 	return *m_data[index];
 }
 
+void Datablock::set(size_t index, const Port& port) {
+	assert(m_data.size() > index);
+
+	// void instances handling - make a new instance if needed
+	if(m_data[index] == nullptr)
+		m_data[index] = port.node().datablock().data(port.index()).clone();
+	assert(m_data[index] != nullptr);
+
+	// and assign the value
+	assert(m_data[index]->type() == port.type());
+	m_data[index]->assign(port.node().datablock().data(port.index()));
+}
+
 void Datablock::reset(size_t index) {
 	assert(m_data.size() > index);
 	m_data[index] = m_meta.metadata().attr(index).createData();
@@ -44,6 +59,11 @@ void Datablock::reset(size_t index) {
 
 const MetadataHandle& Datablock::meta() const {
 	return m_meta;
+}
+
+bool Datablock::isNull(std::size_t index) const {
+	assert(m_data.size() > index);
+	return m_data[index].get() == nullptr;
 }
 
 }
