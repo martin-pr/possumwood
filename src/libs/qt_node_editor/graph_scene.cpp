@@ -289,6 +289,14 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 	}
 }
 
+void GraphScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent) {
+	if(mouseEvent->button() == Qt::LeftButton) {
+		Node* node = findItem<Node>(itemAt(mouseEvent->scenePos(), QTransform()));
+
+		emit doubleClicked(node);
+	}
+}
+
 bool GraphScene::isEdgeEditInProgress() const {
 	return m_editedEdge->isVisible();
 }
@@ -297,7 +305,7 @@ void GraphScene::setMouseConnectionCallback(std::function<void(Port&, Port&)> fn
 	m_connectionCallback = fn;
 }
 
-void GraphScene::setNodesMoveCallback(std::function<void(const std::set<Node*>&)> fn) {
+ void GraphScene::setNodesMoveCallback(std::function<void(const std::set<Node*>&)> fn) {
 	m_nodesMoveCallback = fn;
 }
 
