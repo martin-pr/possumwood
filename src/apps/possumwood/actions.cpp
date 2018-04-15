@@ -24,19 +24,19 @@ dependency_graph::NodeBase& findNode(const dependency_graph::UniqueId& id) {
 	return *index[id].graphNode;
 }
 
-void doCreateNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
+void doCreateNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
 	if(data)
 		assert(data->meta() == meta);
 
 	std::unique_ptr<dependency_graph::BaseData> bd(new dependency_graph::Data<possumwood::NodeData>(blindData));
 
-	possumwood::App::instance().graph().nodes().add(meta, name, std::move(bd), data);
+	possumwood::App::instance().graph().nodes().add(meta, name, std::move(bd), data, id);
 }
 
 void doRemoveNode(const dependency_graph::UniqueId& id) {
 	auto& graph = possumwood::App::instance().graph();
 	auto it = std::find_if(graph.nodes().begin(), graph.nodes().end(), [&](const dependency_graph::NodeBase & i) {
-		return i.blindData<possumwood::NodeData>().id() == id;
+		return i.index() == id;
 	});
 
 	assert(it != graph.nodes().end());
@@ -71,10 +71,12 @@ void Actions::createNode(const dependency_graph::MetadataHandle& meta, const std
 	possumwood::NodeData data;
 	data.setPosition(_data.position());
 
+	dependency_graph::UniqueId id;
+
 	possumwood::UndoStack::Action action;
 	action.addCommand(
-		std::bind(&doCreateNode, std::ref(meta), name, data, boost::optional<const dependency_graph::Datablock&>()),
-		std::bind(&doRemoveNode, data.id())
+		std::bind(&doCreateNode, std::ref(meta), name, id, data, boost::optional<const dependency_graph::Datablock&>()),
+		std::bind(&doRemoveNode, id)
 	);
 
 	possumwood::App::instance().undoStack().execute(action);
@@ -87,8 +89,8 @@ possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node)
 	const dependency_graph::NodeBase& cnode = node;
 
 	action.addCommand(
-		std::bind(&doRemoveNode, node.blindData<possumwood::NodeData>().id()),
-		std::bind(&doCreateNode, std::ref(node.metadata()), node.name(),
+		std::bind(&doRemoveNode, node.index()),
+		std::bind(&doCreateNode, std::ref(node.metadata()), node.name(), node.index(),
 			node.blindData<possumwood::NodeData>(), cnode.datablock())
 	);
 
@@ -108,11 +110,11 @@ void Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 
 	action.addCommand(
 		std::bind(&doConnect,
-			p1.node().blindData<possumwood::NodeData>().id(), p1.index(),
-			p2.node().blindData<possumwood::NodeData>().id(), p2.index()),
+			p1.node().index(), p1.index(),
+			p2.node().index(), p2.index()),
 		std::bind(&doDisconnect,
-			p1.node().blindData<possumwood::NodeData>().id(), p1.index(),
-			p2.node().blindData<possumwood::NodeData>().id(), p2.index())
+			p1.node().index(), p1.index(),
+			p2.node().index(), p2.index())
 	);
 
 	possumwood::App::instance().undoStack().execute(action);
@@ -125,11 +127,11 @@ possumwood::UndoStack::Action disconnectAction(dependency_graph::Port& p1, depen
 
 	action.addCommand(
 		std::bind(&doDisconnect,
-			p1.node().blindData<possumwood::NodeData>().id(), p1.index(),
-			p2.node().blindData<possumwood::NodeData>().id(), p2.index()),
+			p1.node().index(), p1.index(),
+			p2.node().index(), p2.index()),
 		std::bind(&doConnect,
-			p1.node().blindData<possumwood::NodeData>().id(), p1.index(),
-			p2.node().blindData<possumwood::NodeData>().id(), p2.index())
+			p1.node().index(), p1.index(),
+			p2.node().index(), p2.index())
 	);
 
 	return action;
@@ -223,15 +225,15 @@ void Actions::paste(dependency_graph::Selection& selection) {
 
 			const dependency_graph::NodeBase& cn = n;
 			action.addCommand(
-				std::bind(&doCreateNode, dependency_graph::MetadataHandle(n.metadata()), n.name(), d, cn.datablock()),
-				std::bind(&doRemoveNode, n.blindData<possumwood::NodeData>().id())
+				std::bind(&doCreateNode, dependency_graph::MetadataHandle(n.metadata()), n.name(), n.index(), d, cn.datablock()),
+				std::bind(&doRemoveNode, n.index())
 			);
 		}
 
 		// add all connetions, based on "unique" IDs
 		for(auto& c : graph.connections()) {
-			dependency_graph::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
-			dependency_graph::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
+			dependency_graph::UniqueId id1 = c.first.node().index();
+			dependency_graph::UniqueId id2 = c.second.node().index();
 
 			action.addCommand(
 				std::bind(&doConnect, id1, c.first.index(), id2, c.second.index()),
@@ -241,7 +243,9 @@ void Actions::paste(dependency_graph::Selection& selection) {
 	}
 	catch(std::exception& e) {
 		// do nothing
-		// std::cout << e.what() << std::endl;
+		#ifndef NDEBUG
+		std::cout << e.what() << std::endl;
+		#endif
 	}
 
 	// execute the action (will actually make the nodes and connections)
@@ -253,11 +257,11 @@ void Actions::paste(dependency_graph::Selection& selection) {
 		possumwood::Index& index = possumwood::App::instance().index();
 
 		for(auto& n : graph.nodes())
-			selection.addNode(*index[n.blindData<possumwood::NodeData>().id()].graphNode);
+			selection.addNode(*index[n.index()].graphNode);
 
 		for(auto& c : graph.connections()) {
-			dependency_graph::UniqueId id1 = c.first.node().blindData<possumwood::NodeData>().id();
-			dependency_graph::UniqueId id2 = c.second.node().blindData<possumwood::NodeData>().id();
+			dependency_graph::UniqueId id1 = c.first.node().index();
+			dependency_graph::UniqueId id2 = c.second.node().index();
 
 			dependency_graph::NodeBase& n1 = *index[id1].graphNode;
 			dependency_graph::NodeBase& n2 = *index[id2].graphNode;
@@ -281,8 +285,8 @@ void Actions::move(const std::map<dependency_graph::NodeBase*, QPointF>& nodes) 
 			data.setPosition(n.second);
 
 			action.addCommand(
-				std::bind(&doSetBlindData, data.id(), data),
-				std::bind(&doSetBlindData, data.id(), n.first->blindData<possumwood::NodeData>())
+				std::bind(&doSetBlindData, n.first->index(), data),
+				std::bind(&doSetBlindData, n.first->index(), n.first->blindData<possumwood::NodeData>())
 			);
 		}
 	}

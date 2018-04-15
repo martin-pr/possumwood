@@ -4,7 +4,7 @@
 
 namespace dependency_graph {
 
-NodeBase::NodeBase(const std::string& name, const MetadataHandle& metadata, Network* parent) : m_name(name), m_network(parent), m_metadata(metadata), m_data(metadata) {
+NodeBase::NodeBase(const std::string& name, const UniqueId& id, const MetadataHandle& metadata, Network* parent) : m_name(name), m_network(parent), m_index(id), m_metadata(metadata), m_data(metadata) {
 	for(std::size_t a = 0; a < metadata.metadata().attributeCount(); ++a) {
 		auto& meta = metadata.metadata().attr(a);
 		assert(meta.offset() == a);

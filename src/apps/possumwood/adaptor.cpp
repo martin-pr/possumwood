@@ -232,7 +232,7 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 
 void Adaptor::onRemoveNode(dependency_graph::NodeBase& node) {
 	// find the item to be deleted
-	const auto id = node.blindData<possumwood::NodeData>().id();
+	const auto id = node.index();
 	auto& it = getIndex()[id];
 
 	// and remove it
@@ -244,8 +244,8 @@ void Adaptor::onRemoveNode(dependency_graph::NodeBase& node) {
 
 void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	// find the two nodes to be connected
-	auto& n1 = getIndex()[p1.node().blindData<possumwood::NodeData>().id()];
-	auto& n2 = getIndex()[p2.node().blindData<possumwood::NodeData>().id()];
+	auto& n1 = getIndex()[p1.node().index()];
+	auto& n2 = getIndex()[p2.node().index()];
 
 	assert(n1.editorNode->portCount() > p1.index());
 	assert(n2.editorNode->portCount() > p2.index());
@@ -256,8 +256,8 @@ void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) 
 
 void Adaptor::onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	// find the two nodes to be disconnected
-	auto& n1 = getIndex()[p1.node().blindData<possumwood::NodeData>().id()];
-	auto& n2 = getIndex()[p2.node().blindData<possumwood::NodeData>().id()];
+	auto& n1 = getIndex()[p1.node().index()];
+	auto& n2 = getIndex()[p2.node().index()];
 
 	assert(n1.editorNode->portCount() > p1.index());
 	assert(n2.editorNode->portCount() > p2.index());
@@ -269,19 +269,19 @@ void Adaptor::onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p
 void Adaptor::onBlindDataChanged(dependency_graph::NodeBase& node) {
 	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
-	auto& n = getIndex()[data.id()];
+	auto& n = getIndex()[node.index()];
 
 	n.editorNode->setPos(data.position());
 }
 
 void Adaptor::onNameChanged(dependency_graph::NodeBase& node) {
-	auto& n = getIndex()[node.blindData<possumwood::NodeData>().id()];
+	auto& n = getIndex()[node.index()];
 
 	n.editorNode->setName(node.name().c_str());
 }
 
 void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
-	auto& n = getIndex()[node.blindData<possumwood::NodeData>().id()];
+	auto& n = getIndex()[node.index()];
 
 	// count the different error messages
 	unsigned info = 0, warn = 0, err = 0;

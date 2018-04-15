@@ -5,7 +5,7 @@
 namespace possumwood {
 
 void Index::add(Item&& item) {
-	const dependency_graph::UniqueId id = item.graphNode->blindData<possumwood::NodeData>().id();
+	const dependency_graph::UniqueId id = item.graphNode->index();
 
 	assert(m_data.find(id) == m_data.end());
 	auto it = m_data.insert(std::make_pair(id, std::move(item))).first;

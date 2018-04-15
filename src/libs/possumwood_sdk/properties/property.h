@@ -89,8 +89,8 @@ class property : public property_base {
 				// and transfer it back to port, via an undoable action
 				UndoStack::Action action;
 				action.addCommand(
-					std::bind(&doSetValue, port.node().blindData<NodeData>().id(), port.index(), value),
-					std::bind(&doSetValue, port.node().blindData<NodeData>().id(), port.index(), original)
+					std::bind(&doSetValue, port.node().index(), port.index(), value),
+					std::bind(&doSetValue, port.node().index(), port.index(), original)
 				);
 
 				App::instance().undoStack().execute(action);

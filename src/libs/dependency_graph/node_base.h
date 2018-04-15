@@ -60,7 +60,7 @@ class NodeBase : public boost::noncopyable {
 		virtual void computeOutput(size_t index) = 0;
 
 	protected:
-		NodeBase(const std::string& name, const MetadataHandle& metadata, Network* parent);
+		NodeBase(const std::string& name, const UniqueId& id, const MetadataHandle& metadata, Network* parent);
 
 		Datablock& datablock();
 		void setDatablock(const Datablock& data);

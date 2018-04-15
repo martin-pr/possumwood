@@ -19,7 +19,7 @@ class Node : public NodeBase {
 		virtual const State& state() const override;
 
 	protected:
-		Node(const std::string& name, const MetadataHandle& def, Network* parent);
+		Node(const std::string& name, const UniqueId& id, const MetadataHandle& def, Network* parent);
 
 		virtual void computeInput(size_t index) override;
 		virtual void computeOutput(size_t index) override;

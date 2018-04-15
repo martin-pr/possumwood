@@ -62,7 +62,8 @@ class Nodes : public boost::noncopyable {
 
 		NodeBase& add(const MetadataHandle& type, const std::string& name,
 		              std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>(),
-		              boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
+		              boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>(),
+		              const UniqueId& id = UniqueId());
 
 		iterator erase(iterator i);
 		void clear();
