@@ -64,10 +64,6 @@ class Nodes : public boost::noncopyable {
 		              std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>(),
 		              boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
 
-		template<typename T>
-		NodeBase& add(const MetadataHandle& type, const std::string& name, const T& blindData,
-		              boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
-
 		iterator erase(iterator i);
 		void clear();
 

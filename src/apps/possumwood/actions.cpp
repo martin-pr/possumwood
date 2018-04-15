@@ -28,7 +28,9 @@ void doCreateNode(const dependency_graph::MetadataHandle& meta, const std::strin
 	if(data)
 		assert(data->meta() == meta);
 
-	possumwood::App::instance().graph().nodes().add(meta, name, blindData, data);
+	std::unique_ptr<dependency_graph::BaseData> bd(new dependency_graph::Data<possumwood::NodeData>(blindData));
+
+	possumwood::App::instance().graph().nodes().add(meta, name, std::move(bd), data);
 }
 
 void doRemoveNode(const dependency_graph::UniqueId& id) {
