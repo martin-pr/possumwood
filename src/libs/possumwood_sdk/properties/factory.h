@@ -59,6 +59,8 @@ class factory_typed : public factory {
 
 		template<typename VALUE, typename DERIVED>
 		friend class property;
+
+		std::string m_type;
 };
 
 } }
