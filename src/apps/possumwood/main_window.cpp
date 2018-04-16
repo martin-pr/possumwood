@@ -90,7 +90,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		        //   properties dock
 		        dependency_graph::Selection out;
 		        {
-			        auto& index = possumwood::App::instance().index();
+			        auto& index = m_adaptor->index();
 
 			        for(auto& n : selection.nodes)
 				        out.addNode(*index[n].graphNode);

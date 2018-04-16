@@ -3,7 +3,6 @@
 #include <QPoint>
 
 #include "io.h"
-#include <dependency_graph/unique_id.h>
 #include "traits.h"
 
 namespace possumwood {

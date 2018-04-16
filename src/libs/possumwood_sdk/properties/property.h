@@ -73,8 +73,8 @@ class property : public property_base {
 
 	private:
 		static void doSetValue(const dependency_graph::UniqueId& id, unsigned portId, const T& value) {
-			auto& node = App::instance().index()[id];
-			node.graphNode->port(portId).set(value);
+			auto& node = App::instance().graph()[id];
+			node.port(portId).set(value);
 		}
 
 		virtual void valueToPort(dependency_graph::Port& port) const override {

@@ -70,20 +70,33 @@ void Graph::disconnected(Port& p1, Port& p2) {
 void Graph::nameChanged(NodeBase& node) {
 	m_signals->m_onNameChanged(node);
 }
+
 void Graph::stateChanged(NodeBase& node) {
 	m_signals->m_onStateChanged(node);
 }
+
 void Graph::dirtyChanged() {
 	m_signals->m_onDirty();
 }
+
 void Graph::nodeAdded(NodeBase& node) {
 	m_signals->m_onAddNode(node);
 }
+
 void Graph::nodeRemoved(NodeBase& node) {
 	m_signals->m_onRemoveNode(node);
 }
+
 void Graph::blindDataChanged(NodeBase& node) {
 	m_signals->m_onBlindDataChanged(node);
+}
+
+NodeBase& Graph::operator[](const UniqueId& index) {
+	return nodes()[index];
+}
+
+const NodeBase& Graph::operator[](const UniqueId& index) const {
+	return nodes()[index];
 }
 
 }

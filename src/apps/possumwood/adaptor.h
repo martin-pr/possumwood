@@ -9,8 +9,11 @@
 #include <QAction>
 
 #include <possumwood_sdk/drawable.h>
+#include <possumwood_sdk/index.h>
+
 #include <dependency_graph/graph.h>
 #include <dependency_graph/selection.h>
+
 #include <qt_node_editor/graph_widget.h>
 
 /// A simple adaptor widget, marrying qt_graph_editor and dependency_graph
@@ -52,6 +55,8 @@ class Adaptor : public QWidget {
 		/// calls all existing Drawables
 		void draw(const possumwood::Drawable::ViewportState& viewport);
 
+		const possumwood::Index& index() const;
+
 	protected:
 	private:
 		void onAddNode(dependency_graph::NodeBase& node);
@@ -72,4 +77,6 @@ class Adaptor : public QWidget {
 		QSize m_sizeHint;
 
 		QAction *m_copy, *m_paste, *m_cut, *m_delete, *m_undo, *m_redo;
+
+		possumwood::Index m_index;
 };

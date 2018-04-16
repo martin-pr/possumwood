@@ -17,11 +17,10 @@
 namespace {
 
 dependency_graph::NodeBase& findNode(const dependency_graph::UniqueId& id) {
-	// we will need the Index instance to map between node IDs and their pointers
-	possumwood::Index& index = possumwood::App::instance().index();
+	auto& item = possumwood::App::instance().graph()[id];
 
 	// and get the node reference
-	return *index[id].graphNode;
+	return item;
 }
 
 void doCreateNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
@@ -253,18 +252,17 @@ void Actions::paste(dependency_graph::Selection& selection) {
 
 	// and make the selection based on added nodes
 	{
-		// we will need the Index instance to map between node IDs and their pointers
-		possumwood::Index& index = possumwood::App::instance().index();
+		auto& index = possumwood::App::instance().graph();
 
 		for(auto& n : graph.nodes())
-			selection.addNode(*index[n.index()].graphNode);
+			selection.addNode(index[n.index()]);
 
 		for(auto& c : graph.connections()) {
 			dependency_graph::UniqueId id1 = c.first.node().index();
 			dependency_graph::UniqueId id2 = c.second.node().index();
 
-			dependency_graph::NodeBase& n1 = *index[id1].graphNode;
-			dependency_graph::NodeBase& n2 = *index[id2].graphNode;
+			dependency_graph::NodeBase& n1 = index[id1];
+			dependency_graph::NodeBase& n2 = index[id2];
 
 			dependency_graph::Port& p1 = n1.port(c.first.index());
 			dependency_graph::Port& p2 = n2.port(c.second.index());

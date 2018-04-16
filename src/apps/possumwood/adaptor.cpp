@@ -23,14 +23,6 @@
 
 #include "actions.h"
 
-namespace {
-
-possumwood::Index& getIndex() {
-	return possumwood::App::instance().index();
-}
-
-}
-
 Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(400,400) {
 	// register callbacks
 	m_signals.push_back(graph->onAddNode(
@@ -71,8 +63,8 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 
 	m_graphWidget->scene().setMouseConnectionCallback([&](node_editor::Port& p1, node_editor::Port& p2) {
 		// find the two nodes that were connected
-		auto& n1 = getIndex()[&p1.parentNode()];
-		auto& n2 = getIndex()[&p2.parentNode()];
+		auto& n1 = m_index[&p1.parentNode()];
+		auto& n2 = m_index[&p2.parentNode()];
 
 		// and connect them in the graph as well
 		try {
@@ -89,7 +81,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_graphWidget->scene().setNodesMoveCallback([&](const std::set<node_editor::Node*>& nodes) {
 		std::map<dependency_graph::NodeBase*, QPointF> positions;
 		for(auto& nptr : nodes) {
-			auto& n = getIndex()[nptr];
+			auto& n = m_index[nptr];
 
 			positions[n.graphNode] = n.editorNode->pos();
 		}
@@ -98,7 +90,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	});
 
 	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
-		auto& n = getIndex()[&node];
+		auto& n = m_index[&node];
 
 		dependency_graph::State state = n.graphNode->state();
 		if(n.drawable)
@@ -223,7 +215,7 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		drawable = meta->createDrawable(dependency_graph::Values(node));
 
 	// and register the node in the internal index
-	getIndex().add(possumwood::Index::Item{
+	m_index.add(possumwood::Index::Item{
 		&node,
 		&newNode,
 		std::move(drawable)
@@ -233,19 +225,19 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 void Adaptor::onRemoveNode(dependency_graph::NodeBase& node) {
 	// find the item to be deleted
 	const auto id = node.index();
-	auto& it = getIndex()[id];
+	auto& it = m_index[id];
 
 	// and remove it
 	m_graphWidget->scene().removeNode(*(it.editorNode));
 
 	// and delete it from the list of nodes
-	getIndex().remove(id);
+	m_index.remove(id);
 }
 
 void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	// find the two nodes to be connected
-	auto& n1 = getIndex()[p1.node().index()];
-	auto& n2 = getIndex()[p2.node().index()];
+	auto& n1 = m_index[p1.node().index()];
+	auto& n2 = m_index[p2.node().index()];
 
 	assert(n1.editorNode->portCount() > p1.index());
 	assert(n2.editorNode->portCount() > p2.index());
@@ -256,8 +248,8 @@ void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) 
 
 void Adaptor::onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	// find the two nodes to be disconnected
-	auto& n1 = getIndex()[p1.node().index()];
-	auto& n2 = getIndex()[p2.node().index()];
+	auto& n1 = m_index[p1.node().index()];
+	auto& n2 = m_index[p2.node().index()];
 
 	assert(n1.editorNode->portCount() > p1.index());
 	assert(n2.editorNode->portCount() > p2.index());
@@ -269,19 +261,19 @@ void Adaptor::onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p
 void Adaptor::onBlindDataChanged(dependency_graph::NodeBase& node) {
 	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
-	auto& n = getIndex()[node.index()];
+	auto& n = m_index[node.index()];
 
 	n.editorNode->setPos(data.position());
 }
 
 void Adaptor::onNameChanged(dependency_graph::NodeBase& node) {
-	auto& n = getIndex()[node.index()];
+	auto& n = m_index[node.index()];
 
 	n.editorNode->setName(node.name().c_str());
 }
 
 void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
-	auto& n = getIndex()[node.index()];
+	auto& n = m_index[node.index()];
 
 	// count the different error messages
 	unsigned info = 0, warn = 0, err = 0;
@@ -294,7 +286,7 @@ void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
 		}
 	}
 
-	possumwood::Drawable* drw = getIndex()[&node].drawable.get();
+	possumwood::Drawable* drw = m_index[&node].drawable.get();
 	if(drw)
 		for(auto& m : drw->drawState()) {
 			switch(m.first) {
@@ -324,7 +316,7 @@ dependency_graph::Selection Adaptor::selection() const {
 	for(unsigned ni=0; ni<m_graphWidget->scene().nodeCount(); ++ni) {
 		node_editor::Node& n = m_graphWidget->scene().node(ni);
 		if(n.isSelected()) {
-			auto& node = getIndex()[&n];
+			auto& node = m_index[&n];
 
 			auto nodeRef = std::find_if(m_graph->nodes().begin(), m_graph->nodes().end(),
 				[&](const dependency_graph::NodeBase& n) {
@@ -342,8 +334,8 @@ dependency_graph::Selection Adaptor::selection() const {
 	for(unsigned ei=0; ei<m_graphWidget->scene().edgeCount(); ++ei) {
 		node_editor::ConnectedEdge& e = m_graphWidget->scene().edge(ei);
 		if(e.isSelected()) {
-			auto& n1 = getIndex()[&e.fromPort().parentNode()];
-			auto& n2 = getIndex()[&e.toPort().parentNode()];
+			auto& n1 = m_index[&e.fromPort().parentNode()];
+			auto& n2 = m_index[&e.toPort().parentNode()];
 
 			result.addConnection(n1.graphNode->port(e.fromPort().index()), n2.graphNode->port(e.toPort().index()));
 		}
@@ -353,14 +345,14 @@ dependency_graph::Selection Adaptor::selection() const {
 }
 
 void Adaptor::setSelection(const dependency_graph::Selection& selection) {
-	for(auto& n : getIndex())
+	for(auto& n : m_index)
 		n.second.editorNode->setSelected(selection.nodes().find(std::ref(*n.second.graphNode)) != selection.nodes().end());
 
 	for(unsigned ei=0; ei<m_graphWidget->scene().edgeCount(); ++ei) {
 		node_editor::ConnectedEdge& e = m_graphWidget->scene().edge(ei);
 
-		dependency_graph::Port& p1 = getIndex()[&e.fromPort().parentNode()].graphNode->port(e.fromPort().index());
-		dependency_graph::Port& p2 = getIndex()[&e.toPort().parentNode()].graphNode->port(e.toPort().index());
+		dependency_graph::Port& p1 = m_index[&e.fromPort().parentNode()].graphNode->port(e.fromPort().index());
+		dependency_graph::Port& p2 = m_index[&e.toPort().parentNode()].graphNode->port(e.toPort().index());
 
 		auto it = selection.connections().find(dependency_graph::Selection::Connection{std::ref(p1), std::ref(p2)});
 
@@ -419,7 +411,7 @@ QAction* Adaptor::redoAction() const {
 void Adaptor::draw(const possumwood::Drawable::ViewportState& viewport) {
 	GL_CHECK_ERR;
 
-	for(auto& n : getIndex()) {
+	for(auto& n : m_index) {
 		GL_CHECK_ERR;
 
 		if(n.second.drawable != nullptr) {
@@ -437,4 +429,8 @@ void Adaptor::draw(const possumwood::Drawable::ViewportState& viewport) {
 	}
 
 	GL_CHECK_ERR;
+}
+
+const possumwood::Index& Adaptor::index() const {
+	return m_index;
 }
