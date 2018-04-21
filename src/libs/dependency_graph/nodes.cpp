@@ -32,12 +32,12 @@ Nodes::iterator Nodes::erase(iterator i) {
 	m_parent->graph().dirtyChanged();
 
 	auto it = m_nodes.erase(i.base());
-	return boost::make_indirect_iterator(it);
+	return Nodes::iterator(it);
 }
 
 void Nodes::clear() {
 	while(!m_nodes.empty())
-		erase(boost::make_indirect_iterator(m_nodes.begin()));
+		erase(Nodes::iterator(m_nodes.begin()));
 }
 
 bool Nodes::empty() const {
@@ -49,27 +49,27 @@ std::size_t Nodes::size() const {
 }
 
 Nodes::const_iterator Nodes::begin() const {
-	return boost::make_indirect_iterator(m_nodes.begin());
+	return Nodes::const_iterator(m_nodes.begin());
 }
 
 Nodes::const_iterator Nodes::end() const {
-	return boost::make_indirect_iterator(m_nodes.end());
+	return Nodes::const_iterator(m_nodes.end());
 }
 
 Nodes::const_iterator Nodes::find(const UniqueId& id) const {
-	return boost::make_indirect_iterator(m_nodes.find(id));
+	return Nodes::const_iterator(m_nodes.find(id));
 }
 
 Nodes::iterator Nodes::begin() {
-	return boost::make_indirect_iterator(m_nodes.begin());
+	return Nodes::iterator(m_nodes.begin());
 }
 
 Nodes::iterator Nodes::end() {
-	return boost::make_indirect_iterator(m_nodes.end());
+	return Nodes::iterator(m_nodes.end());
 }
 
 Nodes::iterator Nodes::find(const UniqueId& id) {
-	return boost::make_indirect_iterator(m_nodes.find(id));
+	return Nodes::iterator(m_nodes.find(id));
 }
 
 NodeBase& Nodes::operator[](const dependency_graph::UniqueId& index) {

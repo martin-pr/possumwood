@@ -50,12 +50,12 @@ class Nodes : public boost::noncopyable {
 		NodeBase& operator[](const UniqueId& index);
 		const NodeBase& operator[](const UniqueId& index) const;
 
-		typedef boost::indirect_iterator<NodeSet::const_iterator> const_iterator;
+		typedef NodesIterator<NodeSet::const_iterator> const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
 		const_iterator find(const UniqueId& id) const;
 
-		typedef boost::indirect_iterator<NodeSet::iterator> iterator;
+		typedef NodesIterator<NodeSet::iterator> iterator;
 		iterator begin();
 		iterator end();
 		iterator find(const UniqueId& id);
