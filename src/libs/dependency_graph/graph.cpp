@@ -91,12 +91,4 @@ void Graph::blindDataChanged(NodeBase& node) {
 	m_signals->m_onBlindDataChanged(node);
 }
 
-NodeBase& Graph::operator[](const UniqueId& index) {
-	return nodes()[index];
-}
-
-const NodeBase& Graph::operator[](const UniqueId& index) const {
-	return nodes()[index];
-}
-
 }

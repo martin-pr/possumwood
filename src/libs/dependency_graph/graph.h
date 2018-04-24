@@ -19,10 +19,6 @@ class Graph : public Network {
 		Graph();
 		~Graph();
 
-		/// finds a node in this graph (TODO: also includes nodes from sub-networks)
-		NodeBase& operator[](const UniqueId& index);
-		const NodeBase& operator[](const UniqueId& index) const;
-
 		boost::signals2::connection onAddNode(std::function<void(NodeBase&)> callback);
 		boost::signals2::connection onRemoveNode(std::function<void(NodeBase&)> callback);
 

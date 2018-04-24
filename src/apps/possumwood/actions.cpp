@@ -17,10 +17,11 @@
 namespace {
 
 dependency_graph::NodeBase& findNode(const dependency_graph::UniqueId& id) {
-	auto& item = possumwood::App::instance().graph()[id];
+	auto it = possumwood::App::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
+	assert(it != possumwood::App::instance().graph().nodes().end());
 
 	// and get the node reference
-	return item;
+	return *it;
 }
 
 void doCreateNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
@@ -252,17 +253,17 @@ void Actions::paste(dependency_graph::Selection& selection) {
 
 	// and make the selection based on added nodes
 	{
-		auto& index = possumwood::App::instance().graph();
+		auto& nodes = possumwood::App::instance().graph().nodes();
 
 		for(auto& n : graph.nodes())
-			selection.addNode(index[n.index()]);
+			selection.addNode(*nodes.find(n.index(), dependency_graph::Nodes::kRecursive));
 
 		for(auto& c : graph.connections()) {
 			dependency_graph::UniqueId id1 = c.first.node().index();
 			dependency_graph::UniqueId id2 = c.second.node().index();
 
-			dependency_graph::NodeBase& n1 = index[id1];
-			dependency_graph::NodeBase& n2 = index[id2];
+			dependency_graph::NodeBase& n1 = *nodes.find(id1, dependency_graph::Nodes::kRecursive);
+			dependency_graph::NodeBase& n2 = *nodes.find(id2, dependency_graph::Nodes::kRecursive);
 
 			dependency_graph::Port& p1 = n1.port(c.first.index());
 			dependency_graph::Port& p2 = n2.port(c.second.index());
