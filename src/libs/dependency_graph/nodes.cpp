@@ -32,12 +32,12 @@ Nodes::iterator Nodes::erase(iterator i) {
 	m_parent->graph().dirtyChanged();
 
 	auto it = m_nodes.erase(i.base());
-	return Nodes::iterator(it);
+	return Nodes::iterator(it, m_nodes.end(), false);
 }
 
 void Nodes::clear() {
 	while(!m_nodes.empty())
-		erase(Nodes::iterator(m_nodes.begin()));
+		erase(Nodes::iterator(m_nodes.begin(), m_nodes.end(), false));
 }
 
 bool Nodes::empty() const {
@@ -48,28 +48,46 @@ std::size_t Nodes::size() const {
 	return m_nodes.size();
 }
 
-Nodes::const_iterator Nodes::begin() const {
-	return Nodes::const_iterator(m_nodes.begin());
+Nodes::const_iterator Nodes::begin(const SearchType& st) const {
+	return const_iterator(m_nodes.begin(), m_nodes.end(), st == kRecursive);
 }
 
 Nodes::const_iterator Nodes::end() const {
-	return Nodes::const_iterator(m_nodes.end());
+	return const_iterator(m_nodes.end(), m_nodes.end(), false);
 }
 
-Nodes::const_iterator Nodes::find(const UniqueId& id) const {
-	return Nodes::const_iterator(m_nodes.find(id));
+Nodes::const_iterator Nodes::find(const UniqueId& id, const SearchType& st) const {
+	if(st == kThisNetwork)
+		return const_iterator(m_nodes.find(id), m_nodes.end(), false);
+
+	// linear search, for now
+	else {
+		auto it = begin(kRecursive);
+		while(it != end() && it->index() != id)
+			++it;
+		return it;
+	}
 }
 
-Nodes::iterator Nodes::begin() {
-	return Nodes::iterator(m_nodes.begin());
+Nodes::iterator Nodes::begin(const SearchType& st) {
+	return iterator(m_nodes.begin(), m_nodes.end(), st == kRecursive);
 }
 
 Nodes::iterator Nodes::end() {
-	return Nodes::iterator(m_nodes.end());
+	return Nodes::iterator(m_nodes.end(), m_nodes.end(), false);
 }
 
-Nodes::iterator Nodes::find(const UniqueId& id) {
-	return Nodes::iterator(m_nodes.find(id));
+Nodes::iterator Nodes::find(const UniqueId& id, const SearchType& st) {
+	if(st == kThisNetwork)
+		return Nodes::iterator(m_nodes.find(id), m_nodes.end(), false);
+
+	// linear search, for now
+	else {
+		auto it = begin(kRecursive);
+		while(it != end() && it->index() != id)
+			++it;
+		return it;
+	}
 }
 
 NodeBase& Nodes::operator[](const dependency_graph::UniqueId& index) {

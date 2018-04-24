@@ -9,6 +9,7 @@
 
 #include "data.h"
 #include "node.h"
+#include "nodes_iterator.h"
 
 namespace dependency_graph {
 
@@ -44,6 +45,11 @@ class Nodes : public boost::noncopyable {
 		using NodeSet = std::set<std::unique_ptr<NodeBase>, Compare>;
 
 	public:
+		enum SearchType {
+			kThisNetwork,
+			kRecursive
+		};
+
 		bool empty() const;
 		std::size_t size() const;
 
@@ -51,14 +57,14 @@ class Nodes : public boost::noncopyable {
 		const NodeBase& operator[](const UniqueId& index) const;
 
 		typedef NodesIterator<NodeSet::const_iterator> const_iterator;
-		const_iterator begin() const;
+		const_iterator begin(const SearchType& st = kThisNetwork) const;
 		const_iterator end() const;
-		const_iterator find(const UniqueId& id) const;
+		const_iterator find(const UniqueId& id, const SearchType& st = kThisNetwork) const;
 
 		typedef NodesIterator<NodeSet::iterator> iterator;
-		iterator begin();
+		iterator begin(const SearchType& st = kThisNetwork);
 		iterator end();
-		iterator find(const UniqueId& id);
+		iterator find(const UniqueId& id, const SearchType& st = kThisNetwork); // will use is<Network>()
 
 		NodeBase& add(const MetadataHandle& type, const std::string& name,
 		              std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>(),

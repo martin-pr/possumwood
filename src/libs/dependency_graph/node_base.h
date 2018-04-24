@@ -59,6 +59,15 @@ class NodeBase : public boost::noncopyable {
 		virtual void computeInput(size_t index) = 0;
 		virtual void computeOutput(size_t index) = 0;
 
+		template<typename T>
+		bool is() const;
+
+		template<typename T>
+		const T& as() const;
+
+		template<typename T>
+		T& as();
+
 	protected:
 		NodeBase(const std::string& name, const UniqueId& id, const MetadataHandle& metadata, Network* parent);
 

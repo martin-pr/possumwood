@@ -53,4 +53,21 @@ void NodeBase::set(size_t index, const T& value) {
 	datablock().set<T>(index, value);
 }
 
+template<typename T>
+bool NodeBase::is() const {
+	return dynamic_cast<const T*>(this) != nullptr;
+}
+
+template<typename T>
+const T& NodeBase::as() const {
+	assert(is<T>());
+	return dynamic_cast<const T&>(*this);
+}
+
+template<typename T>
+T& NodeBase::as() {
+	assert(is<T>());
+	return dynamic_cast<T&>(*this);
+}
+
 }
