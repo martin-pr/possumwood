@@ -12,6 +12,8 @@
 
 #include "common.h"
 
+using namespace dependency_graph;
+
 namespace dependency_graph {
 
 static std::ostream& operator << (std::ostream& out, const UniqueId& id) {
@@ -26,7 +28,52 @@ static std::ostream& operator << (std::ostream& out, const Nodes::iterator& i) {
 
 }
 
-using namespace dependency_graph;
+namespace {
+
+bool checkNodes(const Network& g, std::vector<NodeBase*> nodes, dependency_graph::Nodes::SearchType st = dependency_graph::Nodes::kThisNetwork) {
+	auto it1 = g.nodes().begin(st);
+	auto it2 = nodes.begin();
+
+	while(it1 != g.nodes().end() || it2 != nodes.end()) {
+		if(&(*it1) != *it2)
+			return false;
+
+		++it1;
+		++it2;
+	}
+
+	return it1 == g.nodes().end() && it2 == nodes.end();
+}
+
+}
+
+BOOST_AUTO_TEST_CASE(network_nodes_instantiation) {
+	Graph g;
+
+	// instantiate nodes from arithmetic.cpp
+	const MetadataHandle& addition = additionNode();
+	const MetadataHandle& multiplication = multiplicationNode();
+
+	NodeBase& networkBase = g.nodes().add(MetadataRegister::singleton()["network"], "new_network");
+	BOOST_REQUIRE(networkBase.is<Network>());
+	Network& network = networkBase.as<Network>();
+
+	NodeBase& na1 = g.nodes().add(addition, "add_1");
+	NodeBase& na2 = g.nodes().add(multiplication, "mult_1");
+	NodeBase& nb1 = network.nodes().add(multiplication, "mult_2");
+	NodeBase& nb2 = network.nodes().add(addition, "add_2");
+
+	// 4 nodes inside a network and no connections
+	BOOST_REQUIRE_EQUAL(g.nodes().size(), 3u);
+	BOOST_REQUIRE_EQUAL(network.nodes().size(), 2u);
+	BOOST_REQUIRE_EQUAL(g.connections().size(), 0u);
+	BOOST_REQUIRE_EQUAL(network.connections().size(), 0u);
+
+	// check the nodes
+	BOOST_CHECK(checkNodes(g, {{&networkBase, &na1, &na2}}));
+	BOOST_CHECK(checkNodes(network, {{&nb1, &nb2}}));
+	BOOST_CHECK(checkNodes(g, {{&networkBase, &nb1, &nb2, &na1, &na2}}, dependency_graph::Nodes::kRecursive));
+}
 
 BOOST_AUTO_TEST_CASE(network_node_iterator) {
 	Graph g;
@@ -49,16 +96,6 @@ BOOST_AUTO_TEST_CASE(network_node_iterator) {
 	BOOST_REQUIRE_EQUAL(network.nodes().size(), 4u);
 	BOOST_REQUIRE_EQUAL(g.connections().size(), 0u);
 	BOOST_REQUIRE_EQUAL(network.connections().size(), 0u);
-
-	// make a total list of node IDs
-	std::set<UniqueId> nodeIDs;
-	nodeIDs.insert(network.index());
-	nodeIDs.insert(n1.index());
-	nodeIDs.insert(n2.index());
-	nodeIDs.insert(n3.index());
-	nodeIDs.insert(n4.index());
-
-	BOOST_REQUIRE_EQUAL(nodeIDs.size(), 5);
 
 	// try non-recursive iteration
 	{
