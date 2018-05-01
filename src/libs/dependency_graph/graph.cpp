@@ -13,14 +13,6 @@ struct Graph::Signals {
 };
 
 Graph::Graph() : Network(nullptr), m_signals(new Signals) {
-	// connect the signals from owned classes
-	connections().onConnect([this](Port& p1, Port& p2) {
-		connected(p1, p2);
-	});
-
-	connections().onDisconnect([this](Port& p1, Port& p2) {
-		disconnected(p1, p2);
-	});
 }
 
 Graph::~Graph() {

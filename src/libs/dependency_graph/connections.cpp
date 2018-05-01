@@ -31,7 +31,7 @@ void Connections::add(Port& src, Port& dest) {
 	m_connections.left.insert(std::make_pair(getId(src), getId(dest)));
 
 	// and run the callback
-	m_onConnect(src, dest);
+	m_parent->graph().connected(src, dest);
 }
 
 void Connections::remove(Port& src, Port& dest) {
@@ -47,7 +47,7 @@ void Connections::remove(Port& src, Port& dest) {
 		throw std::runtime_error("Attempting to remove a non-existing connection.");
 
 	// run the callback
-	m_onDisconnect(src, dest);
+	m_parent->graph().disconnected(src, dest);
 
 	// and remove it
 	m_connections.right.erase(it);
@@ -58,7 +58,7 @@ void Connections::purge(const NodeBase& n) {
 	auto it = m_connections.left.begin();
 	while(it != m_connections.left.end())
 		if(it->first.nodeIndex == n.index() || it->second.nodeIndex == n.index()) {
-			m_onDisconnect(getPort(it->first), getPort(it->second));
+			m_parent->graph().disconnected(getPort(it->first), getPort(it->second));
 
 			// remove the iterator
 			it = m_connections.left.erase(it);
@@ -174,14 +174,6 @@ Connections::iterator Connections::end() {
 		return convertConst(val);
 	};
 	return iterator(m_connections.left.end(), fn);
-}
-
-boost::signals2::connection Connections::onConnect(std::function<void(Port&, Port&)> callback) {
-	return m_onConnect.connect(callback);
-}
-
-boost::signals2::connection Connections::onDisconnect(std::function<void(Port&, Port&)> callback) {
-	return m_onDisconnect.connect(callback);
 }
 
 }
