@@ -200,7 +200,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				QAction* addNode = makeAction(
 				    itemName.c_str(),
 				    [&m, itemName, contextMenu, this]() {
-					    Actions::createNode(m, itemName,
+					    Actions::createNode(m_adaptor->currentNetwork(), m, itemName,
 					                        m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos())));
 					},
 				    m_adaptor);

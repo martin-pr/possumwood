@@ -17,6 +17,9 @@
 namespace {
 
 dependency_graph::NodeBase& findNode(const dependency_graph::UniqueId& id) {
+	if(id == possumwood::App::instance().graph().index())
+		return possumwood::App::instance().graph();
+
 	auto it = possumwood::App::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
 	assert(it != possumwood::App::instance().graph().nodes().end());
 
@@ -24,24 +27,27 @@ dependency_graph::NodeBase& findNode(const dependency_graph::UniqueId& id) {
 	return *it;
 }
 
-void doCreateNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
+void doCreateNode(const dependency_graph::UniqueId& currentNetworkIndex, const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
 	if(data)
 		assert(data->meta() == meta);
 
 	std::unique_ptr<dependency_graph::BaseData> bd(new dependency_graph::Data<possumwood::NodeData>(blindData));
 
-	possumwood::App::instance().graph().nodes().add(meta, name, std::move(bd), data, id);
+	dependency_graph::NodeBase& netBase = findNode(currentNetworkIndex);
+	assert(netBase.is<dependency_graph::Network>());
+
+	netBase.as<dependency_graph::Network>().nodes().add(meta, name, std::move(bd), data, id);
 }
 
 void doRemoveNode(const dependency_graph::UniqueId& id) {
 	auto& graph = possumwood::App::instance().graph();
-	auto it = std::find_if(graph.nodes().begin(), graph.nodes().end(), [&](const dependency_graph::NodeBase & i) {
+	auto it = std::find_if(graph.nodes().begin(dependency_graph::Nodes::kRecursive), graph.nodes().end(), [&](const dependency_graph::NodeBase & i) {
 		return i.index() == id;
 	});
 
 	assert(it != graph.nodes().end());
 
-	graph.nodes().erase(it);
+	it->network().nodes().erase(it);
 }
 
 void doConnect(const dependency_graph::UniqueId& fromNode, std::size_t fromPort, const dependency_graph::UniqueId& toNode, std::size_t toPort) {
@@ -67,7 +73,7 @@ void doSetBlindData(const dependency_graph::UniqueId& node, const possumwood::No
 
 /////////////////////////////////////////////////////////////////////
 
-void Actions::createNode(const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data) {
+void Actions::createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data) {
 	possumwood::NodeData data;
 	data.setPosition(_data.position());
 
@@ -75,7 +81,7 @@ void Actions::createNode(const dependency_graph::MetadataHandle& meta, const std
 
 	possumwood::UndoStack::Action action;
 	action.addCommand(
-		std::bind(&doCreateNode, std::ref(meta), name, id, data, boost::optional<const dependency_graph::Datablock&>()),
+		std::bind(&doCreateNode, current.index(), std::ref(meta), name, id, data, boost::optional<const dependency_graph::Datablock&>()),
 		std::bind(&doRemoveNode, id)
 	);
 
@@ -90,7 +96,7 @@ possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node)
 
 	action.addCommand(
 		std::bind(&doRemoveNode, node.index()),
-		std::bind(&doCreateNode, std::ref(node.metadata()), node.name(), node.index(),
+		std::bind(&doCreateNode, node.network().index(), std::ref(node.metadata()), node.name(), node.index(),
 			node.blindData<possumwood::NodeData>(), cnode.datablock())
 	);
 
@@ -205,33 +211,33 @@ void Actions::copy(const dependency_graph::Selection& selection) {
 	QApplication::clipboard()->setText(ss.str().c_str());
 }
 
-void Actions::paste(dependency_graph::Selection& selection) {
+void Actions::paste(dependency_graph::Network& current, dependency_graph::Selection& selection) {
 	possumwood::UndoStack::Action action;
 
-	dependency_graph::Graph graph;
+	dependency_graph::Graph pastedGraph;
 
 	try {
 		// convert the selection to JSON object
 		auto json = dependency_graph::io::json::parse(QApplication::clipboard()->text().toStdString());
 
 		// import the clipboard
-		dependency_graph::io::from_json(json, graph);
+		dependency_graph::io::from_json(json, pastedGraph);
 
 		// add all the nodes to the main graph
 		//  - each node has a unique ID (unique between all graphs), store that
-		for(auto& n : graph.nodes()) {
+		for(auto& n : pastedGraph.nodes()) {
 			possumwood::NodeData d = n.blindData<possumwood::NodeData>();
 			d.setPosition(QPointF(20, 20) + d.position());
 
 			const dependency_graph::NodeBase& cn = n;
 			action.addCommand(
-				std::bind(&doCreateNode, dependency_graph::MetadataHandle(n.metadata()), n.name(), n.index(), d, cn.datablock()),
+				std::bind(&doCreateNode, current.index(), dependency_graph::MetadataHandle(n.metadata()), n.name(), n.index(), d, cn.datablock()),
 				std::bind(&doRemoveNode, n.index())
 			);
 		}
 
 		// add all connetions, based on "unique" IDs
-		for(auto& c : graph.connections()) {
+		for(auto& c : pastedGraph.connections()) {
 			dependency_graph::UniqueId id1 = c.first.node().index();
 			dependency_graph::UniqueId id2 = c.second.node().index();
 
@@ -253,17 +259,15 @@ void Actions::paste(dependency_graph::Selection& selection) {
 
 	// and make the selection based on added nodes
 	{
-		auto& nodes = possumwood::App::instance().graph().nodes();
+		for(auto& n : pastedGraph.nodes())
+			selection.addNode(findNode(n.index()));
 
-		for(auto& n : graph.nodes())
-			selection.addNode(*nodes.find(n.index(), dependency_graph::Nodes::kRecursive));
-
-		for(auto& c : graph.connections()) {
+		for(auto& c : pastedGraph.connections()) {
 			dependency_graph::UniqueId id1 = c.first.node().index();
 			dependency_graph::UniqueId id2 = c.second.node().index();
 
-			dependency_graph::NodeBase& n1 = *nodes.find(id1, dependency_graph::Nodes::kRecursive);
-			dependency_graph::NodeBase& n2 = *nodes.find(id2, dependency_graph::Nodes::kRecursive);
+			dependency_graph::NodeBase& n1 = findNode(id1);
+			dependency_graph::NodeBase& n2 = findNode(id2);
 
 			dependency_graph::Port& p1 = n1.port(c.first.index());
 			dependency_graph::Port& p2 = n2.port(c.second.index());

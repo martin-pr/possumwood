@@ -35,6 +35,9 @@ class Adaptor : public QWidget {
 		/// returns the dependency graph
 		dependency_graph::Graph& graph();
 
+		void setCurrentNetwork(dependency_graph::Network& n);
+		dependency_graph::Network& currentNetwork();
+
 		node_editor::GraphWidget* graphWidget();
 
 		/// returns current selection
@@ -70,6 +73,7 @@ class Adaptor : public QWidget {
 		void onStateChanged(const dependency_graph::NodeBase& node);
 
 		dependency_graph::Graph* m_graph;
+		dependency_graph::Network* m_currentNetwork;
 		node_editor::GraphWidget* m_graphWidget;
 
 		std::vector<boost::signals2::connection> m_signals;
