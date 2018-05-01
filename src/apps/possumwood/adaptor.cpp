@@ -194,6 +194,43 @@ Adaptor::~Adaptor() {
 		c.disconnect();
 }
 
+namespace {
+	class NetworkDrawable : public possumwood::Drawable {
+		public:
+			NetworkDrawable(dependency_graph::Network& network, dependency_graph::Values&& vals) : Drawable(std::move(vals)) {
+				for(auto& node : network.nodes()) {
+					const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata());
+					if(meta) {
+						std::unique_ptr<Drawable> tmp = meta->createDrawable(dependency_graph::Values(node));
+						if(tmp.get() != nullptr)
+							m_drawables.push_back(std::move(tmp));
+					}
+
+					else if(node.is<dependency_graph::Network>()) {
+						std::unique_ptr<Drawable> tmp(new NetworkDrawable(
+							node.as<dependency_graph::Network>(),
+							dependency_graph::Values(node)
+						));
+						m_drawables.push_back(std::move(tmp));
+					}
+				}
+			}
+
+		protected:
+			dependency_graph::State draw() {
+				dependency_graph::State state;
+				for(auto& d : m_drawables) {
+					d->doDraw(viewport());
+					state.append(d->drawState());
+				}
+				return state;
+			}
+
+		private:
+			std::vector<std::unique_ptr<Drawable>> m_drawables;
+	};
+}
+
 void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 	if(&node.network() == m_currentNetwork) {
 		// get the possumwood::Metadata pointer from the metadata's blind data
@@ -226,6 +263,14 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		if(meta != nullptr)
 			drawable = meta->createDrawable(dependency_graph::Values(node));
 
+		else if(node.is<dependency_graph::Network>()) {
+			drawable = std::unique_ptr<possumwood::Drawable>(new NetworkDrawable(
+				node.as<dependency_graph::Network>(),
+				dependency_graph::Values(node)
+			));
+
+		}
+
 		// and register the node in the internal index
 		m_index.add(possumwood::Index::Item{
 			&node,
@@ -250,8 +295,6 @@ void Adaptor::onRemoveNode(dependency_graph::NodeBase& node) {
 }
 
 void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
-	std::cout << "on connect " << std::endl;
-
 	assert(&p1.node().network() == &p2.node().network());
 	if(&p1.node().network() == m_currentNetwork) {
 		// find the two nodes to be connected
