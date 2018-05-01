@@ -529,6 +529,9 @@ void Adaptor::setCurrentNetwork(dependency_graph::Network& n) {
 
 	for(auto& c : n.connections())
 		onConnect(c.first, c.second);
+
+	// refresh the viewport
+	possumwood::Drawable::refresh();
 }
 
 dependency_graph::Network& Adaptor::currentNetwork() {

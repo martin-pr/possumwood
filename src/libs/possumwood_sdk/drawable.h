@@ -28,6 +28,9 @@ class Drawable : public boost::noncopyable {
 		/// a static signal for queuing a refresh - used by the Qt UI to actually do the queuing
 		static boost::signals2::connection onRefreshQueued(std::function<void()> fn);
 
+		/// queues a refresh (does not refresh immediately, but on next Qt paint event)
+		static void refresh();
+
 	protected:
 		virtual dependency_graph::State draw() = 0;
 
@@ -35,9 +38,6 @@ class Drawable : public boost::noncopyable {
 		const dependency_graph::Values& values() const;
 
 		const possumwood::Drawable::ViewportState& viewport() const;
-
-		/// queues a refresh (does not refresh immediately, but on next Qt paint event)
-		static void refresh();
 
 	private:
 		dependency_graph::Values m_vals;
