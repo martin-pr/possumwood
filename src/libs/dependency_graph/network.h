@@ -27,7 +27,7 @@ class Network : public NodeBase {
 		std::unique_ptr<NodeBase> makeNode(const std::string& name, const MetadataHandle& md, const UniqueId& id = UniqueId());
 
 	private:
-		Network(Network* parent);
+		Network(Network* parent, const std::string& name = "network");
 
 		Nodes m_nodes;
 		Connections m_connections;
