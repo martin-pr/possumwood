@@ -27,7 +27,7 @@ dependency_graph::NodeBase& findNode(const dependency_graph::UniqueId& id) {
 	return *it;
 }
 
-void doCreateNode(const dependency_graph::UniqueId& currentNetworkIndex, const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
+dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& currentNetworkIndex, const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id, const possumwood::NodeData& blindData, boost::optional<const dependency_graph::Datablock&> data = boost::optional<const dependency_graph::Datablock&>()) {
 	if(data)
 		assert(data->meta() == meta);
 
@@ -36,7 +36,9 @@ void doCreateNode(const dependency_graph::UniqueId& currentNetworkIndex, const d
 	dependency_graph::NodeBase& netBase = findNode(currentNetworkIndex);
 	assert(netBase.is<dependency_graph::Network>());
 
-	netBase.as<dependency_graph::Network>().nodes().add(meta, name, std::move(bd), data, id);
+	dependency_graph::NodeBase& n = netBase.as<dependency_graph::Network>().nodes().add(meta, name, std::move(bd), data, id);
+	assert(n.index() == id);
+	return n;
 }
 
 void doRemoveNode(const dependency_graph::UniqueId& id) {
@@ -216,6 +218,42 @@ void Actions::copy(const dependency_graph::Selection& selection) {
 	QApplication::clipboard()->setText(ss.str().c_str());
 }
 
+namespace {
+	possumwood::UndoStack::Action pasteNetwork(const dependency_graph::UniqueId& targetIndex, const dependency_graph::Network& source) {
+		possumwood::UndoStack::Action action;
+
+		// add all the nodes to the parent network
+		//  - each node has a unique ID (unique between all graphs), store that
+		for(auto& n : source.nodes()) {
+			possumwood::NodeData d = n.blindData<possumwood::NodeData>();
+			d.setPosition(QPointF(20, 20) + d.position());
+
+			const dependency_graph::NodeBase& cn = n;
+			action.addCommand(
+				std::bind(&doCreateNode, targetIndex, dependency_graph::MetadataHandle(n.metadata()), n.name(), n.index(), d, cn.datablock()),
+				std::bind(&doRemoveNode, n.index())
+			);
+
+			// recurse to add nested networks
+			if(cn.is<dependency_graph::Network>())
+				action.append(pasteNetwork(n.index(), n.as<dependency_graph::Network>()));
+		}
+
+		// add all connections, based on "unique" IDs
+		for(auto& c : source.connections()) {
+			dependency_graph::UniqueId id1 = c.first.node().index();
+			dependency_graph::UniqueId id2 = c.second.node().index();
+
+			action.addCommand(
+				std::bind(&doConnect, id1, c.first.index(), id2, c.second.index()),
+				std::bind(&doDisconnect, id1, c.first.index(), id2, c.second.index())
+			);
+		}
+
+		return action;
+	}
+}
+
 void Actions::paste(dependency_graph::Network& current, dependency_graph::Selection& selection) {
 	possumwood::UndoStack::Action action;
 
@@ -228,29 +266,8 @@ void Actions::paste(dependency_graph::Network& current, dependency_graph::Select
 		// import the clipboard
 		dependency_graph::io::from_json(json, pastedGraph);
 
-		// add all the nodes to the main graph
-		//  - each node has a unique ID (unique between all graphs), store that
-		for(auto& n : pastedGraph.nodes()) {
-			possumwood::NodeData d = n.blindData<possumwood::NodeData>();
-			d.setPosition(QPointF(20, 20) + d.position());
-
-			const dependency_graph::NodeBase& cn = n;
-			action.addCommand(
-				std::bind(&doCreateNode, current.index(), dependency_graph::MetadataHandle(n.metadata()), n.name(), n.index(), d, cn.datablock()),
-				std::bind(&doRemoveNode, n.index())
-			);
-		}
-
-		// add all connetions, based on "unique" IDs
-		for(auto& c : pastedGraph.connections()) {
-			dependency_graph::UniqueId id1 = c.first.node().index();
-			dependency_graph::UniqueId id2 = c.second.node().index();
-
-			action.addCommand(
-				std::bind(&doConnect, id1, c.first.index(), id2, c.second.index()),
-				std::bind(&doDisconnect, id1, c.first.index(), id2, c.second.index())
-			);
-		}
+		// THIS WILL ALSO NEED TO WORK RECURSIVELY
+		action.append(pasteNetwork(current.index(), pastedGraph));
 	}
 	catch(std::exception& e) {
 		// do nothing
@@ -264,21 +281,21 @@ void Actions::paste(dependency_graph::Network& current, dependency_graph::Select
 
 	// and make the selection based on added nodes
 	{
-		for(auto& n : pastedGraph.nodes())
-			selection.addNode(findNode(n.index()));
+		// for(auto& n : pastedGraph.nodes())
+		// 	selection.addNode(findNode(n.index()));
 
-		for(auto& c : pastedGraph.connections()) {
-			dependency_graph::UniqueId id1 = c.first.node().index();
-			dependency_graph::UniqueId id2 = c.second.node().index();
+		// for(auto& c : pastedGraph.connections()) {
+		// 	dependency_graph::UniqueId id1 = c.first.node().index();
+		// 	dependency_graph::UniqueId id2 = c.second.node().index();
 
-			dependency_graph::NodeBase& n1 = findNode(id1);
-			dependency_graph::NodeBase& n2 = findNode(id2);
+		// 	dependency_graph::NodeBase& n1 = findNode(id1);
+		// 	dependency_graph::NodeBase& n2 = findNode(id2);
 
-			dependency_graph::Port& p1 = n1.port(c.first.index());
-			dependency_graph::Port& p2 = n2.port(c.second.index());
+		// 	dependency_graph::Port& p1 = n1.port(c.first.index());
+		// 	dependency_graph::Port& p2 = n2.port(c.second.index());
 
-			selection.addConnection(p1, p2);
-		}
+		// 	selection.addConnection(p1, p2);
+		// }
 	}
 }
 

@@ -21,7 +21,7 @@ const MetadataHandle& networkMetadata() {
 
 }
 
-Network::Network(Network* parent, const std::string& name) : NodeBase(name, UniqueId(), networkMetadata(), parent), m_nodes(this), m_connections(this) {
+Network::Network(Network* parent, const std::string& name, const UniqueId& id) : NodeBase(name, id, networkMetadata(), parent), m_nodes(this), m_connections(this) {
 }
 
 Network::~Network() {
@@ -71,7 +71,7 @@ std::unique_ptr<NodeBase> Network::makeNode(const std::string& name, const Metad
 	if(md != networkMetadata())
 		return std::unique_ptr<NodeBase>(new Node(name, id, md, this));
 	else
-		return std::unique_ptr<NodeBase>(new Network(this, name));
+		return std::unique_ptr<NodeBase>(new Network(this, name, id));
 }
 
 }

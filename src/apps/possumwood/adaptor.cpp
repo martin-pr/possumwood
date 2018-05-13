@@ -232,9 +232,11 @@ namespace {
 }
 
 void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
+	// get the possumwood::Metadata pointer from the metadata's blind data
+	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata());
+
+	// create visual representation of the node only if in current network
 	if(&node.network() == m_currentNetwork) {
-		// get the possumwood::Metadata pointer from the metadata's blind data
-		const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata());
 
 		// get the blind data, containing the node's position
 		const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
@@ -257,27 +259,27 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 				QColor(colour[0]*255, colour[1]*255, colour[2]*255)
 			});
 		}
-
-		// create a drawable (if factory returns anything)
-		std::unique_ptr<possumwood::Drawable> drawable;
-		if(meta != nullptr)
-			drawable = meta->createDrawable(dependency_graph::Values(node));
-
-		else if(node.is<dependency_graph::Network>()) {
-			drawable = std::unique_ptr<possumwood::Drawable>(new NetworkDrawable(
-				node.as<dependency_graph::Network>(),
-				dependency_graph::Values(node)
-			));
-
-		}
-
-		// and register the node in the internal index
-		m_index.add(possumwood::Index::Item{
-			&node,
-			&newNode,
-			std::move(drawable)
-		});
 	}
+
+	// create a drawable (if factory returns anything)
+	std::unique_ptr<possumwood::Drawable> drawable;
+	if(meta != nullptr)
+		drawable = meta->createDrawable(dependency_graph::Values(node));
+
+	else if(node.is<dependency_graph::Network>()) {
+		drawable = std::unique_ptr<possumwood::Drawable>(new NetworkDrawable(
+			node.as<dependency_graph::Network>(),
+			dependency_graph::Values(node)
+		));
+
+	}
+
+	// and register the node in the internal index
+	m_index.add(possumwood::Index::Item{
+		&node,
+		&newNode, // WHAT DO WITH THIS? we need drawables independent of the INDEX!
+		std::move(drawable)
+	});
 }
 
 void Adaptor::onRemoveNode(dependency_graph::NodeBase& node) {
