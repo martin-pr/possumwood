@@ -5,7 +5,7 @@
 
 namespace dependency_graph { namespace io {
 
-void adl_serializer<Node>::to_json(json& j, const ::dependency_graph::Node& g) {
+void adl_serializer<NodeBase>::to_json(json& j, const ::dependency_graph::NodeBase& g) {
 	j["name"] = g.name();
 	j["type"] = g.metadata().type();
 
@@ -14,8 +14,8 @@ void adl_serializer<Node>::to_json(json& j, const ::dependency_graph::Node& g) {
 
 		// only serialize unconnected inputs
 		if(p.category() == Attr::kInput && !g.network().connections().connectedFrom(p))
-			if(io::isSaveable(g.m_data.data(pi)))
-				io::toJson(j["ports"][p.name()], g.m_data.data(pi));
+			if(io::isSaveable(g.datablock().data(pi)))
+				io::toJson(j["ports"][p.name()], g.datablock().data(pi));
 	}
 
 	if(g.m_blindData == nullptr)
@@ -27,7 +27,7 @@ void adl_serializer<Node>::to_json(json& j, const ::dependency_graph::Node& g) {
 	}
 }
 
-void adl_serializer<Node>::from_json(const json& j, ::dependency_graph::Node& n) {
+void adl_serializer<NodeBase>::from_json(const json& j, ::dependency_graph::NodeBase& n) {
 	if(j.find("ports") != j.end()) {
 		for(json::const_iterator p = j["ports"].begin(); p != j["ports"].end(); ++p) {
 			if(!p.value().is_null()) {

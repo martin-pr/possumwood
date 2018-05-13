@@ -31,8 +31,7 @@ void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>
 		name += "_" + std::to_string(uniqueIds[name]++);
 
 		// and use this to save the node
-		const Node& _n = dynamic_cast<const Node&>(n); // temporary code
-		j[name] = _n;
+		j[name] = n;
 
 		// remember the assigned ID for connection saving
 		nodeIds[&n] = name;
@@ -91,10 +90,7 @@ void from_json(const json& j, Graph& g) {
 		const MetadataHandle& meta = MetadataRegister::singleton()[n["type"].get<std::string>()];
 		NodeBase& node = g.nodes().add(meta, n["name"].get<std::string>(), std::move(blindData));
 
-		// temporary code
-		Node& _node = dynamic_cast<Node&>(node);
-
-		adl_serializer<Node>::from_json(n, _node);
+		adl_serializer<NodeBase>::from_json(n, node);
 
 		assert(nodeIds.find(ni.key()) == nodeIds.end());
 		nodeIds[ni.key()] = node.index();

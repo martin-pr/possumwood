@@ -97,7 +97,7 @@ class NodeBase : public boost::noncopyable {
 		std::vector<Port> m_ports;
 
 		// blind data access
-		friend struct io::adl_serializer<Node>;
+		friend struct io::adl_serializer<NodeBase>;
 		friend class Nodes;
 		friend class Port;
 };
