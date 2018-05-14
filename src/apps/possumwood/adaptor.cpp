@@ -195,45 +195,34 @@ Adaptor::~Adaptor() {
 }
 
 namespace {
-	class NetworkDrawable : public possumwood::Drawable {
-		public:
-			NetworkDrawable(dependency_graph::Network& network, dependency_graph::Values&& vals) : Drawable(std::move(vals)) {
-				for(auto& node : network.nodes()) {
-					const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata());
-					if(meta) {
-						std::unique_ptr<Drawable> tmp = meta->createDrawable(dependency_graph::Values(node));
-						if(tmp.get() != nullptr)
-							m_drawables.push_back(std::move(tmp));
-					}
+	void addToIndex(possumwood::Index& index, dependency_graph::NodeBase* node, node_editor::Node* uiNode) {
+		const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node->metadata());
 
-					else if(node.is<dependency_graph::Network>()) {
-						std::unique_ptr<Drawable> tmp(new NetworkDrawable(
-							node.as<dependency_graph::Network>(),
-							dependency_graph::Values(node)
-						));
-						m_drawables.push_back(std::move(tmp));
-					}
-				}
-			}
+		// create a drawable (if factory returns anything)
+		std::unique_ptr<possumwood::Drawable> drawable;
+		if(meta != nullptr)
+			drawable = meta->createDrawable(dependency_graph::Values(*node));
 
-		protected:
-			dependency_graph::State draw() {
-				dependency_graph::State state;
-				for(auto& d : m_drawables) {
-					d->doDraw(viewport());
-					state.append(d->drawState());
-				}
-				return state;
-			}
+		// add the new item to index (uiNode and drawable can be nullptr)
+		index.add(possumwood::Index::Item(
+			node,
+			uiNode,
+			std::move(drawable)
+		));
 
-		private:
-			std::vector<std::unique_ptr<Drawable>> m_drawables;
-	};
+		// continue recursively
+		if(node->is<dependency_graph::Network>()) {
+			dependency_graph::Network& net = node->as<dependency_graph::Network>();
+			for(auto& child : net.nodes())
+				addToIndex(index, &child, nullptr);
+		}
+	}
 }
 
 void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 	// get the possumwood::Metadata pointer from the metadata's blind data
 	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata());
+	node_editor::Node* uiNode = nullptr;
 
 	// create visual representation of the node only if in current network
 	if(&node.network() == m_currentNetwork) {
@@ -244,6 +233,7 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		// instantiate new graphical item
 		node_editor::Node& newNode = m_graphWidget->scene().addNode(
 			node.name().c_str(), data.position());
+		uiNode = &newNode;
 
 		// add all ports, based on the node's metadata
 		for(size_t a = 0; a < node.metadata().attributeCount(); ++a) {
@@ -261,39 +251,36 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		}
 	}
 
-	// create a drawable (if factory returns anything)
-	std::unique_ptr<possumwood::Drawable> drawable;
-	if(meta != nullptr)
-		drawable = meta->createDrawable(dependency_graph::Values(node));
+	addToIndex(m_index, &node, uiNode);
+}
 
-	else if(node.is<dependency_graph::Network>()) {
-		drawable = std::unique_ptr<possumwood::Drawable>(new NetworkDrawable(
-			node.as<dependency_graph::Network>(),
-			dependency_graph::Values(node)
-		));
+namespace {
+	void removeFromIndex(possumwood::Index& index, const dependency_graph::UniqueId& id) {
+		possumwood::Index::Item& item = index[id];
 
+		if(item.graphNode->is<dependency_graph::Network>()) {
+			dependency_graph::Network& net = item.graphNode->as<dependency_graph::Network>();
+			for(auto& node : net.nodes())
+				removeFromIndex(index, node.index());
+		}
+
+		index.remove(id);
 	}
-
-	// and register the node in the internal index
-	m_index.add(possumwood::Index::Item{
-		&node,
-		&newNode, // WHAT DO WITH THIS? we need drawables independent of the INDEX!
-		std::move(drawable)
-	});
 }
 
 void Adaptor::onRemoveNode(dependency_graph::NodeBase& node) {
+	const auto id = node.index();
+
 	if(&node.network() == m_currentNetwork) {
 		// find the item to be deleted
-		const auto id = node.index();
 		auto& it = m_index[id];
 
 		// and remove it
 		m_graphWidget->scene().removeNode(*(it.editorNode));
-
-		// and delete it from the list of nodes
-		m_index.remove(id);
 	}
+
+	// and delete it from the list of nodes
+	removeFromIndex(m_index, id);
 }
 
 void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
@@ -420,7 +407,8 @@ dependency_graph::Selection Adaptor::selection() const {
 
 void Adaptor::setSelection(const dependency_graph::Selection& selection) {
 	for(auto& n : m_index)
-		n.second.editorNode->setSelected(selection.nodes().find(std::ref(*n.second.graphNode)) != selection.nodes().end());
+		if(n.second.editorNode != nullptr)
+			n.second.editorNode->setSelected(selection.nodes().find(std::ref(*n.second.graphNode)) != selection.nodes().end());
 
 	for(unsigned ei=0; ei<m_graphWidget->scene().edgeCount(); ++ei) {
 		node_editor::ConnectedEdge& e = m_graphWidget->scene().edge(ei);

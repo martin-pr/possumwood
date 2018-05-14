@@ -10,8 +10,11 @@ void Index::add(Item&& item) {
 	assert(m_data.find(id) == m_data.end());
 	auto it = m_data.insert(std::make_pair(id, std::move(item))).first;
 
-	assert(m_uiIndex.find(it->second.editorNode) == m_uiIndex.end());
-	m_uiIndex.insert(std::make_pair(it->second.editorNode, id));
+	// ui index is optional
+	if(it->second.editorNode != nullptr) {
+		assert(m_uiIndex.find(it->second.editorNode) == m_uiIndex.end());
+		m_uiIndex.insert(std::make_pair(it->second.editorNode, id));
+	}
 
 	assert(m_nodeIndex.find(it->second.graphNode) == m_nodeIndex.end());
 	m_nodeIndex.insert(std::make_pair(it->second.graphNode, id));
@@ -21,9 +24,11 @@ void Index::remove(const dependency_graph::UniqueId& id) {
 	auto it = m_data.find(id);
 	assert(it != m_data.end());
 
-	auto uiIt = m_uiIndex.find(it->second.editorNode);
-	assert(uiIt != m_uiIndex.end());
-	m_uiIndex.erase(uiIt);
+	if(it->second.editorNode != nullptr) {
+		auto uiIt = m_uiIndex.find(it->second.editorNode);
+		assert(uiIt != m_uiIndex.end());
+		m_uiIndex.erase(uiIt);
+	}
 
 	auto nodeIt = m_nodeIndex.find(it->second.graphNode);
 	assert(nodeIt != m_nodeIndex.end());
