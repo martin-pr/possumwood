@@ -100,21 +100,6 @@ void Actions::createNode(dependency_graph::Network& current, const dependency_gr
 	possumwood::App::instance().undoStack().execute(action);
 }
 
-namespace {
-
-possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node) {
-	possumwood::UndoStack::Action action;
-	const dependency_graph::NodeBase& cnode = node;
-
-	action.addCommand(
-		std::bind(&doRemoveNode, node.index()),
-		std::bind(&doCreateNode, node.network().index(), std::ref(node.metadata()), node.name(), node.index(),
-			node.blindData<possumwood::NodeData>(), cnode.datablock())
-	);
-
-	return action;
-}
-
 possumwood::UndoStack::Action disconnectAction(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	possumwood::UndoStack::Action action;
 
@@ -126,6 +111,42 @@ possumwood::UndoStack::Action disconnectAction(dependency_graph::Port& p1, depen
 			p1.node().index(), p1.index(),
 			p2.node().index(), p2.index())
 	);
+
+	return action;
+}
+
+namespace {
+
+possumwood::UndoStack::Action removeNetworkAction(dependency_graph::Network& net);
+
+possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node) {
+	possumwood::UndoStack::Action action;
+	const dependency_graph::NodeBase& cnode = node;
+
+	// recusively remove all sub-nodes
+	if(node.is<dependency_graph::Network>())
+		action.append(removeNetworkAction(node.as<dependency_graph::Network>()));
+
+	// and remove current node
+	action.addCommand(
+		std::bind(&doRemoveNode, node.index()),
+		std::bind(&doCreateNode, node.network().index(), std::ref(node.metadata()), node.name(), node.index(),
+			node.blindData<possumwood::NodeData>(), cnode.datablock())
+	);
+
+	return action;
+}
+
+possumwood::UndoStack::Action removeNetworkAction(dependency_graph::Network& net) {
+	possumwood::UndoStack::Action action;
+
+	// remove all connections
+	for(auto& e : net.connections())
+		action.append(disconnectAction(e.first, e.second));
+
+	/// and all nodes
+	for(auto& n : net.nodes())
+		action.append(removeNodeAction(n));
 
 	return action;
 }
