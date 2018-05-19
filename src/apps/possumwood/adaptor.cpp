@@ -256,15 +256,19 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 
 namespace {
 	void removeFromIndex(possumwood::Index& index, const dependency_graph::UniqueId& id) {
-		possumwood::Index::Item& item = index[id];
+		auto it = index.find(id);
 
-		if(item.graphNode->is<dependency_graph::Network>()) {
-			dependency_graph::Network& net = item.graphNode->as<dependency_graph::Network>();
-			for(auto& node : net.nodes())
-				removeFromIndex(index, node.index());
+		if(it != index.end()) {
+			possumwood::Index::Item& item = it->second;
+
+			if(item.graphNode->is<dependency_graph::Network>()) {
+				dependency_graph::Network& net = item.graphNode->as<dependency_graph::Network>();
+				for(auto& node : net.nodes())
+					removeFromIndex(index, node.index());
+			}
+
+			index.remove(id);
 		}
-
-		index.remove(id);
 	}
 }
 
@@ -379,7 +383,7 @@ dependency_graph::Selection Adaptor::selection() const {
 		if(n.isSelected()) {
 			auto& node = m_index[&n];
 
-			auto nodeRef = std::find_if(m_graph->nodes().begin(), m_graph->nodes().end(),
+			auto nodeRef = std::find_if(m_currentNetwork->nodes().begin(dependency_graph::Nodes::kRecursive), m_currentNetwork->nodes().end(),
 				[&](const dependency_graph::NodeBase& n) {
 					return &n == node.graphNode;
 				}
@@ -387,7 +391,7 @@ dependency_graph::Selection Adaptor::selection() const {
 
 			// deselection happens during the Qt object destruction -> the original
 			//   node might not exist
-			if(nodeRef != m_graph->nodes().end())
+			if(nodeRef != m_currentNetwork->nodes().end())
 				result.addNode(*nodeRef);
 		}
 	}
@@ -401,6 +405,11 @@ dependency_graph::Selection Adaptor::selection() const {
 			result.addConnection(n1.graphNode->port(e.fromPort().index()), n2.graphNode->port(e.toPort().index()));
 		}
 	}
+
+	// IN SUBNET, SELECTION IS EMPTY
+
+	std::cout << "selection nodes = " << result.nodes().size() << std::endl;
+	std::cout << "selection connections = " << result.connections().size() << std::endl;
 
 	return result;
 }

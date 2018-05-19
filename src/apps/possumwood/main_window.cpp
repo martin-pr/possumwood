@@ -427,6 +427,10 @@ MainWindow::MainWindow() : QMainWindow() {
 }
 
 MainWindow::~MainWindow() {
+	// first, clear selection to avoid destruction order problems
+	m_adaptor->setSelection(dependency_graph::Selection());
+
+	// then clear the graph
 	possumwood::App::instance().graph().clear();
 }
 

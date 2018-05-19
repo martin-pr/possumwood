@@ -94,4 +94,20 @@ Index::const_iterator Index::end() const {
 	return m_data.end();
 }
 
+Index::const_iterator Index::find(const dependency_graph::UniqueId& id) const {
+	return m_data.find(id);
+}
+
+Index::iterator Index::begin() {
+	return m_data.begin();
+}
+
+Index::iterator Index::end() {
+	return m_data.end();
+}
+
+Index::iterator Index::find(const dependency_graph::UniqueId& id) {
+	return m_data.find(id);
+}
+
 }
