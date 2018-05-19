@@ -523,8 +523,8 @@ void Adaptor::setCurrentNetwork(dependency_graph::Network& n) {
 	m_currentNetwork = &n;
 
 	// and fill the widget
-	for(auto& n : n.nodes())
-		onAddNode(n);
+	for(auto& node : n.nodes())
+		onAddNode(node);
 
 	for(auto& c : n.connections())
 		onConnect(c.first, c.second);
