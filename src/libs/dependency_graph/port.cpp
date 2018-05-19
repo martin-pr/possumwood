@@ -120,6 +120,15 @@ void Port::connect(Port& p) {
 		}
 	}
 
+	// test that both nodes are inside one network
+	assert(p.node().hasParentNetwork() && node().hasParentNetwork());
+	if(&p.node().network() != &node().network()) {
+			std::stringstream msg;
+			msg << "Ports " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
+			    " don't belong to nodes within the same network";
+
+			throw(std::runtime_error(msg.str()));
+	}
 
 	// add the connection
 	p.m_parent->network().connections().add(*this, p);

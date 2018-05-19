@@ -13,14 +13,6 @@ struct Graph::Signals {
 };
 
 Graph::Graph() : Network(nullptr), m_signals(new Signals) {
-	// connect the signals from owned classes
-	connections().onConnect([this](Port& p1, Port& p2) {
-		connected(p1, p2);
-	});
-
-	connections().onDisconnect([this](Port& p1, Port& p2) {
-		disconnected(p1, p2);
-	});
 }
 
 Graph::~Graph() {
@@ -70,18 +62,23 @@ void Graph::disconnected(Port& p1, Port& p2) {
 void Graph::nameChanged(NodeBase& node) {
 	m_signals->m_onNameChanged(node);
 }
+
 void Graph::stateChanged(NodeBase& node) {
 	m_signals->m_onStateChanged(node);
 }
+
 void Graph::dirtyChanged() {
 	m_signals->m_onDirty();
 }
+
 void Graph::nodeAdded(NodeBase& node) {
 	m_signals->m_onAddNode(node);
 }
+
 void Graph::nodeRemoved(NodeBase& node) {
 	m_signals->m_onRemoveNode(node);
 }
+
 void Graph::blindDataChanged(NodeBase& node) {
 	m_signals->m_onBlindDataChanged(node);
 }

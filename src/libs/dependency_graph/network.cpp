@@ -21,7 +21,7 @@ const MetadataHandle& networkMetadata() {
 
 }
 
-Network::Network(Network* parent) : NodeBase("network", networkMetadata(), parent), m_nodes(this), m_connections(this) {
+Network::Network(Network* parent, const std::string& name, const UniqueId& id) : NodeBase(name, id, networkMetadata(), parent), m_nodes(this), m_connections(this) {
 }
 
 Network::~Network() {
@@ -67,11 +67,11 @@ const State& Network::state() const {
 	throw std::runtime_error("Network has no ports, for now");
 }
 
-std::unique_ptr<NodeBase> Network::makeNode(const std::string& name, const MetadataHandle& md) {
+std::unique_ptr<NodeBase> Network::makeNode(const std::string& name, const MetadataHandle& md, const UniqueId& id) {
 	if(md != networkMetadata())
-		return std::unique_ptr<NodeBase>(new Node(name, md, this));
+		return std::unique_ptr<NodeBase>(new Node(name, id, md, this));
 	else
-		return std::unique_ptr<NodeBase>(new Network(this));
+		return std::unique_ptr<NodeBase>(new Network(this, name, id));
 }
 
 }

@@ -51,6 +51,7 @@ class Graph : public Network {
 		friend class Node;
 		friend class Nodes;
 		friend class Connections;
+		friend class Network;
 };
 
 }

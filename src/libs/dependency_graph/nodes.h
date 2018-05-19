@@ -9,6 +9,7 @@
 
 #include "data.h"
 #include "node.h"
+#include "nodes_iterator.h"
 
 namespace dependency_graph {
 
@@ -44,29 +45,31 @@ class Nodes : public boost::noncopyable {
 		using NodeSet = std::set<std::unique_ptr<NodeBase>, Compare>;
 
 	public:
+		enum SearchType {
+			kThisNetwork,
+			kRecursive
+		};
+
 		bool empty() const;
 		std::size_t size() const;
 
 		NodeBase& operator[](const UniqueId& index);
 		const NodeBase& operator[](const UniqueId& index) const;
 
-		typedef boost::indirect_iterator<NodeSet::const_iterator> const_iterator;
-		const_iterator begin() const;
+		typedef NodesIterator<NodeSet::const_iterator> const_iterator;
+		const_iterator begin(const SearchType& st = kThisNetwork) const;
 		const_iterator end() const;
-		const_iterator find(const UniqueId& id) const;
+		const_iterator find(const UniqueId& id, const SearchType& st = kThisNetwork) const;
 
-		typedef boost::indirect_iterator<NodeSet::iterator> iterator;
-		iterator begin();
+		typedef NodesIterator<NodeSet::iterator> iterator;
+		iterator begin(const SearchType& st = kThisNetwork);
 		iterator end();
-		iterator find(const UniqueId& id);
+		iterator find(const UniqueId& id, const SearchType& st = kThisNetwork); // will use is<Network>()
 
 		NodeBase& add(const MetadataHandle& type, const std::string& name,
 		              std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>(),
-		              boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
-
-		template<typename T>
-		NodeBase& add(const MetadataHandle& type, const std::string& name, const T& blindData,
-		              boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>());
+		              boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>(),
+		              const UniqueId& id = UniqueId());
 
 		iterator erase(iterator i);
 		void clear();

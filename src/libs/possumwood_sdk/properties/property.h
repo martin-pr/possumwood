@@ -73,8 +73,10 @@ class property : public property_base {
 
 	private:
 		static void doSetValue(const dependency_graph::UniqueId& id, unsigned portId, const T& value) {
-			auto& node = App::instance().index()[id];
-			node.graphNode->port(portId).set(value);
+			auto it = App::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
+			assert(it != App::instance().graph().nodes().end());
+
+			it->port(portId).set(value);
 		}
 
 		virtual void valueToPort(dependency_graph::Port& port) const override {
@@ -89,8 +91,8 @@ class property : public property_base {
 				// and transfer it back to port, via an undoable action
 				UndoStack::Action action;
 				action.addCommand(
-					std::bind(&doSetValue, port.node().blindData<NodeData>().id(), port.index(), value),
-					std::bind(&doSetValue, port.node().blindData<NodeData>().id(), port.index(), original)
+					std::bind(&doSetValue, port.node().index(), port.index(), value),
+					std::bind(&doSetValue, port.node().index(), port.index(), original)
 				);
 
 				App::instance().undoStack().execute(action);

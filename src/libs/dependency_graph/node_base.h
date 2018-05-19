@@ -59,8 +59,17 @@ class NodeBase : public boost::noncopyable {
 		virtual void computeInput(size_t index) = 0;
 		virtual void computeOutput(size_t index) = 0;
 
+		template<typename T>
+		bool is() const;
+
+		template<typename T>
+		const T& as() const;
+
+		template<typename T>
+		T& as();
+
 	protected:
-		NodeBase(const std::string& name, const MetadataHandle& metadata, Network* parent);
+		NodeBase(const std::string& name, const UniqueId& id, const MetadataHandle& metadata, Network* parent);
 
 		Datablock& datablock();
 		void setDatablock(const Datablock& data);
@@ -88,7 +97,7 @@ class NodeBase : public boost::noncopyable {
 		std::vector<Port> m_ports;
 
 		// blind data access
-		friend struct io::adl_serializer<Node>;
+		friend struct io::adl_serializer<NodeBase>;
 		friend class Nodes;
 		friend class Port;
 };

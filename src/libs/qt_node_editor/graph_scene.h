@@ -55,11 +55,13 @@ class GraphScene : public QGraphicsScene {
 
 	signals:
 		void selectionChanged(const Selection&);
+		void doubleClicked(Node*);
 
 	protected:
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
 		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
 		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
+		virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
 
 	private slots:
 		void onSelectionChanged();

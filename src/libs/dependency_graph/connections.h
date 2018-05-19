@@ -92,9 +92,6 @@ class Connections : public boost::noncopyable {
 		/// connections iteration
 		iterator end();
 
-		boost::signals2::connection onConnect(std::function<void(Port&, Port&)> callback);
-		boost::signals2::connection onDisconnect(std::function<void(Port&, Port&)> callback);
-
 	private:
 		Connections(Network* parent);
 
@@ -110,9 +107,6 @@ class Connections : public boost::noncopyable {
 
 		Network* m_parent;
 		connections_container m_connections;
-
-		/// connect and disconnect signals - used by owner Graph to detect changes
-		boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
 
 	friend class Network;
 	friend class Port;

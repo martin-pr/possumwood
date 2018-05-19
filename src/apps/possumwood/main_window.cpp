@@ -90,7 +90,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		        //   properties dock
 		        dependency_graph::Selection out;
 		        {
-			        auto& index = possumwood::App::instance().index();
+			        auto& index = m_adaptor->index();
 
 			        for(auto& n : selection.nodes)
 				        out.addNode(*index[n].graphNode);
@@ -200,7 +200,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				QAction* addNode = makeAction(
 				    itemName.c_str(),
 				    [&m, itemName, contextMenu, this]() {
-					    Actions::createNode(m, itemName,
+					    Actions::createNode(m_adaptor->currentNetwork(), m, itemName,
 					                        m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos())));
 					},
 				    m_adaptor);
@@ -427,6 +427,10 @@ MainWindow::MainWindow() : QMainWindow() {
 }
 
 MainWindow::~MainWindow() {
+	// first, clear selection to avoid destruction order problems
+	m_adaptor->setSelection(dependency_graph::Selection());
+
+	// then clear the graph
 	possumwood::App::instance().graph().clear();
 }
 

@@ -7,7 +7,7 @@
 
 namespace dependency_graph {
 
-Node::Node(const std::string& name, const MetadataHandle& def, Network* parent) : NodeBase(name, def, parent) {
+Node::Node(const std::string& name, const UniqueId& id, const MetadataHandle& def, Network* parent) : NodeBase(name, id, def, parent) {
 }
 
 void Node::computeInput(size_t index) {

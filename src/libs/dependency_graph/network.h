@@ -24,10 +24,10 @@ class Network : public NodeBase {
 		virtual void computeInput(size_t index) override;
 		virtual void computeOutput(size_t index) override;
 
-		std::unique_ptr<NodeBase> makeNode(const std::string& name, const MetadataHandle& md);
+		std::unique_ptr<NodeBase> makeNode(const std::string& name, const MetadataHandle& md, const UniqueId& id = UniqueId());
 
 	private:
-		Network(Network* parent);
+		Network(Network* parent, const std::string& name = "network", const UniqueId& id = UniqueId());
 
 		Nodes m_nodes;
 		Connections m_connections;

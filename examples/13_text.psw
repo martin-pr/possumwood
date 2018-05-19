@@ -7,18 +7,6 @@
             "out_port": "font"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "text_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
@@ -32,14 +20,26 @@
         },
         {
             "in_node": "draw_0",
-            "in_port": "uniforms",
-            "out_node": "transform_0",
-            "out_port": "out_uniforms"
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "text_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "viewport_0",
             "in_port": "in_uniforms",
             "out_node": "texture_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "transform_0",
             "out_port": "out_uniforms"
         },
         {
@@ -210,6 +210,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAABpgAAAZ4AAAZJAAAD/QAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALxAAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAAasAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAAAhwAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAAAzAAAANIAAAB1AP////sAAAAGAGwAbwBnAQAAAaIAAAJnAAAASQD///8AAALcAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABeEAAAM0AAAAAAAAAAAAAAPWAAACCwAAAAACAAAABeI=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALxAAACxfwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABaAAACxQAAAGwBAAADAAAAAQAAAasAAALF/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABaAAAB8gAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACTQAAANIAAACGAQAAA/sAAAAGAGwAbwBnAQAAAaIAAAJnAAAAAAAAAAAAAAFEAAACxQAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
 }

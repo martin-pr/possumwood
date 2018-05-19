@@ -161,6 +161,13 @@ int main(int argc, char* argv[]) {
 		}
 	);
 
+	QObject::connect(&scene, &node_editor::GraphScene::doubleClicked, [](Node* n) {
+		if(!n)
+			std::cout << "Double clicked outside a node." << std::endl;
+		else
+			std::cout << "Double clicked node '" << n->name().toStdString() << "'." << std::endl;
+	});
+
 	///
 
 	app.exec();

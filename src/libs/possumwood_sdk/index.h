@@ -40,9 +40,15 @@ class Index {
 		Item& operator[](dependency_graph::NodeBase* id);
 		const Item& operator[](const dependency_graph::NodeBase* id) const;
 
+		typedef std::map<dependency_graph::UniqueId, Item>::iterator iterator;
+		iterator begin();
+		iterator end();
+		iterator find(const dependency_graph::UniqueId& id);
+
 		typedef std::map<dependency_graph::UniqueId, Item>::const_iterator const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
+		const_iterator find(const dependency_graph::UniqueId& id) const;
 
 	private:
 		/// this should be implemented using multiindex, but the move semantics in multiindex

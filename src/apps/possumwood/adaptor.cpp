@@ -23,15 +23,7 @@
 
 #include "actions.h"
 
-namespace {
-
-possumwood::Index& getIndex() {
-	return possumwood::App::instance().index();
-}
-
-}
-
-Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(400,400) {
+Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetwork(NULL), m_sizeHint(400,400) {
 	// register callbacks
 	m_signals.push_back(graph->onAddNode(
 		[this](dependency_graph::NodeBase& node) { onAddNode(node); }
@@ -71,8 +63,8 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 
 	m_graphWidget->scene().setMouseConnectionCallback([&](node_editor::Port& p1, node_editor::Port& p2) {
 		// find the two nodes that were connected
-		auto& n1 = getIndex()[&p1.parentNode()];
-		auto& n2 = getIndex()[&p2.parentNode()];
+		auto& n1 = m_index[&p1.parentNode()];
+		auto& n2 = m_index[&p2.parentNode()];
 
 		// and connect them in the graph as well
 		try {
@@ -89,7 +81,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_graphWidget->scene().setNodesMoveCallback([&](const std::set<node_editor::Node*>& nodes) {
 		std::map<dependency_graph::NodeBase*, QPointF> positions;
 		for(auto& nptr : nodes) {
-			auto& n = getIndex()[nptr];
+			auto& n = m_index[nptr];
 
 			positions[n.graphNode] = n.editorNode->pos();
 		}
@@ -98,7 +90,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	});
 
 	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
-		auto& n = getIndex()[&node];
+		auto& n = m_index[&node];
 
 		dependency_graph::State state = n.graphNode->state();
 		if(n.drawable)
@@ -126,12 +118,20 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 		return ss.str();
 	});
 
-	// and instantiate the current graph state
-	for(auto& n : m_graph->nodes())
-		onAddNode(n);
+	connect(&m_graphWidget->scene(), &node_editor::GraphScene::doubleClicked, [this](node_editor::Node* node) {
+		// moving "up"
+		if(node == nullptr) {
+			if(m_currentNetwork->hasParentNetwork())
+				setCurrentNetwork(m_currentNetwork->network());
+		}
 
-	for(auto& c : m_graph->connections())
-		onConnect(c.first, c.second);
+		// moving "into"
+		else {
+			dependency_graph::NodeBase& nb = *m_index[node].graphNode;
+			if(nb.is<dependency_graph::Network>())
+				setCurrentNetwork(nb.as<dependency_graph::Network>());
+		}
+	});
 
 	// setup copy+paste action
 	m_copy = new QAction(QIcon(":icons/edit-copy.png"), "C&opy", this);
@@ -155,7 +155,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_paste, &QAction::triggered, [this](bool) {
 		dependency_graph::Selection sel;
-		Actions::paste(sel);
+		Actions::paste(currentNetwork(), sel);
 		setSelection(sel);
 	});
 	addAction(m_paste);
@@ -171,7 +171,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	m_undo = new QAction(QIcon(":icons/edit-undo.png"), "&Undo", this);
 	m_undo->setShortcut(QKeySequence::Undo);
 	m_undo->setShortcutContext(Qt::ApplicationShortcut);
-	connect(m_undo, &QAction::triggered, [this](bool) {
+	connect(m_undo, &QAction::triggered, [](bool) {
 		possumwood::App::instance().undoStack().undo();
 	});
 	addAction(m_undo);
@@ -180,10 +180,13 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_sizeHint(40
 	// m_redo->setShortcut(QKeySequence::Redo);
 	m_redo->setShortcut(Qt::CTRL + Qt::Key_Y);
 	m_redo->setShortcutContext(Qt::ApplicationShortcut);
-	connect(m_redo, &QAction::triggered, [this](bool) {
+	connect(m_redo, &QAction::triggered, [](bool) {
 		possumwood::App::instance().undoStack().redo();
 	});
 	addAction(m_redo);
+
+	// set the m_currentNetwork to point to the graph
+	setCurrentNetwork(*graph);
 }
 
 Adaptor::~Adaptor() {
@@ -191,112 +194,155 @@ Adaptor::~Adaptor() {
 		c.disconnect();
 }
 
+namespace {
+	void addToIndex(possumwood::Index& index, dependency_graph::NodeBase* node, node_editor::Node* uiNode) {
+		const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node->metadata());
+
+		// create a drawable (if factory returns anything)
+		std::unique_ptr<possumwood::Drawable> drawable;
+		if(meta != nullptr)
+			drawable = meta->createDrawable(dependency_graph::Values(*node));
+
+		// add the new item to index (uiNode and drawable can be nullptr)
+		index.add(possumwood::Index::Item(
+			node,
+			uiNode,
+			std::move(drawable)
+		));
+
+		// continue recursively
+		if(node->is<dependency_graph::Network>()) {
+			dependency_graph::Network& net = node->as<dependency_graph::Network>();
+			for(auto& child : net.nodes())
+				addToIndex(index, &child, nullptr);
+		}
+	}
+}
+
 void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 	// get the possumwood::Metadata pointer from the metadata's blind data
 	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata());
+	node_editor::Node* uiNode = nullptr;
 
-	// get the blind data, containing the node's position
-	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
+	// create visual representation of the node only if in current network
+	if(&node.network() == m_currentNetwork) {
 
-	// instantiate new graphical item
-	node_editor::Node& newNode = m_graphWidget->scene().addNode(
-		node.name().c_str(), data.position());
+		// get the blind data, containing the node's position
+		const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
-	// add all ports, based on the node's metadata
-	for(size_t a = 0; a < node.metadata().attributeCount(); ++a) {
-		const dependency_graph::Attr& attr = node.metadata().attr(a);
+		// instantiate new graphical item
+		node_editor::Node& newNode = m_graphWidget->scene().addNode(
+			node.name().c_str(), data.position());
+		uiNode = &newNode;
 
-		std::array<float, 3> colour{{1,1,1}};
-		if(meta)
-			colour = meta->colour(a);
+		// add all ports, based on the node's metadata
+		for(size_t a = 0; a < node.metadata().attributeCount(); ++a) {
+			const dependency_graph::Attr& attr = node.metadata().attr(a);
 
-		newNode.addPort(node_editor::Node::PortDefinition {
-			attr.name().c_str(),
-			attr.category() == dependency_graph::Attr::kInput ? node_editor::Port::kInput : node_editor::Port::kOutput,
-			QColor(colour[0]*255, colour[1]*255, colour[2]*255)
-		});
-	}
+			std::array<float, 3> colour{{1,1,1}};
+			if(meta)
+				colour = meta->colour(a);
 
-	// create a drawable (if factory returns anything)
-	std::unique_ptr<possumwood::Drawable> drawable;
-	if(meta != nullptr)
-		drawable = meta->createDrawable(dependency_graph::Values(node));
-
-	// and register the node in the internal index
-	getIndex().add(possumwood::Index::Item{
-		&node,
-		&newNode,
-		std::move(drawable)
-	});
-}
-
-void Adaptor::onRemoveNode(dependency_graph::NodeBase& node) {
-	// find the item to be deleted
-	const auto id = node.blindData<possumwood::NodeData>().id();
-	auto& it = getIndex()[id];
-
-	// and remove it
-	m_graphWidget->scene().removeNode(*(it.editorNode));
-
-	// and delete it from the list of nodes
-	getIndex().remove(id);
-}
-
-void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
-	// find the two nodes to be connected
-	auto& n1 = getIndex()[p1.node().blindData<possumwood::NodeData>().id()];
-	auto& n2 = getIndex()[p2.node().blindData<possumwood::NodeData>().id()];
-
-	assert(n1.editorNode->portCount() > p1.index());
-	assert(n2.editorNode->portCount() > p2.index());
-
-	// instantiate the connection
-	m_graphWidget->scene().connect(n1.editorNode->port(p1.index()), n2.editorNode->port(p2.index()));
-}
-
-void Adaptor::onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
-	// find the two nodes to be disconnected
-	auto& n1 = getIndex()[p1.node().blindData<possumwood::NodeData>().id()];
-	auto& n2 = getIndex()[p2.node().blindData<possumwood::NodeData>().id()];
-
-	assert(n1.editorNode->portCount() > p1.index());
-	assert(n2.editorNode->portCount() > p2.index());
-
-	// remove the connection
-	m_graphWidget->scene().disconnect(n1.editorNode->port(p1.index()), n2.editorNode->port(p2.index()));
-}
-
-void Adaptor::onBlindDataChanged(dependency_graph::NodeBase& node) {
-	const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
-
-	auto& n = getIndex()[data.id()];
-
-	n.editorNode->setPos(data.position());
-}
-
-void Adaptor::onNameChanged(dependency_graph::NodeBase& node) {
-	auto& n = getIndex()[node.blindData<possumwood::NodeData>().id()];
-
-	n.editorNode->setName(node.name().c_str());
-}
-
-void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
-	auto& n = getIndex()[node.blindData<possumwood::NodeData>().id()];
-
-	// count the different error messages
-	unsigned info = 0, warn = 0, err = 0;
-
-	for(auto& m : node.state()) {
-		switch(m.first) {
-			case dependency_graph::State::kInfo: ++info; break;
-			case dependency_graph::State::kWarning: ++warn; break;
-			case dependency_graph::State::kError: ++err; break;
+			newNode.addPort(node_editor::Node::PortDefinition {
+				attr.name().c_str(),
+				attr.category() == dependency_graph::Attr::kInput ? node_editor::Port::kInput : node_editor::Port::kOutput,
+				QColor(colour[0]*255, colour[1]*255, colour[2]*255)
+			});
 		}
 	}
 
-	possumwood::Drawable* drw = getIndex()[&node].drawable.get();
-	if(drw)
-		for(auto& m : drw->drawState()) {
+	addToIndex(m_index, &node, uiNode);
+}
+
+namespace {
+	void removeFromIndex(possumwood::Index& index, const dependency_graph::UniqueId& id) {
+		auto it = index.find(id);
+
+		if(it != index.end()) {
+			possumwood::Index::Item& item = it->second;
+
+			if(item.graphNode->is<dependency_graph::Network>()) {
+				dependency_graph::Network& net = item.graphNode->as<dependency_graph::Network>();
+				for(auto& node : net.nodes())
+					removeFromIndex(index, node.index());
+			}
+
+			index.remove(id);
+		}
+	}
+}
+
+void Adaptor::onRemoveNode(dependency_graph::NodeBase& node) {
+	const auto id = node.index();
+
+	if(&node.network() == m_currentNetwork) {
+		// find the item to be deleted
+		auto& it = m_index[id];
+
+		// and remove it
+		m_graphWidget->scene().removeNode(*(it.editorNode));
+	}
+
+	// and delete it from the list of nodes
+	removeFromIndex(m_index, id);
+}
+
+void Adaptor::onConnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
+	assert(&p1.node().network() == &p2.node().network());
+	if(&p1.node().network() == m_currentNetwork) {
+		// find the two nodes to be connected
+		auto& n1 = m_index[p1.node().index()];
+		auto& n2 = m_index[p2.node().index()];
+
+		assert(n1.editorNode->portCount() > p1.index());
+		assert(n2.editorNode->portCount() > p2.index());
+
+		// instantiate the connection
+		m_graphWidget->scene().connect(n1.editorNode->port(p1.index()), n2.editorNode->port(p2.index()));
+	}
+}
+
+void Adaptor::onDisconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
+	assert(&p1.node().network() == &p2.node().network());
+	if(&p1.node().network() == m_currentNetwork) {
+		// find the two nodes to be disconnected
+		auto& n1 = m_index[p1.node().index()];
+		auto& n2 = m_index[p2.node().index()];
+
+		assert(n1.editorNode->portCount() > p1.index());
+		assert(n2.editorNode->portCount() > p2.index());
+
+		// remove the connection
+		m_graphWidget->scene().disconnect(n1.editorNode->port(p1.index()), n2.editorNode->port(p2.index()));
+	}
+}
+
+void Adaptor::onBlindDataChanged(dependency_graph::NodeBase& node) {
+	if(&node.network() == m_currentNetwork) {
+		const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
+
+		auto& n = m_index[node.index()];
+
+		n.editorNode->setPos(data.position());
+	}
+}
+
+void Adaptor::onNameChanged(dependency_graph::NodeBase& node) {
+	if(&node.network() == m_currentNetwork) {
+		auto& n = m_index[node.index()];
+
+		n.editorNode->setName(node.name().c_str());
+	}
+}
+
+void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
+	if(&node.network() == m_currentNetwork) {
+		auto& n = m_index[node.index()];
+
+		// count the different error messages
+		unsigned info = 0, warn = 0, err = 0;
+
+		for(auto& m : node.state()) {
 			switch(m.first) {
 				case dependency_graph::State::kInfo: ++info; break;
 				case dependency_graph::State::kWarning: ++warn; break;
@@ -304,14 +350,25 @@ void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
 			}
 		}
 
-	if(err > 0)
-		n.editorNode->setState(node_editor::Node::kError);
-	else if(warn > 0)
-		n.editorNode->setState(node_editor::Node::kWarning);
-	else if(info > 0)
-		n.editorNode->setState(node_editor::Node::kInfo);
-	else
-		n.editorNode->setState(node_editor::Node::kOk);
+		possumwood::Drawable* drw = m_index[&node].drawable.get();
+		if(drw)
+			for(auto& m : drw->drawState()) {
+				switch(m.first) {
+					case dependency_graph::State::kInfo: ++info; break;
+					case dependency_graph::State::kWarning: ++warn; break;
+					case dependency_graph::State::kError: ++err; break;
+				}
+			}
+
+		if(err > 0)
+			n.editorNode->setState(node_editor::Node::kError);
+		else if(warn > 0)
+			n.editorNode->setState(node_editor::Node::kWarning);
+		else if(info > 0)
+			n.editorNode->setState(node_editor::Node::kInfo);
+		else
+			n.editorNode->setState(node_editor::Node::kOk);
+	}
 }
 
 QPointF Adaptor::mapToScene(QPoint pos) const {
@@ -324,9 +381,9 @@ dependency_graph::Selection Adaptor::selection() const {
 	for(unsigned ni=0; ni<m_graphWidget->scene().nodeCount(); ++ni) {
 		node_editor::Node& n = m_graphWidget->scene().node(ni);
 		if(n.isSelected()) {
-			auto& node = getIndex()[&n];
+			auto& node = m_index[&n];
 
-			auto nodeRef = std::find_if(m_graph->nodes().begin(), m_graph->nodes().end(),
+			auto nodeRef = std::find_if(m_currentNetwork->nodes().begin(dependency_graph::Nodes::kRecursive), m_currentNetwork->nodes().end(),
 				[&](const dependency_graph::NodeBase& n) {
 					return &n == node.graphNode;
 				}
@@ -334,7 +391,7 @@ dependency_graph::Selection Adaptor::selection() const {
 
 			// deselection happens during the Qt object destruction -> the original
 			//   node might not exist
-			if(nodeRef != m_graph->nodes().end())
+			if(nodeRef != m_currentNetwork->nodes().end())
 				result.addNode(*nodeRef);
 		}
 	}
@@ -342,25 +399,31 @@ dependency_graph::Selection Adaptor::selection() const {
 	for(unsigned ei=0; ei<m_graphWidget->scene().edgeCount(); ++ei) {
 		node_editor::ConnectedEdge& e = m_graphWidget->scene().edge(ei);
 		if(e.isSelected()) {
-			auto& n1 = getIndex()[&e.fromPort().parentNode()];
-			auto& n2 = getIndex()[&e.toPort().parentNode()];
+			auto& n1 = m_index[&e.fromPort().parentNode()];
+			auto& n2 = m_index[&e.toPort().parentNode()];
 
 			result.addConnection(n1.graphNode->port(e.fromPort().index()), n2.graphNode->port(e.toPort().index()));
 		}
 	}
 
+	// IN SUBNET, SELECTION IS EMPTY
+
+	std::cout << "selection nodes = " << result.nodes().size() << std::endl;
+	std::cout << "selection connections = " << result.connections().size() << std::endl;
+
 	return result;
 }
 
 void Adaptor::setSelection(const dependency_graph::Selection& selection) {
-	for(auto& n : getIndex())
-		n.second.editorNode->setSelected(selection.nodes().find(std::ref(*n.second.graphNode)) != selection.nodes().end());
+	for(auto& n : m_index)
+		if(n.second.editorNode != nullptr)
+			n.second.editorNode->setSelected(selection.nodes().find(std::ref(*n.second.graphNode)) != selection.nodes().end());
 
 	for(unsigned ei=0; ei<m_graphWidget->scene().edgeCount(); ++ei) {
 		node_editor::ConnectedEdge& e = m_graphWidget->scene().edge(ei);
 
-		dependency_graph::Port& p1 = getIndex()[&e.fromPort().parentNode()].graphNode->port(e.fromPort().index());
-		dependency_graph::Port& p2 = getIndex()[&e.toPort().parentNode()].graphNode->port(e.toPort().index());
+		dependency_graph::Port& p1 = m_index[&e.fromPort().parentNode()].graphNode->port(e.fromPort().index());
+		dependency_graph::Port& p2 = m_index[&e.toPort().parentNode()].graphNode->port(e.toPort().index());
 
 		auto it = selection.connections().find(dependency_graph::Selection::Connection{std::ref(p1), std::ref(p2)});
 
@@ -419,7 +482,7 @@ QAction* Adaptor::redoAction() const {
 void Adaptor::draw(const possumwood::Drawable::ViewportState& viewport) {
 	GL_CHECK_ERR;
 
-	for(auto& n : getIndex()) {
+	for(auto& n : m_index) {
 		GL_CHECK_ERR;
 
 		if(n.second.drawable != nullptr) {
@@ -438,3 +501,41 @@ void Adaptor::draw(const possumwood::Drawable::ViewportState& viewport) {
 
 	GL_CHECK_ERR;
 }
+
+const possumwood::Index& Adaptor::index() const {
+	return m_index;
+}
+
+void Adaptor::setCurrentNetwork(dependency_graph::Network& n) {
+	// clear current view
+	while(m_graphWidget->scene().edgeCount() > 0)
+		// onDisconnect()
+		m_graphWidget->scene().disconnect(m_graphWidget->scene().edge(0));
+
+	while(m_graphWidget->scene().nodeCount() > 0) {
+		dependency_graph::NodeBase* node = m_index[&m_graphWidget->scene().node(0)].graphNode;
+		assert(node != nullptr);
+
+		onRemoveNode(*node);
+	}
+
+	// set the m_currentNetwork, which will represent the network everywhere in this class
+	m_currentNetwork = &n;
+
+	// and fill the widget
+	for(auto& node : n.nodes())
+		onAddNode(node);
+
+	for(auto& c : n.connections())
+		onConnect(c.first, c.second);
+
+	// refresh the viewport
+	possumwood::Drawable::refresh();
+}
+
+dependency_graph::Network& Adaptor::currentNetwork() {
+	assert(m_currentNetwork != nullptr);
+	return *m_currentNetwork;
+}
+
+// ACTIONS SHOULD BE PERFOMED ON CURRENT NETWORK

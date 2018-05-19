@@ -24,7 +24,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// and render the text into a new VertexData instance
 	std::unique_ptr<possumwood::VertexData> vd(new possumwood::VertexData(GL_TRIANGLES));
-	{
+	if(!data.get(a_text).empty()){
 		// first, figure out the size of the text
 		float totalWidth = 0.0f;
 		for(auto& c : data.get(a_text)) {
