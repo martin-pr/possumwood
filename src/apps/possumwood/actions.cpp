@@ -228,9 +228,13 @@ void Actions::cut(const dependency_graph::Selection& selection) {
 }
 
 void Actions::copy(const dependency_graph::Selection& selection) {
+	dependency_graph::Network* net = &possumwood::App::instance().graph();
+	if(!selection.empty() && selection.nodes().begin()->get().hasParentNetwork())
+		net = &selection.nodes().begin()->get().network();
+
 	// convert the selection to JSON string
 	dependency_graph::io::json json;
-	dependency_graph::io::to_json(json, possumwood::App::instance().graph(), selection);
+	dependency_graph::io::to_json(json, *net, selection);
 
 	std::stringstream ss;
 	ss << std::setw(4) << json;
@@ -302,21 +306,21 @@ void Actions::paste(dependency_graph::Network& current, dependency_graph::Select
 
 	// and make the selection based on added nodes
 	{
-		// for(auto& n : pastedGraph.nodes())
-		// 	selection.addNode(findNode(n.index()));
+		for(auto& n : pastedGraph.nodes())
+			selection.addNode(findNode(n.index()));
 
-		// for(auto& c : pastedGraph.connections()) {
-		// 	dependency_graph::UniqueId id1 = c.first.node().index();
-		// 	dependency_graph::UniqueId id2 = c.second.node().index();
+		for(auto& c : pastedGraph.connections()) {
+			dependency_graph::UniqueId id1 = c.first.node().index();
+			dependency_graph::UniqueId id2 = c.second.node().index();
 
-		// 	dependency_graph::NodeBase& n1 = findNode(id1);
-		// 	dependency_graph::NodeBase& n2 = findNode(id2);
+			dependency_graph::NodeBase& n1 = findNode(id1);
+			dependency_graph::NodeBase& n2 = findNode(id2);
 
-		// 	dependency_graph::Port& p1 = n1.port(c.first.index());
-		// 	dependency_graph::Port& p2 = n2.port(c.second.index());
+			dependency_graph::Port& p1 = n1.port(c.first.index());
+			dependency_graph::Port& p2 = n2.port(c.second.index());
 
-		// 	selection.addConnection(p1, p2);
-		// }
+			selection.addConnection(p1, p2);
+		}
 	}
 }
 

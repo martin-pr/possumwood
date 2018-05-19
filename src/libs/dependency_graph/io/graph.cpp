@@ -74,11 +74,11 @@ void writeNetwork(json& j, const ::dependency_graph::Network& net, const Selecti
 
 }
 
-void to_json(json& j, const ::dependency_graph::Graph& g, const Selection& selection) {
+void to_json(json& j, const ::dependency_graph::Network& g, const Selection& selection) {
 	writeNetwork(j, g, selection);
 }
 
-void adl_serializer<Graph>::to_json(json& j, const ::dependency_graph::Graph& g) {
+void adl_serializer<Network>::to_json(json& j, const ::dependency_graph::Network& g) {
 	::dependency_graph::io::to_json(j, g);
 }
 
@@ -138,11 +138,11 @@ void loadNetwork(const json& j, Network& net) {
 
 }
 
-void from_json(const json& j, Graph& g) {
+void from_json(const json& j, Network& g) {
 	loadNetwork(j, g);
 }
 
-void adl_serializer<Graph>::from_json(const json& j, ::dependency_graph::Graph& g) {
+void adl_serializer<Network>::from_json(const json& j, ::dependency_graph::Network& g) {
 	::dependency_graph::io::from_json(j, g);
 }
 

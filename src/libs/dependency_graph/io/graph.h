@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../graph.h"
+#include "../network.h"
 #include "../selection.h"
 
 #include "json.h"
 
 namespace dependency_graph { namespace io {
 
-void to_json(json& j, const Graph& g, const Selection& selection = Selection());
-void from_json(const json& j, Graph& g);
+void to_json(json& j, const Network& g, const Selection& selection = Selection());
+void from_json(const json& j, Network& g);
 
 template<>
-struct adl_serializer<Graph> {
-	static void to_json(json& j, const Graph& g);
-	static void from_json(const json& j, Graph& g);
+struct adl_serializer<Network> {
+	static void to_json(json& j, const Network& g);
+	static void from_json(const json& j, Network& g);
 };
 
 } }
