@@ -14,16 +14,34 @@ class QMainWindow;
 
 namespace possumwood {
 
+/// AppBase is an explicitly-instantiated singleton object, allowing
+/// to mock the undo stack without the need to explicitly instantiate
+/// the UI classes.
+class AppCore : public boost::noncopyable {
+	public:
+		static AppCore& instance();
+
+		AppCore();
+		virtual ~AppCore();
+
+		dependency_graph::Graph& graph();
+		UndoStack& undoStack();
+
+	private:
+		static AppCore* s_instance;
+
+		dependency_graph::Graph m_graph;
+		UndoStack m_undoStack;
+};
+
 /// App is a singleton, instantiated explicitly in main.cpp.
 /// Holds global data about the application.
-class App : public boost::noncopyable {
+class App : public AppCore {
 	public:
 		static App& instance();
 
 		App();
 		~App();
-
-		dependency_graph::Graph& graph();
 
 		const boost::filesystem::path& filename() const;
 
@@ -41,12 +59,9 @@ class App : public boost::noncopyable {
 
 		Config& sceneConfig();
 
-		UndoStack& undoStack();
-
 	private:
 		static App* s_instance;
 
-		dependency_graph::Graph m_graph;
 		boost::filesystem::path m_filename;
 
 		QMainWindow* m_mainWindow;
@@ -55,8 +70,6 @@ class App : public boost::noncopyable {
 		boost::signals2::signal<void(float)> m_timeChanged;
 
 		Config m_sceneConfig;
-
-		UndoStack m_undoStack;
 };
 
 }

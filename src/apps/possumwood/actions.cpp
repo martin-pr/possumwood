@@ -17,11 +17,11 @@
 namespace {
 
 dependency_graph::NodeBase& findNode(const dependency_graph::UniqueId& id) {
-	if(id == possumwood::App::instance().graph().index())
-		return possumwood::App::instance().graph();
+	if(id == possumwood::AppCore::instance().graph().index())
+		return possumwood::AppCore::instance().graph();
 
-	auto it = possumwood::App::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
-	assert(it != possumwood::App::instance().graph().nodes().end());
+	auto it = possumwood::AppCore::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
+	assert(it != possumwood::AppCore::instance().graph().nodes().end());
 
 	// and get the node reference
 	return *it;
@@ -42,7 +42,7 @@ dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& curre
 }
 
 void doRemoveNode(const dependency_graph::UniqueId& id) {
-	auto& graph = possumwood::App::instance().graph();
+	auto& graph = possumwood::AppCore::instance().graph();
 	auto it = std::find_if(graph.nodes().begin(dependency_graph::Nodes::kRecursive), graph.nodes().end(), [&](const dependency_graph::NodeBase & i) {
 		return i.index() == id;
 	});
@@ -97,7 +97,7 @@ possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& curren
 void Actions::createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data) {
 	auto action = createNodeAction(current, meta, name, _data);
 
-	possumwood::App::instance().undoStack().execute(action);
+	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
 possumwood::UndoStack::Action disconnectAction(dependency_graph::Port& p1, dependency_graph::Port& p2) {
@@ -155,7 +155,7 @@ possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _s
 	// add all connections to selected nodes - they'll be removed as well as the selected connections
 	//   with the removed nodes
 	dependency_graph::Selection selection = _selection;
-	for(auto& c : possumwood::App::instance().graph().connections()) {
+	for(auto& c : possumwood::AppCore::instance().graph().connections()) {
 		auto& n1 = c.first.node();
 		auto& n2 = c.second.node();
 
@@ -187,7 +187,7 @@ void Actions::removeNode(dependency_graph::NodeBase& node) {
 
 	auto action = removeAction(selection);
 
-	possumwood::App::instance().undoStack().execute(action);
+	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
 void Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
@@ -202,19 +202,19 @@ void Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 			p2.node().index(), p2.index())
 	);
 
-	possumwood::App::instance().undoStack().execute(action);
+	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
 void Actions::disconnect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	auto action = disconnectAction(p1, p2);
 
-	possumwood::App::instance().undoStack().execute(action);
+	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
 void Actions::remove(const dependency_graph::Selection& selection) {
 	auto action = removeAction(selection);
 
-	possumwood::App::instance().undoStack().execute(action);
+	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
 void Actions::cut(const dependency_graph::Selection& selection) {
@@ -224,11 +224,11 @@ void Actions::cut(const dependency_graph::Selection& selection) {
 	// and delete selection
 	auto action = removeAction(selection);
 
-	possumwood::App::instance().undoStack().execute(action);
+	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
 void Actions::copy(const dependency_graph::Selection& selection) {
-	dependency_graph::Network* net = &possumwood::App::instance().graph();
+	dependency_graph::Network* net = &possumwood::AppCore::instance().graph();
 	if(!selection.empty() && selection.nodes().begin()->get().hasParentNetwork())
 		net = &selection.nodes().begin()->get().network();
 
@@ -302,7 +302,7 @@ void Actions::paste(dependency_graph::Network& current, dependency_graph::Select
 	}
 
 	// execute the action (will actually make the nodes and connections)
-	possumwood::App::instance().undoStack().execute(action);
+	possumwood::AppCore::instance().undoStack().execute(action);
 
 	// and make the selection based on added nodes
 	{
@@ -341,5 +341,5 @@ void Actions::move(const std::map<dependency_graph::NodeBase*, QPointF>& nodes) 
 		}
 	}
 
-	possumwood::App::instance().undoStack().execute(action);
+	possumwood::AppCore::instance().undoStack().execute(action);
 }
