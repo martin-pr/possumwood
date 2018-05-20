@@ -25,10 +25,10 @@
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
+#include <possumwood_sdk/actions.h>
 
 #include "adaptor.h"
 #include "config_dialog.h"
-#include "actions.h"
 #include "grid.h"
 
 namespace {
@@ -200,7 +200,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				QAction* addNode = makeAction(
 				    itemName.c_str(),
 				    [&m, itemName, contextMenu, this]() {
-					    Actions::createNode(m_adaptor->currentNetwork(), m, itemName,
+					    possumwood::Actions::createNode(m_adaptor->currentNetwork(), m, itemName,
 					                        m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos())));
 					},
 				    m_adaptor);

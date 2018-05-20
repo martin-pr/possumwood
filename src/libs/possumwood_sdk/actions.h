@@ -5,8 +5,12 @@
 #include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/undo_stack.h>
 
+namespace possumwood {
+
 struct Actions {
-	static void createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& data);
+	static void createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta,
+	                       const std::string& name, const possumwood::NodeData& data,
+	                       const dependency_graph::UniqueId& id = dependency_graph::UniqueId());
 	static void removeNode(dependency_graph::NodeBase& node);
 
 	static void connect(dependency_graph::Port& p1, dependency_graph::Port& p2);
@@ -19,3 +23,5 @@ struct Actions {
 
 	static void move(const std::map<dependency_graph::NodeBase*, QPointF>& nodes);
 };
+
+}

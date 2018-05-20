@@ -41,14 +41,15 @@ class NodeBase : public boost::noncopyable {
 		/// This ID can be used in Graph::operator[] to get this node from the graph.
 		UniqueId index() const;
 
+		/// returns Metadata instance
 		const Metadata& metadata() const;
+		/// returns datablock instance - contains all input and output data
 		const Datablock& datablock() const;
 
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)
 		template<typename T>
 		void setBlindData(const T& value);
-
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)
 		template<typename T>

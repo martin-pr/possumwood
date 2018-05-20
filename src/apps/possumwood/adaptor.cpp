@@ -21,7 +21,7 @@
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
 
-#include "actions.h"
+#include <possumwood_sdk/actions.h>
 
 Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetwork(NULL), m_sizeHint(400,400) {
 	// register callbacks
@@ -68,7 +68,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 
 		// and connect them in the graph as well
 		try {
-			Actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
+			possumwood::Actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
 		}
 		catch(std::runtime_error& err) {
 			// something went wrong during connecting, undo it
@@ -86,7 +86,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 			positions[n.graphNode] = n.editorNode->pos();
 		}
 
-		Actions::move(positions);
+		possumwood::Actions::move(positions);
 	});
 
 	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
@@ -138,7 +138,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_copy->setShortcut(QKeySequence::Copy);
 	m_copy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_copy, &QAction::triggered, [this](bool) {
-		Actions::copy(selection());
+		possumwood::Actions::copy(selection());
 	});
 	addAction(m_copy);
 
@@ -146,7 +146,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_cut->setShortcut(QKeySequence::Cut);
 	m_cut->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_cut, &QAction::triggered, [this](bool) {
-		Actions::cut(selection());
+		possumwood::Actions::cut(selection());
 	});
 	addAction(m_cut);
 
@@ -155,7 +155,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_paste, &QAction::triggered, [this](bool) {
 		dependency_graph::Selection sel;
-		Actions::paste(currentNetwork(), sel);
+		possumwood::Actions::paste(currentNetwork(), sel);
 		setSelection(sel);
 	});
 	addAction(m_paste);
@@ -164,7 +164,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_delete->setShortcut(QKeySequence::Delete);
 	m_delete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_delete, &QAction::triggered, [this](bool) {
-		Actions::remove(selection());
+		possumwood::Actions::remove(selection());
 	});
 	addAction(m_delete);
 

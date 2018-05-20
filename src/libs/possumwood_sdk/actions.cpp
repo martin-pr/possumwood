@@ -12,7 +12,7 @@
 
 #include <possumwood_sdk/app.h>
 
-#include "main_window.h"
+namespace possumwood {
 
 namespace {
 
@@ -77,11 +77,9 @@ void doSetBlindData(const dependency_graph::UniqueId& node, const possumwood::No
 
 namespace {
 
-possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data) {
+possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id) {
 	possumwood::NodeData data;
 	data.setPosition(_data.position());
-
-	dependency_graph::UniqueId id;
 
 	possumwood::UndoStack::Action action;
 	action.addCommand(
@@ -94,8 +92,8 @@ possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& curren
 
 }
 
-void Actions::createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data) {
-	auto action = createNodeAction(current, meta, name, _data);
+void Actions::createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id) {
+	auto action = createNodeAction(current, meta, name, _data, id);
 
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
@@ -342,4 +340,6 @@ void Actions::move(const std::map<dependency_graph::NodeBase*, QPointF>& nodes) 
 	}
 
 	possumwood::AppCore::instance().undoStack().execute(action);
+}
+
 }
