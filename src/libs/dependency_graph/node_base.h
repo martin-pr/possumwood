@@ -43,6 +43,7 @@ class NodeBase : public boost::noncopyable {
 
 		/// returns Metadata instance
 		const Metadata& metadata() const;
+		const MetadataHandle& metadataHandle() const;
 		/// returns datablock instance - contains all input and output data
 		const Datablock& datablock() const;
 

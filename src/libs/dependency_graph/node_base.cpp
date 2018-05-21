@@ -88,6 +88,10 @@ const Metadata& NodeBase::metadata() const {
 	return m_metadata.metadata();
 }
 
+const MetadataHandle& NodeBase::metadataHandle() const {
+	return m_metadata;
+}
+
 const Datablock& NodeBase::datablock() const {
 	return m_data;
 }

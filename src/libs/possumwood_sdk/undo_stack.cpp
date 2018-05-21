@@ -119,4 +119,16 @@ void UndoStack::redo() {
 #endif
 }
 
+std::size_t UndoStack::undoActionCount() const {
+	return m_undoStack.size();
+}
+
+std::size_t UndoStack::redoActionCount() const {
+	return m_redoStack.size();
+}
+
+bool UndoStack::empty() const {
+	return m_undoStack.empty() && m_redoStack.empty();
+}
+
 }
