@@ -33,7 +33,9 @@ BOOST_AUTO_TEST_CASE(actions_single_node) {
 	BOOST_CHECK(app.undoStack().empty());
 
 	// now make a single node using an Action
-	possumwood::Actions::createNode(app.graph(), additionNode(), "add_1", possumwood::NodeData());
+	BOOST_REQUIRE_NO_THROW(
+		possumwood::Actions::createNode(app.graph(), additionNode(), "add_1", possumwood::NodeData())
+	);
 
 	// check the state of the graph
 	BOOST_REQUIRE_EQUAL(app.graph().nodes().size(), 1u);
@@ -45,22 +47,77 @@ BOOST_AUTO_TEST_CASE(actions_single_node) {
 	}
 
 	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 1u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
 	// undo it
+	BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
 
 	// check the state of the graph
+	BOOST_CHECK(app.graph().nodes().empty());
+	BOOST_CHECK(app.graph().connections().empty());
 
 	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 0u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 1u);
 
 	// redo it
+	BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
 
 	// check the state of the graph
+	BOOST_REQUIRE_EQUAL(app.graph().nodes().size(), 1u);
+	BOOST_CHECK(app.graph().connections().empty());
+	{
+		dependency_graph::NodeBase& node = *app.graph().nodes().begin();
+		BOOST_CHECK_EQUAL(node.metadataHandle(), additionNode());
+		BOOST_CHECK_EQUAL(node.name(), "add_1");
+	}
 
 	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 1u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
 	/////////
 
 	// remove the node
+	BOOST_REQUIRE_NO_THROW(
+		possumwood::Actions::removeNode(*app.graph().nodes().begin());
+	);
 
-	// and do the whole shebang
+	// check the state of the graph
+	BOOST_CHECK(app.graph().nodes().empty());
+	BOOST_CHECK(app.graph().connections().empty());
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 2u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
+
+	// undo it
+	BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
+
+	// check the state of the graph
+	BOOST_REQUIRE_EQUAL(app.graph().nodes().size(), 1u);
+	BOOST_CHECK(app.graph().connections().empty());
+	{
+		dependency_graph::NodeBase& node = *app.graph().nodes().begin();
+		BOOST_CHECK_EQUAL(node.metadataHandle(), additionNode());
+		BOOST_CHECK_EQUAL(node.name(), "add_1");
+	}
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 1u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 1u);
+
+	// redo it
+	BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
+
+	// check the state of the graph
+	BOOST_CHECK(app.graph().nodes().empty());
+	BOOST_CHECK(app.graph().connections().empty());
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 2u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
+
+
 }
