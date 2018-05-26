@@ -128,7 +128,7 @@ possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node)
 	// and remove current node
 	action.addCommand(
 		std::bind(&doRemoveNode, node.index()),
-		std::bind(&doCreateNode, node.network().index(), std::ref(node.metadata()), node.name(), node.index(),
+		std::bind(&doCreateNode, node.network().index(), std::ref(node.metadata().metadata()), node.name(), node.index(),
 			node.blindData<possumwood::NodeData>(), cnode.datablock())
 	);
 

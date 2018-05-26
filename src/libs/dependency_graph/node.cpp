@@ -41,7 +41,7 @@ void Node::computeOutput(size_t index) {
 	assert(port(index).isDirty() && "output should be dirty for recomputation");
 
 	// first, figure out which inputs need pulling, if any
-	std::vector<std::size_t> inputs = metadata().influencedBy(index);
+	std::vector<std::size_t> inputs = metadata()->influencedBy(index);
 
 	// pull on all inputs
 	for(std::size_t& i : inputs) {
@@ -60,7 +60,7 @@ void Node::computeOutput(size_t index) {
 	State result;
 	try {
 		Values vals(*this);
-		result = metadata().m_compute(vals);
+		result = metadata()->m_compute(vals);
 	}
 	catch(std::exception& e) {
 		result.addError(e.what());
@@ -74,7 +74,7 @@ void Node::computeOutput(size_t index) {
 	std::string error_to_throw;
 	if(result.errored()) {
 		// non-void - default value comes from metadata
-		if(metadata().attr(index).type() != typeid(void))
+		if(metadata()->attr(index).type() != typeid(void))
 			datablock().reset(index);
 		// void - default comes from the default of the connected port
 		else {

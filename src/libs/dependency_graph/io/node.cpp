@@ -7,7 +7,7 @@ namespace dependency_graph { namespace io {
 
 void adl_serializer<NodeBase>::to_json(json& j, const ::dependency_graph::NodeBase& g) {
 	j["name"] = g.name();
-	j["type"] = g.metadata().type();
+	j["type"] = g.metadata()->type();
 
 	for(size_t pi=0; pi<g.portCount(); ++pi) {
 		const Port& p = g.port(pi);

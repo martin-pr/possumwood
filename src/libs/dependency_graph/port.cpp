@@ -7,18 +7,18 @@
 namespace dependency_graph {
 
 Port::Port(unsigned id, NodeBase* parent) : m_id(id),
-	m_dirty(parent->metadata().attr(id).category() == Attr::kOutput), m_parent(parent) {
+	m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput), m_parent(parent) {
 }
 
 Port::Port(Port&& p) : m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent) {
 }
 
 const std::string& Port::name() const {
-	return m_parent->metadata().attr(m_id).name();
+	return m_parent->metadata()->attr(m_id).name();
 }
 
 const Attr::Category Port::category() const {
-	return m_parent->metadata().attr(m_id).category();
+	return m_parent->metadata()->attr(m_id).category();
 }
 
 const unsigned Port::index() const {
@@ -26,7 +26,7 @@ const unsigned Port::index() const {
 }
 
 const std::string Port::type() const {
-	std::string t = unmangledName(m_parent->metadata().attr(m_id).type().name());
+	std::string t = unmangledName(m_parent->metadata()->attr(m_id).type().name());
 
 	// void port "type" can be determined by any connected other ports
 	if(t == unmangledTypeId<void>()) {
@@ -88,7 +88,7 @@ void Port::connect(Port& p) {
 			std::set<Port*> newAddedPorts;
 			for(auto& current : addedPorts) {
 				if(current->category() == Attr::kInput)
-					for(std::size_t i : current->node().metadata().influences(current->m_id))
+					for(std::size_t i : current->node().metadata()->influences(current->m_id))
 						newAddedPorts.insert(&current->node().port(i));
 				else {
 					for(Port& i : current->node().network().connections().connectedTo(*current))
@@ -140,12 +140,12 @@ void Port::connect(Port& p) {
 		assert(not node().datablock().isNull(index()) || not p.node().datablock().isNull(p.index()));
 
 		// if the "input" is void acc to the metadata, we need to initialise its datablock
-		if(p.node().metadata().attr(p.index()).type() == typeid(void))
+		if(p.node().metadata()->attr(p.index()).type() == typeid(void))
 			p.node().datablock().set(p.index(), *this);
 		assert(not p.node().datablock().isNull(p.index()));
 
 		// or, if the "output" is void, we need to initialise its datablock
-		if(node().metadata().attr(index()).type() == typeid(void))
+		if(node().metadata()->attr(index()).type() == typeid(void))
 			node().datablock().set(index(), p);
 		assert(not node().datablock().isNull(index()));
 	}

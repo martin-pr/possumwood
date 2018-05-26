@@ -97,7 +97,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 			state.append(n.drawable->drawState());
 
 		std::stringstream ss;
-		ss << "<span style=\"color:#fff;\">" << n.graphNode->name() << " (" << n.graphNode->metadata().type() << ")" << "</p>";
+		ss << "<span style=\"color:#fff;\">" << n.graphNode->name() << " (" << n.graphNode->metadata()->type() << ")" << "</p>";
 		ss << "<br />" << std::endl;
 		for(auto& i : state) {
 			switch(i.first) {
@@ -196,7 +196,7 @@ Adaptor::~Adaptor() {
 
 namespace {
 	void addToIndex(possumwood::Index& index, dependency_graph::NodeBase* node, node_editor::Node* uiNode) {
-		const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node->metadata());
+		const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node->metadata().metadata());
 
 		// create a drawable (if factory returns anything)
 		std::unique_ptr<possumwood::Drawable> drawable;
@@ -221,7 +221,7 @@ namespace {
 
 void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 	// get the possumwood::Metadata pointer from the metadata's blind data
-	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata());
+	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata().metadata());
 	node_editor::Node* uiNode = nullptr;
 
 	// create visual representation of the node only if in current network
@@ -236,8 +236,8 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		uiNode = &newNode;
 
 		// add all ports, based on the node's metadata
-		for(size_t a = 0; a < node.metadata().attributeCount(); ++a) {
-			const dependency_graph::Attr& attr = node.metadata().attr(a);
+		for(size_t a = 0; a < node.metadata()->attributeCount(); ++a) {
+			const dependency_graph::Attr& attr = node.metadata()->attr(a);
 
 			std::array<float, 3> colour{{1,1,1}};
 			if(meta)

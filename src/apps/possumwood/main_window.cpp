@@ -107,7 +107,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		        {
 			        unsigned editorCounter = 0;
 			        for(auto& n : out.nodes()) {
-			        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata());
+			        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
 				        if(meta != nullptr && meta->hasEditor())
 					        ++editorCounter;
 			        }
@@ -130,7 +130,7 @@ MainWindow::MainWindow() : QMainWindow() {
 			        }
 			        else {
 				        for(auto& n : out.nodes()) {
-				        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata());
+				        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
 					        if(meta != nullptr && meta->hasEditor()) {
 						        m_editor = meta->createEditor(n);
 						        editorDock->setWidget(m_editor->widget());

@@ -73,7 +73,7 @@ void NodeBase::markAsDirty(size_t index) {
 		// recurse + handle each port type slightly differently
 		if(p.category() == Attr::kInput) {
 			// all outputs influenced by this input are marked dirty
-			for(std::size_t i : metadata().influences(p.index()))
+			for(std::size_t i : metadata()->influences(p.index()))
 				markAsDirty(i);
 		}
 		else {
@@ -84,11 +84,7 @@ void NodeBase::markAsDirty(size_t index) {
 	}
 }
 
-const Metadata& NodeBase::metadata() const {
-	return m_metadata.metadata();
-}
-
-const MetadataHandle& NodeBase::metadataHandle() const {
+const MetadataHandle& NodeBase::metadata() const {
 	return m_metadata;
 }
 

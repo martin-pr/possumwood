@@ -42,8 +42,7 @@ class NodeBase : public boost::noncopyable {
 		UniqueId index() const;
 
 		/// returns Metadata instance
-		const Metadata& metadata() const;
-		const MetadataHandle& metadataHandle() const;
+		const MetadataHandle& metadata() const;
 		/// returns datablock instance - contains all input and output data
 		const Datablock& datablock() const;
 

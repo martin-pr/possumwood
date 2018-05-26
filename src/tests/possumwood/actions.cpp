@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(actions_single_node) {
 	BOOST_CHECK(app.graph().connections().empty());
 	{
 		dependency_graph::NodeBase& node = *app.graph().nodes().begin();
-		BOOST_CHECK_EQUAL(node.metadataHandle(), additionNode());
+		BOOST_CHECK_EQUAL(node.metadata(), additionNode());
 		BOOST_CHECK_EQUAL(node.name(), "add_1");
 	}
 
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(actions_single_node) {
 	BOOST_CHECK(app.graph().connections().empty());
 	{
 		dependency_graph::NodeBase& node = *app.graph().nodes().begin();
-		BOOST_CHECK_EQUAL(node.metadataHandle(), additionNode());
+		BOOST_CHECK_EQUAL(node.metadata(), additionNode());
 		BOOST_CHECK_EQUAL(node.name(), "add_1");
 	}
 
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(actions_single_node) {
 	BOOST_CHECK(app.graph().connections().empty());
 	{
 		dependency_graph::NodeBase& node = *app.graph().nodes().begin();
-		BOOST_CHECK_EQUAL(node.metadataHandle(), additionNode());
+		BOOST_CHECK_EQUAL(node.metadata(), additionNode());
 		BOOST_CHECK_EQUAL(node.name(), "add_1");
 	}
 
