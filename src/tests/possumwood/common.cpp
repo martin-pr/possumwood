@@ -4,6 +4,7 @@
 #include <dependency_graph/values.inl>
 #include <dependency_graph/metadata.inl>
 #include <dependency_graph/metadata_register.h>
+#include <dependency_graph/port.inl>
 
 const dependency_graph::MetadataHandle& additionNode() {
 	static std::unique_ptr<dependency_graph::MetadataHandle> s_handle;
