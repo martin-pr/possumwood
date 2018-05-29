@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
 
 #include "data.h"
 #include "state.h"
@@ -43,6 +44,11 @@ class NodeBase : public boost::noncopyable {
 
 		/// returns Metadata instance
 		const MetadataHandle& metadata() const;
+
+		/// sets a new metadata instance. Throws if any ports are currently connected.
+		/// Uses an AttrMap instance to map between original and new ports.
+		void setMetadata(const MetadataHandle& handle);
+
 		/// returns datablock instance - contains all input and output data
 		const Datablock& datablock() const;
 

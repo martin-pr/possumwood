@@ -342,4 +342,24 @@ void Actions::move(const std::map<dependency_graph::NodeBase*, QPointF>& nodes) 
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
+namespace {
+
+void doSetMetadata(const dependency_graph::UniqueId& node, const dependency_graph::MetadataHandle& meta) {
+	dependency_graph::NodeBase& n = findNode(node);
+	n.setMetadata(meta);
+}
+
+}
+
+void Actions::changeMetadata(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle) {
+	possumwood::UndoStack::Action action;
+
+	action.addCommand(
+		std::bind(&doSetMetadata, node.index(), handle),
+		std::bind(&doSetMetadata, node.index(), node.metadata())
+	);
+
+	possumwood::AppCore::instance().undoStack().execute(action);
+}
+
 }

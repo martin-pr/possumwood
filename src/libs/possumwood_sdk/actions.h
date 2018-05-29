@@ -16,6 +16,8 @@ struct Actions {
 	static void connect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 	static void disconnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 
+	static void changeMetadata(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle);
+
 	static void cut(const dependency_graph::Selection& selection);
 	static void copy(const dependency_graph::Selection& selection);
 	static void paste(dependency_graph::Network& current, dependency_graph::Selection& selection);

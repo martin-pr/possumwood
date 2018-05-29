@@ -88,6 +88,23 @@ const MetadataHandle& NodeBase::metadata() const {
 	return m_metadata;
 }
 
+void NodeBase::setMetadata(const MetadataHandle& handle) {
+	for(const Port& p : m_ports)
+		if(p.isConnected())
+			throw std::runtime_error("Can only change metadata for nodes without connections.");
+
+	// set the new metadata
+	m_metadata = handle;
+
+	// create new datablock
+	// This will initialise all values to default. Setting the actual values should be done in Actions.
+	m_data = Datablock(handle);
+
+	// mark everything as dirty
+	for(std::size_t p = 0; p < m_ports.size(); ++p)
+		markAsDirty(p);
+}
+
 const Datablock& NodeBase::datablock() const {
 	return m_data;
 }

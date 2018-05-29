@@ -118,6 +118,6 @@ BOOST_AUTO_TEST_CASE(actions_single_node) {
 	// check the state of the undo stack
 	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 2u);
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
-
-
 }
+
+/// TODO: connections and evaluation tests
