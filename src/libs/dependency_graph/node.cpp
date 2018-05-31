@@ -25,7 +25,7 @@ void Node::computeInput(size_t index) {
 	// assign the value directly
 	const NodeBase& srcNode = out->node();
 	const Datablock& srcData = srcNode.datablock();
-	datablock().data(index).assign(srcData.data(out->index()));
+	datablock().setData(index, srcData.data(out->index()));
 	assert(datablock().data(index).isEqual(srcData.data(out->index())));
 
 	// run the watcher callbacks

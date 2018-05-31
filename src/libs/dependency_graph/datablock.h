@@ -33,7 +33,7 @@ class Datablock {
 		void reset(size_t index);
 
 		const BaseData& data(size_t index) const;
-		BaseData& data(size_t index);
+		void setData(size_t index, const BaseData& data);
 		bool isNull(std::size_t index) const;
 
 		const MetadataHandle& meta() const;

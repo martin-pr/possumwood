@@ -37,7 +37,11 @@ void adl_serializer<NodeBase>::from_json(const json& j, ::dependency_graph::Node
 						pi = a;
 				if(pi >= 0) {
 					assert(io::isSaveable(n.m_data.data(pi)));
-					io::fromJson(p.value(), n.m_data.data(pi));
+
+					std::unique_ptr<dependency_graph::BaseData> data(n.m_data.data(pi).clone());
+					io::fromJson(p.value(), *data);
+					n.m_data.setData(pi, *data);
+
 					n.markAsDirty(pi);
 				}
 				else
