@@ -83,12 +83,10 @@ class NodeBase : public boost::noncopyable {
 
 	private:
 		// used by Port instances
-		template<typename T>
-		const T& get(size_t index) const;
+		const BaseData& get(size_t index) const;
 
 		// used by Port instances
-		template<typename T>
-		void set(size_t index, const T& value);
+		void set(size_t index, const BaseData& value);
 
 		// used by Port instances
 		void markAsDirty(size_t index);

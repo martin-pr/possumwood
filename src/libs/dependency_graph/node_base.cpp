@@ -132,4 +132,13 @@ const size_t NodeBase::portCount() const {
 	return m_ports.size();
 }
 
+const BaseData& NodeBase::get(size_t index) const {
+	return datablock().data(index);
+}
+
+void NodeBase::set(size_t index, const BaseData& value) {
+	assert(port(index).category() == Attr::kOutput || !port(index).isConnected());
+	return datablock().setData(index, value);
+}
+
 }

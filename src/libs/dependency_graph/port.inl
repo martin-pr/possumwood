@@ -14,8 +14,9 @@ void Port::set(const T& value) {
 	assert(category() == Attr::kOutput || !isConnected());
 
 	// set the value in the data block
-	const bool valueWasSet = m_parent->get<T>(m_id) != value;
-	m_parent->set<T>(m_id, value);
+	const Data<T>& original = dynamic_cast<const Data<T>&>(m_parent->get(m_id));
+	const bool valueWasSet = original.value != value;
+	m_parent->set(m_id, dependency_graph::Data<T>(value));
 
 	// explicitly setting a value makes it not dirty, but makes everything that
 	//   depends on it dirty
@@ -45,7 +46,8 @@ const T& Port::get() {
 	assert(!m_dirty);
 
 	// and return the value
-	return m_parent->get<T>(m_id);
+	const Data<T>& d = dynamic_cast<const Data<T>&>(m_parent->get(m_id));
+	return d.value;
 }
 
 }
