@@ -59,6 +59,8 @@ class Port : public boost::noncopyable {
 		Port(unsigned id, NodeBase* parent);
 
 		void setDirty(bool dirty);
+		const BaseData& getData();
+		void setData(const BaseData& val);
 
 		unsigned m_id;
 		bool m_dirty;
