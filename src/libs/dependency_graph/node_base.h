@@ -51,6 +51,8 @@ class NodeBase : public boost::noncopyable {
 
 		/// returns datablock instance - contains all input and output data
 		const Datablock& datablock() const;
+		/// sets the datablock instance - new new value has to share the same metadata instance
+		void setDatablock(const Datablock& data);
 
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)
@@ -79,7 +81,6 @@ class NodeBase : public boost::noncopyable {
 		NodeBase(const std::string& name, const UniqueId& id, const MetadataHandle& metadata, Network* parent);
 
 		Datablock& datablock();
-		void setDatablock(const Datablock& data);
 
 	private:
 		// used by Port instances

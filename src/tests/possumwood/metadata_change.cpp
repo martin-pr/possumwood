@@ -59,6 +59,8 @@ BOOST_AUTO_TEST_CASE(meta_single_node) {
 	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 0.0f);
 	BOOST_REQUIRE_NO_THROW(node.port(0).set(3.0f));
 	BOOST_REQUIRE_NO_THROW(node.port(1).set(2.0f));
+	BOOST_CHECK_EQUAL(node.port(0).get<float>(), 3.0f);
+	BOOST_CHECK_EQUAL(node.port(1).get<float>(), 2.0f);
 	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 5.0f);
 
 	// change the metadata of the node
@@ -70,18 +72,15 @@ BOOST_AUTO_TEST_CASE(meta_single_node) {
 	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 2u);
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
-	// test that the attributes are right
+	// test that the attributes are right - THESE SHOULD BE MATCHED VALUES
 	BOOST_REQUIRE_EQUAL(node.portCount(), 3u);
 	BOOST_CHECK(checkPort<float>(node.port(0), "input_1", Attr::Category::kInput));
 	BOOST_CHECK(checkPort<float>(node.port(1), "input_2", Attr::Category::kInput));
 	BOOST_CHECK(checkPort<float>(node.port(2), "output", Attr::Category::kOutput));
 
-	// and test the "pull"
-	BOOST_CHECK_EQUAL(node.port(0).get<float>(), 0.0f);
-	BOOST_CHECK_EQUAL(node.port(1).get<float>(), 0.0f);
-	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 0.0f);
-	BOOST_REQUIRE_NO_THROW(node.port(0).set(3.0f));
-	BOOST_REQUIRE_NO_THROW(node.port(1).set(2.0f));
+	// and test the "pull" - the values should have been transferred
+	BOOST_CHECK_EQUAL(node.port(0).get<float>(), 3.0f);
+	BOOST_CHECK_EQUAL(node.port(1).get<float>(), 2.0f);
 	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 6.0f);
 
 	// undo the last action
@@ -100,11 +99,8 @@ BOOST_AUTO_TEST_CASE(meta_single_node) {
 	BOOST_CHECK(checkPort<float>(node.port(2), "output", Attr::Category::kOutput));
 
 	// and test the "pull"
-	BOOST_CHECK_EQUAL(node.port(0).get<float>(), 0.0f);
-	BOOST_CHECK_EQUAL(node.port(1).get<float>(), 0.0f);
-	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 0.0f);
-	BOOST_REQUIRE_NO_THROW(node.port(0).set(3.0f));
-	BOOST_REQUIRE_NO_THROW(node.port(1).set(2.0f));
+	BOOST_CHECK_EQUAL(node.port(0).get<float>(), 3.0f);
+	BOOST_CHECK_EQUAL(node.port(1).get<float>(), 2.0f);
 	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 5.0f);
 
 	// redo the last action
@@ -123,10 +119,7 @@ BOOST_AUTO_TEST_CASE(meta_single_node) {
 	BOOST_CHECK(checkPort<float>(node.port(2), "output", Attr::Category::kOutput));
 
 	// and test the "pull"
-	BOOST_CHECK_EQUAL(node.port(0).get<float>(), 0.0f);
-	BOOST_CHECK_EQUAL(node.port(1).get<float>(), 0.0f);
-	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 0.0f);
-	BOOST_REQUIRE_NO_THROW(node.port(0).set(3.0f));
-	BOOST_REQUIRE_NO_THROW(node.port(1).set(2.0f));
+	BOOST_CHECK_EQUAL(node.port(0).get<float>(), 3.0f);
+	BOOST_CHECK_EQUAL(node.port(1).get<float>(), 2.0f);
 	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 6.0f);
 }

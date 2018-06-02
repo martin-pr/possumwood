@@ -9,6 +9,7 @@
 #include <dependency_graph/io/graph.h>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
+#include <dependency_graph/attr_map.h>
 
 #include <possumwood_sdk/app.h>
 
@@ -344,9 +345,11 @@ void Actions::move(const std::map<dependency_graph::NodeBase*, QPointF>& nodes) 
 
 namespace {
 
-void doSetMetadata(const dependency_graph::UniqueId& node, const dependency_graph::MetadataHandle& meta) {
+void doSetMetadata(const dependency_graph::UniqueId& node, const dependency_graph::MetadataHandle& meta, const dependency_graph::Datablock& datablock) {
 	dependency_graph::NodeBase& n = findNode(node);
 	n.setMetadata(meta);
+
+	n.setDatablock(datablock);
 }
 
 }
@@ -354,9 +357,18 @@ void doSetMetadata(const dependency_graph::UniqueId& node, const dependency_grap
 void Actions::changeMetadata(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle) {
 	possumwood::UndoStack::Action action;
 
+	// create a new datablock by mapping values using attr_map
+	const dependency_graph::AttrMap map(node.metadata(), handle);
+
+	const dependency_graph::Datablock& srcDatablock = ((const dependency_graph::NodeBase&)node).datablock();
+	dependency_graph::Datablock destDatablock(handle);
+
+	for(auto& i : map)
+		destDatablock.setData(i.second, srcDatablock.data(i.first));
+
 	action.addCommand(
-		std::bind(&doSetMetadata, node.index(), handle),
-		std::bind(&doSetMetadata, node.index(), node.metadata())
+		std::bind(&doSetMetadata, node.index(), handle, destDatablock),
+		std::bind(&doSetMetadata, node.index(), node.metadata(), srcDatablock)
 	);
 
 	possumwood::AppCore::instance().undoStack().execute(action);
