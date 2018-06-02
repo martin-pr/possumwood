@@ -31,6 +31,15 @@ class Port : public boost::noncopyable {
 		template<typename T>
 		const T& get();
 
+		/// gets a value from the port.
+		/// Pulls on the inputs and causes recomputation if the value is
+		/// marked as dirty.
+		const BaseData& getData();
+
+		/// sets a value on the port.
+		/// Marks all downstream values dirty.
+		void setData(const BaseData& val);
+
 		/// returns true if given port is dirty and will require recomputation
 		bool isDirty() const;
 
@@ -59,8 +68,6 @@ class Port : public boost::noncopyable {
 		Port(unsigned id, NodeBase* parent);
 
 		void setDirty(bool dirty);
-		const BaseData& getData();
-		void setData(const BaseData& val);
 
 		unsigned m_id;
 		bool m_dirty;

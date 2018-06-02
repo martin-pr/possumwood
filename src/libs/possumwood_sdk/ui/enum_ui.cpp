@@ -1,17 +1,5 @@
 #include "enum_ui.h"
 
-// #include <boost/algorithm/string/join.hpp>
-// #include <boost/algorithm/string/predicate.hpp>
-
-// #include <QHBoxLayout>
-// #include <QStyle>
-// #include <QFileDialog>
-// #include <QAction>
-// #include <QApplication>
-// #include <QMainWindow>
-
-// #include <possumwood_sdk/app.h>
-
 enum_ui::enum_ui() {
 	m_combobox = new QComboBox(NULL);
 

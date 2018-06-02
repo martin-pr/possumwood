@@ -362,4 +362,29 @@ void Actions::changeMetadata(dependency_graph::NodeBase& node, const dependency_
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
+namespace {
+
+void doSetValue(const dependency_graph::UniqueId& id, unsigned portId, std::shared_ptr<const dependency_graph::BaseData> value) {
+	auto it = AppCore::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
+	assert(it != AppCore::instance().graph().nodes().end());
+
+	it->port(portId).setData(*value);
+}
+
+}
+
+void Actions::setValue(dependency_graph::Port& port, const dependency_graph::BaseData& value) {
+	UndoStack::Action action;
+
+	std::shared_ptr<const dependency_graph::BaseData> original = port.getData().clone();
+	std::shared_ptr<const dependency_graph::BaseData> target = value.clone();
+
+	action.addCommand(
+		std::bind(&doSetValue, port.node().index(), port.index(), std::move(target)),
+		std::bind(&doSetValue, port.node().index(), port.index(), std::move(original))
+	);
+
+	AppCore::instance().undoStack().execute(action);
+}
+
 }
