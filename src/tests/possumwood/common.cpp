@@ -80,3 +80,38 @@ const dependency_graph::MetadataHandle& multiplicationNode() {
 
 	return *s_handle;
 }
+
+const dependency_graph::MetadataHandle& intAdditionNode() {
+	static std::unique_ptr<dependency_graph::MetadataHandle> s_handle;
+
+	if(s_handle == nullptr) {
+		std::unique_ptr<dependency_graph::Metadata> meta(new dependency_graph::Metadata("int_addition"));
+
+		static dependency_graph::OutAttr<float> additionOutput;
+		static dependency_graph::InAttr<float> additionInput1;
+		static dependency_graph::InAttr<int> additionInput2;
+		std::function<dependency_graph::State(dependency_graph::Values&)> additionCompute = [&](dependency_graph::Values & data) {
+			const float a = data.get(additionInput1);
+			const int b = data.get(additionInput2);
+
+			data.set(additionOutput, a * (float)b);
+
+			return dependency_graph::State();
+		};
+
+		meta->addAttribute(additionOutput, "output");
+		meta->addAttribute(additionInput2, "input_int");
+		meta->addAttribute(additionInput1, "input_float");
+
+		meta->addInfluence(additionInput1, additionOutput);
+		meta->addInfluence(additionInput2, additionOutput);
+
+		meta->setCompute(additionCompute);
+
+		s_handle = std::unique_ptr<dependency_graph::MetadataHandle>(new dependency_graph::MetadataHandle(std::move(meta)));
+
+		dependency_graph::MetadataRegister::singleton().add(*s_handle);
+	}
+
+	return *s_handle;
+}
