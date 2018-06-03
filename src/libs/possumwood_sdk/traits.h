@@ -33,12 +33,21 @@ struct Traits<T, typename std::enable_if< std::is_arithmetic<T>::value >::type> 
 template<typename T>
 IO<T> Traits<T, typename std::enable_if< std::is_arithmetic<T>::value >::type>::io(&toJson, &fromJson);
 
-/// traits for numbers
+/// traits for strings
 template<>
 struct Traits<std::string> {
 	static IO<std::string> io;
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{1, 1, 1}};
+	}
+};
+
+/// traits for untyped
+template<>
+struct Traits<void> {
+	// static IO<std::string> io;
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{0, 0, 0}};
 	}
 };
 
