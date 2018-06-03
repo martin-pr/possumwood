@@ -15,7 +15,7 @@ NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, std::u
 	(*it)->m_blindData = std::move(blindData);
 
 	if(datablock) {
-		assert(&datablock->meta().metadata() == &(*it)->metadata());
+		assert(&datablock->meta().metadata() == &((*it)->metadata().metadata()));
 		(*it)->setDatablock(*datablock);
 	}
 

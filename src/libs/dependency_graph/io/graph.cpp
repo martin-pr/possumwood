@@ -28,7 +28,7 @@ void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>
 		const NodeBase& n = dereference(ni);
 
 		// figure out a unique name - type with a number appended
-		std::string name = n.metadata().type();
+		std::string name = n.metadata()->type();
 		auto slash = name.rfind('/');
 		if(slash != std::string::npos)
 			name = name.substr(slash+1);

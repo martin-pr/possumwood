@@ -63,6 +63,8 @@ class Connections : public boost::noncopyable {
 
 		/// remove all connections related to a node (both in and out)
 		void purge(const NodeBase& n);
+		/// returns true if a node has any connections
+		bool isConnected(const NodeBase& n) const;
 
 		/// returns the total number of valid connections in this graph
 		size_t size() const;

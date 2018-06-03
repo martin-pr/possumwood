@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <iostream>
 
 namespace dependency_graph {
 
@@ -21,6 +22,10 @@ class UniqueId {
 
 	private:
 		std::size_t m_id;
+
+	friend std::ostream& operator <<(std::ostream& out, const UniqueId& id);
 };
+
+std::ostream& operator <<(std::ostream& out, const UniqueId& id);
 
 }

@@ -7,18 +7,18 @@
 namespace dependency_graph {
 
 Port::Port(unsigned id, NodeBase* parent) : m_id(id),
-	m_dirty(parent->metadata().attr(id).category() == Attr::kOutput), m_parent(parent) {
+	m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput), m_parent(parent) {
 }
 
 Port::Port(Port&& p) : m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent) {
 }
 
 const std::string& Port::name() const {
-	return m_parent->metadata().attr(m_id).name();
+	return m_parent->metadata()->attr(m_id).name();
 }
 
 const Attr::Category Port::category() const {
-	return m_parent->metadata().attr(m_id).category();
+	return m_parent->metadata()->attr(m_id).category();
 }
 
 const unsigned Port::index() const {
@@ -26,7 +26,7 @@ const unsigned Port::index() const {
 }
 
 const std::string Port::type() const {
-	std::string t = unmangledName(m_parent->metadata().attr(m_id).type().name());
+	std::string t = unmangledName(m_parent->metadata()->attr(m_id).type().name());
 
 	// void port "type" can be determined by any connected other ports
 	if(t == unmangledTypeId<void>()) {
@@ -59,6 +59,46 @@ const NodeBase& Port::node() const {
 	return *m_parent;
 }
 
+const BaseData& Port::getData() {
+	// do the computation if needed, to get rid of the dirty flag
+	if(m_dirty) {
+		if(category() == Attr::kInput) {
+			if(isConnected())
+				m_parent->computeInput(m_id);
+			else
+				setDirty(false);
+		}
+		else if(category() == Attr::kOutput)
+			m_parent->computeOutput(m_id);
+	}
+
+	// when the computation is done, the port should not be dirty
+	assert(!m_dirty);
+
+	// and return the value
+	return m_parent->get(m_id);
+}
+
+void Port::setData(const BaseData& val) {
+	// setting a value in the middle of the graph might do
+	//   weird things, so lets assert it
+	assert(category() == Attr::kOutput || !isConnected());
+
+	// set the value in the data block
+	const bool valueWasSet = (m_parent->get(m_id).type() != val.type()) ||
+		(not m_parent->get(m_id).isEqual(val));
+	m_parent->set(m_id, val);
+
+	// explicitly setting a value makes it not dirty, but makes everything that
+	//   depends on it dirty
+	m_parent->markAsDirty(m_id);
+	setDirty(false);
+
+	// call the values callback
+	if(valueWasSet)
+		m_valueCallbacks();
+}
+
 void Port::setDirty(bool d) {
 	// change in dirtiness flag
 	if(m_dirty != d) {
@@ -88,7 +128,7 @@ void Port::connect(Port& p) {
 			std::set<Port*> newAddedPorts;
 			for(auto& current : addedPorts) {
 				if(current->category() == Attr::kInput)
-					for(std::size_t i : current->node().metadata().influences(current->m_id))
+					for(std::size_t i : current->node().metadata()->influences(current->m_id))
 						newAddedPorts.insert(&current->node().port(i));
 				else {
 					for(Port& i : current->node().network().connections().connectedTo(*current))
@@ -140,12 +180,12 @@ void Port::connect(Port& p) {
 		assert(not node().datablock().isNull(index()) || not p.node().datablock().isNull(p.index()));
 
 		// if the "input" is void acc to the metadata, we need to initialise its datablock
-		if(p.node().metadata().attr(p.index()).type() == typeid(void))
+		if(p.node().metadata()->attr(p.index()).type() == typeid(void))
 			p.node().datablock().set(p.index(), *this);
 		assert(not p.node().datablock().isNull(p.index()));
 
 		// or, if the "output" is void, we need to initialise its datablock
-		if(node().metadata().attr(index()).type() == typeid(void))
+		if(node().metadata()->attr(index()).type() == typeid(void))
 			node().datablock().set(index(), p);
 		assert(not node().datablock().isNull(index()));
 	}

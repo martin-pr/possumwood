@@ -42,18 +42,6 @@ const T& NodeBase::blindData() const {
 }
 
 template<typename T>
-const T& NodeBase::get(size_t index) const {
-	// assert(!port(index).isDirty() || (port(index).category() == Attr::kInput && !inputIsConnected(port(index))));
-	return datablock().get<T>(index);
-}
-
-template<typename T>
-void NodeBase::set(size_t index, const T& value) {
-	assert(port(index).category() == Attr::kOutput || !port(index).isConnected());
-	datablock().set<T>(index, value);
-}
-
-template<typename T>
 bool NodeBase::is() const {
 	return dynamic_cast<const T*>(this) != nullptr;
 }

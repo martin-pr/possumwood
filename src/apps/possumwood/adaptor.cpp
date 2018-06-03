@@ -21,7 +21,7 @@
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
 
-#include "actions.h"
+#include <possumwood_sdk/actions.h>
 
 Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetwork(NULL), m_sizeHint(400,400) {
 	// register callbacks
@@ -68,7 +68,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 
 		// and connect them in the graph as well
 		try {
-			Actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
+			possumwood::Actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
 		}
 		catch(std::runtime_error& err) {
 			// something went wrong during connecting, undo it
@@ -86,7 +86,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 			positions[n.graphNode] = n.editorNode->pos();
 		}
 
-		Actions::move(positions);
+		possumwood::Actions::move(positions);
 	});
 
 	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
@@ -97,7 +97,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 			state.append(n.drawable->drawState());
 
 		std::stringstream ss;
-		ss << "<span style=\"color:#fff;\">" << n.graphNode->name() << " (" << n.graphNode->metadata().type() << ")" << "</p>";
+		ss << "<span style=\"color:#fff;\">" << n.graphNode->name() << " (" << n.graphNode->metadata()->type() << ")" << "</p>";
 		ss << "<br />" << std::endl;
 		for(auto& i : state) {
 			switch(i.first) {
@@ -138,7 +138,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_copy->setShortcut(QKeySequence::Copy);
 	m_copy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_copy, &QAction::triggered, [this](bool) {
-		Actions::copy(selection());
+		possumwood::Actions::copy(selection());
 	});
 	addAction(m_copy);
 
@@ -146,7 +146,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_cut->setShortcut(QKeySequence::Cut);
 	m_cut->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_cut, &QAction::triggered, [this](bool) {
-		Actions::cut(selection());
+		possumwood::Actions::cut(selection());
 	});
 	addAction(m_cut);
 
@@ -155,7 +155,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_paste, &QAction::triggered, [this](bool) {
 		dependency_graph::Selection sel;
-		Actions::paste(currentNetwork(), sel);
+		possumwood::Actions::paste(currentNetwork(), sel);
 		setSelection(sel);
 	});
 	addAction(m_paste);
@@ -164,7 +164,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_delete->setShortcut(QKeySequence::Delete);
 	m_delete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_delete, &QAction::triggered, [this](bool) {
-		Actions::remove(selection());
+		possumwood::Actions::remove(selection());
 	});
 	addAction(m_delete);
 
@@ -196,7 +196,7 @@ Adaptor::~Adaptor() {
 
 namespace {
 	void addToIndex(possumwood::Index& index, dependency_graph::NodeBase* node, node_editor::Node* uiNode) {
-		const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node->metadata());
+		const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node->metadata().metadata());
 
 		// create a drawable (if factory returns anything)
 		std::unique_ptr<possumwood::Drawable> drawable;
@@ -221,7 +221,7 @@ namespace {
 
 void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 	// get the possumwood::Metadata pointer from the metadata's blind data
-	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata());
+	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node.metadata().metadata());
 	node_editor::Node* uiNode = nullptr;
 
 	// create visual representation of the node only if in current network
@@ -236,8 +236,8 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		uiNode = &newNode;
 
 		// add all ports, based on the node's metadata
-		for(size_t a = 0; a < node.metadata().attributeCount(); ++a) {
-			const dependency_graph::Attr& attr = node.metadata().attr(a);
+		for(size_t a = 0; a < node.metadata()->attributeCount(); ++a) {
+			const dependency_graph::Attr& attr = node.metadata()->attr(a);
 
 			std::array<float, 3> colour{{1,1,1}};
 			if(meta)

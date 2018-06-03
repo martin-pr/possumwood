@@ -98,6 +98,14 @@ const Metadata& MetadataHandle::metadata() const {
 	return *m_meta;
 }
 
+MetadataHandle::operator const Metadata&() const {
+	return *m_meta;
+}
+
+const Metadata* MetadataHandle::operator->() const {
+	return m_meta.get();
+}
+
 bool MetadataHandle::operator == (const MetadataHandle& h) const {
 	return m_meta == h.m_meta;
 }

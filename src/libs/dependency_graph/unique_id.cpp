@@ -22,4 +22,9 @@ bool UniqueId::operator < (const UniqueId& id) const {
 	return m_id < id.m_id;
 }
 
+std::ostream& operator <<(std::ostream& out, const UniqueId& id) {
+	out << id.m_id;
+	return out;
+}
+
 }

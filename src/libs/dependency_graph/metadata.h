@@ -113,6 +113,8 @@ class MetadataHandle {
 		~MetadataHandle();
 
 		const Metadata& metadata() const;
+		operator const Metadata&() const;
+		const Metadata* operator->() const;
 
 		bool operator == (const MetadataHandle& h) const;
 		bool operator != (const MetadataHandle& h) const;

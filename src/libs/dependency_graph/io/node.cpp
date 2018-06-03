@@ -7,7 +7,7 @@ namespace dependency_graph { namespace io {
 
 void adl_serializer<NodeBase>::to_json(json& j, const ::dependency_graph::NodeBase& g) {
 	j["name"] = g.name();
-	j["type"] = g.metadata().type();
+	j["type"] = g.metadata()->type();
 
 	for(size_t pi=0; pi<g.portCount(); ++pi) {
 		const Port& p = g.port(pi);
@@ -37,7 +37,11 @@ void adl_serializer<NodeBase>::from_json(const json& j, ::dependency_graph::Node
 						pi = a;
 				if(pi >= 0) {
 					assert(io::isSaveable(n.m_data.data(pi)));
-					io::fromJson(p.value(), n.m_data.data(pi));
+
+					std::unique_ptr<dependency_graph::BaseData> data(n.m_data.data(pi).clone());
+					io::fromJson(p.value(), *data);
+					n.m_data.setData(pi, *data);
+
 					n.markAsDirty(pi);
 				}
 				else

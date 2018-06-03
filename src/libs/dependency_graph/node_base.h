@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
 
 #include "data.h"
 #include "state.h"
@@ -41,14 +42,22 @@ class NodeBase : public boost::noncopyable {
 		/// This ID can be used in Graph::operator[] to get this node from the graph.
 		UniqueId index() const;
 
-		const Metadata& metadata() const;
+		/// returns Metadata instance
+		const MetadataHandle& metadata() const;
+
+		/// sets a new metadata instance. Throws if any ports are currently connected.
+		/// Uses an AttrMap instance to map between original and new ports.
+		void setMetadata(const MetadataHandle& handle);
+
+		/// returns datablock instance - contains all input and output data
 		const Datablock& datablock() const;
+		/// sets the datablock instance - new new value has to share the same metadata instance
+		void setDatablock(const Datablock& data);
 
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)
 		template<typename T>
 		void setBlindData(const T& value);
-
 		/// blind per-node data, to be used by the client application
 		///   to store visual information (e.g., node position, colour...)
 		template<typename T>
@@ -72,16 +81,13 @@ class NodeBase : public boost::noncopyable {
 		NodeBase(const std::string& name, const UniqueId& id, const MetadataHandle& metadata, Network* parent);
 
 		Datablock& datablock();
-		void setDatablock(const Datablock& data);
 
 	private:
 		// used by Port instances
-		template<typename T>
-		const T& get(size_t index) const;
+		const BaseData& get(size_t index) const;
 
 		// used by Port instances
-		template<typename T>
-		void set(size_t index, const T& value);
+		void set(size_t index, const BaseData& value);
 
 		// used by Port instances
 		void markAsDirty(size_t index);

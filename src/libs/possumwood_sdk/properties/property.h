@@ -10,9 +10,9 @@
 #include <dependency_graph/unique_id.h>
 
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/actions.h>
 
 #include "factory.inl"
-
 
 namespace possumwood { namespace properties {
 
@@ -72,30 +72,15 @@ class property : public property_base {
 		virtual void set(const T& value) = 0;
 
 	private:
-		static void doSetValue(const dependency_graph::UniqueId& id, unsigned portId, const T& value) {
-			auto it = App::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
-			assert(it != App::instance().graph().nodes().end());
-
-			it->port(portId).set(value);
-		}
-
 		virtual void valueToPort(dependency_graph::Port& port) const override {
 			// transfer the templated value
 			if((flags() & kInput) && !(flags() & kDisabled) && !m_blockedSignals) {
 				// get the current value
-				const T original = port.get<T>();
-				T value = original;
+				T value = port.get<T>();
 				// allow the UI to change it (or a part of it)
 				get(value);
-
-				// and transfer it back to port, via an undoable action
-				UndoStack::Action action;
-				action.addCommand(
-					std::bind(&doSetValue, port.node().index(), port.index(), value),
-					std::bind(&doSetValue, port.node().index(), port.index(), original)
-				);
-
-				App::instance().undoStack().execute(action);
+				// and use action to apply it to a port (making it undoable)
+				possumwood::Actions::setValue(port, value);
 			}
 		}
 

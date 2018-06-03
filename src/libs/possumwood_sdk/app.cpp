@@ -17,6 +17,33 @@
 
 namespace possumwood {
 
+AppCore* AppCore::s_instance = NULL;
+
+AppCore::AppCore() {
+	assert(s_instance == nullptr);
+	s_instance = this;
+}
+
+AppCore::~AppCore() {
+	assert(s_instance == this);
+	s_instance = nullptr;
+}
+
+AppCore& AppCore::instance() {
+	assert(s_instance != nullptr);
+	return *s_instance;
+}
+
+dependency_graph::Graph& AppCore::graph() {
+	return m_graph;
+}
+
+UndoStack& AppCore::undoStack() {
+	return m_undoStack;
+}
+
+///////////
+
 App* App::s_instance = NULL;
 
 App::App() : m_mainWindow(NULL), m_time(0.0f) {
@@ -48,16 +75,12 @@ App& App::instance() {
 	return *s_instance;
 }
 
-dependency_graph::Graph& App::graph() {
-	return m_graph;
-}
-
 const boost::filesystem::path& App::filename() const {
 	return m_filename;
 }
 
 void App::newFile() {
-	m_graph.clear();
+	graph().clear();
 	m_filename = "";
 }
 
@@ -77,9 +100,9 @@ void App::loadFile(const boost::filesystem::path& filename) {
 
 	try {
 		// read the graph
-		m_graph.clear();
+		graph().clear();
 		dependency_graph::io::adl_serializer<dependency_graph::Graph>::from_json(json,
-		                                                                         m_graph);
+		                                                                         graph());
 
 		// and read the scene config
 		auto& config = json["scene_config"];
@@ -121,7 +144,7 @@ void App::saveFile() {
 void App::saveFile(const boost::filesystem::path& fn) {
 	// make a json instance containing the graph
 	dependency_graph::io::json json;
-	json = m_graph;
+	json = graph();
 
 	// save scene config into the json object
 	auto& config = json["scene_config"];
@@ -164,7 +187,7 @@ void App::setTime(float time) {
 
 		// TERRIBLE HACK - a special node type that outputs time is handled here
 		for(auto& n : graph().nodes())
-			if(n.metadata().type() == "time")
+			if(n.metadata()->type() == "time")
 				n.port(0).set<float>(time);
 	}
 }
@@ -179,10 +202,6 @@ boost::signals2::connection App::onTimeChanged(std::function<void(float)> fn) {
 
 Config& App::sceneConfig() {
 	return m_sceneConfig;
-}
-
-UndoStack& App::undoStack() {
-	return m_undoStack;
 }
 
 }

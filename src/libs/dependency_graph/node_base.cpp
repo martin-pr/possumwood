@@ -73,7 +73,7 @@ void NodeBase::markAsDirty(size_t index) {
 		// recurse + handle each port type slightly differently
 		if(p.category() == Attr::kInput) {
 			// all outputs influenced by this input are marked dirty
-			for(std::size_t i : metadata().influences(p.index()))
+			for(std::size_t i : metadata()->influences(p.index()))
 				markAsDirty(i);
 		}
 		else {
@@ -84,8 +84,25 @@ void NodeBase::markAsDirty(size_t index) {
 	}
 }
 
-const Metadata& NodeBase::metadata() const {
-	return m_metadata.metadata();
+const MetadataHandle& NodeBase::metadata() const {
+	return m_metadata;
+}
+
+void NodeBase::setMetadata(const MetadataHandle& handle) {
+	for(const Port& p : m_ports)
+		if(p.isConnected())
+			throw std::runtime_error("Can only change metadata for nodes without connections.");
+
+	// set the new metadata
+	m_metadata = handle;
+
+	// create new datablock
+	// This will initialise all values to default. Setting the actual values should be done in Actions.
+	m_data = Datablock(handle);
+
+	// mark everything as dirty
+	for(std::size_t p = 0; p < m_ports.size(); ++p)
+		markAsDirty(p);
 }
 
 const Datablock& NodeBase::datablock() const {
@@ -113,6 +130,15 @@ const Port& NodeBase::port(size_t index) const {
 
 const size_t NodeBase::portCount() const {
 	return m_ports.size();
+}
+
+const BaseData& NodeBase::get(size_t index) const {
+	return datablock().data(index);
+}
+
+void NodeBase::set(size_t index, const BaseData& value) {
+	assert(port(index).category() == Attr::kOutput || !port(index).isConnected());
+	return datablock().setData(index, value);
 }
 
 }
