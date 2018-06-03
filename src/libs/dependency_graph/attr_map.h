@@ -15,8 +15,7 @@ class AttrMap {
 		AttrMap(const MetadataHandle& src, const MetadataHandle& dest);
 
 
-		const boost::optional<const
-		Attr&> srcToDest(const Attr& srcAttr) const;
+		const boost::optional<const Attr&> srcToDest(const Attr& srcAttr) const;
 		const boost::optional<const Attr&> destToSrc(const Attr& destAttr) const;
 
 		const MetadataHandle& source() const;
@@ -25,6 +24,7 @@ class AttrMap {
 		typedef boost::bimap<unsigned, unsigned>::left_const_iterator const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
+		const_iterator find(unsigned srcPort) const;
 
 		bool empty() const;
 		std::size_t size() const;

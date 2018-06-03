@@ -94,7 +94,7 @@ const dependency_graph::MetadataHandle& intAdditionNode() {
 			const float a = data.get(additionInput1);
 			const int b = data.get(additionInput2);
 
-			data.set(additionOutput, a * (float)b);
+			data.set(additionOutput, a + (float)b);
 
 			return dependency_graph::State();
 		};

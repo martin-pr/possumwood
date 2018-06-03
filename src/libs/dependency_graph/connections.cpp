@@ -67,6 +67,13 @@ void Connections::purge(const NodeBase& n) {
 			++it;
 }
 
+bool Connections::isConnected(const NodeBase& n) const {
+	for(auto& c : m_connections.left)
+		if(c.first.nodeIndex == n.index() || c.second.nodeIndex == n.index())
+			return true;
+	return false;
+}
+
 boost::optional<const Port&> Connections::connectedFrom(const Port& p) const {
 	if(p.category() != Attr::kInput)
 		throw std::runtime_error("Connected From request can be only run on input ports.");

@@ -107,8 +107,11 @@ AttrMap::const_iterator AttrMap::begin() const {
 }
 
 AttrMap::const_iterator AttrMap::end() const {
-	return m_map.left.
-	end();
+	return m_map.left.end();
+}
+
+AttrMap::const_iterator AttrMap::find(unsigned srcPort) const {
+	return m_map.left.find(srcPort);
 }
 
 bool AttrMap::empty() const {
