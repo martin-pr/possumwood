@@ -16,13 +16,8 @@ using namespace dependency_graph;
 
 namespace dependency_graph {
 
-static std::ostream& operator << (std::ostream& out, const UniqueId& id) {
-	out << "(id)";
-	return out;
-}
-
 static std::ostream& operator << (std::ostream& out, const Nodes::iterator& i) {
-	out << "(it)";
+	out << "(it " << i->index() << ")";
 	return out;
 }
 
