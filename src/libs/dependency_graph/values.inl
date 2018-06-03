@@ -2,6 +2,7 @@
 
 #include "values.h"
 #include "rtti.h"
+#include "port.inl"
 
 namespace dependency_graph {
 
