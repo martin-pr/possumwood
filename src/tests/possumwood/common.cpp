@@ -115,3 +115,34 @@ const dependency_graph::MetadataHandle& intAdditionNode() {
 
 	return *s_handle;
 }
+
+const dependency_graph::MetadataHandle& passThroughNode() {
+	static std::unique_ptr<dependency_graph::MetadataHandle> s_handle;
+
+	if(s_handle == nullptr) {
+		std::unique_ptr<dependency_graph::Metadata> meta(new dependency_graph::Metadata("pass_through"));
+
+		static dependency_graph::InAttr<float> in;
+		static dependency_graph::OutAttr<float> out;
+		std::function<dependency_graph::State(dependency_graph::Values&)> passCompute = [&](dependency_graph::Values & data) {
+			const float val = data.get(in);
+
+			data.set(out, val);
+
+			return dependency_graph::State();
+		};
+
+		meta->addAttribute(in, "input");
+		meta->addAttribute(out, "output");
+
+		meta->addInfluence(in, out);
+
+		meta->setCompute(passCompute);
+
+		s_handle = std::unique_ptr<dependency_graph::MetadataHandle>(new dependency_graph::MetadataHandle(std::move(meta)));
+
+		dependency_graph::MetadataRegister::singleton().add(*s_handle);
+	}
+
+	return *s_handle;
+}

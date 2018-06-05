@@ -12,6 +12,7 @@
 #include <dependency_graph/attr_map.h>
 
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/metadata.h>
 
 namespace possumwood {
 
@@ -101,17 +102,48 @@ void Actions::createNode(dependency_graph::Network& current, const dependency_gr
 
 namespace {
 
-possumwood::UndoStack::Action disconnectAction(const dependency_graph::UniqueId& fromNode, std::size_t fromPort, const dependency_graph::UniqueId& toNode, std::size_t toPort) {
+possumwood::UndoStack::Action changeMetadataAction(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle);
+
+possumwood::UndoStack::Action disconnectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort) {
 	possumwood::UndoStack::Action action;
 
+	// the initial connect / disconnect action
 	action.addCommand(
 		std::bind(&doDisconnect,
-			fromNode, fromPort,
-			toNode, toPort),
+			fromNodeId, fromPort,
+			toNodeId, toPort),
 		std::bind(&doConnect,
-			fromNode, fromPort,
-			toNode, toPort)
+			fromNodeId, fromPort,
+			toNodeId, toPort)
 	);
+
+	// special handling for "input" and "output" types
+	dependency_graph::NodeBase& fromNode = findNode(fromNodeId);
+	dependency_graph::NodeBase& toNode = findNode(toNodeId);
+	if((fromNode.metadata()->type() == "input" || toNode.metadata()->type() == "output") &&
+		fromNode.hasParentNetwork() && toNode.hasParentNetwork()) {
+
+		// find all input and output nodes of the network with connected outputs
+		//   and build metadata that correspond to them
+		std::unique_ptr<possumwood::Metadata> meta(new possumwood::Metadata("network"));
+
+		for(auto& n : fromNode.network().nodes()) {
+			if(n.metadata()->type() == "input" && (n.port(0).isConnected() && n.index() != fromNodeId)) {
+				dependency_graph::InAttr<void> in;
+				meta->addAttribute(in, n.name());
+			}
+
+			if(n.metadata()->type() == "output" && (n.port(0).isConnected() && n.index() != toNodeId)) {
+				dependency_graph::OutAttr<void> out;
+				meta->addAttribute(out, n.name());
+			}
+		}
+
+		dependency_graph::MetadataHandle handle(std::move(meta));
+
+		// and change metadata of the node, using an action
+		action.append(changeMetadataAction(fromNode.network(), handle));
+	}
 
 	return action;
 }
@@ -198,17 +230,46 @@ void Actions::removeNode(dependency_graph::NodeBase& node) {
 
 namespace {
 
-possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fromNode, std::size_t fromPort, const dependency_graph::UniqueId& toNode, std::size_t toPort) {
+possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort) {
 	possumwood::UndoStack::Action action;
 
+	// the connect action
 	action.addCommand(
 		std::bind(&doConnect,
-			fromNode, fromPort,
-			toNode, toPort),
+			fromNodeId, fromPort,
+			toNodeId, toPort),
 		std::bind(&doDisconnect,
-			fromNode, fromPort,
-			toNode, toPort)
+			fromNodeId, fromPort,
+			toNodeId, toPort)
 	);
+
+	// special handling for "input" and "output" types
+	dependency_graph::NodeBase& fromNode = findNode(fromNodeId);
+	dependency_graph::NodeBase& toNode = findNode(toNodeId);
+	if((fromNode.metadata()->type() == "input" || toNode.metadata()->type() == "output") &&
+		fromNode.hasParentNetwork() && toNode.hasParentNetwork()) {
+
+		// find all input and output nodes of the network with connected outputs
+		//   and build metadata that correspond to them
+		std::unique_ptr<possumwood::Metadata> meta(new possumwood::Metadata("network"));
+
+		for(auto& n : fromNode.network().nodes()) {
+			if(n.metadata()->type() == "input" && (n.port(0).isConnected() || n.index() == fromNodeId)) {
+				dependency_graph::InAttr<void> in;
+				meta->addAttribute(in, n.name());
+			}
+
+			if(n.metadata()->type() == "output" && (n.port(0).isConnected() || n.index() == toNodeId)) {
+				dependency_graph::OutAttr<void> out;
+				meta->addAttribute(out, n.name());
+			}
+		}
+
+		dependency_graph::MetadataHandle handle(std::move(meta));
+
+		// and change metadata of the node, using an action
+		action.append(changeMetadataAction(fromNode.network(), handle));
+	}
 
 	return action;
 }
@@ -381,9 +442,7 @@ struct ConnectionItem {
 	std::size_t thisPort, thatPort;
 };
 
-}
-
-void Actions::changeMetadata(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle) {
+possumwood::UndoStack::Action changeMetadataAction(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle) {
 	assert(node.hasParentNetwork());
 
 	possumwood::UndoStack::Action action;
@@ -430,7 +489,8 @@ void Actions::changeMetadata(dependency_graph::NodeBase& node, const dependency_
 	dependency_graph::Datablock destDatablock(handle);
 
 	for(auto& i : map)
-		destDatablock.setData(i.second, srcDatablock.data(i.first));
+		if(!srcDatablock.isNull(i.first))
+			destDatablock.setData(i.second, srcDatablock.data(i.first));
 
 	action.addCommand(
 		std::bind(&doSetMetadata, node.index(), handle, destDatablock),
@@ -450,7 +510,14 @@ void Actions::changeMetadata(dependency_graph::NodeBase& node, const dependency_
 			action.append(connectAction(node.index(), it->second, c.thatNode, c.thatPort));
 	}
 
-	// and finally execute the action
+	return action;
+}
+
+}
+
+void Actions::changeMetadata(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle) {
+	possumwood::UndoStack::Action action = changeMetadataAction(node, handle);
+
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
