@@ -13,15 +13,22 @@ Datablock::Datablock(const MetadataHandle& meta) : m_meta(meta) {
 }
 
 Datablock::Datablock(const Datablock& d) : m_meta(d.m_meta) {
-	for(auto& a : d.m_data)
-		m_data.push_back(a->clone());
+	for(auto& a : d.m_data) {
+		if(a != nullptr)
+			m_data.push_back(a->clone());
+		else
+			m_data.push_back(nullptr);
+	}
 }
 
 Datablock& Datablock::operator = (const Datablock& d) {
 	m_data.clear();
 
 	for(auto& a : d.m_data)
-		m_data.push_back(a->clone());
+		if(a != nullptr)
+			m_data.push_back(a->clone());
+		else
+			m_data.push_back(nullptr);
 
 	m_meta = d.m_meta;
 
