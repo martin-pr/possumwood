@@ -96,9 +96,16 @@ void NodeBase::setMetadata(const MetadataHandle& handle) {
 	// set the new metadata
 	m_metadata = handle;
 
-	// create new datablock
-	// This will initialise all values to default. Setting the actual values should be done in Actions.
+	// create new datablock - this will initialise all values to default.
+	// Setting the actual values should be done in Actions.
 	m_data = Datablock(handle);
+
+	// redo the ports based on the new metadata
+	m_ports.clear();
+	for(std::size_t a = 0; a < handle->attributeCount(); ++a) {
+		auto& meta = handle->attr(a);
+		m_ports.push_back(Port(meta.offset(), this));
+	}
 
 	// mark everything as dirty
 	for(std::size_t p = 0; p < m_ports.size(); ++p)
