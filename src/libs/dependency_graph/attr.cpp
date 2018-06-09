@@ -13,8 +13,8 @@ struct Attr::AttrData {
 	std::unique_ptr<BaseData> data;
 };
 
-Attr::Attr(const std::string& name, unsigned offset, Category cat, const BaseData& d)
-	: m_data(new AttrData{name, offset, cat, d.clone()}) {
+Attr::Attr(const std::string& name, Category cat, const BaseData& d)
+	: m_data(new AttrData{name, unsigned(-1), cat, d.clone()}) {
 }
 
 Attr::~Attr() {
@@ -30,6 +30,17 @@ const Attr::Category& Attr::category() const {
 
 const unsigned& Attr::offset() const {
 	return m_data->offset;
+}
+
+void Attr::setOffset(unsigned o) {
+	std::unique_ptr<AttrData> newData(new AttrData{
+		m_data->name,
+		o,
+		m_data->category,
+		m_data->data->clone()
+	});
+
+	m_data = std::shared_ptr<const AttrData>(newData.release());
 }
 
 const std::type_info& Attr::type() const {
@@ -67,20 +78,20 @@ std::ostream& operator << (std::ostream& out, const Attr& attr) {
 
 /////////
 
-TypedAttr<void>::TypedAttr(const std::string& name, unsigned offset, Category cat) :
-	Attr(name, offset, cat, Data<void>()) {
+TypedAttr<void>::TypedAttr(const std::string& name, Category cat) :
+	Attr(name, cat, Data<void>()) {
 }
 
-InAttr<void>::InAttr() : TypedAttr<void>("", unsigned(-1), Attr::kInput) {
+InAttr<void>::InAttr() : TypedAttr<void>("", Attr::kInput) {
 }
 
-InAttr<void>::InAttr(const std::string& name, unsigned offset) : TypedAttr<void>(name, offset, Attr::kInput) {
+InAttr<void>::InAttr(const std::string& name) : TypedAttr<void>(name, Attr::kInput) {
 }
 
-OutAttr<void>::OutAttr() : TypedAttr<void>("", unsigned(-1), Attr::kOutput) {
+OutAttr<void>::OutAttr() : TypedAttr<void>("", Attr::kOutput) {
 }
 
-OutAttr<void>::OutAttr(const std::string& name, unsigned offset) : TypedAttr<void>(name, offset, Attr::kOutput) {
+OutAttr<void>::OutAttr(const std::string& name) : TypedAttr<void>(name, Attr::kOutput) {
 }
 
 }

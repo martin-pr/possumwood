@@ -35,9 +35,10 @@ class Attr {
 		bool operator != (const Attr& a) const;
 
 	protected:
-		Attr(const std::string& name, unsigned offset, Category cat, const BaseData& data);
+		Attr(const std::string& name, Category cat, const BaseData& data);
 
 		std::unique_ptr<BaseData> createData() const;
+		void setOffset(unsigned o);
 
 	private:
 		struct AttrData;
@@ -45,18 +46,19 @@ class Attr {
 
 		friend class Datablock;
 		friend class Node;
+		friend class Metadata;
 };
 
 template<typename T>
 class TypedAttr : public Attr {
 	protected:
-		TypedAttr(const std::string& name, unsigned offset, Category cat, const T& defaultValue);
+		TypedAttr(const std::string& name, Category cat, const T& defaultValue);
 };
 
 template<>
 class TypedAttr<void> : public Attr {
 	public:
-		TypedAttr(const std::string& name, unsigned offset, Category cat);
+		TypedAttr(const std::string& name, Category cat);
 };
 
 /// Input attribute type (constructed by Metadata class)
@@ -66,7 +68,7 @@ class InAttr final : public TypedAttr<T> {
 		InAttr();
 
 	protected:
-		InAttr(const std::string& name, unsigned offset, const T& defaultValue);
+		InAttr(const std::string& name, const T& defaultValue);
 
 		friend class Metadata;
 };
@@ -77,7 +79,7 @@ class InAttr<void> final : public TypedAttr<void> {
 		InAttr();
 
 	protected:
-		InAttr(const std::string& name, unsigned offset);
+		InAttr(const std::string& name);
 
 		friend class Metadata;
 };
@@ -89,7 +91,7 @@ class OutAttr final : public TypedAttr<T> {
 		OutAttr();
 
 	protected:
-		OutAttr(const std::string& name, unsigned offset, const T& defaultValue);
+		OutAttr(const std::string& name, const T& defaultValue);
 
 		friend class Metadata;
 };
@@ -100,7 +102,7 @@ class OutAttr<void> final : public TypedAttr<void> {
 		OutAttr();
 
 	protected:
-		OutAttr(const std::string& name, unsigned offset);
+		OutAttr(const std::string& name);
 
 		friend class Metadata;
 };

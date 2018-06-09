@@ -30,11 +30,6 @@ size_t Metadata::attributeCount() const {
 	return m_attrs.size();
 }
 
-Attr& Metadata::attr(size_t index) {
-	assert(index < m_attrs.size());
-	return m_attrs[index];
-}
-
 const Attr& Metadata::attr(size_t index) const {
 	assert(index < m_attrs.size());
 	return m_attrs[index];
@@ -43,7 +38,7 @@ const Attr& Metadata::attr(size_t index) const {
 void Metadata::addAttribute(InAttr<void>& in, const std::string& name) {
 	assert(!in.isValid());
 
-	in = InAttr<void>(name, m_attrs.size());
+	in = InAttr<void>(name);
 	doAddAttribute(in);
 
 	assert(in.isValid());
@@ -52,13 +47,15 @@ void Metadata::addAttribute(InAttr<void>& in, const std::string& name) {
 void Metadata::addAttribute(OutAttr<void>& out, const std::string& name) {
 	assert(!out.isValid());
 
-	out = OutAttr<void>(name, m_attrs.size());
+	out = OutAttr<void>(name);
 	doAddAttribute(out);
 
 	assert(out.isValid());
 }
 
 void Metadata::doAddAttribute(Attr& attr) {
+	attr.setOffset(m_attrs.size());
+
 	m_attrs.push_back(attr);
 }
 
