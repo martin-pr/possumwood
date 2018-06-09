@@ -7,9 +7,7 @@ namespace dependency_graph {
 template <typename T>
 TypedAttr<T>::TypedAttr(const std::string& name, unsigned offset, Category cat,
                         const T& defaultValue)
-    : Attr(name, offset, cat, typeid(T), [defaultValue]() {
-	      return std::unique_ptr<BaseData>(new Data<T>(defaultValue));
-	  }) {
+    : Attr(name, offset, cat, Data<T>(defaultValue)) {
 }
 
 template <typename T>

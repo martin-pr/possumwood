@@ -35,7 +35,7 @@ class Attr {
 		bool operator != (const Attr& a) const;
 
 	protected:
-		Attr(const std::string& name, unsigned offset, Category cat, const std::type_info& type, std::function<std::unique_ptr<BaseData>()> dataFactory);
+		Attr(const std::string& name, unsigned offset, Category cat, const BaseData& data);
 
 		std::unique_ptr<BaseData> createData() const;
 

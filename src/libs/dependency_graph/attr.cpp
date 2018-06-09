@@ -9,14 +9,12 @@ struct Attr::AttrData {
 	std::string name;
 	unsigned offset;
 	Category category;
-	const std::type_info& type;
 
-	std::function<std::unique_ptr<BaseData>()> dataFactory;
+	std::unique_ptr<BaseData> data;
 };
 
-Attr::Attr(const std::string& name, unsigned offset, Category cat, const std::type_info& type,
-           std::function<std::unique_ptr<BaseData>()> dataFactory)
-	: m_data(new AttrData{name, offset, cat, type, dataFactory}) {
+Attr::Attr(const std::string& name, unsigned offset, Category cat, const BaseData& d)
+	: m_data(new AttrData{name, offset, cat, d.clone()}) {
 }
 
 Attr::~Attr() {
@@ -35,11 +33,11 @@ const unsigned& Attr::offset() const {
 }
 
 const std::type_info& Attr::type() const {
-	return m_data->type;
+	return m_data->data->typeinfo();
 }
 
 std::unique_ptr<BaseData> Attr::createData() const {
-	return m_data->dataFactory();
+	return m_data->data->clone();
 }
 
 bool Attr::isValid() const {
@@ -70,9 +68,7 @@ std::ostream& operator << (std::ostream& out, const Attr& attr) {
 /////////
 
 TypedAttr<void>::TypedAttr(const std::string& name, unsigned offset, Category cat) :
-	Attr(name, offset, cat, typeid(void), []() {
-		return std::unique_ptr<BaseData>();
-	}) {
+	Attr(name, offset, cat, Data<void>()) {
 }
 
 InAttr<void>::InAttr() : TypedAttr<void>("", unsigned(-1), Attr::kInput) {
