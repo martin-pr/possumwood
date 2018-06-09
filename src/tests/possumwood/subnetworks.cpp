@@ -159,8 +159,72 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	//////
 
 	// disconnect the output
+	BOOST_REQUIRE_NO_THROW(possumwood::Actions::disconnect(middle.port(1), output.port(0)));
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 7u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
+
+	// this should mean that the network has an decreased portcount
+	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 1u);
+	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
+
+	// undo it
+	BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 6u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 1u);
+
+	// ports back to the original state
+	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 2u);
+	BOOST_CHECK_EQUAL(input.network().portCount(), 2u);
+
+	// redo it
+	BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 7u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
+
+	// ports back to the original state
+	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 1u);
+	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
 	//////
 
 	// disconnect the input
+	BOOST_REQUIRE_NO_THROW(possumwood::Actions::disconnect(input.port(0), middle.port(0)));
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 8u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
+
+	// this should mean that the network has an increased portcount
+	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 0u);
+	BOOST_CHECK_EQUAL(input.network().portCount(), 0u);
+
+	// undo it
+	BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 7u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 1u);
+
+	// ports back to the original state
+	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 1u);
+	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
+
+	// redo it
+	BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 8u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
+
+	// ports back to the original state
+	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 0u);
+	BOOST_CHECK_EQUAL(input.network().portCount(), 0u);
+
+	// NEEDS CHECKS OF VALUES
 }
