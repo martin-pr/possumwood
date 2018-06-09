@@ -15,7 +15,8 @@ class BaseData {
 		virtual void assign(const BaseData& src) = 0;
 		virtual bool isEqual(const BaseData& src) const = 0;
 
-		virtual std::string type() const = 0;
+		std::string type() const;
+		virtual const std::type_info& typeinfo() const = 0;
 
 		/// creates a new Data<T> instance based on type name
 		static std::unique_ptr<BaseData> create(const std::string& type);
@@ -41,7 +42,7 @@ struct Data : public BaseData {
 		virtual void assign(const BaseData& src) override;
 		virtual bool isEqual(const BaseData& src) const;
 
-		virtual std::string type() const override;
+		virtual const std::type_info& typeinfo() const override;
 
 		std::unique_ptr<BaseData> clone() const override;
 

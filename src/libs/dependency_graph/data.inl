@@ -37,8 +37,8 @@ bool Data<T>::isEqual(const BaseData& src) const {
 }
 
 template<typename T>
-std::string Data<T>::type() const {
-	return unmangledTypeId<T>();
+const std::type_info& Data<T>::typeinfo() const {
+	return typeid(T);
 }
 
 template<typename T>

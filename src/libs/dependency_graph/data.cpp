@@ -20,4 +20,8 @@ std::unique_ptr<BaseData> BaseData::create(const std::string& type) {
 	return it->second();
 }
 
+std::string BaseData::type() const {
+	return dependency_graph::unmangledName(typeinfo().name());
+}
+
 }
