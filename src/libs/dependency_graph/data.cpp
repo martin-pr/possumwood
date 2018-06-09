@@ -7,6 +7,12 @@ std::map<std::string, std::function<std::unique_ptr<BaseData>()>>& BaseData::fac
 	return s_factories;
 }
 
+BaseData::BaseData() {
+};
+
+BaseData::~BaseData() {
+};
+
 std::unique_ptr<BaseData> BaseData::create(const std::string& type) {
 	auto it = factories().find(type);
 
@@ -23,5 +29,31 @@ std::unique_ptr<BaseData> BaseData::create(const std::string& type) {
 std::string BaseData::type() const {
 	return dependency_graph::unmangledName(typeinfo().name());
 }
+
+////
+
+Data<void>::Data() {
+}
+
+Data<void>::~Data() {
+}
+
+void Data<void>::assign(const BaseData& src) {
+	assert(src.typeinfo() == typeid(void));
+}
+
+bool Data<void>::isEqual(const BaseData& src) const {
+	return src.typeinfo() == typeid(void);
+}
+
+const std::type_info& Data<void>::typeinfo() const {
+	return typeid(void);
+}
+
+std::unique_ptr<BaseData> Data<void>::clone() const {
+	return std::unique_ptr<BaseData>(new Data<void>());
+}
+
+BaseData::Factory<void> Data<void>::m_factory;
 
 }

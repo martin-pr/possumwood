@@ -43,7 +43,7 @@ const std::type_info& Data<T>::typeinfo() const {
 
 template<typename T>
 std::unique_ptr<BaseData> Data<T>::clone() const {
-	std::unique_ptr<BaseData> result = create(type());
+	std::unique_ptr<BaseData> result(new Data<T>());
 	result->assign(*this);
 
 	return result;

@@ -10,7 +10,7 @@ namespace dependency_graph {
 
 class BaseData {
 	public:
-		virtual ~BaseData() {};
+		virtual ~BaseData();
 
 		virtual void assign(const BaseData& src) = 0;
 		virtual bool isEqual(const BaseData& src) const = 0;
@@ -24,6 +24,8 @@ class BaseData {
 		virtual std::unique_ptr<BaseData> clone() const = 0;
 
 	protected:
+		BaseData();
+
 		template<typename T>
 		struct Factory {
 			Factory();
@@ -40,7 +42,7 @@ struct Data : public BaseData {
 		virtual ~Data();
 
 		virtual void assign(const BaseData& src) override;
-		virtual bool isEqual(const BaseData& src) const;
+		virtual bool isEqual(const BaseData& src) const override;
 
 		virtual const std::type_info& typeinfo() const override;
 
@@ -53,8 +55,20 @@ struct Data : public BaseData {
 };
 
 template<>
-struct Data<void> {
-	// invalid
+struct Data<void> : public BaseData {
+	public:
+		Data();
+		virtual ~Data();
+
+		virtual void assign(const BaseData& src) override;
+		virtual bool isEqual(const BaseData& src) const override;
+
+		virtual const std::type_info& typeinfo() const override;
+
+		std::unique_ptr<BaseData> clone() const override;
+
+	private:
+		static Factory<void> m_factory;
 };
 
 }
