@@ -100,11 +100,7 @@ void Actions::createNode(dependency_graph::Network& current, const dependency_gr
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
-namespace {
-
-possumwood::UndoStack::Action changeMetadataAction(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle);
-
-possumwood::UndoStack::Action disconnectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort) {
+possumwood::UndoStack::Action Actions::disconnectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort) {
 	possumwood::UndoStack::Action action;
 
 	// the initial connect / disconnect action
@@ -148,16 +144,14 @@ possumwood::UndoStack::Action disconnectAction(const dependency_graph::UniqueId&
 	return action;
 }
 
-possumwood::UndoStack::Action disconnectAction(dependency_graph::Port& p1, dependency_graph::Port& p2) {
+possumwood::UndoStack::Action Actions::disconnectAction(dependency_graph::Port& p1, dependency_graph::Port& p2) {
 	return disconnectAction(
 		p1.node().index(), p1.index(),
 		p2.node().index(), p2.index()
 	);
 }
 
-possumwood::UndoStack::Action removeNetworkAction(dependency_graph::Network& net);
-
-possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node) {
+possumwood::UndoStack::Action Actions::removeNodeAction(dependency_graph::NodeBase& node) {
 	possumwood::UndoStack::Action action;
 	const dependency_graph::NodeBase& cnode = node;
 
@@ -175,7 +169,7 @@ possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node)
 	return action;
 }
 
-possumwood::UndoStack::Action removeNetworkAction(dependency_graph::Network& net) {
+possumwood::UndoStack::Action Actions::removeNetworkAction(dependency_graph::Network& net) {
 	possumwood::UndoStack::Action action;
 
 	// remove all connections
@@ -189,7 +183,7 @@ possumwood::UndoStack::Action removeNetworkAction(dependency_graph::Network& net
 	return action;
 }
 
-possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _selection) {
+possumwood::UndoStack::Action Actions::removeAction(const dependency_graph::Selection& _selection) {
 	// add all connections to selected nodes - they'll be removed as well as the selected connections
 	//   with the removed nodes
 	dependency_graph::Selection selection = _selection;
@@ -217,8 +211,6 @@ possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _s
 	return action;
 }
 
-}
-
 void Actions::removeNode(dependency_graph::NodeBase& node) {
 	dependency_graph::Selection selection;
 	selection.addNode(node);
@@ -228,9 +220,7 @@ void Actions::removeNode(dependency_graph::NodeBase& node) {
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
-namespace {
-
-possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort) {
+possumwood::UndoStack::Action Actions::connectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort) {
 	possumwood::UndoStack::Action action;
 
 	// the connect action
@@ -274,13 +264,11 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 	return action;
 }
 
-possumwood::UndoStack::Action connectAction(const dependency_graph::Port& p1, const dependency_graph::Port& p2) {
+possumwood::UndoStack::Action Actions::connectAction(const dependency_graph::Port& p1, const dependency_graph::Port& p2) {
 	return connectAction(
 		p1.node().index(), p1.index(),
 		p2.node().index(), p2.index()
 	);
-}
-
 }
 
 void Actions::connect(dependency_graph::Port& p1, dependency_graph::Port& p2) {
@@ -442,7 +430,9 @@ struct ConnectionItem {
 	std::size_t thisPort, thatPort;
 };
 
-possumwood::UndoStack::Action changeMetadataAction(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle) {
+}
+
+possumwood::UndoStack::Action Actions::changeMetadataAction(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle) {
 	assert(node.hasParentNetwork());
 
 	possumwood::UndoStack::Action action;
@@ -511,8 +501,6 @@ possumwood::UndoStack::Action changeMetadataAction(dependency_graph::NodeBase& n
 	}
 
 	return action;
-}
-
 }
 
 void Actions::changeMetadata(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle) {
