@@ -125,13 +125,19 @@ possumwood::UndoStack::Action Actions::disconnectAction(const dependency_graph::
 
 		for(auto& n : fromNode.network().nodes()) {
 			if(n.metadata()->type() == "input" && (n.port(0).isConnected() && n.index() != fromNodeId)) {
-				dependency_graph::InAttr<void> in;
-				meta->addAttribute(in, n.name());
+				auto conns = n.network().connections().connectedTo(n.port(0));
+				assert(!conns.empty());
+
+				dependency_graph::Attr in = conns.front().get().node().metadata()->attr(conns.front().get().index());;
+				meta->doAddAttribute(in);
 			}
 
 			if(n.metadata()->type() == "output" && (n.port(0).isConnected() && n.index() != toNodeId)) {
-				dependency_graph::OutAttr<void> out;
-				meta->addAttribute(out, n.name());
+				auto conns = n.network().connections().connectedFrom(n.port(0));
+				assert(conns);
+
+				dependency_graph::Attr out = conns->node().metadata()->attr(conns->index());;
+				meta->doAddAttribute(out);
 			}
 		}
 
@@ -244,14 +250,32 @@ possumwood::UndoStack::Action Actions::connectAction(const dependency_graph::Uni
 		std::unique_ptr<possumwood::Metadata> meta(new possumwood::Metadata("network"));
 
 		for(auto& n : fromNode.network().nodes()) {
-			if(n.metadata()->type() == "input" && (n.port(0).isConnected() || n.index() == fromNodeId)) {
-				dependency_graph::InAttr<void> in;
-				meta->addAttribute(in, n.name());
+			if(n.metadata()->type() == "input") {
+				if(n.port(0).isConnected()) {
+					auto conns = n.network().connections().connectedTo(n.port(0));
+					assert(!conns.empty());
+
+					dependency_graph::Attr in = conns.front().get().node().metadata()->attr(conns.front().get().index());
+					meta->doAddAttribute(in);
+				}
+				else if(n.index() == fromNodeId) {
+					dependency_graph::Attr in = toNode.metadata()->attr(toPort);
+					meta->doAddAttribute(in);
+				}
 			}
 
-			if(n.metadata()->type() == "output" && (n.port(0).isConnected() || n.index() == toNodeId)) {
-				dependency_graph::OutAttr<void> out;
-				meta->addAttribute(out, n.name());
+			if(n.metadata()->type() == "output") {
+				if(n.port(0).isConnected()) {
+					auto conns = n.network().connections().connectedFrom(n.port(0));
+					assert(conns);
+
+					dependency_graph::Attr out = conns->node().metadata()->attr(conns->index());
+					meta->doAddAttribute(out);
+				}
+				else if(n.index() == toNodeId) {
+					dependency_graph::Attr out = fromNode.metadata()->attr(fromPort);
+					meta->doAddAttribute(out);
+				}
 			}
 		}
 

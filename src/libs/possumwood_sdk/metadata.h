@@ -14,6 +14,8 @@
 
 namespace possumwood {
 
+class Actions;
+
 class Metadata : public dependency_graph::Metadata {
 	public:
 		Metadata(const std::string& nodeType);
@@ -75,6 +77,9 @@ class Metadata : public dependency_graph::Metadata {
 		std::function<std::unique_ptr<Editor>(dependency_graph::NodeBase&)> m_editorFactory;
 
 		std::vector<std::array<float, 3>> m_colours;
+
+	// allow untemplated attribute metadata changes in Actions - used by Network construction
+	friend class Actions;
 };
 
 }

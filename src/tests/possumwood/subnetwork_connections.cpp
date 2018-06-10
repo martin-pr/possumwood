@@ -14,6 +14,14 @@
 
 using namespace dependency_graph;
 
+namespace std {
+	static std::ostream& operator << (std::ostream& out, const std::type_info& t) {
+		out << dependency_graph::unmangledName(t.name());
+
+		return out;
+	}
+}
+
 BOOST_AUTO_TEST_CASE(simple_subnet) {
 	// make the app "singleton"
 	possumwood::AppCore app;
@@ -99,6 +107,11 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 1u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
+	// the new port should be of "float" type
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(0).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
+
 	// undo it
 	BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
 
@@ -121,6 +134,10 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 1u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(0).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
+
 	/////
 
 	// connect the output
@@ -134,6 +151,14 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 2u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 2u);
 
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(0).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
+
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(1).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(1).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(1).category(), Attr::kOutput);
+
 	// undo it
 	BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
 
@@ -145,6 +170,10 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 1u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(0).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
+
 	// redo it
 	BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
 
@@ -155,6 +184,14 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	// ports back to the original state
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 2u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 2u);
+
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(0).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
+
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(1).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(1).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(1).category(), Attr::kOutput);
 
 	//////
 
@@ -169,6 +206,10 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 1u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(0).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
+
 	// undo it
 	BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
 
@@ -180,6 +221,14 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 2u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 2u);
 
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(0).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
+
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(1).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(1).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(1).category(), Attr::kOutput);
+
 	// redo it
 	BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
 
@@ -190,6 +239,10 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	// ports back to the original state
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 1u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
+
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(0).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
 
 	//////
 
@@ -215,6 +268,10 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 1u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
+	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
+	BOOST_CHECK_EQUAL(input.network().port(0).type(), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
+
 	// redo it
 	BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
 
@@ -225,6 +282,4 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	// ports back to the original state
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 0u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 0u);
-
-	// NEEDS CHECKS OF VALUES
 }
