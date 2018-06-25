@@ -40,6 +40,9 @@ struct Actions {
 		static possumwood::UndoStack::Action disconnectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort);
 
 		static possumwood::UndoStack::Action changeMetadataAction(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle);
+
+		static possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& nodeId, std::size_t portId, const dependency_graph::BaseData& value);
+		static possumwood::UndoStack::Action setValueAction(dependency_graph::Port& p, const dependency_graph::BaseData& value);
 };
 
 template<typename T>

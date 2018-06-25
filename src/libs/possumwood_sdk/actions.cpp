@@ -100,6 +100,68 @@ void Actions::createNode(dependency_graph::Network& current, const dependency_gr
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
+namespace {
+	struct Link {
+		dependency_graph::UniqueId fromNode;
+		std::size_t fromPort;
+		dependency_graph::UniqueId toNode;
+		std::size_t toPort;
+	};
+
+	void doAddLink(const Link& l) {
+		dependency_graph::NodeBase& fromNode = findNode(l.fromNode);
+		dependency_graph::NodeBase& toNode = findNode(l.toNode);
+
+		assert(!fromNode.port(l.fromPort).isLinked());
+
+		fromNode.port(l.fromPort).linkTo(toNode.port(l.toPort));
+
+		assert(fromNode.port(l.fromPort).isLinked());
+		assert(fromNode.port(l.fromPort).linkedTo().index() == l.toPort);
+		assert(fromNode.port(l.fromPort).linkedTo().node().index() == l.toNode);
+	}
+
+	void doRemoveLink(const Link& l) {
+		dependency_graph::NodeBase& fromNode = findNode(l.fromNode);
+		// dependency_graph::NodeBase& toNode = findNode(l.toNode);
+
+		assert(fromNode.port(l.fromPort).isLinked());
+		assert(fromNode.port(l.fromPort).linkedTo().index() == l.toPort);
+		assert(fromNode.port(l.fromPort).linkedTo().node().index() == l.toNode);
+
+		fromNode.port(l.fromPort).unlink();
+
+		assert(!fromNode.port(l.fromPort).isLinked());
+	}
+
+	possumwood::UndoStack::Action linkAction(const Link& l) {
+		possumwood::UndoStack::Action action;
+
+		action.addCommand(
+			std::bind(&doAddLink, l),
+			std::bind(&doRemoveLink,l)
+		);
+
+		return action;
+	};
+
+	possumwood::UndoStack::Action unlinkAction(const dependency_graph::Port& p) {
+		Link l{
+			p.node().index(), p.index(),
+			p.linkedTo().node().index(), p.linkedTo().index()
+		};
+
+		possumwood::UndoStack::Action action;
+
+		action.addCommand(
+			std::bind(&doRemoveLink,l),
+			std::bind(&doAddLink, l)
+		);
+
+		return action;
+	}
+}
+
 possumwood::UndoStack::Action Actions::disconnectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort) {
 	possumwood::UndoStack::Action action;
 
@@ -119,12 +181,31 @@ possumwood::UndoStack::Action Actions::disconnectAction(const dependency_graph::
 	if((fromNode.metadata()->type() == "input" || toNode.metadata()->type() == "output") &&
 		fromNode.hasParentNetwork() && toNode.hasParentNetwork()) {
 
+		// unlink any linked ports first
+		dependency_graph::Network& network = fromNode.network();
+		for(std::size_t pi=0; pi<network.portCount(); ++pi)
+			if(network.port(pi).isLinked())
+				action.append(unlinkAction(network.port(pi)));
+
 		// find all input and output nodes of the network with connected outputs
 		//   and build metadata that correspond to them
 		std::unique_ptr<possumwood::Metadata> meta(new possumwood::Metadata("network"));
 
+		std::vector<Link> links;
+		std::vector<std::unique_ptr<dependency_graph::BaseData>> values;
+
 		for(auto& n : fromNode.network().nodes()) {
 			if(n.metadata()->type() == "input" && (n.port(0).isConnected() && n.index() != fromNodeId)) {
+				// link the two ports - will just transfer values blindly
+				links.push_back(Link {
+					fromNode.network().index(), meta->attributeCount(),
+					n.index(), 0
+				});
+
+				// also the port value
+				values.push_back(n.port(0).getData().clone());
+
+				// get the attribute to add to metadata from the other side of the connection
 				auto conns = n.network().connections().connectedTo(n.port(0));
 				assert(!conns.empty());
 
@@ -133,6 +214,20 @@ possumwood::UndoStack::Action Actions::disconnectAction(const dependency_graph::
 			}
 
 			if(n.metadata()->type() == "output" && (n.port(0).isConnected() && n.index() != toNodeId)) {
+				// link the two ports - this will in practice just transfer the dirtiness
+				links.push_back(Link {
+					n.index(), 0,
+					fromNode.network().index(), meta->attributeCount()
+				});
+
+				// but first unlink it if it is linked already
+				if(n.port(0).isLinked())
+					action.append(unlinkAction(n.port(0)));
+
+				// also port the value
+				values.push_back(n.port(0).getData().clone());
+
+				// get the attribute to add to metadata from the other side of the connection
 				auto conns = n.network().connections().connectedFrom(n.port(0));
 				assert(conns);
 
@@ -141,10 +236,42 @@ possumwood::UndoStack::Action Actions::disconnectAction(const dependency_graph::
 			}
 		}
 
-		dependency_graph::MetadataHandle handle(std::move(meta));
+		// build the compute method from all the output-to-output links
+		//   -> links between outputs guarantee that dirtiness is passed correctly.
+		//      Compute method provides the pull mechanism for data transfer.
+		{
+			std::vector<std::function<void(dependency_graph::Values&)>> assignments;
 
-		// and change metadata of the node, using an action
-		action.append(changeMetadataAction(fromNode.network(), handle));
+			for(auto& l : links)
+				if(l.toNode == network.index()) {
+					dependency_graph::NodeBase& fromNode = findNode(l.fromNode);
+
+					assignments.push_back([&fromNode, l](dependency_graph::Values& vals) {
+						vals.transfer(l.toPort, fromNode.port(l.fromPort));
+					});
+				}
+
+			meta->setCompute([assignments](dependency_graph::Values& vals) {
+				for(auto& a : assignments)
+					a(vals);
+
+				return dependency_graph::State();
+			});
+		}
+
+		// change metadata of the node, using an action
+		{
+			dependency_graph::MetadataHandle handle(std::move(meta));
+			action.append(changeMetadataAction(fromNode.network(), handle));
+		}
+
+		// transfer all the values
+		for(std::size_t pi=0; pi<values.size(); ++pi)
+			action.append(setValueAction(fromNode.network().index(), pi, *values[pi]->clone()));
+
+		// link all what needs to be linked
+		for(auto& l : links)
+			action.append(linkAction(l));
 	}
 
 	return action;
@@ -245,44 +372,131 @@ possumwood::UndoStack::Action Actions::connectAction(const dependency_graph::Uni
 	if((fromNode.metadata()->type() == "input" || toNode.metadata()->type() == "output") &&
 		fromNode.hasParentNetwork() && toNode.hasParentNetwork()) {
 
+		// unlink any linked ports first
+		dependency_graph::Network& network = fromNode.network();
+		for(std::size_t pi=0; pi<network.portCount(); ++pi)
+			if(network.port(pi).isLinked())
+				action.append(unlinkAction(network.port(pi)));
+
 		// find all input and output nodes of the network with connected outputs
 		//   and build metadata that correspond to them
 		std::unique_ptr<possumwood::Metadata> meta(new possumwood::Metadata("network"));
 
+		std::vector<Link> links;
+		std::vector<std::unique_ptr<dependency_graph::BaseData>> values;
+
 		for(auto& n : fromNode.network().nodes()) {
 			if(n.metadata()->type() == "input") {
-				if(n.port(0).isConnected()) {
-					auto conns = n.network().connections().connectedTo(n.port(0));
-					assert(!conns.empty());
+				if(n.port(0).isConnected() || n.index() == fromNodeId) {
+					// link the two ports - will just transfer values blindly
+					links.push_back(Link {
+						fromNode.network().index(), meta->attributeCount(),
+						n.index(), 0
+					});
 
-					dependency_graph::Attr in = conns.front().get().node().metadata()->attr(conns.front().get().index());
-					meta->doAddAttribute(in);
-				}
-				else if(n.index() == fromNodeId) {
-					dependency_graph::Attr in = toNode.metadata()->attr(toPort);
-					meta->doAddAttribute(in);
+					// also port the value
+					if(n.port(0).isConnected())
+						values.push_back(n.port(0).getData().clone());
+					else
+						values.push_back(toNode.port(toPort).getData().clone());
+
+					// get the attribute to add to metadata from the other side of the connection
+					std::unique_ptr<dependency_graph::Attr> in;
+
+					if(n.port(0).isConnected()) {
+						auto conns = n.network().connections().connectedTo(n.port(0));
+						assert(!conns.empty());
+
+						in = std::unique_ptr<dependency_graph::Attr>(
+							new dependency_graph::Attr(conns.front().get().node().metadata()->attr(conns.front().get().index())));
+					}
+					else {
+						assert(n.index() == fromNodeId);
+
+						in = std::unique_ptr<dependency_graph::Attr>(
+							new dependency_graph::Attr(toNode.metadata()->attr(toPort)));
+					}
+
+					meta->doAddAttribute(*in);
 				}
 			}
 
 			if(n.metadata()->type() == "output") {
-				if(n.port(0).isConnected()) {
-					auto conns = n.network().connections().connectedFrom(n.port(0));
-					assert(conns);
+				if(n.port(0).isConnected() || n.index() == toNodeId) {
+					// link the two ports - this will in practice just transfer the dirtiness
+					links.push_back(Link {
+						n.index(), 0,
+						fromNode.network().index(), meta->attributeCount()
+					});
 
-					dependency_graph::Attr out = conns->node().metadata()->attr(conns->index());
-					meta->doAddAttribute(out);
-				}
-				else if(n.index() == toNodeId) {
-					dependency_graph::Attr out = fromNode.metadata()->attr(fromPort);
-					meta->doAddAttribute(out);
+					// but first unlink it if it is linked already
+					if(n.port(0).isLinked())
+						action.append(unlinkAction(n.port(0)));
+
+					// also port the value
+					if(n.port(0).isConnected())
+						values.push_back(n.port(0).getData().clone());
+					else
+						values.push_back(fromNode.port(fromPort).getData().clone());
+
+					// get the attribute to add to metadata from the other side of the connection
+					std::unique_ptr<dependency_graph::Attr> out;
+
+					if(n.port(0).isConnected()) {
+						auto conns = n.network().connections().connectedFrom(n.port(0));
+						assert(conns);
+
+						out = std::unique_ptr<dependency_graph::Attr>(
+							new dependency_graph::Attr(conns->node().metadata()->attr(conns->index())));
+					}
+					else {
+						assert(n.index() == toNodeId);
+
+						out = std::unique_ptr<dependency_graph::Attr>(
+							new dependency_graph::Attr(fromNode.metadata()->attr(fromPort)));
+					}
+
+					meta->doAddAttribute(*out);
 				}
 			}
 		}
 
-		dependency_graph::MetadataHandle handle(std::move(meta));
+		// build the compute method from all the output-to-output links
+		//   -> links between outputs guarantee that dirtiness is passed correctly.
+		//      Compute method provides the pull mechanism for data transfer.
+		{
+			std::vector<std::function<void(dependency_graph::Values&)>> assignments;
 
-		// and change metadata of the node, using an action
-		action.append(changeMetadataAction(fromNode.network(), handle));
+			for(auto& l : links)
+				if(l.toNode == network.index()) {
+					dependency_graph::NodeBase& fromNode = findNode(l.fromNode);
+
+					assignments.push_back([&fromNode, l](dependency_graph::Values& vals) {
+						vals.transfer(l.toPort, fromNode.port(l.fromPort));
+					});
+				}
+
+			meta->setCompute([assignments](dependency_graph::Values& vals) {
+				for(auto& a : assignments)
+					a(vals);
+
+				return dependency_graph::State();
+			});
+		}
+
+		// change metadata of the node, using an action
+		{
+			dependency_graph::MetadataHandle handle(std::move(meta));
+			action.append(changeMetadataAction(fromNode.network(), handle));
+		}
+
+		// transfer all the values
+		for(std::size_t pi=0; pi<values.size(); ++pi)
+			action.append(setValueAction(fromNode.network().index(), pi, *values[pi]->clone()));
+
+		// link all what needs to be linked
+		for(auto& l : links)
+			action.append(linkAction(l));
 	}
 
 	return action;
@@ -535,25 +749,52 @@ void Actions::changeMetadata(dependency_graph::NodeBase& node, const dependency_
 
 namespace {
 
-void doSetValue(const dependency_graph::UniqueId& id, unsigned portId, std::shared_ptr<const dependency_graph::BaseData> value) {
+void doSetValue(const dependency_graph::UniqueId& id, unsigned portId, std::shared_ptr<const dependency_graph::BaseData> value, std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> original) {
 	auto it = AppCore::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
 	assert(it != AppCore::instance().graph().nodes().end());
+
+	assert(original != nullptr);
+	*original = it->port(portId).getData().clone();
 
 	it->port(portId).setData(*value);
 }
 
+void doResetValue(const dependency_graph::UniqueId& id, unsigned portId, std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> value) {
+	auto it = AppCore::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
+	assert(it != AppCore::instance().graph().nodes().end());
+
+	assert(value != nullptr);
+	assert(*value != nullptr);
+
+	it->port(portId).setData(**value);
 }
 
-void Actions::setValue(dependency_graph::Port& port, const dependency_graph::BaseData& value) {
+}
+
+possumwood::UndoStack::Action Actions::setValueAction(dependency_graph::Port& port, const dependency_graph::BaseData& value) {
+	return setValueAction(port.node().index(), port.index(), value);
+}
+
+possumwood::UndoStack::Action Actions::setValueAction(const dependency_graph::UniqueId& nodeId, std::size_t portId, const dependency_graph::BaseData& value) {
 	UndoStack::Action action;
 
-	std::shared_ptr<const dependency_graph::BaseData> original = port.getData().clone();
+	// dependency_graph::NodeBase& node = findNode(nodeId);
+
+	std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> original(new std::unique_ptr<dependency_graph::BaseData>());
+
+	// std::shared_ptr<const dependency_graph::BaseData> original = node.port(portId).getData().clone();
 	std::shared_ptr<const dependency_graph::BaseData> target = value.clone();
 
 	action.addCommand(
-		std::bind(&doSetValue, port.node().index(), port.index(), std::move(target)),
-		std::bind(&doSetValue, port.node().index(), port.index(), std::move(original))
+		std::bind(&doSetValue, nodeId, portId, std::move(target), original),
+		std::bind(&doResetValue, nodeId, portId, original)
 	);
+
+	return action;
+}
+
+void Actions::setValue(dependency_graph::Port& port, const dependency_graph::BaseData& value) {
+	possumwood::UndoStack::Action action = setValueAction(port, value);
 
 	AppCore::instance().undoStack().execute(action);
 }
