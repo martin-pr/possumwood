@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 
 #include <boost/noncopyable.hpp>
 
@@ -37,10 +37,17 @@ class Values : public boost::noncopyable {
 		template<typename T>
 		void set(const OutAttr<void>& attr, const T& value);
 
+		/// "transfer" set - get a value from a different port and transfer it here.
+		/// This is a bit of a hack - used only for Network input compute().
+		/// The port has to be non-const - the call might pull, changing its value.
+		void transfer(std::size_t index, Port& p);
+
 		/// untyped attribute type testing.
 		/// Only useful for untyped attributes - typed attribute have an explicit T
 		template<typename T>
 		bool is(const TypedAttr<void>& attr) const;
+
+		const BaseData& data(std::size_t index) const;
 
 	private:
 		NodeBase* m_node;
