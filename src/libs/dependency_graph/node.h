@@ -15,17 +15,11 @@ namespace dependency_graph {
 
 class Node : public NodeBase {
 	public:
-		/// returns the current state of the node (as returned by last compute() evaluation)
-		virtual const State& state() const override;
 
 	protected:
 		Node(const std::string& name, const UniqueId& id, const MetadataHandle& def, Network* parent);
 
-		virtual void computeInput(size_t index) override;
-		virtual void computeOutput(size_t index) override;
-
 	private:
-		State m_state;
 
 	friend class Network;
 };
