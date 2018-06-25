@@ -7,10 +7,12 @@
 namespace dependency_graph {
 
 Port::Port(unsigned id, NodeBase* parent) : m_id(id),
-	m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput), m_parent(parent) {
+	m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput), m_parent(parent), m_linkedPort(nullptr) {
 }
 
-Port::Port(Port&& p) : m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent) {
+Port::Port(Port&& p) : m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent), m_linkedPort(p.m_linkedPort) {
+	p.m_linkedPort = nullptr;
+	p.m_parent = nullptr;
 }
 
 const std::string& Port::name() const {
@@ -97,6 +99,11 @@ void Port::setData(const BaseData& val) {
 	// call the values callback
 	if(valueWasSet)
 		m_valueCallbacks();
+
+	// set data on a linked port, if linked
+	if(isLinked()) {
+		m_linkedPort->setData(val);
+	}
 }
 
 void Port::setDirty(bool d) {
@@ -106,6 +113,10 @@ void Port::setDirty(bool d) {
 
 		// call all flags change callbacks (intended to update UIs accordingly)
 		m_flagsCallbacks();
+
+		// if linked, mark the linked network as dirty as well
+		if(isLinked() && d)
+			m_linkedPort->node().markAsDirty(m_linkedPort->index());
 	}
 }
 
@@ -240,6 +251,29 @@ bool Port::isConnected() const {
 		return static_cast<bool>(m_parent->network().connections().connectedFrom(*this));
 	else
 		return not m_parent->network().connections().connectedTo(*this).empty();
+}
+
+void Port::linkTo(Port& targetPort) {
+	m_linkedPort = &targetPort;
+	targetPort.node().markAsDirty(targetPort.index());
+}
+
+bool Port::isLinked() const {
+	return m_linkedPort != nullptr;
+}
+
+void Port::unlink() {
+	m_linkedPort = nullptr;
+}
+
+const Port& Port::linkedTo() const {
+	assert(isLinked());
+	return *m_linkedPort;
+}
+
+Port& Port::linkedTo() {
+	assert(isLinked());
+	return *m_linkedPort;
 }
 
 boost::signals2::connection Port::valueCallback(const std::function<void()>& fn) {
