@@ -28,4 +28,7 @@ class Meshes {
   private:
 	std::vector<Mesh> m_data;
 };
+
+std::ostream& operator << (std::ostream& out, const Meshes& m);
+
 }

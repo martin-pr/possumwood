@@ -24,6 +24,8 @@ class BaseData {
 		virtual std::unique_ptr<BaseData> clone() const = 0;
 
 	protected:
+		virtual std::string toString() const = 0;
+
 		BaseData();
 
 		template<typename T>
@@ -33,6 +35,8 @@ class BaseData {
 
 	private:
 		static std::map<std::string, std::function<std::unique_ptr<BaseData>()>>& factories();
+
+	friend std::ostream& operator << (std::ostream& out, const BaseData& bd);
 };
 
 template<typename T>
@@ -49,6 +53,9 @@ struct Data : public BaseData {
 		std::unique_ptr<BaseData> clone() const override;
 
 		T value;
+
+	protected:
+		virtual std::string toString() const override;
 
 	private:
 		static Factory<T> m_factory;
@@ -68,7 +75,11 @@ struct Data<void> : public BaseData {
 		std::unique_ptr<BaseData> clone() const override;
 
 	private:
+		virtual std::string toString() const override;
+
 		static Factory<void> m_factory;
 };
+
+std::ostream& operator << (std::ostream& out, const BaseData& bd);
 
 }

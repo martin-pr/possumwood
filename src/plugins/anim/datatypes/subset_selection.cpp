@@ -179,6 +179,11 @@ void SubsetSelection::updateOptions() {
 	}
 }
 
+std::ostream& operator << (std::ostream& out, const SubsetSelection& ss) {
+	out << "(subset selection)";
+	return out;
+}
+
 }
 
 namespace possumwood {

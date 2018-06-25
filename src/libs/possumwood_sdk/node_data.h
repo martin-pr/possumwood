@@ -37,4 +37,6 @@ struct Traits<NodeData> {
 	static IO<NodeData> io;
 };
 
+std::ostream& operator << (std::ostream& out, const NodeData& d);
+
 }

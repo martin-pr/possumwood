@@ -73,4 +73,11 @@ bool Font::operator!=(const Font& f) const {
 	return m_glyphs != f.m_glyphs || m_width != f.m_width || m_height != f.m_height ||
 	       m_size != f.m_size;
 }
+
+std::ostream& operator << (std::ostream& out, const Font& f) {
+	out << "(font)";
+
+	return out;
+}
+
 }

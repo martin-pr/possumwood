@@ -54,6 +54,16 @@ std::unique_ptr<BaseData> Data<void>::clone() const {
 	return std::unique_ptr<BaseData>(new Data<void>());
 }
 
+std::string Data<void>::toString() const {
+	return "void";
+}
+
+std::ostream& operator << (std::ostream& out, const BaseData& bd) {
+	out << bd.toString();
+
+	return out;
+}
+
 BaseData::Factory<void> Data<void>::m_factory;
 
 }

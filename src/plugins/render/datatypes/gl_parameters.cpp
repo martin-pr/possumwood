@@ -39,4 +39,9 @@ GLParameters::ScopedState::~ScopedState() {
 	glLineWidth(m_lineWidth);
 }
 
+std::ostream& operator << (std::ostream& out, const GLParameters& p) {
+	out << "(gl parameters)";
+	return out;
+}
+
 }
