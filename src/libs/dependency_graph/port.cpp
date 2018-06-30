@@ -240,6 +240,9 @@ void Port::disconnect(Port& p) {
 		// set to default (i.e., reset)
 		m_parent->datablock().reset(m_id);
 
+	// this port is going to be dirty after disconnect - might change value and require recomputation
+	m_parent->markAsDirty(m_id);
+
 	// connect / disconnect - might change UI's appearance
 	m_flagsCallbacks();
 	p.m_flagsCallbacks();

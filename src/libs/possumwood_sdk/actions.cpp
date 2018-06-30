@@ -754,7 +754,10 @@ void doSetValue(const dependency_graph::UniqueId& id, unsigned portId, std::shar
 	assert(it != AppCore::instance().graph().nodes().end());
 
 	assert(original != nullptr);
-	*original = it->port(portId).getData().clone();
+	if(*original == nullptr)
+		*original = it->port(portId).getData().clone();
+
+	assert(*original != nullptr);
 
 	it->port(portId).setData(*value);
 }

@@ -160,8 +160,15 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		BOOST_CHECK_EQUAL(middle->port(0).get<float>(), 5.0f);
 		BOOST_CHECK_EQUAL(middle->port(1).get<float>(), 5.0f);
 
+		BOOST_CHECK(not middle->port(0).isDirty());
+		BOOST_CHECK(not middle->port(1).isDirty());
+
 		// we will be connecting next, for now there are no connections
 		BOOST_CHECK_EQUAL(network->connections().size(), 0u);
+
+		// and getting values from input and output should throw an exception
+		BOOST_CHECK_THROW(input->port(0).get<float>(), std::exception);
+		BOOST_CHECK_THROW(output->port(0).get<float>(), std::exception);
 	});
 
 	/////
@@ -174,6 +181,13 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	tests.push_back([&]() {
 		BOOST_CHECK_EQUAL(app.instance().graph().connections().size(), 0u);
 		BOOST_CHECK_EQUAL(network->connections().size(), 1u);
+
+		BOOST_CHECK_EQUAL(input->port(0).get<float>(), 5.0f); // transferred from the connected port
+		BOOST_CHECK_THROW(output->port(0).get<float>(), std::exception);
+
+		BOOST_CHECK(not output->port(0).isDirty());
+		BOOST_CHECK(middle->port(0).isDirty());
+		BOOST_CHECK(middle->port(1).isDirty());
 	});
 
 
@@ -197,6 +211,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		// check that the connected passthru works as expected (internal connections only)
 		//  -> value was set before connecting, and should be transferred to input/output
 		BOOST_CHECK_EQUAL(input->port(0).get<float>(), 5.0f);
+		// BOOST_CHECK_EQUAL(middle->port(0).get<float>(), 5.0f);
+		// BOOST_CHECK_EQUAL(middle->port(0).get<float>(), 5.0f);
 		BOOST_CHECK_EQUAL(output->port(0).get<float>(), 5.0f);
 
 		// external connections should hold the same value now, assuming everything works
