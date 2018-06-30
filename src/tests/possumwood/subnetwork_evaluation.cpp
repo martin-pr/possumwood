@@ -361,5 +361,38 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		tests[i]();
 	}
 
+	// simple and silly way of testing Undo + Redo:
+	//   - check stack
+	//   - do undo
+	//   - check state + stack
+	//   - do redo
+	//   - check state + stack
+	//   - do undo, finally (leaves the last action undone)
+	auto checkUndo = [&](std::function<void()> testBefore, std::function<void()> testAfter, std::size_t undoActionCount, std::size_t redoActionCount) {
+		testBefore();
 
+		BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), undoActionCount);
+		BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), redoActionCount);
+
+		BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
+
+		testAfter();
+
+		BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), undoActionCount-1);
+		BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), redoActionCount+1);
+
+		BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
+
+		testBefore();
+
+		BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), undoActionCount);
+		BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), redoActionCount);
+
+		BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
+
+		testAfter();
+	};
+
+	for(std::size_t i = commands.size()-1; i > 0; --i)
+		checkUndo(tests[i], tests[i-1], i, commands.size()-i-1);
 }
