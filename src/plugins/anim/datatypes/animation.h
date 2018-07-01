@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <possumwood_sdk/traits.h>
+#include <actions/traits.h>
 
 #include "skeleton.h"
 

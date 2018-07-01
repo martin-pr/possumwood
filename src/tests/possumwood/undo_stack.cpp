@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
-#include <possumwood_sdk/undo_stack.h>
+#include <actions/undo_stack.h>
 
 namespace std {
 	std::ostream& operator << (std::ostream& out, const std::vector<unsigned>& vals) {

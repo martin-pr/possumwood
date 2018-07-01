@@ -1,6 +1,6 @@
 #include "metadata.h"
 
-#include "traits.h"
+#include "actions/traits.h"
 
 namespace possumwood {
 

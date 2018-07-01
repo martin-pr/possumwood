@@ -11,7 +11,7 @@
 
 #include <QPixmap>
 
-#include <possumwood_sdk/traits.h>
+#include <actions/traits.h>
 #include <possumwood_sdk/drawable.h>
 
 #include "texture.h"

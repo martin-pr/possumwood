@@ -1,7 +1,8 @@
 #pragma once
 
+#include "actions/traits.h"
+
 #include "metadata.h"
-#include "traits.h"
 #include "editor.h"
 
 namespace possumwood {

@@ -4,7 +4,7 @@
 
 #include <dependency_graph/unique_id.h>
 #include <possumwood_sdk/drawable.h>
-#include <possumwood_sdk/node_data.h>
+#include <actions/node_data.h>
 #include <dependency_graph/node.h>
 #include <qt_node_editor/node.h>
 

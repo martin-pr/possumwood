@@ -10,7 +10,7 @@
 #include <dependency_graph/unique_id.h>
 
 #include <possumwood_sdk/app.h>
-#include <possumwood_sdk/actions.h>
+#include <actions/actions.h>
 
 #include "factory.inl"
 

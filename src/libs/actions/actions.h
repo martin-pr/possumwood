@@ -2,8 +2,9 @@
 
 #include <dependency_graph/metadata.h>
 #include <dependency_graph/selection.h>
-#include <possumwood_sdk/node_data.h>
-#include <possumwood_sdk/undo_stack.h>
+
+#include "node_data.h"
+#include "undo_stack.h"
 
 namespace possumwood {
 
@@ -27,7 +28,7 @@ struct Actions {
 		static void paste(dependency_graph::Network& current, dependency_graph::Selection& selection);
 		static void remove(const dependency_graph::Selection& selection);
 
-		static void move(const std::map<dependency_graph::NodeBase*, QPointF>& nodes);
+		static void move(const std::map<dependency_graph::NodeBase*, possumwood::NodeData::Point>& nodes);
 
 	private:
 		static possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _selection);

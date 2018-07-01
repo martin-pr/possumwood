@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <possumwood_sdk/traits.h>
+#include <actions/traits.h>
 
 #include <dependency_graph/state.h>
 

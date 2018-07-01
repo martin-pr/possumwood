@@ -8,8 +8,8 @@
 #include <dependency_graph/data_traits.h>
 #include <dependency_graph/io/json.h>
 
-#include "../io.h"
-#include "../traits.h"
+#include "actions/io.h"
+#include "actions/traits.h"
 
 namespace possumwood {
 

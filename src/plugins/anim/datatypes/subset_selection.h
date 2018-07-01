@@ -5,7 +5,7 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/noncopyable.hpp>
 
-#include <possumwood_sdk/traits.h>
+#include <actions/traits.h>
 
 namespace anim {
 

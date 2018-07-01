@@ -3,7 +3,7 @@
 #include <array>
 #include <memory>
 
-#include <possumwood_sdk/traits.h>
+#include <actions/traits.h>
 
 #include "skinned_vertices.h"
 #include "polygons.h"

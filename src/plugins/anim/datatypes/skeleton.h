@@ -6,7 +6,7 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <possumwood_sdk/traits.h>
+#include <actions/traits.h>
 
 #include "hierarchy.h"
 #include "transform.h"

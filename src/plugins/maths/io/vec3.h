@@ -2,7 +2,7 @@
 
 #include <OpenEXR/ImathVec.h>
 
-#include <possumwood_sdk/traits.h>
+#include <actions/traits.h>
 
 namespace possumwood {
 

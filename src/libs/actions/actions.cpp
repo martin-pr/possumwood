@@ -2,17 +2,15 @@
 
 #include <functional>
 
-#include <QApplication>
-#include <QClipboard>
-#include <QMainWindow>
-
 #include <dependency_graph/io/graph.h>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/attr_map.h>
 
-#include <possumwood_sdk/app.h>
 #include <possumwood_sdk/metadata.h>
+
+#include "app.h"
+#include "clipboard.h"
 
 namespace possumwood {
 
@@ -550,7 +548,7 @@ void Actions::copy(const dependency_graph::Selection& selection) {
 	ss << std::setw(4) << json;
 
 	// and put it to the clipboard
-	QApplication::clipboard()->setText(ss.str().c_str());
+	Clipboard::instance().setClipboardContent(ss.str().c_str());
 }
 
 namespace {
@@ -561,7 +559,7 @@ namespace {
 		//  - each node has a unique ID (unique between all graphs), store that
 		for(auto& n : source.nodes()) {
 			possumwood::NodeData d = n.blindData<possumwood::NodeData>();
-			d.setPosition(QPointF(20, 20) + d.position());
+			d.setPosition(possumwood::NodeData::Point{20, 20} + d.position());
 
 			const dependency_graph::NodeBase& cn = n;
 			action.addCommand(
@@ -596,7 +594,7 @@ void Actions::paste(dependency_graph::Network& current, dependency_graph::Select
 
 	try {
 		// convert the selection to JSON object
-		auto json = dependency_graph::io::json::parse(QApplication::clipboard()->text().toStdString());
+		auto json = dependency_graph::io::json::parse(Clipboard::instance().clipboardContent());
 
 		// import the clipboard
 		dependency_graph::io::from_json(json, pastedGraph);
@@ -634,7 +632,7 @@ void Actions::paste(dependency_graph::Network& current, dependency_graph::Select
 	}
 }
 
-void Actions::move(const std::map<dependency_graph::NodeBase*, QPointF>& nodes) {
+void Actions::move(const std::map<dependency_graph::NodeBase*, possumwood::NodeData::Point>& nodes) {
 	possumwood::UndoStack::Action action;
 
 	for(auto& n : nodes) {

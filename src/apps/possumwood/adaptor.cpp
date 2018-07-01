@@ -16,12 +16,12 @@
 #include <dependency_graph/io/graph.h>
 
 #include <qt_node_editor/connected_edge.h>
-#include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
 
-#include <possumwood_sdk/actions.h>
+#include <actions/node_data.h>
+#include <actions/actions.h>
 
 Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetwork(NULL), m_sizeHint(400,400) {
 	// register callbacks
@@ -79,11 +79,13 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	});
 
 	m_graphWidget->scene().setNodesMoveCallback([&](const std::set<node_editor::Node*>& nodes) {
-		std::map<dependency_graph::NodeBase*, QPointF> positions;
+		std::map<dependency_graph::NodeBase*, possumwood::NodeData::Point> positions;
 		for(auto& nptr : nodes) {
 			auto& n = m_index[nptr];
 
-			positions[n.graphNode] = n.editorNode->pos();
+			positions[n.graphNode] = possumwood::NodeData::Point {
+				(float)n.editorNode->pos().x(), (float)n.editorNode->pos().y()
+			};
 		}
 
 		possumwood::Actions::move(positions);
@@ -232,7 +234,7 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 
 		// instantiate new graphical item
 		node_editor::Node& newNode = m_graphWidget->scene().addNode(
-			node.name().c_str(), data.position());
+			node.name().c_str(), QPointF(data.position().x, data.position().y));
 		uiNode = &newNode;
 
 		// add all ports, based on the node's metadata
@@ -323,7 +325,7 @@ void Adaptor::onBlindDataChanged(dependency_graph::NodeBase& node) {
 
 		auto& n = m_index[node.index()];
 
-		n.editorNode->setPos(data.position());
+		n.editorNode->setPos(QPointF(data.position().x, data.position().y));
 	}
 }
 
