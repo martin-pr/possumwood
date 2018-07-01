@@ -43,6 +43,9 @@ class JointMappingEditorData {
 	Skeleton m_sourceSkeleton, m_targetSkeleton;
 	std::vector<std::pair<int, int>> m_mapping;
 };
+
+std::ostream& operator << (std::ostream& out, const JointMappingEditorData& d);
+
 }
 
 namespace possumwood {

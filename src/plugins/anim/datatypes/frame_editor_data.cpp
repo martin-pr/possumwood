@@ -51,6 +51,11 @@ bool FrameEditorData::operator!=(const FrameEditorData& d) const {
 	return m_skeleton != d.m_skeleton || m_transforms != d.m_transforms;
 }
 
+std::ostream& operator << (std::ostream& out, const FrameEditorData& d) {
+	std::cout << "(frame editor data)";
+	return out;
+}
+
 }
 
 namespace {

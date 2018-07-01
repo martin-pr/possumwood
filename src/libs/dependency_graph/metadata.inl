@@ -10,7 +10,7 @@ template<typename T>
 void Metadata::addAttribute(InAttr<T>& in, const std::string& name, const T& defaultValue) {
 	assert(!in.isValid());
 
-	in = InAttr<T>(name, m_attrs.size(), defaultValue);
+	in = InAttr<T>(name, defaultValue);
 	doAddAttribute(in);
 
 	assert(in.isValid());
@@ -20,7 +20,7 @@ template<typename T>
 void Metadata::addAttribute(OutAttr<T>& out, const std::string& name, const T& defaultValue) {
 	assert(!out.isValid());
 
-	out = OutAttr<T>(name, m_attrs.size(), defaultValue);
+	out = OutAttr<T>(name, defaultValue);
 	doAddAttribute(out);
 
 	assert(out.isValid());

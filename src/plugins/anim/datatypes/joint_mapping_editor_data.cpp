@@ -84,6 +84,11 @@ bool JointMappingEditorData::operator!=(const JointMappingEditorData& d) const {
 	       m_mapping != d.m_mapping;
 }
 
+std::ostream& operator << (std::ostream& out, const JointMappingEditorData& d) {
+	out << "(joint mapping editor data)";
+	return out;
+}
+
 }
 
 namespace {

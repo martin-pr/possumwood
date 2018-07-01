@@ -30,6 +30,9 @@ class FrameEditorData {
 	Skeleton m_skeleton;
 	std::map<std::size_t, Transform> m_transforms;
 };
+
+std::ostream& operator << (std::ostream& out, const FrameEditorData& d);
+
 }
 
 namespace possumwood {

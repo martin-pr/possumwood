@@ -64,6 +64,17 @@ class Port : public boost::noncopyable {
 		/// adds a "flags changed" callback - to be used by the UI
 		boost::signals2::connection flagsCallback(const std::function<void()>& fn);
 
+		/// "links" two ports - dirtiness and values of source (this) port are directly
+		///   transferred to target port. Usable primarily for subnetworks, but
+		///   might have other uses as well (e.g., "referencing"). Can effectively
+		///   replace "compute". Only output ports can be linked.
+		void linkTo(Port& targetPort);
+		bool isLinked() const;
+		void unlink();
+
+		const Port& linkedTo() const;
+		Port& linkedTo();
+
 	private:
 		Port(unsigned id, NodeBase* parent);
 
@@ -72,6 +83,8 @@ class Port : public boost::noncopyable {
 		unsigned m_id;
 		bool m_dirty;
 		NodeBase* m_parent;
+
+		Port* m_linkedPort;
 
 		boost::signals2::signal<void()> m_valueCallbacks, m_flagsCallbacks;
 

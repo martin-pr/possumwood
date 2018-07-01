@@ -41,4 +41,7 @@ struct Traits<GLParameters> {
 		return std::array<float, 3>{{1, 0.25, 1}};
 	}
 };
+
+std::ostream& operator << (std::ostream& out, const GLParameters& p);
+
 }

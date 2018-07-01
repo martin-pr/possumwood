@@ -13,8 +13,9 @@ Datablock::Datablock(const MetadataHandle& meta) : m_meta(meta) {
 }
 
 Datablock::Datablock(const Datablock& d) : m_meta(d.m_meta) {
-	for(auto& a : d.m_data)
+	for(auto& a : d.m_data) {
 		m_data.push_back(a->clone());
+	}
 }
 
 Datablock& Datablock::operator = (const Datablock& d) {
@@ -31,7 +32,7 @@ Datablock& Datablock::operator = (const Datablock& d) {
 const BaseData& Datablock::data(size_t index) const {
 	assert(m_data.size() > index);
 
-	if(m_data[index] == nullptr)
+	if(m_data[index]->typeinfo() == typeid(void))
 		throw std::runtime_error("Cannot get a value from an unconnected untyped port");
 
 	return *m_data[index];
@@ -41,7 +42,7 @@ const BaseData& Datablock::data(size_t index) const {
 void Datablock::setData(size_t index, const BaseData& data) {
 	assert(m_data.size() > index);
 
-	if(m_data[index] == nullptr)
+	if(m_data[index]->typeinfo() == typeid(void))
 		throw std::runtime_error("Cannot set a value to an unconnected untyped port");
 
 	if(data.type() != m_data[index]->type())
@@ -52,16 +53,16 @@ void Datablock::setData(size_t index, const BaseData& data) {
 
 bool Datablock::isNull(std::size_t index) const {
 	assert(m_data.size() > index);
-	return m_data[index].get() == nullptr;
+	return m_data[index]->typeinfo() == typeid(void);
 }
 
 void Datablock::set(size_t index, const Port& port) {
 	assert(m_data.size() > index);
 
 	// void instances handling - make a new instance if needed
-	if(m_data[index] == nullptr)
+	if(m_data[index]->typeinfo() == typeid(void))
 		m_data[index] = port.node().datablock().m_data[port.index()]->clone();
-	assert(m_data[index] != nullptr);
+	assert(m_data[index]->typeinfo() != typeid(void));
 
 	// and assign the value
 	assert(m_data[index]->type() == port.type());

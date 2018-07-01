@@ -1,5 +1,7 @@
 #include "metadata.h"
 
+#include "traits.h"
+
 namespace possumwood {
 
 Metadata::Metadata(const std::string& nodeType) : dependency_graph::Metadata(nodeType) {
@@ -44,6 +46,18 @@ void Metadata::doAddAttribute(dependency_graph::Attr& a) {
 	//   of the derived class version
 	while(m_colours.size() < attributeCount())
 		m_colours.push_back(std::array<float, 3>{{1,0,1}});
+}
+
+void Metadata::addAttribute(dependency_graph::InAttr<void>& in, const std::string& name) {
+	m_colours.push_back(Traits<void>::colour());
+
+	dependency_graph::Metadata::addAttribute(in, name);
+}
+
+void Metadata::addAttribute(dependency_graph::OutAttr<void>& out, const std::string& name) {
+	m_colours.push_back(Traits<void>::colour());
+
+	dependency_graph::Metadata::addAttribute(out, name);
 }
 
 }

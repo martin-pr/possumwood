@@ -48,6 +48,11 @@ bool Filename::operator != (const Filename& fn) const {
 	return m_filename != fn.m_filename || m_extensions != fn.m_extensions;
 }
 
+std::ostream& operator << (std::ostream& out, const Filename& f) {
+	out << f.filename();
+	return out;
+}
+
 /////////////////
 
 namespace {

@@ -9,14 +9,12 @@ struct Attr::AttrData {
 	std::string name;
 	unsigned offset;
 	Category category;
-	const std::type_info& type;
 
-	std::function<std::unique_ptr<BaseData>()> dataFactory;
+	std::unique_ptr<BaseData> data;
 };
 
-Attr::Attr(const std::string& name, unsigned offset, Category cat, const std::type_info& type,
-           std::function<std::unique_ptr<BaseData>()> dataFactory)
-	: m_data(new AttrData{name, offset, cat, type, dataFactory}) {
+Attr::Attr(const std::string& name, Category cat, const BaseData& d)
+	: m_data(new AttrData{name, unsigned(-1), cat, d.clone()}) {
 }
 
 Attr::~Attr() {
@@ -34,12 +32,23 @@ const unsigned& Attr::offset() const {
 	return m_data->offset;
 }
 
+void Attr::setOffset(unsigned o) {
+	std::unique_ptr<AttrData> newData(new AttrData{
+		m_data->name,
+		o,
+		m_data->category,
+		m_data->data->clone()
+	});
+
+	m_data = std::shared_ptr<const AttrData>(newData.release());
+}
+
 const std::type_info& Attr::type() const {
-	return m_data->type;
+	return m_data->data->typeinfo();
 }
 
 std::unique_ptr<BaseData> Attr::createData() const {
-	return m_data->dataFactory();
+	return m_data->data->clone();
 }
 
 bool Attr::isValid() const {
@@ -69,22 +78,20 @@ std::ostream& operator << (std::ostream& out, const Attr& attr) {
 
 /////////
 
-TypedAttr<void>::TypedAttr(const std::string& name, unsigned offset, Category cat) :
-	Attr(name, offset, cat, typeid(void), []() {
-		return std::unique_ptr<BaseData>();
-	}) {
+TypedAttr<void>::TypedAttr(const std::string& name, Category cat) :
+	Attr(name, cat, Data<void>()) {
 }
 
-InAttr<void>::InAttr() : TypedAttr<void>("", unsigned(-1), Attr::kInput) {
+InAttr<void>::InAttr() : TypedAttr<void>("", Attr::kInput) {
 }
 
-InAttr<void>::InAttr(const std::string& name, unsigned offset) : TypedAttr<void>(name, offset, Attr::kInput) {
+InAttr<void>::InAttr(const std::string& name) : TypedAttr<void>(name, Attr::kInput) {
 }
 
-OutAttr<void>::OutAttr() : TypedAttr<void>("", unsigned(-1), Attr::kOutput) {
+OutAttr<void>::OutAttr() : TypedAttr<void>("", Attr::kOutput) {
 }
 
-OutAttr<void>::OutAttr(const std::string& name, unsigned offset) : TypedAttr<void>(name, offset, Attr::kOutput) {
+OutAttr<void>::OutAttr(const std::string& name) : TypedAttr<void>(name, Attr::kOutput) {
 }
 
 }

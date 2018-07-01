@@ -5,28 +5,25 @@
 namespace dependency_graph {
 
 template <typename T>
-TypedAttr<T>::TypedAttr(const std::string& name, unsigned offset, Category cat,
-                        const T& defaultValue)
-    : Attr(name, offset, cat, typeid(T), [defaultValue]() {
-	      return std::unique_ptr<BaseData>(new Data<T>(defaultValue));
-	  }) {
+TypedAttr<T>::TypedAttr(const std::string& name, Category cat, const T& defaultValue)
+    : Attr(name, cat, Data<T>(defaultValue)) {
 }
 
 template <typename T>
-InAttr<T>::InAttr() : TypedAttr<T>("", unsigned(-1), Attr::kInput, T()) {
+InAttr<T>::InAttr() : TypedAttr<T>("", Attr::kInput, T()) {
 }
 
 template <typename T>
-InAttr<T>::InAttr(const std::string& name, unsigned offset, const T& defaultValue)
-    : TypedAttr<T>(name, offset, Attr::kInput, defaultValue) {
+InAttr<T>::InAttr(const std::string& name, const T& defaultValue)
+    : TypedAttr<T>(name, Attr::kInput, defaultValue) {
 }
 
 template <typename T>
-OutAttr<T>::OutAttr() : TypedAttr<T>("", unsigned(-1), Attr::kOutput, T()) {
+OutAttr<T>::OutAttr() : TypedAttr<T>("", Attr::kOutput, T()) {
 }
 
 template <typename T>
-OutAttr<T>::OutAttr(const std::string& name, unsigned offset, const T& defaultValue)
-    : TypedAttr<T>(name, offset, Attr::kOutput, defaultValue) {
+OutAttr<T>::OutAttr(const std::string& name, const T& defaultValue)
+    : TypedAttr<T>(name, Attr::kOutput, defaultValue) {
 }
 }

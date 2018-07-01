@@ -52,21 +52,6 @@ const Connections& Network::connections() const {
 	return m_connections;
 }
 
-void Network::computeInput(size_t index) {
-	assert(false);
-	throw std::runtime_error("Network has no ports, for now");
-}
-
-void Network::computeOutput(size_t index) {
-	assert(false);
-	throw std::runtime_error("Network has no ports, for now");
-}
-
-const State& Network::state() const {
-	assert(false);
-	throw std::runtime_error("Network has no ports, for now");
-}
-
 std::unique_ptr<NodeBase> Network::makeNode(const std::string& name, const MetadataHandle& md, const UniqueId& id) {
 	if(md != networkMetadata())
 		return std::unique_ptr<NodeBase>(new Node(name, id, md, this));

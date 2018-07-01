@@ -40,4 +40,6 @@ struct Traits<Filename> {
 	}
 };
 
+std::ostream& operator << (std::ostream& out, const Filename& f);
+
 }

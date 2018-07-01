@@ -69,8 +69,6 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		size_t attributeCount() const;
 
 		/// returns an attribute reference
-		Attr& attr(size_t index);
-		/// returns an attribute reference
 		const Attr& attr(size_t index) const;
 
 

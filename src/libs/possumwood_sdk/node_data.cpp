@@ -20,4 +20,10 @@ void fromJson(const ::dependency_graph::io::json& json, NodeData& value) {
 
 IO<NodeData> Traits<NodeData>::io(&toJson, &fromJson);
 
+std::ostream& operator << (std::ostream& out, const NodeData& d) {
+	out << "(node data)";
+
+	return out;
+}
+
 }

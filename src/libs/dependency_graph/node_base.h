@@ -63,10 +63,10 @@ class NodeBase : public boost::noncopyable {
 		template<typename T>
 		const T& blindData() const;
 
-		virtual const State& state() const = 0;
+		const State& state() const;
 
-		virtual void computeInput(size_t index) = 0;
-		virtual void computeOutput(size_t index) = 0;
+		void computeInput(size_t index);
+		void computeOutput(size_t index);
 
 		template<typename T>
 		bool is() const;
@@ -101,6 +101,8 @@ class NodeBase : public boost::noncopyable {
 		MetadataHandle m_metadata;
 		Datablock m_data;
 		std::vector<Port> m_ports;
+
+		State m_state;
 
 		// blind data access
 		friend struct io::adl_serializer<NodeBase>;

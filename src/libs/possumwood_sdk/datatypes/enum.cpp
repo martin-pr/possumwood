@@ -60,6 +60,11 @@ void Enum::toJson(::dependency_graph::io::json& json) const {
 	json = value();
 }
 
+std::ostream& operator << (std::ostream& out, const Enum& e) {
+	out << e.value();
+	return out;
+}
+
 ///////
 
 namespace {

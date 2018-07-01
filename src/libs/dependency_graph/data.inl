@@ -37,16 +37,24 @@ bool Data<T>::isEqual(const BaseData& src) const {
 }
 
 template<typename T>
-std::string Data<T>::type() const {
-	return unmangledTypeId<T>();
+const std::type_info& Data<T>::typeinfo() const {
+	return typeid(T);
 }
 
 template<typename T>
 std::unique_ptr<BaseData> Data<T>::clone() const {
-	std::unique_ptr<BaseData> result = create(type());
+	std::unique_ptr<BaseData> result(new Data<T>());
 	result->assign(*this);
 
 	return result;
+}
+
+template<typename T>
+std::string Data<T>::toString() const {
+	std::stringstream ss;
+	ss << value;
+
+	return ss.str();
 }
 
 template<typename T>

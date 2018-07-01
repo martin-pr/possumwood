@@ -95,6 +95,8 @@ class SubsetSelection {
 		friend class Options;
 };
 
+std::ostream& operator << (std::ostream& out, const SubsetSelection& ss);
+
 }
 
 namespace possumwood {

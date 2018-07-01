@@ -14,4 +14,12 @@ Values& Values::operator =(Values&& vals) {
 	return *this;
 }
 
+void Values::transfer(std::size_t index, Port& p) {
+	m_node->port(index).setData(p.getData());
+}
+
+const BaseData& Values::data(std::size_t index) const {
+	return m_node->port(index).getData();
+}
+
 }

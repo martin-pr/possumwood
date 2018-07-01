@@ -36,6 +36,8 @@ class Font {
 	float m_width, m_height, m_size;
 };
 
+std::ostream& operator << (std::ostream& out, const Font& f);
+
 template<>
 struct Traits<Font> {
 	static constexpr std::array<float, 3> colour() {
