@@ -5,15 +5,15 @@ namespace possumwood {
 namespace {
 
 void toJson(::dependency_graph::io::json& json, const NodeData& value) {
-	json["x"] = value.position().x();
-	json["y"] = value.position().y();
+	json["x"] = value.position().x;
+	json["y"] = value.position().y;
 }
 
 void fromJson(const ::dependency_graph::io::json& json, NodeData& value) {
-	value.setPosition(QPointF(
+	value.setPosition(NodeData::Point{
 		json["x"].get<float>(),
 		json["y"].get<float>()
-	));
+	});
 }
 
 }

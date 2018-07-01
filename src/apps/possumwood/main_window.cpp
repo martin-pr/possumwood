@@ -197,11 +197,13 @@ MainWindow::MainWindow() : QMainWindow() {
 				if(it != std::string::npos)
 					itemName = m.metadata().type().substr(it + 1);
 
+				auto qp = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos()));
+				const possumwood::NodeData::Point p {(float)qp.x(), (float)qp.y()};
+
 				QAction* addNode = makeAction(
 				    itemName.c_str(),
-				    [&m, itemName, contextMenu, this]() {
-					    possumwood::Actions::createNode(m_adaptor->currentNetwork(), m, itemName,
-					                        m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos())));
+				    [&m, itemName, this, p]() {
+					    possumwood::Actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
 					},
 				    m_adaptor);
 				addNode->setIcon(QIcon(":icons/add-node.png"));
@@ -328,7 +330,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		}
 	});
 
-	connect(saveAsAct, &QAction::triggered, [saveAct, this](bool) {
+	connect(saveAsAct, &QAction::triggered, [this](bool) {
 		QString filename =
 		    QFileDialog::getSaveFileName(this, tr("Save File"), possumwood::App::instance().filename().string().c_str(),
 		                                 tr("Possumwood files (*.psw)"));

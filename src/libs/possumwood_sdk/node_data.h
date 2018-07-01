@@ -9,14 +9,30 @@ namespace possumwood {
 
 class NodeData {
 	public:
-		NodeData(const QPointF& p = QPointF(0, 0)) : m_position(p) {
+		struct Point {
+			float x = 0.0f, y = 0.0f;
+
+			bool operator == (const Point& p) const {
+				return p.x == x && p.y == y;
+			}
+
+			bool operator != (const Point& p) const {
+				return p.x != x || p.y != y;
+			}
+
+			Point operator + (const Point& p) const {
+				return Point{x + p.x, y + p.y};
+			}
+		};
+
+		NodeData(const Point& p = Point{0, 0}) : m_position(p) {
 		}
 
-		const QPointF& position() const {
+		const Point& position() const {
 			return m_position;
 		}
 
-		void setPosition(const QPointF& p) {
+		void setPosition(const Point& p) {
 			m_position = p;
 		}
 
@@ -29,7 +45,7 @@ class NodeData {
 		}
 
 	private:
-		QPointF m_position;
+		Point m_position;
 };
 
 template<>

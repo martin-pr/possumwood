@@ -561,7 +561,7 @@ namespace {
 		//  - each node has a unique ID (unique between all graphs), store that
 		for(auto& n : source.nodes()) {
 			possumwood::NodeData d = n.blindData<possumwood::NodeData>();
-			d.setPosition(QPointF(20, 20) + d.position());
+			d.setPosition(possumwood::NodeData::Point{20, 20} + d.position());
 
 			const dependency_graph::NodeBase& cn = n;
 			action.addCommand(
@@ -634,7 +634,7 @@ void Actions::paste(dependency_graph::Network& current, dependency_graph::Select
 	}
 }
 
-void Actions::move(const std::map<dependency_graph::NodeBase*, QPointF>& nodes) {
+void Actions::move(const std::map<dependency_graph::NodeBase*, possumwood::NodeData::Point>& nodes) {
 	possumwood::UndoStack::Action action;
 
 	for(auto& n : nodes) {
