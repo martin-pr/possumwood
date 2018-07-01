@@ -2,10 +2,6 @@
 
 #include <functional>
 
-#include <QApplication>
-#include <QClipboard>
-#include <QMainWindow>
-
 #include <dependency_graph/io/graph.h>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
@@ -13,6 +9,8 @@
 
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/metadata.h>
+
+#include "clipboard.h"
 
 namespace possumwood {
 
@@ -550,7 +548,7 @@ void Actions::copy(const dependency_graph::Selection& selection) {
 	ss << std::setw(4) << json;
 
 	// and put it to the clipboard
-	QApplication::clipboard()->setText(ss.str().c_str());
+	Clipboard::instance().setClipboardContent(ss.str().c_str());
 }
 
 namespace {
@@ -596,7 +594,7 @@ void Actions::paste(dependency_graph::Network& current, dependency_graph::Select
 
 	try {
 		// convert the selection to JSON object
-		auto json = dependency_graph::io::json::parse(QApplication::clipboard()->text().toStdString());
+		auto json = dependency_graph::io::json::parse(Clipboard::instance().clipboardContent());
 
 		// import the clipboard
 		dependency_graph::io::from_json(json, pastedGraph);
