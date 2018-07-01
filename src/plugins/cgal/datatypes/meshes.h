@@ -1,6 +1,6 @@
 #pragma once
 
-#include <possumwood_sdk/traits.h>
+#include <actions/traits.h>
 
 #include "../meshes.h"
 

@@ -5,7 +5,7 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <possumwood_sdk/traits.h>
+#include <actions/traits.h>
 #include <possumwood_sdk/drawable.h>
 
 #include "vbo.h"

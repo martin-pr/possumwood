@@ -16,12 +16,12 @@
 #include <dependency_graph/io/graph.h>
 
 #include <qt_node_editor/connected_edge.h>
-#include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
 
-#include <possumwood_sdk/actions.h>
+#include <actions/node_data.h>
+#include <actions/actions.h>
 
 Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetwork(NULL), m_sizeHint(400,400) {
 	// register callbacks

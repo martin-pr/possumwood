@@ -7,8 +7,8 @@
 #include <dependency_graph/values.inl>
 #include <dependency_graph/metadata_register.h>
 
-#include <possumwood_sdk/app.h>
-#include <possumwood_sdk/actions.h>
+#include <actions/app.h>
+#include <actions/actions.h>
 
 #include "common.h"
 

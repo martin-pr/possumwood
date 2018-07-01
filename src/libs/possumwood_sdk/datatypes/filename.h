@@ -7,8 +7,8 @@
 
 #include <dependency_graph/data_traits.h>
 
-#include "../io.h"
-#include "../traits.h"
+#include "actions/io.h"
+#include "actions/traits.h"
 
 namespace possumwood {
 

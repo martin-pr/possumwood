@@ -21,11 +21,11 @@
 #include <qt_node_editor/connected_edge.h>
 
 #include <possumwood_sdk/metadata.inl>
-#include <possumwood_sdk/node_data.h>
-#include <possumwood_sdk/node_data.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
-#include <possumwood_sdk/actions.h>
+
+#include <actions/actions.h>
+#include <actions/node_data.h>
 
 #include "adaptor.h"
 #include "config_dialog.h"

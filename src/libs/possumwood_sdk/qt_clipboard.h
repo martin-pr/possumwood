@@ -1,6 +1,6 @@
 #pragma once
 
-#include "clipboard.h"
+#include "actions/clipboard.h"
 
 namespace possumwood {
 

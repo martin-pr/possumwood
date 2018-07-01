@@ -2,8 +2,9 @@
 
 #include <dependency_graph/metadata.h>
 #include <dependency_graph/selection.h>
-#include <possumwood_sdk/node_data.h>
-#include <possumwood_sdk/undo_stack.h>
+
+#include "node_data.h"
+#include "undo_stack.h"
 
 namespace possumwood {
 

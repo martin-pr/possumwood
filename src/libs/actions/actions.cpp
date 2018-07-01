@@ -7,9 +7,9 @@
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/attr_map.h>
 
-#include <possumwood_sdk/app.h>
 #include <possumwood_sdk/metadata.h>
 
+#include "app.h"
 #include "clipboard.h"
 
 namespace possumwood {

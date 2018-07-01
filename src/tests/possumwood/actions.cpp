@@ -7,7 +7,7 @@
 #include <dependency_graph/values.inl>
 
 #include <possumwood_sdk/app.h>
-#include <possumwood_sdk/actions.h>
+#include <actions/actions.h>
 
 #include "common.h"
 
