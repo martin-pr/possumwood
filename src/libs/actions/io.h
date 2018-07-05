@@ -48,7 +48,7 @@ class IO : public IOBase {
 
 namespace io {
 
-extern void fromJson(const json& j, dependency_graph::BaseData& data);
-extern void toJson(json& j, const dependency_graph::BaseData& data);
+void fromJson(const json& j, dependency_graph::BaseData& data);
+void toJson(json& j, const dependency_graph::BaseData& data);
 
 } }

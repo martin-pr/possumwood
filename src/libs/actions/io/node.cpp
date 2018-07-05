@@ -29,8 +29,7 @@ void adl_serializer<dependency_graph::NodeBase>::to_json(json& j, const ::depend
 
 void adl_serializer<dependency_graph::NodeBase>::from_json(const json& j, ::dependency_graph::NodeBase& n) {
 	if(j.find("ports") != j.end()) {
-		std::vector<bool> dirty;
-		dependency_graph::Datablock datablock = ((const dependency_graph::Node&)n).datablock();
+		const dependency_graph::Datablock& datablock = ((const dependency_graph::Node&)n).datablock();
 
 		for(json::const_iterator p = j["ports"].begin(); p != j["ports"].end(); ++p) {
 			if(!p.value().is_null()) {
@@ -43,17 +42,13 @@ void adl_serializer<dependency_graph::NodeBase>::from_json(const json& j, ::depe
 
 					std::unique_ptr<dependency_graph::BaseData> data(datablock.data(pi).clone());
 					io::fromJson(p.value(), *data);
-					datablock.setData(pi, *data);
 
-					// n.markAsDirty(pi);
-					dirty.push_back(pi);
+					n.port(pi).setData(*data);
 				}
 				else
 					std::cerr << "Found unused property '" << p.key() << "' while loading a file. Ignoring its value." << std::endl;
 			}
 		}
-
-		n.setDatablock(datablock);
 	}
 }
 
