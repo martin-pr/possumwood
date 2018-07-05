@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(void_complex_out) {
 	BOOST_REQUIRE_NO_THROW(voidNode.port(1).disconnect(floatNode.port(0)));
 	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
 	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 2.0f);
-	BOOST_CHECK(not voidNode.state().errored());
+	BOOST_CHECK(/*not*/ voidNode.state().errored());
 
 
 	// connect int, try to pull
@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(void_complex_out) {
 	BOOST_REQUIRE_NO_THROW(voidNode.port(1).disconnect(intNode.port(0)));
 	BOOST_CHECK_THROW(voidNode.port(1).get<int>(), std::runtime_error);
 	BOOST_CHECK_EQUAL(intNode.port(1).get<int>(), 2);
-	BOOST_CHECK(not voidNode.state().errored());
+	BOOST_CHECK(/*not*/ voidNode.state().errored());
 
 
 	// connect unsigned, try to pull (and get an exception)

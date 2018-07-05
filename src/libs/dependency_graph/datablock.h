@@ -3,8 +3,6 @@
 #include <vector>
 #include <memory>
 
-#include "io/json.h"
-
 #include "data.h"
 #include "metadata.h"
 

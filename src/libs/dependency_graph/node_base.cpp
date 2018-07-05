@@ -256,4 +256,22 @@ const State& NodeBase::state() const {
 	return m_state;
 }
 
+void NodeBase::setBlindData(std::unique_ptr<BaseData>&& data) {
+	m_blindData = std::move(data);
+}
+
+bool NodeBase::hasBlindData() const {
+	return m_blindData != nullptr;
+}
+
+std::string NodeBase::blindDataType() const {
+	assert(m_blindData != nullptr);
+	return m_blindData->type();
+}
+
+const BaseData& NodeBase::blindData() const {
+	assert(m_blindData != nullptr);
+	return *m_blindData;
+}
+
 }

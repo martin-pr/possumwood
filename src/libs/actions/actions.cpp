@@ -2,12 +2,13 @@
 
 #include <functional>
 
-#include <dependency_graph/io/graph.h>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/attr_map.h>
 
 #include <possumwood_sdk/metadata.h>
+
+#include <actions/io/graph.h>
 
 #include "app.h"
 #include "clipboard.h"
@@ -541,8 +542,8 @@ void Actions::copy(const dependency_graph::Selection& selection) {
 		net = &selection.nodes().begin()->get().network();
 
 	// convert the selection to JSON string
-	dependency_graph::io::json json;
-	dependency_graph::io::to_json(json, *net, selection);
+	possumwood::io::json json;
+	possumwood::io::to_json(json, *net, selection);
 
 	std::stringstream ss;
 	ss << std::setw(4) << json;
@@ -594,10 +595,10 @@ void Actions::paste(dependency_graph::Network& current, dependency_graph::Select
 
 	try {
 		// convert the selection to JSON object
-		auto json = dependency_graph::io::json::parse(Clipboard::instance().clipboardContent());
+		auto json = possumwood::io::json::parse(Clipboard::instance().clipboardContent());
 
 		// import the clipboard
-		dependency_graph::io::from_json(json, pastedGraph);
+		possumwood::io::from_json(json, pastedGraph);
 
 		// THIS WILL ALSO NEED TO WORK RECURSIVELY
 		action.append(pasteNetwork(current.index(), pastedGraph));

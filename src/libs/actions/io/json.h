@@ -108,7 +108,7 @@ SOFTWARE.
     #define JSON_UNLIKELY(x)    x
 #endif
 
-namespace dependency_graph
+namespace possumwood
 {
 
 namespace io
@@ -1178,9 +1178,9 @@ struct adl_serializer
     */
     template<typename BasicJsonType, typename ValueType>
     static void from_json(BasicJsonType&& j, ValueType& val) noexcept(
-        noexcept(::dependency_graph::io::from_json(std::forward<BasicJsonType>(j), val)))
+        noexcept(::possumwood::io::from_json(std::forward<BasicJsonType>(j), val)))
     {
-        ::dependency_graph::io::from_json(std::forward<BasicJsonType>(j), val);
+        ::possumwood::io::from_json(std::forward<BasicJsonType>(j), val);
     }
 
     /*!
@@ -1194,9 +1194,9 @@ struct adl_serializer
     */
     template<typename BasicJsonType, typename ValueType>
     static void to_json(BasicJsonType& j, ValueType&& val) noexcept(
-        noexcept(::dependency_graph::io::to_json(j, std::forward<ValueType>(val))))
+        noexcept(::possumwood::io::to_json(j, std::forward<ValueType>(val))))
     {
-        ::dependency_graph::io::to_json(j, std::forward<ValueType>(val));
+        ::possumwood::io::to_json(j, std::forward<ValueType>(val));
     }
 };
 
@@ -14375,10 +14375,10 @@ namespace std
 @since version 1.0.0
 */
 template<>
-inline void swap(::dependency_graph::io::json& j1,
-                 ::dependency_graph::io::json& j2) noexcept(
-                     is_nothrow_move_constructible<::dependency_graph::io::json>::value and
-                     is_nothrow_move_assignable<::dependency_graph::io::json>::value
+inline void swap(::possumwood::io::json& j1,
+                 ::possumwood::io::json& j2) noexcept(
+                     is_nothrow_move_constructible<::possumwood::io::json>::value and
+                     is_nothrow_move_assignable<::possumwood::io::json>::value
                  )
 {
     j1.swap(j2);
@@ -14386,33 +14386,33 @@ inline void swap(::dependency_graph::io::json& j1,
 
 /// hash value for JSON objects
 template<>
-struct hash<::dependency_graph::io::json>
+struct hash<::possumwood::io::json>
 {
     /*!
     @brief return a hash value for a JSON object
 
     @since version 1.0.0
     */
-    std::size_t operator()(const ::dependency_graph::io::json& j) const
+    std::size_t operator()(const ::possumwood::io::json& j) const
     {
         // a naive hashing via the string representation
-        const auto& h = hash<::dependency_graph::io::json::string_t>();
+        const auto& h = hash<::possumwood::io::json::string_t>();
         return h(j.dump());
     }
 };
 
 /// specialization for std::less<value_t>
 template <>
-struct less<::dependency_graph::io::detail::value_t>
+struct less<::possumwood::io::detail::value_t>
 {
     /*!
     @brief compare two value_t enum values
     @since version 3.0.0
     */
-    bool operator()(::dependency_graph::io::detail::value_t lhs,
-                    ::dependency_graph::io::detail::value_t rhs) const noexcept
+    bool operator()(::possumwood::io::detail::value_t lhs,
+                    ::possumwood::io::detail::value_t rhs) const noexcept
     {
-        return ::dependency_graph::io::detail::operator<(lhs, rhs);
+        return ::possumwood::io::detail::operator<(lhs, rhs);
     }
 };
 
@@ -14431,9 +14431,9 @@ if no parse error occurred.
 
 @since version 1.0.0
 */
-inline ::dependency_graph::io::json operator "" _json(const char* s, std::size_t n)
+inline ::possumwood::io::json operator "" _json(const char* s, std::size_t n)
 {
-    return ::dependency_graph::io::json::parse(s, s + n);
+    return ::possumwood::io::json::parse(s, s + n);
 }
 
 /*!
@@ -14449,9 +14449,9 @@ object if no parse error occurred.
 
 @since version 2.0.0
 */
-inline ::dependency_graph::io::json::json_pointer operator "" _json_pointer(const char* s, std::size_t n)
+inline ::possumwood::io::json::json_pointer operator "" _json_pointer(const char* s, std::size_t n)
 {
-    return ::dependency_graph::io::json::json_pointer(std::string(s, n));
+    return ::possumwood::io::json::json_pointer(std::string(s, n));
 }
 
 // restore GCC/clang diagnostic settings

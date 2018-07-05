@@ -36,9 +36,9 @@ IOBase::~IOBase() {
 
 /////////////////////////////////////
 
-namespace dependency_graph { namespace io {
+namespace possumwood { namespace io {
 
-void fromJson(const json& j, BaseData& data) {
+void fromJson(const json& j, dependency_graph::BaseData& data) {
 	auto it = s_fromFn().find(data.type());
 
 	#ifndef NDEBUG
@@ -50,7 +50,7 @@ void fromJson(const json& j, BaseData& data) {
 	it->second(j, data);
 }
 
-void toJson(json& j, const BaseData& data) {
+void toJson(json& j, const dependency_graph::BaseData& data) {
 	auto it = s_toFn().find(data.type());
 	#ifndef NDEBUG
 	if(it == s_toFn().end())
@@ -61,7 +61,11 @@ void toJson(json& j, const BaseData& data) {
 	it->second(j, data);
 }
 
-bool isSaveable(const BaseData& data) {
+} }
+
+namespace dependency_graph { namespace io {
+
+bool isSaveable(const dependency_graph::BaseData& data) {
 	return s_toFn().find(data.type()) != s_toFn().end();
 }
 

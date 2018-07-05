@@ -7,10 +7,11 @@
 
 #include <QMainWindow>
 
-#include <dependency_graph/io/graph.h>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/node.h>
 #include <dependency_graph/node_base.inl>
+
+#include <actions/io/graph.h>
 
 #include "config.inl"
 
@@ -63,7 +64,7 @@ void App::loadFile(const boost::filesystem::path& filename) {
 
 	// read the json file
 	std::ifstream in(filename.string());
-	dependency_graph::io::json json;
+	possumwood::io::json json;
 	in >> json;
 
 	// update the opened filename
@@ -73,7 +74,7 @@ void App::loadFile(const boost::filesystem::path& filename) {
 	try {
 		// read the graph
 		graph().clear();
-		dependency_graph::io::adl_serializer<dependency_graph::Graph>::from_json(json,
+		possumwood::io::adl_serializer<dependency_graph::Graph>::from_json(json,
 		                                                                         graph());
 
 		// and read the scene config
@@ -115,7 +116,7 @@ void App::saveFile() {
 
 void App::saveFile(const boost::filesystem::path& fn) {
 	// make a json instance containing the graph
-	dependency_graph::io::json json;
+	possumwood::io::json json;
 	json = graph();
 
 	// save scene config into the json object

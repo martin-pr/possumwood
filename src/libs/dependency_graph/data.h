@@ -3,8 +3,7 @@
 #include <memory>
 #include <functional>
 #include <type_traits>
-
-#include "io/json.h"
+#include <map>
 
 namespace dependency_graph {
 

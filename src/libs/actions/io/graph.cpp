@@ -1,11 +1,12 @@
 #include "graph.h"
 
-#include "node.h"
-#include "node_base.inl"
-#include "io.h"
-#include "../metadata_register.h"
+#include <dependency_graph/node_base.inl>
+#include <dependency_graph/metadata_register.h>
 
-namespace dependency_graph { namespace io {
+#include "node.h"
+#include "io.h"
+
+namespace possumwood { namespace io {
 
 namespace {
 
@@ -19,13 +20,13 @@ const T& dereference(const T& n) {
 	return n;
 }
 
-void writeNetwork(json& j, const ::dependency_graph::Network& net, const Selection& selection = Selection());
+void writeNetwork(json& j, const ::dependency_graph::Network& net, const dependency_graph::Selection& selection = dependency_graph::Selection());
 
 /// a wrapper of node writing, with CONTAINER either a Nodes instance or a Selection
 template<typename CONTAINER>
 void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>& uniqueIds, std::map<const ::dependency_graph::NodeBase*, std::string>& nodeIds) {
 	for(auto& ni : nodes) {
-		const NodeBase& n = dereference(ni);
+		const dependency_graph::NodeBase& n = dereference(ni);
 
 		// figure out a unique name - type with a number appended
 		std::string name = n.metadata()->type();
@@ -37,15 +38,15 @@ void writeNodes(json& j, const CONTAINER& nodes, std::map<std::string, unsigned>
 		// and use this to save the node
 		j[name] = n;
 
-		if(n.is<Network>())
-			writeNetwork(j[name], n.as<Network>());
+		if(n.is<dependency_graph::Network>())
+			writeNetwork(j[name], n.as<dependency_graph::Network>());
 
 		// remember the assigned ID for connection saving
 		nodeIds[&n] = name;
 	}
 }
 
-void writeNetwork(json& j, const ::dependency_graph::Network& net, const Selection& selection) {
+void writeNetwork(json& j, const ::dependency_graph::Network& net, const dependency_graph::Selection& selection) {
 	std::map<std::string, unsigned> uniqueIds;
 	std::map<const ::dependency_graph::NodeBase*, std::string> nodeIds;
 
@@ -74,43 +75,43 @@ void writeNetwork(json& j, const ::dependency_graph::Network& net, const Selecti
 
 }
 
-void to_json(json& j, const ::dependency_graph::Network& g, const Selection& selection) {
+void to_json(json& j, const ::dependency_graph::Network& g, const dependency_graph::Selection& selection) {
 	writeNetwork(j, g, selection);
 }
 
-void adl_serializer<Network>::to_json(json& j, const ::dependency_graph::Network& g) {
-	::dependency_graph::io::to_json(j, g);
+void adl_serializer<dependency_graph::Network>::to_json(json& j, const ::dependency_graph::Network& g) {
+	::possumwood::io::to_json(j, g);
 }
 
 //////////////
 
 namespace {
 
-void loadNetwork(const json& j, Network& net) {
+void loadNetwork(const json& j, dependency_graph::Network& net) {
 	std::map<std::string, dependency_graph::UniqueId> nodeIds;
 
 	for(json::const_iterator ni = j["nodes"].begin(); ni != j["nodes"].end(); ++ni) {
 		const json& n = ni.value();
 
 		// extract the blind data via factory mechanism
-		std::unique_ptr<BaseData> blindData;
+		std::unique_ptr<dependency_graph::BaseData> blindData;
 		if(!n["blind_data"].is_null()) {
-			blindData = BaseData::create(n["blind_data"]["type"].get<std::string>());
+			blindData = dependency_graph::BaseData::create(n["blind_data"]["type"].get<std::string>());
 			assert(blindData != nullptr);
-			assert(io::isSaveable(*blindData));
+			assert(dependency_graph::io::isSaveable(*blindData));
 			io::fromJson(n["blind_data"]["value"], *blindData);
 		}
 
 		// find the metadata instance
-		const MetadataHandle& meta = MetadataRegister::singleton()[n["type"].get<std::string>()];
-		NodeBase& node = net.nodes().add(meta, n["name"].get<std::string>(), std::move(blindData));
+		const dependency_graph::MetadataHandle& meta = dependency_graph::MetadataRegister::singleton()[n["type"].get<std::string>()];
+		dependency_graph::NodeBase& node = net.nodes().add(meta, n["name"].get<std::string>(), std::move(blindData));
 
 		// read the node data
-		adl_serializer<NodeBase>::from_json(n, node);
+		adl_serializer<dependency_graph::NodeBase>::from_json(n, node);
 
 		// special handling for networks - load the network on top of base node data
-		if(node.is<Network>())
-			loadNetwork(ni.value(), node.as<Network>());
+		if(node.is<dependency_graph::Network>())
+			loadNetwork(ni.value(), node.as<dependency_graph::Network>());
 
 		// and record the new node instance, in index-to-uniqueid translation
 		assert(nodeIds.find(ni.key()) == nodeIds.end());
@@ -118,8 +119,8 @@ void loadNetwork(const json& j, Network& net) {
 	}
 
 	for(auto& c : j["connections"]) {
-		NodeBase& n1 = net.nodes()[nodeIds[c["out_node"].get<std::string>()]];
-		NodeBase& n2 = net.nodes()[nodeIds[c["in_node"].get<std::string>()]];
+		dependency_graph::NodeBase& n1 = net.nodes()[nodeIds[c["out_node"].get<std::string>()]];
+		dependency_graph::NodeBase& n2 = net.nodes()[nodeIds[c["in_node"].get<std::string>()]];
 
 		int p1 = -1;
 		for(unsigned p=0;p<n1.portCount();++p)
@@ -138,12 +139,12 @@ void loadNetwork(const json& j, Network& net) {
 
 }
 
-void from_json(const json& j, Network& g) {
+void from_json(const json& j, dependency_graph::Network& g) {
 	loadNetwork(j, g);
 }
 
-void adl_serializer<Network>::from_json(const json& j, ::dependency_graph::Network& g) {
-	::dependency_graph::io::from_json(j, g);
+void adl_serializer<dependency_graph::Network>::from_json(const json& j, ::dependency_graph::Network& g) {
+	::possumwood::io::from_json(j, g);
 }
 
 } }
