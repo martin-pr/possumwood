@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(actions_single_node_instance) {
 
 	// now make a single node using an Action
 	BOOST_REQUIRE_NO_THROW(
-		possumwood::Actions::createNode(app.graph(), additionNode(), "add_1", possumwood::NodeData())
+		possumwood::actions::createNode(app.graph(), additionNode(), "add_1", possumwood::NodeData())
 	);
 
 	// check the state of the graph
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(actions_single_node_instance) {
 
 	// remove the node
 	BOOST_REQUIRE_NO_THROW(
-		possumwood::Actions::removeNode(*app.graph().nodes().begin());
+		possumwood::actions::removeNode(*app.graph().nodes().begin());
 	);
 
 	// check the state of the graph
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(actions_single_node_value) {
 
 	// now make a single node using an Action
 	BOOST_REQUIRE_NO_THROW(
-		possumwood::Actions::setValue(node.port(0), 1.0f);
+		possumwood::actions::setValue(node.port(0), 1.0f);
 	);
 
 	// check the state of the graph

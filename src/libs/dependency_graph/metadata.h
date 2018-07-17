@@ -30,6 +30,8 @@ class Port;
 
 class MetadataHandle;
 
+namespace detail { struct MetadataAccess; }
+
 class Metadata : public boost::noncopyable, public std::enable_shared_from_this<Metadata> {
 	public:
 		Metadata(const std::string& nodeType);
@@ -100,7 +102,13 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		friend class Node;
 		friend class NodeBase;
 		friend class Port;
+
+		/// allow actions to access untemplated doAddAttribute
+		friend struct detail::MetadataAccess;
 };
+
+/// Implemented in user code, to allow access to derived-class metadata instantiation
+extern std::unique_ptr<Metadata> instantiateMetadata(const std::string& type);
 
 /// Just a wrapper over an std::shared_ptr, which might eventually implement
 /// a variant of copy-on-write paradigm.

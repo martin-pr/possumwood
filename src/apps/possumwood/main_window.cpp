@@ -203,7 +203,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				QAction* addNode = makeAction(
 				    itemName.c_str(),
 				    [&m, itemName, this, p]() {
-					    possumwood::Actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
+					    possumwood::actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
 					},
 				    m_adaptor);
 				addNode->setIcon(QIcon(":icons/add-node.png"));

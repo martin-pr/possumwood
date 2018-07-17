@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	// create a subnetwork in the graph, via actions
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 			app.graph(),
 			dependency_graph::MetadataRegister::singleton()["network"],
 			"network",
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	// create a tiny subnetwork
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 			*network,
 			dependency_graph::MetadataRegister::singleton()["input"],
 			"network_input",
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	dependency_graph::NodeBase* output = nullptr;
 
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 			*network,
 			dependency_graph::MetadataRegister::singleton()["output"],
 			"network_output",
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	dependency_graph::NodeBase* middle = nullptr;
 
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 			*network,
 			passThroughNode(),
 			"passthru",
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	});
 
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::setValue(middle->port(0), 3.0f));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(middle->port(0), 3.0f));
 	});
 
 	tests.push_back([&]() {
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	commands.push_back([&]() {
 		// for the next test, lets set the input to a different value, but don't pull on out yet
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::setValue(middle->port(0), 5.0f));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(middle->port(0), 5.0f));
 	});
 
 	tests.push_back([&]() {
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	commands.push_back([&]() {
 		// connect the input
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::connect(input->port(0), middle->port(0)));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(input->port(0), middle->port(0)));
 	});
 
 	tests.push_back([&]() {
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	commands.push_back([&]() {
 		// connect the output
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::connect(middle->port(1), output->port(0)));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(middle->port(1), output->port(0)));
 	});
 
 	tests.push_back([&]() {
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	// set a value on the external connection
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::setValue(network->port(0), 3.0f));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(network->port(0), 3.0f));
 	});
 
 	tests.push_back([&]() {
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	dependency_graph::NodeBase* output2 = nullptr;
 
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 			*network,
 			dependency_graph::MetadataRegister::singleton()["output"],
 			"network_output_2",
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	commands.push_back([&]() {
 		// now connect it
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::connect(middle->port(1), output2->port(0)));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(middle->port(1), output2->port(0)));
 	});
 
 	tests.push_back([&]() {
@@ -282,7 +282,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	commands.push_back([&]() {
 		// now, disconnecting the first output should just remove an output port
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::disconnect(middle->port(1), output->port(0)));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::disconnect(middle->port(1), output->port(0)));
 	});
 
 	tests.push_back([&]() {
@@ -296,7 +296,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	commands.push_back([&]() {
 		// and setting that value works as expected
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::setValue(network->port(0), 9.0f));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(network->port(0), 9.0f));
 	});
 
 	tests.push_back([&]() {
@@ -315,7 +315,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	commands.push_back([&]() {
 		// disconnecting the input will lead to a network with single output
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::disconnect(input->port(0), middle->port(0)));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::disconnect(input->port(0), middle->port(0)));
 	});
 
 	tests.push_back([&]() {
@@ -329,7 +329,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	// and setting that value works as expected
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::Actions::setValue(middle->port(0), 13.0f));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(middle->port(0), 13.0f));
 	});
 
 	tests.push_back([&]() {

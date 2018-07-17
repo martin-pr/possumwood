@@ -61,3 +61,11 @@ void Metadata::addAttribute(dependency_graph::OutAttr<void>& out, const std::str
 }
 
 }
+
+namespace dependency_graph {
+
+std::unique_ptr<Metadata> instantiateMetadata(const std::string& type) {
+	return std::unique_ptr<Metadata>(new possumwood::Metadata(type));
+}
+
+}
