@@ -107,8 +107,16 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		friend struct detail::MetadataAccess;
 };
 
-/// Implemented in user code, to allow access to derived-class metadata instantiation
-extern std::unique_ptr<Metadata> instantiateMetadata(const std::string& type);
+/// create a new metadata instance - if an instance of MetadataFactory is present in user code, use that
+std::unique_ptr<Metadata> instantiateMetadata(const std::string& type);
+
+/// A simple base class, to be statically instantiated in client code to provide a new metadata implementation
+struct MetadataFactory : public boost::noncopyable {
+	MetadataFactory();
+	virtual ~MetadataFactory() = 0;
+
+	virtual std::unique_ptr<Metadata> instantiate(const std::string& type) = 0;
+};
 
 /// Just a wrapper over an std::shared_ptr, which might eventually implement
 /// a variant of copy-on-write paradigm.

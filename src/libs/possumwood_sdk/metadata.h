@@ -80,10 +80,3 @@ class Metadata : public dependency_graph::Metadata {
 };
 
 }
-
-namespace dependency_graph {
-
-/// implementation of an extern function from dependency_graph
-std::unique_ptr<Metadata> instantiateMetadata(const std::string& type);
-
-}
