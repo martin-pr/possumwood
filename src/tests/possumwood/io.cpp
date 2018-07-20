@@ -44,7 +44,7 @@ void toJson(json& j, const dependency_graph::BaseData& data) {
 	}
 	else if(data.type() == dependency_graph::unmangledTypeId<possumwood::NodeData>()) {
 		// const dependency_graph::Data<possumwood::NodeData>& typed = dynamic_cast<const dependency_graph::Data<possumwood::NodeData>&>(data);
-		j = "";
+		j = "test blind data";
 	}
 	else
 		assert(false);
