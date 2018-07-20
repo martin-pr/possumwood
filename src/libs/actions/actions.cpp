@@ -130,19 +130,12 @@ namespace {
 }
 
 void paste(dependency_graph::Network& current, dependency_graph::Selection& selection) {
-	possumwood::UndoStack::Action action;
-
-	dependency_graph::Graph pastedGraph;
-
 	try {
-		// convert the selection to JSON object
+		// convert the clipboard content to a json object
 		auto json = possumwood::io::json::parse(Clipboard::instance().clipboardContent());
 
-		// import the clipboard
-		possumwood::io::from_json(json, pastedGraph);
-
-		// THIS WILL ALSO NEED TO WORK RECURSIVELY
-		action.append(pasteNetwork(current.index(), pastedGraph));
+		// and pass it to the paste() implementation
+		paste(current, selection, json);
 	}
 	catch(std::exception& e) {
 		// do nothing
@@ -150,6 +143,26 @@ void paste(dependency_graph::Network& current, dependency_graph::Selection& sele
 		std::cout << e.what() << std::endl;
 		#endif
 	}
+}
+
+void paste(dependency_graph::Network& current, dependency_graph::Selection& selection, const possumwood::io::json& json) {
+	possumwood::UndoStack::Action action;
+
+	dependency_graph::Graph pastedGraph;
+
+	try {
+		// import the clipboard
+		possumwood::io::from_json(json, pastedGraph);
+	}
+	catch(std::exception& e) {
+		// do nothing
+		#ifndef NDEBUG
+		std::cout << e.what() << std::endl;
+		#endif
+	}
+
+	// paste the network extracted from the JSON
+	action.append(pasteNetwork(current.index(), pastedGraph));
 
 	// execute the action (will actually make the nodes and connections)
 	possumwood::AppCore::instance().undoStack().execute(action);

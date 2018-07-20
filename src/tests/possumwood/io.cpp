@@ -2,6 +2,7 @@
 #include <dependency_graph/data.h>
 
 #include <actions/io.h>
+#include <actions/node_data.h>
 
 #include "io.h"
 
@@ -24,6 +25,10 @@ void fromJson(const json& j, dependency_graph::BaseData& data) {
 		dependency_graph::Data<std::string>& typed = dynamic_cast<dependency_graph::Data<std::string>&>(data);
 		typed.value = j.get<std::string>();
 	}
+	else if(data.type() == dependency_graph::unmangledTypeId<possumwood::NodeData>()) {
+		dependency_graph::Data<possumwood::NodeData>& typed = dynamic_cast<dependency_graph::Data<possumwood::NodeData>&>(data);
+		typed.value = possumwood::NodeData();
+	}
 	else
 		assert(false);
 }
@@ -36,6 +41,10 @@ void toJson(json& j, const dependency_graph::BaseData& data) {
 	else if(data.type() == dependency_graph::unmangledTypeId<std::string>()) {
 		const dependency_graph::Data<std::string>& typed = dynamic_cast<const dependency_graph::Data<std::string>&>(data);
 		j = typed.value;
+	}
+	else if(data.type() == dependency_graph::unmangledTypeId<possumwood::NodeData>()) {
+		// const dependency_graph::Data<possumwood::NodeData>& typed = dynamic_cast<const dependency_graph::Data<possumwood::NodeData>&>(data);
+		j = "";
 	}
 	else
 		assert(false);
