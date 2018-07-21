@@ -103,14 +103,7 @@ namespace {
 
 			const dependency_graph::NodeBase& cn = n;
 
-			dependency_graph::Network& network = detail::findNode(targetIndex).as<dependency_graph::Network>();
-
-			action.append(detail::createNodeAction(network, n.metadata(), n.name(), d, n.index(), cn.datablock()));
-
-			// action.addCommand(
-			// 	std::bind(&doCreateNode, targetIndex, dependency_graph::MetadataHandle(n.metadata()), n.name(), n.index(), d, cn.datablock()),
-			// 	std::bind(&doRemoveNode, n.index())
-			// );
+			action.append(detail::createNodeAction(targetIndex, n.metadata(), n.name(), d, n.index(), cn.datablock()));
 
 			// recurse to add nested networks
 			if(cn.is<dependency_graph::Network>())

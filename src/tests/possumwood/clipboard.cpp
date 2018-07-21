@@ -24,16 +24,16 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	// the json data to be pasted
 	const json pasted_data (
 		{
-			// {
-			// 	"nodes", {
-			// 		{"network_0", {
-			// 			{"name", "test_network"},
-			// 			{"type", "network"},
-			// 			// {"ports", {}},
-			// 			{"blind_data", {
-			// 				{"type", unmangledTypeId<possumwood::NodeData>()},
-			// 				{"value", "test blind data"}
-			// 			}},
+			{
+				"nodes", {
+					{"network_0", {
+						{"name", "test_network"},
+						{"type", "network"},
+						// {"ports", {}},
+						{"blind_data", {
+							{"type", unmangledTypeId<possumwood::NodeData>()},
+							{"value", "test blind data"}
+						}},
 						{"nodes", {
 							{"addition_0", {
 								{"name", "add"},
@@ -81,12 +81,12 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 								}
 							}
 						}
-			// 		}}
-			// 	},
-			// },
-			// {
-			// 	"connections", "[]"_json
-			// }
+					}}
+				},
+			},
+			{
+				"connections", "[]"_json
+			}
 		}
 	);
 

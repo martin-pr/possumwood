@@ -36,18 +36,27 @@ void doRemoveNode(const dependency_graph::UniqueId& id) {
 
 }
 
-possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id,
+possumwood::UndoStack::Action createNodeAction(const dependency_graph::UniqueId& currentNetworkId, const dependency_graph::MetadataHandle& meta, const std::string& name,
+	const possumwood::NodeData& _data, const dependency_graph::UniqueId& id,
 	boost::optional<const dependency_graph::Datablock&> datablock) {
+
 	possumwood::NodeData data;
 	data.setPosition(_data.position());
 
 	possumwood::UndoStack::Action action;
 	action.addCommand(
-		std::bind(&doCreateNode, current.index(), std::ref(meta), name, id, data, boost::optional<const dependency_graph::Datablock&>(datablock)),
+		std::bind(&doCreateNode, currentNetworkId, std::ref(meta), name, id, data, boost::optional<const dependency_graph::Datablock&>(datablock)),
 		std::bind(&doRemoveNode, id)
 	);
 
 	return action;
+}
+
+
+possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id,
+	boost::optional<const dependency_graph::Datablock&> datablock) {
+
+	return createNodeAction(current.index(), meta, name, _data, id, datablock);
 }
 
 possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node) {
