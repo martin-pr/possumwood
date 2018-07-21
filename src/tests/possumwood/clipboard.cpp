@@ -21,6 +21,7 @@ const std::vector<::possumwood::io::json> testData() {
 	static std::vector<::possumwood::io::json> data;
 
 	if(data.empty()) {
+		////////////
 		// a simple network of nodes
 		data.push_back(possumwood::io::json {
 			{"nodes", {
@@ -63,15 +64,16 @@ const std::vector<::possumwood::io::json> testData() {
 			{
 				"connections", {
 					{
+						{"out_node", "addition_0"},
+						{"out_port", "output"},
 						{"in_node", "multiplication_0"},
 						{"in_port", "input_1"},
-						{"out_node", "addition_0"},
-						{"out_port", "output"}
 					}
 				}
 			}
 		});
 
+		///////////////
 		// previous network as a subnetwork (with no inputs or outputs)
 		data.push_back(possumwood::io::json());
 		data.back()["nodes"]["network_0"] = json{
@@ -87,8 +89,9 @@ const std::vector<::possumwood::io::json> testData() {
 		};
 		data.back()["connections"] = "[]"_json;
 
-		// previous network as a subnetwork (with inputs and outputs)
-		data.push_back(data[1]);
+		///////////////
+		// previous network as a subnetwork (with inputs and outputs, but not connected)
+		data.push_back(data.back());
 		data.back()["nodes"]["network_0"]["nodes"]["input_0"] = json{
 			{"name", "input_1"},
 			{"type", "input"},
@@ -112,6 +115,46 @@ const std::vector<::possumwood::io::json> testData() {
 				{"type", unmangledTypeId<possumwood::NodeData>()},
 				{"value", "test blind data"}
 			}},
+		};
+
+		////////////
+		// previous network, but with connected inputs and output
+		data.push_back(data.back());
+
+		// add network port connections
+		data.back()["nodes"]["network_0"]["connections"] = json {
+			{
+				{"out_node", "addition_0"},
+				{"out_port", "output"},
+				{"in_node", "output_0"},
+				{"in_port", "data"},
+			},
+			{
+				{"out_node", "addition_0"},
+				{"out_port", "output"},
+				{"in_node", "multiplication_0"},
+				{"in_port", "input_1"},
+			},
+			{
+				{"out_node", "input_0"},
+				{"out_port", "data"},
+				{"in_node", "addition_0"},
+				{"in_port", "input_1"},
+			},
+			{
+				{"out_node", "input_1"},
+				{"out_port", "data"},
+				{"in_node", "addition_0"},
+				{"in_port", "input_2"},
+			}
+		};
+
+		// connected ports will no longer be explicitly listed in addition_0 ports
+		data.back()["nodes"]["network_0"]["nodes"]["addition_0"].erase(data.back()["nodes"]["network_0"]["nodes"]["addition_0"].find("ports"));
+		// but they will be exposed out on the network
+		data.back()["nodes"]["network_0"]["ports"] = json {
+			{"input_1", 0},
+			{"input_2", 0},
 		};
 	}
 
