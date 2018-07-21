@@ -172,13 +172,42 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 		// make the app "singleton"
 		possumwood::AppCore app;
 
+		// test that the undo stack is empty
+		BOOST_REQUIRE(app.undoStack().empty());
 
+		// paste the data
 		dependency_graph::Selection selection;
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::paste(possumwood::AppCore::instance().graph(), selection, data));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::paste(app.graph(), selection, data));
 
-		::json json;
-		BOOST_REQUIRE_NO_THROW(json = possumwood::AppCore::instance().graph());
-		BOOST_CHECK_EQUAL(json, data);
+		// check that theres one undo step now
+		BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 1u);
+		BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
+		// check that the pasted data are correct
+		{
+			::json json;
+			BOOST_REQUIRE_NO_THROW(json = app.graph());
+			BOOST_CHECK_EQUAL(json, data);
+		}
 
+		// perform undo
+		BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
+
+		// graph should be empty now
+		BOOST_REQUIRE(app.graph().nodes().empty());
+
+		// check that theres one redo step now
+		BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 0u);
+		BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 1u);
+
+		// perform redo
+		BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
+
+		// and check that the result is right
+		{
+			::json json;
+			BOOST_REQUIRE_NO_THROW(json = app.graph());
+			BOOST_CHECK_EQUAL(json, data);
+		}
+	}
 }
