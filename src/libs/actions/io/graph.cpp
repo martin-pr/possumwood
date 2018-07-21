@@ -95,7 +95,7 @@ void loadNetwork(const json& j, dependency_graph::Network& net) {
 
 		// extract the blind data via factory mechanism
 		std::unique_ptr<dependency_graph::BaseData> blindData;
-		if(!n["blind_data"].is_null()) {
+		if(n.find("blind_data") != n.end() && !n["blind_data"].is_null()) {
 			blindData = dependency_graph::BaseData::create(n["blind_data"]["type"].get<std::string>());
 			assert(blindData != nullptr);
 			assert(dependency_graph::io::isSaveable(*blindData));

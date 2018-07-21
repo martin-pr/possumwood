@@ -14,7 +14,7 @@ void adl_serializer<dependency_graph::NodeBase>::to_json(json& j, const ::depend
 
 		// only serialize unconnected inputs
 		if(p.category() == dependency_graph::Attr::kInput && !g.network().connections().connectedFrom(p))
-			if(dependency_graph::io::isSaveable(g.datablock().data(pi)))
+			if(!g.datablock().isNull(pi) && dependency_graph::io::isSaveable(g.datablock().data(pi)))
 				io::toJson(j["ports"][p.name()], g.datablock().data(pi));
 	}
 
