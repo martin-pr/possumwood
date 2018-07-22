@@ -15,9 +15,26 @@
 using namespace dependency_graph;
 using possumwood::io::json;
 
+namespace {
+
+dependency_graph::Nodes::const_iterator findNode(const dependency_graph::Network& net, const std::string& name) {
+	dependency_graph::Nodes::const_iterator result = net.nodes().end();
+
+	for(auto it = net.nodes().begin(); it != net.nodes().end(); ++it)
+		if(it->name() == name) {
+			result = it;
+			break;
+		}
+
+	return result;
+}
+
+}
+
 BOOST_AUTO_TEST_CASE(clipboard) {
 
 	std::vector<::possumwood::io::json> data;
+	std::vector<std::function<void(const dependency_graph::Network&)>> tests;
 
 	//////////////
 	// a simple network of nodes
@@ -37,7 +54,7 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	};
 
 	data.back()["nodes"]["multiplication_0"] = possumwood::io::json {
-		{"name", "mult"},
+		{"name", "mult_0"},
 		{"type", "multiplication"},
 		{"ports", {
 			{"input_2", 5.0}
@@ -49,7 +66,7 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	};
 
 	data.back()["nodes"]["multiplication_1"] = possumwood::io::json {
-		{"name", "mult"},
+		{"name", "mult_1"},
 		{"type", "multiplication"},
 		{"ports", {
 			{"input_1", 0.0},
@@ -68,6 +85,25 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 		{"in_port", "input_1"},
 	}};
 
+	tests.push_back([&](const dependency_graph::Network& net) {
+		auto m0 = findNode(net, "mult_0");
+		BOOST_REQUIRE(m0 != net.nodes().end());
+
+		auto m1 = findNode(net, "mult_1");
+		BOOST_REQUIRE(m1 != net.nodes().end());
+
+		auto a0 = findNode(net, "add");
+		BOOST_REQUIRE(a0 != net.nodes().end());
+
+		BOOST_CHECK_EQUAL(a0->port(0).get<float>(), 2.0f);
+		BOOST_CHECK_EQUAL(a0->port(1).get<float>(), 4.0f);
+		BOOST_CHECK_EQUAL(a0->port(2).get<float>(), 6.0f);
+
+		BOOST_CHECK_EQUAL(m0->port(0).get<float>(), 6.0f);
+		BOOST_CHECK_EQUAL(m0->port(1).get<float>(), 5.0f);
+		BOOST_CHECK_EQUAL(m0->port(2).get<float>(), 30.0f);
+	});
+
 	///////////////
 	// previous network as a subnetwork (with no inputs or outputs)
 	data.push_back(possumwood::io::json());
@@ -84,8 +120,34 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	};
 	data.back()["connections"] = "[]"_json;
 
+	tests.push_back([&](const dependency_graph::Network& net) {
+		auto s = findNode(net, "test_network");
+		BOOST_REQUIRE(s != net.nodes().end());
+
+		BOOST_REQUIRE(s->is<dependency_graph::Network>());
+		auto& subnet = s->as<dependency_graph::Network>();
+
+		auto m0 = findNode(subnet, "mult_0");
+		BOOST_REQUIRE(m0 != subnet.nodes().end());
+
+		auto m1 = findNode(subnet, "mult_1");
+		BOOST_REQUIRE(m1 != subnet.nodes().end());
+
+		auto a0 = findNode(subnet, "add");
+		BOOST_REQUIRE(a0 != subnet.nodes().end());
+
+		BOOST_CHECK_EQUAL(a0->port(0).get<float>(), 2.0f);
+		BOOST_CHECK_EQUAL(a0->port(1).get<float>(), 4.0f);
+		BOOST_CHECK_EQUAL(a0->port(2).get<float>(), 6.0f);
+
+		BOOST_CHECK_EQUAL(m0->port(0).get<float>(), 6.0f);
+		BOOST_CHECK_EQUAL(m0->port(1).get<float>(), 5.0f);
+		BOOST_CHECK_EQUAL(m0->port(2).get<float>(), 30.0f);
+	});
+
 	///////////////
 	// previous network as a subnetwork (with inputs and outputs, but not connected)
+	//   -> contains unconnected void ports
 	data.push_back(data.back());
 	data.back()["nodes"]["network_0"]["nodes"]["input_0"] = json {
 		{"name", "input_1"},
@@ -111,6 +173,10 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 			{"value", "test blind data"}
 		}},
 	};
+
+	tests.push_back([&](const dependency_graph::Network&) {
+
+	});
 
 	////////////
 	// previous network, but with connected inputs and output
@@ -148,15 +214,52 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	data.back()["nodes"]["network_0"]["nodes"]["addition_0"].erase(data.back()["nodes"]["network_0"]["nodes"]["addition_0"].find("ports"));
 	// but they will be exposed out on the network
 	data.back()["nodes"]["network_0"]["ports"] = json {
-		{"input_1", 2},
-		{"input_2", 3},
+		{"input_1", 7},
+		{"input_2", 8},
 	};
+
+	tests.push_back([&](const dependency_graph::Network& net) {
+		auto s = findNode(net, "test_network");
+		BOOST_REQUIRE(s != net.nodes().end());
+
+		BOOST_REQUIRE(s->is<dependency_graph::Network>());
+		auto& subnet = s->as<dependency_graph::Network>();
+
+		auto m0 = findNode(subnet, "mult_0");
+		BOOST_REQUIRE(m0 != subnet.nodes().end());
+
+		auto m1 = findNode(subnet, "mult_1");
+		BOOST_REQUIRE(m1 != subnet.nodes().end());
+
+		auto a0 = findNode(subnet, "add");
+		BOOST_REQUIRE(a0 != subnet.nodes().end());
+
+		BOOST_CHECK_EQUAL(a0->port(0).get<float>(), 7.0f);
+		BOOST_CHECK_EQUAL(a0->port(1).get<float>(), 8.0f);
+		BOOST_CHECK_EQUAL(a0->port(2).get<float>(), 15.0f);
+
+		BOOST_CHECK_EQUAL(m0->port(0).get<float>(), 15.0f);
+		BOOST_CHECK_EQUAL(m0->port(1).get<float>(), 5.0f);
+		BOOST_CHECK_EQUAL(m0->port(2).get<float>(), 75.0f);
+
+		BOOST_CHECK_EQUAL(s->port(0).get<float>(), 7.0f);
+		BOOST_CHECK_EQUAL(s->port(1).get<float>(), 8.0f);
+		BOOST_CHECK_EQUAL(s->port(2).get<float>(), 15.0f);
+
+		// and test pull from outside
+		BOOST_REQUIRE_NO_THROW(s->port(0).set(9.0f));
+
+		BOOST_CHECK_EQUAL(s->port(0).get<float>(), 9.0f);
+		BOOST_CHECK_EQUAL(s->port(2).get<float>(), 17.0f);
+	});
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 
 	// make sure the static handles are initialised
 	additionNode();
 	multiplicationNode();
+
+	auto test_it = tests.begin();
 
 	for(const auto& pasted_data : data) {
 		// make the app "singleton"
@@ -180,6 +283,9 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 			BOOST_CHECK_EQUAL(json, pasted_data);
 		}
 
+		// run the appropriate test
+		(*test_it)(app.graph());
+
 		// perform undo
 		BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
 
@@ -199,5 +305,7 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 			BOOST_REQUIRE_NO_THROW(json = app.graph());
 			BOOST_CHECK_EQUAL(json, pasted_data);
 		}
+
+		++test_it;
 	}
 }
