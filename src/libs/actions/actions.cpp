@@ -33,7 +33,9 @@ void doSetBlindData(const dependency_graph::UniqueId& node, const possumwood::No
 /////////////////////////////////////////////////////////////////////
 
 void createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id) {
-	auto action = detail::createNodeAction(current, meta, name, _data, id);
+	dependency_graph::Data<possumwood::NodeData> nodeData(_data);
+
+	auto action = detail::createNodeAction(current, meta, name, nodeData, id);
 
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
@@ -103,7 +105,8 @@ namespace {
 
 			const dependency_graph::NodeBase& cn = n;
 
-			action.append(detail::createNodeAction(targetIndex, n.metadata(), n.name(), d, n.index(), cn.datablock()));
+			action.append(detail::createNodeAction(targetIndex, n.metadata(), n.name(),
+				dependency_graph::Data<possumwood::NodeData>(d), n.index(), cn.datablock()));
 
 			// recurse to add nested networks
 			if(cn.is<dependency_graph::Network>())
