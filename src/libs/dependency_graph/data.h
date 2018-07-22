@@ -5,6 +5,8 @@
 #include <type_traits>
 #include <map>
 
+#include <boost/noncopyable.hpp>
+
 namespace dependency_graph {
 
 class BaseData {
@@ -26,6 +28,9 @@ class BaseData {
 		virtual std::string toString() const = 0;
 
 		BaseData();
+
+		BaseData(const BaseData& bd);
+		BaseData& operator = (const BaseData& bd);
 
 		template<typename T>
 		struct Factory {
