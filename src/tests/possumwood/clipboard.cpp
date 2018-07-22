@@ -19,62 +19,59 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 
 	std::vector<::possumwood::io::json> data;
 
-	////////////
+	//////////////
 	// a simple network of nodes
-	data.push_back(possumwood::io::json {
-		{"nodes", {
-			{"addition_0", {
-				{"name", "add"},
-				{"type", "addition"},
-				{"ports", {
-					{"input_1", 2.0},
-					{"input_2", 4.0}
-				}},
-				{"blind_data", {
-					{"type", unmangledTypeId<possumwood::NodeData>()},
-					{"value", "test blind data"}
-				}}
-			}},
-			{"multiplication_0", {
-				{"name", "mult"},
-				{"type", "multiplication"},
-				{"ports", {
-					{"input_2", 5.0}
-				}},
-				{"blind_data", {
-					{"type", unmangledTypeId<possumwood::NodeData>()},
-					{"value", "test blind data"}
-				}}
-			}},
-			{"multiplication_1", {
-				{"name", "mult"},
-				{"type", "multiplication"},
-				{"ports", {
-					{"input_1", 0.0},
-					{"input_2", 0.0}
-				}},
-				{"blind_data", {
-					{"type", unmangledTypeId<possumwood::NodeData>()},
-					{"value", "test blind data"}
-				}}
-			}}
+	data.push_back("{\"connections\":[],\"nodes\":{}}"_json);
+
+	data.back()["nodes"]["addition_0"] = possumwood::io::json {
+		{"name", "add"},
+		{"type", "addition"},
+		{"ports", {
+			{"input_1", 2.0},
+			{"input_2", 4.0}
 		}},
-		{
-			"connections", {
-				{
-					{"out_node", "addition_0"},
-					{"out_port", "output"},
-					{"in_node", "multiplication_0"},
-					{"in_port", "input_1"},
-				}
-			}
-		}
-	});
+		{"blind_data", {
+			{"type", unmangledTypeId<possumwood::NodeData>()},
+			{"value", "test blind data"}
+		}}
+	};
+
+	data.back()["nodes"]["multiplication_0"] = possumwood::io::json {
+		{"name", "mult"},
+		{"type", "multiplication"},
+		{"ports", {
+			{"input_2", 5.0}
+		}},
+		{"blind_data", {
+			{"type", unmangledTypeId<possumwood::NodeData>()},
+			{"value", "test blind data"}
+		}}
+	};
+
+	data.back()["nodes"]["multiplication_1"] = possumwood::io::json {
+		{"name", "mult"},
+		{"type", "multiplication"},
+		{"ports", {
+			{"input_1", 0.0},
+			{"input_2", 0.0}
+		}},
+		{"blind_data", {
+			{"type", unmangledTypeId<possumwood::NodeData>()},
+			{"value", "test blind data"}
+		}}
+	};
+
+	data.back()["connections"] = possumwood::io::json {{
+		{"out_node", "addition_0"},
+		{"out_port", "output"},
+		{"in_node", "multiplication_0"},
+		{"in_port", "input_1"},
+	}};
 
 	///////////////
 	// previous network as a subnetwork (with no inputs or outputs)
 	data.push_back(possumwood::io::json());
-	data.back()["nodes"]["network_0"] = json{
+	data.back()["nodes"]["network_0"] = json {
 		{"name", "test_network"},
 		{"type", "network"},
 		// {"ports", {}},
@@ -90,7 +87,7 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	///////////////
 	// previous network as a subnetwork (with inputs and outputs, but not connected)
 	data.push_back(data.back());
-	data.back()["nodes"]["network_0"]["nodes"]["input_0"] = json{
+	data.back()["nodes"]["network_0"]["nodes"]["input_0"] = json {
 		{"name", "input_1"},
 		{"type", "input"},
 		{"blind_data", {
@@ -98,7 +95,7 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 			{"value", "test blind data"}
 		}},
 	};
-	data.back()["nodes"]["network_0"]["nodes"]["input_1"] = json{
+	data.back()["nodes"]["network_0"]["nodes"]["input_1"] = json {
 		{"name", "input_2"},
 		{"type", "input"},
 		{"blind_data", {
@@ -106,7 +103,7 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 			{"value", "test blind data"}
 		}},
 	};
-	data.back()["nodes"]["network_0"]["nodes"]["output_0"] = json{
+	data.back()["nodes"]["network_0"]["nodes"]["output_0"] = json {
 		{"name", "output_1"},
 		{"type", "output"},
 		{"blind_data", {
@@ -161,7 +158,7 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	additionNode();
 	multiplicationNode();
 
-	for(auto& pasted_data : data) {
+	for(const auto& pasted_data : data) {
 		// make the app "singleton"
 		possumwood::AppCore app;
 
@@ -170,7 +167,7 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 
 		// paste the data
 		dependency_graph::Selection selection;
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::paste(app.graph(), selection, data));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::paste(app.graph(), selection, pasted_data));
 
 		// check that theres one undo step now
 		BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 1u);

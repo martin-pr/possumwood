@@ -104,57 +104,61 @@ namespace {
 
 		// add all the nodes to the parent network
 		//  - each node has a unique ID (unique between all graphs), store that
-		for(possumwood::io::json::const_iterator ni = source["nodes"].begin(); ni != source["nodes"].end(); ++ni) {
-			const possumwood::io::json& n = ni.value();
+		if(source.find("nodes") != source.end()) {
+			for(possumwood::io::json::const_iterator ni = source["nodes"].begin(); ni != source["nodes"].end(); ++ni) {
+				const possumwood::io::json& n = ni.value();
 
-			// extract the blind data via factory mechanism
-			std::unique_ptr<dependency_graph::BaseData> blindData;
-			if(n.find("blind_data") != n.end() && !n["blind_data"].is_null()) {
-				blindData = dependency_graph::BaseData::create(n["blind_data"]["type"].get<std::string>());
-				assert(blindData != nullptr);
-				assert(dependency_graph::io::isSaveable(*blindData));
-				io::fromJson(n["blind_data"]["value"], *blindData);
+				// extract the blind data via factory mechanism
+				std::unique_ptr<dependency_graph::BaseData> blindData;
+				if(n.find("blind_data") != n.end() && !n["blind_data"].is_null()) {
+					blindData = dependency_graph::BaseData::create(n["blind_data"]["type"].get<std::string>());
+					assert(blindData != nullptr);
+					assert(dependency_graph::io::isSaveable(*blindData));
+					io::fromJson(n["blind_data"]["value"], *blindData);
+				}
+
+				// find the metadata instance
+				const dependency_graph::MetadataHandle& meta = dependency_graph::MetadataRegister::singleton()[n["type"].get<std::string>()];
+
+				// generate a new unique index for the node
+				assert(nodeIds.find(ni.key()) == nodeIds.end());
+				const dependency_graph::UniqueId nodeId;
+				nodeIds.insert(std::make_pair(ni.key(), nodeId));
+
+				if(ids)
+					ids->insert(nodeId);
+
+				// add the action to create the node itself
+				action.append(detail::createNodeAction(targetIndex, meta, n["name"].get<std::string>(),
+					*blindData, nodeId));
+
+				// recurse to add nested networks
+				//   -> this will also construct the internals of the network, and instantiate
+				//      its inputs and outputs
+				if(n["type"] == "network")
+					action.append(pasteNetwork(nodeId, n));
+
+				// and another action to set all port values based on the json content
+				//   -> as the node doesn't exist yet, we can't interpret the types
+				if(n.find("ports") != n.end())
+					for(possumwood::io::json::const_iterator pi = n["ports"].begin(); pi != n["ports"].end(); ++pi)
+						action.append(detail::setValueAction(nodeId, pi.key(), pi.value()));
 			}
-
-			// find the metadata instance
-			const dependency_graph::MetadataHandle& meta = dependency_graph::MetadataRegister::singleton()[n["type"].get<std::string>()];
-
-			// generate a new unique index for the node
-			assert(nodeIds.find(ni.key()) == nodeIds.end());
-			const dependency_graph::UniqueId nodeId;
-			nodeIds.insert(std::make_pair(ni.key(), nodeId));
-
-			if(ids)
-				ids->insert(nodeId);
-
-			// add the action to create the node itself
-			action.append(detail::createNodeAction(targetIndex, meta, n["name"].get<std::string>(),
-				*blindData, nodeId));
-
-			// recurse to add nested networks
-			//   -> this will also construct the internals of the network, and instantiate
-			//      its inputs and outputs
-			if(n["type"] == "network")
-				action.append(pasteNetwork(nodeId, n));
-
-			// and another action to set all port values based on the json content
-			//   -> as the node doesn't exist yet, we can't interpret the types
-			if(n.find("ports") != n.end())
-				for(possumwood::io::json::const_iterator pi = n["ports"].begin(); pi != n["ports"].end(); ++pi)
-					action.append(detail::setValueAction(nodeId, pi.key(), pi.value()));
 		}
 
 		// add all connections, based on "unique" IDs
-		for(auto& c : source["connections"]) {
-			auto id1 = nodeIds.find(c["out_node"].get<std::string>());
-			assert(id1 != nodeIds.end());
-			auto port1 = c["out_port"].get<std::string>();
+		if(source.find("connections") != source.end()) {
+			for(auto& c : source["connections"]) {
+				auto id1 = nodeIds.find(c["out_node"].get<std::string>());
+				assert(id1 != nodeIds.end());
+				auto port1 = c["out_port"].get<std::string>();
 
-			auto id2 = nodeIds.find(c["in_node"].get<std::string>());
-			assert(id2 != nodeIds.end());
-			auto port2 = c["in_port"].get<std::string>();
+				auto id2 = nodeIds.find(c["in_node"].get<std::string>());
+				assert(id2 != nodeIds.end());
+				auto port2 = c["in_port"].get<std::string>();
 
-			action.append(detail::connectAction(id1->second, port1, id2->second, port2));
+				action.append(detail::connectAction(id1->second, port1, id2->second, port2));
+			}
 		}
 
 		return action;
