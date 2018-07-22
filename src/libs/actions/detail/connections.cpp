@@ -129,31 +129,84 @@ possumwood::UndoStack::Action buildNetwork(const dependency_graph::UniqueId& fro
 	return action;
 }
 
-void doConnect(const dependency_graph::UniqueId& fromNode, std::size_t fromPort, const dependency_graph::UniqueId& toNode, std::size_t toPort) {
-	dependency_graph::NodeBase& from = detail::findNode(fromNode);
-	dependency_graph::NodeBase& to = detail::findNode(toNode);
+void doConnectByRefs(dependency_graph::NodeBase& fromNode, std::size_t fromPort, dependency_graph::NodeBase& toNode, std::size_t toPort) {
+	unlinkAll(fromNode.index(), toNode.index());
 
-	unlinkAll(fromNode, toNode);
+	assert(fromNode.portCount() > fromPort);
+	assert(toNode.portCount() > toPort);
 
-	assert(from.portCount() > fromPort);
-	assert(to.portCount() > toPort);
-
-	from.port(fromPort).connect(to.port(toPort));
+	fromNode.port(fromPort).connect(toNode.port(toPort));
 
 	possumwood::UndoStack tmpStack;
-	tmpStack.execute(buildNetwork(fromNode, toNode));
+	tmpStack.execute(buildNetwork(fromNode.index(), toNode.index()));
 }
 
-void doDisconnect(const dependency_graph::UniqueId& fromNode, std::size_t fromPort, const dependency_graph::UniqueId& toNode, std::size_t toPort) {
+void doConnectByIds(const dependency_graph::UniqueId& fromNode, std::size_t fromPort, const dependency_graph::UniqueId& toNode, std::size_t toPort) {
 	dependency_graph::NodeBase& from = detail::findNode(fromNode);
 	dependency_graph::NodeBase& to = detail::findNode(toNode);
 
-	unlinkAll(fromNode, toNode);
+	doConnectByRefs(from, fromPort, to, toPort);
+}
 
-	from.port(fromPort).disconnect(to.port(toPort));
+void doConnectByNames(const dependency_graph::UniqueId& fromNode, const std::string& fromPort, const dependency_graph::UniqueId& toNode, const std::string& toPort) {
+	dependency_graph::NodeBase& from = detail::findNode(fromNode);
+	dependency_graph::NodeBase& to = detail::findNode(toNode);
+
+	int fromPortId = -1;
+	for(std::size_t p = 0; p < from.portCount(); ++p)
+		if(from.port(p).name() == fromPort) {
+			fromPortId = p;
+			break;
+		}
+
+	int toPortId = -1;
+	for(std::size_t p = 0; p < to.portCount(); ++p)
+		if(to.port(p).name() == toPort) {
+			toPortId = p;
+			break;
+		}
+
+	doConnectByRefs(from, fromPortId, to, toPortId);
+}
+
+void doDisconnectByRefs(dependency_graph::NodeBase& fromNode, std::size_t fromPort, dependency_graph::NodeBase& toNode, std::size_t toPort) {
+	unlinkAll(fromNode.index(), toNode.index());
+
+	assert(fromNode.portCount() > fromPort);
+	assert(toNode.portCount() > toPort);
+
+	fromNode.port(fromPort).disconnect(toNode.port(toPort));
 
 	possumwood::UndoStack tmpStack;
-	tmpStack.execute(buildNetwork(fromNode, toNode));
+	tmpStack.execute(buildNetwork(fromNode.index(), toNode.index()));
+}
+
+void doDisconnectByIds(const dependency_graph::UniqueId& fromNode, std::size_t fromPort, const dependency_graph::UniqueId& toNode, std::size_t toPort) {
+	dependency_graph::NodeBase& from = detail::findNode(fromNode);
+	dependency_graph::NodeBase& to = detail::findNode(toNode);
+
+	doDisconnectByRefs(from, fromPort, to, toPort);
+}
+
+void doDisconnectByNames(const dependency_graph::UniqueId& fromNode, const std::string& fromPort, const dependency_graph::UniqueId& toNode, const std::string& toPort) {
+	dependency_graph::NodeBase& from = detail::findNode(fromNode);
+	dependency_graph::NodeBase& to = detail::findNode(toNode);
+
+	int fromPortId = -1;
+	for(std::size_t p = 0; p < from.portCount(); ++p)
+		if(from.port(p).name() == fromPort) {
+			fromPortId = p;
+			break;
+		}
+
+	int toPortId = -1;
+	for(std::size_t p = 0; p < to.portCount(); ++p)
+		if(to.port(p).name() == toPort) {
+			toPortId = p;
+			break;
+		}
+
+	doDisconnectByRefs(from, fromPortId, to, toPortId);
 }
 
 }
@@ -164,10 +217,10 @@ possumwood::UndoStack::Action disconnectAction(const dependency_graph::UniqueId&
 
 	// the initial connect / disconnect action
 	action.addCommand(
-		std::bind(&doDisconnect,
+		std::bind(&doDisconnectByIds,
 			fromNodeId, fromPort,
 			toNodeId, toPort),
-		std::bind(&doConnect,
+		std::bind(&doConnectByIds,
 			fromNodeId, fromPort,
 			toNodeId, toPort)
 	);
@@ -185,14 +238,28 @@ possumwood::UndoStack::Action disconnectAction(dependency_graph::Port& p1, depen
 possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort) {
 	possumwood::UndoStack::Action action;
 
-	// the connect action
 	action.addCommand(
-		std::bind(&doConnect,
+		std::bind(&doConnectByIds,
 			fromNodeId, fromPort,
 			toNodeId, toPort),
-		std::bind(&doDisconnect,
+		std::bind(&doDisconnectByIds,
 			fromNodeId, fromPort,
 			toNodeId, toPort)
+	);
+
+	return action;
+}
+
+possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fromNodeId, const std::string& fromPortName, const dependency_graph::UniqueId& toNodeId, const std::string& toPortName) {
+	possumwood::UndoStack::Action action;
+
+	action.addCommand(
+		std::bind(&doConnectByNames,
+			fromNodeId, fromPortName,
+			toNodeId, toPortName),
+		std::bind(&doDisconnectByNames,
+			fromNodeId, fromPortName,
+			toNodeId, toPortName)
 	);
 
 	return action;
