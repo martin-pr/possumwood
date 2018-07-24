@@ -31,7 +31,11 @@ dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& curre
 	if(data)
 		dataRef = boost::optional<const dependency_graph::Datablock&>(*data);
 
-	dependency_graph::NodeBase& n = netBase.as<dependency_graph::Network>().nodes().add(meta, name, blindData->clone(), dataRef, id);
+	std::unique_ptr<dependency_graph::BaseData> d;
+	if(blindData)
+		d = blindData->clone();
+
+	dependency_graph::NodeBase& n = netBase.as<dependency_graph::Network>().nodes().add(meta, name, std::move(d), dataRef, id);
 	assert(n.index() == id);
 	return n;
 }
@@ -50,11 +54,11 @@ void doRemoveNode(const dependency_graph::UniqueId& id) {
 }
 
 possumwood::UndoStack::Action createNodeAction(const dependency_graph::UniqueId& currentNetworkId, const dependency_graph::MetadataHandle& meta, const std::string& name,
-	const dependency_graph::BaseData& data, const dependency_graph::UniqueId& id,
+	std::unique_ptr<dependency_graph::BaseData>&& data, const dependency_graph::UniqueId& id,
 	boost::optional<const dependency_graph::Datablock> datablock) {
 
 	// make a copy of blind data for binding
-	std::shared_ptr<const dependency_graph::BaseData> blindData(data.clone());
+	std::shared_ptr<const dependency_graph::BaseData> blindData(data.release());
 
 	possumwood::UndoStack::Action action;
 	action.addCommand(
@@ -66,10 +70,11 @@ possumwood::UndoStack::Action createNodeAction(const dependency_graph::UniqueId&
 }
 
 
-possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::BaseData& data, const dependency_graph::UniqueId& id,
+possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name,
+	std::unique_ptr<dependency_graph::BaseData>&& data, const dependency_graph::UniqueId& id,
 	boost::optional<const dependency_graph::Datablock> datablock) {
 
-	return createNodeAction(current.index(), meta, name, data, id, datablock);
+	return createNodeAction(current.index(), meta, name, std::move(data), id, datablock);
 }
 
 possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node) {

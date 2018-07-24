@@ -24,12 +24,13 @@ void changeMetadata(dependency_graph::NodeBase& node, const dependency_graph::Me
 
 void cut(const dependency_graph::Selection& selection);
 void copy(const dependency_graph::Selection& selection);
-void paste(dependency_graph::Network& current, dependency_graph::Selection& selection, const possumwood::io::json& json);
 void paste(dependency_graph::Network& current, dependency_graph::Selection& selection);
 void remove(const dependency_graph::Selection& selection);
 
 void move(const std::map<dependency_graph::NodeBase*, possumwood::NodeData::Point>& nodes);
 
+void fromJson(dependency_graph::Network& current, dependency_graph::Selection& selection, const possumwood::io::json& json);
+possumwood::io::json toJson(const dependency_graph::Selection& selection = dependency_graph::Selection());
 ////
 
 template<typename T>

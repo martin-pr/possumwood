@@ -52,6 +52,8 @@ class UndoStack : public boost::noncopyable {
 		std::size_t redoActionCount() const;
 		bool empty() const;
 
+		void clear();
+
 	protected:
 	private:
 		std::vector<Action> m_undoStack, m_redoStack;

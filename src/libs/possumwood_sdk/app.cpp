@@ -6,12 +6,13 @@
 #include <boost/filesystem.hpp>
 
 #include <QMainWindow>
+#include <QCoreApplication>
 
 #include <dependency_graph/port.inl>
 #include <dependency_graph/node.h>
 #include <dependency_graph/node_base.inl>
 
-#include <actions/io/graph.h>
+#include <actions/actions.h>
 
 #include "config.inl"
 
@@ -57,27 +58,18 @@ void App::newFile() {
 	m_filename = "";
 }
 
-void App::loadFile(const boost::filesystem::path& filename) {
-	if(!boost::filesystem::exists(filename))
-		throw std::runtime_error("Cannot open " + filename.string() +
-		                         " - file not found.");
+void App::loadFile(const possumwood::io::json& json) {
+	// read the graph
+	graph().clear();
+	undoStack().clear();
 
-	// read the json file
-	std::ifstream in(filename.string());
-	possumwood::io::json json;
-	in >> json;
+	dependency_graph::Selection selection; // throwaway
+	possumwood::actions::fromJson(graph(), selection, json);
 
-	// update the opened filename
-	const boost::filesystem::path oldFilename = m_filename;
-	m_filename = filename;
+	undoStack().clear();
 
-	try {
-		// read the graph
-		graph().clear();
-		possumwood::io::adl_serializer<dependency_graph::Graph>::from_json(json,
-		                                                                         graph());
-
-		// and read the scene config
+	// and read the scene config
+	if(json.find("scene_config") != json.end()) {
 		auto& config = json["scene_config"];
 
 		for(auto it = config.begin(); it != config.end(); ++it) {
@@ -92,14 +84,34 @@ void App::loadFile(const boost::filesystem::path& filename) {
 			else
 				assert(false);
 		}
+	}
 
-		// read the UI configuration
+	// read the UI configuration
+	if(QCoreApplication::instance() != nullptr) {
 		if(json.find("ui_geometry") != json.end())
 			mainWindow()->restoreGeometry(
 			    QByteArray::fromBase64(json["ui_geometry"].get<std::string>().c_str()));
 		if(json.find("ui_state") != json.end())
 			mainWindow()->restoreState(
 			    QByteArray::fromBase64(json["ui_state"].get<std::string>().c_str()));
+	}
+}
+
+void App::loadFile(const boost::filesystem::path& filename) {
+	if(!boost::filesystem::exists(filename))
+		throw std::runtime_error("Cannot open " + filename.string() +
+		                         " - file not found.");
+	// read the json file
+	std::ifstream in(filename.string());
+	possumwood::io::json json;
+	in >> json;
+
+	// update the opened filename
+	const boost::filesystem::path oldFilename = m_filename;
+	m_filename = filename;
+
+	try {
+		loadFile(json);
 	}
 	catch(...) {
 		// something bad happened - return back the filename value
@@ -114,26 +126,34 @@ void App::saveFile() {
 	saveFile(m_filename);
 }
 
-void App::saveFile(const boost::filesystem::path& fn) {
+void App::saveFile(possumwood::io::json& json, bool saveSceneConfig) {
 	// make a json instance containing the graph
-	possumwood::io::json json;
-	json = graph();
+	json = possumwood::actions::toJson();
 
 	// save scene config into the json object
-	auto& config = json["scene_config"];
-	for(auto& i : possumwood::App::instance().sceneConfig())
-		if(i.is<int>())
-			config[i.name()] = i.as<int>();
-		else if(i.is<float>())
-			config[i.name()] = i.as<float>();
-		else if(i.is<std::string>())
-			config[i.name()] = i.as<std::string>();
-		else
-			assert(false);
+	if(saveSceneConfig) {
+		auto& config = json["scene_config"];
+		for(auto& i : possumwood::App::instance().sceneConfig())
+			if(i.is<int>())
+				config[i.name()] = i.as<int>();
+			else if(i.is<float>())
+				config[i.name()] = i.as<float>();
+			else if(i.is<std::string>())
+				config[i.name()] = i.as<std::string>();
+			else
+				assert(false);
+	}
 
 	// and save the UI configuration
-	json["ui_geometry"] = mainWindow()->saveGeometry().toBase64().data();
-	json["ui_state"] = mainWindow()->saveState().toBase64().data();
+	if(QCoreApplication::instance() != nullptr) {
+		json["ui_geometry"] = mainWindow()->saveGeometry().toBase64().data();
+		json["ui_state"] = mainWindow()->saveState().toBase64().data();
+	}
+}
+
+void App::saveFile(const boost::filesystem::path& fn) {
+	possumwood::io::json json;
+	saveFile(json);
 
 	// save the json to the file
 	std::ofstream out(fn.string());

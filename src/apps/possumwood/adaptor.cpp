@@ -13,7 +13,6 @@
 #include <QStyle>
 
 #include <dependency_graph/node_base.inl>
-#include <actions/io/graph.h>
 
 #include <qt_node_editor/connected_edge.h>
 #include <possumwood_sdk/metadata.h>

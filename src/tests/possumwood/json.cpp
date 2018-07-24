@@ -3,38 +3,69 @@
 #include <dependency_graph/graph.h>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/node.h>
-#include <actions/io/graph.h>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/rtti.h>
 #include <dependency_graph/metadata_register.h>
+
+#include <actions/actions.h>
+
+#include <possumwood_sdk/app.h>
 
 #include "common.h"
 
 using namespace dependency_graph;
 using possumwood::io::json;
 
+namespace {
+
+dependency_graph::NodeBase& findNode(dependency_graph::Network& net, const std::string& name) {
+	for(auto& n : net.nodes())
+		if(n.name() == name)
+			return n;
+
+	BOOST_REQUIRE(false && "Node not found, fail");
+	throw;
+}
+
+dependency_graph::NodeBase& findNode(const std::string& name) {
+	return findNode(possumwood::AppCore::instance().graph(), name);
+}
+
+}
+
 BOOST_AUTO_TEST_CASE(simple_graph_saving) {
-	Graph g;
+	possumwood::App app;
+
+	// make sure the static handles are initialised
+	additionNode();
+	multiplicationNode();
 
 	// empty serialization
 	{
 		const json result = "{\"nodes\":{},\"connections\":[]}"_json;
 
-		::json json;
-		BOOST_REQUIRE_NO_THROW(json = g);
-		BOOST_CHECK_EQUAL(json, result);
+		{
+			assert(!app.graph().hasParentNetwork());
 
-		Graph g2;
-		possumwood::io::adl_serializer<Graph>::from_json(json, g2);
+			::json json;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
 
-		::json json2;
-		BOOST_REQUIRE_NO_THROW(json2 = g2);
-		BOOST_CHECK_EQUAL(json2, result);
+			BOOST_CHECK_EQUAL(json, result);
+		}
+
+		{
+			BOOST_REQUIRE_NO_THROW(app.loadFile(result));
+
+			::json json2;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
+			BOOST_CHECK_EQUAL(json2, result);
+		}
 	}
 
 	// a single node, no connections, no blind data
-	NodeBase& a = g.nodes().add(additionNode(), "add");
 	{
+		NodeBase& a = app.graph().nodes().add(additionNode(), "add");
+
 		const json result(
 			{
 				{
@@ -58,24 +89,27 @@ BOOST_AUTO_TEST_CASE(simple_graph_saving) {
 		a.port(0).set<float>(2.0f);
 		a.port(1).set<float>(4.0f);
 
+		{
+			::json json;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
+			BOOST_CHECK_EQUAL(json, result);
 
-		::json json;
-		BOOST_REQUIRE_NO_THROW(json = g);
-		BOOST_CHECK_EQUAL(json, result);
 
+			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+		}
 
-		Graph g2;
-		possumwood::io::adl_serializer<Graph>::from_json(json, g2);
-
-		::json json2;
-		BOOST_REQUIRE_NO_THROW(json2 = g2);
-		BOOST_CHECK_EQUAL(json2, result);
+		{
+			::json json2;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
+			BOOST_CHECK_EQUAL(json2, result);
+		}
 	}
 
 	// three nodes, a connection, blind data
-	NodeBase& m = g.nodes().add(multiplicationNode(), "mult");
-	g.nodes().add(multiplicationNode(), "mult");
 	{
+		NodeBase& m = app.graph().nodes().add(multiplicationNode(), "mult");
+		app.graph().nodes().add(multiplicationNode(), "mult");
+
 		const json result(
 			{
 				{
@@ -128,40 +162,40 @@ BOOST_AUTO_TEST_CASE(simple_graph_saving) {
 		m.port(0).set<float>(3.0f);
 		m.port(1).set<float>(5.0f);
 
-		a.port(2).connect(m.port(0));
+		findNode("add").port(2).connect(m.port(0));
 
 		m.setBlindData<std::string>("test blind data");
 
 
-		::json json;
-		BOOST_REQUIRE_NO_THROW(json = g);
-		BOOST_CHECK_EQUAL(json, result);
+		{
+			::json json;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
+			BOOST_CHECK_EQUAL(json, result);
 
 
-		Graph g2;
-		possumwood::io::adl_serializer<Graph>::from_json(json, g2);
+			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+		}
 
-		::json json2;
-		BOOST_REQUIRE_NO_THROW(json2 = g2);
-		BOOST_CHECK_EQUAL(json2, result);
+		{
+			::json json2;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
+			BOOST_CHECK_EQUAL(json2, result);
+		}
 	}
 }
 
 
 BOOST_AUTO_TEST_CASE(nested_graph_saving) {
-	Graph g;
-
-	Network* net = nullptr;
+	possumwood::App app;
 
 	// empty network serialization
 	{
 		// add an empty network
 		{
 			MetadataHandle networkMeta = MetadataRegister::singleton()["network"];
-			NodeBase& base = g.nodes().add(networkMeta, "test_network");
+			NodeBase& base = app.graph().nodes().add(networkMeta, "test_network");
 
 			BOOST_REQUIRE(base.is<Network>());
-			net = &(base.as<Network>());
 		}
 
 		const json result(
@@ -186,20 +220,27 @@ BOOST_AUTO_TEST_CASE(nested_graph_saving) {
 
 		::json json;
 
-		BOOST_REQUIRE_NO_THROW(json = g);
-		BOOST_CHECK_EQUAL(json, result);
+		{
+			::json json;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
+			BOOST_CHECK_EQUAL(json, result);
 
-		Graph g2;
-		possumwood::io::adl_serializer<Graph>::from_json(json, g2);
 
-		::json json2;
-		BOOST_REQUIRE_NO_THROW(json2 = g2);
-		BOOST_CHECK_EQUAL(json2, result);
+			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+		}
+
+		{
+			::json json2;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
+			BOOST_CHECK_EQUAL(json2, result);
+		}
 	}
 
 	// a single node, no connections, no blind data
-	NodeBase& a = net->nodes().add(additionNode(), "add");
 	{
+		NodeBase& a = findNode("test_network").as<dependency_graph::Network>().
+			nodes().add(additionNode(), "add");
+
 		const json result(
 			{
 				{
@@ -232,24 +273,29 @@ BOOST_AUTO_TEST_CASE(nested_graph_saving) {
 		a.port(0).set<float>(2.0f);
 		a.port(1).set<float>(4.0f);
 
-		// test saving
-		::json json;
-		BOOST_REQUIRE_NO_THROW(json = g);
-		BOOST_CHECK_EQUAL(json, result);
+		{
+			::json json;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
+			BOOST_CHECK_EQUAL(json, result);
 
-		// and test that it can be loaded again
-		Graph g2;
-		possumwood::io::adl_serializer<Graph>::from_json(json, g2);
 
-		::json json2;
-		BOOST_REQUIRE_NO_THROW(json2 = g2);
-		BOOST_CHECK_EQUAL(json2, result);
+			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+		}
+
+		{
+			::json json2;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
+			BOOST_CHECK_EQUAL(json2, result);
+		}
 	}
 
 	// three nodes, a connection, blind data
-	NodeBase& m = net->nodes().add(multiplicationNode(), "mult");
-	net->nodes().add(multiplicationNode(), "mult");
 	{
+		auto& net = findNode("test_network").as<dependency_graph::Network>();
+
+		NodeBase& m = net.nodes().add(multiplicationNode(), "mult");
+		net.nodes().add(multiplicationNode(), "mult");
+
 		const json result(
 			{
 				{
@@ -313,21 +359,24 @@ BOOST_AUTO_TEST_CASE(nested_graph_saving) {
 		m.port(0).set<float>(3.0f);
 		m.port(1).set<float>(5.0f);
 
-		a.port(2).connect(m.port(0));
+		findNode(net, "add").port(2).connect(m.port(0));
 
 		m.setBlindData<std::string>("test blind data");
 
 
-		::json json;
-		BOOST_REQUIRE_NO_THROW(json = g);
-		BOOST_CHECK_EQUAL(json, result);
+		{
+			::json json;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
+			BOOST_CHECK_EQUAL(json, result);
 
 
-		Graph g2;
-		possumwood::io::adl_serializer<Graph>::from_json(json, g2);
+			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+		}
 
-		::json json2;
-		BOOST_REQUIRE_NO_THROW(json2 = g2);
-		BOOST_CHECK_EQUAL(json2, result);
+		{
+			::json json2;
+			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
+			BOOST_CHECK_EQUAL(json2, result);
+		}
 	}
 }

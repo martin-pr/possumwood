@@ -10,8 +10,6 @@
 #include <dependency_graph/detail.h>
 #include <dependency_graph/metadata_register.h>
 
-#include "io/graph.h"
-
 #include "detail/tools.h"
 #include "detail/nodes.h"
 #include "detail/connections.h"
@@ -35,9 +33,10 @@ void doSetBlindData(const dependency_graph::UniqueId& node, const possumwood::No
 /////////////////////////////////////////////////////////////////////
 
 void createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id) {
-	dependency_graph::Data<possumwood::NodeData> nodeData(_data);
+	std::unique_ptr<dependency_graph::BaseData> nodeData(
+		new dependency_graph::Data<possumwood::NodeData> (_data));
 
-	auto action = detail::createNodeAction(current, meta, name, nodeData, id);
+	auto action = detail::createNodeAction(current, meta, name, std::move(nodeData), id);
 
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
@@ -79,14 +78,120 @@ void cut(const dependency_graph::Selection& selection) {
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
-void copy(const dependency_graph::Selection& selection) {
+namespace {
+
+template<typename T>
+const T& dereference(const std::reference_wrapper<T>& n) {
+	return n.get();
+}
+
+template<typename T>
+const T& dereference(const T& n) {
+	return n;
+}
+
+possumwood::io::json writeNode(const dependency_graph::NodeBase& n) {
+	possumwood::io::json j;
+
+	j["name"] = n.name();
+	j["type"] = n.metadata()->type();
+
+	for(size_t pi=0; pi<n.portCount(); ++pi) {
+		const dependency_graph::Port& p = n.port(pi);
+
+		// only serialize unconnected inputs
+		if(p.category() == dependency_graph::Attr::kInput && !n.network().connections().connectedFrom(p))
+			if(!n.datablock().isNull(pi) && dependency_graph::io::isSaveable(n.datablock().data(pi)))
+				io::toJson(j["ports"][p.name()], n.datablock().data(pi));
+	}
+
+	if(not n.hasBlindData())
+		j["blind_data"] = nullptr;
+	else {
+		assert(dependency_graph::io::isSaveable(n.blindData()));
+		io::toJson(j["blind_data"]["value"], n.blindData());
+		j["blind_data"]["type"] = n.blindDataType();
+	}
+
+	return j;
+}
+
+
+possumwood::io::json writeNetwork(const ::dependency_graph::Network& net, const dependency_graph::Selection& selection = dependency_graph::Selection());
+
+/// a wrapper of node writing, with CONTAINER either a Nodes instance or a Selection
+template<typename CONTAINER>
+void writeNodes(possumwood::io::json& j, const CONTAINER& nodes, std::map<std::string, unsigned>& uniqueIds, std::map<const ::dependency_graph::NodeBase*, std::string>& nodeIds) {
+	for(auto& ni : nodes) {
+		const dependency_graph::NodeBase& n = dereference(ni);
+
+		// figure out a unique name - type with a number appended
+		std::string name = n.metadata()->type();
+		auto slash = name.rfind('/');
+		if(slash != std::string::npos)
+			name = name.substr(slash+1);
+		name += "_" + std::to_string(uniqueIds[name]++);
+
+		// and use this to save the node
+		j[name] = writeNode(n);
+
+		if(n.is<dependency_graph::Network>()) {
+			auto tmp = writeNetwork(n.as<dependency_graph::Network>());
+			for(possumwood::io::json::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
+				j[name][i.key()] = i.value();
+		}
+
+		// remember the assigned ID for connection saving
+		nodeIds[&n] = name;
+	}
+}
+
+possumwood::io::json writeNetwork(const dependency_graph::Network& net, const dependency_graph::Selection& selection) {
+	possumwood::io::json j;
+
+	std::map<std::string, unsigned> uniqueIds;
+	std::map<const ::dependency_graph::NodeBase*, std::string> nodeIds;
+
+	j["nodes"] = "{}"_json;
+	if(selection.empty())
+		writeNodes(j["nodes"], net.nodes(), uniqueIds, nodeIds);
+	else
+		writeNodes(j["nodes"], selection.nodes(), uniqueIds, nodeIds);
+
+	j["connections"] = "[]"_json;
+	for(auto& c : net.connections()) {
+		auto itOut = nodeIds.find(&c.first.node());
+		auto itIn = nodeIds.find(&c.second.node());
+		if(itOut != nodeIds.end() && itIn != nodeIds.end()) {
+			j["connections"].push_back("{}"_json);
+
+			auto& connection = j["connections"].back();
+
+			connection["out_node"] = itOut->second;
+			connection["out_port"] = c.first.name();
+			connection["in_node"] = itIn->second;
+			connection["in_port"] = c.second.name();
+		}
+	}
+
+	return j;
+}
+
+}
+
+possumwood::io::json toJson(const dependency_graph::Selection& selection) {
 	dependency_graph::Network* net = &possumwood::AppCore::instance().graph();
 	if(!selection.empty() && selection.nodes().begin()->get().hasParentNetwork())
 		net = &selection.nodes().begin()->get().network();
 
 	// convert the selection to JSON string
-	possumwood::io::json json;
-	possumwood::io::to_json(json, *net, selection);
+	possumwood::io::json json = writeNetwork(*net, selection);
+
+	return json;
+}
+
+void copy(const dependency_graph::Selection& selection) {
+	auto json = toJson(selection);
 
 	std::stringstream ss;
 	ss << std::setw(4) << json;
@@ -130,7 +235,7 @@ namespace {
 
 				// add the action to create the node itself
 				action.append(detail::createNodeAction(targetIndex, meta, n["name"].get<std::string>(),
-					*blindData, nodeId));
+					std::move(blindData), nodeId));
 
 				// recurse to add nested networks
 				//   -> this will also construct the internals of the network, and instantiate
@@ -171,7 +276,7 @@ void paste(dependency_graph::Network& current, dependency_graph::Selection& sele
 		auto json = possumwood::io::json::parse(Clipboard::instance().clipboardContent());
 
 		// and pass it to the paste() implementation
-		paste(current, selection, json);
+		fromJson(current, selection, json);
 	}
 	catch(std::exception& e) {
 		// do nothing
@@ -181,7 +286,7 @@ void paste(dependency_graph::Network& current, dependency_graph::Selection& sele
 	}
 }
 
-void paste(dependency_graph::Network& current, dependency_graph::Selection& selection, const possumwood::io::json& json) {
+void fromJson(dependency_graph::Network& current, dependency_graph::Selection& selection, const possumwood::io::json& json) {
 	possumwood::UndoStack::Action action;
 
 	std::set<dependency_graph::UniqueId> pastedNodeIds;

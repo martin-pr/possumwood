@@ -290,7 +290,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		if(!filename.isEmpty()) {
 			try {
 				m_properties->show({});
-				possumwood::App::instance().loadFile(filename.toStdString());
+				possumwood::App::instance().loadFile(boost::filesystem::path(filename.toStdString()));
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error loading file...", "Error loading " + filename + ":\n" + err.what());

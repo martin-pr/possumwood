@@ -131,4 +131,9 @@ bool UndoStack::empty() const {
 	return m_undoStack.empty() && m_redoStack.empty();
 }
 
+void UndoStack::clear() {
+	m_undoStack.clear();
+	m_redoStack.clear();
+}
+
 }
