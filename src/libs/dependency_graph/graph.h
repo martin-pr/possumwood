@@ -33,9 +33,12 @@ class Graph : public Network {
 		/// per-node state change callback
 		boost::signals2::connection onStateChanged(std::function<void(const NodeBase&)> callback);
 
+		boost::signals2::connection onMetadataChanged(std::function<void(NodeBase&)> callback);
+
 	private:
 		void nameChanged(NodeBase& node);
 		void stateChanged(NodeBase& node);
+		void metadataChanged(NodeBase& node);
 		void dirtyChanged();
 		void nodeAdded(NodeBase& node);
 		void nodeRemoved(NodeBase& node);

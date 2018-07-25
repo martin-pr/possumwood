@@ -52,6 +52,10 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 		[this](const dependency_graph::NodeBase& n) { onStateChanged(n); }
 	));
 
+	m_signals.push_back(graph->onMetadataChanged(
+		[this](dependency_graph::NodeBase& n) { onMetadataChanged(n); }
+	));
+
 	// instantiate the graph widget
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setContentsMargins(0,0,0,0);
@@ -369,6 +373,24 @@ void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
 			n.editorNode->setState(node_editor::Node::kInfo);
 		else
 			n.editorNode->setState(node_editor::Node::kOk);
+	}
+}
+
+void Adaptor::onMetadataChanged(dependency_graph::NodeBase& node) {
+	if(&node.network() == m_currentNetwork) {
+		auto& n = m_index[node.index()];
+
+#ifndef NDEBUG
+		// make sure there are no connections
+		for(unsigned ei=0;ei<m_graphWidget->scene().edgeCount();++ei) {
+			auto& e = m_graphWidget->scene().edge(ei);
+			assert(&e.fromPort().parentNode() != n.editorNode);
+			assert(&e.toPort().parentNode() != n.editorNode);
+		}
+#endif
+		// remove and add the node
+		onRemoveNode(node);
+		onAddNode(node);
 	}
 }
 

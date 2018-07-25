@@ -6,7 +6,7 @@ namespace dependency_graph {
 
 struct Graph::Signals {
 	boost::signals2::signal<void(NodeBase&)> m_onAddNode, m_onRemoveNode;
-	boost::signals2::signal<void(NodeBase&)> m_onNameChanged, m_onBlindDataChanged;
+	boost::signals2::signal<void(NodeBase&)> m_onNameChanged, m_onBlindDataChanged, m_onMetadataChanged;
 	boost::signals2::signal<void(Port&, Port&)> m_onConnect, m_onDisconnect;
 	boost::signals2::signal<void()> m_onDirty;
 	boost::signals2::signal<void(const NodeBase&)> m_onStateChanged;
@@ -51,6 +51,10 @@ boost::signals2::connection Graph::onStateChanged(std::function<void(const NodeB
 	return m_signals->m_onStateChanged.connect(callback);
 }
 
+boost::signals2::connection Graph::onMetadataChanged(std::function<void(NodeBase&)> callback) {
+	return m_signals->m_onMetadataChanged.connect(callback);
+}
+
 void Graph::connected(Port& p1, Port& p2) {
 	m_signals->m_onConnect(p1, p2);
 }
@@ -65,6 +69,10 @@ void Graph::nameChanged(NodeBase& node) {
 
 void Graph::stateChanged(NodeBase& node) {
 	m_signals->m_onStateChanged(node);
+}
+
+void Graph::metadataChanged(NodeBase& node) {
+	m_signals->m_onMetadataChanged(node);
 }
 
 void Graph::dirtyChanged() {
