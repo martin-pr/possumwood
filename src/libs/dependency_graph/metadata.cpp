@@ -53,6 +53,13 @@ void Metadata::addAttribute(OutAttr<void>& out, const std::string& name) {
 	assert(out.isValid());
 }
 
+unsigned Metadata::doAddAttribute(const std::string& name, Attr::Category cat, const BaseData& data) {
+	Attr tmp(name, cat, data);
+	doAddAttribute(tmp);
+	return tmp.offset();
+}
+
+
 void Metadata::doAddAttribute(Attr& attr) {
 	attr.setOffset(m_attrs.size());
 

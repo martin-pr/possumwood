@@ -1,5 +1,7 @@
 #include "attr.inl"
 
+#include "datablock.h"
+
 namespace dependency_graph {
 
 struct Attr::AttrData {

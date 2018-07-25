@@ -81,7 +81,7 @@ possumwood::UndoStack::Action buildNetwork(const dependency_graph::UniqueId& fro
 				assert(conn);
 
 				dependency_graph::Attr out = conn->node().metadata()->attr(conn->index());;
-				dependency_graph::detail::MetadataAccess::addAttribute(*meta, out);
+				dependency_graph::detail::MetadataAccess::addAttribute(*meta, conn->node().name(), out.category(), *out.createData());
 
 				// also port the value
 				values.push_back(conn->node().port(conn->index()).getData().clone());
@@ -165,6 +165,12 @@ void doConnectByNames(const dependency_graph::UniqueId& fromNode, const std::str
 			toPortId = p;
 			break;
 		}
+
+	if(fromPortId < 0)
+		throw std::runtime_error("Cannot connect "+from.name()+":"+fromPort+" - port doesn't exist on the node.");
+
+	if(toPortId < 0)
+		throw std::runtime_error("Cannot connect "+to.name()+":"+toPort+" - port doesn't exist on the node.");
 
 	doConnectByRefs(from, fromPortId, to, toPortId);
 }

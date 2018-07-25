@@ -12,6 +12,7 @@
 
 #include "state.h"
 #include "data.h"
+#include "attr.h"
 
 namespace dependency_graph {
 
@@ -87,6 +88,7 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 
 
 	protected:
+		unsigned doAddAttribute(const std::string& name, Attr::Category cat, const BaseData& data);
 		virtual void doAddAttribute(Attr& attr);
 
 	private:
