@@ -11,4 +11,6 @@ namespace possumwood { namespace actions { namespace detail {
 
 possumwood::UndoStack::Action changeMetadataAction(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle);
 
+void buildNetwork(dependency_graph::Network& net);
+
 } } }
