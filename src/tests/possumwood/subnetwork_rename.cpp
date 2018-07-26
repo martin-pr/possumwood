@@ -109,10 +109,74 @@ BOOST_AUTO_TEST_CASE(network_in_out_rename) {
 		auto& net = findNode("test_network").as<dependency_graph::Network>();
 		BOOST_CHECK_EQUAL(net.portCount(), 2u);
 		BOOST_CHECK_EQUAL(net.port(0).name(), "this_is_an_input");
+		BOOST_CHECK_EQUAL(net.port(0).get<float>(), 5.0f);
 		BOOST_CHECK_EQUAL(net.port(1).name(), "this_is_an_output");
+		BOOST_CHECK_EQUAL(net.port(1).get<float>(), 5.0f);
 
 		// rename the input node
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::renameNode(findNode(net, "this_is_an_input"), "in"));
 		// which should change metadata and rename the input port on the network
+		BOOST_CHECK_EQUAL(net.portCount(), 2u);
+		BOOST_CHECK_EQUAL(net.port(0).name(), "in");
+		BOOST_CHECK_EQUAL(net.port(0).get<float>(), 5.0f);
+		BOOST_CHECK_EQUAL(net.port(1).name(), "this_is_an_output");
+		BOOST_CHECK_EQUAL(net.port(1).get<float>(), 5.0f);
 
+		// rename the output node
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::renameNode(findNode(net, "this_is_an_output"), "out"));
+		// which should change metadata and rename the output port on the network
+		BOOST_CHECK_EQUAL(net.portCount(), 2u);
+		BOOST_CHECK_EQUAL(net.port(0).name(), "in");
+		BOOST_CHECK_EQUAL(net.port(0).get<float>(), 5.0f);
+		BOOST_CHECK_EQUAL(net.port(1).name(), "out");
+		BOOST_CHECK_EQUAL(net.port(1).get<float>(), 5.0f);
+
+		// check the undo queue
+		BOOST_REQUIRE_EQUAL(app.undoStack().undoActionCount(), 2u);
+		BOOST_REQUIRE_EQUAL(app.undoStack().redoActionCount(), 0u);
+
+		// undo, once
+		BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
+
+		BOOST_CHECK_EQUAL(net.portCount(), 2u);
+		BOOST_CHECK_EQUAL(net.port(0).name(), "in");
+		BOOST_CHECK_EQUAL(net.port(0).get<float>(), 5.0f);
+		BOOST_CHECK_EQUAL(net.port(1).name(), "this_is_an_output");
+		BOOST_CHECK_EQUAL(net.port(1).get<float>(), 5.0f);
+
+		// undo, second time
+		BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
+
+		BOOST_CHECK_EQUAL(net.portCount(), 2u);
+		BOOST_CHECK_EQUAL(net.port(0).name(), "this_is_an_input");
+		BOOST_CHECK_EQUAL(net.port(0).get<float>(), 5.0f);
+		BOOST_CHECK_EQUAL(net.port(1).name(), "this_is_an_output");
+		BOOST_CHECK_EQUAL(net.port(1).get<float>(), 5.0f);
+
+		// check the undo queue
+		BOOST_REQUIRE_EQUAL(app.undoStack().undoActionCount(), 0u);
+		BOOST_REQUIRE_EQUAL(app.undoStack().redoActionCount(), 2u);
+
+		// redo, once
+		BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
+
+		BOOST_CHECK_EQUAL(net.portCount(), 2u);
+		BOOST_CHECK_EQUAL(net.port(0).name(), "in");
+		BOOST_CHECK_EQUAL(net.port(0).get<float>(), 5.0f);
+		BOOST_CHECK_EQUAL(net.port(1).name(), "this_is_an_output");
+		BOOST_CHECK_EQUAL(net.port(1).get<float>(), 5.0f);
+
+		// redo, second time
+		BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
+
+		BOOST_CHECK_EQUAL(net.portCount(), 2u);
+		BOOST_CHECK_EQUAL(net.port(0).name(), "in");
+		BOOST_CHECK_EQUAL(net.port(0).get<float>(), 5.0f);
+		BOOST_CHECK_EQUAL(net.port(1).name(), "out");
+		BOOST_CHECK_EQUAL(net.port(1).get<float>(), 5.0f);
+
+		// check the undo queue
+		BOOST_REQUIRE_EQUAL(app.undoStack().undoActionCount(), 2u);
+		BOOST_REQUIRE_EQUAL(app.undoStack().redoActionCount(), 0u);
 	}
 }

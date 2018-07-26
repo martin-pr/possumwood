@@ -4,6 +4,7 @@
 
 #include "tools.h"
 #include "connections.h"
+#include "metadata.h"
 
 namespace possumwood { namespace actions { namespace detail {
 
@@ -136,6 +137,40 @@ possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _s
 	/// and all nodes
 	for(auto& n : selection.nodes())
 		action.append(removeNodeAction(n));
+
+	return action;
+}
+
+namespace {
+
+void doRenameNode(const dependency_graph::UniqueId& id, std::shared_ptr<std::string> newName, std::shared_ptr<std::string> originalName) {
+	auto& graph = possumwood::AppCore::instance().graph();
+	auto it = std::find_if(graph.nodes().begin(dependency_graph::Nodes::kRecursive), graph.nodes().end(), [&](const dependency_graph::NodeBase & i) {
+		return i.index() == id;
+	});
+
+	assert(it != graph.nodes().end());
+
+	*originalName = it->name();
+	it->setName(*newName);
+
+	if(it->is<dependency_graph::Network>())
+		buildNetwork(it->as<dependency_graph::Network>());
+}
+
+}
+
+possumwood::UndoStack::Action renameNodeAction(const dependency_graph::UniqueId& nodeId, const std::string& name) {
+	possumwood::UndoStack::Action action;
+
+	std::shared_ptr<std::string> newName(new std::string(name));
+	std::shared_ptr<std::string> originalName(new std::string());
+
+	action.addCommand(
+		std::bind(&doRenameNode, nodeId, newName, originalName),
+		std::bind(&doRenameNode, nodeId, originalName, newName)
+	);
+
 
 	return action;
 }

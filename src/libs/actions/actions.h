@@ -21,6 +21,7 @@ void setValue(dependency_graph::Port& p, const T& value);
 void setValue(dependency_graph::Port& p, const dependency_graph::BaseData& value);
 
 void changeMetadata(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle);
+void renameNode(dependency_graph::NodeBase& node, const std::string& name);
 
 void cut(const dependency_graph::Selection& selection);
 void copy(const dependency_graph::Selection& selection);

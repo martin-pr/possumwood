@@ -22,4 +22,6 @@ possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _s
 possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node);
 possumwood::UndoStack::Action removeNetworkAction(dependency_graph::Network& net);
 
+possumwood::UndoStack::Action renameNodeAction(const dependency_graph::UniqueId& nodeId, const std::string& name);
+
 } } }

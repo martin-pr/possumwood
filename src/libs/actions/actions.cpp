@@ -334,4 +334,10 @@ void setValue(dependency_graph::Port& port, const dependency_graph::BaseData& va
 	AppCore::instance().undoStack().execute(action);
 }
 
+void renameNode(dependency_graph::NodeBase& node, const std::string& name) {
+	possumwood::UndoStack::Action action = detail::renameNodeAction(node.index(), name);
+
+	AppCore::instance().undoStack().execute(action);
+}
+
 } }

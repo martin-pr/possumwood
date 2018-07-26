@@ -5,6 +5,8 @@
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/port.inl>
 
+#include <actions/actions.h>
+
 Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 	// setRootIsDecorated(false);
 
@@ -17,7 +19,7 @@ Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 		auto it = m_nodes.find(item);
 		assert(it != m_nodes.end());
 
-		it->second->setName(item->text(0).toStdString()	);
+		possumwood::actions::renameNode(*it->second, item->text(0).toStdString());
 	});
 }
 
