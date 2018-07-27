@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(network_in_out_rename) {
 								}
 							},
 							{"ports", {
-								{"input", 5.0},
+								{"this_is_an_input", 5.0},
 							}},
 						}}
 					},

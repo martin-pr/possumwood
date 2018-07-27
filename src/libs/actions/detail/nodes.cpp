@@ -154,8 +154,8 @@ void doRenameNode(const dependency_graph::UniqueId& id, std::shared_ptr<std::str
 	*originalName = it->name();
 	it->setName(*newName);
 
-	if(it->is<dependency_graph::Network>())
-		buildNetwork(it->as<dependency_graph::Network>());
+	if(it->hasParentNetwork() && (it->metadata()->type() == "input" || it->metadata()->type() == "output"))
+		buildNetwork(it->network());
 }
 
 }
@@ -170,7 +170,6 @@ possumwood::UndoStack::Action renameNodeAction(const dependency_graph::UniqueId&
 		std::bind(&doRenameNode, nodeId, newName, originalName),
 		std::bind(&doRenameNode, nodeId, originalName, newName)
 	);
-
 
 	return action;
 }

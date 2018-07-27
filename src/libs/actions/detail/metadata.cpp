@@ -118,8 +118,8 @@ void buildNetwork(dependency_graph::Network& network) {
 			auto conns = n.network().connections().connectedTo(n.port(0));
 			assert(!conns.empty());
 
-			dependency_graph::Attr in = conns.front().get().node().metadata()->attr(conns.front().get().index());;
-			dependency_graph::detail::MetadataAccess::addAttribute(*meta, in);
+			dependency_graph::Attr in = conns.front().get().node().metadata()->attr(conns.front().get().index());
+			dependency_graph::detail::MetadataAccess::addAttribute(*meta, n.name(), in.category(), *in.createData());
 
 			// also the port value
 			values.push_back(n.port(0).getData().clone());
@@ -137,7 +137,7 @@ void buildNetwork(dependency_graph::Network& network) {
 			assert(conn);
 
 			dependency_graph::Attr out = conn->node().metadata()->attr(conn->index());;
-			dependency_graph::detail::MetadataAccess::addAttribute(*meta, conn->node().name(), out.category(), *out.createData());
+			dependency_graph::detail::MetadataAccess::addAttribute(*meta, n.name(), out.category(), *out.createData());
 
 			// also port the value
 			values.push_back(conn->node().port(conn->index()).getData().clone());
@@ -168,6 +168,15 @@ void buildNetwork(dependency_graph::Network& network) {
 	}
 
 	possumwood::UndoStack::Action action;
+
+	// unlink everything currently linked
+	for(std::size_t pi=0; pi<network.portCount(); ++pi)
+		if(network.port(pi).isLinked())
+			action.append(detail::unlinkAction(network.port(pi)));
+
+	for(auto& n : network.nodes())
+		if((n.metadata()->type() == "output") && n.port(0).isLinked())
+			action.append(detail::unlinkAction(n.port(0)));
 
 	// change metadata of the node, using an action
 	{
