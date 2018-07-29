@@ -71,6 +71,7 @@ class Adaptor : public QWidget {
 		void onBlindDataChanged(dependency_graph::NodeBase& node);
 		void onNameChanged(dependency_graph::NodeBase& node);
 		void onStateChanged(const dependency_graph::NodeBase& node);
+		void onMetadataChanged(dependency_graph::NodeBase& node);
 
 		dependency_graph::Graph* m_graph;
 		dependency_graph::Network* m_currentNetwork;

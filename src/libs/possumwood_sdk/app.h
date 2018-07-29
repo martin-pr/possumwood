@@ -28,8 +28,10 @@ class App : public AppCore {
 
 		void newFile();
 		void loadFile(const boost::filesystem::path& fn);
+		void loadFile(const possumwood::io::json& json);
 		void saveFile();
 		void saveFile(const boost::filesystem::path& fn);
+		void saveFile(possumwood::io::json& json, bool saveSceneConfig = true);
 
 		QMainWindow* mainWindow() const;
 		void setMainWindow(QMainWindow* win);

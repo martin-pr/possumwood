@@ -60,4 +60,18 @@ void Metadata::addAttribute(dependency_graph::OutAttr<void>& out, const std::str
 	dependency_graph::Metadata::addAttribute(out, name);
 }
 
+////////////////
+
+namespace {
+
+struct Factory : public dependency_graph::MetadataFactory {
+	virtual std::unique_ptr<dependency_graph::Metadata> instantiate(const std::string& type) {
+		return std::unique_ptr<dependency_graph::Metadata>(new Metadata(type));
+	}
+};
+
+static Factory s_factoryInstance;
+
+}
+
 }

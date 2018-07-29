@@ -13,6 +13,13 @@ BaseData::BaseData() {
 BaseData::~BaseData() {
 };
 
+BaseData::BaseData(const BaseData& bd) {
+}
+
+BaseData& BaseData::operator = (const BaseData& bd) {
+	return *this;
+}
+
 std::unique_ptr<BaseData> BaseData::create(const std::string& type) {
 	auto it = factories().find(type);
 

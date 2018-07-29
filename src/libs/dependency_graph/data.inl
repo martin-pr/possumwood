@@ -1,5 +1,8 @@
 #pragma once
 
+#include <sstream>
+#include <cassert>
+
 #include "data.h"
 #include "data_traits.h"
 #include "rtti.h"

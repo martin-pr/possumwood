@@ -203,7 +203,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				QAction* addNode = makeAction(
 				    itemName.c_str(),
 				    [&m, itemName, this, p]() {
-					    possumwood::Actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
+					    possumwood::actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
 					},
 				    m_adaptor);
 				addNode->setIcon(QIcon(":icons/add-node.png"));
@@ -290,7 +290,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		if(!filename.isEmpty()) {
 			try {
 				m_properties->show({});
-				possumwood::App::instance().loadFile(filename.toStdString());
+				possumwood::App::instance().loadFile(boost::filesystem::path(filename.toStdString()));
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error loading file...", "Error loading " + filename + ":\n" + err.what());

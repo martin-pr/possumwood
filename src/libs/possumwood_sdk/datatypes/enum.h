@@ -6,7 +6,7 @@
 #include <boost/filesystem/path.hpp>
 
 #include <dependency_graph/data_traits.h>
-#include <dependency_graph/io/json.h>
+#include <actions/io/json.h>
 
 #include "actions/io.h"
 #include "actions/traits.h"
@@ -29,8 +29,8 @@ class Enum {
 	bool operator==(const Enum& fn) const;
 	bool operator!=(const Enum& fn) const;
 
-	void fromJson(const ::dependency_graph::io::json& json);
-	void toJson(::dependency_graph::io::json& json) const;
+	void fromJson(const ::possumwood::io::json& json);
+	void toJson(::possumwood::io::json& json) const;
 
   private:
 	std::pair<std::string, int> m_value;

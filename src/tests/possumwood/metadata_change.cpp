@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(meta_single_node) {
 
 	// create node using an Action
 	UniqueId id;
-	possumwood::Actions::createNode(app.graph(), additionNode(), "first", possumwood::NodeData(), id);
+	possumwood::actions::createNode(app.graph(), additionNode(), "first", possumwood::NodeData(), id);
 
 	// make sure it has been created, and get its pointer
 	auto it = app.graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(meta_single_node) {
 	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 5.0f);
 
 	// change the metadata of the node
-	possumwood::Actions::changeMetadata(node, multiplicationNode());
+	possumwood::actions::changeMetadata(node, multiplicationNode());
 
 	BOOST_CHECK(it->metadata() == multiplicationNode());
 
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(meta_single_differing_nodes) {
 
 	// create node using an Action
 	UniqueId id;
-	possumwood::Actions::createNode(app.graph(), additionNode(), "first", possumwood::NodeData(), id);
+	possumwood::actions::createNode(app.graph(), additionNode(), "first", possumwood::NodeData(), id);
 
 	// make sure it has been created, and get its pointer
 	auto it = app.graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(meta_single_differing_nodes) {
 	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 5.0f);
 
 	// change the metadata of the node
-	possumwood::Actions::changeMetadata(node, intAdditionNode());
+	possumwood::actions::changeMetadata(node, intAdditionNode());
 
 	BOOST_CHECK(it->metadata() == intAdditionNode());
 
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(meta_single_differing_nodes) {
 
 	// ok, we have an int 0 there, as default value, because the second input was not mapped.
 	// lets use an action to set this value to something else, testable
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::setValue(node.port(1), 5));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(node.port(1), 5));
 	BOOST_CHECK_EQUAL(node.port(0).get<float>(), 8.0f);
 
 	// check the state of the undo stack
@@ -274,9 +274,9 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 
 	// create nodes using an Action
 	UniqueId id_front, id_middle, id_back;
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(app.graph(), additionNode(), "front", possumwood::NodeData(), id_front));
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(app.graph(), additionNode(), "middle", possumwood::NodeData(), id_middle));
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(app.graph(), additionNode(), "back", possumwood::NodeData(), id_back));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), additionNode(), "front", possumwood::NodeData(), id_front));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), additionNode(), "middle", possumwood::NodeData(), id_middle));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), additionNode(), "back", possumwood::NodeData(), id_back));
 
 	// make sure they have been created, and get their pointers
 	NodeBase *front, *middle, *back;
@@ -302,13 +302,13 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
 	// make a few connections, and set a few values, all using actions
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::connect(front->port(2), middle->port(0)));
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::connect(middle->port(2), back->port(0)));
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::connect(front->port(2), back->port(1)));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(front->port(2), middle->port(0)));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(middle->port(2), back->port(0)));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(front->port(2), back->port(1)));
 
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::setValue(front->port(0), 2.0f));
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::setValue(front->port(1), 3.0f));
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::setValue(middle->port(1), 5.0f));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(front->port(0), 2.0f));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(front->port(1), 3.0f));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(middle->port(1), 5.0f));
 
 	// check the state of the undo stack
 	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 9u);
@@ -330,7 +330,7 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	BOOST_CHECK_EQUAL(front->port(2).get<float>(), 5.0f);
 
 	// change the metadata of the middle node
-	possumwood::Actions::changeMetadata(*middle, multiplicationNode());
+	possumwood::actions::changeMetadata(*middle, multiplicationNode());
 
 	BOOST_CHECK(middle->metadata() == multiplicationNode());
 
@@ -404,7 +404,7 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	//////////////////////////
 
 	// change the metadata of the middle node to the int addition
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::changeMetadata(*middle, intAdditionNode()));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::changeMetadata(*middle, intAdditionNode()));
 
 	BOOST_CHECK(middle->metadata() == intAdditionNode());
 
@@ -428,7 +428,7 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	BOOST_CHECK_EQUAL(middle->port(2).get<float>(), 5.0f);
 
 	// make the middle one's int input something more interesting
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::setValue(middle->port(1), 3));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(middle->port(1), 3));
 
 	BOOST_CHECK_EQUAL(middle->port(1).get<int>(), 3);
 	BOOST_CHECK_EQUAL(middle->port(0).get<float>(), 8.0f);

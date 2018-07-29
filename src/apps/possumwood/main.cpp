@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
 
 		// open the scene file, if specified on the command line
 		if(vm.count("scene"))
-			possumwood::App::instance().loadFile(vm["scene"].as<std::string>());
+			possumwood::App::instance().loadFile(boost::filesystem::path(vm["scene"].as<std::string>()));
 
 		GL_CHECK_ERR;
 

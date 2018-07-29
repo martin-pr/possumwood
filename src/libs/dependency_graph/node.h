@@ -15,6 +15,7 @@ namespace dependency_graph {
 
 class Node : public NodeBase {
 	public:
+		virtual ~Node();
 
 	protected:
 		Node(const std::string& name, const UniqueId& id, const MetadataHandle& def, Network* parent);

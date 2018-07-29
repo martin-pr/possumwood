@@ -52,11 +52,11 @@ bool Enum::operator!=(const Enum& fn) const {
 	return m_value != fn.m_value || m_options != fn.m_options;
 }
 
-void Enum::fromJson(const ::dependency_graph::io::json& json) {
+void Enum::fromJson(const ::possumwood::io::json& json) {
 	setValue(json.get<std::string>());
 }
 
-void Enum::toJson(::dependency_graph::io::json& json) const {
+void Enum::toJson(::possumwood::io::json& json) const {
 	json = value();
 }
 
@@ -69,11 +69,11 @@ std::ostream& operator << (std::ostream& out, const Enum& e) {
 
 namespace {
 
-void toJson(::dependency_graph::io::json& json, const Enum& value) {
+void toJson(::possumwood::io::json& json, const Enum& value) {
 	json = value.value();
 }
 
-void fromJson(const ::dependency_graph::io::json& json, Enum& value) {
+void fromJson(const ::possumwood::io::json& json, Enum& value) {
 	value.setValue(json.get<std::string>());
 }
 }

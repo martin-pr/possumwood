@@ -7,12 +7,13 @@
 
 #include <boost/noncopyable.hpp>
 
-#include "datablock.h"
+#include "data.h"
 
 namespace dependency_graph {
 
 class Metadata;
 class Node;
+class Datablock;
 
 /// Common attribute base class, with type erasure for its concrete Data instantiation.
 /// The instance itself is copyable, even only as a base class - derived classes
@@ -34,10 +35,12 @@ class Attr {
 		bool operator == (const Attr& a) const;
 		bool operator != (const Attr& a) const;
 
+		/// todo: make private - no need for it in public interface
+		std::unique_ptr<BaseData> createData() const;
+
 	protected:
 		Attr(const std::string& name, Category cat, const BaseData& data);
 
-		std::unique_ptr<BaseData> createData() const;
 		void setOffset(unsigned o);
 
 	private:

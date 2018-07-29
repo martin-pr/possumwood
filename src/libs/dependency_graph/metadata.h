@@ -12,6 +12,7 @@
 
 #include "state.h"
 #include "data.h"
+#include "attr.h"
 
 namespace dependency_graph {
 
@@ -29,6 +30,8 @@ class NodeBase;
 class Port;
 
 class MetadataHandle;
+
+namespace detail { struct MetadataAccess; }
 
 class Metadata : public boost::noncopyable, public std::enable_shared_from_this<Metadata> {
 	public:
@@ -85,6 +88,7 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 
 
 	protected:
+		unsigned doAddAttribute(const std::string& name, Attr::Category cat, const BaseData& data);
 		virtual void doAddAttribute(Attr& attr);
 
 	private:
@@ -100,6 +104,20 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		friend class Node;
 		friend class NodeBase;
 		friend class Port;
+
+		/// allow actions to access untemplated doAddAttribute
+		friend struct detail::MetadataAccess;
+};
+
+/// create a new metadata instance - if an instance of MetadataFactory is present in user code, use that
+std::unique_ptr<Metadata> instantiateMetadata(const std::string& type);
+
+/// A simple base class, to be statically instantiated in client code to provide a new metadata implementation
+struct MetadataFactory : public boost::noncopyable {
+	MetadataFactory();
+	virtual ~MetadataFactory() = 0;
+
+	virtual std::unique_ptr<Metadata> instantiate(const std::string& type) = 0;
 };
 
 /// Just a wrapper over an std::shared_ptr, which might eventually implement

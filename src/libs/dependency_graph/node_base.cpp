@@ -108,6 +108,9 @@ void NodeBase::setMetadata(const MetadataHandle& handle) {
 		m_ports.push_back(Port(meta.offset(), this));
 	}
 
+	// fire the callback
+	graph().metadataChanged(*this);
+
 	// mark everything as dirty
 	for(std::size_t p = 0; p < m_ports.size(); ++p)
 		markAsDirty(p);
@@ -254,6 +257,24 @@ void NodeBase::computeOutput(size_t index) {
 
 const State& NodeBase::state() const {
 	return m_state;
+}
+
+void NodeBase::setBlindData(std::unique_ptr<BaseData>&& data) {
+	m_blindData = std::move(data);
+}
+
+bool NodeBase::hasBlindData() const {
+	return m_blindData != nullptr;
+}
+
+std::string NodeBase::blindDataType() const {
+	assert(m_blindData != nullptr);
+	return m_blindData->type();
+}
+
+const BaseData& NodeBase::blindData() const {
+	assert(m_blindData != nullptr);
+	return *m_blindData;
 }
 
 }

@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 
 	// create a subnetwork in the graph, via actions
 	UniqueId netId;
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 		app.graph(),
 		dependency_graph::MetadataRegister::singleton()["network"],
 		"network",
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 
 	// create a tiny subnetwork
 	UniqueId inId;
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 		network,
 		dependency_graph::MetadataRegister::singleton()["input"],
 		"network_input",
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	dependency_graph::NodeBase& input = *inIt;
 
 	UniqueId outId;
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 		network,
 		dependency_graph::MetadataRegister::singleton()["output"],
 		"network_output",
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	dependency_graph::NodeBase& output = *outIt;
 
 	UniqueId midId;
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::createNode(
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 		network,
 		passThroughNode(),
 		"passthru",
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	/////
 
 	// connect the input
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::connect(input.port(0), middle.port(0)));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(input.port(0), middle.port(0)));
 
 	// check the state of the undo stack
 	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 5u);
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	/////
 
 	// connect the output
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::connect(middle.port(1), output.port(0)));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(middle.port(1), output.port(0)));
 
 	// check the state of the undo stack
 	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 6u);
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	//////
 
 	// disconnect the output
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::disconnect(middle.port(1), output.port(0)));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::disconnect(middle.port(1), output.port(0)));
 
 	// check the state of the undo stack
 	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 7u);
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	//////
 
 	// disconnect the input
-	BOOST_REQUIRE_NO_THROW(possumwood::Actions::disconnect(input.port(0), middle.port(0)));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::disconnect(input.port(0), middle.port(0)));
 
 	// check the state of the undo stack
 	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 8u);

@@ -13,7 +13,6 @@
 #include <QStyle>
 
 #include <dependency_graph/node_base.inl>
-#include <dependency_graph/io/graph.h>
 
 #include <qt_node_editor/connected_edge.h>
 #include <possumwood_sdk/metadata.h>
@@ -53,6 +52,10 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 		[this](const dependency_graph::NodeBase& n) { onStateChanged(n); }
 	));
 
+	m_signals.push_back(graph->onMetadataChanged(
+		[this](dependency_graph::NodeBase& n) { onMetadataChanged(n); }
+	));
+
 	// instantiate the graph widget
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setContentsMargins(0,0,0,0);
@@ -68,7 +71,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 
 		// and connect them in the graph as well
 		try {
-			possumwood::Actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
+			possumwood::actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
 		}
 		catch(std::runtime_error& err) {
 			// something went wrong during connecting, undo it
@@ -88,7 +91,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 			};
 		}
 
-		possumwood::Actions::move(positions);
+		possumwood::actions::move(positions);
 	});
 
 	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
@@ -140,7 +143,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_copy->setShortcut(QKeySequence::Copy);
 	m_copy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_copy, &QAction::triggered, [this](bool) {
-		possumwood::Actions::copy(selection());
+		possumwood::actions::copy(selection());
 	});
 	addAction(m_copy);
 
@@ -148,7 +151,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_cut->setShortcut(QKeySequence::Cut);
 	m_cut->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_cut, &QAction::triggered, [this](bool) {
-		possumwood::Actions::cut(selection());
+		possumwood::actions::cut(selection());
 	});
 	addAction(m_cut);
 
@@ -157,7 +160,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_paste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_paste, &QAction::triggered, [this](bool) {
 		dependency_graph::Selection sel;
-		possumwood::Actions::paste(currentNetwork(), sel);
+		possumwood::actions::paste(currentNetwork(), sel);
 		setSelection(sel);
 	});
 	addAction(m_paste);
@@ -166,7 +169,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_delete->setShortcut(QKeySequence::Delete);
 	m_delete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	connect(m_delete, &QAction::triggered, [this](bool) {
-		possumwood::Actions::remove(selection());
+		possumwood::actions::remove(selection());
 	});
 	addAction(m_delete);
 
@@ -373,6 +376,24 @@ void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
 	}
 }
 
+void Adaptor::onMetadataChanged(dependency_graph::NodeBase& node) {
+	if(&node.network() == m_currentNetwork) {
+		auto& n = m_index[node.index()];
+
+#ifndef NDEBUG
+		// make sure there are no connections
+		for(unsigned ei=0;ei<m_graphWidget->scene().edgeCount();++ei) {
+			auto& e = m_graphWidget->scene().edge(ei);
+			assert(&e.fromPort().parentNode() != n.editorNode);
+			assert(&e.toPort().parentNode() != n.editorNode);
+		}
+#endif
+		// remove and add the node
+		onRemoveNode(node);
+		onAddNode(node);
+	}
+}
+
 QPointF Adaptor::mapToScene(QPoint pos) const {
 	return m_graphWidget->mapToScene(pos);
 }
@@ -407,11 +428,6 @@ dependency_graph::Selection Adaptor::selection() const {
 			result.addConnection(n1.graphNode->port(e.fromPort().index()), n2.graphNode->port(e.toPort().index()));
 		}
 	}
-
-	// IN SUBNET, SELECTION IS EMPTY
-
-	std::cout << "selection nodes = " << result.nodes().size() << std::endl;
-	std::cout << "selection connections = " << result.connections().size() << std::endl;
 
 	return result;
 }

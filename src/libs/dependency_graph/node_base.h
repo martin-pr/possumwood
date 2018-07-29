@@ -63,6 +63,12 @@ class NodeBase : public boost::noncopyable {
 		template<typename T>
 		const T& blindData() const;
 
+		const BaseData& blindData() const;
+
+		void setBlindData(std::unique_ptr<BaseData>&& data);
+		bool hasBlindData() const;
+		std::string blindDataType() const;
+
 		const State& state() const;
 
 		void computeInput(size_t index);
@@ -105,7 +111,7 @@ class NodeBase : public boost::noncopyable {
 		State m_state;
 
 		// blind data access
-		friend struct io::adl_serializer<NodeBase>;
+		// friend struct io::adl_serializer<NodeBase>;
 		friend class Nodes;
 		friend class Port;
 };

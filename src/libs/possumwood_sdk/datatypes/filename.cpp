@@ -57,11 +57,11 @@ std::ostream& operator << (std::ostream& out, const Filename& f) {
 
 namespace {
 
-void toJson(::dependency_graph::io::json& json, const Filename& value) {
+void toJson(::possumwood::io::json& json, const Filename& value) {
 	json = value.filename(false).string();
 }
 
-void fromJson(const ::dependency_graph::io::json& json, Filename& value) {
+void fromJson(const ::possumwood::io::json& json, Filename& value) {
 	value.setFilename(json.get<std::string>());
 }
 

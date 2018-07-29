@@ -53,6 +53,13 @@ void Metadata::addAttribute(OutAttr<void>& out, const std::string& name) {
 	assert(out.isValid());
 }
 
+unsigned Metadata::doAddAttribute(const std::string& name, Attr::Category cat, const BaseData& data) {
+	Attr tmp(name, cat, data);
+	doAddAttribute(tmp);
+	return tmp.offset();
+}
+
+
 void Metadata::doAddAttribute(Attr& attr) {
 	attr.setOffset(m_attrs.size());
 
@@ -80,6 +87,8 @@ std::vector<std::size_t> Metadata::influencedBy(size_t index) const {
 
 	return result;
 }
+
+////////////////
 
 MetadataHandle::MetadataHandle(std::unique_ptr<Metadata> m) : m_meta(m.release()) {
 }
@@ -109,6 +118,31 @@ bool MetadataHandle::operator == (const MetadataHandle& h) const {
 
 bool MetadataHandle::operator != (const MetadataHandle& h) const {
 	return m_meta != h.m_meta;
+}
+
+///////////////
+
+namespace {
+
+MetadataFactory* s_factoryInstance = NULL;
+
+}
+
+/// create a new metadata instance - if an instance of MetadataFactory is present in user code, use that
+std::unique_ptr<Metadata> instantiateMetadata(const std::string& type) {
+	if(s_factoryInstance)
+		return s_factoryInstance->instantiate(type);
+	return std::unique_ptr<Metadata>(new Metadata(type));
+}
+
+MetadataFactory::MetadataFactory() {
+	assert(s_factoryInstance == nullptr);
+	s_factoryInstance = this;
+}
+
+MetadataFactory::~MetadataFactory() {
+	assert(s_factoryInstance == this);
+	s_factoryInstance = nullptr;
 }
 
 }

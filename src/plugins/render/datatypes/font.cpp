@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include <dependency_graph/io/json.h>
+#include <actions/io/json.h>
 
 namespace possumwood {
 
@@ -18,13 +18,13 @@ bool Font::Glyph::operator!=(const Glyph& g) const {
 
 void Font::load(const boost::filesystem::path& filename) {
 	// read the JSON with glyphs
-	dependency_graph::io::json json;
+	possumwood::io::json json;
 	{
 		std::ifstream in(filename.string());
 		in >> json;
 	}
 
-	for(dependency_graph::io::json::const_iterator i = json["characters"].begin();
+	for(possumwood::io::json::const_iterator i = json["characters"].begin();
 	    i != json["characters"].end(); ++i) {
 		assert(i.key().length() == 1);
 

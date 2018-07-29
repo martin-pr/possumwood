@@ -15,11 +15,11 @@ struct Traits;
 /// traits for numbers
 template<typename T>
 struct Traits<T, typename std::enable_if< std::is_arithmetic<T>::value >::type> {
-	static void toJson(dependency_graph::io::json& json, const T& f) {
+	static void toJson(possumwood::io::json& json, const T& f) {
 		json = f;
 	}
 
-	static void fromJson(const dependency_graph::io::json& json, T& f) {
+	static void fromJson(const possumwood::io::json& json, T& f) {
 		f = json.get<T>();
 	}
 
