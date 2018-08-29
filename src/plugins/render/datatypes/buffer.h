@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 #include <boost/noncopyable.hpp>
 //#include <boost/align/aligned_allocator.hpp>
@@ -10,6 +11,8 @@ namespace possumwood {
 class BufferBase : public boost::noncopyable {
 public:
 	virtual ~BufferBase() {};
+
+	virtual void print() const = 0;
 };
 
 /// A simple non-copyable raw-data container for OpenGL buffers.
@@ -68,6 +71,14 @@ class BufferTemplated : public BufferBase {
 
 		auto it = m_data.begin() + offset;
 		return Element(it, it + m_width);
+	}
+
+	virtual void print() const override {
+		for(std::size_t a=0;a<m_data.size(); ++a) {
+			if(a % m_width == 0)
+				std::cout << std::endl;
+			std::cout << m_data[a] << " ";
+		}
 	}
 
   protected:
