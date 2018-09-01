@@ -50,7 +50,7 @@ namespace {
 		return in;
 	}
 
-	GenericPolymesh makeMesh(const std::vector<std::array<float, 3>>& v, const std::vector<Face>& f, std::size_t indexCount) {
+	GenericPolymesh makeMesh(const std::vector<std::array<float, 3>>& v, const std::vector<std::array<float, 3>>& n, const std::vector<Face>& f, std::size_t indexCount) {
 		GenericPolymesh result;
 
 		// copy the vertex data
@@ -65,9 +65,16 @@ namespace {
 			}
 		}
 
+		// normals handle
+		GenericPolymesh::Indices::Handle normalsHandle;
+		if(!n.empty())
+			normalsHandle = result.indices().handles().
+				add<std::array<float, 3>>("N", std::array<float, 3>{{0,0,0}});
+
 		// copy the polygon data
 		{
 			std::vector<std::size_t> indices;
+			std::vector<std::size_t> normals;
 
 			// only one per-polygon attribute - object ID
 			GenericPolymesh::Polygons::Handle objId = result.polygons().handles().
@@ -75,13 +82,28 @@ namespace {
 
 			for(auto& face : f) {
 				indices.clear();
+				normals.clear();
+
 				for(auto& i : face.indices) {
 					assert(i.v > 0);
 					indices.push_back(i.v - 1);
+
+					if(i.vn > 0)
+						normals.push_back(i.vn - 1);
 				}
 
 				auto fi = result.polygons().add(indices.begin(), indices.end());
 				fi->set(objId, face.objectId);
+
+				if(!normals.empty()) {
+					assert(normals.size() == fi->size());
+
+					auto ni = normals.begin();
+					auto f = fi->begin();
+
+					for(; f != fi->end() /*ni != normals.end()*/; ++f, ++ni)
+						f->set(normalsHandle, n[*ni]);
+				}
 			}
 		}
 
@@ -161,7 +183,7 @@ GenericPolymesh loadObj(boost::filesystem::path path) {
 		}
 	}
 
-	return makeMesh(vertices, faces, indexCount);
+	return makeMesh(vertices, normals, faces, indexCount);
 }
 
 }
