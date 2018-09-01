@@ -178,19 +178,19 @@ void buildNetwork(dependency_graph::Network& network) {
 		if((n.metadata()->type() == "output") && n.port(0).isLinked())
 			action.append(detail::unlinkAction(n.port(0)));
 
-	// change metadata of the node, using an action
-	{
+	// change metadata of the node, using an action (unless root - root handling to be addressed at some point)
+	if(network.hasParentNetwork()) {
 		dependency_graph::MetadataHandle handle(std::move(meta));
 		action.append(changeMetadataAction(network, handle));
+
+		// transfer all the values
+		for(std::size_t pi=0; pi<values.size(); ++pi)
+			action.append(detail::setValueAction(network.index(), pi, *values[pi]->clone()));
+
+		// link all what needs to be linked
+		for(auto& l : links)
+			action.append(linkAction(l));
 	}
-
-	// transfer all the values
-	for(std::size_t pi=0; pi<values.size(); ++pi)
-		action.append(detail::setValueAction(network.index(), pi, *values[pi]->clone()));
-
-	// link all what needs to be linked
-	for(auto& l : links)
-		action.append(linkAction(l));
 
 	possumwood::UndoStack tmpStack;
 	tmpStack.execute(action);
