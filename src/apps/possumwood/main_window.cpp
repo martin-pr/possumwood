@@ -197,12 +197,12 @@ MainWindow::MainWindow() : QMainWindow() {
 				if(it != std::string::npos)
 					itemName = m.metadata().type().substr(it + 1);
 
-				auto qp = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos()));
-				const possumwood::NodeData::Point p {(float)qp.x(), (float)qp.y()};
-
 				QAction* addNode = makeAction(
 				    itemName.c_str(),
-				    [&m, itemName, this, p]() {
+				    [&m, itemName, this]() {
+						auto qp = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos()));
+						const possumwood::NodeData::Point p {(float)qp.x(), (float)qp.y()};
+
 					    possumwood::actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
 					},
 				    m_adaptor);
