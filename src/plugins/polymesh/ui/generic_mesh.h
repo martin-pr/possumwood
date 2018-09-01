@@ -6,6 +6,7 @@
 
 #include <QMetaObject>
 #include <QLabel>
+#include <QToolButton>
 
 class QComboBox;
 
@@ -20,5 +21,10 @@ class GenericMeshUI : public possumwood::properties::property<possumwood::polyme
 		virtual QWidget* widget() override;
 
 	private:
-		QLabel* m_widget;
+		QWidget* m_widget;
+
+		QLabel* m_label;
+		QToolButton* m_detailsButton;
+
+		std::vector<std::pair<std::string, std::string>> m_vertexAttrs, m_indexAttrs, m_polyAttrs;
 };
