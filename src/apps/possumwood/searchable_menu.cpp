@@ -1,6 +1,7 @@
 #include "searchable_menu.h"
 
 #include <cassert>
+#include <iostream>
 
 #include <QKeyEvent>
 #include <QApplication>
@@ -29,8 +30,24 @@ void SearchableMenu::init(QMenu* menu, const QString& path) {
 			init(act->menu(), name);
 
 		// a triggerable action
-		else
+		else {
 			m_actions.insert(std::make_pair(name, act));
+
+			QAction* searchAction = new QAction(name, m_menu);
+			connect(searchAction, &QAction::triggered, [this, act]() {
+
+				// triggering the original action
+				act->trigger();
+
+				// closing the menu itself
+				m_menu->close();
+
+				// and closing the parent menu (i.e., SearchableMenu instance)
+				close();
+			});
+
+			m_menu->addAction(searchAction);
+		}
 	}
 }
 
@@ -86,10 +103,14 @@ void SearchableMenu::showEvent(QShowEvent* event) {
 			wa = dynamic_cast<QWidgetAction*>(act);
 
 			if(wa == NULL) {
+				QLineEdit* lineEdit = new QLineEdit();
+
 				wa = new QWidgetAction(this);
-				wa->setDefaultWidget(new QLineEdit());
+				wa->setDefaultWidget(lineEdit);
 
 				insertAction(act, wa);
+
+				connect(lineEdit, &QLineEdit::textEdited, this, &SearchableMenu::onTextEdited);
 			}
 		}
 		assert(wa != NULL);
@@ -98,9 +119,6 @@ void SearchableMenu::showEvent(QShowEvent* event) {
 		QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(wa->defaultWidget());
 		assert(lineEdit != NULL);
 
-		// connect the line edit
-		connect(lineEdit, &QLineEdit::textEdited, this, &SearchableMenu::onTextEdited);
-
 		// prepare the line edit and grab the focus to listen to keystrokes
 		lineEdit->clear();
 		lineEdit->setFocus();
@@ -108,14 +126,15 @@ void SearchableMenu::showEvent(QShowEvent* event) {
 		// initialise
 		m_actions.clear();
 
-		init(this, "");
-
 		// make sure menu instance exists
 		if(m_menu == NULL) {
 			m_menu = new QMenu("", this);
 
 			// and install the event filter
 			m_menu->installEventFilter(new KeyEventFilter(lineEdit));
+
+			// initialise its items
+			init(this, "");
 		}
 		assert(m_menu != NULL);
 		m_menu->hide();
@@ -153,48 +172,37 @@ bool fuzzyMatch(const QString& fuzzy, const QString& text) {
 }
 
 void SearchableMenu::onTextEdited(const QString& text) {
-	// clear the menu
-	assert(m_menu);
-	m_menu->hide();
-	m_menu->clear();
+	if(text.isEmpty())
+		m_menu->hide();
 
-	// get the line editor
-	assert(actions().length() > 0);
-	QWidgetAction* wa = dynamic_cast<QWidgetAction*>(actions()[0]);
-	assert(wa);
+	else {
+		// get the line editor
+		assert(actions().length() > 0);
+		QWidgetAction* wa = dynamic_cast<QWidgetAction*>(actions()[0]);
+		assert(wa);
 
-	QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(wa->defaultWidget());
-	assert(lineEdit);
+		QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(wa->defaultWidget());
+		assert(lineEdit);
 
-	// filter the actions
-	for(auto& a : m_actions)
-		if(fuzzyMatch(text, a.first)) {
-			// positive match - lets make a copy of the action
-			QAction* act = m_menu->addAction(a.first);
-			connect(act, &QAction::triggered, [a, this]() {
-				// triggering the original action
-				a.second->triggered();
+		// filter the actions (change visibility)
+		bool highlighed = false;
+		for(auto& a : m_menu->actions()) {
+			bool match = fuzzyMatch(text, a->text());
 
-				// closing the menu itself
-				m_menu->close();
+			a->setVisible(match);
 
-				// and closing the parent menu (i.e., SearchableMenu instance)
-				close();
-			});
+			// highlight the first action after typing
+			if(match && !highlighed) {
+				m_menu->setActiveAction(a);
 
-			// if there is only one action left in the menu, make it active
-			if(m_menu->actions().length() == 1)
-				m_menu->setActiveAction(act);
+				highlighed = true;
+			}
 		}
 
-	// display the menu as a popup (non-modal)
-	if(!text.isEmpty() && !m_menu->actions().empty()) {
+		// display the menu as a modal menu
 		QPoint pos = lineEdit->mapToGlobal(lineEdit->pos());
 		pos.setX(pos.x() + lineEdit->width());
 
-		m_menu->popup(pos);
+		m_menu->exec(pos);
 	}
-
-	// and return the focus to the line editor
-	lineEdit->setFocus();
 }
