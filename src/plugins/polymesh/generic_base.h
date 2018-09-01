@@ -25,6 +25,8 @@ class GenericBase {
 		/// A handle class, allowing to access data members in Items
 		class Handle {
 			public:
+				Handle();
+
 				const std::string& name() const;
 				const std::type_index& type() const;
 

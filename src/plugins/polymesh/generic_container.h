@@ -26,6 +26,7 @@ class GenericContainer : public GenericBase {
 				bool equal(const iterator& i) const;
 				ITEM& dereference() const;
 				void advance(long);
+				long distance_to(const iterator& i) const;
 
 			private:
 				iterator(GenericContainer* parent, std::size_t index);
@@ -51,6 +52,7 @@ class GenericContainer : public GenericBase {
 				bool equal(const const_iterator& i) const;
 				const ITEM& dereference() const;
 				void advance(long);
+				long distance_to(const const_iterator& i) const;
 
 			private:
 				const_iterator(GenericContainer* parent, std::size_t index);

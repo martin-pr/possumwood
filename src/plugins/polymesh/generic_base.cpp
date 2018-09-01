@@ -72,6 +72,9 @@ bool GenericBase::operator !=(const GenericBase& b) const {
 
 ///////////
 
+GenericBase::Handle::Handle() : m_type(typeid(void)), m_index(-1) {
+}
+
 GenericBase::Handle::Handle(const std::string& n, const std::type_index& type, std::size_t index) : m_name(n), m_type(type), m_index(index) {
 }
 

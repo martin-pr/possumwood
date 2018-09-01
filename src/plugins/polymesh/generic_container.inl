@@ -38,8 +38,13 @@ void GenericContainer<ITEM>::iterator::advance(long d) {
 }
 
 template<typename ITEM>
+long GenericContainer<ITEM>::iterator::distance_to(const iterator& i) const {
+	return *i.m_item - *m_item;
+}
+
+template<typename ITEM>
 bool GenericContainer<ITEM>::iterator::equal(const iterator& i) const {
-	return m_item == i.m_item;
+	return m_item->m_parent == i.m_item->m_parent && m_item->m_index == i.m_item->m_index;
 }
 
 template<typename ITEM>
@@ -77,6 +82,11 @@ void GenericContainer<ITEM>::const_iterator::increment() {
 template<typename ITEM>
 void GenericContainer<ITEM>::const_iterator::advance(long d) {
 	m_item += d;
+}
+
+template<typename ITEM>
+long GenericContainer<ITEM>::const_iterator::distance_to(const const_iterator& i) const {
+	return i.m_item - m_item;
 }
 
 template<typename ITEM>
