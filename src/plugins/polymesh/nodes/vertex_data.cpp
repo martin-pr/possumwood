@@ -15,77 +15,35 @@
 namespace possumwood {
 
 template<typename VAL>
-class VertexIterable {
-	public:
-		typedef VAL value_type;
-
-		VertexIterable(std::shared_ptr<const possumwood::polymesh::GenericPolymesh> m, const polymesh::GenericBase::Handle& h) : mesh(m), handle(h), polyIterator(m->polygons().begin()), faceIndex(0) {
-		}
-
-		~VertexIterable() {
-			assert(triIndex == 0);
-			assert(faceIndex == 0);
-			assert(polyIterator == mesh->polygons().end() || counter == 0);
-		}
-
-		void operator++() {
-			assert(polyIterator != mesh->polygons().end());
-
-			// inside a triangle
-			if(triIndex < 2)
-				++triIndex;
-
-			// switching to another triangle
-			else {
-				// inside a single polygon
-				triIndex = 0;
-				++faceIndex;
-
-				++counter;
-
-				// circulated around the whole polygon - go to the next poly
-				if(faceIndex == polyIterator->size()-2) {
-					faceIndex = 0;
-					++polyIterator;
-				}
-			}
-		}
-
-		VAL value() {
-			assert(triIndex < 3);
-			assert(faceIndex < polyIterator->size()-2);
-			assert(polyIterator != mesh->polygons().end());
-
-			VAL result;
-
-			// first vertex of the triangle - always the first vertex of the polygon
-			if(triIndex == 0)
-				result = (polyIterator->begin()->vertex().get<VAL>(handle));
-
-			// other vertices of the triangle
-			else
-				result = ((polyIterator->begin() + faceIndex + triIndex)->vertex().template get<VAL>(handle));
-
-			return result;
-		}
-
-	private:
-		std::shared_ptr<const possumwood::polymesh::GenericPolymesh> mesh;
-		polymesh::GenericBase::Handle handle;
-
-		possumwood::polymesh::GenericPolymesh::Polygons::const_iterator polyIterator;
-		std::size_t faceIndex = 0, triIndex = 0, counter = 0;
+struct VertexExtractor {
+	static const VAL& get(const possumwood::polymesh::GenericPolymesh::Polygon& poly, possumwood::polymesh::GenericPolymesh::Polygon::const_iterator i, const polymesh::GenericBase::Handle& handle) {
+		return i->vertex().get<VAL>(handle);
+	}
 };
 
 template<typename VAL>
-class IndexIterable {
+struct IndexExtractor {
+	static const VAL& get(const possumwood::polymesh::GenericPolymesh::Polygon& poly, possumwood::polymesh::GenericPolymesh::Polygon::const_iterator i, const polymesh::GenericBase::Handle& handle) {
+		return i->get<VAL>(handle);
+	}
+};
+
+template<typename VAL>
+struct PolyExtractor {
+	static const VAL& get(const possumwood::polymesh::GenericPolymesh::Polygon& poly, possumwood::polymesh::GenericPolymesh::Polygon::const_iterator i, const polymesh::GenericBase::Handle& handle) {
+		return poly.get<VAL>(handle);
+	}
+};
+
+template<typename VAL, typename EXTRACTOR>
+class Iterable {
 	public:
 		typedef VAL value_type;
 
-		IndexIterable(std::shared_ptr<const possumwood::polymesh::GenericPolymesh> m, const polymesh::GenericBase::Handle& h) : mesh(m), handle(h), polyIterator(m->polygons().begin()), faceIndex(0) {
+		Iterable(std::shared_ptr<const possumwood::polymesh::GenericPolymesh> m, const polymesh::GenericBase::Handle& h) : mesh(m), handle(h), polyIterator(m->polygons().begin()), faceIndex(0) {
 		}
 
-		~IndexIterable() {
+		~Iterable() {
 			assert(triIndex == 0);
 			assert(faceIndex == 0);
 			assert(polyIterator == mesh->polygons().end() || counter == 0);
@@ -123,11 +81,11 @@ class IndexIterable {
 
 			// first vertex of the triangle - always the first vertex of the polygon
 			if(triIndex == 0)
-				result = (polyIterator->begin()->get<VAL>(handle));
+				result = EXTRACTOR::get(*polyIterator, polyIterator->begin(), handle);
 
 			// other vertices of the triangle
 			else
-				result = ((polyIterator->begin() + faceIndex + triIndex)->template get<VAL>(handle));
+				result = EXTRACTOR::get(*polyIterator, polyIterator->begin() + faceIndex + triIndex, handle);
 
 			return result;
 		}
@@ -139,7 +97,6 @@ class IndexIterable {
 		possumwood::polymesh::GenericPolymesh::Polygons::const_iterator polyIterator;
 		std::size_t faceIndex = 0, triIndex = 0, counter = 0;
 };
-
 
 template<typename ITER>
 void addVBO(possumwood::VertexData& vd, const possumwood::polymesh::GenericBase::Handle& handle,
@@ -186,16 +143,27 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(triangleCount > 0) {
 		// per-vertex buffers
 		for(auto& handle : mesh->vertices().handles()) {
-			VertexIterable<
-				std::array<float, 3> // !!!!!!!!!!!!!!!!! THIS NEEDS REFACTOR
+			Iterable<
+				std::array<float, 3>, // !!!!!!!!!!!!!!!!! THIS NEEDS REFACTOR
+				VertexExtractor<std::array<float, 3>>
 			> iter(mesh, handle);
 			addVBO(*vd, handle, iter, triangleCount*3);
 		}
 
-		// per-vertex buffers
+		// per-index buffers
 		for(auto& handle : mesh->indices().handles()) {
-			IndexIterable<
-				std::array<float, 3> // !!!!!!!!!!!!!!!!! THIS NEEDS REFACTOR
+			Iterable<
+				std::array<float, 3>, // !!!!!!!!!!!!!!!!! THIS NEEDS REFACTOR
+				IndexExtractor<std::array<float, 3>>
+			> iter(mesh, handle);
+			addVBO(*vd, handle, iter, triangleCount*3);
+		}
+
+		// per-polygon buffers
+		for(auto& handle : mesh->indices().handles()) {
+			Iterable<
+				std::array<float, 3>, // !!!!!!!!!!!!!!!!! THIS NEEDS REFACTOR
+				PolyExtractor<std::array<float, 3>>
 			> iter(mesh, handle);
 			addVBO(*vd, handle, iter, triangleCount*3);
 		}
