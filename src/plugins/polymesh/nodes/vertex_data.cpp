@@ -77,6 +77,69 @@ class VertexIterable {
 		std::size_t faceIndex = 0, triIndex = 0, counter = 0;
 };
 
+template<typename VAL>
+class IndexIterable {
+	public:
+		typedef VAL value_type;
+
+		IndexIterable(std::shared_ptr<const possumwood::polymesh::GenericPolymesh> m, const polymesh::GenericBase::Handle& h) : mesh(m), handle(h), polyIterator(m->polygons().begin()), faceIndex(0) {
+		}
+
+		~IndexIterable() {
+			assert(triIndex == 0);
+			assert(faceIndex == 0);
+			assert(polyIterator == mesh->polygons().end() || counter == 0);
+		}
+
+		void operator++() {
+			assert(polyIterator != mesh->polygons().end());
+
+			// inside a triangle
+			if(triIndex < 2)
+				++triIndex;
+
+			// switching to another triangle
+			else {
+				// inside a single polygon
+				triIndex = 0;
+				++faceIndex;
+
+				++counter;
+
+				// circulated around the whole polygon - go to the next poly
+				if(faceIndex == polyIterator->size()-2) {
+					faceIndex = 0;
+					++polyIterator;
+				}
+			}
+		}
+
+		VAL value() {
+			assert(triIndex < 3);
+			assert(faceIndex < polyIterator->size()-2);
+			assert(polyIterator != mesh->polygons().end());
+
+			VAL result;
+
+			// first vertex of the triangle - always the first vertex of the polygon
+			if(triIndex == 0)
+				result = (polyIterator->begin()->get<VAL>(handle));
+
+			// other vertices of the triangle
+			else
+				result = ((polyIterator->begin() + faceIndex + triIndex)->template get<VAL>(handle));
+
+			return result;
+		}
+
+	private:
+		std::shared_ptr<const possumwood::polymesh::GenericPolymesh> mesh;
+		polymesh::GenericBase::Handle handle;
+
+		possumwood::polymesh::GenericPolymesh::Polygons::const_iterator polyIterator;
+		std::size_t faceIndex = 0, triIndex = 0, counter = 0;
+};
+
 
 template<typename ITER>
 void addVBO(possumwood::VertexData& vd, const possumwood::polymesh::GenericBase::Handle& handle,
@@ -124,6 +187,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		// per-vertex buffers
 		for(auto& handle : mesh->vertices().handles()) {
 			VertexIterable<
+				std::array<float, 3> // !!!!!!!!!!!!!!!!! THIS NEEDS REFACTOR
+			> iter(mesh, handle);
+			addVBO(*vd, handle, iter, triangleCount*3);
+		}
+
+		// per-vertex buffers
+		for(auto& handle : mesh->indices().handles()) {
+			IndexIterable<
 				std::array<float, 3> // !!!!!!!!!!!!!!!!! THIS NEEDS REFACTOR
 			> iter(mesh, handle);
 			addVBO(*vd, handle, iter, triangleCount*3);
