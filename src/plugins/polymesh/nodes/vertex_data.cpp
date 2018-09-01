@@ -118,6 +118,40 @@ void addVBO(possumwood::VertexData& vd, const possumwood::polymesh::GenericBase:
 	);
 }
 
+template<template<typename> class EXTRACTOR>
+void makeVBO(possumwood::VertexData& vd, const possumwood::polymesh::GenericBase::Handle& handle,
+	const std::shared_ptr<const polymesh::GenericPolymesh>& mesh, std::size_t count) {
+
+	// this is SUPER UGLY - self-registered traits might be nicer
+	if(handle.type() == typeid(float))
+		addVBO(vd, handle, Iterable<float, EXTRACTOR<float>>(mesh, handle), count);
+
+	else if(handle.type() == typeid(std::array<float, 2>))
+		addVBO(vd, handle, Iterable<std::array<float, 2>, EXTRACTOR<std::array<float, 2>>>(mesh, handle), count);
+
+	else if(handle.type() == typeid(std::array<float, 3>))
+		addVBO(vd, handle, Iterable<std::array<float, 3>, EXTRACTOR<std::array<float, 3>>>(mesh, handle), count);
+
+	else if(handle.type() == typeid(std::array<float, 4>))
+		addVBO(vd, handle, Iterable<std::array<float, 4>, EXTRACTOR<std::array<float, 4>>>(mesh, handle), count);
+
+	else if(handle.type() == typeid(int))
+		addVBO(vd, handle, Iterable<int, EXTRACTOR<int>>(mesh, handle), count);
+
+	else if(handle.type() == typeid(std::array<int, 2>))
+		addVBO(vd, handle, Iterable<std::array<int, 2>, EXTRACTOR<std::array<int, 2>>>(mesh, handle), count);
+
+	else if(handle.type() == typeid(std::array<int, 3>))
+		addVBO(vd, handle, Iterable<std::array<int, 3>, EXTRACTOR<std::array<int, 3>>>(mesh, handle), count);
+
+	else if(handle.type() == typeid(std::array<int, 4>))
+		addVBO(vd, handle, Iterable<std::array<int, 4>, EXTRACTOR<std::array<int, 4>>>(mesh, handle), count);
+
+	else
+		throw std::runtime_error("Unsupported type " + std::string(handle.type().name()) + " for VBO conversion");
+
+}
+
 dependency_graph::OutAttr<std::shared_ptr<const possumwood::VertexData>> a_vd;
 dependency_graph::InAttr<polymesh::GenericPolymesh> a_mesh;
 
@@ -142,31 +176,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// and build the buffers
 	if(triangleCount > 0) {
 		// per-vertex buffers
-		for(auto& handle : mesh->vertices().handles()) {
-			Iterable<
-				std::array<float, 3>, // !!!!!!!!!!!!!!!!! THIS NEEDS REFACTOR
-				VertexExtractor<std::array<float, 3>>
-			> iter(mesh, handle);
-			addVBO(*vd, handle, iter, triangleCount*3);
-		}
+		for(auto& handle : mesh->vertices().handles())
+			makeVBO<VertexExtractor>(*vd, handle, mesh, triangleCount*3);
 
 		// per-index buffers
-		for(auto& handle : mesh->indices().handles()) {
-			Iterable<
-				std::array<float, 3>, // !!!!!!!!!!!!!!!!! THIS NEEDS REFACTOR
-				IndexExtractor<std::array<float, 3>>
-			> iter(mesh, handle);
-			addVBO(*vd, handle, iter, triangleCount*3);
-		}
+		for(auto& handle : mesh->indices().handles())
+			makeVBO<IndexExtractor>(*vd, handle, mesh, triangleCount*3);
 
-		// per-polygon buffers
-		for(auto& handle : mesh->indices().handles()) {
-			Iterable<
-				std::array<float, 3>, // !!!!!!!!!!!!!!!!! THIS NEEDS REFACTOR
-				PolyExtractor<std::array<float, 3>>
-			> iter(mesh, handle);
-			addVBO(*vd, handle, iter, triangleCount*3);
-		}
+		// per-index buffers
+		for(auto& handle : mesh->polygons().handles())
+			makeVBO<PolyExtractor>(*vd, handle, mesh, triangleCount*3);
 	}
 
 	data.set(a_vd, std::shared_ptr<const possumwood::VertexData>(vd.release()));

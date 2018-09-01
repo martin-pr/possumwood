@@ -78,7 +78,7 @@ namespace {
 
 			// only one per-polygon attribute - object ID
 			GenericPolymesh::Polygons::Handle objId = result.polygons().handles().
-				add<std::size_t>("objectId", 0);
+				add<int>("objectId", 0);
 
 			for(auto& face : f) {
 				indices.clear();
@@ -93,7 +93,7 @@ namespace {
 				}
 
 				auto fi = result.polygons().add(indices.begin(), indices.end());
-				fi->set(objId, face.objectId);
+				fi->set(objId, (int)face.objectId);
 
 				if(!normals.empty()) {
 					assert(normals.size() == fi->size());
