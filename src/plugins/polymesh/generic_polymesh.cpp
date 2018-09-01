@@ -125,9 +125,14 @@ GenericPolymesh::Index& GenericPolymesh::Index::operator += (long d) {
 void GenericPolymesh::Index::operator++() {
 	++m_index;
 
-	assert(dynamic_cast<Polygons*>(m_parent) != nullptr);
-	Polygons* polys = (Polygons*)m_parent;
-	m_vertex = std::unique_ptr<Vertex>(new Vertex(&polys->m_parent->m_vertices, polys->m_parent->m_vertexIndices[m_index]));
+	assert(m_parent != nullptr);
+	assert(dynamic_cast<Indices*>(m_parent) != nullptr);
+	Indices* indices = (Indices*)m_parent;
+	m_vertex = std::unique_ptr<Vertex>(new Vertex(&indices->m_parent->m_vertices, indices->m_parent->m_vertexIndices[m_index]));
+}
+
+long GenericPolymesh::Index::operator - (const Index& i) const {
+	return m_index - i.m_index;
 }
 
 GenericPolymesh::Vertex& GenericPolymesh::Index::vertex() {
@@ -175,7 +180,7 @@ GenericPolymesh::Polygon::iterator GenericPolymesh::Polygon::begin() {
 }
 
 GenericPolymesh::Polygon::iterator GenericPolymesh::Polygon::end() {
-	return m_parent->m_indices.begin() + m_parent->m_polygonPointers[m_index+1];
+	return m_parent->m_indices.begin() + (m_parent->m_polygonPointers[m_index] + size());
 }
 
 GenericPolymesh::Polygon::const_iterator GenericPolymesh::Polygon::begin() const {
@@ -185,7 +190,7 @@ GenericPolymesh::Polygon::const_iterator GenericPolymesh::Polygon::begin() const
 
 GenericPolymesh::Polygon::const_iterator GenericPolymesh::Polygon::end() const {
 	const GenericContainer<Index>& indices = m_parent->m_indices;
-	return indices.begin() + m_parent->m_polygonPointers[m_index+1];
+	return indices.begin() + (m_parent->m_polygonPointers[m_index] + size());
 }
 
 ///////

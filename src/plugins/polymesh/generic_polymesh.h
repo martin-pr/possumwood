@@ -85,6 +85,7 @@ class GenericPolymesh {
 
 				Index& operator += (long d);
 				void operator++();
+				long operator - (const Index& i) const;
 
 				GenericContainer<Index>* m_parent;
 				std::size_t m_index;
