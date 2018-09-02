@@ -344,6 +344,81 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	/////
 
+	commands.push_back([&]() {
+		// connect back the input
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(input->port(0), middle->port(0)));
+	});
+
+	tests.push_back([&]() {
+		// one less attribute
+		BOOST_CHECK_EQUAL(network->metadata()->attributeCount(), 2u);
+		BOOST_CHECK_EQUAL(network->portCount(), 2u);
+
+		// but the remaining attribute still has the right value
+		BOOST_CHECK_EQUAL(network->port(0).get<float>(), 13.0f);
+		BOOST_CHECK_EQUAL(network->port(1).get<float>(), 13.0f);
+	});
+
+	commands.push_back([&]() {
+		// setting the input value still works
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(network->port(0), 15.0f));
+	});
+
+	tests.push_back([&]() {
+		BOOST_CHECK_EQUAL(middle->port(0).get<float>(), 15.0f);
+		BOOST_CHECK_EQUAL(output2->port(0).get<float>(), 15.0f);
+
+		BOOST_CHECK_EQUAL(network->port(0).get<float>(), 15.0f);
+
+		// getting a value from an unconnected port should throw
+		BOOST_CHECK_EQUAL(input->port(0).get<float>(), 15.0f);
+	});
+
+	const UniqueId indirectInputId;
+	dependency_graph::NodeBase* indirectInput = nullptr;
+	auto indirectInputIt = app.graph().nodes().end();
+
+	commands.push_back([&]() {
+		// make a passthru node
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
+			app.graph(),
+			passThroughNode(),
+			"passthru",
+			possumwood::NodeData(),
+			indirectInputId
+		));
+	});
+
+	tests.push_back([&]() {
+		indirectInputIt = app.graph().nodes().find(indirectInputId);
+		BOOST_REQUIRE(indirectInputIt != app.graph().nodes().end());
+		indirectInput = &(*indirectInputIt);
+
+		BOOST_CHECK_EQUAL(indirectInput->port(0).get<float>(), 0.0f);
+		BOOST_CHECK_EQUAL(indirectInput->port(1).get<float>(), 0.0f);
+	});
+
+	commands.push_back([&]() {
+		// connect back the input
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(indirectInput->port(1), network->port(0)));
+	});
+
+	tests.push_back([&]() {
+		// the connection to the input node should now exist
+		BOOST_CHECK(indirectInput->port(1).isConnected());
+		BOOST_REQUIRE(app.graph().connections().connectedFrom(network->port(0)));
+		BOOST_CHECK_EQUAL(&(*app.graph().connections().connectedFrom(network->port(0))), &(indirectInput->port(1)));
+
+		// the indirect input node should still be the same
+		BOOST_CHECK_EQUAL(indirectInput->port(0).get<float>(), 0.0f);
+		BOOST_CHECK_EQUAL(indirectInput->port(1).get<float>(), 0.0f);
+
+		// which means its value should propagate
+		BOOST_CHECK_EQUAL(network->port(0).get<float>(), 0.0f);
+	});
+
+	/////
+
 	// execute all actions + tests afterwards
 	assert(commands.size() == tests.size());
 
