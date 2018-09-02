@@ -3,6 +3,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
+#include <boost/filesystem.hpp>
 
 #include <QMenuBar>
 #include <QAction>
@@ -337,7 +338,11 @@ MainWindow::MainWindow() : QMainWindow() {
 
 		if(!filename.isEmpty()) {
 			try {
-				possumwood::App::instance().saveFile(filename.toStdString());
+				boost::filesystem::path path = filename.toStdString();
+				if(!path.has_extension())
+					path.replace_extension(".psw");
+
+				possumwood::App::instance().saveFile(path);
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error saving file...",
