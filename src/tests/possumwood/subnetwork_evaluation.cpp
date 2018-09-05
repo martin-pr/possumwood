@@ -413,8 +413,33 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		BOOST_CHECK_EQUAL(indirectInput->port(0).get<float>(), 0.0f);
 		BOOST_CHECK_EQUAL(indirectInput->port(1).get<float>(), 0.0f);
 
+		///////////////////////////////////////////////// FIX ME!!!!
+
 		// which means its value should propagate
 		BOOST_CHECK_EQUAL(network->port(0).get<float>(), 0.0f);
+		BOOST_CHECK_EQUAL(input->port(0).get<float>(), 0.0f);
+		BOOST_CHECK_EQUAL(middle->port(0).get<float>(), 0.0f);
+		BOOST_CHECK_EQUAL(middle->port(1).get<float>(), 0.0f);
+		BOOST_CHECK_EQUAL(output2->port(0).get<float>(), 0.0f);
+		BOOST_CHECK_EQUAL(network->port(1).get<float>(), 0.0f);
+	});
+
+	commands.push_back([&]() {
+		// setting a value on the connected input
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(indirectInput->port(0), 23.0f));
+	});
+
+	tests.push_back([&]() {
+		// the new value should propagate throughout the network
+	BOOST_CHECK_EQUAL(indirectInput->port(0).get<float>(), 23.0f);
+	BOOST_CHECK_EQUAL(indirectInput->port(1).get<float>(), 23.0f);
+
+		BOOST_CHECK_EQUAL(network->port(0).get<float>(), 23.0f);
+		BOOST_CHECK_EQUAL(input->port(0).get<float>(), 23.0f);
+		BOOST_CHECK_EQUAL(middle->port(0).get<float>(), 23.0f);
+		BOOST_CHECK_EQUAL(middle->port(1).get<float>(), 23.0f);
+		BOOST_CHECK_EQUAL(output2->port(0).get<float>(), 23.0f);
+		BOOST_CHECK_EQUAL(network->port(1).get<float>(), 23.0f);
 	});
 
 	/////

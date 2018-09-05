@@ -84,8 +84,12 @@ const BaseData& Port::getData() {
 			else
 				setDirty(false);
 		}
-		else if(category() == Attr::kOutput)
-			m_parent->computeOutput(m_id);
+		else if(category() == Attr::kOutput) {
+			if(!m_linkedFromPort)
+				m_parent->computeOutput(m_id);
+			else
+				setData(m_linkedFromPort->getData());
+		}
 	}
 
 	// when the computation is done, the port should not be dirty
