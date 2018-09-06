@@ -71,7 +71,10 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 
 		// and connect them in the graph as well
 		try {
-			possumwood::actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
+			if(!n2.graphNode->port(p2.index()).isConnected())
+				possumwood::actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
+			else
+				m_graphWidget->scene().disconnect(p1, p2);
 		}
 		catch(std::runtime_error& err) {
 			// something went wrong during connecting, undo it
