@@ -179,9 +179,9 @@ void App::setTime(float time) {
 		m_timeChanged(time);
 
 		// TERRIBLE HACK - a special node type that outputs time is handled here
-		for(auto& n : graph().nodes())
-			if(n.metadata()->type() == "time")
-				n.port(0).set<float>(time);
+		for(dependency_graph::Nodes::iterator i = graph().nodes().begin(dependency_graph::Nodes::kRecursive); i != graph().nodes().end(); ++i)
+			if(i->metadata()->type() == "time")
+				i->port(0).set<float>(time);
 	}
 }
 
