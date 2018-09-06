@@ -38,6 +38,6 @@ QWidget* string_ui::widget() {
 
 void string_ui::onFlagsChanged(unsigned flags) {
 	const bool bs = m_lineEdit->blockSignals(true);
-	m_lineEdit->setDisabled((flags & kDirty) || (flags & kDisabled));
+	m_lineEdit->setDisabled(flags & kDisabled);
 	m_lineEdit->blockSignals(bs);
 }

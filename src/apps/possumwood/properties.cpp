@@ -89,11 +89,15 @@ Properties::Property::Property(dependency_graph::Port& port) {
 			if(port.category() == dependency_graph::Attr::kOutput)
 				flags |= possumwood::properties::property_base::kOutput;
 
-			if(port.isDirty())
-				flags |= possumwood::properties::property_base::kDirty;
+			// if(port.isDirty())
+			// 	flags |= possumwood::properties::property_base::kDirty;
 
 			// and set the flags on the property (calls UI's update, if implemented)
 			prop->setFlags(flags);
+
+			// immediate refresh when a port is dirty (pulls on the port)
+			if(port.isDirty())
+				prop->valueFromPort(port);
 		};
 
 		flagsConnection = port.flagsCallback(updateFlags);

@@ -53,6 +53,6 @@ QWidget* vec3_ui::widget() {
 void vec3_ui::onFlagsChanged(unsigned flags) {
 	for(unsigned a=0;a<3;++a) {
 		m_values[a]->setReadOnly(flags & kOutput);
-		m_values[a]->setDisabled((flags & kDirty) || (flags & kDisabled));
+		m_values[a]->setDisabled(flags & kDisabled);
 	}
 }

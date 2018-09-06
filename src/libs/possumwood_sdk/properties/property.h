@@ -22,7 +22,7 @@ class property_base : public boost::noncopyable {
 			kInput = 1,
 			kOutput = 2,
 			kDisabled = 4,
-			kDirty = 8
+			// kDirty = 8 // not needed - the widget refreshes itself immediately
 		};
 
 		virtual ~property_base() = 0;

@@ -32,5 +32,5 @@ QWidget* bool_ui::widget() {
 }
 
 void bool_ui::onFlagsChanged(unsigned flags) {
-	m_checkBox->setDisabled((flags & kOutput) || (flags & kDirty) || (flags & kDisabled));
+	m_checkBox->setDisabled((flags & kOutput) || (flags & kDisabled));
 }

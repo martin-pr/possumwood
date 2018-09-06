@@ -167,7 +167,7 @@ void FrameEditor::onFlagsChanged(unsigned flags) {
 		assert(cb != NULL);
 		if(cb->hasFocus())
 			m_focusedComboBox = cb;
-		cb->setDisabled((flags & kDirty) || (flags & kDisabled) || (flags & kOutput));
+		cb->setDisabled((flags & kDisabled) || (flags & kOutput));
 		if(cb->isEnabled() && m_focusedComboBox == cb) {
 			m_focusedComboBox = NULL;
 			cb->setFocus();
@@ -175,15 +175,15 @@ void FrameEditor::onFlagsChanged(unsigned flags) {
 
 		QWidget* rxw = m_widget->itemWidget(item, 1);
 		QDoubleSpinBox* rx = dynamic_cast<QDoubleSpinBox*>(rxw);
-		rx->setReadOnly((flags & kDirty) || (flags & kDisabled) || (flags & kOutput));
+		rx->setReadOnly((flags & kDisabled) || (flags & kOutput));
 
 		QWidget* ryw = m_widget->itemWidget(item, 2);
 		QDoubleSpinBox* ry = dynamic_cast<QDoubleSpinBox*>(ryw);
-		ry->setReadOnly((flags & kDirty) || (flags & kDisabled) || (flags & kOutput));
+		ry->setReadOnly((flags & kDisabled) || (flags & kOutput));
 
 		QWidget* rzw = m_widget->itemWidget(item, 3);
 		QDoubleSpinBox* rz = dynamic_cast<QDoubleSpinBox*>(rzw);
-		rz->setReadOnly((flags & kDirty) || (flags & kDisabled) || (flags & kOutput));
+		rz->setReadOnly((flags & kDisabled) || (flags & kOutput));
 	}
 
 	m_signalsBlocked = signalsBlockedOrig;
