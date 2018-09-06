@@ -82,6 +82,10 @@ void NodeBase::markAsDirty(size_t index) {
 			for(Port& o : network().connections().connectedTo(port(index)))
 				o.node().markAsDirty(o.index());
 		}
+
+		// propagate to linked ports
+		if(p.isLinked())
+			p.linkedTo().node().markAsDirty(p.linkedTo().m_id);
 	}
 }
 

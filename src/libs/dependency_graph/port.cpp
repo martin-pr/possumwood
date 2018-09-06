@@ -229,7 +229,12 @@ void Port::connect(Port& p) {
 	// Not good. Lets just dirty the whole thing, and force reevaluation independently
 	// of the current state.
 	node().markAsDirty(index());
+	if(isLinked())
+		m_linkedToPort->node().markAsDirty(m_linkedToPort->index());
+
 	p.node().markAsDirty(p.index());
+	if(p.isLinked())
+		p.m_linkedToPort->node().markAsDirty(p.m_linkedToPort->index());
 
 	// connect / disconnect - might change UI's appearance
 	m_flagsCallbacks();
@@ -258,7 +263,13 @@ void Port::disconnect(Port& p) {
 		m_parent->datablock().reset(m_id);
 
 	// this port is going to be dirty after disconnect - might change value and require recomputation
-	m_parent->markAsDirty(m_id);
+	node().markAsDirty(index());
+	if(isLinked())
+		m_linkedToPort->node().markAsDirty(m_linkedToPort->index());
+
+	p.node().markAsDirty(p.index());
+	if(p.isLinked())
+		p.m_linkedToPort->node().markAsDirty(p.m_linkedToPort->index());
 
 	// connect / disconnect - might change UI's appearance
 	m_flagsCallbacks();
@@ -290,6 +301,9 @@ bool Port::isLinked() const {
 void Port::unlink() {
 	assert(m_linkedToPort != nullptr);
 	assert(m_linkedToPort->m_linkedFromPort != nullptr);
+
+	m_linkedToPort->node().markAsDirty(m_linkedToPort->index());
+	node().markAsDirty(index());
 
 	m_linkedToPort->m_linkedFromPort = nullptr;
 	m_linkedToPort = nullptr;
