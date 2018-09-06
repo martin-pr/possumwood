@@ -81,6 +81,8 @@ const BaseData& Port::getData() {
 		if(category() == Attr::kInput) {
 			if(isConnected())
 				m_parent->computeInput(m_id);
+			else if(m_linkedFromPort)
+				setData(m_linkedFromPort->getData());
 			else
 				setDirty(false);
 		}

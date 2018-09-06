@@ -164,8 +164,9 @@ void NodeBase::computeInput(size_t index) {
 	// pull on the single connected output if needed
 	boost::optional<Port&> out = network().connections().connectedFrom(port(index));
 	assert(out);
-	if(out->isDirty())
-		out->node().computeOutput(out->index());
+	if(out->isDirty()) {
+		out->getData(); // throw away (bad)
+	}
 	assert(not out->isDirty());
 
 	// assign the value directly
@@ -192,10 +193,7 @@ void NodeBase::computeOutput(size_t index) {
 	// pull on all inputs
 	for(std::size_t& i : inputs) {
 		if(port(i).isDirty()) {
-			if(port(i).isConnected())
-				computeInput(i);
-			else
-				port(i).setDirty(false);
+			port(i).getData(); // throw away (bad)
 		}
 
 		assert(!port(i).isDirty());
