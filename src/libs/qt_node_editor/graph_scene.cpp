@@ -278,8 +278,8 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 			if(m_leftMouseDown) {
 				m_leftMouseDown = false;
 
-				if(!m_movingNodes.empty() && m_nodesMoveCallback)
-					m_nodesMoveCallback(m_movingNodes);
+				if(!m_movingNodes.empty())
+					emit nodesMoved(m_movingNodes);
 				m_movingNodes.clear();
 			}
 		}
@@ -298,10 +298,6 @@ void GraphScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 
 bool GraphScene::isEdgeEditInProgress() const {
 	return m_editedEdge->isVisible();
-}
-
-void GraphScene::setNodesMoveCallback(std::function<void(const std::set<Node*>&)> fn) {
-	m_nodesMoveCallback = fn;
 }
 
 void GraphScene::onSelectionChanged() {

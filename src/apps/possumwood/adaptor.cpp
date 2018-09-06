@@ -84,7 +84,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 		}
 	});
 
-	m_graphWidget->scene().setNodesMoveCallback([&](const std::set<node_editor::Node*>& nodes) {
+	connect(&m_graphWidget->scene(), &node_editor::GraphScene::nodesMoved, [&](const std::set<node_editor::Node*>& nodes) {
 		std::map<dependency_graph::NodeBase*, possumwood::NodeData::Point> positions;
 		for(auto& nptr : nodes) {
 			auto& n = m_index[nptr];
