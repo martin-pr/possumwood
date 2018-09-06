@@ -64,7 +64,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_graphWidget = new node_editor::GraphWidget();
 	layout->addWidget(m_graphWidget);
 
-	m_graphWidget->scene().setMouseConnectionCallback([&](node_editor::Port& p1, node_editor::Port& p2) {
+	connect(&m_graphWidget->scene(), &node_editor::GraphScene::portsConnected, [&](node_editor::Port& p1, node_editor::Port& p2) {
 		// find the two nodes that were connected
 		auto& n1 = m_index[&p1.parentNode()];
 		auto& n2 = m_index[&p2.parentNode()];

@@ -267,8 +267,7 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 			if(!isConnected(*portFrom, *portTo)) {
 				connect(*portFrom, *portTo);
 
-				if(m_connectionCallback)
-					m_connectionCallback(*portFrom, *portTo);
+				emit portsConnected(*portFrom, *portTo);
 			}
 		}
 
@@ -301,11 +300,7 @@ bool GraphScene::isEdgeEditInProgress() const {
 	return m_editedEdge->isVisible();
 }
 
-void GraphScene::setMouseConnectionCallback(std::function<void(Port&, Port&)> fn) {
-	m_connectionCallback = fn;
-}
-
- void GraphScene::setNodesMoveCallback(std::function<void(const std::set<Node*>&)> fn) {
+void GraphScene::setNodesMoveCallback(std::function<void(const std::set<Node*>&)> fn) {
 	m_nodesMoveCallback = fn;
 }
 
