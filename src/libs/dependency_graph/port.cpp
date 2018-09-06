@@ -120,9 +120,9 @@ void Port::setData(const BaseData& val) {
 	if(valueWasSet)
 		m_valueCallbacks();
 
-	// set data on a linked port, if linked
+	// and make linked port dirty, to allow it to pull on next evaluation
 	if(isLinked())
-		m_linkedToPort->setData(val);
+		m_linkedToPort->node().markAsDirty(m_linkedToPort->index());
 }
 
 void Port::setDirty(bool d) {
