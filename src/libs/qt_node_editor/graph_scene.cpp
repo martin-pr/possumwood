@@ -172,36 +172,46 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 	if(mouseEvent->button() == Qt::LeftButton) {
 		Port* port = findItem<Port>(itemAt(mouseEvent->scenePos(), QTransform()));
 		if(port) {
+			const QPointF pos = port->mapFromScene(mouseEvent->scenePos());
+			const QRectF bbox = port->boundingRect();
+
 			Port::Type portType;
-			if((port->portType() == Port::kInput) || (port->portType() == Port::kOutput))
+			if((port->portType() == Port::kInput) && (pos.x() <= bbox.height()))
 				portType = port->portType();
-			else {
-				const QPointF pos = port->mapFromScene(mouseEvent->scenePos());
-				const QRectF bbox = port->boundingRect();
-				if(pos.x() < bbox.width() / 2)
+			else if((port->portType() == Port::kOutput) && (bbox.width() - pos.x() <= bbox.height()))
+				portType = port->portType();
+			else if(port->portType() == Port::kInputOutput) {
+				if(pos.x() <= bbox.height())
 					portType = Port::kInput;
-				else
+				else if(pos.x() >= bbox.width() - bbox.height())
 					portType = Port::kOutput;
 			}
 
-			QPointF pos;
-			{
-				const QRectF bbox = port->boundingRect();
-				if(portType == Port::kInput)
-					pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
-				else
-					pos = QPointF(bbox.x() + bbox.width() - bbox.height() / 2, bbox.y() + bbox.height() / 2);
-				pos = port->mapToScene(pos);
+			if(portType == Port::kInput || portType == Port::kOutput) {
+				QPointF pos;
+				{
+					const QRectF bbox = port->boundingRect();
+					if(portType == Port::kInput)
+						pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
+					else
+						pos = QPointF(bbox.x() + bbox.width() - bbox.height() / 2, bbox.y() + bbox.height() / 2);
+					pos = port->mapToScene(pos);
+				}
+
+				m_editedEdge->setVisible(true);
+				m_editedEdge->setPoints(pos, pos);
+				m_editedEdge->setPen(QPen(port->color(), 2));
+				m_connectedSide = portType;
+
+				mouseEvent->accept();
 			}
+			else
+				port = nullptr;
 
-			m_editedEdge->setVisible(true);
-			m_editedEdge->setPoints(pos, pos);
-			m_editedEdge->setPen(QPen(port->color(), 2));
-			m_connectedSide = portType;
 
-			mouseEvent->accept();
 		}
-		else {
+
+		if(!port) {
 			m_editedEdge->setVisible(false);
 
 			m_leftMouseDown = true;
