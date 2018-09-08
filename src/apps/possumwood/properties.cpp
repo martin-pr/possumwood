@@ -27,6 +27,7 @@ void Properties::show(const dependency_graph::Selection& selection) {
 	clear();
 	m_properties.clear();
 	m_nodes.clear();
+	m_states.clear();
 
 	bool block = blockSignals(true);
 
@@ -44,7 +45,7 @@ void Properties::show(const dependency_graph::Selection& selection) {
 		for(unsigned pi = 0; pi != node.get().portCount(); ++pi) {
 			auto& port = node.get().port(pi);
 
-			m_properties.push_back(Property(port));
+			m_properties.push_back(PropertyHolder(port));
 			if(m_properties.back().ui) {
 				QTreeWidgetItem* portItem = new QTreeWidgetItem();
 				portItem->setText(0, port.name().c_str());
@@ -54,6 +55,15 @@ void Properties::show(const dependency_graph::Selection& selection) {
 				setItemWidget(portItem, 1, m_properties.back().ui->widget());
 			}
 		}
+
+		// add the status widget
+		m_states.push_back(StatusHolder(node));
+
+		QTreeWidgetItem* stateItem = new QTreeWidgetItem();
+		stateItem->setText(0, "status");
+		nodeItem->addChild(stateItem);
+
+		setItemWidget(stateItem, 1, m_states.back().m_status.get());
 	}
 
 	blockSignals(block);
@@ -64,7 +74,7 @@ void Properties::show(const dependency_graph::Selection& selection) {
 
 ////////
 
-Properties::Property::Property(dependency_graph::Port& port) {
+Properties::PropertyHolder::PropertyHolder(dependency_graph::Port& port) {
 	// create the widget
 	ui = possumwood::properties::factories::singleton().create(port.type());
 	if(ui) {
@@ -115,7 +125,7 @@ Properties::Property::Property(dependency_graph::Port& port) {
 	}
 }
 
-Properties::Property::Property(Property&& prop) {
+Properties::PropertyHolder::PropertyHolder(PropertyHolder&& prop) {
 	ui = std::move(prop.ui);
 
 	graphValueConnection = prop.graphValueConnection;
@@ -128,10 +138,21 @@ Properties::Property::Property(Property&& prop) {
 	prop.flagsConnection = boost::signals2::connection();
 }
 
-Properties::Property::~Property() {
+Properties::PropertyHolder::~PropertyHolder() {
 	graphValueConnection.disconnect();
 	uiValueConnection.disconnect();
 	flagsConnection.disconnect();
 
 }
 
+Properties::StatusHolder::StatusHolder(dependency_graph::NodeBase& node) : m_status(new Status(node)) {
+
+}
+
+Properties::StatusHolder::~StatusHolder() {
+
+}
+
+Properties::StatusHolder::StatusHolder(StatusHolder&& h) {
+	m_status = std::move(h.m_status);
+}
