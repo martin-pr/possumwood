@@ -97,35 +97,6 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 		possumwood::actions::move(positions);
 	});
 
-	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
-		auto& n = m_index[&node];
-
-		dependency_graph::State state = n.graphNode->state();
-		if(n.drawable)
-			state.append(n.drawable->drawState());
-
-		std::stringstream ss;
-		ss << "<span style=\"color:#fff;\">" << n.graphNode->name() << " (" << n.graphNode->metadata()->type() << ")" << "</p>";
-		ss << "<br />" << std::endl;
-		for(auto& i : state) {
-			switch(i.first) {
-				case dependency_graph::State::kInfo:
-					ss << "<br /><span style=\"color:#aaa\">";
-					break;
-				case dependency_graph::State::kWarning:
-					ss << "<br /><span style=\"color:#ff0\">";
-					break;
-				case dependency_graph::State::kError:
-					ss << "<br /><span style=\"color:#f00\">";
-					break;
-			}
-
-			ss << i.second << "</span>" << std::endl;
-		}
-
-		return ss.str();
-	});
-
 	connect(&m_graphWidget->scene(), &node_editor::GraphScene::doubleClicked, [this](node_editor::Node* node) {
 		// moving "up"
 		if(node == nullptr) {

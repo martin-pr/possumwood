@@ -17,15 +17,6 @@ GraphScene::GraphScene(QGraphicsView* parent) : QGraphicsScene(parent), m_leftMo
 	m_editedEdge->setVisible(false);
 	addItem(m_editedEdge);
 
-	m_infoRect = new QGraphicsRectItem();
-	m_infoRect->setBrush(QColor(24, 24, 24));
-	m_infoRect->setZValue(1000);
-	m_infoRect->setVisible(false);
-
-	m_infoText = new QGraphicsTextItem(m_infoRect);
-
-	addItem(m_infoRect);
-
 	QObject::connect(this, SIGNAL(selectionChanged()), this, SLOT(onSelectionChanged()));
 }
 
@@ -218,19 +209,6 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 			QGraphicsScene::mousePressEvent(mouseEvent);
 		}
 	}
-	else if(mouseEvent->button() == Qt::MiddleButton) {
-		Node* node = findItem<Node>(itemAt(mouseEvent->scenePos(), QTransform()));
-		if(node && m_nodeInfoCallback) {
-			m_infoText->setHtml(m_nodeInfoCallback(*node).c_str());
-			m_infoRect->setPos(mouseEvent->scenePos().x() - m_infoText->boundingRect().width()/2, mouseEvent->scenePos().y());
-			m_infoRect->setRect(m_infoText->boundingRect());
-			m_infoRect->setVisible(true);
-
-			QApplication::setOverrideCursor(Qt::BlankCursor);
-		}
-
-		mouseEvent->accept();
-	}
 	else
 		QGraphicsScene::mousePressEvent(mouseEvent);
 }
@@ -249,12 +227,6 @@ void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 }
 
 void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
-	if(m_infoRect->isVisible()) {
-		m_infoRect->setVisible(false);
-
-		QApplication::restoreOverrideCursor();
-	}
-
 	if(m_editedEdge->isVisible()) {
 		m_editedEdge->setVisible(false);
 
@@ -315,10 +287,6 @@ void GraphScene::onSelectionChanged() {
 	}
 
 	selectionChanged(selectionSet);
-}
-
-void GraphScene::setNodeInfoCallback(std::function<std::string(const Node&)> fn) {
-	m_nodeInfoCallback = fn;
 }
 
 void GraphScene::registerNodeMove(Node* n) {

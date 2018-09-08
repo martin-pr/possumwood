@@ -46,11 +46,10 @@ class GraphScene : public QGraphicsScene {
 			std::set<ConnectedEdge*> connections;
 		};
 
-		void setNodeInfoCallback(std::function<std::string(const Node&)> fn);
-
 	signals:
 		void selectionChanged(const Selection&);
 		void doubleClicked(Node*);
+		void middleClicked(Node*);
 		void portsConnected(Port&, Port&);
 		void nodesMoved(const std::set<Node*>&);
 
@@ -75,11 +74,6 @@ class GraphScene : public QGraphicsScene {
 
 		Edge* m_editedEdge;
 		Port::Type m_connectedSide;
-
-		QGraphicsTextItem* m_infoText;
-		QGraphicsRectItem* m_infoRect;
-
-		std::function<std::string(const Node&)> m_nodeInfoCallback;
 
 		void registerNodeMove(Node*);
 
