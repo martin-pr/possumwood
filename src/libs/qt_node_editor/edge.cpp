@@ -46,6 +46,8 @@ Edge::Edge(QPointF origin, QPointF target) : m_origin(origin), m_target(target) 
 	setFlags(ItemIsSelectable);
 
 	setPoints(origin, target);
+
+	setZValue(0);
 }
 
 Edge::~Edge() {

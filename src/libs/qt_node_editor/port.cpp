@@ -12,10 +12,6 @@
 
 namespace node_editor {
 
-namespace {
-const unsigned s_margin = 5;
-}
-
 Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsigned id) : QGraphicsRectItem(parent), m_color(color), m_in(NULL), m_out(NULL), m_parent(parent), m_id(id) {
 	m_name = new QGraphicsTextItem(name, this);
 	m_name->setPos(m_name->boundingRect().height(), 0);
@@ -27,8 +23,8 @@ Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsign
 
 	if(t & kInput) {
 		m_in = new QGraphicsRectItem(
-		    s_margin, s_margin,
-		    m_name->boundingRect().height() - 2 * s_margin, m_name->boundingRect().height() - 2 * s_margin,
+		    margin(), margin(),
+		    m_name->boundingRect().height() - 2 * margin(), m_name->boundingRect().height() - 2 * margin(),
 		    this);
 		m_in->setBrush(m_color);
 		m_in->setPen(Qt::NoPen);
@@ -36,8 +32,8 @@ Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsign
 
 	if(t & kOutput) {
 		m_out = new QGraphicsRectItem(
-		    m_name->boundingRect().height() + m_name->boundingRect().width() + s_margin, s_margin,
-		    m_name->boundingRect().height() - 2 * s_margin, m_name->boundingRect().height() - 2 * s_margin,
+		    m_name->boundingRect().height() + m_name->boundingRect().width() + margin(), margin(),
+		    m_name->boundingRect().height() - 2 * margin(), m_name->boundingRect().height() - 2 * margin(),
 		    this);
 		m_out->setBrush(m_color);
 		m_out->setPen(Qt::NoPen);
@@ -46,6 +42,8 @@ Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsign
 	setRect(QRect(rect().x(), rect().y(), minWidth(), m_name->boundingRect().height()));
 
 	setPen(Qt::NoPen);
+
+	setZValue(1);
 }
 
 unsigned Port::minWidth() const {
@@ -61,8 +59,8 @@ void Port::setWidth(unsigned w) {
 		m_name->setPos(w - m_name->boundingRect().height() - m_name->boundingRect().width(), 0);
 
 	if(m_out)
-		m_out->setRect(w - m_name->boundingRect().height() + s_margin, s_margin,
-		               m_name->boundingRect().height() - 2 * s_margin, m_name->boundingRect().height() - 2 * s_margin);
+		m_out->setRect(w - m_name->boundingRect().height() + margin(), margin(),
+		               m_name->boundingRect().height() - 2 * margin(), m_name->boundingRect().height() - 2 * margin());
 }
 
 const QString Port::name() const {
