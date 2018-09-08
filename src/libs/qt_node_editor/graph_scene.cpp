@@ -266,6 +266,18 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 			}
 		}
 
+		if(mouseEvent->button() == Qt::MiddleButton) {
+			Node* node = findItem<Node>(itemAt(mouseEvent->scenePos(), QTransform()));
+
+			emit middleClicked(node);
+		}
+
+		if(mouseEvent->button() == Qt::RightButton) {
+			Node* node = findItem<Node>(itemAt(mouseEvent->scenePos(), QTransform()));
+
+			emit rightClicked(node);
+		}
+
 		QGraphicsScene::mouseReleaseEvent(mouseEvent);
 	}
 }

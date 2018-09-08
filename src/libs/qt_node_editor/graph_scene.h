@@ -48,10 +48,12 @@ class GraphScene : public QGraphicsScene {
 
 	signals:
 		void selectionChanged(const Selection&);
-		void doubleClicked(Node*);
-		void middleClicked(Node*);
 		void portsConnected(Port&, Port&);
 		void nodesMoved(const std::set<Node*>&);
+
+		void doubleClicked(Node*);
+		void middleClicked(Node*);
+		void rightClicked(Node*);
 
 	protected:
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
