@@ -369,11 +369,26 @@ MainWindow::MainWindow() : QMainWindow() {
 	QAction* quitAct = new QAction(QIcon(":icons/exit.png"), "&Quit", this);
 	connect(quitAct, &QAction::triggered, [this](bool) { close(); });
 
-	/////////////////////
-	// toolbar
-	QToolBar* docksToolbar = addToolBar("Dock widgets toolbar");
+	//////////////
+
+	QWidget* menuWidget = new QWidget();
+
+	QVBoxLayout* menuLayout = new QVBoxLayout(menuWidget);
+	menuLayout->setContentsMargins(0,0,0,0);
+	menuLayout->setSpacing(0);
+
+	QMenuBar* mainMenu = new QMenuBar();
+	menuLayout->addWidget(mainMenu);
+
+	QToolBar* docksToolbar = new QToolBar();
 	docksToolbar->setObjectName("docks_toolbar");
 	docksToolbar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	menuLayout->addWidget(docksToolbar);
+
+	setMenuWidget(menuWidget);
+
+	/////////////////////
+	// toolbar
 	docksToolbar->addAction(graphDock->toggleViewAction());
 	docksToolbar->addAction(propDock->toggleViewAction());
 	docksToolbar->addAction(editorDock->toggleViewAction());
@@ -382,7 +397,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	// file menu
 
 	{
-		QMenu* fileMenu = menuBar()->addMenu("&File");
+		QMenu* fileMenu = mainMenu->addMenu("&File");
 
 		fileMenu->addAction(newAct);
 		fileMenu->addAction(openAct);
@@ -398,7 +413,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	// copy + paste functionality
 
 	{
-		QMenu* editMenu = menuBar()->addMenu("&Edit");
+		QMenu* editMenu = mainMenu->addMenu("&Edit");
 
 		editMenu->addAction(m_adaptor->undoAction());
 		editMenu->addAction(m_adaptor->redoAction());
@@ -415,7 +430,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	// view menu
 
 	{
-		QMenu* viewMenu = menuBar()->addMenu("&View");
+		QMenu* viewMenu = mainMenu->addMenu("&View");
 
 		viewMenu->addAction(propDock->toggleViewAction());
 		viewMenu->addAction(graphDock->toggleViewAction());
@@ -427,10 +442,11 @@ MainWindow::MainWindow() : QMainWindow() {
 	/////////////////////
 	// playback menu
 	{
-		QMenu* playbackMenu = menuBar()->addMenu("&Playback");
+		QMenu* playbackMenu = mainMenu->addMenu("&Playback");
 
 		playbackMenu->addAction(m_timeline->playAction());
 	}
+
 }
 
 MainWindow::~MainWindow() {
