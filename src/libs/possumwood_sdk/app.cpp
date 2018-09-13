@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <fstream>
+#include <regex>
 
 #include <boost/filesystem.hpp>
 
@@ -37,6 +38,57 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 
 	m_sceneConfig.addItem(Config::Item("fps", "timeline", 24.0f, Config::Item::kNoFlags,
 	                                   "Scene's frames-per-second value"));
+
+	///////////////////////
+	// expressions
+
+	// find the config file
+	boost::filesystem::path full_path(boost::filesystem::current_path());
+	while(!full_path.empty()) {
+		if(boost::filesystem::exists(full_path / "possumwood.conf"))
+			break;
+
+		full_path = full_path.parent_path();
+	}
+
+	if(!full_path.empty()) {
+		std::ifstream cfg(((full_path / "possumwood.conf").string()));
+		while(!cfg.eof() && cfg.good()) {
+			std::string line;
+			std::getline(cfg, line);
+
+			if(!line.empty()) {
+				std::string key;
+				std::string value;
+
+				int state = 0;
+				for(std::size_t c=0;c<line.length(); ++c) {
+					if(state == 0) {
+						if(line[c] != ' ' && line[c] != '\t')
+							key.push_back(line[c]);
+						else
+							state = 1;
+					}
+
+					if(state == 1) {
+						if(line[c] != ' ' && line[c] != '\t')
+							state = 2;
+					}
+
+					if(state == 2)
+						value.push_back(line[c]);
+				}
+
+				boost::filesystem::path path(value);
+				if(path.is_relative())
+					path = full_path / path;
+
+				m_pathVariables[key] = path.string();
+			}
+		}
+	}
+	else
+		std::cout << "Warning: configuration file 'possumwood.conf' not found!" << std::endl;
 }
 
 App::~App() {
@@ -196,5 +248,41 @@ boost::signals2::connection App::onTimeChanged(std::function<void(float)> fn) {
 Config& App::sceneConfig() {
 	return m_sceneConfig;
 }
+
+boost::filesystem::path App::expandPath(const boost::filesystem::path& path) const {
+	std::string p = path.string();
+
+	const std::regex var("\\$[A-Z]+");
+	std::smatch match;
+	while(std::regex_search(p, match, var)) {
+		auto it = m_pathVariables.find(match.str().substr(1));
+		if(it != m_pathVariables.end())
+			p = match.prefix().str() + it->second.string() + match.suffix().str();
+		else
+			break;
+	}
+
+	return p;
+}
+
+boost::filesystem::path App::shrinkPath(const boost::filesystem::path& path) const {
+	std::string p = path.string();
+
+	bool cont = true;
+	while(cont) {
+		cont = false;
+		for(auto& i : m_pathVariables) {
+			auto it = p.find(i.second.string());
+			if(it != std::string::npos) {
+				cont = true;
+
+				p = p.substr(0, it) + "$" + i.first + p.substr(it + i.second.string().length());
+			}
+		}
+	}
+
+	return p;
+}
+
 
 }
