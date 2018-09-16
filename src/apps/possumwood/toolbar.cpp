@@ -1,6 +1,7 @@
 #include "toolbar.h"
 
 #include <regex>
+#include <fstream>
 #include <streambuf>
 
 #include <boost/filesystem.hpp>
@@ -63,7 +64,6 @@ Toolbar::Toolbar() {
 
 				QToolButton* toolButton = (QToolButton*)tb->widgetForAction(action);
 				toolButton->setAutoRaise(false);
-				toolButton->setWordWrap(true);
 
 				QAction::connect(action, &QAction::triggered, [setupPath]() {
 					try {
