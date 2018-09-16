@@ -31,6 +31,7 @@
 #include "adaptor.h"
 #include "config_dialog.h"
 #include "grid.h"
+#include "toolbar.h"
 
 namespace {
 
@@ -373,9 +374,16 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	QWidget* menuWidget = new QWidget();
 
-	QVBoxLayout* menuLayout = new QVBoxLayout(menuWidget);
+	QHBoxLayout* topLayout = new QHBoxLayout(menuWidget);
+	topLayout->setContentsMargins(0,0,0,0);
+
+	QVBoxLayout* menuLayout = new QVBoxLayout();
 	menuLayout->setContentsMargins(0,0,0,0);
 	menuLayout->setSpacing(0);
+	topLayout->addLayout(menuLayout, 0);
+
+	QWidget* tabs = new Toolbar();
+	topLayout->addWidget(tabs, 1);
 
 	QMenuBar* mainMenu = new QMenuBar();
 	menuLayout->addWidget(mainMenu);
@@ -383,6 +391,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	QToolBar* docksToolbar = new QToolBar();
 	docksToolbar->setObjectName("docks_toolbar");
 	docksToolbar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	docksToolbar->setIconSize(QSize(32, 32));
 	menuLayout->addWidget(docksToolbar);
 
 	setMenuWidget(menuWidget);

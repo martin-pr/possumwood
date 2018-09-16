@@ -271,9 +271,13 @@ namespace {
 }
 
 void paste(dependency_graph::Network& current, dependency_graph::Selection& selection) {
+	paste(current, selection, Clipboard::instance().clipboardContent());
+}
+
+void paste(dependency_graph::Network& current, dependency_graph::Selection& selection, const std::string& content) {
 	try {
 		// convert the clipboard content to a json object
-		auto json = possumwood::io::json::parse(Clipboard::instance().clipboardContent());
+		auto json = possumwood::io::json::parse(content);
 
 		// and pass it to the paste() implementation
 		fromJson(current, selection, json);
