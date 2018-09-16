@@ -38,5 +38,5 @@ QWidget* float_ui::widget() {
 
 void float_ui::onFlagsChanged(unsigned flags) {
 	m_spinBox->setReadOnly(flags & kOutput);
-	m_spinBox->setDisabled((flags & kDirty) || (flags & kDisabled));
+	m_spinBox->setDisabled(flags & kDisabled);
 }

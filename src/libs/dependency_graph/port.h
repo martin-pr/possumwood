@@ -14,6 +14,7 @@ class NodeBase;
 class Port : public boost::noncopyable {
 	public:
 		Port(Port&& p);
+		~Port();
 
 		const std::string& name() const;
 		const Attr::Category category() const;
@@ -84,7 +85,8 @@ class Port : public boost::noncopyable {
 		bool m_dirty;
 		NodeBase* m_parent;
 
-		Port* m_linkedPort;
+		Port* m_linkedToPort;
+		Port* m_linkedFromPort;
 
 		boost::signals2::signal<void()> m_valueCallbacks, m_flagsCallbacks;
 

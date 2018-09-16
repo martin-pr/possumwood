@@ -16,6 +16,7 @@ Graph::Graph() : Network(nullptr), m_signals(new Signals) {
 }
 
 Graph::~Graph() {
+	clear();
 }
 
 boost::signals2::connection Graph::onAddNode(std::function<void(NodeBase&)> callback) {

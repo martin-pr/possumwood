@@ -137,7 +137,7 @@ void JointMappingEditor::onFlagsChanged(unsigned flags) {
 		assert(cb1 != NULL);
 		if(cb1->hasFocus())
 			m_focusedComboBox = cb1;
-		cb1->setDisabled((flags & kDirty) || (flags & kDisabled) || (flags & kOutput));
+		cb1->setDisabled((flags & kDisabled) || (flags & kOutput));
 		if(cb1->isEnabled() && m_focusedComboBox == cb1) {
 			m_focusedComboBox = NULL;
 			cb1->setFocus();
@@ -148,7 +148,7 @@ void JointMappingEditor::onFlagsChanged(unsigned flags) {
 		assert(cb2 != NULL);
 		if(cb2->hasFocus())
 			m_focusedComboBox = cb2;
-		cb2->setDisabled((flags & kDirty) || (flags & kDisabled) || (flags & kOutput));
+		cb2->setDisabled((flags & kDisabled) || (flags & kOutput));
 		if(cb2->isEnabled() && m_focusedComboBox == cb2) {
 			m_focusedComboBox = NULL;
 			cb2->setFocus();

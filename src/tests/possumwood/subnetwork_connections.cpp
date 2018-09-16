@@ -283,3 +283,73 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().metadata()->attributeCount(), 0u);
 	BOOST_CHECK_EQUAL(input.network().portCount(), 0u);
 }
+
+BOOST_AUTO_TEST_CASE(input_output_root) {
+	// make the app "singleton"
+	possumwood::AppCore app;
+
+	// initial state check
+	BOOST_CHECK(app.graph().nodes().empty());
+	BOOST_CHECK(app.graph().connections().empty());
+	BOOST_CHECK_EQUAL(app.graph().metadata()->attributeCount(), 0u);
+
+	// create a tiny subnetwork
+	UniqueId inId;
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
+		app.graph(),
+		dependency_graph::MetadataRegister::singleton()["input"],
+		"network_input",
+		possumwood::NodeData(),
+		inId
+	));
+
+	auto inIt = app.graph().nodes().find(inId);
+	BOOST_REQUIRE(inIt != app.graph().nodes().end());
+	dependency_graph::NodeBase& input = *inIt;
+
+	UniqueId outId;
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
+		app.graph(),
+		dependency_graph::MetadataRegister::singleton()["output"],
+		"network_output",
+		possumwood::NodeData(),
+		outId
+	));
+
+	auto outIt = app.graph().nodes().find(outId);
+	BOOST_REQUIRE(outIt != app.graph().nodes().end());
+	dependency_graph::NodeBase& output = *outIt;
+
+	UniqueId midId;
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
+		app.graph(),
+		passThroughNode(),
+		"passthru",
+		possumwood::NodeData(),
+		midId
+	));
+
+	auto midIt = app.graph().nodes().find(midId);
+	BOOST_REQUIRE(midIt != app.graph().nodes().end());
+	dependency_graph::NodeBase& middle = *midIt;
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 3u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
+
+	// before connecting the input and output, the network should have no ports
+	BOOST_CHECK_EQUAL(app.graph().portCount(), 0u);
+
+	// connect
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(input.port(0), middle.port(0)));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(middle.port(1), output.port(0)));
+
+	// check the state of the undo stack
+	BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), 5u);
+	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
+
+	// after connecting, the graph should have an input and an output
+	// BOOST_CHECK_EQUAL(app.graph().portCount(), 2u);
+	// NOT IMPLEMENTED - for now, root doesn't have ports
+	BOOST_CHECK_EQUAL(app.graph().portCount(), 0u);
+}

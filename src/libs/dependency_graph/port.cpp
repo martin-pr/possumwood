@@ -7,12 +7,26 @@
 namespace dependency_graph {
 
 Port::Port(unsigned id, NodeBase* parent) : m_id(id),
-	m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput), m_parent(parent), m_linkedPort(nullptr) {
+	m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput), m_parent(parent), m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
 }
 
-Port::Port(Port&& p) : m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent), m_linkedPort(p.m_linkedPort) {
-	p.m_linkedPort = nullptr;
+Port::Port(Port&& p) : m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent), m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
+	if(p.m_linkedFromPort)
+		p.m_linkedFromPort->unlink();
+	if(p.m_linkedToPort)
+		p.unlink();
+
+	p.m_linkedToPort = nullptr;
+	p.m_linkedFromPort = nullptr;
 	p.m_parent = nullptr;
+}
+
+Port::~Port() {
+	if(m_linkedFromPort)
+		m_linkedFromPort->unlink();
+
+	if(m_linkedToPort)
+		unlink();
 }
 
 const std::string& Port::name() const {
@@ -67,11 +81,17 @@ const BaseData& Port::getData() {
 		if(category() == Attr::kInput) {
 			if(isConnected())
 				m_parent->computeInput(m_id);
+			else if(m_linkedFromPort)
+				setData(m_linkedFromPort->getData());
 			else
 				setDirty(false);
 		}
-		else if(category() == Attr::kOutput)
-			m_parent->computeOutput(m_id);
+		else if(category() == Attr::kOutput) {
+			if(!m_linkedFromPort)
+				m_parent->computeOutput(m_id);
+			else
+				setData(m_linkedFromPort->getData());
+		}
 	}
 
 	// when the computation is done, the port should not be dirty
@@ -100,10 +120,9 @@ void Port::setData(const BaseData& val) {
 	if(valueWasSet)
 		m_valueCallbacks();
 
-	// set data on a linked port, if linked
-	if(isLinked()) {
-		m_linkedPort->setData(val);
-	}
+	// and make linked port dirty, to allow it to pull on next evaluation
+	if(isLinked())
+		m_linkedToPort->node().markAsDirty(m_linkedToPort->index());
 }
 
 void Port::setDirty(bool d) {
@@ -116,7 +135,7 @@ void Port::setDirty(bool d) {
 
 		// if linked, mark the linked network as dirty as well
 		if(isLinked() && d)
-			m_linkedPort->node().markAsDirty(m_linkedPort->index());
+			m_linkedToPort->node().markAsDirty(m_linkedToPort->index());
 	}
 }
 
@@ -212,7 +231,12 @@ void Port::connect(Port& p) {
 	// Not good. Lets just dirty the whole thing, and force reevaluation independently
 	// of the current state.
 	node().markAsDirty(index());
+	if(isLinked())
+		m_linkedToPort->node().markAsDirty(m_linkedToPort->index());
+
 	p.node().markAsDirty(p.index());
+	if(p.isLinked())
+		p.m_linkedToPort->node().markAsDirty(p.m_linkedToPort->index());
 
 	// connect / disconnect - might change UI's appearance
 	m_flagsCallbacks();
@@ -241,7 +265,13 @@ void Port::disconnect(Port& p) {
 		m_parent->datablock().reset(m_id);
 
 	// this port is going to be dirty after disconnect - might change value and require recomputation
-	m_parent->markAsDirty(m_id);
+	node().markAsDirty(index());
+	if(isLinked())
+		m_linkedToPort->node().markAsDirty(m_linkedToPort->index());
+
+	p.node().markAsDirty(p.index());
+	if(p.isLinked())
+		p.m_linkedToPort->node().markAsDirty(p.m_linkedToPort->index());
 
 	// connect / disconnect - might change UI's appearance
 	m_flagsCallbacks();
@@ -257,26 +287,38 @@ bool Port::isConnected() const {
 }
 
 void Port::linkTo(Port& targetPort) {
-	m_linkedPort = &targetPort;
+	assert(m_linkedToPort == nullptr);
+	assert(targetPort.m_linkedFromPort == nullptr);
+
+	m_linkedToPort = &targetPort;
+	targetPort.m_linkedFromPort = this;
+
 	targetPort.node().markAsDirty(targetPort.index());
 }
 
 bool Port::isLinked() const {
-	return m_linkedPort != nullptr;
+	return m_linkedToPort != nullptr;
 }
 
 void Port::unlink() {
-	m_linkedPort = nullptr;
+	assert(m_linkedToPort != nullptr);
+	assert(m_linkedToPort->m_linkedFromPort != nullptr);
+
+	m_linkedToPort->node().markAsDirty(m_linkedToPort->index());
+	node().markAsDirty(index());
+
+	m_linkedToPort->m_linkedFromPort = nullptr;
+	m_linkedToPort = nullptr;
 }
 
 const Port& Port::linkedTo() const {
 	assert(isLinked());
-	return *m_linkedPort;
+	return *m_linkedToPort;
 }
 
 Port& Port::linkedTo() {
 	assert(isLinked());
-	return *m_linkedPort;
+	return *m_linkedToPort;
 }
 
 boost::signals2::connection Port::valueCallback(const std::function<void()>& fn) {

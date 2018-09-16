@@ -39,5 +39,5 @@ QWidget* enum_ui::widget() {
 void enum_ui::onFlagsChanged(unsigned flags) {
 	assert((!(flags & kOutput)) && "Enum should never be used as an output.");
 
-	m_combobox->setDisabled((flags & kDirty) || (flags & kDisabled));
+	m_combobox->setDisabled(flags & kDisabled);
 }

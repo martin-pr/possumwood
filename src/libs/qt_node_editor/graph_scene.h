@@ -40,22 +40,20 @@ class GraphScene : public QGraphicsScene {
 		bool isConnected(const Port& p1, const Port& p2);
 
 		bool isEdgeEditInProgress() const;
-		/// node connection changes callback (the only graph change necessary
-		///   out of the box)
-		void setMouseConnectionCallback(std::function<void(Port&, Port&)> fn);
 
 		struct Selection {
 			std::set<Node*> nodes;
 			std::set<ConnectedEdge*> connections;
 		};
 
-		void setNodesMoveCallback(std::function<void(const std::set<Node*>&)> fn);
-
-		void setNodeInfoCallback(std::function<std::string(const Node&)> fn);
-
 	signals:
 		void selectionChanged(const Selection&);
+		void portsConnected(Port&, Port&);
+		void nodesMoved(const std::set<Node*>&);
+
 		void doubleClicked(Node*);
+		void middleClicked(Node*);
+		void rightClicked(Node*);
 
 	protected:
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
@@ -78,13 +76,6 @@ class GraphScene : public QGraphicsScene {
 
 		Edge* m_editedEdge;
 		Port::Type m_connectedSide;
-
-		QGraphicsTextItem* m_infoText;
-		QGraphicsRectItem* m_infoRect;
-
-		std::function<void(Port&, Port&)> m_connectionCallback;
-		std::function<void(const std::set<Node*>&)> m_nodesMoveCallback;
-		std::function<std::string(const Node&)> m_nodeInfoCallback;
 
 		void registerNodeMove(Node*);
 

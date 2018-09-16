@@ -23,6 +23,10 @@ class Port : public QGraphicsRectItem {
 		Node& parentNode();
 		const Node& parentNode() const;
 
+		static constexpr const float margin() {
+			return 5;
+		}
+
 	private:
 		void setWidth(unsigned w);
 		unsigned minWidth() const;

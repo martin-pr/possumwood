@@ -87,5 +87,5 @@ QWidget* filename_ui::widget() {
 void filename_ui::onFlagsChanged(unsigned flags) {
 	assert((!(flags & kOutput)) && "Filename should never be used as an output.");
 
-	m_browseButton->setDisabled((flags & kDirty) || (flags & kDisabled));
+	m_browseButton->setDisabled(flags & kDisabled);
 }

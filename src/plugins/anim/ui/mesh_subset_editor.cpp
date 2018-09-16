@@ -77,7 +77,7 @@ void MeshSubsetEditor::onFlagsChanged(unsigned flags) {
 	const bool signalsBlockedOrig = m_signalsBlocked;
 	m_signalsBlocked = true;
 
-	m_widget->setDisabled((flags & kDirty) || (flags & kDisabled));
+	m_widget->setDisabled(flags & kDisabled);
 
 	m_signalsBlocked = signalsBlockedOrig;
 }

@@ -158,6 +158,32 @@ possumwood::UndoStack::Action disconnectAction(dependency_graph::Port& p1, depen
 possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort) {
 	possumwood::UndoStack::Action action;
 
+	// value reset after disconnect
+	//   -> we want the value as it was when undoing a connect action
+	std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> data(
+		new std::unique_ptr<dependency_graph::BaseData>());
+
+	action.addCommand(
+		// on connect, save the value
+		[toNodeId, toPort, data]() {
+			dependency_graph::NodeBase& node = detail::findNode(toNodeId);
+
+			// only on non-void ports, though
+			if(*data == nullptr && node.port(toPort).type() != dependency_graph::unmangledName(typeid(void).name()))
+				*data = node.port(toPort).getData().clone();
+		},
+
+		// and on disconnect, put it back
+		[toNodeId, toPort, data]() {
+			dependency_graph::NodeBase& node = detail::findNode(toNodeId);
+
+			if(*data != nullptr) {
+				assert(!node.port(toPort).isConnected());
+				node.port(toPort).setData(**data);
+			}
+		}
+	);
+
 	action.addCommand(
 		std::bind(&doConnectByIds,
 			fromNodeId, fromPort,
@@ -172,6 +198,48 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 
 possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fromNodeId, const std::string& fromPortName, const dependency_graph::UniqueId& toNodeId, const std::string& toPortName) {
 	possumwood::UndoStack::Action action;
+
+	// value reset after disconnect
+	//   -> we want the value as it was when undoing a connect action
+	std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> data(
+		new std::unique_ptr<dependency_graph::BaseData>());
+
+	action.addCommand(
+		// on connect, save the value
+		[toNodeId, toPortName, data]() {
+			dependency_graph::NodeBase& node = detail::findNode(toNodeId);
+
+			int toPort = -1;
+			for(std::size_t p = 0; p < node.portCount(); ++p)
+				if(node.port(p).name() == toPortName) {
+					toPort = p;
+					break;
+				}
+			assert(toPort >= 0);
+
+			// only on non-void ports, though
+			if(*data == nullptr && node.port(toPort).type() != dependency_graph::unmangledName(typeid(void).name()))
+				*data = node.port(toPort).getData().clone();
+		},
+
+		// and on disconnect, put it back
+		[toNodeId, toPortName, data]() {
+			dependency_graph::NodeBase& node = detail::findNode(toNodeId);
+
+			int toPort = -1;
+			for(std::size_t p = 0; p < node.portCount(); ++p)
+				if(node.port(p).name() == toPortName) {
+					toPort = p;
+					break;
+				}
+			assert(toPort >= 0);
+
+			if(*data != nullptr) {
+				assert(!node.port(toPort).isConnected());
+				node.port(toPort).setData(**data);
+			}
+		}
+	);
 
 	action.addCommand(
 		std::bind(&doConnectByNames,

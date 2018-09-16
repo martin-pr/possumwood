@@ -64,14 +64,17 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_graphWidget = new node_editor::GraphWidget();
 	layout->addWidget(m_graphWidget);
 
-	m_graphWidget->scene().setMouseConnectionCallback([&](node_editor::Port& p1, node_editor::Port& p2) {
+	connect(&m_graphWidget->scene(), &node_editor::GraphScene::portsConnected, [&](node_editor::Port& p1, node_editor::Port& p2) {
 		// find the two nodes that were connected
 		auto& n1 = m_index[&p1.parentNode()];
 		auto& n2 = m_index[&p2.parentNode()];
 
 		// and connect them in the graph as well
 		try {
-			possumwood::actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
+			if(!n2.graphNode->port(p2.index()).isConnected())
+				possumwood::actions::connect(n1.graphNode->port(p1.index()), n2.graphNode->port(p2.index()));
+			else
+				m_graphWidget->scene().disconnect(p1, p2);
 		}
 		catch(std::runtime_error& err) {
 			// something went wrong during connecting, undo it
@@ -81,7 +84,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 		}
 	});
 
-	m_graphWidget->scene().setNodesMoveCallback([&](const std::set<node_editor::Node*>& nodes) {
+	connect(&m_graphWidget->scene(), &node_editor::GraphScene::nodesMoved, [&](const std::set<node_editor::Node*>& nodes) {
 		std::map<dependency_graph::NodeBase*, possumwood::NodeData::Point> positions;
 		for(auto& nptr : nodes) {
 			auto& n = m_index[nptr];
@@ -92,35 +95,6 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 		}
 
 		possumwood::actions::move(positions);
-	});
-
-	m_graphWidget->scene().setNodeInfoCallback([&](const node_editor::Node& node) {
-		auto& n = m_index[&node];
-
-		dependency_graph::State state = n.graphNode->state();
-		if(n.drawable)
-			state.append(n.drawable->drawState());
-
-		std::stringstream ss;
-		ss << "<span style=\"color:#fff;\">" << n.graphNode->name() << " (" << n.graphNode->metadata()->type() << ")" << "</p>";
-		ss << "<br />" << std::endl;
-		for(auto& i : state) {
-			switch(i.first) {
-				case dependency_graph::State::kInfo:
-					ss << "<br /><span style=\"color:#aaa\">";
-					break;
-				case dependency_graph::State::kWarning:
-					ss << "<br /><span style=\"color:#ff0\">";
-					break;
-				case dependency_graph::State::kError:
-					ss << "<br /><span style=\"color:#f00\">";
-					break;
-			}
-
-			ss << i.second << "</span>" << std::endl;
-		}
-
-		return ss.str();
 	});
 
 	connect(&m_graphWidget->scene(), &node_editor::GraphScene::doubleClicked, [this](node_editor::Node* node) {

@@ -3,6 +3,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
+#include <boost/filesystem.hpp>
 
 #include <QMenuBar>
 #include <QAction>
@@ -197,12 +198,12 @@ MainWindow::MainWindow() : QMainWindow() {
 				if(it != std::string::npos)
 					itemName = m.metadata().type().substr(it + 1);
 
-				auto qp = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos()));
-				const possumwood::NodeData::Point p {(float)qp.x(), (float)qp.y()};
-
 				QAction* addNode = makeAction(
 				    itemName.c_str(),
-				    [&m, itemName, this, p]() {
+				    [&m, itemName, this]() {
+						auto qp = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos()));
+						const possumwood::NodeData::Point p {(float)qp.x(), (float)qp.y()};
+
 					    possumwood::actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
 					},
 				    m_adaptor);
@@ -337,7 +338,11 @@ MainWindow::MainWindow() : QMainWindow() {
 
 		if(!filename.isEmpty()) {
 			try {
-				possumwood::App::instance().saveFile(filename.toStdString());
+				boost::filesystem::path path = filename.toStdString();
+				if(!path.has_extension())
+					path.replace_extension(".psw");
+
+				possumwood::App::instance().saveFile(path);
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error saving file...",

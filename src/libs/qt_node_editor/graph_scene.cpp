@@ -17,15 +17,6 @@ GraphScene::GraphScene(QGraphicsView* parent) : QGraphicsScene(parent), m_leftMo
 	m_editedEdge->setVisible(false);
 	addItem(m_editedEdge);
 
-	m_infoRect = new QGraphicsRectItem();
-	m_infoRect->setBrush(QColor(24, 24, 24));
-	m_infoRect->setZValue(1000);
-	m_infoRect->setVisible(false);
-
-	m_infoText = new QGraphicsTextItem(m_infoRect);
-
-	addItem(m_infoRect);
-
 	QObject::connect(this, SIGNAL(selectionChanged()), this, SLOT(onSelectionChanged()));
 }
 
@@ -181,55 +172,52 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 	if(mouseEvent->button() == Qt::LeftButton) {
 		Port* port = findItem<Port>(itemAt(mouseEvent->scenePos(), QTransform()));
 		if(port) {
+			const QPointF pos = port->mapFromScene(mouseEvent->scenePos());
+			const QRectF bbox = port->boundingRect();
+
 			Port::Type portType;
-			if((port->portType() == Port::kInput) || (port->portType() == Port::kOutput))
+			if((port->portType() == Port::kInput) && (pos.x() <= bbox.height()))
 				portType = port->portType();
-			else {
-				const QPointF pos = port->mapFromScene(mouseEvent->scenePos());
-				const QRectF bbox = port->boundingRect();
-				if(pos.x() < bbox.width() / 2)
+			else if((port->portType() == Port::kOutput) && (bbox.width() - pos.x() <= bbox.height()))
+				portType = port->portType();
+			else if(port->portType() == Port::kInputOutput) {
+				if(pos.x() <= bbox.height())
 					portType = Port::kInput;
-				else
+				else if(pos.x() >= bbox.width() - bbox.height())
 					portType = Port::kOutput;
 			}
 
-			QPointF pos;
-			{
-				const QRectF bbox = port->boundingRect();
-				if(portType == Port::kInput)
-					pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
-				else
-					pos = QPointF(bbox.x() + bbox.width() - bbox.height() / 2, bbox.y() + bbox.height() / 2);
-				pos = port->mapToScene(pos);
+			if(portType == Port::kInput || portType == Port::kOutput) {
+				QPointF pos;
+				{
+					const QRectF bbox = port->boundingRect();
+					if(portType == Port::kInput)
+						pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
+					else
+						pos = QPointF(bbox.x() + bbox.width() - bbox.height() / 2, bbox.y() + bbox.height() / 2);
+					pos = port->mapToScene(pos);
+				}
+
+				m_editedEdge->setVisible(true);
+				m_editedEdge->setPoints(pos, pos);
+				m_editedEdge->setPen(QPen(port->color(), 2));
+				m_connectedSide = portType;
+
+				mouseEvent->accept();
 			}
+			else
+				port = nullptr;
 
-			m_editedEdge->setVisible(true);
-			m_editedEdge->setPoints(pos, pos);
-			m_editedEdge->setPen(QPen(port->color(), 2));
-			m_connectedSide = portType;
 
-			mouseEvent->accept();
 		}
-		else {
+
+		if(!port) {
 			m_editedEdge->setVisible(false);
 
 			m_leftMouseDown = true;
 
 			QGraphicsScene::mousePressEvent(mouseEvent);
 		}
-	}
-	else if(mouseEvent->button() == Qt::MiddleButton) {
-		Node* node = findItem<Node>(itemAt(mouseEvent->scenePos(), QTransform()));
-		if(node && m_nodeInfoCallback) {
-			m_infoText->setHtml(m_nodeInfoCallback(*node).c_str());
-			m_infoRect->setPos(mouseEvent->scenePos().x() - m_infoText->boundingRect().width()/2, mouseEvent->scenePos().y());
-			m_infoRect->setRect(m_infoText->boundingRect());
-			m_infoRect->setVisible(true);
-
-			QApplication::setOverrideCursor(Qt::BlankCursor);
-		}
-
-		mouseEvent->accept();
 	}
 	else
 		QGraphicsScene::mousePressEvent(mouseEvent);
@@ -249,12 +237,6 @@ void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 }
 
 void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
-	if(m_infoRect->isVisible()) {
-		m_infoRect->setVisible(false);
-
-		QApplication::restoreOverrideCursor();
-	}
-
 	if(m_editedEdge->isVisible()) {
 		m_editedEdge->setVisible(false);
 
@@ -267,8 +249,7 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 			if(!isConnected(*portFrom, *portTo)) {
 				connect(*portFrom, *portTo);
 
-				if(m_connectionCallback)
-					m_connectionCallback(*portFrom, *portTo);
+				emit portsConnected(*portFrom, *portTo);
 			}
 		}
 
@@ -279,10 +260,22 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 			if(m_leftMouseDown) {
 				m_leftMouseDown = false;
 
-				if(!m_movingNodes.empty() && m_nodesMoveCallback)
-					m_nodesMoveCallback(m_movingNodes);
+				if(!m_movingNodes.empty())
+					emit nodesMoved(m_movingNodes);
 				m_movingNodes.clear();
 			}
+		}
+
+		if(mouseEvent->button() == Qt::MiddleButton) {
+			Node* node = findItem<Node>(itemAt(mouseEvent->scenePos(), QTransform()));
+
+			emit middleClicked(node);
+		}
+
+		if(mouseEvent->button() == Qt::RightButton) {
+			Node* node = findItem<Node>(itemAt(mouseEvent->scenePos(), QTransform()));
+
+			emit rightClicked(node);
 		}
 
 		QGraphicsScene::mouseReleaseEvent(mouseEvent);
@@ -301,14 +294,6 @@ bool GraphScene::isEdgeEditInProgress() const {
 	return m_editedEdge->isVisible();
 }
 
-void GraphScene::setMouseConnectionCallback(std::function<void(Port&, Port&)> fn) {
-	m_connectionCallback = fn;
-}
-
- void GraphScene::setNodesMoveCallback(std::function<void(const std::set<Node*>&)> fn) {
-	m_nodesMoveCallback = fn;
-}
-
 void GraphScene::onSelectionChanged() {
 	Selection selectionSet;
 
@@ -324,10 +309,6 @@ void GraphScene::onSelectionChanged() {
 	}
 
 	selectionChanged(selectionSet);
-}
-
-void GraphScene::setNodeInfoCallback(std::function<std::string(const Node&)> fn) {
-	m_nodeInfoCallback = fn;
 }
 
 void GraphScene::registerNodeMove(Node* n) {

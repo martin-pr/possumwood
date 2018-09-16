@@ -19,9 +19,9 @@ QPointF pointFromPort(const Port& p, Port::Type t) {
 
 	float x = 0;
 	if(t == Port::kInput)
-		x = bb.x() + bb.height() / 2;
+		x = bb.x() + Port::margin();
 	else
-		x = bb.x() + bb.width() - bb.height() / 2;
+		x = bb.x() + bb.width() - Port::margin();
 	const float y = bb.y() + bb.height() / 2;
 
 	return QPoint(x, y);
@@ -69,9 +69,9 @@ void ConnectedEdge::adjust() {
 	const QRectF bb1 = m_p1->mapRectToScene(m_p1->boundingRect());
 	const QRectF bb2 = m_p2->mapRectToScene(m_p2->boundingRect());
 
-	const float x1 = bb1.x() + bb1.width() - bb1.height() / 2;
+	const float x1 = bb1.x() + bb1.width() - Port::margin();
 	const float y1 = bb1.y() + bb1.height() / 2;
-	const float x2 = bb2.x() + bb2.height() / 2;
+	const float x2 = bb2.x() + Port::margin();
 	const float y2 = bb2.y() + bb2.height() / 2;
 
 	setPoints(QPointF(x1, y1), QPointF(x2, y2));
