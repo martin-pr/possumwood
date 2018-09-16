@@ -26,6 +26,7 @@ void renameNode(dependency_graph::NodeBase& node, const std::string& name);
 void cut(const dependency_graph::Selection& selection);
 void copy(const dependency_graph::Selection& selection);
 void paste(dependency_graph::Network& current, dependency_graph::Selection& selection);
+void paste(dependency_graph::Network& current, dependency_graph::Selection& selection, const std::string& content);
 void remove(const dependency_graph::Selection& selection);
 
 void move(const std::map<dependency_graph::NodeBase*, possumwood::NodeData::Point>& nodes);

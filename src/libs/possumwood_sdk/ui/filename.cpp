@@ -41,6 +41,8 @@ filename_ui::filename_ui() {
 			QString path = m_lineEdit->text();
 			if(path.isEmpty())
 				path = possumwood::App::instance().filename().parent_path().string().c_str();
+			else
+				path = possumwood::App::instance().expandPath(path.toStdString()).string().c_str();
 
 			// run the file dialog
 			path = QFileDialog::getOpenFileName(
@@ -51,13 +53,9 @@ filename_ui::filename_ui() {
 			);
 
 			if(!path.isEmpty()) {
-				boost::filesystem::path result = path.toStdString();
-				const auto pp = possumwood::App::instance().filename().parent_path();
+				path = possumwood::App::instance().shrinkPath(path.toStdString()).string().c_str();
 
-				if(!pp.string().empty() && boost::starts_with(result.string(), pp.string()))
-					result = result.string().substr(pp.string().length()+1);
-
-				m_lineEdit->setText(result.string().c_str());
+				m_lineEdit->setText(path);
 				m_lineEdit->editingFinished();
 			}
 		}

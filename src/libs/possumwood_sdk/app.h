@@ -42,6 +42,9 @@ class App : public AppCore {
 
 		Config& sceneConfig();
 
+		boost::filesystem::path expandPath(const boost::filesystem::path& path) const;
+		boost::filesystem::path shrinkPath(const boost::filesystem::path& path) const;
+
 	private:
 		static App* s_instance;
 
@@ -53,6 +56,7 @@ class App : public AppCore {
 		boost::signals2::signal<void(float)> m_timeChanged;
 
 		Config m_sceneConfig;
+		std::map<std::string, boost::filesystem::path> m_pathVariables;
 };
 
 }

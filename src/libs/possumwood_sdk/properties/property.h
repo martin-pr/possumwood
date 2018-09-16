@@ -91,7 +91,7 @@ class property : public property_base {
 
 		void valueFromPort(dependency_graph::Port& port) override {
 			// transfer the templated value
-			if(!m_blockedSignals && port.type() == type().name()) {
+			if(!m_blockedSignals && port.type() == dependency_graph::unmangledName(type().name())) {
 				bool block = widget()->blockSignals(true);
 				m_blockedSignals = true;
 				set(port.get<T>());
