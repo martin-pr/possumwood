@@ -38,11 +38,12 @@ namespace {
 			if(in.peek() != '/')
 				in >> f.vt;
 
-			assert(in.peek() == '/');
-			in.get();
+			if(in.peek() == '/') {
+				in.get();
 
-			if(in.peek() >= '0' && in.peek() <= '9')
-				in >> f.vn;
+				if(in.peek() >= '0' && in.peek() <= '9')
+					in >> f.vn;
+			}
 
 			assert(in.peek() != '/');
 		}
@@ -73,7 +74,7 @@ namespace {
 
 		// uv handle
 		GenericPolymesh::Indices::Handle uvHandle;
-		if(!n.empty())
+		if(!uv.empty())
 			uvHandle = result.indices().handles().
 				add<std::array<float, 2>>("uv", std::array<float, 2>{{0,0}});
 
