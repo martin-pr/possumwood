@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QStyle>
+#include <QAction>
 
 namespace possumwood {
 
@@ -31,10 +32,21 @@ ShaderEditor::ShaderEditor(dependency_graph::InAttr<std::string>& src) : m_src(&
 	QWidget* spacer = new QWidget();
 	buttonsLayout->addWidget(spacer, 1);
 
+	QAction* applyAction = new QAction(m_widget);
+	applyAction->setText("Apply (CTRL+Return)");
+	applyAction->setIcon(m_widget->style()->standardIcon(QStyle::SP_DialogOkButton));
+	applyAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Return));
+	m_widget->addAction(applyAction);
+
+	QObject::connect(applyAction, &QAction::triggered, [this]() {
+		m_blockedSignals = true;
+		values().set(*m_src, m_editor->toPlainText().toStdString());
+		m_blockedSignals = false;
+	});
+
 	QPushButton* apply = new QPushButton();
 	apply->setText("Apply (CTRL+Return)");
 	apply->setIcon(apply->style()->standardIcon(QStyle::SP_DialogOkButton));
-	apply->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Return));
 	buttonsLayout->addWidget(apply);
 
 	QObject::connect(apply, &QPushButton::pressed, [this]() {

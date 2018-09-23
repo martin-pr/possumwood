@@ -6,7 +6,7 @@ const std::string& defaultVertexShaderSrc() {
 	static std::string s_src =
 		"#version 130 \n"
 		" \n"
-		"in vec3 position;              // position attr from the vbo \n"
+		"in vec3 P;                     // position attr from the vbo \n"
 		" \n"
 		"uniform mat4 iProjection;      // projection matrix \n"
 		"uniform mat4 iModelView;       // modelview matrix \n"
@@ -14,7 +14,7 @@ const std::string& defaultVertexShaderSrc() {
 		"out vec3 vertexPosition;       // vertex position for the fragment shader \n"
 		" \n"
 		"void main() {\n"
-		"	vec4 pos4 = vec4(position.x, position.y, position.z, 1);\n"
+		"	vec4 pos4 = vec4(P.x, P.y, P.z, 1);\n"
 		"\n"
 		"	vertexPosition = (iModelView * pos4).xyz;\n"
 		"   	gl_Position = iProjection * iModelView * pos4;\n"

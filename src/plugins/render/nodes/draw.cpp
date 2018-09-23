@@ -16,7 +16,6 @@
 #include "datatypes/vbo.inl"
 #include "datatypes/vertex_data.inl"
 #include "datatypes/uniforms.inl"
-#include "datatypes/gl_parameters.h"
 #include "uniforms.h"
 
 #include "default_shaders.h"
@@ -26,7 +25,6 @@ namespace {
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Program>> a_program;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::VertexData>> a_vertexData;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_uniforms;
-dependency_graph::InAttr<possumwood::GLParameters> a_params;
 
 namespace {
 	std::shared_ptr<const possumwood::Uniforms> defaultUniforms() {
@@ -98,9 +96,6 @@ struct Drawable : public possumwood::Drawable {
 				glGenVertexArrays(1, &m_vao);
 			assert(m_vao != 0);
 
-			// apply the parameters
-			auto scopedParams = values().get(a_params).apply();
-
 			// use the program
 			glUseProgram(program->id());
 
@@ -143,7 +138,6 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_program, "program");
 	meta.addAttribute(a_vertexData, "vertex_data");
 	meta.addAttribute(a_uniforms, "uniforms", defaultUniforms());
-	meta.addAttribute(a_params, "gl_params");
 
 	meta.setDrawable<Drawable>();
 }
