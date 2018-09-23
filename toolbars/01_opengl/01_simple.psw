@@ -1,0 +1,118 @@
+{
+    "connections": [
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "vertex_data_0",
+            "in_port": "generic_mesh",
+            "out_node": "loader_0",
+            "out_port": "generic_polymesh"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "vertex_data_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        }
+    ],
+    "nodes": {
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 481.0,
+                    "y": 409.0
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 71.0,
+                    "y": 313.0
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130 \n \nout vec4 color; \n \nin vec3 normal; \n \nvoid main() { \n\tvec3 norm = normalize(normal);\n\n\tfloat val = abs(norm.z);\n\tcolor = vec4(val, val, val, 1); \n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 46.0,
+                    "y": 503.0
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "$EXAMPLES/fsu_models/alfa147.obj"
+            },
+            "type": "polymesh/loader"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 244.0,
+                    "y": 260.0
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "vertex_data_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 272.0,
+                    "y": 467.0
+                }
+            },
+            "name": "vertex_data",
+            "type": "polymesh/vertex_data"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 86.0,
+                    "y": 201.0
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n\nout vec3 normal;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P.x * 0.1, P.z * 0.1, P.y * 0.1, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(N.x, N.z, N.y, 1)).xyz;\n} \n"
+            },
+            "type": "render/vertex_shader"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAAAAAAAQ6AAACHAAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAagAAAMe/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAB9QAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACYQAAASgAAACgAQAAAwAAAnAAAAMeAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

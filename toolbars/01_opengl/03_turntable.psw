@@ -1,0 +1,172 @@
+{
+    "connections": [
+        {
+            "in_node": "viewport_0",
+            "in_port": "in_uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "vertex_data_0",
+            "in_port": "generic_mesh",
+            "out_node": "loader_0",
+            "out_port": "generic_polymesh"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "value",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "vertex_data_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        }
+    ],
+    "nodes": {
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 490.0,
+                    "y": 217.0
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "float_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 91.0,
+                    "y": 455.0
+                }
+            },
+            "name": "float",
+            "ports": {
+                "name": "time"
+            },
+            "type": "render/uniforms/float"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 85.0,
+                    "y": 177.0
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 430 \n \nout vec4 color; \n \nin vec3 vertexPosition; \nin vec3 vertexNormal; \n \nvoid main() { \n\tvec3 norm = normalize(vertexNormal); \n \n\tcolor = vec4(norm.z, norm.z, norm.z, 1); \n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 41.0,
+                    "y": 311.0
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "$EXAMPLES/fsu_models/alfa147.obj"
+            },
+            "type": "polymesh/loader"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 265.0,
+                    "y": 103.0
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "time_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -48.5,
+                    "y": 523.5
+                }
+            },
+            "name": "time",
+            "type": "time"
+        },
+        "vertex_data_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 275.0,
+                    "y": 274.0
+                }
+            },
+            "name": "vertex_data",
+            "type": "polymesh/vertex_data"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 96.0,
+                    "y": 42.0
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 430 \n \nin vec3 P;                     // position attr from the vbo \nin vec3 N;                     // normal attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal; // normal modelview matrix \nuniform float time;            // time uniform input\n \nout vec3 vertexPosition;       // vertex position for the fragment shader \nout vec3 vertexNormal;         // vertex position for the fragment shader \n \nvoid main() {\n\tfloat t = time / 2.5 * 3.1415;\n\n\tmat4 tr = mat4(\n\t\tsin(t), 0, cos(t), 0,\n\t\t0, 1, 0, 0,\n\t\t-cos(t), 0, sin(t), 0,\n\t\t0, 0, 0, 1\n\t);\n\n\tvec4 pos4 = vec4(P.x * 0.1, P.z * 0.1, -P.y * 0.1, 1);\n\tvec4 norm4 = vec4(N.x, N.z, -N.y, 0);\n\n\tvertexPosition = (iModelView * tr * pos4).xyz;\n\tvertexNormal = (iModelViewNormal * tr * norm4).xyz;\n\n   \tgl_Position = iProjection * iModelView * tr * pos4;\n} \n"
+            },
+            "type": "render/vertex_shader"
+        },
+        "viewport_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 287.0,
+                    "y": 421.0
+                }
+            },
+            "name": "viewport",
+            "type": "render/uniforms/viewport"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAACcAAAAYAAAAaqAAADnAAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKNAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAawAAAMe/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAAzAAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABOAAAAlEAAACGAQAAAwAAAnAAAAMeAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

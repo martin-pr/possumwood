@@ -1,16 +1,16 @@
 {
     "connections": [
         {
-            "in_node": "vertex_data_0",
-            "in_port": "generic_mesh",
-            "out_node": "loader_0",
-            "out_port": "generic_polymesh"
-        },
-        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "vertex_data_0",
+            "in_port": "generic_mesh",
+            "out_node": "loader_0",
+            "out_port": "generic_polymesh"
         },
         {
             "in_node": "draw_0",
@@ -67,7 +67,7 @@
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/stanford_models/bunny.obj"
+                "filename": "$EXAMPLES/fsu_models/teapot.obj"
             },
             "type": "polymesh/loader"
         },
@@ -113,6 +113,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAABQAAAQ6AAACHwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADG/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADGwAAAGwBAAADAAAAAQAAAagAAAMb/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAAA7wAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABXgAAAisAAACGAQAAAwAAAnAAAAMbAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAAYAAAAQ6AAADnAAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAagAAAMe/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAA8AAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABXAAAAi0AAACGAQAAAwAAAnAAAAMeAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
 }
