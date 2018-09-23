@@ -1,12 +1,6 @@
 {
     "connections": [
         {
-            "in_node": "from_animation_0",
-            "in_port": "time",
-            "out_node": "time_0",
-            "out_port": "time"
-        },
-        {
             "in_node": "transform_0",
             "in_port": "in_anim",
             "out_node": "bvh_0",
@@ -17,6 +11,12 @@
             "in_port": "skeleton",
             "out_node": "from_animation_0",
             "out_port": "frame"
+        },
+        {
+            "in_node": "from_animation_0",
+            "in_port": "time",
+            "out_node": "time_0",
+            "out_port": "time"
         },
         {
             "in_node": "from_animation_0",
@@ -36,7 +36,7 @@
             },
             "name": "bvh",
             "ports": {
-                "filename": "accad_mocap/Male1_B3_Walk.bvh"
+                "filename": "$EXAMPLES/accad_mocap/Male1_B3_Walk.bvh"
             },
             "type": "anim/loaders/bvh"
         },
@@ -103,6 +103,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAADyPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABBAAADyAAAAEkA////AAAAAQAAASwAAAPI/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABBAAABVwAAAEkA////+wAAAAwAZQBkAGkAdABvAHIBAAABnAAAARIAAAB1AP////sAAAAGAGwAbwBnAQAAArIAAAFXAAAASQD///8AAANUAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAACcAAAABkAAAaqAAACNQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAH+AAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAjAAAAMe/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAACJgAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACkgAAAPcAAACGAQAAA/sAAAAGAGwAbwBnAQAAArIAAAFXAAAAAAAAAAAAAAJ7AAADHgAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

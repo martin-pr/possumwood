@@ -77,7 +77,7 @@
             },
             "name": "font",
             "ports": {
-                "font_def_file": "fonts/opensans.json"
+                "font_def_file": "$EXAMPLES/fonts/opensans.json"
             },
             "type": "render/font"
         },
@@ -105,7 +105,7 @@
             },
             "name": "load",
             "ports": {
-                "filename": "fonts/opensans.png"
+                "filename": "$EXAMPLES/fonts/opensans.png"
             },
             "type": "render/image/load"
         },
@@ -210,6 +210,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABeEAAAM0AAAAAAAAAAAAAAPWAAACCwAAAAACAAAABeI=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALxAAACxfwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABaAAACxQAAAGwBAAADAAAAAQAAAasAAALF/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABaAAAB8gAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACTQAAANIAAACGAQAAA/sAAAAGAGwAbwBnAQAAAaIAAAJnAAAAAAAAAAAAAAFEAAACxQAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAACcAAAABkAAAaqAAACNQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAItAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAagAAAMe/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAABiQAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB9QAAAZQAAACGAQAAA/sAAAAGAGwAbwBnAQAAAaIAAAJnAAAAAAAAAAAAAALUAAADHgAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }
