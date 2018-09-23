@@ -1,52 +1,10 @@
 {
     "connections": [
         {
-            "in_node": "texture_2",
-            "in_port": "value",
-            "out_node": "load_2",
-            "out_port": "image"
-        },
-        {
-            "in_node": "float_2",
-            "in_port": "in_uniforms",
-            "out_node": "texture_2",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "program_1",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_1",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "float_1",
-            "in_port": "in_uniforms",
-            "out_node": "texture_1",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "float_0",
-            "in_port": "in_uniforms",
-            "out_node": "texture_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "texture_1",
-            "in_port": "value",
-            "out_node": "load_1",
-            "out_port": "image"
-        },
-        {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "transform_0",
-            "out_port": "out_mesh"
-        },
-        {
-            "in_node": "program_1",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_1",
-            "out_port": "shader"
+            "in_node": "draw_2",
+            "in_port": "vertex_data",
+            "out_node": "background_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "draw_3",
@@ -65,6 +23,60 @@
             "in_port": "vertex_data",
             "out_node": "cgal_0",
             "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "uniforms",
+            "out_node": "float_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "draw_3",
+            "in_port": "uniforms",
+            "out_node": "float_2",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_1",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_1",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_1",
+            "in_port": "value",
+            "out_node": "load_1",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_2",
+            "in_port": "value",
+            "out_node": "load_2",
+            "out_port": "image"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
         },
         {
             "in_node": "cgal_0",
@@ -74,9 +86,21 @@
         },
         {
             "in_node": "draw_0",
-            "in_port": "uniforms",
-            "out_node": "float_0",
-            "out_port": "out_uniforms"
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_3",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
         },
         {
             "in_node": "draw_2",
@@ -85,46 +109,28 @@
             "out_port": "program"
         },
         {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "loader_0",
-            "out_port": "polyhedron"
+            "in_node": "float_0",
+            "in_port": "in_uniforms",
+            "out_node": "texture_0",
+            "out_port": "out_uniforms"
         },
         {
-            "in_node": "texture_0",
-            "in_port": "value",
-            "out_node": "load_0",
-            "out_port": "image"
+            "in_node": "float_1",
+            "in_port": "in_uniforms",
+            "out_node": "texture_1",
+            "out_port": "out_uniforms"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
+            "in_node": "float_2",
+            "in_port": "in_uniforms",
+            "out_node": "texture_2",
+            "out_port": "out_uniforms"
         },
         {
-            "in_node": "draw_1",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "draw_3",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "draw_2",
-            "in_port": "vertex_data",
-            "out_node": "background_0",
-            "out_port": "vertex_data"
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
         },
         {
             "in_node": "program_0",
@@ -133,16 +139,10 @@
             "out_port": "shader"
         },
         {
-            "in_node": "draw_3",
-            "in_port": "uniforms",
-            "out_node": "float_2",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "draw_1",
-            "in_port": "uniforms",
-            "out_node": "float_1",
-            "out_port": "out_uniforms"
+            "in_node": "program_1",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_1",
+            "out_port": "shader"
         },
         {
             "in_node": "texture_0",
@@ -313,7 +313,7 @@
             },
             "name": "load",
             "ports": {
-                "filename": "matcap_textures/00034.png"
+                "filename": "$EXAMPLES/matcap_textures/00034.png"
             },
             "type": "render/image/load"
         },
@@ -327,7 +327,7 @@
             },
             "name": "load",
             "ports": {
-                "filename": "matcap_textures/00022.png"
+                "filename": "$EXAMPLES/matcap_textures/00022.png"
             },
             "type": "render/image/load"
         },
@@ -335,13 +335,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -81.859375,
+                    "x": -79.90625,
                     "y": 546.484375
                 }
             },
             "name": "load",
             "ports": {
-                "filename": "matcap_textures/00007.png"
+                "filename": "$EXAMPLES/matcap_textures/00007.png"
             },
             "type": "render/image/load"
         },
@@ -355,7 +355,7 @@
             },
             "name": "loader",
             "ports": {
-                "filename": "stanford_models/armadillo.obj",
+                "filename": "$EXAMPLES/stanford_models/armadillo.obj",
                 "name": "mesh"
             },
             "type": "cgal/loader"
@@ -511,6 +511,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADyPwCAAAAAfwAAABBAAADyAAAAIsBAAAV+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAlAD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAlQAAAA4AP///wAAAAEAAAJBAAADyPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMAAAAAQQAAA8gAAABJAP////sAAAAGAGwAbwBnAAAAAsEAAAFAAAAASQD///8AAAUoAAADyAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAABcAAAd/AAAEHwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADHvwCAAAAAfwAAABrAAADHgAAAKIBAAAb+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAowEAAAP7AAAACgBnAHIAYQBwAGgBAAAAAAAAAlQAAABgAQAAAwAAAAEAAAJBAAADHvwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAawAAAx4AAABsAQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAAIUAAADHgAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }
