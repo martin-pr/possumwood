@@ -1,64 +1,10 @@
 {
     "connections": [
         {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "background_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "program_1",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "program_2",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "background_2",
-            "in_port": "uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "background_1",
-            "in_port": "uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "background_0",
-            "in_port": "uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "background_1",
-            "in_port": "program",
-            "out_node": "program_1",
-            "out_port": "program"
-        },
-        {
-            "in_node": "background_2",
-            "in_port": "program",
-            "out_node": "program_2",
-            "out_port": "program"
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "background_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "viewport_0",
@@ -67,40 +13,40 @@
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "program_2",
+            "in_node": "program_0",
             "in_port": "fragment_shader",
-            "out_node": "fragment_shader_2",
+            "out_node": "fragment_shader_0",
             "out_port": "shader"
         },
         {
-            "in_node": "background_2",
-            "in_port": "vertex_data",
-            "out_node": "background_3",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "background_1",
-            "in_port": "vertex_data",
-            "out_node": "background_3",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "background_0",
-            "in_port": "vertex_data",
-            "out_node": "background_3",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "program_1",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_1",
-            "out_port": "shader"
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
         },
         {
             "in_node": "float_0",
             "in_port": "value",
             "out_node": "time_0",
             "out_port": "time"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
         }
     ],
     "nodes": {
@@ -108,45 +54,23 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 436.0,
-                    "y": 417.0
-                }
-            },
-            "name": "ground_v2",
-            "type": "render/draw"
-        },
-        "background_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 438.0,
-                    "y": 510.0
-                }
-            },
-            "name": "background_v2",
-            "type": "render/draw"
-        },
-        "background_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 439.0,
-                    "y": 614.0
-                }
-            },
-            "name": "boxes_v2",
-            "type": "render/draw"
-        },
-        "background_3": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 232.0,
-                    "y": 712.0
+                    "x": 216.375,
+                    "y": 624.5
                 }
             },
             "name": "background",
             "type": "render/vertex_data/background"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 427.0625,
+                    "y": 531.875
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
         },
         "float_0": {
             "blind_data": {
@@ -166,22 +90,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 57.0,
-                    "y": 322.0
-                }
-            },
-            "name": "fragment_shader",
-            "ports": {
-                "source": "#version 130\n\n// generic attributes\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\nuniform vec2 iResolution;  // viewport resolution\n\n// attributes useable for raytracing\nin vec3 iNearPosition;     // position of fragment-corresponding point on near plane\nin vec3 iFarPosition;      // position of fragment-corresponding point on far plane\n\n// output colour\nout vec4 color;\n\n// a simple integer-based checkerboard pattern\nfloat tile(vec2 pos) {\n\treturn mod(\n\t\tint(pos.x + max(0.0, sign(pos.x))) + \n\t\tint(pos.y + max(0.0, sign(pos.y))),\n\t \t2.0);\n}\n\n// computes Z-buffer depth value, and converts the range.\n// ref: https://stackoverflow.com/questions/10264949/glsl-gl-fragcoord-z-calculation-and-setting-gl-fragdepth\nfloat computeDepth(vec3 pos) {\n\t// get the clip-space coordinates\n\tvec4 eye_space_pos = iModelView * vec4(pos.xyz, 1.0);\n\tvec4 clip_space_pos = iProjection * eye_space_pos;\n\n\t// get the depth value in normalized device coordinates\n\tfloat ndc_depth = clip_space_pos.z / clip_space_pos.w;\n\n\t// and compute the range based on gl_DepthRange settings (usually not necessary, but still)\n\tfloat far = gl_DepthRange.far; \n\tfloat near = gl_DepthRange.near;\n\n\tfloat depth = (((far-near) * ndc_depth) + near + far) / 2.0;\n\n\t// and return the result\n\treturn depth;\n}\n\nvoid main() {\n\t// find the t parameter where Y = 0 (intersection with ground plane)\n\tfloat t = iNearPosition.y / (iNearPosition.y - iFarPosition.y);\n\n\t// not intersecting with ground plane at all - discard\n\tif(t < 0.0 || iFarPosition.y > iNearPosition.y)\n\t\tdiscard;\n\n\t// find the intersecting position\n\tvec3 pos = iNearPosition + t * (iFarPosition - iNearPosition);\n\n\t// and make the checkerboard pattern\n\tfloat col = tile(pos.xz) * 0.3;\n\tcol = col + tile(pos.xz / 10.0) * 0.15;\n\tcol = col + tile(pos.xz / 100.0) * 0.075;\n\n\t// simple attenuation with distance\n\tfloat dist = sqrt(pos.x*pos.x + pos.z*pos.z);\n\tfloat dim = max(0.0, 1.0 - dist/1000.0);\n\tcol = col * dim + 0.5 * (1.0 - dim);\n\n\t// output colour\n\tcolor = vec4(col, col, col, 1);\n\n\t// convert the world-space position to a depth value, to keep Z buffer working\n\tgl_FragDepth = computeDepth(pos + vec3(0,0.05,0));\n}\n"
-            },
-            "type": "render/fragment_shader"
-        },
-        "fragment_shader_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 57.0,
-                    "y": 422.0
+                    "x": 49.1875,
+                    "y": 550.125
                 }
             },
             "name": "fragment_shader",
@@ -190,32 +100,21 @@
             },
             "type": "render/fragment_shader"
         },
-        "fragment_shader_2": {
+        "load_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 54.0,
-                    "y": 525.0
+                    "x": -129.4375,
+                    "y": 662.5625
                 }
             },
-            "name": "fragment_shader",
+            "name": "load",
             "ports": {
-                "source": "#version 130\n\n// generic attributes\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\nuniform vec2 iResolution;  // viewport resolution\n\n// attributes useable for raytracing\nin vec3 iNearPosition;     // position of fragment-corresponding point on near plane\nin vec3 iFarPosition;      // position of fragment-corresponding point on far plane\n\n// output colour\nout vec4 color;\n\n////\n\n// computes Z-buffer depth value, and converts the range.\n// ref: https://stackoverflow.com/questions/10264949/glsl-gl-fragcoord-z-calculation-and-setting-gl-fragdepth\nfloat computeDepth(vec3 pos) {\n\t// get the clip-space coordinates\n\tvec4 eye_space_pos = iModelView * vec4(pos.xyz, 1.0);\n\tvec4 clip_space_pos = iProjection * eye_space_pos;\n\n\t// get the depth value in normalized device coordinates\n\tfloat ndc_depth = clip_space_pos.z / clip_space_pos.w;\n\n\t// and compute the range based on gl_DepthRange settings (usually not necessary, but still)\n\tfloat far = gl_DepthRange.far; \n\tfloat near = gl_DepthRange.near;\n\n\tfloat depth = (((far-near) * ndc_depth) + near + far) / 2.0;\n\n\t// and return the result\n\treturn depth;\n}\n\n////\n\n// based on http://iquilezles.org/www/articles/distfunctions/distfunctions.htm\n\nfloat distFnRoundedBox(vec3 pos, vec3 box, float radius) {\n\treturn length(max(abs(pos)-box,0.0))-radius;\n}\n\nfloat distFn(vec3 pos) {\n\treturn min(\n\t\tdistFnRoundedBox(pos + vec3(0, -4, -4), vec3(2,2,2), 1),\n\t\tdistFnRoundedBox(pos + vec3(0, -4, 4), vec3(2,2,2), 1)\n\t);\n}\n\n////\n\nfloat eps = 0.1;\nint maxIter = 50;\n\nvoid main() {\n\t// starting position and \n\tvec3 pos = iNearPosition;\n\tvec3 v = normalize(iFarPosition - iNearPosition);\n\n\t// limited raymarching with the help of distance function\n\tfloat d;\n\tfor(int i=0; i<maxIter; ++i) {\n\t\t// dest if we've reached a point close to an object\n\t\td = distFn(pos);\n\t\tif(d <= eps)\n\t\t\tbreak;\n\n\t\t// march on\n\t\tpos = pos + v * d;\n\t}\n\n\t// output colour\n\tif(d <= eps) {\n\t\t// compute a normal from the dist fn gradient\n\t\tvec3 norm = vec3(\n\t\t\tdistFn(pos + vec3(eps/10.0, 0, 0)) - d,\n\t\t\tdistFn(pos + vec3(0, eps/10.0, 0)) - d,\n\t\t\tdistFn(pos + vec3(0, 0, eps/10.0)) - d\n\t\t);\n\t\tnorm = normalize(norm);\n\n\t\t// a silly \"shading\"\n\t\tfloat col = -dot(norm, v);\n\n\t\tcolor = vec4(col, col, col, 1);\n\t\tgl_FragDepth = computeDepth(pos);\n\t}\n\telse\n\t\tdiscard;\n}\n"
+                "filename": "$EXAMPLES/hdrihaven_envmaps/misty_pines_4k.png"
             },
-            "type": "render/fragment_shader"
+            "type": "render/image/load"
         },
         "program_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 232.0,
-                    "y": 356.0
-                }
-            },
-            "name": "program",
-            "type": "render/program"
-        },
-        "program_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -226,23 +125,26 @@
             "name": "program",
             "type": "render/program"
         },
-        "program_2": {
+        "texture_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 218.0,
-                    "y": 589.0
+                    "x": 79.9375,
+                    "y": 704.75
                 }
             },
-            "name": "program",
-            "type": "render/program"
+            "name": "texture",
+            "ports": {
+                "name": "envmap"
+            },
+            "type": "render/uniforms/texture"
         },
         "time_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -24.3750038146973,
-                    "y": 920.6875
+                    "x": -41.5625038146973,
+                    "y": 905.0625
                 }
             },
             "name": "time",
@@ -252,8 +154,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 63.0,
-                    "y": 135.0
+                    "x": 77.0625,
+                    "y": 430.3125
                 }
             },
             "name": "vertex_shader",
@@ -279,6 +181,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAA/////QAAB3AAAAQUAAAAAAAAABQAAAdwAAAEFAAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADs/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADswAAAFkA////AAAAAQAAAlcAAAOz/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAAAzgAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABIgAAAX0AAAB3AP////sAAAAGAGwAbwBnAQAAAqUAAAFcAAAAWQD///8AAAK/AAADswAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAABkAAAQ6AAACNQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ4AAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAm0AAAMe/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAB0gAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAAUsAAACGAQAAA/sAAAAGAGwAbwBnAQAAAqUAAAFcAAAAAAAAAAAAAAHEAAADHgAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }
