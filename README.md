@@ -24,6 +24,14 @@ Introduces basic concepts of GLSL shaders in Possumwood, via a simple setup disp
 
 <div style="clear: both"></div>
 
+#### [Skybox](Skybox)
+
+<img src="doc/skybox.png" align="right" width="150">
+
+A simple GLSL skybox setup, using fragment shader and the `background` node (based on [gluUnProject](https://www.khronos.org/registry/OpenGL-Refpages)) to render a background quad with spherically-mapped texture.
+
+<div style="clear: both"></div>
+
 ## Code Example
 
 Possumwood is designed to be easily extensible. A simple addition node, using float attributes, can be implemented in a few lines of code:
