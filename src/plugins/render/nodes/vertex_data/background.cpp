@@ -26,7 +26,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// we're drawing quads
 	std::unique_ptr<possumwood::VertexData> vd(new possumwood::VertexData(GL_TRIANGLE_FAN));
 
-	vd->addVBO<Imath::V3f>("position", 4, possumwood::VertexData::kStatic,
+	vd->addVBO<Imath::V3f>("P", 4, possumwood::VertexData::kStatic,
 	                       [](possumwood::Buffer<float>& buffer,
 	                          const possumwood::Drawable::ViewportState& viewport) {
 		                       buffer.element(0) = Imath::V3f(-1, -1, 1);
