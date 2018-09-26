@@ -24,7 +24,7 @@ Introduces basic concepts of GLSL shaders in Possumwood, via a simple setup disp
 
 <div style="clear: both"></div>
 
-#### [Skybox](Skybox)
+#### [Skybox](https://github.com/martin-pr/possumwood/wiki/Skybox)
 
 <img src="doc/skybox.png" align="right" width="150">
 
