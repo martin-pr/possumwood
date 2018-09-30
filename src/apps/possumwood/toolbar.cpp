@@ -3,6 +3,7 @@
 #include <regex>
 #include <fstream>
 #include <streambuf>
+#include <sstream>
 
 #include <boost/filesystem.hpp>
 
@@ -53,10 +54,24 @@ Toolbar::Toolbar() {
 					setups[entry.path().filename()] = name;
 				}
 
+			unsigned currentIndex = 1;
 			for(auto& i : setups) {
 				const boost::filesystem::path setupPath = path / toolbarIt.first / i.first;
 				boost::filesystem::path iconPath = setupPath;
 				iconPath.replace_extension(".png");
+
+				{
+					std::stringstream fnss(setupPath.filename().string());
+					unsigned index;
+					fnss >> index;
+
+					if(index > currentIndex) {
+						tb->addSeparator();
+						currentIndex = index;
+					}
+
+					++currentIndex;
+				}
 
 				QAction* action = tb->addAction(i.second.c_str());
 				if(boost::filesystem::exists(iconPath))
