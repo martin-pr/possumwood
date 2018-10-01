@@ -32,6 +32,14 @@ A simple GLSL skybox setup, using fragment shader and the `background` node (bas
 
 <div style="clear: both"></div>
 
+#### [Environment mapping](https://github.com/martin-pr/possumwood/wiki/Environment-mapping)
+
+<img src="doc/envmap.png" align="right" width="150">
+
+Environment map is a simple technique to approximate reflective surfaces in GLSL, without the need of actual raytracing. This tutorial builds on the previous Skybox tutorial, and extends it to make a teapot's material tool like polished metal.
+
+<div style="clear: both"></div>
+
 ## Code Example
 
 Possumwood is designed to be easily extensible. A simple addition node, using float attributes, can be implemented in a few lines of code:
