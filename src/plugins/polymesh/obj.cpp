@@ -204,6 +204,10 @@ GenericPolymesh loadObj(boost::filesystem::path path) {
 					if(fi.v > 0) {
 						fi.v += vertexOrigin;
 
+						// support for per-vertex normals, without explicit index in "f" record
+						if(fi.vn < 0 && fi.v + normalOrigin <= normals.size())
+							fi.vn = fi.v + normalOrigin;
+
 						f.indices.push_back(fi);
 					}
 				}

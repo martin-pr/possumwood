@@ -7,21 +7,9 @@
             "out_port": "vertex_data"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
             "out_port": "shader"
         },
         {
@@ -32,9 +20,21 @@
         },
         {
             "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_0",
             "in_port": "uniforms",
             "out_node": "texture_0",
             "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
         }
     ],
     "nodes": {
@@ -70,7 +70,7 @@
             },
             "name": "fragment_shader",
             "ports": {
-                "source": "#version 130\n\nuniform sampler2D background;\n\nin vec3 vertexPosition;\nin vec3 iNearPosition;\nin vec3 iFarPosition;\n\nout vec4 color;\n\nvoid main() {\n\tvec3 dir = normalize(iFarPosition - iNearPosition);\n\n\tfloat lng = acos(dir.y) / 3.1415;\n\tfloat lat = atan(dir.x, dir.z) / 3.1415 / 2.0;\n\t\n\tcolor = texture(\tbackground, vec2(lat, lng));\n}\n"
+                "source": "#version 130\n\nuniform sampler2D background;\n\nin vec3 vertexPosition;\nin vec3 iNearPosition;\nin vec3 iFarPosition;\n\nout vec4 color;\n\nvoid main() {\n\tvec3 dir = normalize(iFarPosition - iNearPosition);\n\n\tfloat lng = acos(dir.y) / 3.1415;\n\tfloat lat = atan(dir.x, -dir.z) / 3.1415 / 2.0;\n\t\n\tcolor = texture(\tbackground, vec2(lat, lng));\n}\n"
             },
             "type": "render/fragment_shader"
         },
@@ -133,6 +133,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAAAAAAAQ6AAACHAAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJpAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAagAAAMe/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAABkwAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB/wAAAYoAAACGAQAAAwAAApgAAAMeAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAABkAAAQ6AAACNQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJpAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAagAAAMe/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAABlAAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACAAAAAYkAAACGAQAAAwAAApgAAAMeAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
