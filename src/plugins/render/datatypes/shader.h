@@ -46,6 +46,13 @@ class VertexShader : public Shader {
 		}
 };
 
+/// Concrete type for a Vertex shader - to allow explicit type checking
+class GeometryShader : public Shader {
+	public:
+		GeometryShader() : Shader(GL_GEOMETRY_SHADER) {
+		}
+};
+
 template<>
 struct Traits<std::shared_ptr<const FragmentShader>> {
 	static constexpr std::array<float, 3> colour() {
@@ -58,6 +65,14 @@ template<>
 struct Traits<std::shared_ptr<const VertexShader>> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0.3, 0, 0.3}};
+	}
+
+};
+
+template<>
+struct Traits<std::shared_ptr<const GeometryShader>> {
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{0.45, 0, 0.45}};
 	}
 
 };
