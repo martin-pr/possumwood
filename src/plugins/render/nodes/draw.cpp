@@ -46,7 +46,10 @@ namespace {
 		if(s_program == nullptr) {
 			std::unique_ptr<possumwood::Program> program(new possumwood::Program());
 
-			program->link(possumwood::defaultVertexShader(), possumwood::defaultFragmentShader());
+			program->addShader(possumwood::defaultVertexShader());
+			program->addShader(possumwood::defaultFragmentShader());
+
+			program->link();
 
 			assert(!program->state().errored());
 

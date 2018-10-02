@@ -25,7 +25,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	else {
 		std::unique_ptr<possumwood::Program> program(new possumwood::Program());
 
-		program->link(*vs, *fs);
+		program->addShader(*vs);
+		program->addShader(*fs);
+
+		program->link();
 		result = program->state();
 
 		if(!program->state().errored())
