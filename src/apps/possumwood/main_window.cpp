@@ -40,6 +40,7 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 	QObject::connect(result, &QAction::triggered, [fn](bool) { fn(); });
 	return result;
 }
+
 }
 
 MainWindow::MainWindow() : QMainWindow() {
@@ -87,60 +88,68 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	// connect the selection signal
 	connect(&m_adaptor->scene(), &node_editor::GraphScene::selectionChanged,
-	        [editorDock, this](const node_editor::GraphScene::Selection& selection) {
-		        // convert the selection to the dependency graph selection, to pass to the
-		        //   properties dock
-		        dependency_graph::Selection out;
-		        {
-			        auto& index = m_adaptor->index();
+			[editorDock, this](const node_editor::GraphScene::Selection& selection) {
+				// convert the selection to the dependency graph selection, to pass to the
+				//   properties dock
+				dependency_graph::Selection out;
+				{
+					auto& index = m_adaptor->index();
 
-			        for(auto& n : selection.nodes)
-				        out.addNode(*index[n].graphNode);
+					for(auto& n : selection.nodes)
+						out.addNode(*index[n].graphNode);
 
-			        for(auto& c : selection.connections) {
-				        out.addConnection(index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
-				                          index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index()));
-			        }
+					for(auto& c : selection.connections) {
+						out.addConnection(index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
+										  index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index()));
+					}
 
-			        m_properties->show(out);
-		        }
+					m_properties->show(out);
+				}
 
-		        // instantiate the editor
-		        {
-			        unsigned editorCounter = 0;
-			        for(auto& n : out.nodes()) {
-			        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
-				        if(meta != nullptr && meta->hasEditor())
-					        ++editorCounter;
-			        }
+				// instantiate the editor
+				{
+					unsigned editorCounter = 0;
+					for(auto& n : out.nodes()) {
+						const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
+						if(meta != nullptr && meta->hasEditor())
+							++editorCounter;
+					}
 
-			        if(editorCounter == 0) {
-				        QLabel* editorWidget = new QLabel("No editable node selected");
-				        editorWidget->setAlignment(Qt::AlignCenter);
-				        editorWidget->setMinimumHeight(100);
-				        editorDock->setWidget(editorWidget);
+					if(editorCounter == 0) {
+						QLabel* editorWidget = new QLabel("No editable node selected");
+						editorWidget->setAlignment(Qt::AlignCenter);
+						editorWidget->setMinimumHeight(100);
+						editorDock->setWidget(editorWidget);
 
-				        m_editor.reset();
-			        }
-			        else if(editorCounter > 1) {
-				        QLabel* editorWidget = new QLabel("More than one editable node selected");
-				        editorWidget->setAlignment(Qt::AlignCenter);
-				        editorWidget->setMinimumHeight(100);
-				        editorDock->setWidget(editorWidget);
+						m_editor.reset();
+					}
+					else if(editorCounter > 1) {
+						QLabel* editorWidget = new QLabel("More than one editable node selected");
+						editorWidget->setAlignment(Qt::AlignCenter);
+						editorWidget->setMinimumHeight(100);
+						editorDock->setWidget(editorWidget);
 
-				        m_editor.reset();
-			        }
-			        else {
-				        for(auto& n : out.nodes()) {
-				        	const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
-					        if(meta != nullptr && meta->hasEditor()) {
-						        m_editor = meta->createEditor(n);
-						        editorDock->setWidget(m_editor->widget());
-					        }
-				        }
-			        }
-		        }
-		    });
+						m_editor.reset();
+					}
+					else {
+						for(auto& n : out.nodes()) {
+							const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
+							if(meta != nullptr && meta->hasEditor()) {
+								m_editor = meta->createEditor(n);
+								editorDock->setWidget(m_editor->widget());
+							}
+						}
+					}
+				}
+
+				// set the status bar
+				updateStatusBar();
+			});
+
+	// connect status signal
+	m_adaptor->graph().onStateChanged([this](const dependency_graph::NodeBase& node) {
+		updateStatusBar();
+	});
 
 	// create the context click menu
 	m_adaptor->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -149,7 +158,7 @@ MainWindow::MainWindow() : QMainWindow() {
 		QMenu* contextMenu = new QMenu(m_adaptor);
 		connect(m_adaptor, &Adaptor::customContextMenuRequested, [contextMenu, this](QPoint pos) {
 			contextMenu->move(m_adaptor->mapToGlobal(pos));  // to make sure pos() is right, which is
-			                                                 // used for placing the new node
+															 // used for placing the new node
 			contextMenu->popup(m_adaptor->mapToGlobal(pos));
 		});
 
@@ -200,14 +209,14 @@ MainWindow::MainWindow() : QMainWindow() {
 					itemName = m.metadata().type().substr(it + 1);
 
 				QAction* addNode = makeAction(
-				    itemName.c_str(),
-				    [&m, itemName, this]() {
+					itemName.c_str(),
+					[&m, itemName, this]() {
 						auto qp = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos()));
 						const possumwood::NodeData::Point p {(float)qp.x(), (float)qp.y()};
 
-					    possumwood::actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
+						possumwood::actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
 					},
-				    m_adaptor);
+					m_adaptor);
 				addNode->setIcon(QIcon(":icons/add-node.png"));
 
 				items.insert(std::make_pair(m.metadata().type(), addNode));
@@ -286,8 +295,8 @@ MainWindow::MainWindow() : QMainWindow() {
 	openAct->setShortcuts(QKeySequence::Open);
 	connect(openAct, &QAction::triggered, [this](bool) {
 		QString filename =
-		    QFileDialog::getOpenFileName(this, tr("Open File"), possumwood::App::instance().filename().string().c_str(),
-		                                 tr("Possumwood files (*.psw)"));
+			QFileDialog::getOpenFileName(this, tr("Open File"), possumwood::App::instance().filename().string().c_str(),
+										 tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty()) {
 			try {
@@ -299,7 +308,7 @@ MainWindow::MainWindow() : QMainWindow() {
 			}
 			catch(...) {
 				QMessageBox::critical(this, "Error loading file...",
-				                      "Error loading " + filename + ":\nUnhandled exception thrown during loading.");
+									  "Error loading " + filename + ":\nUnhandled exception thrown during loading.");
 			}
 		}
 	});
@@ -319,23 +328,23 @@ MainWindow::MainWindow() : QMainWindow() {
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error saving file...",
-				                      "Error saving " +
-				                          QString(possumwood::App::instance().filename().string().c_str()) + ":\n" +
-				                          err.what());
+									  "Error saving " +
+										  QString(possumwood::App::instance().filename().string().c_str()) + ":\n" +
+										  err.what());
 			}
 			catch(...) {
 				QMessageBox::critical(this, "Error saving file...",
-				                      "Error saving " +
-				                          QString(possumwood::App::instance().filename().string().c_str()) +
-				                          ":\nUnhandled exception thrown during saving.");
+									  "Error saving " +
+										  QString(possumwood::App::instance().filename().string().c_str()) +
+										  ":\nUnhandled exception thrown during saving.");
 			}
 		}
 	});
 
 	connect(saveAsAct, &QAction::triggered, [this](bool) {
 		QString filename =
-		    QFileDialog::getSaveFileName(this, tr("Save File"), possumwood::App::instance().filename().string().c_str(),
-		                                 tr("Possumwood files (*.psw)"));
+			QFileDialog::getSaveFileName(this, tr("Save File"), possumwood::App::instance().filename().string().c_str(),
+										 tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty()) {
 			try {
@@ -347,15 +356,15 @@ MainWindow::MainWindow() : QMainWindow() {
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error saving file...",
-				                      "Error saving " +
-				                          QString(possumwood::App::instance().filename().string().c_str()) + ":\n" +
-				                          err.what());
+									  "Error saving " +
+										  QString(possumwood::App::instance().filename().string().c_str()) + ":\n" +
+										  err.what());
 			}
 			catch(...) {
 				QMessageBox::critical(this, "Error saving file...",
-				                      "Error saving " +
-				                          QString(possumwood::App::instance().filename().string().c_str()) +
-				                          ":\nUnhandled exception thrown during saving.");
+									  "Error saving " +
+										  QString(possumwood::App::instance().filename().string().c_str()) +
+										  ":\nUnhandled exception thrown during saving.");
 			}
 		}
 	});
@@ -456,6 +465,16 @@ MainWindow::MainWindow() : QMainWindow() {
 		playbackMenu->addAction(m_timeline->playAction());
 	}
 
+	/////////////////////
+	// status bar
+	m_statusBar = new QStatusBar();
+	setStatusBar(m_statusBar);
+
+	m_statusIcon = new QLabel();
+	m_statusBar->addPermanentWidget(m_statusIcon, 0);
+
+	m_statusText = new QLabel();
+	m_statusBar->addPermanentWidget(m_statusText, 1);
 }
 
 MainWindow::~MainWindow() {
@@ -490,4 +509,42 @@ void MainWindow::draw(float dt) {
 Adaptor& MainWindow::adaptor() {
 	assert(m_adaptor != nullptr);
 	return *m_adaptor;
+}
+
+void MainWindow::updateStatusBar() {
+	auto& index = m_adaptor->index();
+
+	std::string errors, warnings, infos;
+
+	for(auto& n : m_adaptor->selection().nodes()) {
+		for(auto& msg : index[n.get().index()].graphNode->state()) {
+			if(msg.first == dependency_graph::State::kInfo)
+				infos += msg.second;
+			if(msg.first == dependency_graph::State::kWarning)
+				warnings += msg.second;
+			if(msg.first == dependency_graph::State::kError)
+				errors += msg.second;
+		}
+	}
+
+	std::replace(errors.begin(), errors.end(), '\n', '\t');
+	std::replace(warnings.begin(), warnings.end(), '\n', '\t');
+	std::replace(infos.begin(), infos.end(), '\n', '\t');
+
+	if(!errors.empty()) {
+		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-error").pixmap(QSize(16,16)));
+		m_statusText->setText(errors.c_str());
+	}
+	else if(!errors.empty()) {
+		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(QSize(16,16)));
+		m_statusText->setText(warnings.c_str());
+	}
+	else if(!errors.empty()) {
+		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-information").pixmap(QSize(16,16)));
+		m_statusText->setText(infos.c_str());
+	}
+	else {
+		m_statusIcon->setPixmap(QPixmap());
+		m_statusText->setText("");
+	}
 }
