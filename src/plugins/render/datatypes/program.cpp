@@ -46,18 +46,22 @@ GLuint Program::id() const {
 	return m_programId;
 }
 
+void Program::addShader(const Shader& s) {
+	m_shaderIds.push_back(s.id());
+}
+
 /// links this program
-void Program::link(const VertexShader& vs, const FragmentShader& fs) {
+void Program::link() {
 	m_state = dependency_graph::State();
 
-	glAttachShader(m_programId, vs.id());
-	glAttachShader(m_programId, fs.id());
+	for(auto& s : m_shaderIds)
+		glAttachShader(m_programId, s);
 
 	glLinkProgram(m_programId);
 	m_state = checkProgramState(m_programId);
 
-	glDetachShader(m_programId, vs.id());
-	glDetachShader(m_programId, fs.id());
+	for(auto& s : m_shaderIds)
+		glDetachShader(m_programId, s);
 }
 
 }
