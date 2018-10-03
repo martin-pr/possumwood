@@ -10,4 +10,7 @@ const possumwood::VertexShader& defaultVertexShader();
 const std::string& defaultFragmentShaderSrc();
 const possumwood::FragmentShader& defaultFragmentShader();
 
+const std::string& defaultGeometryShaderSrc();
+const possumwood::GeometryShader& defaultGeometryShader();
+
 }

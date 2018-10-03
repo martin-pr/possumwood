@@ -24,13 +24,16 @@ class Program : public boost::noncopyable {
 		/// returns the program ID (not be used in GL commands)
 		GLuint id() const;
 
+		void addShader(const Shader& s);
+
 		/// links this program
-		void link(const VertexShader& vs, const FragmentShader& fs);
+		void link();
 
 	private:
 		dependency_graph::State m_state;
 
 		GLuint m_programId;
+		std::vector<GLuint> m_shaderIds;
 };
 
 template<>
