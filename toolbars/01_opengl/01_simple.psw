@@ -67,7 +67,7 @@
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/fsu_models/alfa147.obj"
+                "filename": "$EXAMPLES/fsu_models/teapot.obj"
             },
             "type": "polymesh/loader"
         },
@@ -103,7 +103,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nout vec3 normal;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P.x * 0.1, P.z * 0.1, P.y * 0.1, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(N.x, N.z, N.y, 1)).xyz;\n} \n"
+                "source": "#version 130 \n\nout vec3 normal;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P.x * 0.1, P.y * 0.1, P.z * 0.1, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(N.x, N.y, N.z, 1)).xyz;\n} \n"
             },
             "type": "render/vertex_shader"
         }
@@ -113,6 +113,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAAAAAAAQ6AAACHAAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAagAAAMe/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAB9QAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACYQAAASgAAACgAQAAAwAAAnAAAAMeAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAACcAAAABkAAAaqAAACNQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAagAAAMe/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAA/QAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABaQAAAiAAAACGAQAAAwAAAnAAAAMeAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
