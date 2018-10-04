@@ -10,8 +10,6 @@
 #include <possumwood_sdk/properties/property.h>
 #include <dependency_graph/selection.h>
 
-#include "status.h"
-
 /// A widget displaying properties of selected nodes
 class Properties : public QTreeWidget {
 	Q_OBJECT
@@ -33,16 +31,6 @@ class Properties : public QTreeWidget {
 			boost::signals2::connection graphValueConnection, uiValueConnection, flagsConnection;
 		};
 
-		struct StatusHolder : public boost::noncopyable {
-			StatusHolder(dependency_graph::NodeBase& node);
-			~StatusHolder();
-
-			StatusHolder(StatusHolder&&);
-
-			std::unique_ptr<Status> m_status;
-		};
-
 		std::vector<PropertyHolder> m_properties;
-		std::vector<StatusHolder> m_states;
 		std::map<QTreeWidgetItem*, dependency_graph::NodeBase*> m_nodes;
 };
