@@ -1,0 +1,138 @@
+{
+    "connections": [
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "geometry_shader",
+            "out_node": "geometry_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "vertex_data_0",
+            "in_port": "generic_mesh",
+            "out_node": "loader_0",
+            "out_port": "generic_polymesh"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "vertex_data_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        }
+    ],
+    "nodes": {
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 481.0,
+                    "y": 409.0
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 71.0,
+                    "y": 313.0
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130 \n \nout vec4 color; \n \nin vec3 vertexNormal; \n \nvoid main() { \n\tvec3 norm = normalize(vertexNormal);\n\n\tfloat val = abs(norm.z);\n\tcolor = vec4(val, val, val, 1); \n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "geometry_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 64.0,
+                    "y": 191.0
+                }
+            },
+            "name": "geometry_shader",
+            "ports": {
+                "source": "#version 150\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\nuniform vec2 iResolution;\n\nlayout(triangles) in;\nlayout(triangle_strip, max_vertices = 12) out;\n\nin vec3 norm[];\n\nout vec3 vertexNormal;\n\nfloat LINE_WIDTH = 5; // now in pixels, resolution independent!\n\nvoid doEmitVertex(vec4 p, vec3 n, vec2 edge) {\n\t// a common normal\n\tvertexNormal = (iModelViewNormal * vec4(n, 0)).xyz;\n\n\t// edges of the line, emitted as 2 vertices\n\tgl_Position = p + vec4(edge, 0, 0); \n\tEmitVertex(); \n\tgl_Position = p - vec4(edge, 0, 0); \n\tEmitVertex(); \n}\n\nvoid doEmitLine(vec3 p1, vec3 n1, vec3 p2, vec3 n2) {\n\t// normalize p1\n\tvec4 np1 = iProjection * iModelView * vec4(p1, 1);\n\tnp1 = np1 / np1.w;\n\n\t// normalize p2\n\tvec4 np2 = iProjection * iModelView * vec4(p2, 1);\n\tnp2 = np2 / np2.w;\n\n\t// perpendicular \"edge\" vector\n\tvec2 edge = (np2-np1).xy;\n\tedge = normalize(vec2(edge.y, -edge.x));\n\n\t// adjust for screen resolution\n\tedge.x = edge.x / iResolution.x * LINE_WIDTH / 2.0;\n\tedge.y = edge.y / iResolution.y * LINE_WIDTH / 2.0;\n\n\t// emit the line vertices\n\tdoEmitVertex(np1, n1, edge);\n\tdoEmitVertex(np2, n2, edge);\n}\n\nvoid main() { \n\tfor(int i = 0; i < gl_in.length(); i++) { \n\t\t// each \"line\" is emitted as a triangle strip\n\t\tdoEmitLine(\n\t\t\tgl_in[i].gl_Position.xyz,\n\t\t\tnorm[i],\n\t\t\tgl_in[(i+1) % gl_in.length()].gl_Position.xyz,\n\t\t\tnorm[(i+1) % gl_in.length()]\n\t\t);\n\n\t\tEndPrimitive(); \n\t} \n} "
+            },
+            "type": "render/geometry_shader"
+        },
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 46.0,
+                    "y": 503.0
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "$EXAMPLES/fsu_models/teapot.obj"
+            },
+            "type": "polymesh/loader"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 244.0,
+                    "y": 260.0
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "vertex_data_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 272.0,
+                    "y": 467.0
+                }
+            },
+            "name": "vertex_data",
+            "type": "polymesh/vertex_data"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 86.0,
+                    "y": 62.0
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n\nout vec3 norm;\n \nin vec3 P;\nin vec3 N;\n\nvoid main() {\n\tnorm = N;\n   \tgl_Position = vec4(P, 1);\n} "
+            },
+            "type": "render/vertex_shader"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAwAAANMAAAanAAAC/gAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIJAAADB/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADBwAAAGwBAAADAAAAAQAAAbAAAAMH/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAABrAAAA9QAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAawAAAwcAAACgAQAAAwAAAvAAAAMHAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

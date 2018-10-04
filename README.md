@@ -40,6 +40,14 @@ Environment map is a simple technique to approximate reflective surfaces in GLSL
 
 <div style="clear: both"></div>
 
+#### [Wireframe using a geometry shader](https://github.com/martin-pr/possumwood/wiki/Wireframe-using-a-Geometry-Shader)
+
+<img src="doc/wireframe.png" align="right" width="150">
+
+Most implementation of OpenGL 4 remove the ability to influence the width of lines using the classical `glLineWidth` call. This tutorial describes in detail how to achieve a similar effect (and much more) using a geometry shader, by rendering each line as a camera-facing polygon strip.
+
+<div style="clear: both"></div>
+
 ## Code Example
 
 Possumwood is designed to be easily extensible. A simple addition node, using float attributes, can be implemented in a few lines of code:
