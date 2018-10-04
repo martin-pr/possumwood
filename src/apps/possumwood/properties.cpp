@@ -27,7 +27,6 @@ void Properties::show(const dependency_graph::Selection& selection) {
 	clear();
 	m_properties.clear();
 	m_nodes.clear();
-	m_states.clear();
 
 	bool block = blockSignals(true);
 
@@ -55,15 +54,6 @@ void Properties::show(const dependency_graph::Selection& selection) {
 				setItemWidget(portItem, 1, m_properties.back().ui->widget());
 			}
 		}
-
-		// add the status widget
-		m_states.push_back(StatusHolder(node));
-
-		QTreeWidgetItem* stateItem = new QTreeWidgetItem();
-		stateItem->setText(0, "status");
-		nodeItem->addChild(stateItem);
-
-		setItemWidget(stateItem, 1, m_states.back().m_status.get());
 	}
 
 	blockSignals(block);
@@ -143,16 +133,4 @@ Properties::PropertyHolder::~PropertyHolder() {
 	uiValueConnection.disconnect();
 	flagsConnection.disconnect();
 
-}
-
-Properties::StatusHolder::StatusHolder(dependency_graph::NodeBase& node) : m_status(new Status(node)) {
-
-}
-
-Properties::StatusHolder::~StatusHolder() {
-
-}
-
-Properties::StatusHolder::StatusHolder(StatusHolder&& h) {
-	m_status = std::move(h.m_status);
 }

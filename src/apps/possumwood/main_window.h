@@ -2,6 +2,8 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QLabel>
 
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/editor.h>
@@ -26,11 +28,17 @@ class MainWindow : public QMainWindow {
 		void draw(float dt);
 
 	private:
+		void updateStatusBar();
+
 		Viewport* m_viewport;
 		Adaptor* m_adaptor;
 		Properties* m_properties;
 		TimelineWidget* m_timeline;
 		std::unique_ptr<possumwood::Editor> m_editor;
+
+		QStatusBar* m_statusBar;
+		QLabel* m_statusIcon;
+		QLabel* m_statusText;
 
 		SearchableMenu* m_newNodeMenu;
 };

@@ -96,6 +96,8 @@ int main(int argc, char* argv[]) {
 
 		// create the application object
 		QApplication app(argc, argv);
+		QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+		QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
 		GL_CHECK_ERR;
 
