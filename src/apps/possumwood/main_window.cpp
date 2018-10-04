@@ -516,7 +516,8 @@ void MainWindow::updateStatusBar() {
 
 	std::string errors, warnings, infos;
 
-	for(auto& n : m_adaptor->selection().nodes()) {
+	dependency_graph::Selection selection = m_adaptor->selection();
+	for(auto& n : selection.nodes()) {
 		for(auto& msg : index[n.get().index()].graphNode->state()) {
 			if(msg.first == dependency_graph::State::kInfo)
 				infos += msg.second;
@@ -535,11 +536,11 @@ void MainWindow::updateStatusBar() {
 		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-error").pixmap(QSize(16,16)));
 		m_statusText->setText(errors.c_str());
 	}
-	else if(!errors.empty()) {
+	else if(!warnings.empty()) {
 		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(QSize(16,16)));
 		m_statusText->setText(warnings.c_str());
 	}
-	else if(!errors.empty()) {
+	else if(!infos.empty()) {
 		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-information").pixmap(QSize(16,16)));
 		m_statusText->setText(infos.c_str());
 	}
