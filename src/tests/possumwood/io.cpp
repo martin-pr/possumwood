@@ -1,5 +1,5 @@
 #include <dependency_graph/rtti.h>
-#include <dependency_graph/data.h>
+#include <dependency_graph/data.inl>
 
 #include <actions/io.h>
 #include <actions/node_data.h>
@@ -8,9 +8,19 @@
 
 namespace dependency_graph { namespace io {
 
-bool isSaveable(const dependency_graph::BaseData& data) {
-	return true;
-}
+struct SaveableRegistration {
+	SaveableRegistration() {
+		setIsSaveableCallback([](const BaseData&) {
+			return true;
+		});
+	}
+
+	~SaveableRegistration() {
+		setIsSaveableCallback(std::function<bool(const BaseData& data)>());
+	}
+};
+
+static SaveableRegistration s_saveableRegistration;
 
 } }
 

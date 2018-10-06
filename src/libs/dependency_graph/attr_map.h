@@ -4,6 +4,7 @@
 #include <boost/optional.hpp>
 
 #include "metadata.h"
+#include "attr.h"
 
 namespace dependency_graph {
 

@@ -2,7 +2,7 @@
 
 #include <dependency_graph/graph.h>
 #include <dependency_graph/node_base.inl>
-#include <dependency_graph/node.h>
+#include <dependency_graph/nodes.inl>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/rtti.h>
 #include <dependency_graph/metadata_register.h>

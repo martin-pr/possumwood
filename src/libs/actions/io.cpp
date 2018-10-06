@@ -65,8 +65,18 @@ void toJson(json& j, const dependency_graph::BaseData& data) {
 
 namespace dependency_graph { namespace io {
 
-bool isSaveable(const dependency_graph::BaseData& data) {
-	return s_toFn().find(data.type()) != s_toFn().end();
-}
+struct SaveableRegistration {
+	SaveableRegistration() {
+		setIsSaveableCallback([](const BaseData& data) {
+			return s_toFn().find(data.type()) != s_toFn().end();
+		});
+	}
+
+	~SaveableRegistration() {
+		setIsSaveableCallback(std::function<bool(const BaseData& data)>());
+	}
+};
+
+static SaveableRegistration s_saveableRegistration;
 
 } }

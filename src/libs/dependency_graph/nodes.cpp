@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include "graph.h"
+#include "nodes_iterator.inl"
 
 namespace dependency_graph {
 

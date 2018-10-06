@@ -3,6 +3,7 @@
 #include <dependency_graph/attr_map.h>
 #include <dependency_graph/detail.h>
 #include <dependency_graph/values.h>
+#include <dependency_graph/nodes_iterator.inl>
 
 #include "tools.h"
 #include "connections.h"

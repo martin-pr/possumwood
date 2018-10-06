@@ -41,10 +41,10 @@ const T& NodeBase::blindData() const {
 	return val.value;
 }
 
-template<typename T>
-bool NodeBase::is() const {
-	return dynamic_cast<const T*>(this) != nullptr;
-}
+// template<typename T>
+// bool NodeBase::is() const {
+// 	return dynamic_cast<const T*>(this) != nullptr;
+// }
 
 template<typename T>
 const T& NodeBase::as() const {

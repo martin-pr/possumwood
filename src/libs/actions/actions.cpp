@@ -9,6 +9,7 @@
 #include <dependency_graph/values.h>
 #include <dependency_graph/detail.h>
 #include <dependency_graph/metadata_register.h>
+#include <dependency_graph/network.h>
 
 #include "detail/tools.h"
 #include "detail/nodes.h"
