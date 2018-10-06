@@ -4,8 +4,8 @@
 
 namespace dependency_graph { namespace io {
 
-// extern void fromJson(const json& j, BaseData& data);
-// extern void toJson(json& j, const BaseData& data);
-extern bool isSaveable(const BaseData& data);
+bool isSaveable(const BaseData& data);
+
+void setIsSaveableCallback(std::function<bool(const BaseData& data)> fn);
 
 } }
