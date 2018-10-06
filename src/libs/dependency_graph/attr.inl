@@ -1,6 +1,7 @@
 #pragma once
 
 #include "attr.h"
+#include "data.inl"
 
 namespace dependency_graph {
 

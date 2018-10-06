@@ -2,6 +2,7 @@
 
 #include <dependency_graph/detail.h>
 #include <dependency_graph/values.h>
+#include <dependency_graph/nodes.inl>
 
 #include "tools.h"
 #include "links.h"

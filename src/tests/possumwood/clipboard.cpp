@@ -4,6 +4,7 @@
 
 #include <dependency_graph/graph.h>
 #include <dependency_graph/rtti.h>
+#include <dependency_graph/nodes_iterator.inl>
 
 #include <actions/actions.h>
 

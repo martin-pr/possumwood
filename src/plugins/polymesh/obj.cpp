@@ -107,13 +107,16 @@ namespace {
 				auto fi = result.polygons().add(indices.begin(), indices.end());
 				fi->set(objId, (int)face.objectId);
 
+				auto fBegin = fi->begin();
+				auto fEnd = fi->end();
+
 				if(!normals.empty()) {
 					assert(normals.size() == fi->size());
 
 					auto ni = normals.begin();
-					auto f = fi->begin();
+					auto f = fBegin;
 
-					for(; f != fi->end(); ++f, ++ni)
+					for(; f != fEnd; ++f, ++ni)
 						f->set(normalsHandle, n[*ni]);
 				}
 
@@ -121,9 +124,9 @@ namespace {
 					assert(uvs.size() == fi->size());
 
 					auto uvi = uvs.begin();
-					auto f = fi->begin();
+					auto f = fBegin;
 
-					for(; f != fi->end(); ++f, ++uvi)
+					for(; f != fEnd; ++f, ++uvi)
 						f->set(uvHandle, uv[*uvi]);
 				}
 			}

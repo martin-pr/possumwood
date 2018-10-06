@@ -1,5 +1,7 @@
 #include "values.h"
 
+#include <dependency_graph/nodes.inl>
+
 #include "../app.h"
 
 namespace possumwood { namespace actions { namespace detail {

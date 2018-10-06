@@ -2,6 +2,9 @@
 
 #include <dependency_graph/attr_map.h>
 #include <dependency_graph/graph.h>
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/metadata.inl>
+#include <dependency_graph/node_base.inl>
 
 using namespace dependency_graph;
 

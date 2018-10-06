@@ -35,6 +35,8 @@ struct PolyExtractor {
 	}
 };
 
+namespace {
+
 template<typename VAL, typename EXTRACTOR>
 class Iterable {
 	public:
@@ -97,6 +99,8 @@ class Iterable {
 		possumwood::polymesh::GenericPolymesh::Polygons::const_iterator polyIterator;
 		std::size_t faceIndex = 0, triIndex = 0, counter = 0;
 };
+
+}
 
 template<typename ITER>
 void addVBO(possumwood::VertexData& vd, const possumwood::polymesh::GenericBase::Handle& handle,

@@ -1,5 +1,7 @@
 #include "tools.h"
 
+#include <dependency_graph/nodes_iterator.inl>
+
 #include "../app.h"
 
 namespace possumwood { namespace actions { namespace detail {

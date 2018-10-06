@@ -2,6 +2,7 @@
 
 #include <dependency_graph/metadata.h>
 #include <dependency_graph/selection.h>
+#include <dependency_graph/node_base.h>
 
 #include "node_data.h"
 #include "undo_stack.h"

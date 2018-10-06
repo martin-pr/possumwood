@@ -18,7 +18,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_CXX_STANDARD 14)
 
 add_definitions(-Wall -Werror -g)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
+add_definitions(-Wl,--no-undefined)
+
 
 # DNEG-specific hack, should have no impact for anything else
 include_directories($ENV{BOB_WORLD_SLOT_ilmbase}/include/OpenEXR)
