@@ -17,4 +17,4 @@ file(GLOB_RECURSE sources *.cpp)
 
 add_library(dependency_graph SHARED ${sources})
 
-target_link_libraries(dependency_graph ${LIBS})
+target_link_libraries(dependency_graph ${LIBS} GL)

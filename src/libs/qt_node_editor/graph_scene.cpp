@@ -175,7 +175,7 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 			const QPointF pos = port->mapFromScene(mouseEvent->scenePos());
 			const QRectF bbox = port->boundingRect();
 
-			Port::Type portType;
+			Port::Type portType = Port::kUnknown;
 			if((port->portType() == Port::kInput) && (pos.x() <= bbox.height()))
 				portType = port->portType();
 			else if((port->portType() == Port::kOutput) && (bbox.width() - pos.x() <= bbox.height()))

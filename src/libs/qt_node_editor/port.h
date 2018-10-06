@@ -11,7 +11,7 @@ class ConnectedEdge;
 
 class Port : public QGraphicsRectItem {
 	public:
-		enum Type { kInput = 1, kOutput = 2, kInputOutput = 3 };
+		enum Type { kUnknown = 0, kInput = 1, kOutput = 2, kInputOutput = 3 };
 
 		Port(const QString& name, Type t, QColor color, Node* parent, unsigned id);
 

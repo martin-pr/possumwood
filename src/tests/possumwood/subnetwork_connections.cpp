@@ -6,6 +6,7 @@
 #include <dependency_graph/port.inl>
 #include <dependency_graph/values.inl>
 #include <dependency_graph/metadata_register.h>
+#include <dependency_graph/nodes_iterator.inl>
 
 #include <actions/app.h>
 #include <actions/actions.h>

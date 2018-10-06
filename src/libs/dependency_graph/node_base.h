@@ -75,7 +75,9 @@ class NodeBase : public boost::noncopyable {
 		void computeOutput(size_t index);
 
 		template<typename T>
-		bool is() const;
+		bool is() const {
+			return dynamic_cast<const T*>(this) != nullptr;
+		}
 
 		template<typename T>
 		const T& as() const;
