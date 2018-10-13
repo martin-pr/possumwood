@@ -474,6 +474,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	m_statusBar->addPermanentWidget(m_statusIcon, 0);
 
 	m_statusText = new QLabel();
+	m_statusText->setWordWrap(true);
 	m_statusBar->addPermanentWidget(m_statusText, 1);
 }
 

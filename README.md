@@ -48,6 +48,14 @@ Most implementation of OpenGL 4 remove the ability to influence the width of lin
 
 <div style="clear: both"></div>
 
+## [PN Triangles Tesselation using a geometry shader](https://github.com/martin-pr/possumwood/wiki/Geometry-Shader-Tessellation-using-PN-Triangles)
+
+<img src="doc/pn_triangles.png" align="right" width="150">
+
+Implementation of [Curved PN Triangles](https://alex.vlachos.com/graphics/CurvedPNTriangles.pdf) tessellation technique, presented by Alex Vlachos on GDC 2011. This method tessellates input triangles using solely their vertex positions and normals (independently of the mesh topology) in a geometry shader.
+
+<div style="clear: both"></div>
+
 ## Code Example
 
 Possumwood is designed to be easily extensible. A simple addition node, using float attributes, can be implemented in a few lines of code:
