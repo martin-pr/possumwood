@@ -29,6 +29,7 @@ GLuint Texture::id() const {
 }
 
 void Texture::use(GLint attribLocation, GLenum textureUnit) const {
+	glUniform1i(attribLocation, textureUnit-GL_TEXTURE0);
 	glActiveTexture(textureUnit);
 	glBindTexture(GL_TEXTURE_2D, m_id);
 }
