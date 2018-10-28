@@ -64,6 +64,13 @@ Infinite ground plane, implemented using a single polygon and simple fragment sh
 
 <div style="clear: both"></div>
 
+#### [Phong reflectance and shading models](https://github.com/martin-pr/possumwood/wiki/Phong-Lighting-Model)
+
+<img src="doc/phong.png" align="right" width="150">
+
+The [Phong reflectance model](https://en.wikipedia.org/wiki/Phong_reflection_model), and [Phong shading](https://en.wikipedia.org/wiki/Phong_shading) are two basic models of light behaviour in computer graphics. This tutorial explains their function, and provides a step-by-step implementation in GLSL, using a single orbiting light as the lightsource.
+
+
 ## Code Example
 
 Possumwood is designed to be easily extensible. A simple addition node, using float attributes, can be implemented in a few lines of code:
