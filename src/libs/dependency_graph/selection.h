@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include <iostream>
 
 #include "node.h"
 
@@ -30,7 +31,8 @@ class Selection {
 	protected:
 		std::set<std::reference_wrapper<NodeBase>, NodeComparator> m_nodes;
 		std::set<Connection> m_connections;
-
 };
+
+std::ostream& operator << (std::ostream& out, const Selection& s);
 
 };

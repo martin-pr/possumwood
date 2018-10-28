@@ -118,18 +118,27 @@ possumwood::UndoStack::Action removeNetworkAction(dependency_graph::Network& net
 }
 
 possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _selection) {
+	// collect all "parent" networks for all selected nodes
+	std::set<dependency_graph::Network*> networks;
+	networks.insert(&possumwood::AppCore::instance().graph());
+
+	for(auto& n : _selection.nodes())
+		if(n.get().hasParentNetwork())
+			networks.insert(&n.get().network());
+
 	// add all connections to selected nodes - they'll be removed as well as the selected connections
 	//   with the removed nodes
 	dependency_graph::Selection selection = _selection;
-	for(auto& c : possumwood::AppCore::instance().graph().connections()) {
-		auto& n1 = c.first.node();
-		auto& n2 = c.second.node();
+	for(auto& net : networks)
+		for(auto& c : net->connections()) {
+			auto& n1 = c.first.node();
+			auto& n2 = c.second.node();
 
-		if(selection.nodes().find(n1) != selection.nodes().end())
-			selection.addConnection(c.first, c.second);
-		if(selection.nodes().find(n2) != selection.nodes().end())
-			selection.addConnection(c.first, c.second);
-	}
+			if(selection.nodes().find(n1) != selection.nodes().end())
+				selection.addConnection(c.first, c.second);
+			if(selection.nodes().find(n2) != selection.nodes().end())
+				selection.addConnection(c.first, c.second);
+		}
 
 	// this will be the resulting action
 	possumwood::UndoStack::Action action;
