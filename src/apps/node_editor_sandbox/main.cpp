@@ -86,8 +86,12 @@ int main(int argc, char* argv[]) {
 
 	GraphScene& scene = graph->scene();
 
-	Node& n1 = scene.addNode("first", "dummy_node", QPointF(-50, 20), {{"aaaaa", Port::kInput, Qt::blue}, {"b", Port::kOutput, Qt::red}});
-	Node& n2 = scene.addNode("second", "dummy_node", QPointF(50, 20), {{"xxxxxxxxxxxxxxxx", Port::kInputOutput, Qt::red}});
+	Node& n1 = scene.addNode("first", "dummy_node", QPointF(-50, 20));
+	n1.addPort(Node::PortDefinition{"aaaaa", Port::kInput, Qt::blue});
+	n1.addPort(Node::PortDefinition{"b", Port::kOutput, Qt::red});
+
+	Node& n2 = scene.addNode("second", "dummy_node", QPointF(50, 20));
+	n2.addPort(Node::PortDefinition{"xxxxxxxxxxxxxxxx", Port::kInputOutput, Qt::red});
 
 	scene.connect(n1.port(1), n2.port(0));
 
@@ -97,12 +101,14 @@ int main(int argc, char* argv[]) {
 
 	graph->addAction(makeAction("Add single input node", [&]() {
 		QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-		scene.addNode(makeUniqueNodeName(), "dummy_node", pos, {{"input", Port::kInput, randomColor()}});
+		Node& n = scene.addNode(makeUniqueNodeName(), "dummy_node", pos);
+		n.addPort(Node::PortDefinition{"input", Port::kInput, randomColor()});
 	}, NULL));
 
 	graph->addAction(makeAction("Add single output node", [&]() {
 		QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-		scene.addNode(makeUniqueNodeName(), "dummy_node", pos, {{"output", Port::kOutput, randomColor()}});
+		Node& n = scene.addNode(makeUniqueNodeName(), "dummy_node", pos);
+		n.addPort(Node::PortDefinition{"output", Port::kOutput, randomColor()});
 	}, NULL));
 
 	graph->addAction(makeAction("Add random more complex node", [&]() {

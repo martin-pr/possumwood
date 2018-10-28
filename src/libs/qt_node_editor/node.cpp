@@ -13,7 +13,7 @@
 
 namespace node_editor {
 
-Node::Node(const QString& name, const QString& type, const QPointF& position, const std::initializer_list<PortDefinition>& ports) : m_state(kOk), m_typeString(type) {
+Node::Node(const QString& name, const QString& type, const QPointF& position) : m_state(kOk), m_typeString(type) {
 	setPos(position);
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
 	setZValue(-1);
@@ -23,9 +23,6 @@ Node::Node(const QString& name, const QString& type, const QPointF& position, co
 
 	m_titleBackground = new QGraphicsRectItem(this);
 	m_title = new QGraphicsTextItem(name, this);
-
-	for(auto& p : ports)
-		addPort(p);
 
 	setBrush(QColor(32, 32, 32));
 	m_titleBackground->setPen(Qt::NoPen);

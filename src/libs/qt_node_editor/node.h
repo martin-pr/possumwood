@@ -24,8 +24,7 @@ class Node : public QGraphicsRectItem {
 			QColor color;
 		};
 
-		Node(const QString& name, const QString& type, const QPointF& position = QPointF(0, 0),
-		     const std::initializer_list<PortDefinition>& ports = std::initializer_list<PortDefinition>());
+		Node(const QString& name, const QString& type, const QPointF& position = QPointF(0, 0));
 		virtual ~Node();
 
 

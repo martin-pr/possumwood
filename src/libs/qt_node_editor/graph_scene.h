@@ -30,8 +30,7 @@ class GraphScene : public QGraphicsScene {
 
 		Node& addNode(const QString& name,
 		              const QString& type,
-		              const QPointF& position,
-		              const std::initializer_list<Node::PortDefinition>& ports = std::initializer_list<Node::PortDefinition>());
+		              const QPointF& position);
 
 		void removeNode(Node& n);
 
