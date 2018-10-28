@@ -190,19 +190,19 @@ void NodeBase::computeOutput(size_t index) {
 	// first, figure out which inputs need pulling, if any
 	std::vector<std::size_t> inputs = metadata()->influencedBy(index);
 
-	// pull on all inputs
-	for(std::size_t& i : inputs) {
-		if(port(i).isDirty()) {
-			port(i).getData(); // throw away (bad)
-		}
-
-		assert(!port(i).isDirty());
-	}
-
-	// now run compute, as all inputs are fine
-	//  -> this will change the output value (if the compute method works)
+	// main computation
 	State result;
 	try {
+		// pull on all inputs - triggers their recomputation
+		for(std::size_t& i : inputs) {
+			if(port(i).isDirty())
+				port(i).getData(); // throw away (bad! should eventually start using shader_ptr to hold data to avoid wasting resources)
+
+			assert(!port(i).isDirty());
+		}
+
+		// now run compute, as all inputs are fine
+		//  -> this will change the output value (if the compute method works)
 		Values vals(*this);
 		result = metadata()->m_compute(vals);
 	}
