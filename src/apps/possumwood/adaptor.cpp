@@ -212,8 +212,15 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
 		// instantiate new graphical item
+		std::string typeString = node.metadata()->type();
+		{
+			auto pos = typeString.rfind("/");
+			if(pos != std::string::npos)
+				typeString = typeString.substr(pos+1);
+		}
+
 		node_editor::Node& newNode = m_graphWidget->scene().addNode(
-			node.name().c_str(), QPointF(data.position().x, data.position().y));
+			node.name().c_str(), typeString.c_str(), QPointF(data.position().x, data.position().y));
 		uiNode = &newNode;
 
 		// add all ports, based on the node's metadata
