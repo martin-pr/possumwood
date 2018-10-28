@@ -516,7 +516,7 @@ BOOST_AUTO_TEST_CASE(void_complex_in) {
 	BOOST_REQUIRE_NO_THROW(floatNode.port(1).disconnect(voidNode.port(0)));
 	BOOST_CHECK_NO_THROW(voidNode.port(1).get<float>());
 	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 2.0f);
-	BOOST_CHECK(voidNode.state().errored());
+	BOOST_CHECK(voidNode.state().errored());  // trying to recompute output from an unconnected input
 
 
 	// connect int, try to pull

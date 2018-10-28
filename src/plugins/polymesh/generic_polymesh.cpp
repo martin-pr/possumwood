@@ -116,8 +116,12 @@ GenericPolymesh::Index& GenericPolymesh::Index::operator += (long d) {
 	m_index += d;
 
 	assert(dynamic_cast<Indices*>(m_parent) != nullptr);
-	Indices* ii = (Indices*)m_parent;
-	m_vertex = std::unique_ptr<Vertex>(new Vertex(&ii->m_parent->m_vertices, ii->m_parent->m_vertexIndices[m_index]));
+	Indices* indices = (Indices*)m_parent;
+
+	if(m_index < indices->m_parent->m_vertexIndices.size())
+		m_vertex = std::unique_ptr<Vertex>(new Vertex(&indices->m_parent->m_vertices, indices->m_parent->m_vertexIndices[m_index]));
+	else
+		m_vertex = std::unique_ptr<Vertex>(new Vertex(&indices->m_parent->m_vertices, 0));
 
 	return *this;
 }
@@ -128,7 +132,11 @@ void GenericPolymesh::Index::operator++() {
 	assert(m_parent != nullptr);
 	assert(dynamic_cast<Indices*>(m_parent) != nullptr);
 	Indices* indices = (Indices*)m_parent;
-	m_vertex = std::unique_ptr<Vertex>(new Vertex(&indices->m_parent->m_vertices, indices->m_parent->m_vertexIndices[m_index]));
+
+	if(m_index < indices->m_parent->m_vertexIndices.size())
+		m_vertex = std::unique_ptr<Vertex>(new Vertex(&indices->m_parent->m_vertices, indices->m_parent->m_vertexIndices[m_index]));
+	else
+		m_vertex = std::unique_ptr<Vertex>(new Vertex(&indices->m_parent->m_vertices, 0));
 }
 
 long GenericPolymesh::Index::operator - (const Index& i) const {

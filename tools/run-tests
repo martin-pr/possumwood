@@ -1,5 +1,10 @@
 #!/bin/bash
 
-./build/dependency_graph_tests
-./build/anim_tests
-./build/possumwood_tests
+# exit on first error, with an error
+set -e
+
+# run the individual tests
+for t in `find ./build/ -executable | grep '_tests$'`
+do
+	$t
+done
