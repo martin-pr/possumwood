@@ -24,7 +24,7 @@ class Node : public QGraphicsRectItem {
 			QColor color;
 		};
 
-		Node(const QString& name, const QString& type, const QPointF& position = QPointF(0, 0));
+		Node(const QString& name, const QString& type, const QPointF& position = QPointF(0, 0), const QColor& color = QColor(64, 64, 64));
 		virtual ~Node();
 
 
@@ -53,6 +53,8 @@ class Node : public QGraphicsRectItem {
 
 		State m_state;
 		QString m_typeString;
+
+		QColor m_color;
 };
 
 }

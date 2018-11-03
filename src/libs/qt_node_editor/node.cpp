@@ -13,27 +13,29 @@
 
 namespace node_editor {
 
-Node::Node(const QString& name, const QString& type, const QPointF& position) : m_state(kOk), m_typeString(type) {
+Node::Node(const QString& name, const QString& type, const QPointF& position, const QColor& color) : m_state(kOk), m_typeString(type), m_color(color) {
 	setPos(position);
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
 	setZValue(-1);
 
 	m_type = new QGraphicsTextItem(type, this);
-	m_type->setDefaultTextColor(QColor(64, 64, 64));
+	m_type->setDefaultTextColor(m_color);
 
 	m_titleBackground = new QGraphicsRectItem(this);
 	m_title = new QGraphicsTextItem(name, this);
 
-	setBrush(QColor(32, 32, 32));
+	QColor brushColor(m_color.red(), m_color.green(), m_color.blue(), 127);
+	setBrush(brushColor);
+
 	m_titleBackground->setPen(Qt::NoPen);
-	m_titleBackground->setBrush(QColor(64, 64, 64));
+	m_titleBackground->setBrush(m_color);
 	m_title->setDefaultTextColor(Qt::white);
 
 	QFont font = m_title->font();
 	font.setPixelSize(12);
 	m_title->setFont(font);
 
-	setPen(QPen(QColor(64, 64, 64), 3));
+	setPen(QPen(m_color, 3));
 
 	updateRect();
 }
