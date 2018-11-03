@@ -15,6 +15,7 @@
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QLabel>
+#include <QInputDialog>
 
 #include <dependency_graph/values.inl>
 #include <dependency_graph/metadata_register.h>
@@ -156,11 +157,6 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	{
 		QMenu* contextMenu = new QMenu(m_adaptor);
-		connect(m_adaptor, &Adaptor::customContextMenuRequested, [contextMenu, this](QPoint pos) {
-			contextMenu->move(m_adaptor->mapToGlobal(pos));  // to make sure pos() is right, which is
-															 // used for placing the new node
-			contextMenu->popup(m_adaptor->mapToGlobal(pos));
-		});
 
 		{
 			m_newNodeMenu = new SearchableMenu("Create");
@@ -270,6 +266,47 @@ MainWindow::MainWindow() : QMainWindow() {
 
 		contextMenu->addAction(m_adaptor->undoAction());
 		contextMenu->addAction(m_adaptor->redoAction());
+
+		// node-specific items - communicate via currentNode shared ptr
+		std::shared_ptr<node_editor::Node*> currentNode(new node_editor::Node*());
+
+		QAction* nodeSeparator = new QAction(m_adaptor);
+		nodeSeparator->setSeparator(true);
+		contextMenu->addAction(nodeSeparator);
+
+		QAction* renameNodeAction = new QAction(QIcon(":icons/rename.png"), "&Rename node...", this);
+		connect(renameNodeAction, &QAction::triggered, [currentNode, this](bool) {
+			QString name = QInputDialog::getText(this, "Rename...", "Node name:", QLineEdit::Normal, (*currentNode)->name());
+
+			if(name != (*currentNode)->name()) {
+				dependency_graph::NodeBase& depNode = *(m_adaptor->index()[*currentNode].graphNode);
+				possumwood::actions::renameNode(depNode, name.toStdString());
+			}
+		});
+		contextMenu->addAction(renameNodeAction);
+
+		connect(m_adaptor, &Adaptor::customContextMenuRequested, [=](QPoint pos) {
+			contextMenu->move(m_adaptor->mapToGlobal(pos));  // to make sure pos() is right, which is
+															 // used for placing the new node
+
+			// node-specific menu
+			node_editor::Node* node = nullptr;
+			{
+				QGraphicsItem* item = m_adaptor->scene().itemAt(m_adaptor->graphWidget()->transform().inverted().map(pos) , QTransform());
+				while(item != nullptr && node == nullptr) {
+					node = dynamic_cast<node_editor::Node*>(item);
+
+					item = item->parentItem();
+				}
+			}
+			*currentNode = node;
+
+			nodeSeparator->setVisible(node != nullptr);
+			renameNodeAction->setVisible(node != nullptr);
+
+			// show the menu
+			contextMenu->popup(m_adaptor->mapToGlobal(pos));
+		});
 	}
 
 	// drawing callback
