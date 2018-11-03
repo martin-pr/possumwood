@@ -45,12 +45,14 @@ void doSetValue(const dependency_graph::UniqueId& nodeId, unsigned portId, std::
 	auto it = AppCore::instance().graph().nodes().find(nodeId, dependency_graph::Nodes::kRecursive);
 	assert(it != AppCore::instance().graph().nodes().end());
 
-	assert(original != nullptr);
-	if(*original == nullptr)
-		*original = it->port(portId).getData().clone();
-	assert(*original != nullptr);
+	if(it->port(portId).category() == dependency_graph::Attr::kOutput || !it->port(portId).isConnected()) {
+		assert(original != nullptr);
+		if(*original == nullptr)
+			*original = it->port(portId).getData().clone();
+		assert(*original != nullptr);
 
-	it->port(portId).setData(*value);
+		it->port(portId).setData(*value);
+	}
 }
 
 void doResetValue(const dependency_graph::UniqueId& nodeId, unsigned portId, std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> value) {
@@ -59,7 +61,8 @@ void doResetValue(const dependency_graph::UniqueId& nodeId, unsigned portId, std
 		auto it = AppCore::instance().graph().nodes().find(nodeId, dependency_graph::Nodes::kRecursive);
 		assert(it != AppCore::instance().graph().nodes().end());
 
-		it->port(portId).setData(**value);
+		if(it->port(portId).category() == dependency_graph::Attr::kOutput || !it->port(portId).isConnected())
+			it->port(portId).setData(**value);
 	}
 }
 
