@@ -21,6 +21,8 @@ class Metadata : public dependency_graph::Metadata {
 		Metadata(const std::string& nodeType);
 		virtual ~Metadata();
 
+		using dependency_graph::Metadata::addAttribute;
+
 		/// registers an input attribute.
 		/// Each attribute instance should be held statically in the
 		/// implementation of the "node" concept of the target application.
@@ -29,8 +31,6 @@ class Metadata : public dependency_graph::Metadata {
 		template<typename T>
 		void addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, const T& defaultValue = T());
 
-		void addAttribute(dependency_graph::InAttr<void>& in, const std::string& name);
-
 		/// registers an output attribute.
 		/// Each attribute instance should be held statically in the
 		/// implementation of the "node" concept of the target application.
@@ -38,8 +38,6 @@ class Metadata : public dependency_graph::Metadata {
 		/// that it will be available throughout the application run.
 		template<typename T>
 		void addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue = T());
-
-		void addAttribute(dependency_graph::OutAttr<void>& out, const std::string& name);
 
 		using dependency_graph::Metadata::addInfluence;
 		using dependency_graph::Metadata::setCompute;
@@ -65,18 +63,9 @@ class Metadata : public dependency_graph::Metadata {
 		/// create an editor for a node instance
 		std::unique_ptr<Editor> createEditor(dependency_graph::NodeBase& node) const;
 
-
-		/// colour of an attribute, based on its index (derived from Traits instances)
-		const std::array<float, 3>& colour(unsigned attrId) const;
-
-	protected:
-		virtual void doAddAttribute(dependency_graph::Attr& a) override;
-
 	private:
 		std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> m_drawableFactory;
 		std::function<std::unique_ptr<Editor>(dependency_graph::NodeBase&)> m_editorFactory;
-
-		std::vector<std::array<float, 3>> m_colours;
 };
 
 }

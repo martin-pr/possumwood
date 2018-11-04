@@ -4,6 +4,7 @@
 
 #include "metadata.h"
 #include "editor.h"
+#include "colours.h"
 
 namespace possumwood {
 
@@ -28,14 +29,14 @@ void Metadata::setEditor() {
 
 template<typename T>
 void Metadata::addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, const T& defaultValue) {
-	m_colours.push_back(Traits<T>::colour());
+	Colours::registerColour(typeid(T), Traits<T>::colour());
 
 	dependency_graph::Metadata::addAttribute(in, name, defaultValue);
 }
 
 template<typename T>
 void Metadata::addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue) {
-	m_colours.push_back(Traits<T>::colour());
+	Colours::registerColour(typeid(T), Traits<T>::colour());
 
 	dependency_graph::Metadata::addAttribute(out, name, defaultValue);
 }

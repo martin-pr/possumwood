@@ -20,6 +20,7 @@
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
+#include <possumwood_sdk/colours.h>
 
 #include <actions/node_data.h>
 #include <actions/actions.h>
@@ -235,7 +236,7 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 
 			std::array<float, 3> colour{{1,1,1}};
 			if(meta)
-				colour = meta->colour(a);
+				colour = possumwood::Colours::get(attr.type());
 
 			newNode.addPort(node_editor::Node::PortDefinition {
 				attr.name().c_str(),

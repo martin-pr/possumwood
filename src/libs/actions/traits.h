@@ -47,7 +47,7 @@ template<>
 struct Traits<void> {
 	// static IO<std::string> io;
 	static constexpr std::array<float, 3> colour() {
-		return std::array<float, 3>{{0, 0, 0}};
+		return std::array<float, 3>{{1, 1, 1}};
 	}
 };
 

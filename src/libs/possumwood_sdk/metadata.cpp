@@ -24,11 +24,6 @@ std::unique_ptr<Drawable> Metadata::createDrawable(dependency_graph::Values&& va
 	return std::unique_ptr<Drawable>();
 }
 
-const std::array<float, 3>& Metadata::colour(unsigned attrId) const {
-	assert(attrId < m_colours.size());
-	return m_colours[attrId];
-}
-
 bool Metadata::hasEditor() const {
 	return m_editorFactory.operator bool();
 }
@@ -37,27 +32,6 @@ std::unique_ptr<Editor> Metadata::createEditor(dependency_graph::NodeBase& node)
 	assert(hasEditor());
 
 	return m_editorFactory(node);
-}
-
-void Metadata::doAddAttribute(dependency_graph::Attr& a) {
-	dependency_graph::Metadata::doAddAttribute(a);
-
-	// just a silly workaround when the base addAttribute() gets called instead
-	//   of the derived class version
-	while(m_colours.size() < attributeCount())
-		m_colours.push_back(std::array<float, 3>{{1,0,1}});
-}
-
-void Metadata::addAttribute(dependency_graph::InAttr<void>& in, const std::string& name) {
-	m_colours.push_back(Traits<void>::colour());
-
-	dependency_graph::Metadata::addAttribute(in, name);
-}
-
-void Metadata::addAttribute(dependency_graph::OutAttr<void>& out, const std::string& name) {
-	m_colours.push_back(Traits<void>::colour());
-
-	dependency_graph::Metadata::addAttribute(out, name);
 }
 
 ////////////////
