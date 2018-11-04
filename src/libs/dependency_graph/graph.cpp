@@ -12,7 +12,7 @@ struct Graph::Signals {
 	boost::signals2::signal<void(const NodeBase&)> m_onStateChanged;
 };
 
-Graph::Graph() : Network(nullptr), m_signals(new Signals) {
+Graph::Graph() : Network("network", UniqueId(), Network::defaultMetadata(), nullptr), m_signals(new Signals) {
 }
 
 Graph::~Graph() {

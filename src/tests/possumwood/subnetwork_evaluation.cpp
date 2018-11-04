@@ -433,8 +433,23 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		if(network == nullptr) {
 			netIt = app.graph().nodes().find(netId);
 			BOOST_REQUIRE(netIt != app.graph().nodes().end());
-
 			network = &netIt->as<dependency_graph::Network>();
+
+			inIt = network->nodes().find(inId);
+			BOOST_REQUIRE(inIt != network->nodes().end());
+			input = &(*inIt);
+
+			midIt = network->nodes().find(midId);
+			BOOST_REQUIRE(midIt != network->nodes().end());
+			middle = &(*midIt);
+
+			outIt = network->nodes().find(outId);
+			BOOST_REQUIRE(outIt != network->nodes().end());
+			output = &(*outIt);
+
+			auto out2It = network->nodes().find(out2Id);
+			BOOST_REQUIRE(out2It != network->nodes().end());
+			output2 = &(*out2It);
 		}
 
 		// the new value should propagate throughout the network

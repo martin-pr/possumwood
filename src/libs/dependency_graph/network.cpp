@@ -5,26 +5,12 @@
 
 namespace dependency_graph {
 
-namespace {
+Network::Network(const std::string& name, const UniqueId& id, const MetadataHandle& md, Network* parent) : NodeBase(name, id, md, parent), m_nodes(this), m_connections(this) {
 
-const MetadataHandle& networkMetadata() {
-	static std::unique_ptr<MetadataHandle> s_handle;
-	if(s_handle == nullptr) {
-		std::unique_ptr<Metadata> meta(new Metadata("network"));
-		s_handle = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(meta)));
-
-		MetadataRegister::singleton().add(*s_handle);
-	}
-
-	return *s_handle;
-}
-
-}
-
-Network::Network(Network* parent, const std::string& name, const UniqueId& id) : NodeBase(name, id, networkMetadata(), parent), m_nodes(this), m_connections(this) {
 }
 
 Network::~Network() {
+	clear();
 }
 
 bool Network::empty() const {
@@ -32,6 +18,18 @@ bool Network::empty() const {
 }
 
 void Network::clear() {
+	// first, unlink all the ports
+	for(unsigned i=0; i<portCount(); ++i) {
+		Port& p = port(i);
+		if(p.isLinked())
+			p.unlink();
+	}
+
+	// clear all subnetworks
+	for(auto& n : m_nodes)
+		if(n.is<Network>())
+			n.as<Network>().clear();
+
 	// clear only nodes - connections will clear themselves with the nodes
 	m_nodes.clear();
 }
@@ -53,10 +51,23 @@ const Connections& Network::connections() const {
 }
 
 std::unique_ptr<NodeBase> Network::makeNode(const std::string& name, const MetadataHandle& md, const UniqueId& id) {
-	if(md != networkMetadata())
+	// if(md != networkMetadata())
+	if(md.metadata().type() != "network")
 		return std::unique_ptr<NodeBase>(new Node(name, id, md, this));
 	else
-		return std::unique_ptr<NodeBase>(new Network(this, name, id));
+		return std::unique_ptr<NodeBase>(new Network(name, id, md, this));
+}
+
+const MetadataHandle& Network::defaultMetadata() {
+	static std::unique_ptr<MetadataHandle> s_handle;
+	if(s_handle == nullptr) {
+		std::unique_ptr<Metadata> meta(new Metadata("network"));
+		s_handle = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(meta)));
+
+		MetadataRegister::singleton().add(*s_handle);
+	}
+
+	return *s_handle;
 }
 
 }

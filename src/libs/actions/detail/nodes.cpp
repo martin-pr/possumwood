@@ -14,6 +14,28 @@ namespace possumwood { namespace actions { namespace detail {
 
 namespace {
 
+bool isCompatible(const dependency_graph::Metadata& m1, const dependency_graph::Metadata& m2) {
+	if(m1.attributeCount() != m2.attributeCount())
+		return false;
+
+	for(std::size_t i=0; i<m1.attributeCount(); ++i) {
+		const dependency_graph::Attr& a1 = m1.attr(i);
+		const dependency_graph::Attr& a2 = m2.attr(i);
+
+		if(a1.name() != a2.name())
+			return false;
+
+		if(a1.category() != a2.category())
+			return false;
+
+		if(a1.type() != a2.type())
+			return false;
+	}
+
+	return true;
+}
+
+
 dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& currentNetworkIndex, const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id,
 	std::shared_ptr<const dependency_graph::BaseData> blindData, boost::optional<const dependency_graph::Datablock> data = boost::optional<const dependency_graph::Datablock>()) {
 
@@ -31,16 +53,19 @@ dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& curre
 
 	dependency_graph::NodeBase& netBase = detail::findNode(currentNetworkIndex);
 	assert(netBase.is<dependency_graph::Network>());
+	dependency_graph::Network& network = netBase.as<dependency_graph::Network>();
 
 	boost::optional<const dependency_graph::Datablock&> dataRef;
-	if(data)
+	if(data) {
+		assert(isCompatible(meta.metadata(), data->meta().metadata()));
 		dataRef = boost::optional<const dependency_graph::Datablock&>(*data);
+	}
 
 	std::unique_ptr<dependency_graph::BaseData> d;
 	if(blindData)
 		d = blindData->clone();
 
-	dependency_graph::NodeBase& n = netBase.as<dependency_graph::Network>().nodes().add(meta, name, std::move(d), dataRef, id);
+	dependency_graph::NodeBase& n = network.nodes().add(meta, name, std::move(d), dataRef, id);
 	assert(n.index() == id);
 	return n;
 }
