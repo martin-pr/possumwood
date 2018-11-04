@@ -429,6 +429,14 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	});
 
 	tests.push_back([&]() {
+		// after undoing the next "remove" action, we need a new network pointer
+		if(network == nullptr) {
+			netIt = app.graph().nodes().find(netId);
+			BOOST_REQUIRE(netIt != app.graph().nodes().end());
+
+			network = &netIt->as<dependency_graph::Network>();
+		}
+
 		// the new value should propagate throughout the network
 		BOOST_CHECK_EQUAL(network->port(1).get<float>(), 23.0f);
 
@@ -443,6 +451,20 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		BOOST_CHECK_EQUAL(network->port(1).get<float>(), 23.0f);
 	});
 
+	// remove the network
+	commands.push_back([&]() {
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::removeNode(
+			*network
+		));
+	});
+
+	// check that the network was removed
+	tests.push_back([&]() {
+		netIt = app.graph().nodes().find(netId);
+		BOOST_REQUIRE(netIt == app.graph().nodes().end());
+
+		network = nullptr;
+	});
 	/////
 
 	// execute all actions + tests afterwards
