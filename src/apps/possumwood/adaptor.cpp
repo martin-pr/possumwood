@@ -224,6 +224,10 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		QColor nodeColor(64,64,64);
 		if(node.metadata()->type() == "network")
 			nodeColor = QColor(32,64,96);
+		if(node.metadata()->type() == "input")
+			nodeColor = QColor(96,64,32);
+		if(node.metadata()->type() == "output")
+			nodeColor = QColor(64,96,32);
 
 		// make the new node
 		node_editor::Node& newNode = m_graphWidget->scene().addNode(
