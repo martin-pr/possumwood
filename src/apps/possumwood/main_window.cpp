@@ -285,6 +285,16 @@ MainWindow::MainWindow() : QMainWindow() {
 		});
 		contextMenu->addAction(renameNodeAction);
 
+		QAction* openNetworkAction = new QAction(QIcon(":icons/open-network.png"), "&Open network", this);
+		connect(openNetworkAction, &QAction::triggered, [currentNode, this](bool) {
+			dependency_graph::NodeBase& depNode = *(m_adaptor->index()[*currentNode].graphNode);
+			assert(depNode.is<dependency_graph::Network>());
+
+			if(depNode.is<dependency_graph::Network>())
+				m_adaptor->setCurrentNetwork(depNode.as<dependency_graph::Network>());
+		});
+		contextMenu->addAction(openNetworkAction);
+
 		connect(m_adaptor, &Adaptor::customContextMenuRequested, [=](QPoint pos) {
 			contextMenu->move(m_adaptor->mapToGlobal(pos));  // to make sure pos() is right, which is
 															 // used for placing the new node
@@ -303,6 +313,13 @@ MainWindow::MainWindow() : QMainWindow() {
 
 			nodeSeparator->setVisible(node != nullptr);
 			renameNodeAction->setVisible(node != nullptr);
+
+			if(*currentNode) {
+				dependency_graph::NodeBase& depNode = *(m_adaptor->index()[*currentNode].graphNode);
+				openNetworkAction->setVisible(depNode.is<dependency_graph::Network>());
+			}
+			else
+				openNetworkAction->setVisible(false);
 
 			// show the menu
 			contextMenu->popup(m_adaptor->mapToGlobal(pos));

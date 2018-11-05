@@ -27,6 +27,7 @@
 	<file>icons/add-node.png</file>
 	<file>icons/package.png</file>
 	<file>icons/rename.png</file>
+	<file>icons/open-network.png</file>
 </qresource>
 </RCC>
 
