@@ -295,6 +295,13 @@ MainWindow::MainWindow() : QMainWindow() {
 		});
 		contextMenu->addAction(openNetworkAction);
 
+		QAction* exitNetworkAction = new QAction(QIcon(":icons/exit-network.png"), "&Exit network", this);
+		connect(exitNetworkAction, &QAction::triggered, [currentNode, this](bool) {
+			if(m_adaptor->currentNetwork().hasParentNetwork())
+				m_adaptor->setCurrentNetwork(m_adaptor->currentNetwork().network());
+		});
+		contextMenu->addAction(exitNetworkAction);
+
 		connect(m_adaptor, &Adaptor::customContextMenuRequested, [=](QPoint pos) {
 			contextMenu->move(m_adaptor->mapToGlobal(pos));  // to make sure pos() is right, which is
 															 // used for placing the new node
@@ -311,7 +318,7 @@ MainWindow::MainWindow() : QMainWindow() {
 			}
 			*currentNode = node;
 
-			nodeSeparator->setVisible(node != nullptr);
+			nodeSeparator->setVisible(node != nullptr || m_adaptor->currentNetwork().hasParentNetwork());
 			renameNodeAction->setVisible(node != nullptr);
 
 			if(*currentNode) {
@@ -320,6 +327,8 @@ MainWindow::MainWindow() : QMainWindow() {
 			}
 			else
 				openNetworkAction->setVisible(false);
+
+			exitNetworkAction->setVisible(node == nullptr && m_adaptor->currentNetwork().hasParentNetwork());
 
 			// show the menu
 			contextMenu->popup(m_adaptor->mapToGlobal(pos));

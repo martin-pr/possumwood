@@ -28,6 +28,7 @@
 	<file>icons/package.png</file>
 	<file>icons/rename.png</file>
 	<file>icons/open-network.png</file>
+	<file>icons/exit-network.png</file>
 </qresource>
 </RCC>
 
