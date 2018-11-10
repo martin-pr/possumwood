@@ -14,7 +14,7 @@ class ConnectedEdge;
 class Node;
 
 class GraphScene : public QGraphicsScene {
-	Q_OBJECT
+		Q_OBJECT
 
 	public:
 		GraphScene(QGraphicsView* parent);
@@ -29,8 +29,9 @@ class GraphScene : public QGraphicsScene {
 		unsigned edgeCount() const;
 
 		Node& addNode(const QString& name,
+		              const QString& type,
 		              const QPointF& position,
-		              const std::initializer_list<Node::PortDefinition>& ports = std::initializer_list<Node::PortDefinition>());
+		              const QColor& color = QColor(64, 64, 64));
 
 		void removeNode(Node& n);
 

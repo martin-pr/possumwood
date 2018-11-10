@@ -1,5 +1,8 @@
 #include "properties.h"
 
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+
 #include <QHeaderView>
 
 #include <dependency_graph/node_base.inl>
@@ -41,17 +44,39 @@ void Properties::show(const dependency_graph::Selection& selection) {
 		m_nodes.insert(std::make_pair(nodeItem, &(node.get())));
 
 		// add each port as a subitem
+		std::map<std::string, QTreeWidgetItem*> parentItems;
 		for(unsigned pi = 0; pi != node.get().portCount(); ++pi) {
 			auto& port = node.get().port(pi);
 
 			m_properties.push_back(PropertyHolder(port));
+
 			if(m_properties.back().ui) {
-				QTreeWidgetItem* portItem = new QTreeWidgetItem();
-				portItem->setText(0, port.name().c_str());
+				std::vector<std::string> pieces;
+				boost::algorithm::split(pieces, port.name(), boost::is_any_of("/"));
 
-				nodeItem->addChild(portItem);
+				QTreeWidgetItem* currentItem = nodeItem;
+				std::string currentString = "";
 
-				setItemWidget(portItem, 1, m_properties.back().ui->widget());
+				while(!pieces.empty()) {
+					currentString += "/" + *pieces.begin();
+
+					auto it = parentItems.find(currentString);
+					if(it == parentItems.end()) {
+						QTreeWidgetItem* item = new QTreeWidgetItem();
+						item->setText(0, pieces.begin()->c_str());
+						item->setFirstColumnSpanned(true);
+						currentItem->addChild(item);
+
+						it = parentItems.insert(std::make_pair(currentString, item)).first;
+					}
+
+					currentItem = it->second;
+
+					pieces.erase(pieces.begin());
+				}
+
+				currentItem->setFirstColumnSpanned(false);
+				setItemWidget(currentItem, 1, m_properties.back().ui->widget());
 			}
 		}
 	}

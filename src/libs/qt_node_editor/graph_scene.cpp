@@ -56,10 +56,11 @@ unsigned GraphScene::edgeCount() const {
 }
 
 Node& GraphScene::addNode(const QString& name,
+                          const QString& type,
                           const QPointF& position,
-                          const std::initializer_list<Node::PortDefinition>& ports) {
+                          const QColor& color) {
 
-	Node* n = new Node(name, position, ports);
+	Node* n = new Node(name, type, position, color);
 	m_nodes.push_back(n);
 	addItem(n);
 

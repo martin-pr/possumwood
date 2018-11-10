@@ -15,6 +15,10 @@ NodeBase::NodeBase(const std::string& name, const UniqueId& id, const MetadataHa
 }
 
 NodeBase::~NodeBase() {
+	for(auto& p : m_ports) {
+		if(p.isLinked())
+			p.unlink();
+	}
 }
 
 const std::string& NodeBase::name() const {

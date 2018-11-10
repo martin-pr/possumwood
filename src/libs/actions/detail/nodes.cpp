@@ -14,6 +14,28 @@ namespace possumwood { namespace actions { namespace detail {
 
 namespace {
 
+bool isCompatible(const dependency_graph::Metadata& m1, const dependency_graph::Metadata& m2) {
+	if(m1.attributeCount() != m2.attributeCount())
+		return false;
+
+	for(std::size_t i=0; i<m1.attributeCount(); ++i) {
+		const dependency_graph::Attr& a1 = m1.attr(i);
+		const dependency_graph::Attr& a2 = m2.attr(i);
+
+		if(a1.name() != a2.name())
+			return false;
+
+		if(a1.category() != a2.category())
+			return false;
+
+		if(a1.type() != a2.type())
+			return false;
+	}
+
+	return true;
+}
+
+
 dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& currentNetworkIndex, const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id,
 	std::shared_ptr<const dependency_graph::BaseData> blindData, boost::optional<const dependency_graph::Datablock> data = boost::optional<const dependency_graph::Datablock>()) {
 
@@ -31,16 +53,19 @@ dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& curre
 
 	dependency_graph::NodeBase& netBase = detail::findNode(currentNetworkIndex);
 	assert(netBase.is<dependency_graph::Network>());
+	dependency_graph::Network& network = netBase.as<dependency_graph::Network>();
 
 	boost::optional<const dependency_graph::Datablock&> dataRef;
-	if(data)
+	if(data) {
+		assert(isCompatible(meta.metadata(), data->meta().metadata()));
 		dataRef = boost::optional<const dependency_graph::Datablock&>(*data);
+	}
 
 	std::unique_ptr<dependency_graph::BaseData> d;
 	if(blindData)
 		d = blindData->clone();
 
-	dependency_graph::NodeBase& n = netBase.as<dependency_graph::Network>().nodes().add(meta, name, std::move(d), dataRef, id);
+	dependency_graph::NodeBase& n = network.nodes().add(meta, name, std::move(d), dataRef, id);
 	assert(n.index() == id);
 	return n;
 }
@@ -52,6 +77,14 @@ void doRemoveNode(const dependency_graph::UniqueId& id) {
 	});
 
 	assert(it != graph.nodes().end());
+
+	// removing a network - the network should be empty at this stage, as all its
+	// nodes and connections are handled already
+	#ifndef NDEBUG
+	dependency_graph::Network* net = dynamic_cast<dependency_graph::Network*>(&(*it));
+	if(net)
+		assert(net->empty());
+	#endif
 
 	it->network().nodes().erase(it);
 }
@@ -118,18 +151,27 @@ possumwood::UndoStack::Action removeNetworkAction(dependency_graph::Network& net
 }
 
 possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _selection) {
+	// collect all "parent" networks for all selected nodes
+	std::set<dependency_graph::Network*> networks;
+	networks.insert(&possumwood::AppCore::instance().graph());
+
+	for(auto& n : _selection.nodes())
+		if(n.get().hasParentNetwork())
+			networks.insert(&n.get().network());
+
 	// add all connections to selected nodes - they'll be removed as well as the selected connections
 	//   with the removed nodes
 	dependency_graph::Selection selection = _selection;
-	for(auto& c : possumwood::AppCore::instance().graph().connections()) {
-		auto& n1 = c.first.node();
-		auto& n2 = c.second.node();
+	for(auto& net : networks)
+		for(auto& c : net->connections()) {
+			auto& n1 = c.first.node();
+			auto& n2 = c.second.node();
 
-		if(selection.nodes().find(n1) != selection.nodes().end())
-			selection.addConnection(c.first, c.second);
-		if(selection.nodes().find(n2) != selection.nodes().end())
-			selection.addConnection(c.first, c.second);
-	}
+			if(selection.nodes().find(n1) != selection.nodes().end())
+				selection.addConnection(c.first, c.second);
+			if(selection.nodes().find(n2) != selection.nodes().end())
+				selection.addConnection(c.first, c.second);
+		}
 
 	// this will be the resulting action
 	possumwood::UndoStack::Action action;

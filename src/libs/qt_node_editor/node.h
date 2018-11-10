@@ -24,8 +24,7 @@ class Node : public QGraphicsRectItem {
 			QColor color;
 		};
 
-		Node(const QString& name, const QPointF& position = QPointF(0, 0),
-		     const std::initializer_list<PortDefinition>& ports = std::initializer_list<PortDefinition>());
+		Node(const QString& name, const QString& type, const QPointF& position = QPointF(0, 0), const QColor& color = QColor(64, 64, 64));
 		virtual ~Node();
 
 
@@ -49,10 +48,13 @@ class Node : public QGraphicsRectItem {
 		void updateRect();
 
 		QGraphicsRectItem* m_titleBackground;
-		QGraphicsTextItem* m_title;
+		QGraphicsTextItem *m_title, *m_type;
 		QVector<Port*> m_ports;
 
 		State m_state;
+		QString m_typeString;
+
+		QColor m_color;
 };
 
 }

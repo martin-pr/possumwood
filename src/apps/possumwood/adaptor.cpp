@@ -6,7 +6,7 @@
 
 #include <GL/gl.h>
 
-#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QMessageBox>
 #include <QApplication>
 #include <QClipboard>
@@ -15,11 +15,13 @@
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/network.h>
+#include <dependency_graph/unique_id.h>
 
 #include <qt_node_editor/connected_edge.h>
 #include <possumwood_sdk/metadata.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
+#include <possumwood_sdk/colours.h>
 
 #include <actions/node_data.h>
 #include <actions/actions.h>
@@ -59,9 +61,25 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	));
 
 	// instantiate the graph widget
-	QHBoxLayout* layout = new QHBoxLayout(this);
+	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->setContentsMargins(0,0,0,0);
+	layout->setSpacing(0);
 	setLayout(layout);
+
+	m_pathWidget = new PathWidget(this);
+	layout->addWidget(m_pathWidget);
+
+	connect(m_pathWidget, &PathWidget::changeCurrentNetwork, [this](dependency_graph::UniqueId id) {
+		if(id == possumwood::App::instance().graph().index())
+			setCurrentNetwork(possumwood::App::instance().graph());
+		else {
+			auto it = possumwood::App::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
+			assert(it != possumwood::App::instance().graph().nodes().end());
+
+			dependency_graph::Network& net = dynamic_cast<dependency_graph::Network&>(*it);
+			setCurrentNetwork(net);
+		}
+	});
 
 	m_graphWidget = new node_editor::GraphWidget();
 	layout->addWidget(m_graphWidget);
@@ -212,8 +230,25 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		const possumwood::NodeData& data = node.blindData<possumwood::NodeData>();
 
 		// instantiate new graphical item
+		std::string typeString = node.metadata()->type();
+		{
+			auto pos = typeString.rfind("/");
+			if(pos != std::string::npos)
+				typeString = typeString.substr(pos+1);
+		}
+
+		// node colour - hardcoded different colour for networks (for now)
+		QColor nodeColor(64,64,64);
+		if(node.metadata()->type() == "network")
+			nodeColor = QColor(32,64,96);
+		if(node.metadata()->type() == "input")
+			nodeColor = QColor(96,64,32);
+		if(node.metadata()->type() == "output")
+			nodeColor = QColor(64,96,32);
+
+		// make the new node
 		node_editor::Node& newNode = m_graphWidget->scene().addNode(
-			node.name().c_str(), QPointF(data.position().x, data.position().y));
+			node.name().c_str(), typeString.c_str(), QPointF(data.position().x, data.position().y), nodeColor);
 		uiNode = &newNode;
 
 		// add all ports, based on the node's metadata
@@ -222,7 +257,7 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 
 			std::array<float, 3> colour{{1,1,1}};
 			if(meta)
-				colour = meta->colour(a);
+				colour = possumwood::Colours::get(attr.type());
 
 			newNode.addPort(node_editor::Node::PortDefinition {
 				attr.name().c_str(),
@@ -525,6 +560,18 @@ void Adaptor::setCurrentNetwork(dependency_graph::Network& n) {
 
 	// refresh the viewport
 	possumwood::Drawable::refresh();
+
+	// and change the path widget
+	std::vector<dependency_graph::UniqueId> path;
+	path.push_back(n.index());
+
+	const dependency_graph::Network* net = &n;
+	while(net->hasParentNetwork()) {
+		net = &net->network();
+		path.insert(path.begin(), net->index());
+	}
+
+	m_pathWidget->setPath(path);
 }
 
 dependency_graph::Network& Adaptor::currentNetwork() {

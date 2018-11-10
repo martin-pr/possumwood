@@ -42,4 +42,18 @@ bool Selection::empty() const {
 	return m_nodes.empty() && m_connections.empty();
 }
 
+//////
+
+std::ostream& operator << (std::ostream& out, const Selection& s) {
+	out << "Nodes: (" << s.nodes().size() << ")" << std::endl;
+	for(auto& n : s.nodes())
+		out << "  " << n.get().name() << std::endl;
+
+	out << "Connections: (" << s.connections().size() << ")" << std::endl;
+	for(auto& c : s.connections())
+		out << "  " << c.from.get().node().name() << "/" << c.from.get().name() << "  ->  " << c.to.get().node().name() << "/" << c.to.get().name() << std::endl;
+
+	return out;
+}
+
 }

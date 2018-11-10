@@ -68,11 +68,9 @@ void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 
 void GraphWidget::wheelEvent(QWheelEvent *event) {
 	const QPointF orig = mapToScene(event->x(), event->y());
+	const float delta = pow(1.002, (float)event->angleDelta().y());
 
-	if(event->delta() > 0)
-		scale(1.25, 1.25);
-	else
-		scale(1.0/1.25, 1.0/1.25);
+	scale(delta, delta);
 
 	const QPointF current = mapToScene(event->x(), event->y());
 
