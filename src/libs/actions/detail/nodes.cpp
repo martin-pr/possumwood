@@ -78,6 +78,14 @@ void doRemoveNode(const dependency_graph::UniqueId& id) {
 
 	assert(it != graph.nodes().end());
 
+	// removing a network - the network should be empty at this stage, as all its
+	// nodes and connections are handled already
+	#ifndef NDEBUG
+	dependency_graph::Network* net = dynamic_cast<dependency_graph::Network*>(&(*it));
+	if(net)
+		assert(net->empty());
+	#endif
+
 	it->network().nodes().erase(it);
 }
 

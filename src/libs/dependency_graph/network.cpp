@@ -14,7 +14,7 @@ Network::~Network() {
 }
 
 bool Network::empty() const {
-	return m_nodes.empty();
+	return m_nodes.empty() && m_connections.empty();
 }
 
 void Network::clear() {
