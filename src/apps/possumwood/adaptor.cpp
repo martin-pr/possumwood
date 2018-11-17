@@ -562,16 +562,7 @@ void Adaptor::setCurrentNetwork(dependency_graph::Network& n) {
 	possumwood::Drawable::refresh();
 
 	// and change the path widget
-	std::vector<dependency_graph::UniqueId> path;
-	path.push_back(n.index());
-
-	const dependency_graph::Network* net = &n;
-	while(net->hasParentNetwork()) {
-		net = &net->network();
-		path.insert(path.begin(), net->index());
-	}
-
-	m_pathWidget->setPath(path);
+	m_pathWidget->setPath(n);
 }
 
 dependency_graph::Network& Adaptor::currentNetwork() {

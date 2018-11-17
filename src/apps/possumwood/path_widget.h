@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <dependency_graph/unique_id.h>
+#include <dependency_graph/node.h>
 
 #include <QWidget>
 #include <QPushButton>
@@ -16,15 +16,27 @@ class PathWidget : public QWidget {
 	Q_OBJECT
 
 	public:
+		class Path {
+			public:
+				Path();
+				Path(const dependency_graph::Network& network);
+
+			private:
+				std::vector<dependency_graph::UniqueId> m_path;
+
+			friend class PathWidget;
+		};
+
 		PathWidget(QWidget* parent);
 
-		void setPath(const std::vector<dependency_graph::UniqueId>& ids);
-		const std::vector<dependency_graph::UniqueId>& path() const;
+		void setPath(const Path& path);
+		const Path& path() const;
 
 	signals:
 		void changeCurrentNetwork(dependency_graph::UniqueId id);
 
 	private:
 		QHBoxLayout* m_layout;
-		std::vector<dependency_graph::UniqueId> m_path;
+
+		Path m_path;
 };
