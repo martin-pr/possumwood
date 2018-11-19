@@ -5,8 +5,8 @@
 #include <dependency_graph/node.h>
 
 #include <QWidget>
-#include <QPushButton>
 #include <QHBoxLayout>
+#include <QToolButton>
 
 namespace possumwood {
 	class Index;
@@ -21,6 +21,12 @@ class PathWidget : public QWidget {
 				Path();
 				Path(const dependency_graph::Network& network);
 
+				const dependency_graph::UniqueId& operator[](std::size_t index) const;
+				std::size_t size() const;
+
+				void pop_back();
+				const dependency_graph::UniqueId& back() const;
+
 			private:
 				std::vector<dependency_graph::UniqueId> m_path;
 
@@ -33,10 +39,19 @@ class PathWidget : public QWidget {
 		const Path& path() const;
 
 	signals:
-		void changeCurrentNetwork(dependency_graph::UniqueId id);
+		void changeCurrentNetwork(Path path);
 
 	private:
+		void goToPath(const Path& path);
+		void goForward();
+		void goBack();
+
+		void emitChangeNetwork(unsigned id);
+
 		QHBoxLayout* m_layout;
 
-		Path m_path;
+		QToolButton* m_forward;
+		QToolButton* m_back;
+
+		std::vector<Path> m_history, m_future;
 };

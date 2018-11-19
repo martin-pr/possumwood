@@ -3,6 +3,7 @@
 #include <map>
 #include <array>
 #include <functional>
+#include <cassert>
 
 #include <GL/gl.h>
 
@@ -69,16 +70,25 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_pathWidget = new PathWidget(this);
 	layout->addWidget(m_pathWidget);
 
-	connect(m_pathWidget, &PathWidget::changeCurrentNetwork, [this](dependency_graph::UniqueId id) {
-		if(id == possumwood::App::instance().graph().index())
-			setCurrentNetwork(possumwood::App::instance().graph());
-		else {
-			auto it = possumwood::App::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
-			assert(it != possumwood::App::instance().graph().nodes().end());
+	connect(m_pathWidget, &PathWidget::changeCurrentNetwork, [this](PathWidget::Path path) {
+		assert(path.size() >= 1);
+		assert(path[0] == possumwood::App::instance().graph().index());
 
-			dependency_graph::Network& net = dynamic_cast<dependency_graph::Network&>(*it);
-			setCurrentNetwork(net);
+		bool done = false;
+		while(path.size() > 1 && !done) {
+			auto it = possumwood::App::instance().graph().nodes().find(path.back(), dependency_graph::Nodes::kRecursive);
+			if(it != possumwood::App::instance().graph().nodes().end()) {
+				dependency_graph::Network& net = dynamic_cast<dependency_graph::Network&>(*it);
+
+				setCurrentNetwork(net, false);
+				done = true;
+			}
+			else
+				path.pop_back();
 		}
+
+		if(!done)
+			setCurrentNetwork(possumwood::App::instance().graph(), false);
 	});
 
 	m_graphWidget = new node_editor::GraphWidget();
@@ -535,7 +545,7 @@ const possumwood::Index& Adaptor::index() const {
 	return m_index;
 }
 
-void Adaptor::setCurrentNetwork(dependency_graph::Network& n) {
+void Adaptor::setCurrentNetwork(dependency_graph::Network& n, bool recordHistory) {
 	// clear current view
 	while(m_graphWidget->scene().edgeCount() > 0)
 		// onDisconnect()
@@ -562,7 +572,8 @@ void Adaptor::setCurrentNetwork(dependency_graph::Network& n) {
 	possumwood::Drawable::refresh();
 
 	// and change the path widget
-	m_pathWidget->setPath(n);
+	if(recordHistory)
+		m_pathWidget->setPath(n);
 }
 
 dependency_graph::Network& Adaptor::currentNetwork() {

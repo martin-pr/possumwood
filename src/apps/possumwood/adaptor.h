@@ -37,7 +37,7 @@ class Adaptor : public QWidget {
 		/// returns the dependency graph
 		dependency_graph::Graph& graph();
 
-		void setCurrentNetwork(dependency_graph::Network& n);
+		void setCurrentNetwork(dependency_graph::Network& n, bool recordHistory = true);
 		dependency_graph::Network& currentNetwork();
 
 		node_editor::GraphWidget* graphWidget();
