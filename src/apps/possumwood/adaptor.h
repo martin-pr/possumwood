@@ -17,6 +17,7 @@
 #include <qt_node_editor/graph_widget.h>
 
 #include "path_widget.h"
+#include "tree_widget.h"
 
 /// A simple adaptor widget, marrying qt_graph_editor and dependency_graph
 class Adaptor : public QWidget {
@@ -79,6 +80,7 @@ class Adaptor : public QWidget {
 		dependency_graph::Network* m_currentNetwork;
 		node_editor::GraphWidget* m_graphWidget;
 		PathWidget* m_pathWidget;
+		TreeWidget* m_treeWidget;
 
 		std::vector<boost::signals2::connection> m_signals;
 

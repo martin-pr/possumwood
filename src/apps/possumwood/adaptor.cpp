@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QStyle>
+#include <QSplitter>
 
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/node_base.inl>
@@ -91,8 +92,16 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 			setCurrentNetwork(possumwood::App::instance().graph(), false);
 	});
 
+	QSplitter* splitter = new QSplitter();
+	layout->addWidget(splitter);
+
+	m_treeWidget = new TreeWidget(splitter, this);
+	splitter->addWidget(m_treeWidget);
+
+	splitter->setSizes(QList<int>({500, 3000}));
+
 	m_graphWidget = new node_editor::GraphWidget();
-	layout->addWidget(m_graphWidget);
+	splitter->addWidget(m_graphWidget);
 
 	connect(&m_graphWidget->scene(), &node_editor::GraphScene::portsConnected, [&](node_editor::Port& p1, node_editor::Port& p2) {
 		// find the two nodes that were connected
