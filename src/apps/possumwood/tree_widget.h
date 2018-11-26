@@ -8,6 +8,7 @@
 #include <QTreeWidget>
 
 #include <dependency_graph/node.h>
+#include <dependency_graph/selection.h>
 
 class Adaptor;
 
@@ -17,6 +18,9 @@ class TreeWidget : public QWidget {
 	public:
 		TreeWidget(QWidget* parent, Adaptor* adaptor);
 		virtual ~TreeWidget();
+
+	public slots:
+		void onSelectionChanged(dependency_graph::Selection selection);
 
 	private slots:
 		void onCurrentNetworkChanged(const dependency_graph::NodeBase& node);

@@ -96,6 +96,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	layout->addWidget(splitter);
 
 	m_treeWidget = new TreeWidget(splitter, this);
+	connect(this, &Adaptor::selectionChanged, m_treeWidget, &TreeWidget::onSelectionChanged);
 	splitter->addWidget(m_treeWidget);
 
 	splitter->setSizes(QList<int>({500, 3000}));
