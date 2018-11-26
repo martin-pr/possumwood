@@ -88,29 +88,16 @@ MainWindow::MainWindow() : QMainWindow() {
 	addDockWidget(Qt::RightDockWidgetArea, editorDock);
 
 	// connect the selection signal
-	connect(&m_adaptor->scene(), &node_editor::GraphScene::selectionChanged,
-			[editorDock, this](const node_editor::GraphScene::Selection& selection) {
-				// convert the selection to the dependency graph selection, to pass to the
-				//   properties dock
-				dependency_graph::Selection out;
-				{
-					auto& index = m_adaptor->index();
+	connect(m_adaptor, &Adaptor::selectionChanged,
+			[editorDock, this](dependency_graph::Selection selection) {
 
-					for(auto& n : selection.nodes)
-						out.addNode(*index[n].graphNode);
-
-					for(auto& c : selection.connections) {
-						out.addConnection(index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
-										  index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index()));
-					}
-
-					m_properties->show(out);
-				}
+				// show the selection in the properties dock
+				m_properties->show(selection);
 
 				// instantiate the editor
 				{
 					unsigned editorCounter = 0;
-					for(auto& n : out.nodes()) {
+					for(auto& n : selection.nodes()) {
 						const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
 						if(meta != nullptr && meta->hasEditor())
 							++editorCounter;
@@ -133,7 +120,7 @@ MainWindow::MainWindow() : QMainWindow() {
 						m_editor.reset();
 					}
 					else {
-						for(auto& n : out.nodes()) {
+						for(auto& n : selection.nodes()) {
 							const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
 							if(meta != nullptr && meta->hasEditor()) {
 								m_editor = meta->createEditor(n);

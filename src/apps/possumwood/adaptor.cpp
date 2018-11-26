@@ -151,6 +151,24 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 		}
 	});
 
+	// connect the selection signal
+	connect(&scene(), &node_editor::GraphScene::selectionChanged,
+		[this](const node_editor::GraphScene::Selection& selection) {
+			// convert the selection to the dependency graph selection
+			dependency_graph::Selection out;
+			{
+				for(auto& n : selection.nodes)
+					out.addNode(*m_index[n].graphNode);
+
+				for(auto& c : selection.connections) {
+					out.addConnection(m_index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
+									  m_index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index()));
+				}
+
+				emit selectionChanged(out);
+			}
+		});
+
 	// setup copy+paste action
 	m_copy = new QAction(QIcon(":icons/edit-copy.png"), "C&opy", this);
 	m_copy->setShortcut(QKeySequence::Copy);
@@ -477,6 +495,8 @@ void Adaptor::setSelection(const dependency_graph::Selection& selection) {
 
 		e.setSelected(it != selection.connections().end());
 	}
+
+	emit selectionChanged(selection);
 }
 
 node_editor::GraphScene& Adaptor::scene() {
@@ -592,5 +612,3 @@ dependency_graph::Network& Adaptor::currentNetwork() {
 	assert(m_currentNetwork != nullptr);
 	return *m_currentNetwork;
 }
-
-// ACTIONS SHOULD BE PERFOMED ON CURRENT NETWORK
