@@ -15,7 +15,7 @@ struct Traits<QColor> {
 
 }
 
-std::ostream& operator << (std::ostream& out, const QColor& col) {
+inline std::ostream& operator << (std::ostream& out, const QColor& col) {
 	out << col.red() << " " << col.green() << " " << col.blue();
 
 	return out;
