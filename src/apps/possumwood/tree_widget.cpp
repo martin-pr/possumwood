@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 
 #include <dependency_graph/network.h>
+#include <dependency_graph/node.h>
 
 #include "adaptor.h"
 
@@ -21,7 +22,7 @@ TreeWidget::TreeWidget(QWidget* parent, Adaptor* adaptor) : QWidget(parent), m_a
 	root->setIcon(0, QIcon(":icons/network.png"));
 	m_tree->addTopLevelItem(root);
 
-	m_items.insert(std::make_pair(m_adaptor->graph().index(), root));
+	m_items.left.insert(std::make_pair(m_adaptor->graph().index(), root));
 
 	m_signals.push_back(m_adaptor->graph().onAddNode(
 		[this](dependency_graph::NodeBase& node) { onAddNode(node); }
@@ -32,6 +33,7 @@ TreeWidget::TreeWidget(QWidget* parent, Adaptor* adaptor) : QWidget(parent), m_a
 	));
 
 	connect(adaptor, &Adaptor::currentNetworkChanged, this, &TreeWidget::onCurrentNetworkChanged);
+	connect(m_tree, &QTreeWidget::itemSelectionChanged, this, &TreeWidget::onCurrentSelectionChanged);
 }
 
 TreeWidget::~TreeWidget() {
@@ -42,8 +44,8 @@ TreeWidget::~TreeWidget() {
 void TreeWidget::onAddNode(dependency_graph::NodeBase& node) {
 	assert(node.hasParentNetwork());
 
-	auto parent = m_items.find(node.network().index());
-	assert(parent != m_items.end());
+	auto parent = m_items.left.find(node.network().index());
+	assert(parent != m_items.left.end());
 
 	QTreeWidgetItem* item = new QTreeWidgetItem();
 	item->setText(0, node.name().c_str());
@@ -54,21 +56,21 @@ void TreeWidget::onAddNode(dependency_graph::NodeBase& node) {
 		item->setIcon(0, QIcon(":icons/node.png"));
 	parent->second->addChild(item);
 
-	m_items.insert(std::make_pair(node.index(), item));
+	m_items.left.insert(std::make_pair(node.index(), item));
 }
 
 void TreeWidget::onRemoveNode(dependency_graph::NodeBase& node) {
-	auto it = m_items.find(node.index());
-	assert(it != m_items.end());
+	auto it = m_items.left.find(node.index());
+	assert(it != m_items.left.end());
 
 	it->second->parent()->removeChild(it->second);
 	delete it->second;
-	m_items.erase(it);
+	m_items.left.erase(it);
 }
 
 void TreeWidget::onCurrentNetworkChanged(const dependency_graph::NodeBase& node) {
-	auto it = m_items.find(node.index());
-	assert(it != m_items.end());
+	auto it = m_items.left.find(node.index());
+	assert(it != m_items.left.end());
 
 	if(!it->second->isExpanded())
 		it->second->setExpanded(true);
@@ -80,11 +82,35 @@ void TreeWidget::onSelectionChanged(dependency_graph::Selection selection) {
 	m_tree->clearSelection();
 
 	for(auto& n : selection.nodes()) {
-		auto it = m_items.find(n.get().index());
-		assert(it != m_items.end());
+		auto it = m_items.left.find(n.get().index());
+		assert(it != m_items.left.end());
 
 		it->second->setSelected(true);
 	}
 
+	m_tree->blockSignals(originalBlock);
+}
+
+void TreeWidget::onCurrentSelectionChanged() {
+	// build a selection
+	dependency_graph::Selection selection;
+	for(auto& s : m_tree->selectedItems()) {
+		auto it = m_items.right.find(s);
+		assert(it != m_items.right.end());
+		dependency_graph::UniqueId id = it->second;
+
+		dependency_graph::NodeBase& node = *m_adaptor->index().find(id)->second.graphNode;
+
+		selection.addNode(node);
+
+		if(node.hasParentNetwork())
+			for(auto& con : node.network().connections())
+				if(con.first.node().index() == node.index() || con.second.node().index() == node.index())
+					selection.addConnection(con.first, con.second);
+	}
+
+	// and set this selection in the parent adaptor
+	bool originalBlock = m_tree->blockSignals(true);
+	m_adaptor->setSelection(selection);
 	m_tree->blockSignals(originalBlock);
 }

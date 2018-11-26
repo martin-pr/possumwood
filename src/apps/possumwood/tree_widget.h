@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
-#include <map>
 
 #include <boost/signals2.hpp>
+#include <boost/bimap.hpp>
 
 #include <QTreeWidget>
 
@@ -24,6 +24,7 @@ class TreeWidget : public QWidget {
 
 	private slots:
 		void onCurrentNetworkChanged(const dependency_graph::NodeBase& node);
+		void onCurrentSelectionChanged();
 
 	private:
 		void onAddNode(dependency_graph::NodeBase& node);
@@ -33,7 +34,7 @@ class TreeWidget : public QWidget {
 		QTreeWidget* m_tree;
 
 		Adaptor* m_adaptor;
-		std::map<dependency_graph::UniqueId, QTreeWidgetItem*> m_items;
+		boost::bimap<dependency_graph::UniqueId, QTreeWidgetItem*> m_items;
 
 		std::vector<boost::signals2::connection> m_signals;
 };
