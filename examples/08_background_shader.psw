@@ -112,7 +112,7 @@
             "ports": {
                 "filename": "$EXAMPLES/hdrihaven_envmaps/misty_pines_4k.png"
             },
-            "type": "render/image/load"
+            "type": "images/load"
         },
         "program_0": {
             "blind_data": {

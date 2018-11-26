@@ -5,7 +5,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include "pixmap.h"
+#include <images/datatypes/pixmap.h>
 
 namespace possumwood {
 
