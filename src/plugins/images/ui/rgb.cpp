@@ -4,6 +4,8 @@
 #include <QHBoxLayout>
 #include <QSizePolicy>
 #include <QDoubleSpinBox>
+#include <QLabel>
+#include <QPainter>
 
 RGB::RGB() {
 	m_widget = new QWidget();
@@ -20,7 +22,9 @@ RGB::RGB() {
 
 	{
 		void (QDoubleSpinBox::* fn)(double) = &QDoubleSpinBox::valueChanged;
-		QWidget::connect(m_r, fn, [this](double) { callValueChangedCallbacks(); });
+		QWidget::connect(m_r, fn, [this](double) {
+			coloursChanged();
+		});
 	}
 
 	m_g = new QDoubleSpinBox();
@@ -33,7 +37,9 @@ RGB::RGB() {
 
 	{
 		void (QDoubleSpinBox::* fn)(double) = &QDoubleSpinBox::valueChanged;
-		QWidget::connect(m_g, fn, [this](double) { callValueChangedCallbacks(); });
+		QWidget::connect(m_g, fn, [this](double) {
+			coloursChanged();
+		});
 	}
 
 	m_b = new QDoubleSpinBox();
@@ -46,8 +52,14 @@ RGB::RGB() {
 
 	{
 		void (QDoubleSpinBox::* fn)(double) = &QDoubleSpinBox::valueChanged;
-		QWidget::connect(m_b, fn, [this](double) { callValueChangedCallbacks(); });
+		QWidget::connect(m_b, fn, [this](double) {
+			coloursChanged();
+		});
 	}
+
+	m_colour = new ColourWidget();
+	m_colour->setMinimumWidth(10);
+	layout->addWidget(m_colour, 1);
 }
 
 RGB::~RGB() {
@@ -63,6 +75,8 @@ void RGB::set(const QColor& value) {
 	m_r->setValue(value.redF());
 	m_g->setValue(value.greenF());
 	m_b->setValue(value.blueF());
+
+	coloursChanged(false);
 }
 
 QWidget* RGB::widget() {
@@ -73,4 +87,37 @@ void RGB::onFlagsChanged(unsigned flags) {
 	m_r->setDisabled(flags & kDisabled || flags & kOutput);
 	m_g->setDisabled(flags & kDisabled || flags & kOutput);
 	m_b->setDisabled(flags & kDisabled || flags & kOutput);
+}
+
+void RGB::coloursChanged(bool callback) {
+	if(callback)
+		callValueChangedCallbacks();
+
+	QColor col;
+	get(col);
+	m_colour->setColour(col);
+}
+
+/////
+
+ColourWidget::ColourWidget(QWidget* parent) : QWidget(parent) {
+}
+
+ColourWidget::~ColourWidget() {
+}
+
+void ColourWidget::setColour(const QColor& c) {
+	m_colour = c;
+
+	repaint();
+}
+
+void ColourWidget::paintEvent(QPaintEvent *event) {
+	{
+		QPainter painter(this);
+
+		painter.fillRect(rect(), m_colour);
+	}
+
+	QWidget::paintEvent(event);
 }
