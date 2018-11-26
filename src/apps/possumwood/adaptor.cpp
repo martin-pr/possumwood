@@ -583,6 +583,9 @@ void Adaptor::setCurrentNetwork(dependency_graph::Network& n, bool recordHistory
 	// and change the path widget
 	if(recordHistory)
 		m_pathWidget->setPath(n);
+
+	// emit a signal for external use
+	emit currentNetworkChanged(n);
 }
 
 dependency_graph::Network& Adaptor::currentNetwork() {

@@ -12,13 +12,19 @@
 class Adaptor;
 
 class TreeWidget : public QWidget {
+	Q_OBJECT
+
 	public:
 		TreeWidget(QWidget* parent, Adaptor* adaptor);
 		virtual ~TreeWidget();
 
+	private slots:
+		void onCurrentNetworkChanged(const dependency_graph::NodeBase& node);
+
 	private:
 		void onAddNode(dependency_graph::NodeBase& node);
 		void onRemoveNode(dependency_graph::NodeBase& node);
+
 
 		QTreeWidget* m_tree;
 

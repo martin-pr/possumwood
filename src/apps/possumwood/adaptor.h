@@ -63,6 +63,9 @@ class Adaptor : public QWidget {
 
 		const possumwood::Index& index() const;
 
+	signals:
+		void currentNetworkChanged(dependency_graph::Network&);
+
 	protected:
 	private:
 		void onAddNode(dependency_graph::NodeBase& node);

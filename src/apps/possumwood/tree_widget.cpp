@@ -30,6 +30,8 @@ TreeWidget::TreeWidget(QWidget* parent, Adaptor* adaptor) : QWidget(parent), m_a
 	m_signals.push_back(m_adaptor->graph().onRemoveNode(
 		[this](dependency_graph::NodeBase& node) { onRemoveNode(node); }
 	));
+
+	connect(adaptor, &Adaptor::currentNetworkChanged, this, &TreeWidget::onCurrentNetworkChanged);
 }
 
 TreeWidget::~TreeWidget() {
@@ -62,5 +64,13 @@ void TreeWidget::onRemoveNode(dependency_graph::NodeBase& node) {
 	it->second->parent()->removeChild(it->second);
 	delete it->second;
 	m_items.erase(it);
+}
+
+void TreeWidget::onCurrentNetworkChanged(const dependency_graph::NodeBase& node) {
+	auto it = m_items.find(node.index());
+	assert(it != m_items.end());
+
+	if(!it->second->isExpanded())
+		it->second->setExpanded(true);
 }
 
