@@ -3,6 +3,7 @@
 #include <map>
 #include <array>
 #include <functional>
+#include <cassert>
 
 #include <GL/gl.h>
 
@@ -11,6 +12,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QStyle>
+#include <QSplitter>
 
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/node_base.inl>
@@ -69,20 +71,38 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	m_pathWidget = new PathWidget(this);
 	layout->addWidget(m_pathWidget);
 
-	connect(m_pathWidget, &PathWidget::changeCurrentNetwork, [this](dependency_graph::UniqueId id) {
-		if(id == possumwood::App::instance().graph().index())
-			setCurrentNetwork(possumwood::App::instance().graph());
-		else {
-			auto it = possumwood::App::instance().graph().nodes().find(id, dependency_graph::Nodes::kRecursive);
-			assert(it != possumwood::App::instance().graph().nodes().end());
+	connect(m_pathWidget, &PathWidget::changeCurrentNetwork, [this](PathWidget::Path path) {
+		assert(path.size() >= 1);
+		assert(path[0] == possumwood::App::instance().graph().index());
 
-			dependency_graph::Network& net = dynamic_cast<dependency_graph::Network&>(*it);
-			setCurrentNetwork(net);
+		bool done = false;
+		while(path.size() > 1 && !done) {
+			auto it = possumwood::App::instance().graph().nodes().find(path.back(), dependency_graph::Nodes::kRecursive);
+			if(it != possumwood::App::instance().graph().nodes().end()) {
+				dependency_graph::Network& net = dynamic_cast<dependency_graph::Network&>(*it);
+
+				setCurrentNetwork(net, false);
+				done = true;
+			}
+			else
+				path.pop_back();
 		}
+
+		if(!done)
+			setCurrentNetwork(possumwood::App::instance().graph(), false);
 	});
 
+	QSplitter* splitter = new QSplitter();
+	layout->addWidget(splitter);
+
+	m_treeWidget = new TreeWidget(splitter, this);
+	connect(this, &Adaptor::selectionChanged, m_treeWidget, &TreeWidget::onSelectionChanged);
+	splitter->addWidget(m_treeWidget);
+
+	splitter->setSizes(QList<int>({500, 3000}));
+
 	m_graphWidget = new node_editor::GraphWidget();
-	layout->addWidget(m_graphWidget);
+	splitter->addWidget(m_graphWidget);
 
 	connect(&m_graphWidget->scene(), &node_editor::GraphScene::portsConnected, [&](node_editor::Port& p1, node_editor::Port& p2) {
 		// find the two nodes that were connected
@@ -131,6 +151,24 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 				setCurrentNetwork(nb.as<dependency_graph::Network>());
 		}
 	});
+
+	// connect the selection signal
+	connect(&scene(), &node_editor::GraphScene::selectionChanged,
+		[this](const node_editor::GraphScene::Selection& selection) {
+			// convert the selection to the dependency graph selection
+			dependency_graph::Selection out;
+			{
+				for(auto& n : selection.nodes)
+					out.addNode(*m_index[n].graphNode);
+
+				for(auto& c : selection.connections) {
+					out.addConnection(m_index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
+									  m_index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index()));
+				}
+
+				emit selectionChanged(out);
+			}
+		});
 
 	// setup copy+paste action
 	m_copy = new QAction(QIcon(":icons/edit-copy.png"), "C&opy", this);
@@ -458,6 +496,8 @@ void Adaptor::setSelection(const dependency_graph::Selection& selection) {
 
 		e.setSelected(it != selection.connections().end());
 	}
+
+	emit selectionChanged(selection);
 }
 
 node_editor::GraphScene& Adaptor::scene() {
@@ -535,7 +575,7 @@ const possumwood::Index& Adaptor::index() const {
 	return m_index;
 }
 
-void Adaptor::setCurrentNetwork(dependency_graph::Network& n) {
+void Adaptor::setCurrentNetwork(dependency_graph::Network& n, bool recordHistory) {
 	// clear current view
 	while(m_graphWidget->scene().edgeCount() > 0)
 		// onDisconnect()
@@ -562,21 +602,14 @@ void Adaptor::setCurrentNetwork(dependency_graph::Network& n) {
 	possumwood::Drawable::refresh();
 
 	// and change the path widget
-	std::vector<dependency_graph::UniqueId> path;
-	path.push_back(n.index());
+	if(recordHistory)
+		m_pathWidget->setPath(n);
 
-	const dependency_graph::Network* net = &n;
-	while(net->hasParentNetwork()) {
-		net = &net->network();
-		path.insert(path.begin(), net->index());
-	}
-
-	m_pathWidget->setPath(path);
+	// emit a signal for external use
+	emit currentNetworkChanged(n);
 }
 
 dependency_graph::Network& Adaptor::currentNetwork() {
 	assert(m_currentNetwork != nullptr);
 	return *m_currentNetwork;
 }
-
-// ACTIONS SHOULD BE PERFOMED ON CURRENT NETWORK

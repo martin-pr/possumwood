@@ -29,6 +29,11 @@
 	<file>icons/rename.png</file>
 	<file>icons/open-network.png</file>
 	<file>icons/exit-network.png</file>
+	<file>icons/forward.png</file>
+	<file>icons/back.png</file>
+	<file>icons/tree.png</file>
+	<file>icons/network.png</file>
+	<file>icons/node.png</file>
 </qresource>
 </RCC>
 
