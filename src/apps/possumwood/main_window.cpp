@@ -140,7 +140,7 @@ MainWindow::MainWindow() : QMainWindow() {
 	});
 
 	// create the context click menu
-	m_adaptor->setContextMenuPolicy(Qt::CustomContextMenu);
+	m_adaptor->graphWidget()->setContextMenuPolicy(Qt::CustomContextMenu);
 
 	{
 		QMenu* contextMenu = new QMenu(m_adaptor);
@@ -194,7 +194,7 @@ MainWindow::MainWindow() : QMainWindow() {
 				QAction* addNode = makeAction(
 					itemName.c_str(),
 					[&m, itemName, this]() {
-						auto qp = m_adaptor->mapToScene(m_adaptor->mapFromGlobal(m_newNodeMenu->pos()));
+						auto qp = m_adaptor->graphWidget()->mapToScene(m_adaptor->graphWidget()->mapFromGlobal(m_newNodeMenu->pos()));
 						const possumwood::NodeData::Point p {(float)qp.x(), (float)qp.y()};
 
 						possumwood::actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
@@ -289,8 +289,8 @@ MainWindow::MainWindow() : QMainWindow() {
 		});
 		contextMenu->addAction(exitNetworkAction);
 
-		connect(m_adaptor, &Adaptor::customContextMenuRequested, [=](QPoint pos) {
-			contextMenu->move(m_adaptor->mapToGlobal(pos));  // to make sure pos() is right, which is
+		connect(m_adaptor->graphWidget(), &node_editor::GraphWidget::customContextMenuRequested, [=](QPoint pos) {
+			contextMenu->move(m_adaptor->graphWidget()->mapToGlobal(pos));  // to make sure pos() is right, which is
 															 // used for placing the new node
 
 			// node-specific menu
@@ -318,7 +318,7 @@ MainWindow::MainWindow() : QMainWindow() {
 			exitNetworkAction->setVisible(node == nullptr && m_adaptor->currentNetwork().hasParentNetwork());
 
 			// show the menu
-			contextMenu->popup(m_adaptor->mapToGlobal(pos));
+			contextMenu->popup(m_adaptor->graphWidget()->mapToGlobal(pos));
 		});
 	}
 
