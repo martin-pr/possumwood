@@ -3,7 +3,6 @@
 #include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/program.h"
-#include "ui/shader_editor.h"
 
 namespace {
 

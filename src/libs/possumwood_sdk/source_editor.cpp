@@ -1,4 +1,4 @@
-#include "shader_editor.h"
+#include "source_editor.h"
 
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/values.inl>
@@ -11,7 +11,7 @@
 
 namespace possumwood {
 
-ShaderEditor::ShaderEditor(dependency_graph::InAttr<std::string>& src) : m_src(&src), m_blockedSignals(false) {
+SourceEditor::SourceEditor(dependency_graph::InAttr<std::string>& src) : m_src(&src), m_blockedSignals(false) {
 	m_widget = new QWidget();
 
 	QVBoxLayout* layout = new QVBoxLayout(m_widget);
@@ -57,14 +57,14 @@ ShaderEditor::ShaderEditor(dependency_graph::InAttr<std::string>& src) : m_src(&
 
 }
 
-ShaderEditor::~ShaderEditor() {
+SourceEditor::~SourceEditor() {
 }
 
-QWidget* ShaderEditor::widget() {
+QWidget* SourceEditor::widget() {
 	return m_widget;
 }
 
-void ShaderEditor::valueChanged(const dependency_graph::Attr& attr) {
+void SourceEditor::valueChanged(const dependency_graph::Attr& attr) {
 	if(attr == *m_src && !m_blockedSignals)
 		m_editor->setPlainText(values().get(*m_src).c_str());
 }
