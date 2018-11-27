@@ -63,7 +63,8 @@ void TreeWidget::onRemoveNode(dependency_graph::NodeBase& node) {
 	auto it = m_items.left.find(node.index());
 	assert(it != m_items.left.end());
 
-	it->second->parent()->removeChild(it->second);
+	if(it->second != nullptr && it->second->parent() != nullptr)
+		it->second->parent()->removeChild(it->second);
 	delete it->second;
 	m_items.left.erase(it);
 }

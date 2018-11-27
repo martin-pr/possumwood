@@ -201,7 +201,16 @@ void Port::connect(Port& p) {
 	}
 
 	// add the connection
-	p.m_parent->network().connections().add(*this, p);
+	try {
+		p.m_parent->network().connections().add(*this, p);
+	}
+	catch(std::runtime_error& err) {
+		std::stringstream msg;
+		msg << "Ports " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
+		    " - " << err.what();
+
+		throw(std::runtime_error(msg.str()));
+	}
 	assert(p.type() == type() && "at this stage, the types should match");
 
 	// datablock initialisation handling for untyped ports
