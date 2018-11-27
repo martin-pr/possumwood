@@ -100,19 +100,18 @@ void TreeWidget::onCurrentSelectionChanged() {
 		assert(it != m_items.right.end());
 		dependency_graph::UniqueId id = it->second;
 
-		dependency_graph::NodeBase* node = m_adaptor->index().find(id)->second.graphNode;
-		if(node) {
-			selection.addNode(*node);
+		auto ii = m_adaptor->index().find(id);
+		if(ii != m_adaptor->index().end()) {
+			dependency_graph::NodeBase* node = ii->second.graphNode;
+			if(node) {
+				selection.addNode(*node);
 
-			if(node->hasParentNetwork())
-				for(auto& con : node->network().connections())
-					if(con.first.node().index() == node->index() || con.second.node().index() == node->index())
-						selection.addConnection(con.first, con.second);
+				if(node->hasParentNetwork())
+					for(auto& con : node->network().connections())
+						if(con.first.node().index() == node->index() || con.second.node().index() == node->index())
+							selection.addConnection(con.first, con.second);
+			}
 		}
-
-		// if the node doesn't exist in the adaptor's Index instance, it has to be the root
-		else
-			assert(id == m_adaptor->graph().index());
 	}
 
 	// and set this selection in the parent adaptor
