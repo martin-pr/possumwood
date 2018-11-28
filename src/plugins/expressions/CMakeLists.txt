@@ -5,10 +5,10 @@ set(LIBS ${LIBS} Qt5::Widgets Qt5::OpenGL)
 
 ######################################
 
-file(GLOB_RECURSE sources *.cpp)
+file(GLOB_RECURSE expr_sources *.cpp)
 
 include_directories(./)
 
-add_library(images SHARED ${sources})
+add_library(expressions SHARED ${expr_sources})
 
-target_link_libraries(images maths expressions ${LIBS})
+target_link_libraries(expressions ${LIBS})

@@ -1,6 +1,6 @@
-#include <memory>
-
 #include <exprtk/exprtk.hpp>
+
+#include <memory>
 
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/source_editor.h>
@@ -8,10 +8,12 @@
 #include <QPainter>
 
 #include "datatypes/pixmap.h"
+#include "expressions/datatypes/symbol_table.h"
 
 namespace {
 
 dependency_graph::InAttr<std::string> a_src;
+dependency_graph::InAttr<possumwood::ExprSymbols> a_symbols;
 dependency_graph::InAttr<std::shared_ptr<const QPixmap>> a_inPixmap;
 dependency_graph::OutAttr<std::shared_ptr<const QPixmap>> a_outPixmap;
 
@@ -40,7 +42,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		float g = 0.0f;
 		float b = 0.0f;
 
+		const possumwood::ExprSymbols& symbols = data.get(a_symbols);
+
 		exprtk::symbol_table<float> symbol_table;
+
+		for(auto& s : symbols)
+			symbol_table.add_constant(s.first, s.second);
 
 		symbol_table.add_variable("x", x);
 		symbol_table.add_variable("y", y);
@@ -57,15 +64,21 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		exprtk::expression<float> expression;
 		expression.register_symbol_table(symbol_table);
 
-		exprtk::parser<float> parser;
+		std::string err;
+		bool success = false;
+		{
+			exprtk::parser<float> parser;
+			success = parser.compile(data.get(a_src), expression);
 
-		const bool success = parser.compile(data.get(a_src), expression);
+			if(!success)
+				err = parser.error();
+		}
 
 		auto cexpr = (const exprtk::expression<float>)expression;
 
 		// compilation failed
 		if(!success) {
-			result.addError(parser.error());
+			result.addError(err);
 
 			// output nothing
 			data.set(a_outPixmap, std::shared_ptr<const QPixmap>());
@@ -109,16 +122,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_src, "source", std::string("r := x / width;\ng := y / height;\nb := max(0, 1-r-g);"));
+	meta.addAttribute(a_symbols, "symbols");
 	meta.addAttribute(a_inPixmap, "in_image");
 	meta.addAttribute(a_outPixmap, "out_image");
 
 	meta.addInfluence(a_src, a_outPixmap);
+	meta.addInfluence(a_symbols, a_outPixmap);
 	meta.addInfluence(a_inPixmap, a_outPixmap);
 
 	meta.setCompute(&compute);
 	meta.setEditor<Editor>();
 }
 
-possumwood::NodeImplementation s_impl("images/expression", init);
+possumwood::NodeImplementation s_impl("images/per_pixel_expr", init);
 
 }
