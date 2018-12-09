@@ -6,10 +6,10 @@
 
 namespace possumwood {
 
-class ShaderEditor : public possumwood::Editor {
+class SourceEditor : public possumwood::Editor {
 	public:
-		ShaderEditor(dependency_graph::InAttr<std::string>& src);
-		virtual ~ShaderEditor();
+		SourceEditor(dependency_graph::InAttr<std::string>& src);
+		virtual ~SourceEditor();
 
 		virtual QWidget* widget() override;
 

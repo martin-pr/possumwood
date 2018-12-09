@@ -1,9 +1,9 @@
 #include <memory>
 
 #include <possumwood_sdk/node_implementation.h>
+#include <possumwood_sdk/source_editor.h>
 
 #include "datatypes/shader.h"
-#include "ui/shader_editor.h"
 #include "default_shaders.h"
 
 namespace {
@@ -11,9 +11,9 @@ namespace {
 dependency_graph::InAttr<std::string> a_src;
 dependency_graph::OutAttr<std::shared_ptr<const possumwood::VertexShader>> a_shader;
 
-class Editor : public possumwood::ShaderEditor {
+class Editor : public possumwood::SourceEditor {
 	public:
-		Editor() : ShaderEditor(a_src) {
+		Editor() : SourceEditor(a_src) {
 		}
 
 };

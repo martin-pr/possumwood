@@ -315,7 +315,7 @@
             "ports": {
                 "filename": "$EXAMPLES/matcap_textures/00034.png"
             },
-            "type": "render/image/load"
+            "type": "images/load"
         },
         "load_1": {
             "blind_data": {
@@ -329,7 +329,7 @@
             "ports": {
                 "filename": "$EXAMPLES/matcap_textures/00022.png"
             },
-            "type": "render/image/load"
+            "type": "images/load"
         },
         "load_2": {
             "blind_data": {
@@ -343,7 +343,7 @@
             "ports": {
                 "filename": "$EXAMPLES/matcap_textures/00007.png"
             },
-            "type": "render/image/load"
+            "type": "images/load"
         },
         "loader_0": {
             "blind_data": {

@@ -9,7 +9,7 @@
 namespace {
 
 dependency_graph::InAttr<std::string> a_name;
-dependency_graph::InAttr<std::shared_ptr<const QPixmap>> a_value;
+dependency_graph::InAttr<unsigned> a_value;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_inUniforms;
 dependency_graph::OutAttr<std::shared_ptr<const possumwood::Uniforms>> a_outUniforms;
 
@@ -24,14 +24,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	else
 		uniforms = std::unique_ptr<possumwood::Uniforms>(new possumwood::Uniforms());
 
-	std::shared_ptr<const QPixmap> value = data.get(a_value);
+	const float value = data.get(a_value);
 
-	if(value) {
-		uniforms->addTexture(
-			data.get(a_name),
-			*value
-		);
-	}
+	uniforms->addUniform<unsigned>(
+		data.get(a_name),
+		1,
+		possumwood::Uniforms::kPerFrame,
+		[value](unsigned* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
+			assert(size == 1);
+			return *data = value;
+		}
+	);
 
 	data.set(a_outUniforms, std::shared_ptr<const possumwood::Uniforms>(uniforms.release()));
 
@@ -39,8 +42,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_name, "name", std::string("image"));
-	meta.addAttribute(a_value, "value");
+	meta.addAttribute(a_name, "name", std::string("uniform_value"));
+	meta.addAttribute(a_value, "value", 0u);
 	meta.addAttribute(a_inUniforms, "in_uniforms");
 	meta.addAttribute(a_outUniforms, "out_uniforms");
 
@@ -51,6 +54,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(&compute);
 }
 
-possumwood::NodeImplementation s_impl("render/uniforms/texture", init);
+possumwood::NodeImplementation s_impl("render/uniforms/unsigned", init);
 
 }

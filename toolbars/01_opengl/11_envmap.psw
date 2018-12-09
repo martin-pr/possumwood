@@ -26,7 +26,7 @@
             "ports": {
                 "filename": "$EXAMPLES/hdrihaven_envmaps/rathaus_8k.png"
             },
-            "type": "render/image/load"
+            "type": "images/load"
         },
         "loader_0": {
             "blind_data": {

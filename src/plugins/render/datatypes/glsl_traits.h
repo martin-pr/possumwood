@@ -12,6 +12,24 @@ struct GLSLTraits {
 };
 
 template<>
+struct GLSLTraits<unsigned> {
+	constexpr static unsigned width() { return 1; };
+	constexpr static GLenum type() { return GL_UNSIGNED_INT; };
+	constexpr static const char* typeString() { return "uint"; };
+	static void applyUniform(GLint attr, std::size_t size, const unsigned* val) { glUniform1uiv(attr, size, val); };
+
+	static void applyUniformVec2(GLint attr, std::size_t size, const unsigned* val) { glUniform2uiv(attr, size, val); };
+	static void applyUniformVec3(GLint attr, std::size_t size, const unsigned* val) { glUniform3uiv(attr, size, val); };
+	static void applyUniformMat4(GLint attr, std::size_t size, const unsigned* val) {
+		float tmp[16*size];
+		for(unsigned a=0;a<16*size;++a)
+			tmp[a] = val[a];
+
+		glUniformMatrix4fv(attr, size, false, tmp);
+	};
+};
+
+template<>
 struct GLSLTraits<float> {
 	constexpr static unsigned width() { return 1; };
 	constexpr static GLenum type() { return GL_FLOAT; };

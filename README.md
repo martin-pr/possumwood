@@ -70,6 +70,15 @@ Infinite ground plane, implemented using a single polygon and simple fragment sh
 
 The [Phong reflectance model](https://en.wikipedia.org/wiki/Phong_reflection_model), and [Phong shading](https://en.wikipedia.org/wiki/Phong_shading) are two basic models of light behaviour in computer graphics. This tutorial explains their function, and provides a step-by-step implementation in GLSL, using a single orbiting light as the lightsource.
 
+### Image manipulation
+
+### [Image loading and display](https://github.com/martin-pr/possumwood/wiki/Images-Loading-and-Display)
+
+<img src="doc/image_loading.png" align="right" width="150">
+
+This tutorial introduces basic concepts of image manipulation in Possumwood, and a simple shader-based OpenGL setup to display a texture in the scene.
+
+
 
 ## Code Example
 
