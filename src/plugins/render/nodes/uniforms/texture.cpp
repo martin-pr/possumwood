@@ -39,7 +39,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_name, "name", std::string("texture"));
+	meta.addAttribute(a_name, "name", std::string("image"));
 	meta.addAttribute(a_value, "value");
 	meta.addAttribute(a_inUniforms, "in_uniforms");
 	meta.addAttribute(a_outUniforms, "out_uniforms");
