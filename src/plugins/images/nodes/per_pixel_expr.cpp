@@ -6,6 +6,8 @@
 #include <possumwood_sdk/source_editor.h>
 
 #include <QPainter>
+#include <QPushButton>
+#include <QMenu>
 
 #include "datatypes/pixmap.h"
 #include "expressions/datatypes/symbol_table.h"
@@ -17,11 +19,88 @@ dependency_graph::InAttr<possumwood::ExprSymbols> a_symbols;
 dependency_graph::InAttr<std::shared_ptr<const QPixmap>> a_inPixmap;
 dependency_graph::OutAttr<std::shared_ptr<const QPixmap>> a_outPixmap;
 
-class Editor : public possumwood::SourceEditor {
+class Popup : public QMenu {
 	public:
-		Editor() : SourceEditor(a_src) {
+		Popup(QWidget* parent) : QMenu(parent) {
 		}
 
+		void addItem(const std::string& name) {
+			addAction(name.c_str());
+		}
+
+	private:
+};
+
+
+class Editor : public possumwood::SourceEditor {
+	public:
+		Editor() : SourceEditor(a_src), m_popup(nullptr) {
+			m_varsButton = new QPushButton("Variables");
+			buttonsLayout()->insertWidget(0, m_varsButton);
+
+			widget()->connect(m_varsButton, &QPushButton::pressed, [this]() {
+				if(m_popup)
+					m_popup->popup(
+						m_varsButton->mapToGlobal(QPoint(0,-m_popup->sizeHint().height()))
+					);
+			});
+		}
+
+	protected:
+		virtual void valueChanged(const dependency_graph::Attr& attr) override {
+			if(attr == a_symbols) {
+				m_popup->deleteLater();
+
+				populateVariableList();
+			}
+
+			else
+				SourceEditor::valueChanged(attr);
+		}
+
+		void populateVariableList() {
+			if(!m_popup)
+				m_popup->deleteLater();
+
+			m_popup = new Popup(m_varsButton);
+
+			m_popup->connect(m_popup, &Popup::triggered, [this](QAction* action) {
+				QString text = action->text();
+				while(!text.isEmpty() && !QChar(text[0]).isLetterOrNumber())
+					text = text.mid(1, text.length()-1);
+				if(text.indexOf('\t') >= 0)
+					text = text.mid(0, text.indexOf('\t'));
+
+				editorWidget()->insertPlainText(text);
+			});
+
+			// the external symbols
+			unsigned ctr = 0;
+			for(auto& s : values().get(a_symbols)) {
+				m_popup->addItem(s.first + "\t(constant)");
+				++ctr;
+			}
+
+			if(ctr > 0)
+				m_popup->addSeparator();
+
+			// hardwired symbols
+			m_popup->addItem("x\t(constant)");
+			m_popup->addItem("y\t(constant)");
+			m_popup->addItem("width\t(constant)");
+			m_popup->addItem("height\t(constant)");
+
+			m_popup->addSeparator();
+
+			m_popup->addItem("r\t(variable)");
+			m_popup->addItem("g\t(variable)");
+			m_popup->addItem("b\t(variable)");
+		}
+
+	private:
+		QPushButton* m_varsButton;
+
+		Popup* m_popup;
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
