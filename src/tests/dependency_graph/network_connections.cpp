@@ -114,3 +114,66 @@ BOOST_AUTO_TEST_CASE(network_connections) {
 		std::make_pair(&nb1.port(2), &nb2.port(0))
 	}}));
 }
+
+BOOST_AUTO_TEST_CASE(network_connections_2) {
+	Graph g;
+
+	// instantiate nodes from arithmetic.cpp
+	const MetadataHandle& addition = additionNode();
+	const MetadataHandle& multiplication = multiplicationNode();
+
+	NodeBase& parentNetworkBase = g.nodes().add(MetadataRegister::singleton()["network"], "parent_network");
+	BOOST_REQUIRE(parentNetworkBase.is<Network>());
+	Network& parentNetwork = parentNetworkBase.as<Network>();
+
+	NodeBase& networkBase = parentNetwork.nodes().add(MetadataRegister::singleton()["network"], "new_network");
+	BOOST_REQUIRE(networkBase.is<Network>());
+	Network& network = networkBase.as<Network>();
+
+	NodeBase& na1 = g.nodes().add(addition, "add_1");
+	NodeBase& na2 = g.nodes().add(multiplication, "mult_1");
+	NodeBase& nb_parent = parentNetwork.nodes().add(multiplication, "mult_parent");
+	NodeBase& nb1 = network.nodes().add(multiplication, "mult_2");
+	NodeBase& nb2 = network.nodes().add(addition, "add_2");
+
+	// 4 nodes inside a network and no connections
+	BOOST_REQUIRE_EQUAL(g.nodes().size(), 3u);
+	BOOST_REQUIRE_EQUAL(parentNetwork.nodes().size(), 2u);
+	BOOST_REQUIRE_EQUAL(network.nodes().size(), 2u);
+	BOOST_REQUIRE_EQUAL(g.connections().size(), 0u);
+	BOOST_REQUIRE_EQUAL(parentNetwork.connections().size(), 0u);
+	BOOST_REQUIRE_EQUAL(network.connections().size(), 0u);
+
+	// check the nodes
+	BOOST_CHECK(checkNodes(g, {{&parentNetwork, &na1, &na2}}));
+	BOOST_CHECK(checkNodes(parentNetwork, {{ &network, &nb_parent }}));
+	BOOST_CHECK(checkNodes(network, {{&nb1, &nb2}}));
+	BOOST_CHECK(checkNodes(g, {{&parentNetwork, &network, &nb1, &nb2, &nb_parent, &na1, &na2}}, dependency_graph::Nodes::kRecursive));
+
+	// try to connect outside nested network
+	BOOST_CHECK_NO_THROW(na1.port(2).connect(na2.port(0)));
+
+	BOOST_CHECK(checkConnections(g, {{
+		std::make_pair(&na1.port(2), &na2.port(0))
+	}}));
+
+	// try to connect inside nested network
+	BOOST_CHECK_NO_THROW(nb1.port(2).connect(nb2.port(0)));
+
+	BOOST_CHECK(checkConnections(g, {{
+		std::make_pair(&na1.port(2), &na2.port(0)),
+		std::make_pair(&nb1.port(2), &nb2.port(0))
+	}}));
+
+	// try to connect between inside and outside network
+	BOOST_CHECK_THROW(na1.port(2).connect(nb2.port(1)), std::runtime_error);
+	BOOST_CHECK_THROW(nb1.port(2).connect(na2.port(1)), std::runtime_error);
+	BOOST_CHECK_THROW(nb1.port(2).connect(nb_parent.port(1)), std::runtime_error);
+	BOOST_CHECK_THROW(nb_parent.port(2).connect(na2.port(1)), std::runtime_error);
+	BOOST_CHECK_THROW(nb_parent.port(2).connect(nb2.port(1)), std::runtime_error);
+
+	BOOST_CHECK(checkConnections(g, {{
+		std::make_pair(&na1.port(2), &na2.port(0)),
+		std::make_pair(&nb1.port(2), &nb2.port(0))
+	}}));
+}

@@ -17,19 +17,20 @@ void unlinkAll(const dependency_graph::UniqueId& fromNodeId, const dependency_gr
 	// special handling for "input" and "output" types
 	dependency_graph::NodeBase& fromNode = detail::findNode(fromNodeId);
 	dependency_graph::NodeBase& toNode = detail::findNode(toNodeId);
-	if((fromNode.metadata()->type() == "input" || toNode.metadata()->type() == "output") &&
-		fromNode.hasParentNetwork() && toNode.hasParentNetwork()) {
 
-		// unlink any linked ports first
+	if(fromNode.hasParentNetwork() && toNode.hasParentNetwork() && fromNode.network().index() == toNode.network().index()) {
 		dependency_graph::Network& network = fromNode.network();
-		for(std::size_t pi=0; pi<network.portCount(); ++pi)
-			if(network.port(pi).isLinked())
-				network.port(pi).unlink();
 
-		for(auto& n : network.nodes())
-			for(std::size_t pi=0; pi<n.portCount(); ++pi)
-				if(n.port(pi).isLinked())
-					n.port(pi).unlink();
+		if((fromNode.metadata()->type() == "input" || toNode.metadata()->type() == "output")) {
+			for(std::size_t pi=0; pi<network.portCount(); ++pi)
+				if(network.port(pi).isLinked() && network.port(pi).linkedTo().node().network().index() == network.index())
+					network.port(pi).unlink();
+
+			for(auto& n : network.nodes())
+				for(std::size_t pi=0; pi<n.portCount(); ++pi)
+					if(n.port(pi).isLinked() && n.port(pi).linkedTo().node().index() == network.index())
+						n.port(pi).unlink();
+		}
 	}
 }
 
@@ -37,12 +38,12 @@ void buildNetwork(const dependency_graph::UniqueId& fromNodeId, const dependency
 	// special handling for "input" and "output" types
 	dependency_graph::NodeBase& fromNode = detail::findNode(fromNodeId);
 	dependency_graph::NodeBase& toNode = detail::findNode(toNodeId);
-	if((fromNode.metadata()->type() == "input" || toNode.metadata()->type() == "output") &&
-		fromNode.hasParentNetwork() && toNode.hasParentNetwork()) {
+	if((fromNode.metadata()->type() == "input" || toNode.metadata()->type() == "output")) {
+		if(fromNode.hasParentNetwork() && toNode.hasParentNetwork() && fromNode.network().index() == toNode.network().index()) {
+			dependency_graph::Network& network = fromNode.network();
 
-		dependency_graph::Network& network = fromNode.network();
-
-		::possumwood::actions::detail::buildNetwork(network);
+			::possumwood::actions::detail::buildNetwork(network);
+		}
 	}
 }
 
