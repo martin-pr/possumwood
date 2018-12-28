@@ -1,0 +1,262 @@
+{
+    "connections": [],
+    "nodes": {
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 34.247859954834,
+                    "y": 328.449829101562
+                }
+            },
+            "connections": [
+                {
+                    "in_node": "per_pixel_expr_0",
+                    "in_port": "in_image",
+                    "out_node": "generate_0",
+                    "out_port": "image"
+                },
+                {
+                    "in_node": "unsigned_constant_0",
+                    "in_port": "value",
+                    "out_node": "input_0",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "network_0",
+                    "in_port": "image",
+                    "out_node": "per_pixel_expr_0",
+                    "out_port": "out_image"
+                },
+                {
+                    "in_node": "per_pixel_expr_0",
+                    "in_port": "symbols",
+                    "out_node": "unsigned_constant_0",
+                    "out_port": "out_symbols"
+                }
+            ],
+            "name": "flower",
+            "nodes": {
+                "generate_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 21.7465286254883,
+                            "y": 332.903381347656
+                        }
+                    },
+                    "name": "generate",
+                    "ports": {
+                        "height": 500,
+                        "width": 500
+                    },
+                    "type": "images/generate"
+                },
+                "input_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": -103.862258911133,
+                            "y": 152.630996704102
+                        }
+                    },
+                    "name": "petals",
+                    "type": "input"
+                },
+                "network_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 381.174224853516,
+                            "y": 391.369781494141
+                        }
+                    },
+                    "connections": [
+                        {
+                            "in_node": "draw_0",
+                            "in_port": "vertex_data",
+                            "out_node": "background_0",
+                            "out_port": "vertex_data"
+                        },
+                        {
+                            "in_node": "program_0",
+                            "in_port": "fragment_shader",
+                            "out_node": "fragment_shader_0",
+                            "out_port": "shader"
+                        },
+                        {
+                            "in_node": "texture_0",
+                            "in_port": "value",
+                            "out_node": "input_0",
+                            "out_port": "data"
+                        },
+                        {
+                            "in_node": "draw_0",
+                            "in_port": "program",
+                            "out_node": "program_0",
+                            "out_port": "program"
+                        },
+                        {
+                            "in_node": "viewport_0",
+                            "in_port": "in_uniforms",
+                            "out_node": "texture_0",
+                            "out_port": "out_uniforms"
+                        },
+                        {
+                            "in_node": "program_0",
+                            "in_port": "vertex_shader",
+                            "out_node": "vertex_shader_0",
+                            "out_port": "shader"
+                        },
+                        {
+                            "in_node": "draw_0",
+                            "in_port": "uniforms",
+                            "out_node": "viewport_0",
+                            "out_port": "out_uniforms"
+                        }
+                    ],
+                    "name": "draw_texture",
+                    "nodes": {
+                        "background_0": {
+                            "blind_data": {
+                                "type": "possumwood::NodeData",
+                                "value": {
+                                    "x": 257.546997070312,
+                                    "y": 827.481750488281
+                                }
+                            },
+                            "name": "background",
+                            "type": "render/vertex_data/background"
+                        },
+                        "draw_0": {
+                            "blind_data": {
+                                "type": "possumwood::NodeData",
+                                "value": {
+                                    "x": 465.344848632812,
+                                    "y": 735.149230957031
+                                }
+                            },
+                            "name": "draw",
+                            "type": "render/draw"
+                        },
+                        "fragment_shader_0": {
+                            "blind_data": {
+                                "type": "possumwood::NodeData",
+                                "value": {
+                                    "x": 53.7295379638672,
+                                    "y": 639.149230957031
+                                }
+                            },
+                            "name": "fragment_shader",
+                            "ports": {
+                                "source": "#version 130 \n \nin vec2 uv;\n\nout vec4 color; \n\nuniform sampler2D tex;\n \nvoid main() { \n\tcolor = texture(tex, uv); \n} \n"
+                            },
+                            "type": "render/fragment_shader"
+                        },
+                        "input_0": {
+                            "blind_data": {
+                                "type": "possumwood::NodeData",
+                                "value": {
+                                    "x": -97.643928527832,
+                                    "y": 971.463073730469
+                                }
+                            },
+                            "name": "image",
+                            "type": "input"
+                        },
+                        "program_0": {
+                            "blind_data": {
+                                "type": "possumwood::NodeData",
+                                "value": {
+                                    "x": 228.344833374023,
+                                    "y": 586.149230957031
+                                }
+                            },
+                            "name": "program",
+                            "type": "render/program"
+                        },
+                        "texture_0": {
+                            "blind_data": {
+                                "type": "possumwood::NodeData",
+                                "value": {
+                                    "x": 96.0169982910156,
+                                    "y": 916.323181152344
+                                }
+                            },
+                            "name": "texture",
+                            "ports": {
+                                "name": "tex"
+                            },
+                            "type": "render/uniforms/texture"
+                        },
+                        "vertex_shader_0": {
+                            "blind_data": {
+                                "type": "possumwood::NodeData",
+                                "value": {
+                                    "x": 70.3448333740234,
+                                    "y": 527.149230957031
+                                }
+                            },
+                            "name": "vertex_shader",
+                            "ports": {
+                                "source": "#version 130 \n\nin vec3 P;\n\nout vec2 uv;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P.x, P.y, P.z, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tuv = vec2(P.x/2.0+0.5, P.y/2.0+0.5);\n} \n"
+                            },
+                            "type": "render/vertex_shader"
+                        },
+                        "viewport_0": {
+                            "blind_data": {
+                                "type": "possumwood::NodeData",
+                                "value": {
+                                    "x": 283.391815185547,
+                                    "y": 959.936279296875
+                                }
+                            },
+                            "name": "viewport",
+                            "type": "render/uniforms/viewport"
+                        }
+                    },
+                    "type": "network"
+                },
+                "per_pixel_expr_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 202.584838867188,
+                            "y": 341.117156982422
+                        }
+                    },
+                    "name": "expression",
+                    "ports": {
+                        "source": "// -1..1 parameterisation with [0,0] in the centre\nvar u := (x / width - 0.5) * 2.0;\nvar v := (y / height - 0.5) * 2.0;\n\n// parameter represents an angle\nvar param := abs(atan2(u, v) / 3.1415);\n// distance to the centre\nvar dist := 1.0 - sqrt(u*u  + v*v);\n\n// the \"flower\" function, combining an angular modulo with distance from the centre\nr := dist + abs((1/petals - param % (2/petals)) * petals / 2);\nr := max(0, r);\n\n// thresholding\nif (r < 0.5)\n\tr := 0.1;\nelse\n\tr := 1;\n\n// a white flower - all 3 channels have the same value\ng := r;\nb := g;"
+                    },
+                    "type": "images/per_pixel_expr"
+                },
+                "unsigned_constant_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 42.5432319641113,
+                            "y": 159.382141113281
+                        }
+                    },
+                    "name": "unsigned_constant",
+                    "ports": {
+                        "name": "petals"
+                    },
+                    "type": "expressions/unsigned_constant"
+                }
+            },
+            "ports": {
+                "petals": 6
+            },
+            "type": "network"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAACcAAAABkAAAaqAAACTAAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJTAAADB/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADBwAAAI4BAAADAAAAAQAAAeYAAAMH/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAABMwAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABnwAAAdMAAACGAQAAAwAAAnAAAAMHAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
