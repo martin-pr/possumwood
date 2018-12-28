@@ -122,3 +122,66 @@ BOOST_AUTO_TEST_CASE(network_node_iterator) {
 	BOOST_REQUIRE(g.nodes().find(n1.index(), Nodes::kRecursive) != g.nodes().end());
 	BOOST_CHECK_EQUAL(&(*g.nodes().find(n1.index(), Nodes::kRecursive)), &n1);
 }
+
+BOOST_AUTO_TEST_CASE(network_node_iterator_2) {
+	Graph g;
+
+	// instantiate nodes from arithmetic.cpp
+	const MetadataHandle& addition = additionNode();
+	const MetadataHandle& multiplication = multiplicationNode();
+
+	NodeBase& parentNetworkBase = g.nodes().add(MetadataRegister::singleton()["network"], "parent_network");
+	BOOST_REQUIRE(parentNetworkBase.is<Network>());
+	Network& parentNetwork = parentNetworkBase.as<Network>();
+
+	NodeBase& networkBase = parentNetwork.nodes().add(MetadataRegister::singleton()["network"], "new_network");
+	BOOST_REQUIRE(networkBase.is<Network>());
+	Network& network = networkBase.as<Network>();
+
+	NodeBase& n1 = network.nodes().add(addition, "add_1");
+	NodeBase& n2 = network.nodes().add(multiplication, "mult_1");
+	NodeBase& n3 = network.nodes().add(multiplication, "mult_2");
+	NodeBase& n4 = network.nodes().add(addition, "add_2");
+
+	// 4 nodes inside a network and no connections
+	BOOST_REQUIRE_EQUAL(g.nodes().size(), 1u);
+	BOOST_REQUIRE_EQUAL(parentNetwork.nodes().size(), 1u);
+	BOOST_REQUIRE_EQUAL(network.nodes().size(), 4u);
+	BOOST_REQUIRE_EQUAL(g.connections().size(), 0u);
+	BOOST_REQUIRE_EQUAL(network.connections().size(), 0u);
+
+	// try non-recursive iteration
+	{
+		auto it = g.nodes().begin();
+		BOOST_CHECK_EQUAL(it->index(), parentNetwork.index());
+		++it;
+		BOOST_CHECK_EQUAL(it, g.nodes().end());
+	}
+
+	// and try recursive iteration
+	{
+		auto it = g.nodes().begin(Nodes::kRecursive);
+		BOOST_CHECK_EQUAL((it++)->index(), parentNetwork.index());
+		BOOST_CHECK_EQUAL((it++)->index(), network.index());
+		BOOST_CHECK_EQUAL((it++)->index(), n1.index());
+		BOOST_CHECK_EQUAL((it++)->index(), n2.index());
+		BOOST_CHECK_EQUAL((it++)->index(), n3.index());
+		BOOST_CHECK_EQUAL((it++)->index(), n4.index());
+		BOOST_CHECK_EQUAL(it, g.nodes().end());
+	}
+
+	// try to find "network"
+	BOOST_REQUIRE(g.nodes().find(parentNetwork.index()) != g.nodes().end());
+	BOOST_CHECK_EQUAL(&(*g.nodes().find(parentNetwork.index())), &parentNetwork);
+
+	BOOST_REQUIRE(g.nodes().find(network.index()) == g.nodes().end());
+	BOOST_REQUIRE(g.nodes().find(network.index(), Nodes::kRecursive) != g.nodes().end());
+	BOOST_CHECK_EQUAL(&(*g.nodes().find(network.index(), Nodes::kRecursive)), &network);
+
+	// non-recursive find will not find n1
+	BOOST_REQUIRE_EQUAL(g.nodes().find(n1.index()), g.nodes().end());
+
+	// but a recursive one will
+	BOOST_REQUIRE(g.nodes().find(n1.index(), Nodes::kRecursive) != g.nodes().end());
+	BOOST_CHECK_EQUAL(&(*g.nodes().find(n1.index(), Nodes::kRecursive)), &n1);
+}
