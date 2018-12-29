@@ -12,13 +12,20 @@ namespace {
 
 dependency_graph::InAttr<unsigned> a_width, a_height;
 dependency_graph::InAttr<QColor> a_colour;
-dependency_graph::OutAttr<std::shared_ptr<const QPixmap>> a_image;
+dependency_graph::OutAttr<std::shared_ptr<const possumwood::Pixmap>> a_image;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	std::shared_ptr<QPixmap> result(new QPixmap(data.get(a_width), data.get(a_height)));
-	result->fill(data.get(a_colour));
+	const QColor col = data.get(a_colour);
 
-	data.set(a_image, std::shared_ptr<const QPixmap>(result));
+	possumwood::Pixmap::channel_t red = col.red();
+	possumwood::Pixmap::channel_t green = col.green();
+	possumwood::Pixmap::channel_t blue = col.blue();
+
+	possumwood::Pixel defaultValue(possumwood::Pixel::value_t{{red, green, blue}});
+
+	std::shared_ptr<possumwood::Pixmap> result(new possumwood::Pixmap(data.get(a_width), data.get(a_height), defaultValue));
+
+	data.set(a_image, std::shared_ptr<const possumwood::Pixmap>(result));
 
 	return dependency_graph::State();
 }

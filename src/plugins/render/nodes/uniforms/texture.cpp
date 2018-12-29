@@ -9,7 +9,7 @@
 namespace {
 
 dependency_graph::InAttr<std::string> a_name;
-dependency_graph::InAttr<std::shared_ptr<const QPixmap>> a_value;
+dependency_graph::InAttr<std::shared_ptr<const possumwood::Pixmap>> a_value;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_inUniforms;
 dependency_graph::OutAttr<std::shared_ptr<const possumwood::Uniforms>> a_outUniforms;
 
@@ -24,7 +24,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	else
 		uniforms = std::unique_ptr<possumwood::Uniforms>(new possumwood::Uniforms());
 
-	std::shared_ptr<const QPixmap> value = data.get(a_value);
+	std::shared_ptr<const possumwood::Pixmap> value = data.get(a_value);
 
 	if(value) {
 		uniforms->addTexture(

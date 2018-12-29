@@ -2,6 +2,8 @@
 
 #include <boost/filesystem.hpp>
 
+#include <QPixmap>
+
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/datatypes/filename.h>
 
@@ -10,24 +12,38 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
-dependency_graph::OutAttr<std::shared_ptr<const QPixmap>> a_image;
+dependency_graph::OutAttr<std::shared_ptr<const possumwood::Pixmap>> a_image;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State out;
 
 	const possumwood::Filename filename = data.get(a_filename);
 
-	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
-		std::unique_ptr<QPixmap> pixmap(new QPixmap(
-			filename.filename().string().c_str()));
+	std::shared_ptr<possumwood::Pixmap> result;
 
-		if(!pixmap->isNull())
-			data.set(a_image, std::shared_ptr<const QPixmap>(pixmap.release()));
+	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
+		QPixmap pixmap(filename.filename().string().c_str());
+
+		QImage image = pixmap.toImage();
+		image = image.convertToFormat(QImage::Format_RGB888);
+		assert(image.format() == QImage::Format_RGB888);
+
+		if(!pixmap.isNull()) {
+			result = std::shared_ptr<possumwood::Pixmap>(new possumwood::Pixmap(image.width(), image.height()));
+
+			for(std::size_t y=0; y<(std::size_t)image.height(); ++y) {
+				const uchar* scanline = image.constScanLine(y);
+
+				for(std::size_t x=0; x<(std::size_t)image.width(); ++x)
+					(*result)(x, y).setValue(possumwood::Pixel::value_t{{scanline[x*3], scanline[x*3+1], scanline[x*3+2]}});
+			}
+		}
 	}
-	else {
-		data.set(a_image, std::shared_ptr<const QPixmap>());
+
+	data.set(a_image, std::shared_ptr<const possumwood::Pixmap>(result));
+
+	if(!result)
 		out.addError("Cannot load filename " + filename.filename().string());
-	}
 
 	return out;
 }
