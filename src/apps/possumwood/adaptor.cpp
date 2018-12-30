@@ -69,7 +69,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	setLayout(layout);
 
 	m_pathWidget = new PathWidget(this);
-	layout->addWidget(m_pathWidget);
+	layout->addWidget(m_pathWidget, 0);
 
 	connect(m_pathWidget, &PathWidget::changeCurrentNetwork, [this](PathWidget::Path path) {
 		assert(path.size() >= 1);
@@ -93,7 +93,7 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	});
 
 	QSplitter* splitter = new QSplitter();
-	layout->addWidget(splitter);
+	layout->addWidget(splitter, 1);
 
 	m_treeWidget = new TreeWidget(splitter, this);
 	connect(this, &Adaptor::selectionChanged, m_treeWidget, &TreeWidget::onSelectionChanged);
