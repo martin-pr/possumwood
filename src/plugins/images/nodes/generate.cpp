@@ -20,17 +20,26 @@ struct Params {
 Params<possumwood::LDRPixmap> s_ldrParams;
 Params<possumwood::HDRPixmap> s_hdrParams;
 
+void extract(possumwood::LDRPixel::value_t& pixel, const QColor& color) {
+	pixel[0] = color.red();
+	pixel[1] = color.green();
+	pixel[2] = color.blue();
+}
+
+void extract(possumwood::HDRPixel::value_t& pixel, const QColor& color) {
+	pixel[0] = color.redF();
+	pixel[1] = color.greenF();
+	pixel[2] = color.blueF();
+}
+
 template<typename PIXMAP>
 dependency_graph::State compute(dependency_graph::Values& data, Params<PIXMAP>& params) {
 	const QColor col = data.get(params.a_colour);
 
-	typename PIXMAP::channel_t red = col.red();
-	typename PIXMAP::channel_t green = col.green();
-	typename PIXMAP::channel_t blue = col.blue();
+	typename PIXMAP::pixel_t::value_t value;
+	extract(value, col);
 
-	typename PIXMAP::pixel_t defaultValue(typename PIXMAP::pixel_t::value_t{{red, green, blue}});
-
-	std::shared_ptr<PIXMAP> result(new PIXMAP(data.get(params.a_width), data.get(params.a_height), defaultValue));
+	std::shared_ptr<PIXMAP> result(new PIXMAP(data.get(params.a_width), data.get(params.a_height), value));
 
 	data.set(params.a_image, std::shared_ptr<const PIXMAP>(result));
 
