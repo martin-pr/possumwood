@@ -3,7 +3,6 @@
 #include <string>
 #include <memory>
 
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 
 #include "data.h"
@@ -20,7 +19,7 @@ class Nodes;
 class Network;
 class Port;
 
-class NodeBase : public boost::noncopyable {
+class NodeBase {
 	public:
 		virtual ~NodeBase();
 
@@ -91,6 +90,9 @@ class NodeBase : public boost::noncopyable {
 		Datablock& datablock();
 
 	private:
+		NodeBase(const NodeBase&) = delete;
+		NodeBase& operator = (const NodeBase&) = delete;
+
 		// used by Port instances
 		const BaseData& get(size_t index) const;
 
@@ -99,6 +101,9 @@ class NodeBase : public boost::noncopyable {
 
 		// used by Port instances
 		void markAsDirty(size_t index);
+
+		// used during destruction
+		void disconnectAll();
 
 		std::string m_name;
 		Network* m_network;

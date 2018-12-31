@@ -79,11 +79,14 @@ class Port : public boost::noncopyable {
 	private:
 		Port(unsigned id, NodeBase* parent);
 
+		Port(const Port&) = delete;
+		Port& operator =(const Port& p) = delete;
+
 		void setDirty(bool dirty);
 
+		NodeBase* m_parent;
 		unsigned m_id;
 		bool m_dirty;
-		NodeBase* m_parent;
 
 		Port* m_linkedToPort;
 		Port* m_linkedFromPort;

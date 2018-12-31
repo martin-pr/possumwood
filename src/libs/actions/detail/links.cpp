@@ -33,7 +33,11 @@ void doRemoveLink(const Link& l) {
 possumwood::UndoStack::Action linkAction(const Link& l) {
 	possumwood::UndoStack::Action action;
 
+	std::stringstream ss;
+	ss << "Linking " << l.fromNode << "/" << l.fromPort << " and " << l.toNode << "/" << l.toPort;
+
 	action.addCommand(
+		ss.str(),
 		std::bind(&doAddLink, l),
 		std::bind(&doRemoveLink,l)
 	);
@@ -47,9 +51,13 @@ possumwood::UndoStack::Action unlinkAction(const dependency_graph::Port& p) {
 		p.linkedTo().node().index(), p.linkedTo().index()
 	};
 
+	std::stringstream ss;
+	ss << "Unlinking " << p.node().name() << "/" << p.name();
+
 	possumwood::UndoStack::Action action;
 
 	action.addCommand(
+		ss.str(),
 		std::bind(&doRemoveLink,l),
 		std::bind(&doAddLink, l)
 	);

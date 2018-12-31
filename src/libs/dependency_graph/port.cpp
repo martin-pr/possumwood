@@ -6,27 +6,32 @@
 
 namespace dependency_graph {
 
-Port::Port(unsigned id, NodeBase* parent) : m_id(id),
-	m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput), m_parent(parent), m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
+Port::Port(unsigned id, NodeBase* parent) : m_parent(parent), m_id(id),
+	m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput), m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
 }
 
-Port::Port(Port&& p) : m_id(p.m_id), m_dirty(p.m_dirty), m_parent(p.m_parent), m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
+Port::Port(Port&& p) : m_parent(p.m_parent), m_id(p.m_id), m_dirty(p.m_dirty), m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
 	if(p.m_linkedFromPort)
 		p.m_linkedFromPort->unlink();
 	if(p.m_linkedToPort)
 		p.unlink();
 
-	p.m_linkedToPort = nullptr;
-	p.m_linkedFromPort = nullptr;
+	assert(p.m_linkedToPort == nullptr);
+	assert(p.m_linkedFromPort == nullptr);
 	p.m_parent = nullptr;
 }
 
 Port::~Port() {
-	if(m_linkedFromPort)
-		m_linkedFromPort->unlink();
+	if(m_parent) {
+		// this port should not be connected
+		assert(!isConnected());
 
-	if(m_linkedToPort)
-		unlink();
+		if(m_linkedFromPort)
+			m_linkedFromPort->unlink();
+
+		if(m_linkedToPort)
+			unlink();
+	}
 }
 
 const std::string& Port::name() const {
@@ -288,11 +293,9 @@ void Port::disconnect(Port& p) {
 }
 
 bool Port::isConnected() const {
-	if(category() == Attr::kInput)
-		// return true if there are no connections leading to this input port
-		return static_cast<bool>(m_parent->network().connections().connectedFrom(*this));
-	else
-		return not m_parent->network().connections().connectedTo(*this).empty();
+	// return true if there are no connections leading to/from this input/output port
+	return static_cast<bool>(m_parent->network().connections().connectedFrom(*this)) ||
+		not m_parent->network().connections().connectedTo(*this).empty();
 }
 
 void Port::linkTo(Port& targetPort) {
@@ -314,10 +317,11 @@ void Port::unlink() {
 	assert(m_linkedToPort->m_linkedFromPort != nullptr);
 
 	m_linkedToPort->node().markAsDirty(m_linkedToPort->index());
-	node().markAsDirty(index());
 
 	m_linkedToPort->m_linkedFromPort = nullptr;
 	m_linkedToPort = nullptr;
+
+	node().markAsDirty(index());
 }
 
 const Port& Port::linkedTo() const {

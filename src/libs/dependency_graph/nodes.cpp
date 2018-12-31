@@ -54,7 +54,7 @@ NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, std::u
 }
 
 Nodes::iterator Nodes::erase(iterator i) {
-	m_parent->graph().connections().purge(*i);
+	i->disconnectAll();
 
 	m_parent->graph().nodeRemoved(*i);
 	m_parent->graph().dirtyChanged();

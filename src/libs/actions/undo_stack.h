@@ -21,13 +21,18 @@ class UndoStack : public boost::noncopyable {
 		/// executing an action, all commands of a failed action are rolled back.
 		class Action {
 			public:
-				void addCommand(const std::function<void()>& redo, const std::function<void()>& undo);
+				void addCommand(const std::string& name, const std::function<void()>& redo, const std::function<void()>& undo);
 
 				/// appends all commands from action 'a' to this action
 				void append(const Action& a);
 
 			private:
-				std::vector<std::function<void()>> m_redo, m_undo;
+				struct Data {
+					std::string name;
+					std::function<void()> fn;
+				};
+
+				std::vector<Data> m_redo, m_undo;
 
 			/// the actual implementation is handled in UndoStack code.
 			friend class UndoStack;

@@ -78,7 +78,11 @@ possumwood::UndoStack::Action changeMetadataAction(dependency_graph::NodeBase& n
 		if(!srcDatablock.isNull(i.first))
 			destDatablock.setData(i.second, srcDatablock.data(i.first));
 
+	std::stringstream ss;
+	ss << "Setting metadata to " << node.name();
+
 	action.addCommand(
+		ss.str(),
 		std::bind(&doSetMetadata, node.index(), handle, destDatablock),
 		std::bind(&doSetMetadata, node.index(), node.metadata(), srcDatablock)
 	);

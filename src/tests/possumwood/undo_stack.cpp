@@ -16,6 +16,7 @@ BOOST_AUTO_TEST_CASE(simple_undo_redo) {
 	{
 		possumwood::UndoStack::Action a;
 		a.addCommand(
+			"Pushing back 10",
 			[&values]() {
 				values.push_back(10);
 			},
@@ -56,6 +57,7 @@ BOOST_AUTO_TEST_CASE(multi_command_undo_redo) {
 	{
 		possumwood::UndoStack::Action a;
 		a.addCommand(
+			"Pushing back 10",
 			[&values]() {
 				values.push_back(10);
 			},
@@ -66,6 +68,7 @@ BOOST_AUTO_TEST_CASE(multi_command_undo_redo) {
 		);
 
 		a.addCommand(
+			"Pushing back 10",
 			[&values]() {
 				values.push_back(20);
 			},
@@ -109,6 +112,7 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 	{
 		possumwood::UndoStack::Action a;
 		a.addCommand(
+			"Pushing back 10",
 			[&values]() {
 				values.push_back(10);
 			},
@@ -119,6 +123,7 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 		);
 
 		a.addCommand(
+			"Pushing back 20",
 			[&values]() {
 				values.push_back(20);
 			},
@@ -134,6 +139,7 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 	{
 		possumwood::UndoStack::Action a;
 		a.addCommand(
+			"Pushing back 30",
 			[&values]() {
 				values.push_back(30);
 			},
@@ -144,6 +150,7 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 		);
 
 		a.addCommand(
+			"Pushing back 40",
 			[&values]() {
 				values.push_back(40);
 			},
@@ -213,6 +220,7 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 
 		possumwood::UndoStack::Action a;
 		a.addCommand(
+			"Pushing back 10",
 			[&values]() {
 				values.push_back(10);
 			},
@@ -223,6 +231,7 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 		);
 
 		a.addCommand(
+			"Pushing back 20",
 			[&values]() {
 				values.push_back(20);
 			},
@@ -240,6 +249,7 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 	{
 		possumwood::UndoStack::Action a;
 		a.addCommand(
+			"Pushing back 30",
 			[&values]() {
 				values.push_back(30);
 
@@ -256,10 +266,11 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 		);
 
 		a.addCommand(
-			[&values]() {
+			"Throwing",
+			[]() {
 				throw "stuff";
 			},
-			[&values]() {
+			[]() {
 			}
 		);
 
