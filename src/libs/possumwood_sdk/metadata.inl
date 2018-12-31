@@ -18,11 +18,8 @@ void Metadata::setDrawable() {
 
 template<typename EDITOR>
 void Metadata::setEditor() {
-	m_editorFactory = [](dependency_graph::NodeBase& node) {
+	m_editorFactory = []() {
 		std::unique_ptr<possumwood::Editor> result(new EDITOR());
-
-		result->setNodeReference(node);
-
 		return result;
 	};
 }

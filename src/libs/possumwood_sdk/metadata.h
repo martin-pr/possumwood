@@ -58,6 +58,9 @@ class Metadata : public dependency_graph::Metadata {
 		template<typename EDITOR>
 		void setEditor();
 
+		/// set the editor factory directly (allows for passing additional parameters to the constructor)
+		void setEditorFactory(const std::function<std::unique_ptr<Editor>()>& editorFactory);
+
 		/// returns true if this node type has an editor set
 		bool hasEditor() const;
 		/// create an editor for a node instance
@@ -70,7 +73,7 @@ class Metadata : public dependency_graph::Metadata {
 
 	private:
 		std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> m_drawableFactory;
-		std::function<std::unique_ptr<Editor>(dependency_graph::NodeBase&)> m_editorFactory;
+		std::function<std::unique_ptr<Editor>()> m_editorFactory;
 };
 
 }

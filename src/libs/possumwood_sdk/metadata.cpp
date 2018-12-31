@@ -50,10 +50,19 @@ bool Metadata::hasEditor() const {
 	return m_editorFactory.operator bool();
 }
 
+void Metadata::setEditorFactory(const std::function<std::unique_ptr<Editor>()>& editorFactory) {
+	m_editorFactory = editorFactory;
+}
+
 std::unique_ptr<Editor> Metadata::createEditor(dependency_graph::NodeBase& node) const {
 	assert(hasEditor());
 
-	return m_editorFactory(node);
+	// create a new editor instance
+	std::unique_ptr<Editor> editor = m_editorFactory();
+	// set the edited node reference
+	editor->setNodeReference(node);
+
+	return editor;
 }
 
 std::unique_ptr<dependency_graph::NodeBase> Metadata::createNode(const std::string& name, dependency_graph::Network& parent, const dependency_graph::UniqueId& id) const {
