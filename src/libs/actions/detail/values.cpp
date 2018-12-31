@@ -100,7 +100,11 @@ possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& n
 	// std::shared_ptr<const dependency_graph::BaseData> original = node.port(portId).getData().clone();
 	std::shared_ptr<const dependency_graph::BaseData> target = value.clone();
 
+	std::stringstream ss;
+	ss << "Setting value of " << nodeId << "/" << portId << " to " << *target;
+
 	action.addCommand(
+		ss.str(),
 		std::bind(&doSetValue, nodeId, portId, std::move(target), original),
 		std::bind(&doResetValue, nodeId, portId, original)
 	);
@@ -113,7 +117,11 @@ possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& n
 
 	std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> original(new std::unique_ptr<dependency_graph::BaseData>());
 
+	std::stringstream ss;
+	ss << "Setting value of " << nodeId << "/" << portName << " to " << value << " from JSON";
+
 	action.addCommand(
+		ss.str(),
 		std::bind(&doSetValueFromJson, nodeId, portName, value, original),
 		std::bind(&doResetValueFromJson, nodeId, portName, original)
 	);

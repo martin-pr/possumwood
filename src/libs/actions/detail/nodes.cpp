@@ -98,8 +98,12 @@ possumwood::UndoStack::Action createNodeAction(const dependency_graph::UniqueId&
 	// make a copy of blind data for binding
 	std::shared_ptr<const dependency_graph::BaseData> blindData(data.release());
 
+	std::stringstream ss;
+	ss << "Creating node " << name << " of type " << meta->type();
+
 	possumwood::UndoStack::Action action;
 	action.addCommand(
+		ss.str(),
 		std::bind(&doCreateNode, currentNetworkId, meta, name, id, blindData, boost::optional<const dependency_graph::Datablock>(datablock)),
 		std::bind(&doRemoveNode, id)
 	);
@@ -126,8 +130,12 @@ possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node)
 	// store the original blind data for undo
 	std::shared_ptr<const dependency_graph::BaseData> blindData(node.blindData().clone());
 
+	std::stringstream ss;
+	ss << "Removing node " << node.name() << " of type " << node.metadata()->type();
+
 	// and remove current node
 	action.addCommand(
+		ss.str(),
 		std::bind(&doRemoveNode, node.index()),
 		std::bind(&doCreateNode, node.network().index(), node.metadata(), node.name(), node.index(),
 			blindData, cnode.datablock())
@@ -212,7 +220,11 @@ possumwood::UndoStack::Action renameNodeAction(const dependency_graph::UniqueId&
 	std::shared_ptr<std::string> newName(new std::string(name));
 	std::shared_ptr<std::string> originalName(new std::string());
 
+	std::stringstream ss;
+	ss << "Renaming node " << nodeId << " to " << name;
+
 	action.addCommand(
+		ss.str(),
 		std::bind(&doRenameNode, nodeId, newName, originalName),
 		std::bind(&doRenameNode, nodeId, originalName, newName)
 	);

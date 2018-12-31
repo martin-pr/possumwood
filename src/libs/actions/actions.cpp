@@ -318,6 +318,7 @@ void move(const std::map<dependency_graph::NodeBase*, possumwood::NodeData::Poin
 			data.setPosition(n.second);
 
 			action.addCommand(
+				"Move " + n.first->name(),
 				std::bind(&doSetBlindData, n.first->index(), data),
 				std::bind(&doSetBlindData, n.first->index(), n.first->blindData<possumwood::NodeData>())
 			);

@@ -137,8 +137,12 @@ void doDisconnectByNames(const dependency_graph::UniqueId& fromNode, const std::
 possumwood::UndoStack::Action disconnectAction(const dependency_graph::UniqueId& fromNodeId, std::size_t fromPort, const dependency_graph::UniqueId& toNodeId, std::size_t toPort) {
 	possumwood::UndoStack::Action action;
 
+	std::stringstream ss;
+	ss << "Disconnecting " << fromNodeId << "/" << fromPort << " and " << toNodeId << "/" << toPort;
+
 	// the initial connect / disconnect action
 	action.addCommand(
+		ss.str(),
 		std::bind(&doDisconnectByIds,
 			fromNodeId, fromPort,
 			toNodeId, toPort),
@@ -165,35 +169,47 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 	std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> data(
 		new std::unique_ptr<dependency_graph::BaseData>());
 
-	action.addCommand(
-		// on connect, save the value
-		[toNodeId, toPort, data]() {
-			dependency_graph::NodeBase& node = detail::findNode(toNodeId);
+	{
+		std::stringstream ss;
+		ss << "Cloning data for a new connection between " << fromNodeId << "/" << fromPort << " and " << toNodeId << "/" << toPort;
 
-			// only on non-void ports, though
-			if(*data == nullptr && node.port(toPort).type() != dependency_graph::unmangledName(typeid(void).name()))
-				*data = node.port(toPort).getData().clone();
-		},
+		action.addCommand(
+			ss.str(),
+			// on connect, save the value
+			[toNodeId, toPort, data]() {
+				dependency_graph::NodeBase& node = detail::findNode(toNodeId);
 
-		// and on disconnect, put it back
-		[toNodeId, toPort, data]() {
-			dependency_graph::NodeBase& node = detail::findNode(toNodeId);
+				// only on non-void ports, though
+				if(*data == nullptr && node.port(toPort).type() != dependency_graph::unmangledName(typeid(void).name()))
+					*data = node.port(toPort).getData().clone();
+			},
 
-			if(*data != nullptr) {
-				assert(!node.port(toPort).isConnected());
-				node.port(toPort).setData(**data);
+			// and on disconnect, put it back
+			[toNodeId, toPort, data]() {
+				dependency_graph::NodeBase& node = detail::findNode(toNodeId);
+
+				if(*data != nullptr) {
+					assert(!node.port(toPort).isConnected());
+					node.port(toPort).setData(**data);
+				}
 			}
-		}
-	);
+		);
+	}
 
-	action.addCommand(
-		std::bind(&doConnectByIds,
-			fromNodeId, fromPort,
-			toNodeId, toPort),
-		std::bind(&doDisconnectByIds,
-			fromNodeId, fromPort,
-			toNodeId, toPort)
-	);
+	{
+		std::stringstream ss;
+		ss << "Creating a connection between " << fromNodeId << "/" << fromPort << " and " << toNodeId << "/" << toPort;
+
+		action.addCommand(
+			ss.str(),
+			std::bind(&doConnectByIds,
+				fromNodeId, fromPort,
+				toNodeId, toPort),
+			std::bind(&doDisconnectByIds,
+				fromNodeId, fromPort,
+				toNodeId, toPort)
+		);
+	}
 
 	return action;
 }
@@ -206,51 +222,63 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 	std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> data(
 		new std::unique_ptr<dependency_graph::BaseData>());
 
-	action.addCommand(
-		// on connect, save the value
-		[toNodeId, toPortName, data]() {
-			dependency_graph::NodeBase& node = detail::findNode(toNodeId);
+	{
+		std::stringstream ss;
+		ss << "Cloning data for a new connection between " << fromNodeId << "/" << fromPortName << " and " << toNodeId << "/" << toPortName;
 
-			int toPort = -1;
-			for(std::size_t p = 0; p < node.portCount(); ++p)
-				if(node.port(p).name() == toPortName) {
-					toPort = p;
-					break;
+		action.addCommand(
+			ss.str(),
+			// on connect, save the value
+			[toNodeId, toPortName, data]() {
+				dependency_graph::NodeBase& node = detail::findNode(toNodeId);
+
+				int toPort = -1;
+				for(std::size_t p = 0; p < node.portCount(); ++p)
+					if(node.port(p).name() == toPortName) {
+						toPort = p;
+						break;
+					}
+				assert(toPort >= 0);
+
+				// only on non-void ports, though
+				if(*data == nullptr && node.port(toPort).type() != dependency_graph::unmangledName(typeid(void).name()))
+					*data = node.port(toPort).getData().clone();
+			},
+
+			// and on disconnect, put it back
+			[toNodeId, toPortName, data]() {
+				dependency_graph::NodeBase& node = detail::findNode(toNodeId);
+
+				int toPort = -1;
+				for(std::size_t p = 0; p < node.portCount(); ++p)
+					if(node.port(p).name() == toPortName) {
+						toPort = p;
+						break;
+					}
+				assert(toPort >= 0);
+
+				if(*data != nullptr) {
+					assert(!node.port(toPort).isConnected());
+					node.port(toPort).setData(**data);
 				}
-			assert(toPort >= 0);
-
-			// only on non-void ports, though
-			if(*data == nullptr && node.port(toPort).type() != dependency_graph::unmangledName(typeid(void).name()))
-				*data = node.port(toPort).getData().clone();
-		},
-
-		// and on disconnect, put it back
-		[toNodeId, toPortName, data]() {
-			dependency_graph::NodeBase& node = detail::findNode(toNodeId);
-
-			int toPort = -1;
-			for(std::size_t p = 0; p < node.portCount(); ++p)
-				if(node.port(p).name() == toPortName) {
-					toPort = p;
-					break;
-				}
-			assert(toPort >= 0);
-
-			if(*data != nullptr) {
-				assert(!node.port(toPort).isConnected());
-				node.port(toPort).setData(**data);
 			}
-		}
-	);
+		);
+	}
 
-	action.addCommand(
-		std::bind(&doConnectByNames,
-			fromNodeId, fromPortName,
-			toNodeId, toPortName),
-		std::bind(&doDisconnectByNames,
-			fromNodeId, fromPortName,
-			toNodeId, toPortName)
-	);
+	{
+		std::stringstream ss;
+		ss << "Creating a connection between " << fromNodeId << "/" << fromPortName << " and " << toNodeId << "/" << toPortName;
+
+		action.addCommand(
+			ss.str(),
+			std::bind(&doConnectByNames,
+				fromNodeId, fromPortName,
+				toNodeId, toPortName),
+			std::bind(&doDisconnectByNames,
+				fromNodeId, fromPortName,
+				toNodeId, toPortName)
+		);
+	}
 
 	return action;
 }

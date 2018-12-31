@@ -7,12 +7,12 @@
 
 namespace possumwood {
 
-void UndoStack::Action::addCommand(const std::function<void()>& redo, const std::function<void()>& undo) {
+void UndoStack::Action::addCommand(const std::string& name, const std::function<void()>& redo, const std::function<void()>& undo) {
 	assert(undo);
 	assert(redo);
 
-	m_undo.push_back(undo);
-	m_redo.push_back(redo);
+	m_undo.push_back(Data{name, undo});
+	m_redo.push_back(Data{name, redo});
 }
 
 void UndoStack::Action::append(const Action& a) {
@@ -46,14 +46,14 @@ void UndoStack::execute(const Action& action) {
 		for(std::size_t counter = 0; counter < action.m_redo.size(); ++counter) {
 			try {
 				// just run the command
-				action.m_redo[counter]();
+				action.m_redo[counter].fn();
 			}
 			catch(...) {
 				// an exception was caught during the last command - undo all previous commands
 				while(counter > 0) {
 					--counter;
 
-					action.m_undo[counter]();
+					action.m_undo[counter].fn();
 				}
 
 #ifndef NDEBUG
@@ -84,8 +84,8 @@ void UndoStack::undo() {
 
 	// execute the last undo queue item
 	if(!m_undoStack.empty()) {
-		for(std::vector<std::function<void()>>::const_reverse_iterator it = m_undoStack.back().m_undo.rbegin(); it != m_undoStack.back().m_undo.rend(); ++it)
-			(*it)();
+		for(std::vector<UndoStack::Action::Data>::const_reverse_iterator it = m_undoStack.back().m_undo.rbegin(); it != m_undoStack.back().m_undo.rend(); ++it)
+			it->fn();
 
 		// and move it to the redo stack
 		m_redoStack.push_back(m_undoStack.back());
@@ -106,8 +106,8 @@ void UndoStack::redo() {
 
 	// execute the last redo queue item
 	if(!m_redoStack.empty()) {
-		for(std::vector<std::function<void()>>::const_iterator it = m_redoStack.back().m_redo.begin(); it != m_redoStack.back().m_redo.end(); ++it)
-			(*it)();
+		for(std::vector<Action::Data>::const_iterator it = m_redoStack.back().m_redo.begin(); it != m_redoStack.back().m_redo.end(); ++it)
+			it->fn();
 
 		// and move it to the undo stack
 		m_undoStack.push_back(m_redoStack.back());
