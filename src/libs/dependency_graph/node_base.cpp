@@ -18,6 +18,20 @@ NodeBase::~NodeBase() {
 	for(auto& p : m_ports) {
 		if(p.isLinked())
 			p.unlink();
+		assert(!p.isConnected());
+	}
+}
+
+void NodeBase::disconnectAll() {
+	if(hasParentNetwork()) {
+		auto it = network().connections().begin();
+		while(it != network().connections().end())
+			if(&it->first.node() == this || &it->second.node() == this) {
+				it->first.disconnect(it->second);
+				it = network().connections().begin(); // inefficient!
+			}
+			else
+				++it;
 	}
 }
 

@@ -61,8 +61,6 @@ class Connections : public boost::noncopyable {
 		///   to input ports connected to this output)
 		std::vector<std::reference_wrapper<Port>> connectedTo(Port& p);
 
-		/// remove all connections related to a node (both in and out)
-		void purge(const NodeBase& n);
 		/// returns true if a node has any connections
 		bool isConnected(const NodeBase& n) const;
 

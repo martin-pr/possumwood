@@ -53,20 +53,6 @@ void Connections::remove(Port& src, Port& dest) {
 	m_connections.right.erase(it);
 }
 
-void Connections::purge(const NodeBase& n) {
-	// remove all connections related to a node
-	auto it = m_connections.left.begin();
-	while(it != m_connections.left.end())
-		if(it->first.nodeIndex == n.index() || it->second.nodeIndex == n.index()) {
-			m_parent->graph().disconnected(getPort(it->first), getPort(it->second));
-
-			// remove the iterator
-			it = m_connections.left.erase(it);
-		}
-		else
-			++it;
-}
-
 bool Connections::isConnected(const NodeBase& n) const {
 	for(auto& c : m_connections.left)
 		if(c.first.nodeIndex == n.index() || c.second.nodeIndex == n.index())
@@ -75,10 +61,6 @@ bool Connections::isConnected(const NodeBase& n) const {
 }
 
 boost::optional<const Port&> Connections::connectedFrom(const Port& p) const {
-	if(p.category() != Attr::kInput)
-		throw std::runtime_error("Connected From request can be only run on input ports.");
-
-	// ugly const casts, to keep const-correctness, ironically
 	auto it = m_connections.right.lower_bound(getId(p));
 
 	if((it == m_connections.right.end()) || (it->first != getId(p)))
@@ -90,10 +72,6 @@ boost::optional<const Port&> Connections::connectedFrom(const Port& p) const {
 }
 
 std::vector<std::reference_wrapper<const Port>> Connections::connectedTo(const Port& p) const {
-	if(p.category() != Attr::kOutput)
-		throw std::runtime_error("Connected To request can be only run on output ports.");
-
-	// ugly const casts, to keep const-correctness, ironically
 	auto it1 = m_connections.left.lower_bound(getId(p));
 	auto it2 = m_connections.left.upper_bound(getId(p));
 
@@ -107,7 +85,6 @@ boost::optional<Port&> Connections::connectedFrom(Port& p) {
 	if(p.category() != Attr::kInput)
 		throw std::runtime_error("Connected From request can be only run on input ports.");
 
-	// ugly const casts, to keep const-correctness, ironically
 	auto it = m_connections.right.lower_bound(getId(p));
 
 	if((it == m_connections.right.end()) || (it->first != getId(p)))
