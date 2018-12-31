@@ -48,11 +48,11 @@ void init(possumwood::Metadata& meta, Params<PIXMAP>& params) {
 	});
 }
 
-possumwood::NodeImplementation s_impl("render/metadata", [](possumwood::Metadata& meta) {
+possumwood::NodeImplementation s_impl("images/metadata", [](possumwood::Metadata& meta) {
 	init<possumwood::LDRPixmap>(meta, s_ldrParams);
 });
 
-possumwood::NodeImplementation s_impl_hdr("render/metadata_hdr", [](possumwood::Metadata& meta) {
+possumwood::NodeImplementation s_impl_hdr("images/metadata_hdr", [](possumwood::Metadata& meta) {
 	init<possumwood::HDRPixmap>(meta, s_hdrParams);
 });
 
