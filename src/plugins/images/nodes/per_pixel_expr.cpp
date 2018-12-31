@@ -14,10 +14,16 @@
 
 namespace {
 
-dependency_graph::InAttr<std::string> a_src;
-dependency_graph::InAttr<possumwood::ExprSymbols> a_symbols;
-dependency_graph::InAttr<std::shared_ptr<const possumwood::LDRPixmap>> a_inPixmap;
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::LDRPixmap>> a_outPixmap;
+template<typename PIXMAP>
+struct Params {
+	dependency_graph::InAttr<std::string> a_src;
+	dependency_graph::InAttr<possumwood::ExprSymbols> a_symbols;
+	dependency_graph::InAttr<std::shared_ptr<const PIXMAP>> a_inPixmap;
+	dependency_graph::OutAttr<std::shared_ptr<const PIXMAP>> a_outPixmap;
+};
+
+Params<possumwood::LDRPixmap> s_ldrParams;
+Params<possumwood::HDRPixmap> s_hdrParams;
 
 class Popup : public QMenu {
 	public:
@@ -31,10 +37,10 @@ class Popup : public QMenu {
 	private:
 };
 
-
+template<typename PIXMAP>
 class Editor : public possumwood::SourceEditor {
 	public:
-		Editor() : SourceEditor(a_src), m_popup(nullptr) {
+		Editor(Params<PIXMAP>& params) : SourceEditor(params.a_src), m_params(params), m_popup(nullptr) {
 			m_varsButton = new QPushButton("Variables");
 			buttonsLayout()->insertWidget(0, m_varsButton);
 
@@ -48,7 +54,7 @@ class Editor : public possumwood::SourceEditor {
 
 	protected:
 		virtual void valueChanged(const dependency_graph::Attr& attr) override {
-			if(attr == a_symbols) {
+			if(attr == m_params.a_symbols) {
 				m_popup->deleteLater();
 
 				populateVariableList();
@@ -76,7 +82,7 @@ class Editor : public possumwood::SourceEditor {
 
 			// the external symbols
 			unsigned ctr = 0;
-			for(auto& s : values().get(a_symbols)) {
+			for(auto& s : values().get(m_params.a_symbols)) {
 				m_popup->addItem(s.first + "\t(constant)");
 				++ctr;
 			}
@@ -98,19 +104,50 @@ class Editor : public possumwood::SourceEditor {
 		}
 
 	private:
+		Params<PIXMAP>& m_params;
+
 		QPushButton* m_varsButton;
 
 		Popup* m_popup;
 };
 
-dependency_graph::State compute(dependency_graph::Values& data) {
+std::tuple<float, float, float> readValue(const possumwood::LDRPixel& pixel) {
+	std::tuple<float, float, float> result;
+
+	std::get<0>(result) = (float)pixel.value()[0] / 255.0f;
+	std::get<1>(result) = (float)pixel.value()[1] / 255.0f;
+	std::get<2>(result) = (float)pixel.value()[2] / 255.0f;
+
+	return result;
+};
+
+std::tuple<float, float, float> readValue(const possumwood::HDRPixel& pixel) {
+	return std::tie(pixel.value()[0], pixel.value()[1], pixel.value()[2]);
+};
+
+void writeValue(possumwood::LDRPixel& pixel, const std::tuple<float, float, float>& value) {
+	pixel = possumwood::LDRPixmap::pixel_t::value_t{{
+		possumwood::LDRPixmap::channel_t(std::min(255.0f, std::max(0.0f, std::get<0>(value) * 255.0f))),
+		possumwood::LDRPixmap::channel_t(std::min(255.0f, std::max(0.0f, std::get<1>(value) * 255.0f))),
+		possumwood::LDRPixmap::channel_t(std::min(255.0f, std::max(0.0f, std::get<2>(value) * 255.0f)))
+	}};
+};
+
+void writeValue(possumwood::HDRPixel& pixel, const std::tuple<float, float, float>& value) {
+	pixel = possumwood::HDRPixmap::pixel_t::value_t{{
+		std::get<0>(value), std::get<1>(value), std::get<2>(value)
+	}};
+}
+
+template<typename PIXMAP>
+dependency_graph::State compute(dependency_graph::Values& data, Params<PIXMAP>& params) {
 	dependency_graph::State result;
 
-	std::shared_ptr<const possumwood::LDRPixmap> input = data.get(a_inPixmap);
+	std::shared_ptr<const PIXMAP> input = data.get(params.a_inPixmap);
 
 	if(input == nullptr) {
 		result.addError("No input pixmap");
-		data.set(a_outPixmap, input);
+		data.set(params.a_outPixmap, input);
 	}
 
 	else {
@@ -121,7 +158,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		float g = 0.0f;
 		float b = 0.0f;
 
-		const possumwood::ExprSymbols& symbols = data.get(a_symbols);
+		const possumwood::ExprSymbols& symbols = data.get(params.a_symbols);
 
 		exprtk::symbol_table<float> symbol_table;
 
@@ -147,7 +184,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		bool success = false;
 		{
 			exprtk::parser<float> parser;
-			success = parser.compile(data.get(a_src), expression);
+			success = parser.compile(data.get(params.a_src), expression);
 
 			if(!success)
 				err = parser.error();
@@ -160,12 +197,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			result.addError(err);
 
 			// output nothing
-			data.set(a_outPixmap, std::shared_ptr<const possumwood::LDRPixmap>());
+			data.set(params.a_outPixmap, std::shared_ptr<const PIXMAP>());
 		}
 
 		// compilation success
 		else {
-			std::unique_ptr<possumwood::LDRPixmap> out(new possumwood::LDRPixmap(input->width(), input->height()));
+			std::unique_ptr<PIXMAP> out(new PIXMAP(input->width(), input->height()));
 
 			// iterate over pixels
 			for(std::size_t yi = 0; yi < input->height(); ++yi)
@@ -174,43 +211,47 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					y = yi;
 
 					// r, g, b variables are changeable from the expression
-					auto value = (*input)(xi, yi).value();
-
-					r = (float)value[0] / 255.0f;
-					g = (float)value[1] / 255.0f;
-					b = (float)value[2] / 255.0f;
+					std::tie(r,g,b) = readValue((*input)(xi, yi).value());
 
 					// evaluate the expression, ignoring its output
 					cexpr.value();
 
-					(*out)(xi, yi) = possumwood::LDRPixmap::pixel_t::value_t{{
-						possumwood::LDRPixmap::channel_t(std::min(255.0f, std::max(0.0f, r * 255.0f))),
-						possumwood::LDRPixmap::channel_t(std::min(255.0f, std::max(0.0f, g * 255.0f))),
-						possumwood::LDRPixmap::channel_t(std::min(255.0f, std::max(0.0f, b * 255.0f))),
-					}};
+					// write the values back
+					writeValue((*out)(xi, yi), std::tie(r,g,b));
 				}
 
-			data.set(a_outPixmap, std::shared_ptr<const possumwood::LDRPixmap>(out.release()));
+			data.set(params.a_outPixmap, std::shared_ptr<const PIXMAP>(out.release()));
 		}
 	}
 
 	return result;
 }
 
-void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_src, "source", std::string("r := x / width;\ng := y / height;\nb := max(0, 1-r-g);"));
-	meta.addAttribute(a_symbols, "symbols");
-	meta.addAttribute(a_inPixmap, "in_image");
-	meta.addAttribute(a_outPixmap, "out_image");
+template<typename PIXMAP>
+void init(possumwood::Metadata& meta, Params<PIXMAP>& params) {
+	meta.addAttribute(params.a_src, "source", std::string("r := x / width;\ng := y / height;\nb := max(0, 1-r-g);"));
+	meta.addAttribute(params.a_symbols, "symbols");
+	meta.addAttribute(params.a_inPixmap, "in_image");
+	meta.addAttribute(params.a_outPixmap, "out_image");
 
-	meta.addInfluence(a_src, a_outPixmap);
-	meta.addInfluence(a_symbols, a_outPixmap);
-	meta.addInfluence(a_inPixmap, a_outPixmap);
+	meta.addInfluence(params.a_src, params.a_outPixmap);
+	meta.addInfluence(params.a_symbols, params.a_outPixmap);
+	meta.addInfluence(params.a_inPixmap, params.a_outPixmap);
 
-	meta.setCompute(&compute);
-	meta.setEditor<Editor>();
+	meta.setCompute([&params](dependency_graph::Values& data) {
+		return compute<PIXMAP>(data, params);
+	});
+	meta.setEditorFactory([&params]() {
+		return std::unique_ptr<possumwood::Editor>(new Editor<PIXMAP>(params));
+	});
 }
 
-possumwood::NodeImplementation s_impl("images/per_pixel_expr", init);
+possumwood::NodeImplementation s_impl("images/per_pixel_expr", [](possumwood::Metadata& meta) {
+	init<possumwood::LDRPixmap>(meta, s_ldrParams);
+});
+
+possumwood::NodeImplementation s_impl_hdr("images/per_pixel_expr_hdr", [](possumwood::Metadata& meta) {
+	init<possumwood::HDRPixmap>(meta, s_hdrParams);
+});
 
 }
