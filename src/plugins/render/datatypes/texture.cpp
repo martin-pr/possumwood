@@ -25,7 +25,7 @@ Texture::Texture(const HDRPixmap& pixmap) : m_id(0) {
 		glBindTexture(GL_TEXTURE_2D, m_id);
 
 		// this assumes all image data are stored as a flat float per channel array!
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pixmap.width(), pixmap.height(), 0, GL_RGB, GL_FLOAT,
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, pixmap.width(), pixmap.height(), 0, GL_RGB, GL_FLOAT,
 		             &(pixmap(0,0).value()[0]));
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
