@@ -50,9 +50,6 @@ const Connections& Network::connections() const {
 	return m_connections;
 }
 
-std::unique_ptr<NodeBase> Network::makeNode(const std::string& name, const MetadataHandle& md, const UniqueId& id) {
-	return md->createNode(name, *this, id);
-}
 
 const MetadataHandle& Network::defaultMetadata() {
 	static std::unique_ptr<MetadataHandle> s_handle;
