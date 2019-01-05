@@ -17,7 +17,7 @@ void Uniforms::addTexture(const std::string& name, const QPixmap& pixmap) {
 	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(pixmap));
 }
 
-void Uniforms::use(GLuint programId, const Drawable::ViewportState& vs) const {
+void Uniforms::use(GLuint programId, const ViewportState& vs) const {
 	const bool timeUpdate = m_currentTime != possumwood::App::instance().time();
 	m_currentTime = possumwood::App::instance().time();
 

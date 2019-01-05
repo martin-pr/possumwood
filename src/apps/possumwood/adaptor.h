@@ -59,7 +59,7 @@ class Adaptor : public QWidget {
 		QAction* redoAction() const;
 
 		/// calls all existing Drawables
-		void draw(const possumwood::Drawable::ViewportState& viewport);
+		void draw(const possumwood::ViewportState& viewport);
 
 		const possumwood::Index& index() const;
 

@@ -548,7 +548,7 @@ QAction* Adaptor::redoAction() const {
 	return m_redo;
 }
 
-void Adaptor::draw(const possumwood::Drawable::ViewportState& viewport) {
+void Adaptor::draw(const possumwood::ViewportState& viewport) {
 	GL_CHECK_ERR;
 
 	for(auto& n : m_index) {

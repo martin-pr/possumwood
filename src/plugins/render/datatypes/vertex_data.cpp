@@ -9,7 +9,7 @@ namespace possumwood {
 VertexData::VertexData(GLenum drawElementType) : m_drawElementType(drawElementType) {
 }
 
-void VertexData::use(GLuint programId, const Drawable::ViewportState& vs) const {
+void VertexData::use(GLuint programId, const ViewportState& vs) const {
 	// do the updates, if needed
 	for(auto& v : m_vbos)
 		if(v.updateType == kPerDraw || v.buffer == nullptr)

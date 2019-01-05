@@ -2,20 +2,15 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <ImathMatrix.h>
-
 #include <dependency_graph/values.h>
 #include <dependency_graph/state.h>
+
+#include "viewport_state.h"
 
 namespace possumwood {
 
 class Drawable : public boost::noncopyable {
 	public:
-		struct ViewportState {
-			unsigned width, height;
-			Imath::M44f projection, modelview;
-		};
-
 		Drawable(dependency_graph::Values&& vals);
 		virtual ~Drawable();
 
@@ -37,11 +32,11 @@ class Drawable : public boost::noncopyable {
 		dependency_graph::Values& values();
 		const dependency_graph::Values& values() const;
 
-		const possumwood::Drawable::ViewportState& viewport() const;
+		const possumwood::ViewportState& viewport() const;
 
 	private:
 		dependency_graph::Values m_vals;
-		possumwood::Drawable::ViewportState m_viewport;
+		possumwood::ViewportState m_viewport;
 		static boost::signals2::signal<void()> s_refresh;
 		dependency_graph::State m_drawState;
 };

@@ -544,7 +544,7 @@ void MainWindow::draw(float dt) {
 	s_grid->draw(m_viewport->projection(), m_viewport->modelview());
 
 	// draw everything else
-	possumwood::Drawable::ViewportState viewport;
+	possumwood::ViewportState viewport;
 	viewport.width = m_viewport->width();
 	viewport.height = m_viewport->height();
 	viewport.modelview = m_viewport->modelview();

@@ -47,7 +47,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		data.get(a_name),
 		1,
 		possumwood::Uniforms::kPerFrame,
-		[matrix](Imath::Matrix44<float>* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
+		[matrix](Imath::Matrix44<float>* data, std::size_t size, const possumwood::ViewportState& vs) {
 			assert(size == 1);
 			*data = matrix;
 		}

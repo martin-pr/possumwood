@@ -10,7 +10,7 @@ Metadata::Metadata(const std::string& nodeType) : dependency_graph::Metadata(nod
 Metadata::~Metadata() {
 }
 
-void Metadata::setDrawable(std::function<dependency_graph::State(const dependency_graph::Values&, const possumwood::Drawable::ViewportState&)> fn) {
+void Metadata::setDrawable(std::function<dependency_graph::State(const dependency_graph::Values&, const possumwood::ViewportState&)> fn) {
 	m_drawableFactory = [fn](dependency_graph::Values&& vals) {
 		return std::unique_ptr<possumwood::Drawable>(
 			new possumwood::DrawableFunctor(std::move(vals), fn));

@@ -110,7 +110,7 @@ void addVBO(possumwood::VertexData& vd, const possumwood::polymesh::GenericBase:
 
 	vd.addVBO<typename ITER::value_type>(handle.name(), count, possumwood::VertexData::kStatic,
 		[i, count](possumwood::Buffer<typename possumwood::VBOTraits<typename ITER::value_type>::element>& buffer,
-			const possumwood::Drawable::ViewportState& vs) {
+			const possumwood::ViewportState& vs) {
 
 			for(std::size_t v=0;v<count;++v) {
 				const auto& val = (*i).value();
