@@ -38,17 +38,11 @@ using std::cout;
 using std::endl;
 using std::flush;
 
-#ifndef PLUGIN_DIR
-#define PLUGIN_DIR "./plugins"
-#endif
-
 int main(int argc, char* argv[]) {
 	// // Declare the supported options.
 	po::options_description desc("Allowed options");
 	desc.add_options()
 		("help", "produce help message")
-		("plugin_directory", po::value<std::string>()->default_value(PLUGIN_DIR),
-			"directory to search for plugins")
 		("scene", po::value<std::string>(), "open a scene file")
 	;
 
@@ -64,10 +58,13 @@ int main(int argc, char* argv[]) {
 
 	///////////////////////////////
 
+	// create the possumwood application
+	possumwood::App papp;
+
 	std::vector<void*> pluginHandles;
 
 	// scan for plugins
-	for(fs::directory_iterator itr(vm["plugin_directory"].as<std::string>());
+	for(fs::directory_iterator itr(papp.expandPath("$PLUGINS"));
 	    itr != fs::directory_iterator(); ++itr) {
 		if(fs::is_regular_file(itr->status()) && itr->path().extension() == ".so") {
 			void* ptr = dlopen(itr->path().string().c_str(), RTLD_NOW);
@@ -102,11 +99,6 @@ int main(int argc, char* argv[]) {
 			QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 			QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 		#endif
-
-		GL_CHECK_ERR;
-
-		// create the possumwood application
-		possumwood::App papp;
 
 		GL_CHECK_ERR;
 
