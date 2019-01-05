@@ -31,6 +31,7 @@ class Network : public NodeBase {
 
 	friend class Graph;
 	friend class Nodes;
+	friend class Metadata;
 };
 
 }

@@ -22,7 +22,7 @@ class Node : public NodeBase {
 
 	private:
 
-	friend class Network;
+	friend class Metadata;
 };
 
 }

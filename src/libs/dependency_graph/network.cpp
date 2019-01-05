@@ -51,11 +51,7 @@ const Connections& Network::connections() const {
 }
 
 std::unique_ptr<NodeBase> Network::makeNode(const std::string& name, const MetadataHandle& md, const UniqueId& id) {
-	// if(md != networkMetadata())
-	if(md.metadata().type() != "network")
-		return std::unique_ptr<NodeBase>(new Node(name, id, md, this));
-	else
-		return std::unique_ptr<NodeBase>(new Network(name, id, md, this));
+	return md->createNode(name, *this, id);
 }
 
 const MetadataHandle& Network::defaultMetadata() {
