@@ -541,27 +541,9 @@ QAction* Adaptor::redoAction() const {
 }
 
 void Adaptor::draw(const possumwood::ViewportState& viewport) {
-	GL_CHECK_ERR;
-
-	for(auto& n : m_index) {
-		GL_CHECK_ERR;
-
-		boost::optional<possumwood::Drawable&> drawable = possumwood::Metadata::getDrawable(*n.second.graphNode);
-		if(drawable) {
-			const auto currentDrawState = drawable->drawState();
-
-			GL_CHECK_ERR;
-			drawable->doDraw(viewport);
-			GL_CHECK_ERR;
-
-			if(drawable->drawState() != currentDrawState)
-				onStateChanged(*n.second.graphNode);
-		}
-
-		GL_CHECK_ERR;
-	}
-
-	GL_CHECK_ERR;
+	possumwood::App::instance().draw(viewport, [this](const dependency_graph::NodeBase& node) {
+		onStateChanged(node);
+	});
 }
 
 const possumwood::Index& Adaptor::index() const {

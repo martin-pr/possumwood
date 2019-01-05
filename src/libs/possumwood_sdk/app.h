@@ -36,6 +36,9 @@ class App : public AppCore {
 		QMainWindow* mainWindow() const;
 		void setMainWindow(QMainWindow* win);
 
+		/// run OpenGL drawing, by iterating over all Node instances and calling any existing Drawable::doDraw()
+		void draw(const possumwood::ViewportState& viewport, std::function<void(const dependency_graph::NodeBase&)> stateChangedCallback = std::function<void(const dependency_graph::NodeBase&)>());
+
 		void setTime(float time);
 		float time() const;
 		boost::signals2::connection onTimeChanged(std::function<void(float)> fn);

@@ -16,6 +16,9 @@
 
 #include <actions/actions.h>
 
+#include <possumwood_sdk/gl.h>
+#include <possumwood_sdk/metadata.h>
+
 #include "config.inl"
 
 namespace possumwood {
@@ -224,6 +227,30 @@ void App::setMainWindow(QMainWindow* win) {
 	assert(m_mainWindow == NULL &&
 	       "setMainWindow is called only once at the beginning of an application");
 	m_mainWindow = win;
+}
+
+void App::draw(const possumwood::ViewportState& viewport, std::function<void(const dependency_graph::NodeBase&)> stateChangedCallback) {
+	GL_CHECK_ERR;
+
+	for(auto it = graph().nodes().begin(dependency_graph::Nodes::kRecursive); it != graph().nodes().end(); ++it) {
+		GL_CHECK_ERR;
+
+		boost::optional<possumwood::Drawable&> drawable = possumwood::Metadata::getDrawable(*it);
+		if(drawable) {
+			const auto currentDrawState = drawable->drawState();
+
+			GL_CHECK_ERR;
+			drawable->doDraw(viewport);
+			GL_CHECK_ERR;
+
+			if(drawable->drawState() != currentDrawState && stateChangedCallback)
+				stateChangedCallback(*it);
+		}
+
+		GL_CHECK_ERR;
+	}
+
+	GL_CHECK_ERR;
 }
 
 void App::setTime(float time) {
