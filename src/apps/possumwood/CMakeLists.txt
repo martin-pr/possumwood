@@ -1,6 +1,7 @@
 # Find the source files
 file(GLOB headers *.h)
 file(GLOB_RECURSE sources *.cpp)
+file(GLOB sources_common ../*.cpp)
 
 # Find Qt
 SET(QT_USE_QTOPENGL TRUE)
@@ -22,6 +23,6 @@ set(LIBS ${LIBS} ${GLUT_LIBRARY})
 # Build the executable
 include_directories(./)
 qt5_add_resources(resources resources/resources.qrc)
-add_executable(possumwood ${sources} ${headers_moc} ${resources})
+add_executable(possumwood ${sources} ${sources_common} ${headers_moc} ${resources})
 
 target_link_libraries(possumwood nodeeditor dependency_graph possumwood_sdk ${LIBS} dl GLEW)

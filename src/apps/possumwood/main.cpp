@@ -2,8 +2,6 @@
 #include <string>
 #include <stdexcept>
 
-#include <dlfcn.h>
-
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
@@ -30,9 +28,9 @@
 #include "adaptor.h"
 #include "main_window.h"
 #include "gl_init.h"
+#include "common.h"
 
 namespace po = boost::program_options;
-namespace fs = boost::filesystem;
 
 using std::cout;
 using std::endl;
@@ -61,23 +59,10 @@ int main(int argc, char* argv[]) {
 	// create the possumwood application
 	possumwood::App papp;
 
-	std::vector<void*> pluginHandles;
-
-	// scan for plugins
-	for(fs::directory_iterator itr(papp.expandPath("$PLUGINS"));
-	    itr != fs::directory_iterator(); ++itr) {
-		if(fs::is_regular_file(itr->status()) && itr->path().extension() == ".so") {
-			void* ptr = dlopen(itr->path().string().c_str(), RTLD_NOW);
-			if(ptr)
-				pluginHandles.push_back(ptr);
-			else
-				std::cout << dlerror() << std::endl;
-		}
-	}
-
-	///////////////////////////////
-
 	{
+		// load all plugins into an RAII container
+		PluginsRAII plugins;
+
 		GL_CHECK_ERR;
 
 		{
@@ -124,14 +109,6 @@ int main(int argc, char* argv[]) {
 		app.exec();
 
 		GL_CHECK_ERR;
-	}
-
-	////////////////////////////////
-
-	// unload all plugins
-	while(!pluginHandles.empty()) {
-		dlclose(pluginHandles.back());
-		pluginHandles.pop_back();
 	}
 
 	return 0;
