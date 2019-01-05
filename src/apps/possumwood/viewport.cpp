@@ -103,14 +103,17 @@ void Viewport::paintGL() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// update the projection matrix
-	m_projection =
+	// update the matrices
+	m_viewportState.projection =
 	    perspective(45, (float)width() / (float)height(), m_sceneDistance * 0.1f,
 	                std::max(m_sceneDistance * 2.0f, 1000.0f));
 
-	m_modelview = lookAt(
+	m_viewportState.modelview = lookAt(
 	    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance) + m_origin,
 	    m_origin, Imath::V3f(0, 1, 0));
+
+	m_viewportState.width = width();
+	m_viewportState.height = height();
 
 	// record the time difference between frames, to determine current FPS
 	const boost::posix_time::ptime t(boost::posix_time::microsec_clock::universal_time());
@@ -169,10 +172,6 @@ void Viewport::mouseMoveEvent(QMouseEvent* event) {
 	m_mouseY = event->y();
 }
 
-const Imath::M44f& Viewport::projection() const {
-	return m_projection;
-}
-
-const Imath::M44f& Viewport::modelview() const {
-	return m_modelview;
+const possumwood::ViewportState& Viewport::viewportState() const {
+	return m_viewportState;
 }
