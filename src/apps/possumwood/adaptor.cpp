@@ -233,18 +233,10 @@ Adaptor::~Adaptor() {
 
 namespace {
 	void addToIndex(possumwood::Index& index, dependency_graph::NodeBase* node, node_editor::Node* uiNode) {
-		const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&node->metadata().metadata());
-
-		// create a drawable (if factory returns anything)
-		std::unique_ptr<possumwood::Drawable> drawable;
-		if(meta != nullptr)
-			drawable = meta->createDrawable(dependency_graph::Values(*node));
-
 		// add the new item to index (uiNode and drawable can be nullptr)
 		index.add(possumwood::Index::Item(
 			node,
-			uiNode,
-			std::move(drawable)
+			uiNode
 		));
 
 		// continue recursively
@@ -404,7 +396,7 @@ void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
 			}
 		}
 
-		possumwood::Drawable* drw = m_index[&node].drawable.get();
+		boost::optional<possumwood::Drawable&> drw = possumwood::Metadata::getDrawable(node);
 		if(drw)
 			for(auto& m : drw->drawState()) {
 				switch(m.first) {
@@ -554,14 +546,15 @@ void Adaptor::draw(const possumwood::ViewportState& viewport) {
 	for(auto& n : m_index) {
 		GL_CHECK_ERR;
 
-		if(n.second.drawable != nullptr) {
-			const auto currentDrawState = n.second.drawable->drawState();
+		boost::optional<possumwood::Drawable&> drawable = possumwood::Metadata::getDrawable(*n.second.graphNode);
+		if(drawable) {
+			const auto currentDrawState = drawable->drawState();
 
 			GL_CHECK_ERR;
-			n.second.drawable->doDraw(viewport);
+			drawable->doDraw(viewport);
 			GL_CHECK_ERR;
 
-			if(n.second.drawable->drawState() != currentDrawState)
+			if(drawable->drawState() != currentDrawState)
 				onStateChanged(*n.second.graphNode);
 		}
 

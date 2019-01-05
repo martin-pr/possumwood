@@ -63,6 +63,11 @@ class Metadata : public dependency_graph::Metadata {
 		/// create an editor for a node instance
 		std::unique_ptr<Editor> createEditor(dependency_graph::NodeBase& node) const;
 
+		virtual std::unique_ptr<dependency_graph::NodeBase> createNode(const std::string& name, dependency_graph::Network& parent, const dependency_graph::UniqueId& id = dependency_graph::UniqueId()) const override;
+
+		/// draw a node instance, calling drawable's doDraw() function, if present
+		static boost::optional<Drawable&> getDrawable(const dependency_graph::NodeBase& node);
+
 	private:
 		std::function<std::unique_ptr<Drawable>(dependency_graph::Values&&)> m_drawableFactory;
 		std::function<std::unique_ptr<Editor>(dependency_graph::NodeBase&)> m_editorFactory;

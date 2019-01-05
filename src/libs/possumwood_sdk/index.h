@@ -16,15 +16,14 @@ namespace possumwood {
 class Index {
 	public:
 		struct Item : public boost::noncopyable {
-			Item(dependency_graph::NodeBase* gr, node_editor::Node* en, std::unique_ptr<possumwood::Drawable>&& dr) : graphNode(gr), editorNode(en), drawable(std::move(dr)) {
+			Item(dependency_graph::NodeBase* gr, node_editor::Node* en) : graphNode(gr), editorNode(en) {
 			}
 
-			Item(Item&& i) : graphNode(i.graphNode), editorNode(i.editorNode), drawable(std::move(i.drawable)) {
+			Item(Item&& i) : graphNode(i.graphNode), editorNode(i.editorNode) {
 			}
 
 			dependency_graph::NodeBase* graphNode;
 			node_editor::Node* editorNode;
-			std::unique_ptr<possumwood::Drawable> drawable;
 		};
 
 		void add(Item&& item);
