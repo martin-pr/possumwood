@@ -1,0 +1,31 @@
+#pragma once
+
+#include <vector>
+
+
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+/// WHY?
+#ifndef GLAPI
+#define GLAPI extern
+#endif
+
+#include <GL/osmesa.h>
+
+#include <possumwood_sdk/viewport_state.h>
+
+class RenderContext {
+	public:
+		RenderContext();
+		~RenderContext();
+
+		std::vector<GLubyte> render(const possumwood::ViewportState& viewport);
+
+	private:
+		RenderContext(const RenderContext&) = delete;
+		RenderContext& operator = (const RenderContext&) = delete;
+
+		OSMesaContext m_ctx;
+};
