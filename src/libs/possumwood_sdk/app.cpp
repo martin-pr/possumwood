@@ -6,8 +6,8 @@
 
 #include <boost/filesystem.hpp>
 
+#include <QApplication>
 #include <QMainWindow>
-#include <QCoreApplication>
 
 #include <dependency_graph/port.inl>
 #include <dependency_graph/node.h>

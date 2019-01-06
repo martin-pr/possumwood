@@ -7,9 +7,10 @@
 #include <dependency_graph/graph.h>
 
 #include "actions/app.h"
+#include "actions/io.h"
 
 #include "config.h"
-#include "index.h"
+#include "viewport_state.h"
 
 class QMainWindow;
 
