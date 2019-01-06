@@ -18,7 +18,7 @@
 
 class RenderContext {
 	public:
-		RenderContext();
+		RenderContext(const possumwood::ViewportState& viewport);
 		~RenderContext();
 
 		std::vector<GLubyte> render(const possumwood::ViewportState& viewport);

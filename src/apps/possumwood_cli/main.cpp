@@ -8,6 +8,10 @@
 #include "render_context.h"
 
 int main(int argc, char* argv[]) {
+	// rendering options
+	possumwood::ViewportState viewport;
+	RenderContext ctx(viewport);
+
 	// create the possumwood application
 	possumwood::App papp;
 
@@ -17,8 +21,6 @@ int main(int argc, char* argv[]) {
 	// parse the program options
 	Options options(argc, argv);
 
-	// rendering options
-	possumwood::ViewportState viewport;
 
 	for(auto& option : options) {
 		// scene loading
@@ -38,7 +40,6 @@ int main(int argc, char* argv[]) {
 
 			std::cout << "Rendering " << option.parameters[0] << "... " << std::flush;
 
-			RenderContext ctx;
 			std::vector<GLubyte> buffer = ctx.render(viewport);
 
 			std::cout << "done" << std::endl;

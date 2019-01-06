@@ -12,7 +12,7 @@ file(GLOB sources_common ../*.cpp)
 #message(info ${GLUT_INCLUDE_DIRS})
 #set(LIBS ${LIBS} ${GLUT_LIBRARY})
 
-add_definitions(-DGLEW_OSMESA)
+add_definitions(-DGLEW_OSMESA -DSYSTEM=linux-osmesa)
 
 # Build the executable
 include_directories(./)
