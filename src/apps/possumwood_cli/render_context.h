@@ -12,8 +12,6 @@
 #define GLAPI extern
 #endif
 
-#include <GL/osmesa.h>
-
 #include <possumwood_sdk/viewport_state.h>
 
 class RenderContext {
@@ -27,5 +25,5 @@ class RenderContext {
 		RenderContext(const RenderContext&) = delete;
 		RenderContext& operator = (const RenderContext&) = delete;
 
-		OSMesaContext m_ctx;
+		int m_windowId;
 };

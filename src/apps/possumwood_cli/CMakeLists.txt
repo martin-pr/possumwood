@@ -12,10 +12,8 @@ file(GLOB sources_common ../*.cpp)
 #message(info ${GLUT_INCLUDE_DIRS})
 #set(LIBS ${LIBS} ${GLUT_LIBRARY})
 
-add_definitions(-DGLEW_OSMESA -DSYSTEM=linux-osmesa)
-
 # Build the executable
 include_directories(./)
 add_executable(possumwood_cli ${sources} ${sources_common})
 
-target_link_libraries(possumwood_cli dependency_graph possumwood_sdk ${LIBS} dl OSMesa GLEW GLU)
+target_link_libraries(possumwood_cli dependency_graph possumwood_sdk ${LIBS} dl GLEW GLU GL glut)

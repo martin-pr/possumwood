@@ -3,73 +3,64 @@
 #include <stdexcept>
 #include <string>
 
+#include <GL/freeglut.h>
+
 #include <possumwood_sdk/gl.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/metadata.h>
 
 namespace {
 
-bool s_glewInitialised = false;
+bool s_initialised = false;
 
 }
 
 RenderContext::RenderContext(const possumwood::ViewportState& viewport) {
-    static const int attribs[] = {
-       OSMESA_FORMAT, OSMESA_RGBA,
-       OSMESA_DEPTH_BITS, 32,
-       OSMESA_STENCIL_BITS, 0,
-       OSMESA_ACCUM_BITS, 0,
-       OSMESA_PROFILE, OSMESA_CORE_PROFILE,
-       OSMESA_CONTEXT_MAJOR_VERSION, 3,
-       OSMESA_CONTEXT_MINOR_VERSION, 3,
-       0 };
+	// lets init GLUT
+	if(!s_initialised) {
+		int count = 0;
+		glutInit(&count, nullptr);
+	}
 
-	m_ctx = OSMesaCreateContextAttribs(attribs, NULL);
-	if(!m_ctx)
-		throw std::runtime_error("Mesa context creation failed");
+	glutInitWindowSize(viewport.width, viewport.height);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitContextVersion (4, 3);
+	glutInitContextFlags (GLUT_CORE_PROFILE | GLUT_DEBUG);
 
-	std::vector<GLubyte> buffer(viewport.width * viewport.height * 4);
-	if(!OSMesaMakeCurrent(m_ctx, &buffer[0], GL_UNSIGNED_BYTE, viewport.width, viewport.height))
-		throw std::runtime_error("OSMesaMakeCurrent call failed");
+	m_windowId = glutCreateWindow("offscreen-ish");
 
-	if(!s_glewInitialised) {
+	if(!s_initialised) {
 		auto glewErr = glewInit();
 		if(glewErr != GLEW_OK)
 			throw std::runtime_error(std::string("Error initialising GLEW - ") + (const char*)(glewGetErrorString(glewErr)));
-		s_glewInitialised = true;
+
+		s_initialised = true;
 	}
-
-	std::cout << "GLEW_VERSION_2_0 = " << (int)GLEW_VERSION_2_0 << std::endl;
-	std::cout << "GLEW_VERSION_3_0 = " << (int)GLEW_VERSION_3_0 << std::endl;
-	std::cout << "GLEW_VERSION_3_3 = " << (int)GLEW_VERSION_3_3 << std::endl;
-	std::cout << "GLEW_VERSION_4_1 = " << (int)GLEW_VERSION_4_1 << std::endl;
-	std::cout << "GLEW_VERSION_4_2 = " << (int)GLEW_VERSION_4_2 << std::endl;
-
-	int major, minor;
-	glGetIntegerv(GL_MAJOR_VERSION, &major);
-	glGetIntegerv(GL_MINOR_VERSION, &minor);
-
-	std::cout << "GL_MAJOR_VERSION = " << major << std::endl;
-	std::cout << "GL_MINOR_VERSION = " << minor << std::endl;
-
-	GL_CHECK_ERR;
 }
 
 RenderContext::~RenderContext() {
-	OSMesaDestroyContext(m_ctx);
+	if(!s_initialised) {
+		// silly GLUT - https://sourceforge.net/p/freeglut/mailman/freeglut-developer/thread/BANLkTin7n06HnopO5qSiUgUBrN3skAWDyA@mail.gmail.com/
+		int count = 0;
+		glutInit(&count, nullptr);
+	}
+
+	glutDestroyWindow(m_windowId);
 }
 
-std::vector<GLubyte> RenderContext::render(const possumwood::ViewportState& viewport) {
-	std::vector<GLubyte> buffer(viewport.width * viewport.height * 4);
+namespace {
 
+possumwood::ViewportState s_viewportState;
+
+void draw() {
 	// setup the viewport basics
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
 	glClearColor(0, 0, 0, 0);
-	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	possumwood::App::instance().draw(viewport, [](const dependency_graph::NodeBase& node) {
+	possumwood::App::instance().draw(s_viewportState, [](const dependency_graph::NodeBase& node) {
 		boost::optional<possumwood::Drawable&> drawable = possumwood::Metadata::getDrawable(node);
 		if(drawable && drawable->drawState().errored()) {
 			std::stringstream ss;
@@ -80,6 +71,39 @@ std::vector<GLubyte> RenderContext::render(const possumwood::ViewportState& view
 		}
 
 	});
+
+	glFlush();
+}
+
+///
+
+GLubyte* s_dataPtr;
+
+void readFrame() {
+	glReadBuffer(GL_BACK);
+
+	glReadPixels(0, 0, s_viewportState.width, s_viewportState.height, GL_RGB, GL_UNSIGNED_BYTE, s_dataPtr);
+
+	glutLeaveMainLoop();
+
+	s_initialised = false;
+}
+
+}
+
+std::vector<GLubyte> RenderContext::render(const possumwood::ViewportState& viewport) {
+	std::vector<GLubyte> buffer(viewport.width * viewport.height * 3);
+
+	s_viewportState = viewport;
+	s_dataPtr = &buffer[0];
+
+	glutDisplayFunc(draw);
+	glutIdleFunc(readFrame);
+
+	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
+	glutMainLoop();
+
+	s_dataPtr = nullptr;
 
 	return buffer;
 }
