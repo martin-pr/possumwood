@@ -25,7 +25,7 @@
 // global viewport state
 possumwood::ViewportState viewport;
 // rendering options
-RenderContext ctx(viewport);
+std::unique_ptr<RenderContext> ctx;
 
 // global application instance
 std::unique_ptr<possumwood::App> papp;
@@ -39,45 +39,45 @@ void loadScene(const Options::Item& option) {
 	std::cout << "done" << std::endl;
 }
 
-void render(const Options::Item& option) {
+std::vector<Action> render(const Options::Item& option) {
 	if(option.parameters.size() != 1)
 		throw std::runtime_error("--render option allows only exactly one filename");
 
-	std::cout << "Rendering " << option.parameters[0] << "... " << std::flush;
+	const std::string filename = option.parameters[0];
 
-	std::vector<GLubyte> buffer = ctx.render(viewport);
+	std::function<void(std::vector<GLubyte>&)> callback = [filename](std::vector<GLubyte>& buffer) {
+		std::cout << "Rendering " << filename << "... " << std::flush;
 
-	{
-		std::ofstream file(option.parameters[0].c_str(), std::ofstream::binary);
+		std::ofstream file(filename.c_str(), std::ofstream::binary);
 
 		file << "P6" << std::endl;
 		file << viewport.width << " " << viewport.height << " 255" << std::endl;
 
 		for(unsigned l=viewport.height; l>0; --l)
 			file.write((const char*)(&buffer[(l-1) * viewport.width*3]), viewport.width*3);
-	}
 
+		std::cout << "done" << std::endl;
+	};
 
-	std::cout << "done" << std::endl;
+	std::vector<Action> result;
+	result.push_back(ctx->render(viewport, callback));
+	return result;
 }
 
 std::vector<Action> evaluateOption(const Options::const_iterator& current) {
 	const Options::Item& option = *current;
-
-	// any expanded actions (or empty if none needed)
-	std::vector<Action> followUpActions;
 
 	if(option.name == "--scene")
 		loadScene(option);
 
 	// rendering a frame
 	else if(option.name == "--render")
-		render(option);
+		return render(option);
 
 	else
 		throw std::runtime_error("Unknown command line option " + option.name);
 
-	return followUpActions;
+	return std::vector<Action>();
 }
 
 std::vector<Action> evaluateOptions(const Options& options) {
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
 	// parse the program options
 	Options options(argc, argv);
 
-	// and run the loop
+	// populate the initial action
 	Stack s;
 	s.add(Action([&]() {
 		std::vector<Action> result;
@@ -107,8 +107,24 @@ int main(int argc, char* argv[]) {
 		return result;
 	}));
 
-	while(!s.isFinished())
-		s.step();
+	// two types of loops - "non-GL" loop when no --render parameter passed
+	//                    - "GL" loop based on GLUT when at least one --render parameter is present
+	auto renderParamIt = std::find_if(options.begin(), options.end(),
+		[](const Options::Item& item) {
+			return item.name == "--render";
+		});
+
+	if(renderParamIt != options.end()) {
+		// use GL-based loop
+		ctx = std::unique_ptr<RenderContext>(new RenderContext(viewport));
+		ctx->run(s);
+	}
+
+	else {
+		// use a trivial while statement
+		while(!s.isFinished())
+			s.step();
+	}
 
 	return 0;
 }

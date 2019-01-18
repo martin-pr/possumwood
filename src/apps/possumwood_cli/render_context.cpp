@@ -9,6 +9,8 @@
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/metadata.h>
 
+#include "stack.h"
+
 namespace {
 
 static bool s_glutInitialised = false;
@@ -61,8 +63,6 @@ namespace {
 possumwood::ViewportState s_viewportState;
 
 void draw() {
-	std::cout << "DRAW" << std::endl;
-
 	// setup the viewport basics
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -87,49 +87,83 @@ void draw() {
 
 ///
 
-GLubyte* s_dataPtr;
-bool s_firstRun;
+}
 
-void readFrame() {
-	if(s_firstRun) {
-		glutPostRedisplay();
+Action RenderContext::render(const possumwood::ViewportState& viewport, std::function<void(std::vector<GLubyte>&)> callback) {
+	return Action([viewport, callback]() {
+		std::vector<Action> actions;
 
-		s_firstRun = false;
-	}
+		std::shared_ptr<std::vector<GLubyte>> data(new std::vector<GLubyte>(viewport.width * viewport.height * 3));
 
-	else {
-		glReadBuffer(GL_BACK);
+		// initialisation
+		actions.push_back(Action([data, viewport]() -> std::vector<Action> {
+			ensureGLUTInitialised();
 
-		glReadPixels(0, 0, s_viewportState.width, s_viewportState.height, GL_RGB, GL_UNSIGNED_BYTE, s_dataPtr);
+			s_viewportState = viewport;
 
+			return std::vector<Action>();
+		}));
+
+		// rendering
+		actions.push_back(Action([]() {
+			GL_CHECK_ERR
+
+			draw();
+
+			GL_CHECK_ERR
+
+			return std::vector<Action>();
+		}));
+
+		// reading back the buffers
+		actions.push_back(Action([data, callback] {
+			GL_CHECK_ERR
+
+			// glReadBuffer(GL_BACK);
+
+			GL_CHECK_ERR
+
+			glReadPixels(0, 0, s_viewportState.width, s_viewportState.height, GL_RGB, GL_UNSIGNED_BYTE, &(*data)[0]);
+
+			GL_CHECK_ERR
+
+			callback(*data);
+
+			GL_CHECK_ERR
+
+			return std::vector<Action>();
+		}));
+
+		return actions;
+	});
+}
+
+namespace {
+
+Stack* s_stack;
+
+void step() {
+	if(!s_stack->isFinished())
+		s_stack->step();
+
+	else
 		glutLeaveMainLoop();
-	}
 }
 
 }
 
-std::vector<GLubyte> RenderContext::render(const possumwood::ViewportState& viewport) {
-	ensureGLUTInitialised();
+void RenderContext::run(Stack& stack) {
+	s_stack = &stack;
 
-	std::vector<GLubyte> buffer(viewport.width * viewport.height * 3);
-
-	s_viewportState = viewport;
-	s_dataPtr = &buffer[0];
-	s_firstRun = true;
-
-	glutDisplayFunc(draw);
-	glutIdleFunc(readFrame);
-
-	std::cout << "** main loop start " << std::endl;
+	// glutDisplayFunc(draw);
+	// glutIdleFunc(readFrame);
+	glutDisplayFunc(step);
+	glutIdleFunc(glutPostRedisplay);
 
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 	glutMainLoop();
 
-	std::cout << "** main loop end " << std::endl;
-
 	s_glutInitialised = false;
 
-	s_dataPtr = nullptr;
-
-	return buffer;
+	s_stack = nullptr;
 }

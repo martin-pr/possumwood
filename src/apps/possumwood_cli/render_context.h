@@ -14,12 +14,18 @@
 
 #include <possumwood_sdk/viewport_state.h>
 
+#include "action.h"
+
+class Stack;
+
 class RenderContext {
 	public:
 		RenderContext(const possumwood::ViewportState& viewport);
 		~RenderContext();
 
-		std::vector<GLubyte> render(const possumwood::ViewportState& viewport);
+		void run(Stack& stack);
+
+		Action render(const possumwood::ViewportState& viewport, std::function<void(std::vector<GLubyte>&)> callback);
 
 	private:
 		RenderContext(const RenderContext&) = delete;
