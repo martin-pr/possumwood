@@ -61,6 +61,8 @@ namespace {
 possumwood::ViewportState s_viewportState;
 
 void draw() {
+	std::cout << "DRAW" << std::endl;
+
 	// setup the viewport basics
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -118,8 +120,12 @@ std::vector<GLubyte> RenderContext::render(const possumwood::ViewportState& view
 	glutDisplayFunc(draw);
 	glutIdleFunc(readFrame);
 
+	std::cout << "** main loop start " << std::endl;
+
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 	glutMainLoop();
+
+	std::cout << "** main loop end " << std::endl;
 
 	s_glutInitialised = false;
 

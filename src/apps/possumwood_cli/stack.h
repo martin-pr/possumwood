@@ -6,7 +6,7 @@ class Stack {
 	public:
 		Stack() = default;
 
-		void add(std::unique_ptr<Action>&& action);
+		void add(const Action& action);
 
 		void step();
 		bool isFinished() const;
@@ -15,5 +15,5 @@ class Stack {
 		Stack(const Stack&) = delete;
 		Stack& operator = (const Stack&) = delete;
 
-		std::vector<std::unique_ptr<Action>> m_actions;
+		std::vector<Action> m_actions;
 };

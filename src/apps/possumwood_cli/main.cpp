@@ -30,7 +30,7 @@ RenderContext ctx(viewport);
 // global application instance
 std::unique_ptr<possumwood::App> papp;
 
-std::vector<std::unique_ptr<Action>> evaluateOption(const Options::const_iterator& current) {
+std::vector<Action> evaluateOption(const Options::const_iterator& current) {
 	const Options::Item& option = *current;
 
 	if(option.name == "--scene") {
@@ -68,15 +68,15 @@ std::vector<std::unique_ptr<Action>> evaluateOption(const Options::const_iterato
 	else
 		throw std::runtime_error("Unknown command line option " + option.name);
 
-	std::vector<std::unique_ptr<Action>> result;
+	std::vector<Action> result;
 	return result;
 }
 
-std::vector<std::unique_ptr<Action>> evaluateOptions(const Options& options) {
-	std::vector<std::unique_ptr<Action>> result;
+std::vector<Action> evaluateOptions(const Options& options) {
+	std::vector<Action> result;
 
 	for(auto it = options.begin(); it != options.end(); ++it)
-		result.push_back(std::unique_ptr<Action>(new ActionFunctor(std::bind(evaluateOption, it))));
+		result.push_back(Action(std::bind(evaluateOption, it)));
 
 	return result;
 }
@@ -93,11 +93,11 @@ int main(int argc, char* argv[]) {
 
 	// and run the loop
 	Stack s;
-	s.add(std::unique_ptr<Action>(new ActionFunctor([&]() {
-		std::vector<std::unique_ptr<Action>> result;
-		result.push_back(std::unique_ptr<Action>(new ActionFunctor(std::bind(evaluateOptions, std::cref(options)))));
+	s.add(Action([&]() {
+		std::vector<Action> result;
+		result.push_back(Action(std::bind(evaluateOptions, std::cref(options))));
 		return result;
-	})));
+	}));
 
 	while(!s.isFinished())
 		s.step();

@@ -1,12 +1,8 @@
 #include "action.h"
 
-std::vector<std::unique_ptr<Action>> Action::operator()() const {
-	return exec();
+Action::Action(const std::function<std::vector<Action>()>& fn) : m_fn(fn) {
 }
 
-ActionFunctor::ActionFunctor(const std::function<std::vector<std::unique_ptr<Action>>()>& fn) : m_fn(fn) {
-}
-
-std::vector<std::unique_ptr<Action>> ActionFunctor::exec() const {
+std::vector<Action> Action::operator()() const {
 	return m_fn();
 }
