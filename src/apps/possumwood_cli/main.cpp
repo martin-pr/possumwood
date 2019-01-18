@@ -30,46 +30,54 @@ RenderContext ctx(viewport);
 // global application instance
 std::unique_ptr<possumwood::App> papp;
 
+void loadScene(const Options::Item& option) {
+	if(option.parameters.size() != 1)
+		throw std::runtime_error("--scene option allows only exactly one filename");
+
+	std::cout << "Loading " << option.parameters[0] << "... " << std::flush;
+	papp->loadFile(boost::filesystem::path(option.parameters[0]));
+	std::cout << "done" << std::endl;
+}
+
+void render(const Options::Item& option) {
+	if(option.parameters.size() != 1)
+		throw std::runtime_error("--render option allows only exactly one filename");
+
+	std::cout << "Rendering " << option.parameters[0] << "... " << std::flush;
+
+	std::vector<GLubyte> buffer = ctx.render(viewport);
+
+	{
+		std::ofstream file(option.parameters[0].c_str(), std::ofstream::binary);
+
+		file << "P6" << std::endl;
+		file << viewport.width << " " << viewport.height << " 255" << std::endl;
+
+		for(unsigned l=viewport.height; l>0; --l)
+			file.write((const char*)(&buffer[(l-1) * viewport.width*3]), viewport.width*3);
+	}
+
+
+	std::cout << "done" << std::endl;
+}
+
 std::vector<Action> evaluateOption(const Options::const_iterator& current) {
 	const Options::Item& option = *current;
 
-	if(option.name == "--scene") {
-		if(option.parameters.size() != 1)
-			throw std::runtime_error("--scene option allows only exactly one filename");
+	// any expanded actions (or empty if none needed)
+	std::vector<Action> followUpActions;
 
-		std::cout << "Loading " << option.parameters[0] << "... " << std::flush;
-		papp->loadFile(boost::filesystem::path(option.parameters[0]));
-		std::cout << "done" << std::endl;
-	}
+	if(option.name == "--scene")
+		loadScene(option);
 
 	// rendering a frame
-	else if(option.name == "--render") {
-		if(option.parameters.size() != 1)
-			throw std::runtime_error("--render option allows only exactly one filename");
-
-		std::cout << "Rendering " << option.parameters[0] << "... " << std::flush;
-
-		std::vector<GLubyte> buffer = ctx.render(viewport);
-
-		{
-			std::ofstream file(option.parameters[0].c_str(), std::ofstream::binary);
-
-			file << "P6" << std::endl;
-			file << viewport.width << " " << viewport.height << " 255" << std::endl;
-
-			for(unsigned l=viewport.height; l>0; --l)
-				file.write((const char*)(&buffer[(l-1) * viewport.width*3]), viewport.width*3);
-		}
-
-
-		std::cout << "done" << std::endl;
-	}
+	else if(option.name == "--render")
+		render(option);
 
 	else
 		throw std::runtime_error("Unknown command line option " + option.name);
 
-	std::vector<Action> result;
-	return result;
+	return followUpActions;
 }
 
 std::vector<Action> evaluateOptions(const Options& options) {
