@@ -11,23 +11,19 @@
 
 namespace {
 
-bool s_initialised = false;
+static bool s_glutInitialised = false;
 
-}
-
-RenderContext::RenderContext(const possumwood::ViewportState& viewport) {
-	// lets init GLUT
-	if(!s_initialised) {
+void ensureGLUTInitialised() {
+	if(!s_glutInitialised) {
 		int count = 0;
 		glutInit(&count, nullptr);
+
+		s_glutInitialised = true;
 	}
+}
 
-	glutInitWindowSize(viewport.width, viewport.height);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitContextVersion (4, 3);
-	glutInitContextFlags (GLUT_CORE_PROFILE | GLUT_DEBUG);
-
-	m_windowId = glutCreateWindow("offscreen-ish");
+void ensureGLEWInitialised() {
+	static bool s_initialised = false;
 
 	if(!s_initialised) {
 		auto glewErr = glewInit();
@@ -38,12 +34,24 @@ RenderContext::RenderContext(const possumwood::ViewportState& viewport) {
 	}
 }
 
+}
+
+RenderContext::RenderContext(const possumwood::ViewportState& viewport) {
+	ensureGLUTInitialised();
+
+	glutInitWindowSize(viewport.width, viewport.height);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitContextVersion (4, 3);
+	glutInitContextFlags (GLUT_CORE_PROFILE | GLUT_DEBUG);
+
+	m_windowId = glutCreateWindow("offscreen-ish");
+
+	ensureGLEWInitialised();
+}
+
 RenderContext::~RenderContext() {
-	if(!s_initialised) {
-		// silly GLUT - https://sourceforge.net/p/freeglut/mailman/freeglut-developer/thread/BANLkTin7n06HnopO5qSiUgUBrN3skAWDyA@mail.gmail.com/
-		int count = 0;
-		glutInit(&count, nullptr);
-	}
+	// silly GLUT - https://sourceforge.net/p/freeglut/mailman/freeglut-developer/thread/BANLkTin7n06HnopO5qSiUgUBrN3skAWDyA@mail.gmail.com/
+	ensureGLUTInitialised();
 
 	glutDestroyWindow(m_windowId);
 }
@@ -78,30 +86,42 @@ void draw() {
 ///
 
 GLubyte* s_dataPtr;
+bool s_firstRun;
 
 void readFrame() {
-	glReadBuffer(GL_BACK);
+	if(s_firstRun) {
+		glutPostRedisplay();
 
-	glReadPixels(0, 0, s_viewportState.width, s_viewportState.height, GL_RGB, GL_UNSIGNED_BYTE, s_dataPtr);
+		s_firstRun = false;
+	}
 
-	glutLeaveMainLoop();
+	else {
+		glReadBuffer(GL_BACK);
 
-	s_initialised = false;
+		glReadPixels(0, 0, s_viewportState.width, s_viewportState.height, GL_RGB, GL_UNSIGNED_BYTE, s_dataPtr);
+
+		glutLeaveMainLoop();
+	}
 }
 
 }
 
 std::vector<GLubyte> RenderContext::render(const possumwood::ViewportState& viewport) {
+	ensureGLUTInitialised();
+
 	std::vector<GLubyte> buffer(viewport.width * viewport.height * 3);
 
 	s_viewportState = viewport;
 	s_dataPtr = &buffer[0];
+	s_firstRun = true;
 
 	glutDisplayFunc(draw);
 	glutIdleFunc(readFrame);
 
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 	glutMainLoop();
+
+	s_glutInitialised = false;
 
 	s_dataPtr = nullptr;
 
