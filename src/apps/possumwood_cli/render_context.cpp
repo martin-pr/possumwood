@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 #include <string>
+#include <chrono>
+#include <thread>
 
 #include <GL/freeglut.h>
 
@@ -60,17 +62,17 @@ RenderContext::~RenderContext() {
 
 namespace {
 
-possumwood::ViewportState s_viewportState;
-
-void draw() {
+void draw(const possumwood::ViewportState& viewport) {
 	// setup the viewport basics
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	glClearColor(0, 0, 0, 0);
+	glViewport(0,0,viewport.width, viewport.height);
+
+	glClearColor(0, 1, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	possumwood::App::instance().draw(s_viewportState, [](const dependency_graph::NodeBase& node) {
+	possumwood::App::instance().draw(viewport, [](const dependency_graph::NodeBase& node) {
 		boost::optional<possumwood::Drawable&> drawable = possumwood::Metadata::getDrawable(node);
 		if(drawable && drawable->drawState().errored()) {
 			std::stringstream ss;
@@ -85,7 +87,17 @@ void draw() {
 	glFlush();
 }
 
-///
+std::function<void()> s_idleFn;
+
+void idleFn() {
+	if(s_idleFn) {
+		s_idleFn();
+		s_idleFn = std::function<void()>();
+	}
+
+	else
+		glutPostRedisplay();
+}
 
 }
 
@@ -99,16 +111,23 @@ Action RenderContext::render(const possumwood::ViewportState& viewport, std::fun
 		actions.push_back(Action([data, viewport]() -> std::vector<Action> {
 			ensureGLUTInitialised();
 
-			s_viewportState = viewport;
+			s_idleFn = [viewport]() {
+				glutReshapeWindow(viewport.width, viewport.height);
+			};
 
 			return std::vector<Action>();
 		}));
 
-		// rendering
+		// do nothing for one iteration
 		actions.push_back(Action([]() {
+			return std::vector<Action>();
+		}));
+
+		// rendering
+		actions.push_back(Action([viewport]() {
 			GL_CHECK_ERR
 
-			draw();
+			draw(viewport);
 
 			GL_CHECK_ERR
 
@@ -116,14 +135,14 @@ Action RenderContext::render(const possumwood::ViewportState& viewport, std::fun
 		}));
 
 		// reading back the buffers
-		actions.push_back(Action([data, callback] {
+		actions.push_back(Action([data, callback, viewport] {
 			GL_CHECK_ERR
 
 			// glReadBuffer(GL_BACK);
 
 			GL_CHECK_ERR
 
-			glReadPixels(0, 0, s_viewportState.width, s_viewportState.height, GL_RGB, GL_UNSIGNED_BYTE, &(*data)[0]);
+			glReadPixels(0, 0, viewport.width, viewport.height, GL_RGB, GL_UNSIGNED_BYTE, &(*data)[0]);
 
 			GL_CHECK_ERR
 
@@ -143,11 +162,20 @@ namespace {
 Stack* s_stack;
 
 void step() {
-	if(!s_stack->isFinished())
+	using namespace std::chrono_literals;
+
+	if(!s_stack->isFinished()) {
 		s_stack->step();
+
+		glutPostRedisplay();
+	}
 
 	else
 		glutLeaveMainLoop();
+}
+
+void reshapeFunc(int w, int h) {
+	glViewport(0,0,w,h);
 }
 
 }
@@ -155,10 +183,10 @@ void step() {
 void RenderContext::run(Stack& stack) {
 	s_stack = &stack;
 
-	// glutDisplayFunc(draw);
-	// glutIdleFunc(readFrame);
 	glutDisplayFunc(step);
-	glutIdleFunc(glutPostRedisplay);
+	// glutIdleFunc(glutPostRedisplay);
+	glutIdleFunc(idleFn);
+	glutReshapeFunc(reshapeFunc);
 
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 	glutMainLoop();

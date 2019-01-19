@@ -30,6 +30,14 @@ std::unique_ptr<RenderContext> ctx;
 // global application instance
 std::unique_ptr<possumwood::App> papp;
 
+void printHelp() {
+	std::cout << "Parameters:" << std::endl;
+	std::cout << "  --scene <filename> - Loads a .psw scene file." << std::endl;
+	std::cout << "  --render <filename> - renders a frame to a file. Only PPM files supported at the moment." << std::endl;
+	std::cout << "  --window <width> <height> - defines the render window size in pixels" << std::endl;
+	std::cout << std::endl;
+}
+
 void loadScene(const Options::Item& option) {
 	if(option.parameters.size() != 1)
 		throw std::runtime_error("--scene option allows only exactly one filename");
@@ -70,9 +78,19 @@ std::vector<Action> evaluateOption(const Options::const_iterator& current) {
 	if(option.name == "--scene")
 		loadScene(option);
 
-	// rendering a frame
 	else if(option.name == "--render")
 		return render(option);
+
+	else if(option.name == "--help")
+		printHelp();
+
+	else if(option.name == "--window") {
+		if(option.parameters.size() != 2)
+			throw std::runtime_error("--window option allows only exactly two integer parameters");
+
+		viewport.width = atoi(option.parameters[0].c_str());
+		viewport.height = atoi(option.parameters[1].c_str());
+	}
 
 	else
 		throw std::runtime_error("Unknown command line option " + option.name);
