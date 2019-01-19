@@ -65,7 +65,7 @@ class Skeleton : public possumwood::Drawable {
 				vbo.data.clear();
 		}
 
-		m_renderable.draw(viewport().projection, viewport().modelview);
+		m_renderable.draw(viewport().projection(), viewport().modelview());
 
 		return dependency_graph::State();
 	}

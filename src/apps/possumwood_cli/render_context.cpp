@@ -82,7 +82,7 @@ RenderContext::RenderContext(const possumwood::ViewportState& viewport) : m_wind
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, false);
 
-	m_window = glfwCreateWindow(viewport.width, viewport.height, "offscreen-ish", NULL, NULL);
+	m_window = glfwCreateWindow(viewport.width(), viewport.height(), "offscreen-ish", NULL, NULL);
 
 	if(!m_window)
 		throw std::runtime_error("GLFW window creation failed.");
@@ -109,7 +109,7 @@ void draw(const possumwood::ViewportState& viewport) {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	glViewport(0,0,viewport.width, viewport.height);
+	glViewport(0,0,viewport.width(), viewport.height());
 
 	glClearColor(0, 1, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -135,13 +135,13 @@ Action RenderContext::render(const possumwood::ViewportState& viewport, std::fun
 	return Action([this, viewport, callback]() {
 		std::vector<Action> actions;
 
-		std::shared_ptr<std::vector<GLubyte>> data(new std::vector<GLubyte>(viewport.width * viewport.height * 3));
+		std::shared_ptr<std::vector<GLubyte>> data(new std::vector<GLubyte>(viewport.width() * viewport.height() * 3));
 
 		// initialisation
 		actions.push_back(Action([this, data, viewport]() -> std::vector<Action> {
 			ensureGLFWInitialised();
 
-			glfwSetWindowSize(m_window, viewport.width, viewport.height);
+			glfwSetWindowSize(m_window, viewport.width(), viewport.height());
 
 			return std::vector<Action>();
 		}));
@@ -170,7 +170,7 @@ Action RenderContext::render(const possumwood::ViewportState& viewport, std::fun
 
 			GL_CHECK_ERR
 
-			glReadPixels(0, 0, viewport.width, viewport.height, GL_RGB, GL_UNSIGNED_BYTE, &(*data)[0]);
+			glReadPixels(0, 0, viewport.width(), viewport.height(), GL_RGB, GL_UNSIGNED_BYTE, &(*data)[0]);
 
 			GL_CHECK_ERR
 
@@ -194,6 +194,7 @@ void RenderContext::run(Stack& stack) {
         glfwSwapBuffers(m_window);
         glfwPollEvents();
 
-		std::this_thread::sleep_for(1000ms);
+		// a little delay to allow GLFW to run its "idle" loop
+		std::this_thread::sleep_for(10ms);
 	}
 }

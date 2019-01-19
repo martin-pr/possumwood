@@ -65,8 +65,7 @@ void Viewport::paintGL() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// update the matrices
-	m_viewportState.width = width();
-	m_viewportState.height = height();
+	m_viewportState.resize(width(), height());
 
 	m_viewportState.perspective(45, m_sceneDistance * 0.1f,
 	                std::max(m_sceneDistance * 2.0f, 1000.0f));

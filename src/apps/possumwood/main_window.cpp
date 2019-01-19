@@ -541,7 +541,7 @@ void MainWindow::draw(float dt) {
 
 	// draw the floor grid
 	static std::unique_ptr<possumwood::Grid> s_grid(new possumwood::Grid());
-	s_grid->draw(m_viewport->viewportState().projection, m_viewport->viewportState().modelview);
+	s_grid->draw(m_viewport->viewportState().projection(), m_viewport->viewportState().modelview());
 
 	GL_CHECK_ERR;
 

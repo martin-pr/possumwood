@@ -59,10 +59,10 @@ std::vector<Action> render(const Options::Item& option) {
 		std::ofstream file(filename.c_str(), std::ofstream::binary);
 
 		file << "P6" << std::endl;
-		file << viewport.width << " " << viewport.height << " 255" << std::endl;
+		file << viewport.width() << " " << viewport.height() << " 255" << std::endl;
 
-		for(unsigned l=viewport.height; l>0; --l)
-			file.write((const char*)(&buffer[(l-1) * viewport.width*3]), viewport.width*3);
+		for(unsigned l=viewport.height(); l>0; --l)
+			file.write((const char*)(&buffer[(l-1) * viewport.width()*3]), viewport.width()*3);
 
 		std::cout << "done" << std::endl;
 	};
@@ -88,8 +88,9 @@ std::vector<Action> evaluateOption(const Options::const_iterator& current) {
 		if(option.parameters.size() != 2)
 			throw std::runtime_error("--window option allows only exactly two integer parameters");
 
-		viewport.width = atoi(option.parameters[0].c_str());
-		viewport.height = atoi(option.parameters[1].c_str());
+		viewport.resize(
+			atoi(option.parameters[0].c_str()),
+			atoi(option.parameters[1].c_str()));
 	}
 
 	else

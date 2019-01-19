@@ -42,11 +42,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		    GLint viewport[4];
 		    viewport[0] = 0;
 		    viewport[1] = 0;
-		    viewport[2] = vp.width;
-		    viewport[3] = vp.height;
+		    viewport[2] = vp.width();
+		    viewport[3] = vp.height();
 
-		    const Imath::M44d modelview = toDouble(vp.modelview);
-		    const Imath::M44d projection = toDouble(vp.projection);
+		    const Imath::M44d modelview = toDouble(vp.modelview());
+		    const Imath::M44d projection = toDouble(vp.projection());
 
 		    // points on the near plane, corresponding to each fragment (useful for
 		    // raytracing)
@@ -68,11 +68,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		    GLint viewport[4];
 		    viewport[0] = 0;
 		    viewport[1] = 0;
-		    viewport[2] = vp.width;
-		    viewport[3] = vp.height;
+		    viewport[2] = vp.width();
+		    viewport[3] = vp.height();
 
-		    const Imath::M44d modelview = toDouble(vp.modelview);
-		    const Imath::M44d projection = toDouble(vp.projection);
+		    const Imath::M44d modelview = toDouble(vp.modelview());
+		    const Imath::M44d projection = toDouble(vp.projection());
 
 		    // points on the near plane, corresponding to each fragment (useful for
 		    // raytracing)
