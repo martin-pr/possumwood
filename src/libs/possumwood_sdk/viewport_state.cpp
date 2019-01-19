@@ -3,21 +3,23 @@
 namespace possumwood {
 
 ViewportState::ViewportState() : width(300), height(200) {
-	perspective(46, 300, 200, 0.1, 100);
+	perspective(45, 0.1, 100);
 	lookAt(Imath::V3f(10, 10, 10), Imath::V3f(0, 0, 0));
 }
 
-void ViewportState::perspective(float fovyInDegrees, int w, int h, float znear, float zfar) {
-	width = w;
-	height = h;
-
-	const float aspectRatio = (float)w / (float)h;
+void ViewportState::perspective(float fovyInDegrees, float znear, float zfar) {
+	const float aspectRatio = (float)width / (float)height;
 
 	const float f = 1.0 / tanf(fovyInDegrees * M_PI / 360.0);
 	const float A = (zfar + znear) / (znear - zfar);
 	const float B = 2.0 * zfar * znear / (znear - zfar);
 
-	projection = Imath::M44f(f / aspectRatio, 0, 0, 0, 0, f, 0, 0, 0, 0, A, -1, 0, 0, B, 0);
+	projection = Imath::M44f(
+		f / aspectRatio, 0, 0, 0,
+		0, f, 0, 0,
+		0, 0, A, -1,
+		0, 0, B, 0
+	);
 }
 
 void ViewportState::lookAt(const Imath::V3f& eyePosition, const Imath::V3f& lookAt,

@@ -5,7 +5,7 @@
 #include <chrono>
 #include <thread>
 
-#include <GL/freeglut.h>
+#include <GLFW/glfw3.h>
 
 #include <possumwood_sdk/gl.h>
 #include <possumwood_sdk/app.h>
@@ -15,14 +15,19 @@
 
 namespace {
 
-static bool s_glutInitialised = false;
+void glfwErrorCallback(int error, const char* description) {
+	std::cerr << "GLFW error: " << description << " (" << error << ")" << std::endl;
+}
 
-void ensureGLUTInitialised() {
-	if(!s_glutInitialised) {
-		int count = 0;
-		glutInit(&count, nullptr);
+static bool s_glfwInitialised = false;
 
-		s_glutInitialised = true;
+void ensureGLFWInitialised() {
+	if(!s_glfwInitialised) {
+		glfwInit();
+
+		glfwSetErrorCallback(glfwErrorCallback);
+
+		s_glfwInitialised = true;
 	}
 }
 
@@ -38,26 +43,63 @@ void ensureGLEWInitialised() {
 	}
 }
 
+// Hacky version handling - it is difficult to figure out what version of OpenGL is supported
+// without trying to create a context first, seeing it fail, and trying again with a lower number.
+// This makes use of defines in glew.h instead.
+
+std::pair<unsigned, unsigned> findGLVersion() {
+#if GL_VERSION_6_0
+	return std::make_pair(6,0);
+#elif GL_VERSION_4_7
+	return std::make_pair(4,7);
+#elif GL_VERSION_4_6
+	return std::make_pair(4,6);
+#elif GL_VERSION_4_5
+	return std::make_pair(4,5);
+#elif GL_VERSION_4_4
+	return std::make_pair(4,4);
+#elif GL_VERSION_4_3
+	return std::make_pair(4,3);
+#elif GL_VERSION_4_2
+	return std::make_pair(4,2);
+#elif GL_VERSION_4_1
+	return std::make_pair(4,1);
+#elif GL_VERSION_4_0
+	return std::make_pair(4,0);
+#endif
+	return std::make_pair(0,0);
 }
 
-RenderContext::RenderContext(const possumwood::ViewportState& viewport) {
-	ensureGLUTInitialised();
+}
 
-	glutInitWindowSize(viewport.width, viewport.height);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitContextVersion (4, 3);
-	glutInitContextFlags (GLUT_CORE_PROFILE | GLUT_DEBUG);
+RenderContext::RenderContext(const possumwood::ViewportState& viewport) : m_window(nullptr) {
+	ensureGLFWInitialised();
 
-	m_windowId = glutCreateWindow("offscreen-ish");
+	std::pair<unsigned, unsigned> gl_ver = findGLVersion();
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_ver.first);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_ver.second);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, false);
+
+	m_window = glfwCreateWindow(viewport.width, viewport.height, "offscreen-ish", NULL, NULL);
+
+	if(!m_window)
+		throw std::runtime_error("GLFW window creation failed.");
+
+	glfwMakeContextCurrent(m_window);
+
+	std::cout << "OpenGL version supported by this platform is "
+	          << glGetString(GL_VERSION) << std::endl;
 
 	ensureGLEWInitialised();
 }
 
 RenderContext::~RenderContext() {
 	// silly GLUT - https://sourceforge.net/p/freeglut/mailman/freeglut-developer/thread/BANLkTin7n06HnopO5qSiUgUBrN3skAWDyA@mail.gmail.com/
-	ensureGLUTInitialised();
+	ensureGLFWInitialised();
 
-	glutDestroyWindow(m_windowId);
+	glfwDestroyWindow(m_window);
 }
 
 namespace {
@@ -87,33 +129,19 @@ void draw(const possumwood::ViewportState& viewport) {
 	glFlush();
 }
 
-std::function<void()> s_idleFn;
-
-void idleFn() {
-	if(s_idleFn) {
-		s_idleFn();
-		s_idleFn = std::function<void()>();
-	}
-
-	else
-		glutPostRedisplay();
-}
-
 }
 
 Action RenderContext::render(const possumwood::ViewportState& viewport, std::function<void(std::vector<GLubyte>&)> callback) {
-	return Action([viewport, callback]() {
+	return Action([this, viewport, callback]() {
 		std::vector<Action> actions;
 
 		std::shared_ptr<std::vector<GLubyte>> data(new std::vector<GLubyte>(viewport.width * viewport.height * 3));
 
 		// initialisation
-		actions.push_back(Action([data, viewport]() -> std::vector<Action> {
-			ensureGLUTInitialised();
+		actions.push_back(Action([this, data, viewport]() -> std::vector<Action> {
+			ensureGLFWInitialised();
 
-			s_idleFn = [viewport]() {
-				glutReshapeWindow(viewport.width, viewport.height);
-			};
+			glfwSetWindowSize(m_window, viewport.width, viewport.height);
 
 			return std::vector<Action>();
 		}));
@@ -138,7 +166,7 @@ Action RenderContext::render(const possumwood::ViewportState& viewport, std::fun
 		actions.push_back(Action([data, callback, viewport] {
 			GL_CHECK_ERR
 
-			// glReadBuffer(GL_BACK);
+			glReadBuffer(GL_BACK);
 
 			GL_CHECK_ERR
 
@@ -157,41 +185,15 @@ Action RenderContext::render(const possumwood::ViewportState& viewport, std::fun
 	});
 }
 
-namespace {
-
-Stack* s_stack;
-
-void step() {
+void RenderContext::run(Stack& stack) {
 	using namespace std::chrono_literals;
 
-	if(!s_stack->isFinished()) {
-		s_stack->step();
+	while(!stack.isFinished()) {
+		stack.step();
 
-		glutPostRedisplay();
+        glfwSwapBuffers(m_window);
+        glfwPollEvents();
+
+		std::this_thread::sleep_for(1000ms);
 	}
-
-	else
-		glutLeaveMainLoop();
-}
-
-void reshapeFunc(int w, int h) {
-	glViewport(0,0,w,h);
-}
-
-}
-
-void RenderContext::run(Stack& stack) {
-	s_stack = &stack;
-
-	glutDisplayFunc(step);
-	// glutIdleFunc(glutPostRedisplay);
-	glutIdleFunc(idleFn);
-	glutReshapeFunc(reshapeFunc);
-
-	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
-	glutMainLoop();
-
-	s_glutInitialised = false;
-
-	s_stack = nullptr;
 }

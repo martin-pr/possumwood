@@ -2,7 +2,6 @@
 
 #include <vector>
 
-
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -17,6 +16,7 @@
 #include "action.h"
 
 class Stack;
+class GLFWwindow;
 
 class RenderContext {
 	public:
@@ -31,5 +31,5 @@ class RenderContext {
 		RenderContext(const RenderContext&) = delete;
 		RenderContext& operator = (const RenderContext&) = delete;
 
-		int m_windowId;
+		GLFWwindow* m_window;
 };
