@@ -186,7 +186,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					color.setRedF(r);
 					color.setGreenF(g);
 					color.setBlueF(b);
-					image.setPixelColor(xi, yi, color);
+					image.setPixelColor(xi, yi, color.rgb());
 				}
 
 			std::unique_ptr<QPixmap> out(new QPixmap());
