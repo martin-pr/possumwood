@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 
+#include <boost/format.hpp>
+
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/viewport_state.h>
 
@@ -11,6 +13,7 @@
 #include "options.h"
 #include "render_context.h"
 #include "stack.h"
+#include "expression.h"
 
 
 // The CLI unfortunately has to be designed around GLUT - it is not possible in current
@@ -30,11 +33,32 @@ std::unique_ptr<RenderContext> ctx;
 // global application instance
 std::unique_ptr<possumwood::App> papp;
 
+// expression expansion
+int currentFrame() {
+	return std::round(possumwood::App::instance().time()
+		* possumwood::App::instance().sceneConfig()["fps"].as<float>());
+};
+
+const ExpressionExpansion expr({
+	{"T", []() { return (boost::format("%.2f") % possumwood::App::instance().time()).str(); }},
+	{"F", []() { return (boost::format("%d") % currentFrame()).str(); }},
+	{"2F", []() { return (boost::format("%02d") % currentFrame()).str(); }},
+	{"3F", []() { return (boost::format("%03d") % currentFrame()).str(); }},
+	{"4F", []() { return (boost::format("%04d") % currentFrame()).str(); }}
+});
+
 void printHelp() {
 	std::cout << "Parameters:" << std::endl;
 	std::cout << "  --scene <filename> - Loads a .psw scene file." << std::endl;
 	std::cout << "  --render <filename> - renders a frame to a file. Only PPM files supported at the moment." << std::endl;
 	std::cout << "  --window <width> <height> - defines the render window size in pixels" << std::endl;
+	std::cout << std::endl;
+	std::cout << "The render filename parameter can contain the following 'variables':" << std::endl;
+	std::cout << "  $T - time, with two decimal points" << std::endl;
+	std::cout << "  $F - frame, as an integer value" << std::endl;
+	std::cout << "  $2F - frame, as an integer value, padded with 0s to the width of 2" << std::endl;
+	std::cout << "  $3F - frame, as an integer value, padded with 0s to the width of 3" << std::endl;
+	std::cout << "  $4F - frame, as an integer value, padded with 0s to the width of 4" << std::endl;
 	std::cout << std::endl;
 }
 
@@ -51,7 +75,7 @@ std::vector<Action> render(const Options::Item& option) {
 	if(option.parameters.size() != 1)
 		throw std::runtime_error("--render option allows only exactly one filename");
 
-	const std::string filename = option.parameters[0];
+	const std::string filename = expr.expand(option.parameters[0]);
 
 	std::function<void(std::vector<GLubyte>&)> callback = [filename](std::vector<GLubyte>& buffer) {
 		std::cout << "Rendering " << filename << "... " << std::flush;
