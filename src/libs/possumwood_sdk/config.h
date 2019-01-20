@@ -45,7 +45,7 @@ class Config : public boost::noncopyable {
 				bool is() const;
 
 				template<typename T>
-				const T& as() const;
+				const T as() const;
 
 				template<typename T>
 				Item& operator = (const T& val);

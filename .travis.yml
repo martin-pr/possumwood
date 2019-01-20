@@ -1,6 +1,6 @@
 # Basic parameters of the build
 sudo: required
-dist: trusty
+dist: xenial
 group: edge
 language: cpp
 compiler: gcc
@@ -38,21 +38,16 @@ addons:
       - cmake
       - libglew-dev
       - libmpfr-dev
-
-before_install:
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt593-trusty
-  - sudo apt-get update -qq
-
-install:
-  - sudo apt-get install qt59base
+      - libglfw3-dev
+      - qt5-default
+      - qtdeclarative5-dev
+      - libqt5opengl5-dev
 
 # Run build
 script:
   - wget http://www.mprazak.info/cgal-releases-CGAL-4.11.tar.gz
   - tar xzf cgal-releases-CGAL-4.11.tar.gz
-  - pushd cgal-releases-CGAL-4.11 && mkdir build && pushd build && cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/usr && make && sudo make install && popd && popd
-
-  - source /opt/qt59/bin/qt59-env.sh
+  - pushd cgal-releases-CGAL-4.11 && mkdir build && pushd build && cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/usr -DWITH_examples=OFF -DWITH_demos=OFF -DWITH_tests=OFF && make && sudo make install && popd && popd
 
   - export CXX=g++-5
   - export CC=gcc-5
