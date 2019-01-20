@@ -175,7 +175,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					y = yi;
 
 					// r, g, b variables are changeable from the expression
-					QColor color = image.pixelColor(xi, yi);
+					QColor color(image.pixel(xi, yi));
 					r = color.redF();
 					g = color.greenF();
 					b = color.blueF();
@@ -186,7 +186,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					color.setRedF(r);
 					color.setGreenF(g);
 					color.setBlueF(b);
-					image.setPixelColor(xi, yi, color.rgb());
+					image.setPixel(xi, yi, color.rgb());
 				}
 
 			std::unique_ptr<QPixmap> out(new QPixmap());
