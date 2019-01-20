@@ -27,8 +27,8 @@ bool Config::Item::is() const {
 }
 
 template<typename T>
-const T& Config::Item::as() const {
-	return boost::get<const T&>(m_value);
+const T Config::Item::as() const {
+	return boost::get<T>(m_value);
 }
 
 template<typename T>
