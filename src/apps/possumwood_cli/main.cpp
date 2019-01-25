@@ -33,14 +33,20 @@ std::unique_ptr<RenderContext> ctx;
 // global application instance
 std::unique_ptr<possumwood::App> papp;
 
+// frame step
+std::size_t frame_step = 0;
+
 // expression expansion
 int currentFrame() {
-	return std::round(possumwood::App::instance().time()
-		* possumwood::App::instance().sceneConfig()["fps"].as<float>());
+	return std::round(possumwood::App::instance().time() * possumwood::App::instance().sceneConfig()["fps"].as<float>());
+};
+
+float currentTime() {
+	return possumwood::App::instance().time();
 };
 
 const ExpressionExpansion expr({
-	{"T", []() { return (boost::format("%.2f") % possumwood::App::instance().time()).str(); }},
+	{"T", []() { return (boost::format("%.2f") % currentTime()).str(); }},
 	{"F", []() { return (boost::format("%d") % currentFrame()).str(); }},
 	{"2F", []() { return (boost::format("%02d") % currentFrame()).str(); }},
 	{"3F", []() { return (boost::format("%03d") % currentFrame()).str(); }},
@@ -52,6 +58,7 @@ void printHelp() {
 	std::cout << "  --scene <filename> - Loads a .psw scene file." << std::endl;
 	std::cout << "  --render <filename> - renders a frame to a file. Only PPM files supported at the moment." << std::endl;
 	std::cout << "  --window <width> <height> - defines the render window size in pixels" << std::endl;
+	std::cout << "  --frame_step <step> - render multiple frames" << std::endl;
 	std::cout << std::endl;
 	std::cout << "The render filename parameter can contain the following 'variables':" << std::endl;
 	std::cout << "  $T - time, with two decimal points" << std::endl;
@@ -75,24 +82,37 @@ std::vector<Action> render(const Options::Item& option) {
 	if(option.parameters.size() != 1)
 		throw std::runtime_error("--render option allows only exactly one filename");
 
-	const std::string filename = expr.expand(option.parameters[0]);
-
-	std::function<void(std::vector<GLubyte>&)> callback = [filename](std::vector<GLubyte>& buffer) {
-		std::cout << "Rendering " << filename << "... " << std::flush;
-
-		std::ofstream file(filename.c_str(), std::ofstream::binary);
-
-		file << "P6" << std::endl;
-		file << viewport.width() << " " << viewport.height() << " 255" << std::endl;
-
-		for(unsigned l=viewport.height(); l>0; --l)
-			file.write((const char*)(&buffer[(l-1) * viewport.width()*3]), viewport.width()*3);
-
-		std::cout << "done" << std::endl;
-	};
-
 	std::vector<Action> result;
-	result.push_back(ctx->render(viewport, callback));
+
+	std::size_t end_param = 0;
+	if(frame_step > 0) {
+		const possumwood::Config& cfg = possumwood::App::instance().sceneConfig();
+		end_param = std::size_t(round((cfg["end_time"].as<float>() - cfg["start_time"].as<float>()) * cfg["fps"].as<float>())) / frame_step;
+	}
+
+	for(std::size_t param = 0; param <= end_param; ++param) {
+		std::function<void(std::vector<GLubyte>&)> callback = [option, param](std::vector<GLubyte>& buffer) {
+			const possumwood::Config& cfg = possumwood::App::instance().sceneConfig();
+			const float t = (float)(param * frame_step) / cfg["fps"].as<float>() + cfg["start_time"].as<float>();
+			possumwood::App::instance().setTime(t);
+
+			const std::string filename = expr.expand(option.parameters[0]);
+			std::cout << "Rendering " << filename << "... " << std::flush;
+
+			std::ofstream file(filename.c_str(), std::ofstream::binary);
+
+			file << "P6" << std::endl;
+			file << viewport.width() << " " << viewport.height() << " 255" << std::endl;
+
+			for(unsigned l=viewport.height(); l>0; --l)
+				file.write((const char*)(&buffer[(l-1) * viewport.width()*3]), viewport.width()*3);
+
+			std::cout << "done" << std::endl;
+		};
+
+		result.push_back(ctx->render(viewport, callback));
+	}
+
 	return result;
 }
 
@@ -107,6 +127,13 @@ std::vector<Action> evaluateOption(const Options::const_iterator& current) {
 
 	else if(option.name == "--help")
 		printHelp();
+
+	else if(option.name == "--frame_step") {
+		if(option.parameters.size() != 1)
+			throw std::runtime_error("--frame_step option allows only exactly one integer parameter");
+
+		frame_step = atoi(option.parameters[0].c_str());
+	}
 
 	else if(option.name == "--window") {
 		if(option.parameters.size() != 2)
