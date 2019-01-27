@@ -19,6 +19,10 @@ class ViewportState {
 		const Imath::V3f& target() const;
 		const Imath::V3f& upVector() const;
 
+		const float fowInDegrees() const;
+		const float znear() const;
+		const float zfar();
+
 		const Imath::M44f projection() const;
 		const Imath::M44f modelview() const;
 

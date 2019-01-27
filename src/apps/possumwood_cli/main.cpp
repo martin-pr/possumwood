@@ -127,6 +127,7 @@ std::vector<Action> render(const Options::Item& option) {
 		viewVec = viewVec * rotate;
 
 		possumwood::ViewportState current = viewport;
+		current.perspective(viewport.fowInDegrees(), viewVec.length() / 10.0f, viewVec.length() * 10.0f);
 		current.lookAt(viewport.target() + viewVec, current.target());
 
 		result.push_back(ctx->render(current, callback));

@@ -46,6 +46,18 @@ const Imath::V3f& ViewportState::upVector() const {
 	return m_upVector;
 }
 
+const float ViewportState::fowInDegrees() const {
+	return m_fovyInDegrees;
+}
+
+const float ViewportState::znear() const {
+	return m_znear;
+}
+
+const float ViewportState::zfar() {
+	return m_zfar;
+}
+
 const Imath::M44f ViewportState::projection() const {
 	const float aspectRatio = (float)m_width / (float)m_height;
 
