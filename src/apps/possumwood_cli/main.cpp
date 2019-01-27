@@ -33,8 +33,9 @@ std::unique_ptr<RenderContext> ctx;
 // global application instance
 std::unique_ptr<possumwood::App> papp;
 
-// frame step
+// additional view parameters
 std::size_t frame_step = 0;
+float cam_orbit = 0.0f;
 
 // expression expansion
 int currentFrame() {
@@ -60,6 +61,7 @@ void printHelp() {
 	std::cout << "  --window <width> <height> - defines the render window size in pixels" << std::endl;
 	std::cout << "  --cam_pos <x> <y> <z> - defines camera position in world space" << std::endl;
 	std::cout << "  --cam_target <x> <y> <z> - defines camera target (default 0,0,0)" << std::endl;
+	std::cout << "  --cam_orbit <orbit_count> - if present, makes the camera orbit the scene" << std::endl;
 	std::cout << "  --frame_step <step> - render multiple frames" << std::endl;
 	std::cout << std::endl;
 	std::cout << "The render filename parameter can contain the following 'variables':" << std::endl;
@@ -93,9 +95,10 @@ std::vector<Action> render(const Options::Item& option) {
 	}
 
 	for(std::size_t param = 0; param <= end_param; ++param) {
-		std::function<void(std::vector<GLubyte>&)> callback = [option, param](std::vector<GLubyte>& buffer) {
-			const possumwood::Config& cfg = possumwood::App::instance().sceneConfig();
-			const float t = (float)(param * frame_step) / cfg["fps"].as<float>() + cfg["start_time"].as<float>();
+		const possumwood::Config& cfg = possumwood::App::instance().sceneConfig();
+		const float t = (float)(param * frame_step) / cfg["fps"].as<float>() + cfg["start_time"].as<float>();
+
+		std::function<void(std::vector<GLubyte>&)> callback = [option, t](std::vector<GLubyte>& buffer) {
 			possumwood::App::instance().setTime(t);
 
 			const std::string filename = expr.expand(option.parameters[0]);
@@ -112,7 +115,21 @@ std::vector<Action> render(const Options::Item& option) {
 			std::cout << "done" << std::endl;
 		};
 
-		result.push_back(ctx->render(viewport, callback));
+		// orbitting camera
+		Imath::V3f viewVec = viewport.eyePosition() - viewport.target();
+
+		const float angle = (float)param / (float)end_param * 2.0f * M_PI * cam_orbit;
+		const Imath::M33f rotate(
+			cos(angle), 0, sin(angle),
+			0, 1, 0,
+			-sin(angle), 0, cos(angle)
+		);
+		viewVec = viewVec * rotate;
+
+		possumwood::ViewportState current = viewport;
+		current.lookAt(viewport.target() + viewVec, current.target());
+
+		result.push_back(ctx->render(current, callback));
 	}
 
 	return result;
@@ -150,13 +167,20 @@ std::vector<Action> evaluateOption(const Options::const_iterator& current) {
 
 	else if(option.name == "--cam_target") {
 		if(option.parameters.size() != 3)
-			throw std::runtime_error("--cam_pos option allows only exactly three floating-point parameter");
+			throw std::runtime_error("--cam_target option allows only exactly three floating-point parameter");
 
 		float x = atof(option.parameters[0].c_str());
 		float y = atof(option.parameters[1].c_str());
 		float z = atof(option.parameters[2].c_str());
 
 		viewport.lookAt(viewport.eyePosition(), Imath::V3f(x, y, z));
+	}
+
+	else if(option.name == "--cam_orbit") {
+		if(option.parameters.size() != 1)
+			throw std::runtime_error("--cam_orbit option allows only exactly one floating-point parameter");
+
+		cam_orbit = atof(option.parameters[0].c_str());
 	}
 
 	else if(option.name == "--window") {
