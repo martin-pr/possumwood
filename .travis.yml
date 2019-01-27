@@ -42,6 +42,7 @@ addons:
       - qt5-default
       - qtdeclarative5-dev
       - libqt5opengl5-dev
+      - libopenimageio-dev
 
 # Run build
 script:
