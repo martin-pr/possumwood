@@ -15,6 +15,10 @@ class ViewportState {
 		unsigned width() const;
 		unsigned height() const;
 
+		const Imath::V3f& eyePosition() const;
+		const Imath::V3f& target() const;
+		const Imath::V3f& upVector() const;
+
 		const Imath::M44f projection() const;
 		const Imath::M44f modelview() const;
 

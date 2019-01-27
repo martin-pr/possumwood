@@ -34,6 +34,18 @@ unsigned ViewportState::height() const {
 	return m_height;
 }
 
+const Imath::V3f& ViewportState::eyePosition() const {
+	return m_eyePosition;
+}
+
+const Imath::V3f& ViewportState::target() const {
+	return m_lookAt;
+}
+
+const Imath::V3f& ViewportState::upVector() const {
+	return m_upVector;
+}
+
 const Imath::M44f ViewportState::projection() const {
 	const float aspectRatio = (float)m_width / (float)m_height;
 
