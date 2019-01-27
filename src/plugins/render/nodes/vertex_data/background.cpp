@@ -28,7 +28,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	vd->addVBO<Imath::V3f>("P", 4, possumwood::VertexData::kStatic,
 	                       [](possumwood::Buffer<float>& buffer,
-	                          const possumwood::Drawable::ViewportState& viewport) {
+	                          const possumwood::ViewportState& viewport) {
 		                       buffer.element(0) = Imath::V3f(-1, -1, 1);
 		                       buffer.element(1) = Imath::V3f(1, -1, 1);
 		                       buffer.element(2) = Imath::V3f(1, 1, 1);
@@ -38,15 +38,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	vd->addVBO<Imath::V3d>(
 	    "iNearPositionVert", 4, possumwood::VertexData::kPerDraw,
 	    [](possumwood::Buffer<double>& buffer,
-	       const possumwood::Drawable::ViewportState& vp) {
+	       const possumwood::ViewportState& vp) {
 		    GLint viewport[4];
 		    viewport[0] = 0;
 		    viewport[1] = 0;
-		    viewport[2] = vp.width;
-		    viewport[3] = vp.height;
+		    viewport[2] = vp.width();
+		    viewport[3] = vp.height();
 
-		    const Imath::M44d modelview = toDouble(vp.modelview);
-		    const Imath::M44d projection = toDouble(vp.projection);
+		    const Imath::M44d modelview = toDouble(vp.modelview());
+		    const Imath::M44d projection = toDouble(vp.projection());
 
 		    // points on the near plane, corresponding to each fragment (useful for
 		    // raytracing)
@@ -64,15 +64,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	vd->addVBO<Imath::V3d>(
 	    "iFarPositionVert", 4, possumwood::VertexData::kPerDraw,
 	    [](possumwood::Buffer<double>& buffer,
-	       const possumwood::Drawable::ViewportState& vp) {
+	       const possumwood::ViewportState& vp) {
 		    GLint viewport[4];
 		    viewport[0] = 0;
 		    viewport[1] = 0;
-		    viewport[2] = vp.width;
-		    viewport[3] = vp.height;
+		    viewport[2] = vp.width();
+		    viewport[3] = vp.height();
 
-		    const Imath::M44d modelview = toDouble(vp.modelview);
-		    const Imath::M44d projection = toDouble(vp.projection);
+		    const Imath::M44d modelview = toDouble(vp.modelview());
+		    const Imath::M44d projection = toDouble(vp.projection());
 
 		    // points on the near plane, corresponding to each fragment (useful for
 		    // raytracing)

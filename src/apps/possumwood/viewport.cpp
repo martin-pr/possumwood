@@ -57,45 +57,6 @@ Imath::V3f eyePosition(float sceneRotX, float sceneRotY, float sceneDist) {
 	return eye;
 }
 
-Imath::M44f lookAt(const Imath::V3f& eyePosition, const Imath::V3f& lookAt,
-                   const Imath::V3f& upVector) {
-	Imath::V3f forward = lookAt - eyePosition;
-	forward.normalize();
-
-	Imath::V3f side = forward.cross(upVector);
-	side.normalize();
-
-	Imath::V3f up = side.cross(forward);
-	up.normalize();
-
-	Imath::M44f rotmat;
-	rotmat.makeIdentity();
-
-	rotmat[0][0] = side.x;
-	rotmat[1][0] = side.y;
-	rotmat[2][0] = side.z;
-
-	rotmat[0][1] = up.x;
-	rotmat[1][1] = up.y;
-	rotmat[2][1] = up.z;
-
-	rotmat[0][2] = -forward.x;
-	rotmat[1][2] = -forward.y;
-	rotmat[2][2] = -forward.z;
-
-	Imath::M44f transmat;
-	transmat.setTranslation(Imath::V3f(-eyePosition.x, -eyePosition.y, -eyePosition.z));
-
-	return transmat * rotmat;
-}
-
-Imath::M44f perspective(float fovyInDegrees, float aspectRatio, float znear, float zfar) {
-	const float f = 1.0 / tanf(fovyInDegrees * M_PI / 360.0);
-	const float A = (zfar + znear) / (znear - zfar);
-	const float B = 2.0 * zfar * znear / (znear - zfar);
-
-	return Imath::M44f(f / aspectRatio, 0, 0, 0, 0, f, 0, 0, 0, 0, A, -1, 0, 0, B, 0);
-}
 }
 
 void Viewport::paintGL() {
@@ -103,12 +64,13 @@ void Viewport::paintGL() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// update the projection matrix
-	m_projection =
-	    perspective(45, (float)width() / (float)height(), m_sceneDistance * 0.1f,
+	// update the matrices
+	m_viewportState.resize(width(), height());
+
+	m_viewportState.perspective(45, m_sceneDistance * 0.1f,
 	                std::max(m_sceneDistance * 2.0f, 1000.0f));
 
-	m_modelview = lookAt(
+	m_viewportState.lookAt(
 	    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance) + m_origin,
 	    m_origin, Imath::V3f(0, 1, 0));
 
@@ -169,10 +131,6 @@ void Viewport::mouseMoveEvent(QMouseEvent* event) {
 	m_mouseY = event->y();
 }
 
-const Imath::M44f& Viewport::projection() const {
-	return m_projection;
-}
-
-const Imath::M44f& Viewport::modelview() const {
-	return m_modelview;
+const possumwood::ViewportState& Viewport::viewportState() const {
+	return m_viewportState;
 }

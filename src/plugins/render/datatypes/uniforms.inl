@@ -11,7 +11,7 @@ namespace possumwood {
 template <typename T>
 void Uniforms::addUniform(
     const std::string& name, std::size_t size, const UpdateType& updateType,
-    std::function<void(T*, std::size_t, const Drawable::ViewportState&)> updateFunctor) {
+    std::function<void(T*, std::size_t, const ViewportState&)> updateFunctor) {
 	UniformHolder uniform;
 
 	uniform.name = name;
@@ -30,7 +30,7 @@ void Uniforms::addUniform(
 	}
 
 	uniform.updateFunctor = [updateFunctor, size](DataBase& baseData,
-	                                              const Drawable::ViewportState& vs) {
+	                                              const ViewportState& vs) {
 		Data<T>& data = dynamic_cast<Data<T>&>(baseData);
 		assert(data.data.size() == size);
 

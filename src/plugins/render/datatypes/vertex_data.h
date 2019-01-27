@@ -26,10 +26,10 @@ class VertexData : public boost::noncopyable {
 	template <typename T>
 	void addVBO(const std::string& name, std::size_t size,
 	            const UpdateType& updateType,
-	            std::function<void(Buffer<typename VBOTraits<T>::element>&, const Drawable::ViewportState& viewport)> updateFn);
+	            std::function<void(Buffer<typename VBOTraits<T>::element>&, const ViewportState& viewport)> updateFn);
 
 	/// updates and uses the program
-	void use(GLuint programId, const Drawable::ViewportState& vs) const;
+	void use(GLuint programId, const ViewportState& vs) const;
 
 	/// returns the drawing element primitive type
 	GLenum drawElementType() const;
@@ -48,7 +48,7 @@ class VertexData : public boost::noncopyable {
 		std::unique_ptr<VBOBase> vbo;
 		std::size_t size;
 		UpdateType updateType;
-		std::function<std::unique_ptr<BufferBase>(const Drawable::ViewportState& vs)> update;
+		std::function<std::unique_ptr<BufferBase>(const ViewportState& vs)> update;
 		mutable std::unique_ptr<BufferBase> buffer; // MESSY
 	};
 

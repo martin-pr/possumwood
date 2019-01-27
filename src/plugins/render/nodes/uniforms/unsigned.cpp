@@ -30,7 +30,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		data.get(a_name),
 		1,
 		possumwood::Uniforms::kPerFrame,
-		[value](unsigned* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
+		[value](unsigned* data, std::size_t size, const possumwood::ViewportState& vs) {
 			assert(size == 1);
 			return *data = value;
 		}

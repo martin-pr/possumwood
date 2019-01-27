@@ -5,6 +5,7 @@
 #include <boost/iterator/indirect_iterator.hpp>
 
 #include "attr.h"
+#include "network.h"
 
 namespace dependency_graph {
 
@@ -86,6 +87,14 @@ std::vector<std::size_t> Metadata::influencedBy(size_t index) const {
 		result.push_back(i->second);
 
 	return result;
+}
+
+std::unique_ptr<NodeBase> Metadata::createNode(const std::string& name, Network& parent, const UniqueId& id) const {
+	// special handling for networks
+	if(m_type == Network::defaultMetadata()->type())
+		return std::unique_ptr<NodeBase>(new Network(name, id, *this, &parent));
+	else
+		return std::unique_ptr<NodeBase>(new Node(name, id, *this, &parent));
 }
 
 ////////////////

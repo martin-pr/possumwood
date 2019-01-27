@@ -40,7 +40,7 @@ void addVerticesVBO(possumwood::VertexData& vd, const possumwood::Meshes& meshes
 	    [meshes, triangleCount](
 	        possumwood::Buffer<typename possumwood::VBOTraits<
 	            possumwood::CGALPolyhedron::Point_3>::element>& buffer,
-	        const possumwood::Drawable::ViewportState& vs) {
+	        const possumwood::ViewportState& vs) {
 
 		    // TODO: use index buffer instead
 		    std::size_t index = 0;
@@ -86,7 +86,7 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 	    name, triangleCount * 3, possumwood::VertexData::kStatic,
 	    [mesh, propertyName, extract](
 	        possumwood::Buffer<typename possumwood::VBOTraits<T>::element>& buffer,
-	        const possumwood::Drawable::ViewportState& vs) {
+	        const possumwood::ViewportState& vs) {
 		    std::size_t index = 0;
 
 		    for(auto& m : mesh) {

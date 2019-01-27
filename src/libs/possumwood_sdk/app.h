@@ -7,9 +7,10 @@
 #include <dependency_graph/graph.h>
 
 #include "actions/app.h"
+#include "actions/io.h"
 
 #include "config.h"
-#include "index.h"
+#include "viewport_state.h"
 
 class QMainWindow;
 
@@ -35,6 +36,9 @@ class App : public AppCore {
 
 		QMainWindow* mainWindow() const;
 		void setMainWindow(QMainWindow* win);
+
+		/// run OpenGL drawing, by iterating over all Node instances and calling any existing Drawable::doDraw()
+		void draw(const possumwood::ViewportState& viewport, std::function<void(const dependency_graph::NodeBase&)> stateChangedCallback = std::function<void(const dependency_graph::NodeBase&)>());
 
 		void setTime(float time);
 		float time() const;

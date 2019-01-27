@@ -2,8 +2,6 @@
 #include <string>
 #include <stdexcept>
 
-#include <dlfcn.h>
-
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
@@ -30,25 +28,19 @@
 #include "adaptor.h"
 #include "main_window.h"
 #include "gl_init.h"
+#include "common.h"
 
 namespace po = boost::program_options;
-namespace fs = boost::filesystem;
 
 using std::cout;
 using std::endl;
 using std::flush;
-
-#ifndef PLUGIN_DIR
-#define PLUGIN_DIR "./plugins"
-#endif
 
 int main(int argc, char* argv[]) {
 	// // Declare the supported options.
 	po::options_description desc("Allowed options");
 	desc.add_options()
 		("help", "produce help message")
-		("plugin_directory", po::value<std::string>()->default_value(PLUGIN_DIR),
-			"directory to search for plugins")
 		("scene", po::value<std::string>(), "open a scene file")
 	;
 
@@ -64,23 +56,13 @@ int main(int argc, char* argv[]) {
 
 	///////////////////////////////
 
-	std::vector<void*> pluginHandles;
-
-	// scan for plugins
-	for(fs::directory_iterator itr(vm["plugin_directory"].as<std::string>());
-	    itr != fs::directory_iterator(); ++itr) {
-		if(fs::is_regular_file(itr->status()) && itr->path().extension() == ".so") {
-			void* ptr = dlopen(itr->path().string().c_str(), RTLD_NOW);
-			if(ptr)
-				pluginHandles.push_back(ptr);
-			else
-				std::cout << dlerror() << std::endl;
-		}
-	}
-
-	///////////////////////////////
+	// create the possumwood application
+	possumwood::App papp;
 
 	{
+		// load all plugins into an RAII container
+		PluginsRAII plugins;
+
 		GL_CHECK_ERR;
 
 		{
@@ -102,11 +84,6 @@ int main(int argc, char* argv[]) {
 			QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 			QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 		#endif
-
-		GL_CHECK_ERR;
-
-		// create the possumwood application
-		possumwood::App papp;
 
 		GL_CHECK_ERR;
 
@@ -132,14 +109,6 @@ int main(int argc, char* argv[]) {
 		app.exec();
 
 		GL_CHECK_ERR;
-	}
-
-	////////////////////////////////
-
-	// unload all plugins
-	while(!pluginHandles.empty()) {
-		dlclose(pluginHandles.back());
-		pluginHandles.pop_back();
 	}
 
 	return 0;

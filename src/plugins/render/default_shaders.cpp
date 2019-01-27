@@ -31,7 +31,11 @@ const possumwood::VertexShader& defaultVertexShader() {
 
 		s_shader->compile(defaultVertexShaderSrc());
 
+#ifndef NDEBUG
+		if(s_shader->state().errored())
+			std::cout << "Default vertex shader compilation failed: " << s_shader->state() << std::endl;
 		assert(!s_shader->state().errored());
+#endif
 	}
 
 	return *s_shader;
@@ -65,7 +69,11 @@ const possumwood::FragmentShader& defaultFragmentShader() {
 
 		s_shader->compile(defaultFragmentShaderSrc());
 
+#ifndef NDEBUG
+		if(s_shader->state().errored())
+			std::cout << "Default fragment shader compilation failed: " << s_shader->state() << std::endl;
 		assert(!s_shader->state().errored());
+#endif
 	}
 
 	return *s_shader;

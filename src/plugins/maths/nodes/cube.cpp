@@ -67,7 +67,7 @@ class Cube : public possumwood::Drawable {
   protected:
 	virtual dependency_graph::State draw() {
 		// get the original modelview
-		Imath::M44f modelview = viewport().modelview;
+		Imath::M44f modelview = viewport().modelview();
 
 		const Imath::Vec3<float> pos = values().get(a_pos);
 		const Imath::Vec3<float> size = values().get(a_size);
@@ -76,7 +76,7 @@ class Cube : public possumwood::Drawable {
 		                        pos.y, pos.z, 1) *
 		            modelview;
 
-		m_renderable.draw(viewport().projection, modelview);
+		m_renderable.draw(viewport().projection(), modelview);
 
 		return dependency_graph::State();
 	}

@@ -11,8 +11,8 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iProjection",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::M44f* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
-			*data = vs.projection;
+		[](Imath::M44f* data, std::size_t size, const possumwood::ViewportState& vs) {
+			*data = vs.projection();
 		}
 	);
 
@@ -20,8 +20,8 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iModelView",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::M44f* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
-			*data = vs.modelview;
+		[](Imath::M44f* data, std::size_t size, const possumwood::ViewportState& vs) {
+			*data = vs.modelview();
 		}
 	);
 
@@ -29,8 +29,8 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iModelViewNormal",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::M44f* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
-			Imath::M44f mv = vs.modelview;
+		[](Imath::M44f* data, std::size_t size, const possumwood::ViewportState& vs) {
+			Imath::M44f mv = vs.modelview();
 
 			// normal matrix has to be inverted and transposed
 			mv = mv.inverse().transposed();
@@ -43,8 +43,8 @@ void addViewportUniforms(possumwood::Uniforms& uniforms) {
 		"iResolution",
 		1,
 		possumwood::Uniforms::kPerDraw,
-		[](Imath::V2f* data, std::size_t size, const possumwood::Drawable::ViewportState& vs) {
-			*data = Imath::V2f(vs.width, vs.height);
+		[](Imath::V2f* data, std::size_t size, const possumwood::ViewportState& vs) {
+			*data = Imath::V2f(vs.width(), vs.height());
 		}
 	);
 }

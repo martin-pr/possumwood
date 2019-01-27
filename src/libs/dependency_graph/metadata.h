@@ -13,6 +13,7 @@
 #include "state.h"
 #include "data.h"
 #include "attr.h"
+#include "unique_id.h"
 
 namespace dependency_graph {
 
@@ -28,6 +29,7 @@ class Attr;
 class Node;
 class NodeBase;
 class Port;
+class Network;
 
 class MetadataHandle;
 
@@ -85,7 +87,7 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		template<typename T>
 		std::vector<std::reference_wrapper<const Attr>> influencedBy(const OutAttr<T>& out) const;
 
-
+		virtual std::unique_ptr<NodeBase> createNode(const std::string& name, Network& parent, const UniqueId& id = UniqueId()) const;
 
 	protected:
 		unsigned doAddAttribute(const std::string& name, Attr::Category cat, const BaseData& data);

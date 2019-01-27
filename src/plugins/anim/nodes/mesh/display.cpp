@@ -150,7 +150,7 @@ class Drawable : public possumwood::Drawable {
 			}
 		}
 
-		m_renderable.draw(viewport().projection, viewport().modelview);
+		m_renderable.draw(viewport().projection(), viewport().modelview());
 
 		return dependency_graph::State();
 	}

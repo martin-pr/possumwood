@@ -8,6 +8,8 @@
 
 #include <QtWidgets/QOpenGLWidget>
 
+#include <possumwood_sdk/viewport_state.h>
+
 #include <ImathVec.h>
 #include <ImathMatrix.h>
 
@@ -21,8 +23,7 @@ class Viewport : public QOpenGLWidget, public boost::noncopyable {
 	Viewport(QWidget* parent = NULL);
 	virtual ~Viewport();
 
-	const Imath::M44f& projection() const;
-	const Imath::M44f& modelview() const;
+	const possumwood::ViewportState& viewportState() const;
 
   protected:
 	virtual void initializeGL() override;
@@ -35,7 +36,7 @@ class Viewport : public QOpenGLWidget, public boost::noncopyable {
 	Imath::V3f m_origin;
 	int m_mouseX, m_mouseY;
 
-	Imath::M44f m_projection, m_modelview;
+	possumwood::ViewportState m_viewportState;
 
 	boost::posix_time::ptime m_timer;
 };

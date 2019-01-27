@@ -18,7 +18,7 @@ const dependency_graph::Values& Drawable::values() const {
 	return m_vals;
 }
 
-const possumwood::Drawable::ViewportState& Drawable::viewport() const {
+const possumwood::ViewportState& Drawable::viewport() const {
 	return m_viewport;
 }
 

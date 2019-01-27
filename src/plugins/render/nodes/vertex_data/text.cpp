@@ -87,7 +87,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// and add them to the vertex data
 		vd->addVBO<Imath::V2f>("position", vertices.size(), possumwood::VertexData::kStatic,
-		[vertices](possumwood::Buffer<float>& buffer, const possumwood::Drawable::ViewportState & viewport) {
+		[vertices](possumwood::Buffer<float>& buffer, const possumwood::ViewportState & viewport) {
 			std::size_t ctr = 0;
 			for(auto& v : vertices) {
 				buffer.element(ctr) = v;
@@ -97,7 +97,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		                      );
 
 		vd->addVBO<Imath::V2f>("uv", uvs.size(), possumwood::VertexData::kStatic,
-		[uvs](possumwood::Buffer<float>& buffer, const possumwood::Drawable::ViewportState & viewport) {
+		[uvs](possumwood::Buffer<float>& buffer, const possumwood::ViewportState & viewport) {
 			std::size_t ctr = 0;
 			for(auto& v : uvs) {
 				buffer.element(ctr) = v;

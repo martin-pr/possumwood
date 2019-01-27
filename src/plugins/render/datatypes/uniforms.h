@@ -27,11 +27,11 @@ class Uniforms {
 
 	template <typename T>
 	void addUniform(const std::string& name, std::size_t size,
-	                const UpdateType& updateType, std::function<void(T*, std::size_t, const Drawable::ViewportState&)> updateFunctor);
+	                const UpdateType& updateType, std::function<void(T*, std::size_t, const ViewportState&)> updateFunctor);
 
 	void addTexture(const std::string& name, const QPixmap& pixmap);
 
-	void use(GLuint programId, const Drawable::ViewportState&) const;
+	void use(GLuint programId, const ViewportState&) const;
 
 	/// returns the number of uniforms and textures stored in this container
 	std::size_t size() const;
@@ -67,7 +67,7 @@ class Uniforms {
 			std::unique_ptr<DataBase> data;
 			mutable bool initialised = false; // ugly :(
 
-			std::function<void(DataBase&, const Drawable::ViewportState&)> updateFunctor;
+			std::function<void(DataBase&, const ViewportState&)> updateFunctor;
 			std::function<void(GLuint, const std::string&,
 			                   const DataBase&)> useFunctor;
 		};
