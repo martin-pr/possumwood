@@ -2,7 +2,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include <QPixmap>
+#include <OpenImageIO/imageio.h>
 
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/datatypes/filename.h>
@@ -10,6 +10,8 @@
 #include "datatypes/pixmap.h"
 
 namespace {
+
+using namespace OIIO;
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<std::shared_ptr<const possumwood::Pixmap>> a_image;
@@ -22,21 +24,32 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::shared_ptr<possumwood::Pixmap> result;
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
-		QPixmap pixmap(filename.filename().string().c_str());
 
-		QImage image = pixmap.toImage();
-		image = image.convertToFormat(QImage::Format_RGB888);
-		assert(image.format() == QImage::Format_RGB888);
 
-		if(!pixmap.isNull()) {
-			result = std::shared_ptr<possumwood::Pixmap>(new possumwood::Pixmap(image.width(), image.height()));
+		auto in = ImageInput::open(filename.filename().string());
+		if (!in)
+			throw std::runtime_error("Error loading " + filename.filename().string());
 
-			for(std::size_t y=0; y<(std::size_t)image.height(); ++y) {
-				const uchar* scanline = image.constScanLine(y);
+		const ImageSpec &spec = in->spec();
+		int xres = spec.width;
+		int yres = spec.height;
+		int channels = spec.nchannels;
+		if(spec.nchannels != 3)
+			throw std::runtime_error("Error loading " + filename.filename().string() + " - only images with 3 channels are supported at the moment!");
 
-				for(std::size_t x=0; x<(std::size_t)image.width(); ++x)
-					(*result)(x, y).setValue(possumwood::Pixel::value_t{{scanline[x*3], scanline[x*3+1], scanline[x*3+2]}});
-			}
+		std::vector<unsigned char> pixels(xres*yres*channels);
+		in->read_image(TypeDesc::UINT8, &pixels[0]);
+		in->close();
+
+		result = std::shared_ptr<possumwood::Pixmap>(new possumwood::Pixmap(xres, yres));
+
+		for(int y=0; y < yres; ++y) {
+			for(int x=0; x<xres; ++x)
+				(*result)(x, y).setValue(possumwood::Pixel::value_t{{
+					pixels[(x+y*xres)*3],
+					pixels[(x+y*xres)*3+1],
+					pixels[(x+y*xres)*3+2]
+				}});
 		}
 	}
 

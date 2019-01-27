@@ -11,4 +11,4 @@ include_directories(./)
 
 add_library(images SHARED ${sources})
 
-target_link_libraries(images maths expressions ${LIBS})
+target_link_libraries(images maths expressions ${LIBS} OpenImageIO)
