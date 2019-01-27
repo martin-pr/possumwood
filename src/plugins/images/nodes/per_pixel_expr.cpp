@@ -16,8 +16,8 @@ namespace {
 
 dependency_graph::InAttr<std::string> a_src;
 dependency_graph::InAttr<possumwood::ExprSymbols> a_symbols;
-dependency_graph::InAttr<std::shared_ptr<const QPixmap>> a_inPixmap;
-dependency_graph::OutAttr<std::shared_ptr<const QPixmap>> a_outPixmap;
+dependency_graph::InAttr<std::shared_ptr<const possumwood::Pixmap>> a_inPixmap;
+dependency_graph::OutAttr<std::shared_ptr<const possumwood::Pixmap>> a_outPixmap;
 
 class Popup : public QMenu {
 	public:
@@ -106,7 +106,7 @@ class Editor : public possumwood::SourceEditor {
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State result;
 
-	std::shared_ptr<const QPixmap> input = data.get(a_inPixmap);
+	std::shared_ptr<const possumwood::Pixmap> input = data.get(a_inPixmap);
 
 	if(input == nullptr) {
 		result.addError("No input pixmap");
@@ -160,39 +160,37 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			result.addError(err);
 
 			// output nothing
-			data.set(a_outPixmap, std::shared_ptr<const QPixmap>());
+			data.set(a_outPixmap, std::shared_ptr<const possumwood::Pixmap>());
 		}
 
 		// compilation success
 		else {
-			// make a QImage, so we can set pixels
-			QImage image = input->toImage();
+			std::unique_ptr<possumwood::Pixmap> out(new possumwood::Pixmap(input->width(), input->height()));
 
 			// iterate over pixels
-			for(int yi = 0; yi < input->height(); ++yi)
-				for(int xi = 0; xi < input->width(); ++xi) {
+			for(std::size_t yi = 0; yi < input->height(); ++yi)
+				for(std::size_t xi = 0; xi < input->width(); ++xi) {
 					x = xi;
 					y = yi;
 
 					// r, g, b variables are changeable from the expression
-					QColor color(image.pixel(xi, yi));
-					r = color.redF();
-					g = color.greenF();
-					b = color.blueF();
+					auto value = (*input)(xi, yi).value();
+
+					r = (float)value[0] / 255.0f;
+					g = (float)value[1] / 255.0f;
+					b = (float)value[2] / 255.0f;
 
 					// evaluate the expression, ignoring its output
 					cexpr.value();
 
-					color.setRedF(r);
-					color.setGreenF(g);
-					color.setBlueF(b);
-					image.setPixel(xi, yi, color.rgb());
+					(*out)(xi, yi) = possumwood::Pixel::value_t{{
+						possumwood::Pixmap::channel_t(std::min(255.0f, std::max(0.0f, r * 255.0f))),
+						possumwood::Pixmap::channel_t(std::min(255.0f, std::max(0.0f, g * 255.0f))),
+						possumwood::Pixmap::channel_t(std::min(255.0f, std::max(0.0f, b * 255.0f))),
+					}};
 				}
 
-			std::unique_ptr<QPixmap> out(new QPixmap());
-			*out = QPixmap::fromImage(std::move(image));
-
-			data.set(a_outPixmap, std::shared_ptr<const QPixmap>(out.release()));
+			data.set(a_outPixmap, std::shared_ptr<const possumwood::Pixmap>(out.release()));
 		}
 	}
 

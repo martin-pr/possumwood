@@ -11,4 +11,4 @@ include_directories(./)
 
 add_library(render SHARED ${sources})
 
-target_link_libraries(render maths cgal anim ${LIBS} GLEW)
+target_link_libraries(render maths cgal anim images ${LIBS} GLEW)

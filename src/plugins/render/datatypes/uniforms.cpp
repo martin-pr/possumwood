@@ -9,7 +9,7 @@ namespace possumwood {
 Uniforms::Uniforms() : m_currentTime(std::numeric_limits<float>::infinity()) {
 }
 
-void Uniforms::addTexture(const std::string& name, const QPixmap& pixmap) {
+void Uniforms::addTexture(const std::string& name, const Pixmap& pixmap) {
 	m_textures.push_back(TextureHolder());
 
 	m_textures.back().name = name;

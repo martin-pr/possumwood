@@ -6,11 +6,11 @@
 
 namespace {
 
-dependency_graph::InAttr<std::shared_ptr<const QPixmap>> a_image;
+dependency_graph::InAttr<std::shared_ptr<const possumwood::Pixmap>> a_image;
 dependency_graph::OutAttr<unsigned> a_width, a_height;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	std::shared_ptr<const QPixmap> input = data.get(a_image);
+	std::shared_ptr<const possumwood::Pixmap> input = data.get(a_image);
 
 	dependency_graph::State result;
 	if(input == nullptr) {
