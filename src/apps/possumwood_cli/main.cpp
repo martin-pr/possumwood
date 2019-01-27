@@ -59,6 +59,7 @@ void printHelp() {
 	std::cout << "  --render <filename> - renders a frame to a file. Only PPM files supported at the moment." << std::endl;
 	std::cout << "  --window <width> <height> - defines the render window size in pixels" << std::endl;
 	std::cout << "  --cam_pos <x> <y> <z> - defines camera position in world space" << std::endl;
+	std::cout << "  --cam_target <x> <y> <z> - defines camera target (default 0,0,0)" << std::endl;
 	std::cout << "  --frame_step <step> - render multiple frames" << std::endl;
 	std::cout << std::endl;
 	std::cout << "The render filename parameter can contain the following 'variables':" << std::endl;
@@ -145,6 +146,17 @@ std::vector<Action> evaluateOption(const Options::const_iterator& current) {
 		float z = atof(option.parameters[2].c_str());
 
 		viewport.lookAt(Imath::V3f(x, y, z), viewport.target());
+	}
+
+	else if(option.name == "--cam_target") {
+		if(option.parameters.size() != 3)
+			throw std::runtime_error("--cam_pos option allows only exactly three floating-point parameter");
+
+		float x = atof(option.parameters[0].c_str());
+		float y = atof(option.parameters[1].c_str());
+		float z = atof(option.parameters[2].c_str());
+
+		viewport.lookAt(viewport.eyePosition(), Imath::V3f(x, y, z));
 	}
 
 	else if(option.name == "--window") {
