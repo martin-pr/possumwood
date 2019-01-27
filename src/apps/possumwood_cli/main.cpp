@@ -6,6 +6,8 @@
 
 #include <boost/format.hpp>
 
+#include <OpenImageIO/imageio.h>
+
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/viewport_state.h>
 
@@ -14,6 +16,8 @@
 #include "render_context.h"
 #include "stack.h"
 #include "expression.h"
+
+using namespace OIIO;
 
 
 // The CLI unfortunately has to be designed around GLUT - it is not possible in current
@@ -104,13 +108,15 @@ std::vector<Action> render(const Options::Item& option) {
 			const std::string filename = expr.expand(option.parameters[0]);
 			std::cout << "Rendering " << filename << "... " << std::flush;
 
-			std::ofstream file(filename.c_str(), std::ofstream::binary);
+			std::unique_ptr<ImageOutput> out(ImageOutput::create(filename));
+			if(!out)
+				throw(std::runtime_error("Cannot write output image " + filename));
 
-			file << "P6" << std::endl;
-			file << viewport.width() << " " << viewport.height() << " 255" << std::endl;
-
-			for(unsigned l=viewport.height(); l>0; --l)
-				file.write((const char*)(&buffer[(l-1) * viewport.width()*3]), viewport.width()*3);
+			ImageSpec spec(viewport.width(), viewport.height(), 3, TypeDesc::UINT8);
+			out->open(filename, spec);
+			for (int y = viewport.height()-1; y >= 0; --y)
+				out->write_scanline (y, 0, TypeDesc::UINT8, &buffer[y*viewport.width()*3]);
+			out->close();
 
 			std::cout << "done" << std::endl;
 		};
