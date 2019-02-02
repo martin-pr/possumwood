@@ -4,6 +4,10 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+#
+# Generate images in ./tmp
+#
+
 mkdir -p "$DIR/../tmp"
 
 for setup in `find $DIR/../toolbars | grep '\.psw$' | sort`
@@ -22,3 +26,34 @@ do
 		echo "$config not found."
 	fi
 done
+
+#
+# Compare results with images in ./regression
+#
+
+set +e
+
+tmp_out="`mktemp`"
+result=0
+
+for file in `find $DIR/../regression | grep '\.png$' | sort`
+do
+	compare_with=`echo $file | sed "s@$DIR/../regression@$DIR/../tmp@g"`
+	echo "Regression: $file"
+	echo "Current: $compare_with"
+
+	out=`compare -metric MEPP "$file" "$compare_with" "$tmp_out" 2>&1`
+	out=$(tr -dc '\11\12\15\40-\176' <<< "$out")
+
+	echo "Comparison: $out"
+
+	if [ "$out" != "0 (0, 0)" ]
+	then
+		echo "Comparison failed."
+		result=1
+	fi
+
+	echo
+done
+
+exit $result
