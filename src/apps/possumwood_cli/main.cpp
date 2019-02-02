@@ -102,7 +102,7 @@ std::vector<Action> render(const Options::Item& option) {
 		const possumwood::Config& cfg = possumwood::App::instance().sceneConfig();
 		const float t = (float)(param * frame_step) / cfg["fps"].as<float>() + cfg["start_time"].as<float>();
 
-		std::function<void(std::vector<GLubyte>&)> callback = [option, t](std::vector<GLubyte>& buffer) {
+		std::function<void(std::vector<GLubyte>&)> callback = [option, t](const std::vector<GLubyte>& buffer) {
 			possumwood::App::instance().setTime(t);
 
 			const std::string filename = expr.expand(option.parameters[0]);
@@ -113,10 +113,17 @@ std::vector<Action> render(const Options::Item& option) {
 				throw(std::runtime_error("Cannot write output image " + filename));
 
 			ImageSpec spec(viewport.width(), viewport.height(), 3, TypeDesc::UINT8);
-			out->open(filename, spec);
-			for (int y = viewport.height()-1; y >= 0; --y)
-				out->write_scanline (y, 0, TypeDesc::UINT8, &buffer[y*viewport.width()*3]);
-			out->close();
+			if(out->open(filename, spec)) {
+				for(int y = viewport.height()-1; y >= 0; --y) {
+					const GLubyte* ptr = &(buffer[y*viewport.width()*3]);
+
+					out->write_scanline (y, 0, TypeDesc::UINT8, ptr);
+				}
+
+				out->close();
+			}
+			else
+				throw std::runtime_error("Error opening output file " + filename);
 
 			std::cout << "done" << std::endl;
 		};
