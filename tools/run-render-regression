@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+mkdir -p "$DIR/../tmp"
+
+for setup in `find $DIR/../toolbars | grep '\.psw$' | sort`
+do
+	config=`echo $setup | sed 's/\.psw$/\.cfg/g'`
+	if [ -e $config ];
+	then
+		target_dir=$DIR/../tmp/`echo $setup | sed 's@'$DIR'/../toolbars/@@g' | sed 's/\.psw$//g'`
+		mkdir -p "$target_dir"
+
+		cmd="$DIR/../build/possumwood_cli `cat $config | tr '\n' ' '` --scene $setup --window 800 600 --render $target_dir/'out_\$4F.png'"
+		echo "Command: $cmd"
+
+		bash -c "$cmd"
+	else
+		echo "$config not found."
+	fi
+done
