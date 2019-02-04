@@ -1,3 +1,6 @@
 # Build directory
 build/*
 *~
+tmp/*
+_archive
+plugins/*.so
