@@ -43,6 +43,7 @@ addons:
       - qtdeclarative5-dev
       - libqt5opengl5-dev
       - libopenimageio-dev
+      - libluabind-dev
 
 # Run build
 script:
