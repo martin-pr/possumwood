@@ -1,6 +1,9 @@
 # Find Qt
 SET(QT_USE_QTOPENGL TRUE)
+FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Gui OpenGL Widgets)
+set(LIBS ${LIBS} Qt5::Widgets Qt5::OpenGL)
 
+# Find luabind
 FIND_PACKAGE(PkgConfig REQUIRED)
 
 pkg_check_modules (LUABIND luabind)
