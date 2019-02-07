@@ -29,4 +29,9 @@ bool PODVariable<T>::equalTo(const Variable& v) const {
 	return vt.m_value == m_value;
 }
 
+template<typename T>
+std::string PODVariable<T>::str() const {
+	return std::to_string(m_value);
+}
+
 } }

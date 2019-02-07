@@ -23,6 +23,7 @@ class Variable {
 		bool operator != (const Variable& var) const;
 
 		virtual void init(State& s) = 0;
+		virtual std::string str() const = 0;
 
 	protected:
 		Variable(const Variable& con);
@@ -34,6 +35,8 @@ class Variable {
 		std::string m_name;
 };
 
+std::ostream& operator << (std::ostream& out, const Variable& v);
+
 template<typename T>
 class PODVariable final : public Variable {
 	public:
@@ -43,6 +46,7 @@ class PODVariable final : public Variable {
 		virtual const std::type_info& type() const override;
 
 		virtual void init(State& s) override;
+		virtual std::string str() const override;
 
 	protected:
 		virtual bool equalTo(const Variable& v) const override;

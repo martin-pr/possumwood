@@ -65,7 +65,7 @@ void Context::addVariable(std::unique_ptr<Variable>&& var) {
 std::ostream& operator << (std::ostream& out, const Context& st) {
 	std::cout << "Variables: ";
 	for(auto& v : st.m_variables)
-		std::cout << v->name() << " ";
+		std::cout << v->name() << "=" << v->str() << " ";
 
 	return out;
 }
