@@ -11,6 +11,8 @@
 
 #include <luabind/luabind.hpp>
 
+#include "datatypes/state.h"
+
 namespace {
 
 dependency_graph::InAttr<std::string> a_src;
@@ -77,18 +79,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const std::string& src = data.get(a_src);
 
 	// Create a new lua state
-	lua_State *myLuaState = luaL_newstate();
-
-	// Connect LuaBind to this lua state
-	luabind::open(myLuaState);
+	possumwood::lua::State state;
 
 	// Define a lua function that we can call
-	luaL_dostring(myLuaState, src.c_str());
+	luaL_dostring(state, src.c_str());
 
-	const float out = luabind::call_function<float>(myLuaState, "main");
+	const float out = luabind::call_function<float>(state, "main");
 	data.set(a_out, out);
-
-	lua_close(myLuaState);
 
 	return result;
 }
