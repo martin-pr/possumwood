@@ -12,10 +12,12 @@
 #include <luabind/luabind.hpp>
 
 #include "datatypes/state.h"
+#include "datatypes/context.h"
 
 namespace {
 
 dependency_graph::InAttr<std::string> a_src;
+dependency_graph::InAttr<possumwood::lua::Context> a_context;
 dependency_graph::OutAttr<float> a_out;
 
 class Popup : public QMenu {
@@ -79,7 +81,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const std::string& src = data.get(a_src);
 
 	// Create a new lua state
-	possumwood::lua::State state;
+	possumwood::lua::State state(data.get(a_context));
 
 	// Define a lua function that we can call
 	luaL_dostring(state, src.c_str());
@@ -92,9 +94,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_src, "source", std::string("function main()\n  return 0\nend\n"));
+	meta.addAttribute(a_context, "context");
 	meta.addAttribute(a_out, "out");
 
 	meta.addInfluence(a_src, a_out);
+	meta.addInfluence(a_context, a_out);
 
 	meta.setCompute(&compute);
 	meta.setEditor<Editor>();

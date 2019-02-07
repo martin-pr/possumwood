@@ -6,9 +6,11 @@
 
 namespace possumwood { namespace lua {
 
+class Context;
+
 class State final : public boost::noncopyable {
 	public:
-		State();
+		State(const Context& con);
 		~State();
 
 		luabind::object globals() const;

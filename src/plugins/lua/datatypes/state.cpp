@@ -1,13 +1,19 @@
 #include "state.h"
 
+#include "context.h"
+
 namespace possumwood { namespace lua {
 
-State::State() {
+State::State(const Context& con) {
 	// create a new raw state from Lua
 	m_state = luaL_newstate();
 
 	// connect the state to luabind library
 	luabind::open(m_state);
+
+	// add all variables from the context
+	for(auto& v : con.m_variables)
+		v->init(*this);
 }
 
 State::~State() {
