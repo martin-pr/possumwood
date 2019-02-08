@@ -101,8 +101,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// Define a lua function that we can call
 	luaL_dostring(state, src.c_str());
 
-	const float out = luabind::call_function<float>(state, "main");
-	data.set(a_out, out);
+	try {
+		const float out = luabind::call_function<float>(state, "main");
+		data.set(a_out, out);
+	}
+	catch(const luabind::error& err) {
+		throw std::runtime_error(lua_tostring(err.state(), -1));
+	}
 
 	return result;
 }
