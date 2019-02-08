@@ -49,18 +49,19 @@ class Editor : public possumwood::SourceEditor {
 
 	protected:
 		virtual void valueChanged(const dependency_graph::Attr& attr) override {
-			// if(attr == a_symbols) {
-			// 	m_popup->deleteLater();
+			if(attr == a_context) {
+				if(m_popup)
+					m_popup->deleteLater();
 
-			// 	populateVariableList();
-			// }
+				populateVariableList();
+			}
 
-			// else
+			else
 				SourceEditor::valueChanged(attr);
 		}
 
 		void populateVariableList() {
-			if(!m_popup)
+			if(m_popup)
 				m_popup->deleteLater();
 
 			m_popup = new Popup(m_varsButton);
@@ -75,27 +76,12 @@ class Editor : public possumwood::SourceEditor {
 				editorWidget()->insertPlainText(text);
 			});
 
-			// // the external symbols
-			// unsigned ctr = 0;
-			// for(auto& s : values().get(a_symbols)) {
-			// 	m_popup->addItem(s.first + "\t(constant)");
-			// 	++ctr;
-			// }
-
-			// if(ctr > 0)
-			// 	m_popup->addSeparator();
-
-			// // hardwired symbols
-			// m_popup->addItem("x\t(constant)");
-			// m_popup->addItem("y\t(constant)");
-			// m_popup->addItem("width\t(constant)");
-			// m_popup->addItem("height\t(constant)");
-
-			// m_popup->addSeparator();
-
-			// m_popup->addItem("r\t(variable)");
-			// m_popup->addItem("g\t(variable)");
-			// m_popup->addItem("b\t(variable)");
+			// variables
+			unsigned ctr = 0;
+			for(auto& s : values().get(a_context).variables()) {
+				m_popup->addItem(s.name() + "\t" + s.str());
+				++ctr;
+			}
 		}
 
 	private:

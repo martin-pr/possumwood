@@ -62,6 +62,13 @@ void Context::addVariable(std::unique_ptr<Variable>&& var) {
 	m_variables.push_back(std::move(var));
 }
 
+boost::iterator_range<Context::const_var_iterator> Context::variables() const {
+	return boost::make_iterator_range(
+		boost::make_indirect_iterator(m_variables.begin()),
+		boost::make_indirect_iterator(m_variables.end())
+	);
+}
+
 std::ostream& operator << (std::ostream& out, const Context& st) {
 	std::cout << "Variables: ";
 	for(auto& v : st.m_variables)

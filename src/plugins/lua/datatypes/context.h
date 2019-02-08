@@ -3,6 +3,9 @@
 #include <memory>
 #include <vector>
 
+#include <boost/range/iterator_range.hpp>
+#include <boost/iterator/indirect_iterator.hpp>
+
 #include <actions/traits.h>
 
 #include "variable.h"
@@ -23,6 +26,9 @@ class Context {
 
 		bool operator == (const Context& c) const;
 		bool operator != (const Context& c) const;
+
+		typedef boost::indirect_iterator<std::vector<std::unique_ptr<Variable>>::const_iterator> const_var_iterator;
+		boost::iterator_range<const_var_iterator> variables() const;
 
 	private:
 		std::vector<std::unique_ptr<Variable>> m_variables;
