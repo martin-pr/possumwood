@@ -18,7 +18,7 @@ namespace {
 
 dependency_graph::InAttr<std::string> a_src;
 dependency_graph::InAttr<possumwood::lua::Context> a_context;
-dependency_graph::OutAttr<float> a_out;
+dependency_graph::OutAttr<std::shared_ptr<const possumwood::lua::State>> a_state;
 
 class Popup : public QMenu {
 	public:
@@ -96,14 +96,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const std::string& src = data.get(a_src);
 
 	// Create a new lua state
-	possumwood::lua::State state(data.get(a_context));
-
-	// Define a lua function that we can call
-	luaL_dostring(state, src.c_str());
+	std::shared_ptr<possumwood::lua::State> state(new possumwood::lua::State(data.get(a_context)));
 
 	try {
-		const float out = luabind::call_function<float>(state, "main");
-		data.set(a_out, out);
+		// evaluate our script
+		luaL_dostring(*state, src.c_str());
+
+		// and return the resulting state
+		data.set(a_state, std::shared_ptr<const possumwood::lua::State>(state));
 	}
 	catch(const luabind::error& err) {
 		throw std::runtime_error(lua_tostring(err.state(), -1));
@@ -113,12 +113,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_src, "source", std::string("function main()\n  return 0\nend\n"));
+	meta.addAttribute(a_src, "source", std::string("variable = 10\n"));
 	meta.addAttribute(a_context, "context");
-	meta.addAttribute(a_out, "out");
+	meta.addAttribute(a_state, "state");
 
-	meta.addInfluence(a_src, a_out);
-	meta.addInfluence(a_context, a_out);
+	meta.addInfluence(a_src, a_state);
+	meta.addInfluence(a_context, a_state);
 
 	meta.setCompute(&compute);
 	meta.setEditor<Editor>();

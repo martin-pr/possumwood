@@ -38,4 +38,8 @@ State::operator const lua_State*() const {
 	return m_state;
 }
 
+std::ostream& operator << (std::ostream& out, const std::shared_ptr<const State>& st) {
+	return out;
+}
+
 }}
