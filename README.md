@@ -12,7 +12,17 @@ Possumwood is built on top of a simple graph-evaluation engine and a Qt-based no
 
 ## Tutorials
 
+### Basics
+
 Tutorials are intended to introduce the concepts in Possumwood, and help a user navigate its UIs. They are still work-in-progress, and more will be added over time.
+
+#### [Lua integration](https://github.com/martin-pr/possumwood/wiki/Lua-Basics)
+
+<img src="doc/lua.png" align="right" width="150">
+
+This tutorial introduces the [Lua](https://en.wikipedia.org/wiki/Lua_(programming_language)) integration of Possumwood, using a simple example of an addition node.
+
+<div style="clear: both"></div>
 
 ### OpenGL / GLSL
 
