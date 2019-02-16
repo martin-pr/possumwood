@@ -1,0 +1,156 @@
+{
+    "connections": [],
+    "nodes": {
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 208.0,
+                    "y": 305.0
+                }
+            },
+            "connections": [
+                {
+                    "in_node": "float_0",
+                    "in_port": "value",
+                    "out_node": "input_0",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "float_1",
+                    "in_port": "in_context",
+                    "out_node": "float_0",
+                    "out_port": "out_context"
+                },
+                {
+                    "in_node": "script_0",
+                    "in_port": "context",
+                    "out_node": "float_1",
+                    "out_port": "out_context"
+                },
+                {
+                    "in_node": "float_1",
+                    "in_port": "value",
+                    "out_node": "input_1",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "float_2",
+                    "in_port": "state",
+                    "out_node": "script_0",
+                    "out_port": "state"
+                },
+                {
+                    "in_node": "output_0",
+                    "in_port": "data",
+                    "out_node": "float_2",
+                    "out_port": "out"
+                }
+            ],
+            "name": "multiplication",
+            "nodes": {
+                "float_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 174.0,
+                            "y": 71.0
+                        }
+                    },
+                    "name": "float_a_inject",
+                    "ports": {
+                        "name": "a"
+                    },
+                    "type": "lua/inject/float"
+                },
+                "float_1": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 176.0,
+                            "y": 234.0
+                        }
+                    },
+                    "name": "float_b_inject",
+                    "ports": {
+                        "name": "b"
+                    },
+                    "type": "lua/inject/float"
+                },
+                "float_2": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 190.0,
+                            "y": 547.0
+                        }
+                    },
+                    "name": "float_result_extract",
+                    "ports": {
+                        "name": "result"
+                    },
+                    "type": "lua/extract/float"
+                },
+                "input_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 60.0,
+                            "y": 73.0
+                        }
+                    },
+                    "name": "a",
+                    "type": "input"
+                },
+                "input_1": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 55.0,
+                            "y": 232.0
+                        }
+                    },
+                    "name": "b",
+                    "type": "input"
+                },
+                "output_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 324.0,
+                            "y": 576.0
+                        }
+                    },
+                    "name": "result",
+                    "type": "output"
+                },
+                "script_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 186.0,
+                            "y": 406.0
+                        }
+                    },
+                    "name": "script",
+                    "ports": {
+                        "source": "result = a * b"
+                    },
+                    "type": "lua/script"
+                }
+            },
+            "ports": {
+                "a": 2.0,
+                "b": 3.0
+            },
+            "type": "network"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAAAAAAAQ6AAACMwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADB/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADBwAAAI4BAAADAAAAAQAAAagAAAMH/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAB3QAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACSQAAASkAAACGAQAAAwAAAnAAAAMHAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
