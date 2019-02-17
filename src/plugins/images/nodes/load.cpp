@@ -24,8 +24,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::shared_ptr<possumwood::Pixmap> result;
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
-
-
 		auto in = ImageInput::open(filename.filename().string());
 		if (!in)
 			throw std::runtime_error("Error loading " + filename.filename().string());
