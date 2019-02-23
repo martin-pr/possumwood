@@ -9,7 +9,15 @@ namespace possumwood {
 Uniforms::Uniforms() : m_currentTime(std::numeric_limits<float>::infinity()) {
 }
 
-void Uniforms::addTexture(const std::string& name, const Pixmap& pixmap) {
+void Uniforms::addTexture(const std::string& name, const LDRPixmap& pixmap) {
+	m_textures.push_back(TextureHolder());
+
+	m_textures.back().name = name;
+	m_textures.back().glslType = "uniform sampler2D " + name + ";";
+	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(pixmap));
+}
+
+void Uniforms::addTexture(const std::string& name, const HDRPixmap& pixmap) {
 	m_textures.push_back(TextureHolder());
 
 	m_textures.back().name = name;

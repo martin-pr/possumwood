@@ -29,7 +29,8 @@ class Uniforms {
 	void addUniform(const std::string& name, std::size_t size,
 	                const UpdateType& updateType, std::function<void(T*, std::size_t, const ViewportState&)> updateFunctor);
 
-	void addTexture(const std::string& name, const Pixmap& pixmap);
+	void addTexture(const std::string& name, const LDRPixmap& pixmap);
+	void addTexture(const std::string& name, const HDRPixmap& pixmap);
 
 	void use(GLuint programId, const ViewportState&) const;
 

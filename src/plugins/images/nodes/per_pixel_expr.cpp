@@ -16,8 +16,8 @@ namespace {
 
 dependency_graph::InAttr<std::string> a_src;
 dependency_graph::InAttr<possumwood::ExprSymbols> a_symbols;
-dependency_graph::InAttr<std::shared_ptr<const possumwood::Pixmap>> a_inPixmap;
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::Pixmap>> a_outPixmap;
+dependency_graph::InAttr<std::shared_ptr<const possumwood::LDRPixmap>> a_inPixmap;
+dependency_graph::OutAttr<std::shared_ptr<const possumwood::LDRPixmap>> a_outPixmap;
 
 class Popup : public QMenu {
 	public:
@@ -106,7 +106,7 @@ class Editor : public possumwood::SourceEditor {
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State result;
 
-	std::shared_ptr<const possumwood::Pixmap> input = data.get(a_inPixmap);
+	std::shared_ptr<const possumwood::LDRPixmap> input = data.get(a_inPixmap);
 
 	if(input == nullptr) {
 		result.addError("No input pixmap");
@@ -160,12 +160,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			result.addError(err);
 
 			// output nothing
-			data.set(a_outPixmap, std::shared_ptr<const possumwood::Pixmap>());
+			data.set(a_outPixmap, std::shared_ptr<const possumwood::LDRPixmap>());
 		}
 
 		// compilation success
 		else {
-			std::unique_ptr<possumwood::Pixmap> out(new possumwood::Pixmap(input->width(), input->height()));
+			std::unique_ptr<possumwood::LDRPixmap> out(new possumwood::LDRPixmap(input->width(), input->height()));
 
 			// iterate over pixels
 			for(std::size_t yi = 0; yi < input->height(); ++yi)
@@ -183,14 +183,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					// evaluate the expression, ignoring its output
 					cexpr.value();
 
-					(*out)(xi, yi) = possumwood::Pixel::value_t{{
-						possumwood::Pixmap::channel_t(std::min(255.0f, std::max(0.0f, r * 255.0f))),
-						possumwood::Pixmap::channel_t(std::min(255.0f, std::max(0.0f, g * 255.0f))),
-						possumwood::Pixmap::channel_t(std::min(255.0f, std::max(0.0f, b * 255.0f))),
+					(*out)(xi, yi) = possumwood::LDRPixmap::pixel_t::value_t{{
+						possumwood::LDRPixmap::channel_t(std::min(255.0f, std::max(0.0f, r * 255.0f))),
+						possumwood::LDRPixmap::channel_t(std::min(255.0f, std::max(0.0f, g * 255.0f))),
+						possumwood::LDRPixmap::channel_t(std::min(255.0f, std::max(0.0f, b * 255.0f))),
 					}};
 				}
 
-			data.set(a_outPixmap, std::shared_ptr<const possumwood::Pixmap>(out.release()));
+			data.set(a_outPixmap, std::shared_ptr<const possumwood::LDRPixmap>(out.release()));
 		}
 	}
 
