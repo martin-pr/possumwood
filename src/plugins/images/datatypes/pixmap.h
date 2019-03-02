@@ -8,13 +8,14 @@ template<typename BASE>
 class Pixel {
 	public:
 		typedef std::array<BASE, 3> value_t;
+		typedef typename value_t::value_type channel_t;
 
 		Pixel(const value_t& value = value_t{{0, 0, 0}});
 
 		const value_t& value() const;
 		void setValue(const value_t& rgb);
 
-		std::size_t size() const;
+		static constexpr std::size_t size();
 
 		Pixel& operator = (const value_t& rgb);
 		const value_t& operator*() const;
@@ -44,8 +45,8 @@ class Pixmap {
 		bool empty() const;
 
 	private:
-		std::vector<pixel_t> m_data;
-		std::size_t m_width, m_height;
+		std::vector<uint8_t> m_data;
+		std::size_t m_width, m_scanline, m_height;
 };
 
 // pixmap types (explicit template instantiation only!)
