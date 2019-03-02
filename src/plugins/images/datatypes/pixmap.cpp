@@ -17,6 +17,11 @@ void Pixel<BASE>::setValue(const value_t& rgb) {
 }
 
 template<typename BASE>
+std::size_t Pixel<BASE>::size() const {
+	return m_value.size();
+}
+
+template<typename BASE>
 Pixel<BASE>& Pixel<BASE>::operator = (const value_t& rgb) {
 	m_value = rgb;
 	return *this;

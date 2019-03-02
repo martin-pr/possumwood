@@ -14,6 +14,8 @@ class Pixel {
 		const value_t& value() const;
 		void setValue(const value_t& rgb);
 
+		std::size_t size() const;
+
 		Pixel& operator = (const value_t& rgb);
 		const value_t& operator*() const;
 		operator const value_t&() const;
