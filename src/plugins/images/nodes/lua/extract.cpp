@@ -29,10 +29,10 @@ static dependency_graph::State compute(dependency_graph::Values& data, Params<PI
 
 	try {
 		// get the result
-		std::shared_ptr<PixmapWrapper<PIXMAP>> value =
-			luabind::object_cast<std::shared_ptr<PixmapWrapper<PIXMAP>>>(state->globals()[data.get(params.a_name)]);
+		PixmapWrapper<PIXMAP> value =
+			luabind::object_cast<PixmapWrapper<PIXMAP>>(state->globals()[data.get(params.a_name)]);
 		// and push it to the output
-		data.set(params.a_out, std::shared_ptr<const PIXMAP>(new PIXMAP(value->pixmap())));
+		data.set(params.a_out, std::shared_ptr<const PIXMAP>(new PIXMAP(value.pixmap())));
 	}
 	catch(const luabind::error& err) {
 		throw std::runtime_error(lua_tostring(err.state(), -1));
