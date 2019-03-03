@@ -12,11 +12,7 @@ dependency_graph::OutAttr<possumwood::lua::Context> a_outContext;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::lua::Context context = data.get(a_inContext);
-	context.addVariable(
-		std::unique_ptr<possumwood::lua::Variable>(
-			new	possumwood::lua::PODVariable<float>(data.get(a_name), data.get(a_value))
-		)
-	);
+	context.addVariable(possumwood::lua::Variable(data.get(a_name), data.get(a_value)));
 	data.set(a_outContext, context);
 
 	return dependency_graph::State();

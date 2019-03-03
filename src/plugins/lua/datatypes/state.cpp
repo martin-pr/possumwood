@@ -19,7 +19,7 @@ State::State(const Context& con) {
 
 	// add all variables from the context
 	for(auto& v : con.m_variables)
-		v->init(*this);
+		v.init(*this);
 }
 
 State::~State() {
