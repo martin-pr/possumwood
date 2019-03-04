@@ -13,6 +13,9 @@ class PixmapWrapper {
 		PixmapWrapper(std::size_t width, std::size_t height) : m_pixmap(new PIXMAP(width, height)) {
 		}
 
+		PixmapWrapper(std::shared_ptr<PIXMAP> ptr) : m_pixmap(ptr) {
+		}
+
 		void setPixel(std::size_t x, std::size_t y, const luabind::object& value) {
 			if(x >= width() || y >= height()) {
 				std::stringstream ss;
@@ -46,6 +49,10 @@ class PixmapWrapper {
 
 		const PIXMAP& pixmap() const {
 			return *m_pixmap;
+		}
+
+		operator std::shared_ptr<const PIXMAP>() const {
+			return m_pixmap;
 		}
 
 	private:

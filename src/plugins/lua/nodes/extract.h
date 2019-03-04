@@ -2,12 +2,12 @@
 
 #include <possumwood_sdk/node_implementation.h>
 
-#include "datatypes/context.h"
-#include "datatypes/variable.inl"
+#include "lua/datatypes/context.h"
+#include "lua/datatypes/variable.inl"
 
 namespace possumwood { namespace lua {
 
-template<typename T>
+template<typename T, typename HOLDER = T>
 struct Extract {
 	struct Params {
 		dependency_graph::InAttr<std::string> a_name;
@@ -23,7 +23,7 @@ struct Extract {
 
 		try {
 			// get the result
-			T value = luabind::object_cast<T>(state->globals()[data.get(params.a_name)]);
+			T value = luabind::object_cast<HOLDER>(state->globals()[data.get(params.a_name)]);
 			// and push it to the output
 			data.set(params.a_out, value);
 		}
