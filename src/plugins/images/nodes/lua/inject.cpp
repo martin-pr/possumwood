@@ -12,12 +12,12 @@ namespace {
 
 possumwood::NodeImplementation s_impl_ldr("lua/inject/image",
 	possumwood::lua::Inject<std::shared_ptr<const possumwood::LDRPixmap>,
-	possumwood::images::PixmapWrapper<const possumwood::LDRPixmap>>::init
+	possumwood::images::PixmapWrapper<possumwood::LDRPixmap>>::init
 );
 
 possumwood::NodeImplementation s_impl_hdr("lua/inject/image_hdr",
 	possumwood::lua::Inject<std::shared_ptr<const possumwood::HDRPixmap>,
-	possumwood::images::PixmapWrapper<const possumwood::HDRPixmap>>::init
+	possumwood::images::PixmapWrapper<possumwood::HDRPixmap>>::init
 );
 
 }
