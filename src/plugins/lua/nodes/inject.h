@@ -2,12 +2,12 @@
 
 #include <possumwood_sdk/node_implementation.h>
 
-#include "datatypes/context.h"
-#include "datatypes/variable.inl"
+#include "lua/datatypes/context.h"
+#include "lua/datatypes/variable.inl"
 
 namespace possumwood { namespace lua {
 
-template<typename T>
+template<typename T, typename HOLDER = T>
 struct Inject {
 	struct Params {
 		dependency_graph::InAttr<std::string> a_name;
@@ -18,7 +18,8 @@ struct Inject {
 
 	static dependency_graph::State compute(dependency_graph::Values& data, const Params& params) {
 		possumwood::lua::Context context = data.get(params.a_inContext);
-		context.addVariable(possumwood::lua::Variable(data.get(params.a_name), data.get(params.a_value)));
+		HOLDER holder = data.get(params.a_value);
+		context.addVariable(possumwood::lua::Variable(data.get(params.a_name), holder));
 		data.set(params.a_outContext, context);
 
 		return dependency_graph::State();
