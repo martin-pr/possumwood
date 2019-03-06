@@ -27,7 +27,9 @@ void Variable::Holder<T>::init(State& s, const std::string& name) const {
 
 template<typename T>
 std::string Variable::Holder<T>::str() const {
-	return std::to_string(m_value);
+	// ADL lookup - either use current namespace, or std, whichever comes first
+	using std::to_string;
+	return to_string(m_value);
 }
 
 template<typename T>

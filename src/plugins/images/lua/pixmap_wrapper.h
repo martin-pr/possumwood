@@ -55,8 +55,17 @@ class PixmapWrapper {
 			return m_pixmap;
 		}
 
+		bool operator == (const PixmapWrapper<PIXMAP>& p) const {
+			return m_pixmap == p.m_pixmap;
+		}
+
 	private:
 		std::shared_ptr<PIXMAP> m_pixmap;
 };
+
+template<typename PIXMAP>
+std::string to_string(const PixmapWrapper<PIXMAP>& p) {
+	return "(pixmap " + std::to_string(p.width()) + "x" + std::to_string(p.height()) + ")";
+}
 
 } }
