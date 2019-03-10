@@ -6,38 +6,54 @@
 
 namespace {
 
-dependency_graph::InAttr<std::shared_ptr<const possumwood::Pixmap>> a_image;
-dependency_graph::OutAttr<unsigned> a_width, a_height;
+template<typename PIXMAP>
+struct Params {
+	dependency_graph::InAttr<std::shared_ptr<const PIXMAP>> a_image;
+	dependency_graph::OutAttr<unsigned> a_width, a_height;
+};
 
-dependency_graph::State compute(dependency_graph::Values& data) {
-	std::shared_ptr<const possumwood::Pixmap> input = data.get(a_image);
+Params<possumwood::LDRPixmap> s_ldrParams;
+Params<possumwood::HDRPixmap> s_hdrParams;
+
+template<typename PIXMAP>
+dependency_graph::State compute(dependency_graph::Values& data, Params<PIXMAP>& params) {
+	std::shared_ptr<const PIXMAP> input = data.get(params.a_image);
 
 	dependency_graph::State result;
 	if(input == nullptr) {
 		result.addError("No input pixmap.");
-		data.set(a_width, 0u);
-		data.set(a_height, 0u);
+		data.set(params.a_width, 0u);
+		data.set(params.a_height, 0u);
 	}
 	else {
-		data.set(a_width, (unsigned)input->width());
-		data.set(a_height, (unsigned)input->height());
+		data.set(params.a_width, (unsigned)input->width());
+		data.set(params.a_height, (unsigned)input->height());
 	}
 
 	return dependency_graph::State();
 }
 
-void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_width, "width", 0u);
-	meta.addAttribute(a_height, "height", 0u);
+template<typename PIXMAP>
+void init(possumwood::Metadata& meta, Params<PIXMAP>& params) {
+	meta.addAttribute(params.a_width, "width", 0u);
+	meta.addAttribute(params.a_height, "height", 0u);
 
-	meta.addAttribute(a_image, "image");
+	meta.addAttribute(params.a_image, "image");
 
-	meta.addInfluence(a_image, a_width);
-	meta.addInfluence(a_image, a_height);
+	meta.addInfluence(params.a_image, params.a_width);
+	meta.addInfluence(params.a_image, params.a_height);
 
-	meta.setCompute(&compute);
+	meta.setCompute([&params](dependency_graph::Values& data) {
+		return compute<PIXMAP>(data, params);
+	});
 }
 
-possumwood::NodeImplementation s_impl("images/metadata", init);
+possumwood::NodeImplementation s_impl("images/metadata", [](possumwood::Metadata& meta) {
+	init<possumwood::LDRPixmap>(meta, s_ldrParams);
+});
+
+possumwood::NodeImplementation s_impl_hdr("images/metadata_hdr", [](possumwood::Metadata& meta) {
+	init<possumwood::HDRPixmap>(meta, s_hdrParams);
+});
 
 }

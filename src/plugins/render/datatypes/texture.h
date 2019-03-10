@@ -11,7 +11,8 @@ namespace possumwood {
 
 class Texture : public boost::noncopyable {
 	public:
-		Texture(const Pixmap& pixmap);
+		Texture(const LDRPixmap& pixmap);
+		Texture(const HDRPixmap& pixmap);
 		~Texture();
 
 		GLuint id() const;
