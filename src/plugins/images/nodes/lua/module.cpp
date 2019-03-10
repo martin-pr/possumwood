@@ -22,9 +22,12 @@ template<typename PIXMAP>
 dependency_graph::State compute(dependency_graph::Values& data, const std::string& suffix, Params& params) {
 	possumwood::lua::Context context = data.get(params.a_inContext);
 
-	context.addModule("images" + suffix, [suffix](possumwood::lua::State& state) {
-		possumwood::images::init<PIXMAP>(state, suffix);
-	});
+	context.addModule(
+		"images" + suffix,
+		[suffix](possumwood::lua::State& state) {
+			possumwood::images::init<PIXMAP>(state, suffix);
+		}
+	);
 
 	data.set(params.a_outContext, context);
 

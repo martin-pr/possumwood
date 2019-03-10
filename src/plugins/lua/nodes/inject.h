@@ -7,7 +7,17 @@
 
 namespace possumwood { namespace lua {
 
-template<typename T, typename HOLDER = T>
+struct NullModule {
+	static std::string name() {
+		return "";
+	}
+
+	static void init(State& s) {
+		// nothing
+	}
+};
+
+template<typename T, typename HOLDER = T, typename MODULE = NullModule>
 struct Inject {
 	struct Params {
 		dependency_graph::InAttr<std::string> a_name;
@@ -18,6 +28,13 @@ struct Inject {
 
 	static dependency_graph::State compute(dependency_graph::Values& data, const Params& params) {
 		possumwood::lua::Context context = data.get(params.a_inContext);
+
+		// instantiate a module instance, and try to use it for initialisation
+		if(!MODULE::name().empty())
+			context.addModule(MODULE::name(), MODULE::init);
+
+		// inject the data, by instantiating a HOLDER type instance
+		//   assuming assignment operator between HOLDER and T
 		HOLDER holder = data.get(params.a_value);
 		context.addVariable(possumwood::lua::Variable(data.get(params.a_name), holder));
 		data.set(params.a_outContext, context);
@@ -38,7 +55,7 @@ struct Inject {
 		meta.addInfluence(s_params.a_value, s_params.a_outContext);
 		meta.addInfluence(s_params.a_inContext, s_params.a_outContext);
 
-		meta.setCompute([&](dependency_graph::Values& data) {
+		meta.setCompute([](dependency_graph::Values& data) {
 			return compute(data, s_params);
 		});
 	}
