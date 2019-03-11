@@ -8,24 +8,6 @@ Context::Context() {
 Context::~Context() {
 }
 
-Context::Context(const Context& con) {
-	for(auto& v : con.m_variables)
-		m_variables.push_back(v->clone());
-
-	m_modules = con.m_modules;
-}
-
-Context& Context::operator = (const Context& con) {
-	m_variables.clear();
-
-	for(auto& v : con.m_variables)
-		m_variables.push_back(v->clone());
-
-	m_modules = con.m_modules;
-
-	return *this;
-}
-
 bool Context::operator == (const Context& c) const {
 	if(c.m_variables.size() != m_variables.size() || c.m_modules.size() != m_modules.size())
 		return false;
@@ -35,7 +17,7 @@ bool Context::operator == (const Context& c) const {
 		auto i2 = c.m_variables.begin();
 
 		while(i1 != m_variables.end()) {
-			if(**i1 != **i2)
+			if(*i1 != *i2)
 				return false;
 
 			++i1;
@@ -68,7 +50,7 @@ bool Context::operator != (const Context& c) const {
 		auto i2 = c.m_variables.begin();
 
 		while(i1 != m_variables.end()) {
-			if(**i1 != **i2)
+			if(*i1 != *i2)
 				return true;
 
 			++i1;
@@ -92,8 +74,8 @@ bool Context::operator != (const Context& c) const {
 	return false;
 }
 
-void Context::addVariable(std::unique_ptr<Variable>&& var) {
-	m_variables.push_back(std::move(var));
+void Context::addVariable(const Variable& var) {
+	m_variables.push_back(var);
 }
 
 void Context::addModule(const std::string& name, const std::function<void(State&)>& registration) {
@@ -101,10 +83,7 @@ void Context::addModule(const std::string& name, const std::function<void(State&
 }
 
 boost::iterator_range<Context::const_var_iterator> Context::variables() const {
-	return boost::make_iterator_range(
-		boost::make_indirect_iterator(m_variables.begin()),
-		boost::make_indirect_iterator(m_variables.end())
-	);
+	return boost::make_iterator_range(m_variables.begin(), m_variables.end());
 }
 
 boost::iterator_range<Context::const_module_iterator> Context::modules() const {

@@ -10,49 +10,57 @@ namespace possumwood { namespace lua {
 
 class State;
 
-class Variable {
+class Variable final {
 	public:
-		Variable(const std::string& name);
-		virtual ~Variable() = default;
+		template<typename T>
+		Variable(const std::string& name, const T& value);
+		~Variable() = default;
 
-		virtual std::unique_ptr<Variable> clone() const = 0;
-		virtual const std::type_info& type() const = 0;
+		const std::type_info& type() const;
 
 		const std::string& name() const;
 		bool operator == (const Variable& var) const;
 		bool operator != (const Variable& var) const;
 
-		virtual void init(State& s) = 0;
-		virtual std::string str() const = 0;
-
-	protected:
-		Variable(const Variable& con);
-		Variable& operator = (const Variable& con);
-
-		virtual bool equalTo(const Variable& v) const = 0;
+		void init(State& s) const;
+		std::string str() const;
 
 	private:
+		struct HolderBase {
+			HolderBase() = default;
+			virtual ~HolderBase() = default;
+
+			HolderBase(const HolderBase&) = delete;
+			HolderBase& operator = (const HolderBase&) = delete;
+
+			virtual const std::type_info& type() const = 0;
+
+			virtual void init(State& s, const std::string& name) const = 0;
+			virtual std::string str() const = 0;
+
+			virtual bool equalTo(const HolderBase& v) const = 0;
+		};
+
+		template<typename T>
+		class Holder : public HolderBase {
+			public:
+				Holder(const T& value);
+
+				virtual const std::type_info& type() const override;
+
+				virtual void init(State& s, const std::string& name) const override;
+				virtual std::string str() const override;
+
+				virtual bool equalTo(const HolderBase& v) const override;
+
+			private:
+				T m_value;
+		};
+
 		std::string m_name;
+		std::shared_ptr<const HolderBase> m_value;
 };
 
 std::ostream& operator << (std::ostream& out, const Variable& v);
-
-template<typename T>
-class PODVariable final : public Variable {
-	public:
-		PODVariable(const std::string& name, const T& value);
-
-		virtual std::unique_ptr<Variable> clone() const override;
-		virtual const std::type_info& type() const override;
-
-		virtual void init(State& s) override;
-		virtual std::string str() const override;
-
-	protected:
-		virtual bool equalTo(const Variable& v) const override;
-
-	private:
-		T m_value;
-};
 
 }}

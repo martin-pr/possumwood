@@ -1,3 +1,5 @@
+#pragma once
+
 #include "variable.h"
 
 #include "state.h"
@@ -5,33 +7,37 @@
 namespace possumwood { namespace lua {
 
 template<typename T>
-PODVariable<T>::PODVariable(const std::string& name, const T& value) : Variable(name), m_value(value) {
+Variable::Variable(const std::string& name, const T& value) : m_name(name) {
+	m_value = std::shared_ptr<const HolderBase>(new Holder<T>(value));
 }
 
 template<typename T>
-std::unique_ptr<Variable> PODVariable<T>::clone() const {
-	return std::unique_ptr<Variable>(new PODVariable<T>(*this));
+Variable::Holder<T>::Holder(const T& value) : m_value(value) {
 }
 
 template<typename T>
-const std::type_info& PODVariable<T>::type() const {
+const std::type_info& Variable::Holder<T>::type() const {
 	return typeid(T);
 }
 
 template<typename T>
-void PODVariable<T>::init(State& s) {
-	s.globals()[name()] = m_value;
+void Variable::Holder<T>::init(State& s, const std::string& name) const {
+	s.globals()[name] = m_value;
 }
 
 template<typename T>
-bool PODVariable<T>::equalTo(const Variable& v) const {
-	const PODVariable& vt = dynamic_cast<const PODVariable&>(v);
-	return vt.m_value == m_value;
+std::string Variable::Holder<T>::str() const {
+	// ADL lookup - either use current namespace, or std, whichever comes first
+	using std::to_string;
+	return to_string(m_value);
 }
 
 template<typename T>
-std::string PODVariable<T>::str() const {
-	return std::to_string(m_value);
+bool Variable::Holder<T>::equalTo(const HolderBase& v) const {
+	const Holder<T>* tmp = dynamic_cast<const Holder<T>*>(&v);
+	if(tmp)
+		return m_value == tmp->m_value;
+	return false;
 }
 
 } }

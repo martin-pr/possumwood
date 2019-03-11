@@ -22,16 +22,13 @@ class Context {
 		Context();
 		~Context();
 
-		Context(const Context& con);
-		Context& operator = (const Context& con);
-
-		void addVariable(std::unique_ptr<Variable>&& var);
+		void addVariable(const Variable& v);
 		void addModule(const std::string& name, const std::function<void(State&)>& registration);
 
 		bool operator == (const Context& c) const;
 		bool operator != (const Context& c) const;
 
-		typedef boost::indirect_iterator<std::vector<std::unique_ptr<Variable>>::const_iterator> const_var_iterator;
+		typedef std::vector<Variable>::const_iterator const_var_iterator;
 		boost::iterator_range<const_var_iterator> variables() const;
 
 		typedef boost::transform_iterator<
@@ -41,7 +38,7 @@ class Context {
 		boost::iterator_range<const_module_iterator> modules() const;
 
 	private:
-		std::vector<std::unique_ptr<Variable>> m_variables;
+		std::vector<Variable> m_variables;
 		std::map<std::string, std::function<void(State&)>> m_modules;
 
 	friend class State;

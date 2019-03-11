@@ -17,6 +17,11 @@ void Pixel<BASE>::setValue(const value_t& rgb) {
 }
 
 template<typename BASE>
+constexpr std::size_t Pixel<BASE>::size() {
+	return sizeof(Pixel) / sizeof(channel_t);
+}
+
+template<typename BASE>
 Pixel<BASE>& Pixel<BASE>::operator = (const value_t& rgb) {
 	m_value = rgb;
 	return *this;
@@ -33,21 +38,31 @@ Pixel<BASE>::operator const value_t&() const {
 }
 
 template<typename PIXEL>
-Pixmap<PIXEL>::Pixmap(std::size_t width, std::size_t height, const Pixmap<PIXEL>::pixel_t& defaultValue) : m_data(width*height, defaultValue), m_width(width), m_height(height) {
+Pixmap<PIXEL>::Pixmap(std::size_t width, std::size_t height, const Pixmap<PIXEL>::pixel_t& defaultValue) :
+m_width(width), m_height(height) {
+	m_scanline = width * sizeof(PIXEL);
+
+	m_scanline = (m_scanline / 4 + (m_scanline % 4 > 0)) * 4;
+
+	m_data = std::vector<uint8_t>(m_scanline*height*sizeof(PIXEL));
 }
 
 template<typename PIXEL>
 const typename Pixmap<PIXEL>::pixel_t& Pixmap<PIXEL>::operator()(std::size_t x, std::size_t y) const {
 	assert(x < m_width);
 	assert(y < m_height);
-	return m_data[x + y*m_width];
+
+	const uint8_t* ptr = &(*m_data.begin()) + (x*sizeof(PIXEL) + y*m_scanline);
+	return *reinterpret_cast<const Pixmap<PIXEL>::pixel_t*>(ptr);
 }
 
 template<typename PIXEL>
 typename Pixmap<PIXEL>::pixel_t& Pixmap<PIXEL>::operator()(std::size_t x, std::size_t y) {
 	assert(x < m_width);
 	assert(y < m_height);
-	return m_data[x + y*m_width];
+
+	uint8_t* ptr = &(*m_data.begin()) + (x*sizeof(PIXEL) + y*m_scanline);
+	return *reinterpret_cast<Pixmap<PIXEL>::pixel_t*>(ptr);
 }
 
 template<typename PIXEL>
