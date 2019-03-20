@@ -96,7 +96,7 @@ This tutorial introduces basic concepts of image manipulation in Possumwood, and
 
 <img src="doc/image_expr.png" align="right" width="150">
 
-Generating and manipulating an image using an expression offers a huge amount of flexibility. This tutorial shows the use of a simple per-pixel expression operator, using the [ExprTk syntax](https://github.com/ArashPartow/exprtk).
+Apart from [rendering existing images loaded from a file](Images-Loading-and-Display), Possumwood can also generate and edit images using [Lua scripting](https://en.wikipedia.org/wiki/Lua_(programming_language)). In this tutorial, we explore a very simple setup which uses Lua and per-pixel expressions to generate an image.
 
 
 
