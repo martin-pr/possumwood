@@ -1,5 +1,3 @@
-#include <exprtk/exprtk.hpp>
-
 #include <memory>
 
 #include <possumwood_sdk/node_implementation.h>
