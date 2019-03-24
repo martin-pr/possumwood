@@ -21,6 +21,9 @@
 
 #include "config.inl"
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
 namespace possumwood {
 
 App* App::s_instance = NULL;
@@ -44,24 +47,44 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 	                                   "Scene's frames-per-second value"));
 
 	///////////////////////
-	// expressions
+	// resolving paths from possumwood.conf
 
-	// find the config file
-	boost::filesystem::path full_path(boost::filesystem::current_path());
-	while(!full_path.empty()) {
-		if(boost::filesystem::exists(full_path / "possumwood.conf"))
+	boost::filesystem::path conf_path;
+
+	// conf path can be explicitly defined during the build (at which point we just use it)
+#ifdef POSSUMWOOD_CONF_PATH
+	conf_path = boost::filesystem::path(TOSTRING(POSSUMWOOD_CONF_PATH));
+
+	// however, if that path doesn't exist (for development only)
+	if(!boost::filesystem::exists(conf_path)) {
+#endif
+
+	// find the config file in the current or parent directories
+	conf_path = boost::filesystem::path(boost::filesystem::current_path());
+	while(!conf_path.empty()) {
+		if(boost::filesystem::exists(conf_path / "possumwood.conf")) {
+			conf_path = conf_path / "possumwood.conf";
 			break;
-
-		full_path = full_path.parent_path();
+		}
+		else
+			conf_path = conf_path.parent_path();
 	}
 
-	if(!full_path.empty()) {
-		std::ifstream cfg(((full_path / "possumwood.conf").string()));
+#ifdef POSSUMWOOD_CONF_PATH
+	}
+#endif
+
+	if(!conf_path.empty()) {
+		// parent directory for the config file - used for resolving relative paths
+		const boost::filesystem::path full_path = conf_path.parent_path();
+
+		std::ifstream cfg(conf_path.string());
 		while(!cfg.eof() && cfg.good()) {
 			std::string line;
 			std::getline(cfg, line);
 
 			if(!line.empty()) {
+				// read the key/value pair of key->path from the file
 				std::string key;
 				std::string value;
 
@@ -84,9 +107,12 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 				}
 
 				boost::filesystem::path path(value);
+
+				// resolve relative paths to absolute
 				if(path.is_relative())
 					path = full_path / path;
 
+				// store this path variable
 				m_pathVariables[key] = path.string();
 			}
 		}
