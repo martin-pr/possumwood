@@ -75,12 +75,21 @@ set(LIBS ${LIBS} ${OPENEXR_HALF_LIBRARY} ${OPENEXR_IEX_LIBRARY} ${OPENEXR_ILMIMF
 
 message("***** Install prefix = ${CMAKE_INSTALL_PREFIX} *****")
 
-set(POSSUMWOOD_DATA_PREFIX ${CMAKE_INSTALL_PREFIX}/share/possumwood)
-
 set(POSSUMWOOD_CONF_PATH ${CMAKE_INSTALL_PREFIX}/etc/possumwood.conf)
 set(PLUGINS_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/lib/possumwood/plugins)
 set(EXAMPLES_INSTALL_PATH ${POSSUMWOOD_DATA_PREFIX}/examples)
 set(TOOLBARS_INSTALL_PATH ${POSSUMWOOD_DATA_PREFIX}/toolbars)
+
+add_custom_target(
+	config ALL
+	COMMAND bash -cx \"echo \\\"EXAMPLES ${EXAMPLES_INSTALL_PATH}\\nTOOLBARS ${TOOLBARS_INSTALL_PATH}\\nPLUGINS ${PLUGINS_INSTALL_PATH}\\n\\\" > \\\"${CMAKE_CURRENT_BINARY_DIR}/possumwood.conf\\\"\"
+)
+
+message("  Generated config file: ${CMAKE_CURRENT_BINARY_DIR}/possumwood.conf")
+
+set(POSSUMWOOD_DATA_PREFIX "${CMAKE_INSTALL_PREFIX}/share/possumwood")
+
+
 
 message("  Master config file: ${POSSUMWOOD_CONF_PATH}")
 message("  Plugins directory: ${PLUGINS_INSTALL_PATH}")
@@ -91,7 +100,8 @@ message("  Toolbars directory: ${TOOLBARS_INSTALL_PATH}")
 add_definitions(-DPOSSUMWOOD_CONF_PATH=${POSSUMWOOD_CONF_PATH})
 
 # generate the config file content
-install(CODE "file(WRITE $ENV{DESTDIR}/etc/possumwood.conf \"EXAMPLES ${EXAMPLES_INSTALL_PATH}\nTOOLBARS ${TOOLBARS_INSTALL_PATH}\nPLUGINS ${PLUGINS_INSTALL_PATH}\n\")")
+#install(CODE "file(WRITE \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/etc/possumwood.conf\" \"EXAMPLES ${EXAMPLES_INSTALL_PATH}\nTOOLBARS ${TOOLBARS_INSTALL_PATH}\nPLUGINS ${PLUGINS_INSTALL_PATH}\n\")")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/possumwood.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/etc)
 
 # copy all toolbars and examples
 FILE(GLOB TOOLBARS "toolbars/*")
