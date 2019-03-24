@@ -28,8 +28,15 @@ MetadataRegister::MetadataRegister() {
 }
 
 void MetadataRegister::add(const MetadataHandle& handle) {
-	assert(m_handles.find(handle.metadata().type()) == m_handles.end());
-	m_handles.insert(handle);
+	if(m_handles.find(handle.metadata().type()) == m_handles.end())
+		m_handles.insert(handle);
+	else {
+		std::stringstream ss;
+		ss << "Node type " << handle->type() << " already registered! Loading a plugin twice would lead to problems. Let's not.";
+
+		throw std::runtime_error(ss.str().c_str());
+	}
+
 }
 
 void MetadataRegister::remove(const MetadataHandle& handle) {
