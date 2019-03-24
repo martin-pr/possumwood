@@ -11,6 +11,7 @@ set(LIBS ${LIBS} Qt5::Widgets)
 QT5_WRAP_CPP(headers_lib_moc ${headers_lib})
 add_definitions(${QT_DEFINITIONS})
 add_library(nodeeditor SHARED ${sources_lib} ${headers_lib_moc})
+install(TARGETS nodeeditor DESTINATION lib)
 
 # Final linking
 target_link_libraries(nodeeditor ${LIBS})

@@ -10,11 +10,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
 
-set(LIBS "")
-
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_CXX_STANDARD 14)
 
 add_definitions(-Wall -Werror -g)
@@ -28,6 +23,8 @@ include_directories($ENV{BOB_WORLD_SLOT_ilmbase}/include/OpenEXR)
 
 ###########################################################
 # DEPENDENCIES
+
+set(LIBS "")
 
 # looking for boost
 find_package(Boost REQUIRED COMPONENTS
@@ -65,9 +62,47 @@ if (OPENEXR_INCLUDE_DIR AND OPENEXR_HALF_LIBRARY AND OPENEXR_IEX_LIBRARY AND OPE
   message (STATUS "OpenEXR library found (${OPENEXR_INCLUDE_DIR}, ${OPENEXR_IEX_LIBRARY} and ${OPENEXR_HALF_LIBRARY} and ${OPENEXR_ILMIMF_LIBRARY}).")
 else (OPENEXR_INCLUDE_DIR AND OPENEXR_HALF_LIBRARY AND OPENEXR_IEX_LIBRARYAND OPENEXR_ILMIMF_LIBRARY)
   message (FATAL_ERROR "OpenEXR library not found (${OPENEXR_INCLUDE_DIR}, ${OPENEXR_IEX_LIBRARY} and ${OPENEXR_HALF_LIBRARY} and ${OPENEXR_ILMIMF_LIBRARY}).")
-endif (OPENEXR_INCLUDE_DIR AND OPENEXR_HALF_LIBRARY AND OPENEXR_IEX_LIBRARY AND AND OPENEXR_ILMIMF_LIBRARY)
+endif (OPENEXR_INCLUDE_DIR AND OPENEXR_HALF_LIBRARY AND OPENEXR_IEX_LIBRARY AND OPENEXR_ILMIMF_LIBRARY)
 include_directories(SYSTEM ${OPENEXR_INCLUDE_DIR})
 set(LIBS ${LIBS} ${OPENEXR_HALF_LIBRARY} ${OPENEXR_IEX_LIBRARY} ${OPENEXR_ILMIMF_LIBRARY})
+
+
+###########################################################
+# INSTALL TARGETS
+
+if(CMAKE_INSTALL_PREFIX)
+	message("***** Install prefix = ${CMAKE_INSTALL_PREFIX} *****")
+
+	set(POSSUMWOOD_DATA_PREFIX ${CMAKE_INSTALL_PREFIX}/share/possumwood)
+
+	set(POSSUMWOOD_CONF_PATH ${CMAKE_INSTALL_PREFIX}/etc/possumwood.conf)
+	set(PLUGINS_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/lib/possumwood/plugins)
+	set(EXAMPLES_INSTALL_PATH ${POSSUMWOOD_DATA_PREFIX}/examples)
+	set(TOOLBARS_INSTALL_PATH ${POSSUMWOOD_DATA_PREFIX}/toolbars)
+
+	message("  Master config file: ${POSSUMWOOD_CONF_PATH}")
+	message("  Plugins directory: ${PLUGINS_INSTALL_PATH}")
+	message("  Examples directory: ${EXAMPLES_INSTALL_PATH}")
+	message("  Toolbars directory: ${TOOLBARS_INSTALL_PATH}")
+
+	# pass the config file explicitly to C++
+	add_definitions(-DPOSSUMWOOD_CONF_PATH=${POSSUMWOOD_CONF_PATH})
+
+	# generate the config file content
+	install(CODE "file(WRITE ${POSSUMWOOD_CONF_PATH} \"EXAMPLES ${EXAMPLES_INSTALL_PATH}\nTOOLBARS ${TOOLBARS_INSTALL_PATH}\nPLUGINS ${PLUGINS_INSTALL_PATH}\n\")")
+
+	# copy all toolbars and examples
+	FILE(GLOB TOOLBARS "toolbars/*")
+	install(DIRECTORY ${TOOLBARS} DESTINATION ${TOOLBARS_INSTALL_PATH})
+
+	install(DIRECTORY examples DESTINATION ${POSSUMWOOD_DATA_PREFIX})
+
+	# we will need the RPATHs set
+	# SET(CMAKE_SKIP_BUILD_RPATH FALSE)
+	SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib:${PLUGINS_INSTALL_PATH}")
+
+endif(CMAKE_INSTALL_PREFIX)
+
 
 ###########################################################
 # BUILD

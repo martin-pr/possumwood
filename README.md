@@ -152,12 +152,16 @@ The project is structured as a standard CMake-built project. To build, just run 
 ```
 mkdir build
 cd build
-cmake .. && make -j
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install && make -j
 ```
 
-No installation targets are provided for the time being.
+This will build Possumwood and all its plugins, and install the result inside `./install` directory. Installation is necessary to make sure Possumwood is able to find its plugins and its dependencies. After that, you can run the build via:
 
-The code has been tested only on Linux (several distributions). While it should fundamentally work on Windows, it has not been compiled there. No support for MacOS is planned for the time being due to heavy dependency on OpenGL.
+```
+./install/bin/possumwood
+```
+
+The code has been tested only on Linux (several distributions). While it should work on Windows, it has not been compiled or tested there. No support for MacOS is planned for the time being due to heavy dependency on OpenGL.
 
 ## API Reference
 

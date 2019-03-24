@@ -19,5 +19,6 @@ file(GLOB_RECURSE expr_sources *.cpp)
 include_directories(./)
 
 add_library(lua SHARED ${expr_sources})
+install(TARGETS lua DESTINATION ${PLUGINS_INSTALL_PATH})
 
 target_link_libraries(lua ${LIBS})

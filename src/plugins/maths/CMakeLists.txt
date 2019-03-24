@@ -9,5 +9,6 @@ include_directories(./)
 include_directories(../)
 
 add_library(maths SHARED ${sources})
+install(TARGETS maths DESTINATION ${PLUGINS_INSTALL_PATH})
 
 target_link_libraries(maths ${LIBS})

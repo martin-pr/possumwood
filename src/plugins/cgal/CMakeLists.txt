@@ -15,6 +15,7 @@ file(GLOB_RECURSE sources *.cpp)
 
 include_directories(./)
 
-add_library(cgal SHARED ${sources})
+add_library(possumwood_cgal SHARED ${sources})
+install(TARGETS possumwood_cgal DESTINATION ${PLUGINS_INSTALL_PATH})
 
-target_link_libraries(cgal maths ${LIBS})
+target_link_libraries(possumwood_cgal maths ${LIBS})

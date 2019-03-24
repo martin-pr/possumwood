@@ -16,5 +16,6 @@ include_directories(./)
 file(GLOB_RECURSE sources *.cpp)
 
 add_library(dependency_graph SHARED ${sources})
+install(TARGETS dependency_graph DESTINATION lib)
 
 target_link_libraries(dependency_graph ${LIBS})

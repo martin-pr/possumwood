@@ -19,5 +19,6 @@ file(GLOB_RECURSE sources *.cpp)
 include_directories(./)
 
 add_library(images SHARED ${sources})
+install(TARGETS images DESTINATION ${PLUGINS_INSTALL_PATH})
 
 target_link_libraries(images maths lua ${OPENEXR_IEX_LIBRARY} ${LIBS} OpenImageIO)
