@@ -1,0 +1,48 @@
+name: possumwood
+version: '0.1+git'
+summary: Possumwood is a graph-based procedural authoring sandbox.
+description: |
+  Possumwood is a graph-based procedural authoring tool, in concept not dissimilar to popular CG 
+  packages like Houdini, Blender or Maya. It is intended to serve as a sandbox for computer graphics 
+  algorithms and libraries, providing a user-friendly and coding-free UI for libraries that would 
+  otherwise be inaccessible for an average user.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+base: core16
+
+build-packages: 
+  - gcc
+  - libc6-dev
+  - libboost-all-dev
+  - libopenexr-dev
+  - libqt5opengl5-dev
+  - freeglut3-dev
+  - libgmp-dev
+  - libmpfr-dev
+  - libeigen3-dev
+  - libxi-dev
+  - libxmu-dev
+  - libluabind-dev
+  - libglew-dev
+  - libopenimageio-dev
+  - libglfw3-dev
+  - libpng12-dev
+
+apps:
+  possumwood:
+    command: possumwood
+    plugs: [opengl]
+
+parts:
+  cgal:
+    plugin: cmake
+    source: https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-4.13/CGAL-4.13.tar.xz
+    configflags: [-DCMAKE_BUILD_TYPE=Release -DWITH_examples=OFF -DWITH_demos=OFF -DWITH_tests=OFF]
+
+  core:
+    plugin: cmake
+    source: .
+    configflags: [-DCMAKE_BUILD_TYPE=Release]
+    after: [cgal]
+    stage-packages: [libgl1]

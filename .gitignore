@@ -8,3 +8,4 @@ plugins/*.so
 parts
 stage
 snap
+prime
