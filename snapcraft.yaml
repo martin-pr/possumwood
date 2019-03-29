@@ -77,7 +77,10 @@ parts:
   core:
     plugin: cmake
     source: .
-    configflags: [-DCMAKE_BUILD_TYPE=Release -DCONF_PATH='\\$SNAP/share/possumwood/possumwood.conf' -DDATA_PREFIX='\\$SNAP/share/possumwood' -DPLUGINS_INSTALL_PATH='\\$SNAP/lib/possumwood/plugins']
+    configflags:
+      - -DCMAKE_BUILD_TYPE=Debug
+      - -DCONF_PATH='$SNAP/share/possumwood/possumwood.conf'
+      - -DMAKE_CONF_FILE=OFF
     after: [cgal, desktop-qt5]
     stage-packages:
       - libgl1
@@ -251,3 +254,9 @@ parts:
       - libxvidcore4
       - libyaml-cpp0.3v5
       - libzvbi0
+
+  config:
+    plugin: nil
+    after: [core]
+    prepare: printf 'EXAMPLES $SNAP/share/possumwood/examples\nTOOLBARS $SNAP/share/possumwood/toolbars\nPLUGINS $SNAP/lib/possumwood/plugins\n' > $SNAPCRAFT_STAGE/share/possumwood/possumwood.conf
+    install: mkdir -p $SNAPCRAFT_PART_INSTALL/share/possumwood && cp -p $SNAPCRAFT_STAGE/share/possumwood/possumwood.conf $SNAPCRAFT_PART_INSTALL/share/possumwood
