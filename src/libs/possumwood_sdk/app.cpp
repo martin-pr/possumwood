@@ -28,6 +28,40 @@ namespace possumwood {
 
 App* App::s_instance = NULL;
 
+namespace {
+
+boost::filesystem::path expandEnvvars(const boost::filesystem::path& p) {
+	boost::filesystem::path result = p;
+
+	bool expanded = true;
+	while(expanded) {
+		expanded = false;
+
+		for(auto it = result.begin(); it != result.end(); ++it) {
+			const std::string part = it->string();
+			if(!part.empty() && part[0] == '$') {
+				const char* envvar = getenv(part.substr(1).c_str());
+				if(envvar != nullptr) {
+					boost::filesystem::path tmp;
+					for(auto it2 = result.begin(); it2 != result.end(); ++it2)
+						if(it2 != it)
+							tmp /= *it2;
+						else
+							tmp /= envvar;
+					result = tmp;
+
+					expanded = true;
+					break;
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
+}
+
 App::App() : m_mainWindow(NULL), m_time(0.0f) {
 	assert(s_instance == nullptr);
 	s_instance = this;
@@ -54,6 +88,8 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 	// conf path can be explicitly defined during the build (at which point we just use it)
 #ifdef POSSUMWOOD_CONF_PATH
 	conf_path = boost::filesystem::path(TOSTRING(POSSUMWOOD_CONF_PATH));
+
+	conf_path = expandEnvvars(conf_path);
 
 	// however, if that path doesn't exist (for development only)
 	if(!boost::filesystem::exists(conf_path)) {
@@ -107,6 +143,9 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 				}
 
 				boost::filesystem::path path(value);
+
+				// expand any env vars
+				path = expandEnvvars(path);
 
 				// resolve relative paths to absolute
 				if(path.is_relative())

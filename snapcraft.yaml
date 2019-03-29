@@ -2,19 +2,24 @@ name: possumwood
 version: '0.1+git'
 summary: Possumwood is a graph-based procedural authoring sandbox.
 description: |
-  Possumwood is a graph-based procedural authoring tool, in concept not dissimilar to popular CG 
-  packages like Houdini, Blender or Maya. It is intended to serve as a sandbox for computer graphics 
-  algorithms and libraries, providing a user-friendly and coding-free UI for libraries that would 
+  Possumwood is a graph-based procedural authoring tool, in concept not dissimilar to popular CG
+  packages like Houdini, Blender or Maya. It is intended to serve as a sandbox for computer graphics
+  algorithms and libraries, providing a user-friendly and coding-free UI for libraries that would
   otherwise be inaccessible for an average user.
 
 grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: devmode # use 'strict' once you have the right plugs and slots
-base: core16
+base: core18
 
-build-packages: 
+build-packages:
   - gcc
   - libc6-dev
-  - libboost-all-dev
+  - libboost-filesystem1.65-dev
+  - libboost-serialization1.65-dev
+  - libboost-regex1.65-dev
+  - libboost-thread1.65-dev
+  - libboost-test1.65-dev
+  - libboost-system1.65-dev
   - libopenexr-dev
   - libqt5opengl5-dev
   - freeglut3-dev
@@ -27,22 +32,222 @@ build-packages:
   - libglew-dev
   - libopenimageio-dev
   - libglfw3-dev
-  - libpng12-dev
+  - libpng-dev
 
 apps:
   possumwood:
-    command: possumwood
-    plugs: [opengl]
+    command: desktop-launch possumwood
+    plugs: [opengl, home, desktop, gsettings, wayland, x11]
+
+  run-bash:
+    command: desktop-launch bash
+    plugs: [opengl, home, desktop, gsettings, wayland, x11]
+
+plugs:
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/share/themes
+    default-provider: gtk-common-themes:gtk-3-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/share/icons
+    default-provider: gtk-common-themes:icon-themes
+  sound-themes:
+    interface: content
+    target: $SNAP/share/sounds
+    default-provider: gtk-common-themes:sounds-themes
 
 parts:
   cgal:
     plugin: cmake
     source: https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-4.13/CGAL-4.13.tar.xz
     configflags: [-DCMAKE_BUILD_TYPE=Release -DWITH_examples=OFF -DWITH_demos=OFF -DWITH_tests=OFF]
+    stage-packages:
+      - libboost-system1.65.1
+      - libboost-filesystem1.65.1
+      - libboost-serialization1.65.1
+      - libboost-regex1.65.1
+      - libboost-thread1.65.1
+      - libboost-test1.65.1
+      - libboost-program-options1.65.1
+      - libboost-chrono1.62.0
+      - libboost-date-time1.62.0
+      - libboost-atomic1.62.0
 
   core:
     plugin: cmake
     source: .
-    configflags: [-DCMAKE_BUILD_TYPE=Release]
-    after: [cgal]
-    stage-packages: [libgl1]
+    configflags: [-DCMAKE_BUILD_TYPE=Release -DCONF_PATH='\\$SNAP/share/possumwood/possumwood.conf' -DDATA_PREFIX='\\$SNAP/share/possumwood' -DPLUGINS_INSTALL_PATH='\\$SNAP/lib/possumwood/plugins']
+    after: [cgal, desktop-qt5]
+    stage-packages:
+      - libgl1
+      - libboost-filesystem1.65.1
+      - libboost-serialization1.65.1
+      - libboost-system1.65.1
+      - libboost-regex1.65.1
+      - libboost-thread1.65.1
+      - libboost-test1.65.1
+      - libboost-program-options1.65.1
+
+
+      - libboost-filesystem1.62.0
+      - libboost-serialization1.62.0
+      - libboost-system1.62.0
+      - libboost-regex1.62.0
+      - libboost-thread1.62.0
+      - libboost-test1.62.0
+      - libboost-program-options1.62.0
+      - libboost-chrono1.62.0
+      - libboost-date-time1.62.0
+      - libboost-atomic1.62.0
+
+
+      - libqt5opengl5
+      - libopencolorio1v5
+      - libopenimageio1.7
+      - libarmadillo8
+      - libgdal20
+      - libluabind0.9.1v5
+      - libhdf4-0
+      - libogdi3.2
+      - libusb-1.0-0
+      - libcharls1
+      - libglew2.0
+      - libglu1
+      - libilmbase12
+      - libqt5core5a
+      - libqt5gui5
+      - libqt5widgets5
+      - libxc4
+      - libxinerama1
+      - libxrandr2
+      - libxrender1
+      - libaec0
+      - libarpack2
+      - osmo-libasn1c0
+      - libavcodec57
+      - libavformat57
+      - libavutil55
+      - libblas3
+      - libbluray-bin
+      - libcairo2
+      - libchromaprint1
+      - libcroco3
+      - libcrystalhd3
+      - libcurl3-gnutls
+      - libdap25
+      - libdapclient6v5
+      - libdatrie1
+      - libdc1394-22
+      - libdouble-conversion1
+      - libepsilon1
+      - libexif12
+      - libfontconfig
+      - libfreetype6
+      - libfreexl1
+      - libfyba0
+      - libgdcm2.8
+      - libgdk-pixbuf2.0-0
+      - libgeos-3.6.2
+      - libgeos-c1v5
+      - libgeotiff2
+      - libgfortran5
+      - libgif7
+      - libglfw3
+      - libgme0
+      - libgomp1
+      - libgphoto2-6
+      - libgphoto2-port12
+      - libgraphite2-3
+      - libgsm0710-0
+      - libgssapi3-heimdal
+      - libharfbuzz0b
+      - libhcrypto4-heimdal
+      - libheimbase1-heimdal
+      - libheimntlm0-heimdal
+      - libhx509-5-heimdal
+      - libjbig0
+      - libjpeg8
+      - libkmlbase1
+      - libkmldom1
+      - libkmlengine1
+      - libkrb5-3
+      - liblapack3
+      - liblcms2-2
+      - libldap-2.4-2
+      - libltdl7
+      - liblua5.2-0
+      - libminizip1
+      - libmp3lame0
+      - libmpg123-0
+      - libmysqlclient20
+      - libnetcdf-c++4
+      - libnghttp2-14
+      - libnspr4
+      - libnss3
+      - libnss3-tools
+      - libnuma1
+      - libodbc1
+      - libodbcinstq4-1
+      - libogg0
+      - libopencv-core3.2
+      - libopencv-imgcodecs3.2
+      - libopencv-imgproc3.2
+      - libopencv-videoio3.2
+      - libopenjp2-7
+      - libopenmpt0
+      - libopus0
+      - libpango-1.0-0
+      - libpangocairo-1.0-0
+      - libpangoft2-1.0-0
+      - libpixman-1-0
+      - libpng16-16
+      - libpoppler73
+      - libpq5
+      - libproj12
+      - libpsl5
+      - libqhull7
+      - libquadmath0
+      - libraw1394-11
+      - libraw16
+      - libroken18-heimdal
+      - librsvg2-2
+      - librtmp1
+      - libsasl2-2
+      - libshine3
+      - libsnappy1v5
+      - libspatialite7
+      - libspeex1
+      - libssh-gcrypt-4
+      - libsuperlu5
+      - libswresample2
+      - libswscale4
+      - libsz2
+      - libtbb2
+      - libthai0
+      - libtheora0
+      - libtiff5
+      - libtinyxml2-6
+      - libtwolame0
+      - liburiparser1
+      - libva-drm2
+      - libva-x11-2
+      - libva2
+      - libvdpau1
+      - libvorbis0a
+      - libvorbisenc2
+      - libvorbisfile3
+      - libvpx5
+      - libwavpack1
+      - libwebp6
+      - libwebpmux3
+      - libwind0-heimdal
+      - libx264-152
+      - libx265-146
+      - libxcb-render0
+      - libxcb-shm0
+      - libxerces-c3.2
+      - libxml2
+      - libxvidcore4
+      - libyaml-cpp0.3v5
+      - libzvbi0
