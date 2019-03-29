@@ -3,15 +3,29 @@ SET(QT_USE_QTOPENGL TRUE)
 FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Gui OpenGL Widgets)
 set(LIBS ${LIBS} Qt5::Widgets Qt5::OpenGL)
 
-######################################
-
-file(GLOB_RECURSE sources *.cpp)
-
 include_directories(./)
 
-add_library(render SHARED ${sources})
+#####
+
+file(GLOB sources *.cpp datatypes/*.cpp ui/*.cpp)
+file(GLOB_RECURSE headers *.h)
+
+QT5_WRAP_CPP(headers_moc ${headers})
+
+add_library(psw_render SHARED ${sources} ${headers_moc})
+
+install(TARGETS psw_render DESTINATION lib)
+
+target_link_libraries(psw_render ${LIBS} possumwood_sdk)
+
+#####
+
+file(GLOB nodes_sources nodes/*.cpp)
+
+add_library(render SHARED ${nodes_sources})
+SET_TARGET_PROPERTIES(render PROPERTIES PREFIX "")
+
 install(TARGETS render DESTINATION ${PLUGINS_INSTALL_PATH})
 set_property(TARGET render PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
-set_property(TARGET render PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
-target_link_libraries(render maths possumwood_cgal anim images ${LIBS} GLEW)
+target_link_libraries(render psw_render psw_images ${LIBS} possumwood_sdk GLEW)
