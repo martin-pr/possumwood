@@ -1,3 +1,44 @@
+###########################################################
+# INSTALL TARGETS
+
+message("***** Install prefix = ${CMAKE_INSTALL_PREFIX} *****")
+
+set(DATA_PREFIX "${CMAKE_INSTALL_PREFIX}/share/possumwood" CACHE STRING "")
+
+set(CONF_PATH ${CMAKE_INSTALL_PREFIX}/etc/possumwood.conf CACHE STRING "")
+set(PLUGINS_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/lib/possumwood/plugins CACHE STRING "")
+set(EXAMPLES_INSTALL_PATH ${DATA_PREFIX}/examples CACHE STRING "")
+set(TOOLBARS_INSTALL_PATH ${DATA_PREFIX}/toolbars CACHE STRING "")
+
+message("  Generated config file: ${CMAKE_CURRENT_BINARY_DIR}/possumwood.conf")
+
+message("  Master config file: ${CONF_PATH}")
+message("  Plugins directory: ${PLUGINS_INSTALL_PATH}")
+message("  Examples directory: ${EXAMPLES_INSTALL_PATH}")
+message("  Toolbars directory: ${TOOLBARS_INSTALL_PATH}")
+
+# generate the config file content
+add_custom_target(
+	config ALL
+	COMMAND bash -cx \"printf \\\"EXAMPLES ${EXAMPLES_INSTALL_PATH}\\nTOOLBARS ${TOOLBARS_INSTALL_PATH}\\nPLUGINS ${PLUGINS_INSTALL_PATH}\\n\\\" > \\\"${CMAKE_CURRENT_BINARY_DIR}/possumwood.conf\\\"\"
+)
+
+get_filename_component(CONF_DIR ${CONF_PATH} DIRECTORY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/possumwood.conf DESTINATION ${CONF_DIR})
+
+# copy all toolbars and examples
+FILE(GLOB TOOLBARS "${PROJECT_SOURCE_DIR}/toolbars/*")
+install(DIRECTORY ${TOOLBARS} DESTINATION ${TOOLBARS_INSTALL_PATH})
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples DESTINATION ${DATA_PREFIX})
+
+# pass the config file explicitly to C++
+add_definitions(-DPOSSUMWOOD_CONF_PATH=${CONF_PATH})
+
+
+###########################################################
+# BUILDING THE SDK
+
 include_directories(./)
 
 # Building the library

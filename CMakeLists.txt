@@ -10,6 +10,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
 
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+
 set(CMAKE_CXX_STANDARD 14)
 
 add_definitions(-Wall -Werror -g)
@@ -69,49 +73,8 @@ endif (OPENEXR_INCLUDE_DIR AND OPENEXR_HALF_LIBRARY AND OPENEXR_IEX_LIBRARY AND 
 include_directories(SYSTEM ${OPENEXR_INCLUDE_DIR})
 set(LIBS ${LIBS} ${OPENEXR_HALF_LIBRARY} ${OPENEXR_IEX_LIBRARY} ${OPENEXR_ILMIMF_LIBRARY})
 
-
-###########################################################
-# INSTALL TARGETS
-
-message("***** Install prefix = ${CMAKE_INSTALL_PREFIX} *****")
-
-set(POSSUMWOOD_DATA_PREFIX "${CMAKE_INSTALL_PREFIX}/share/possumwood")
-
-set(POSSUMWOOD_CONF_PATH ${CMAKE_INSTALL_PREFIX}/etc/possumwood.conf)
-set(PLUGINS_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/lib/possumwood/plugins)
-set(EXAMPLES_INSTALL_PATH ${POSSUMWOOD_DATA_PREFIX}/examples)
-set(TOOLBARS_INSTALL_PATH ${POSSUMWOOD_DATA_PREFIX}/toolbars)
-
-add_custom_target(
-	config ALL
-	COMMAND bash -cx \"printf \\\"EXAMPLES ${EXAMPLES_INSTALL_PATH}\\nTOOLBARS ${TOOLBARS_INSTALL_PATH}\\nPLUGINS ${PLUGINS_INSTALL_PATH}\\n\\\" > \\\"${CMAKE_CURRENT_BINARY_DIR}/possumwood.conf\\\"\"
-)
-
-message("  Generated config file: ${CMAKE_CURRENT_BINARY_DIR}/possumwood.conf")
-
-
-
-
-message("  Master config file: ${POSSUMWOOD_CONF_PATH}")
-message("  Plugins directory: ${PLUGINS_INSTALL_PATH}")
-message("  Examples directory: ${EXAMPLES_INSTALL_PATH}")
-message("  Toolbars directory: ${TOOLBARS_INSTALL_PATH}")
-
-# pass the config file explicitly to C++
-add_definitions(-DPOSSUMWOOD_CONF_PATH=${POSSUMWOOD_CONF_PATH})
-
-# generate the config file content
-#install(CODE "file(WRITE \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/etc/possumwood.conf\" \"EXAMPLES ${EXAMPLES_INSTALL_PATH}\nTOOLBARS ${TOOLBARS_INSTALL_PATH}\nPLUGINS ${PLUGINS_INSTALL_PATH}\n\")")
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/possumwood.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/etc)
-
-# copy all toolbars and examples
-FILE(GLOB TOOLBARS "toolbars/*")
-install(DIRECTORY ${TOOLBARS} DESTINATION ${TOOLBARS_INSTALL_PATH})
-
-install(DIRECTORY examples DESTINATION ${POSSUMWOOD_DATA_PREFIX})
-
 # we will need the RPATHs set
-# SET(CMAKE_SKIP_BUILD_RPATH FALSE)
+SET(CMAKE_SKIP_BUILD_RPATH FALSE)
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib:${PLUGINS_INSTALL_PATH}")
 
 
