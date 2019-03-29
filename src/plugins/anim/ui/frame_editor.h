@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QTreeWidget>
-#include <QMetaObject>
+#include <QtWidgets/QTreeWidget>
+#include <QtCore/QMetaObject>
 
 #include <OpenEXR/ImathVec.h>
 

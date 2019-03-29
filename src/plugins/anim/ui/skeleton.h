@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QMetaObject>
-#include <QTreeWidget>
-#include <QLabel>
-#include <QPushButton>
-#include <QDialog>
+#include <QtCore/QMetaObject>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QDialog>
 
 #include <possumwood_sdk/properties/property.h>
 
