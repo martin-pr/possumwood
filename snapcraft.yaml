@@ -78,7 +78,7 @@ parts:
     plugin: cmake
     source: .
     configflags:
-      - -DCMAKE_BUILD_TYPE=Debug
+      - -DCMAKE_BUILD_TYPE=Release
       - -DCONF_PATH='$SNAP/share/possumwood/possumwood.conf'
       - -DMAKE_CONF_FILE=OFF
     after: [cgal, desktop-qt5]

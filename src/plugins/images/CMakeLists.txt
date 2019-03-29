@@ -29,7 +29,7 @@ target_link_libraries(psw_images ${LIBS} possumwood_sdk)
 
 #####
 
-file(GLOB nodes_sources nodes/*.cpp)
+file(GLOB_RECURSE nodes_sources nodes/*.cpp)
 
 add_library(images SHARED ${nodes_sources})
 SET_TARGET_PROPERTIES(images PROPERTIES PREFIX "")

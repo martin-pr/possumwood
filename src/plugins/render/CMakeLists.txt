@@ -20,7 +20,7 @@ target_link_libraries(psw_render ${LIBS} possumwood_sdk)
 
 #####
 
-file(GLOB nodes_sources nodes/*.cpp)
+file(GLOB_RECURSE nodes_sources nodes/*.cpp)
 
 add_library(render SHARED ${nodes_sources})
 SET_TARGET_PROPERTIES(render PROPERTIES PREFIX "")
@@ -28,4 +28,4 @@ SET_TARGET_PROPERTIES(render PROPERTIES PREFIX "")
 install(TARGETS render DESTINATION ${PLUGINS_INSTALL_PATH})
 set_property(TARGET render PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
-target_link_libraries(render psw_render psw_images ${LIBS} possumwood_sdk GLEW)
+target_link_libraries(render psw_render psw_images psw_cgal psw_anim ${LIBS} possumwood_sdk GLEW)

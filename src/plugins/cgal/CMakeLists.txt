@@ -24,7 +24,7 @@ install(TARGETS psw_cgal DESTINATION lib)
 
 #####
 
-file(GLOB node_sources nodes/*.cpp)
+file(GLOB_RECURSE node_sources nodes/*.cpp)
 
 add_library(cgal SHARED ${node_sources})
 install(TARGETS cgal DESTINATION ${PLUGINS_INSTALL_PATH})
