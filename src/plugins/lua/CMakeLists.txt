@@ -35,7 +35,6 @@ add_library(lua SHARED ${nodes_sources})
 SET_TARGET_PROPERTIES(lua PROPERTIES PREFIX "")
 
 install(TARGETS lua DESTINATION ${PLUGINS_INSTALL_PATH})
-set_property(TARGET lua PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
 target_link_libraries(lua psw_lua ${LIBS} possumwood_sdk)
 

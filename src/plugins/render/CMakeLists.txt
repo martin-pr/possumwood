@@ -26,6 +26,5 @@ add_library(render SHARED ${nodes_sources})
 SET_TARGET_PROPERTIES(render PROPERTIES PREFIX "")
 
 install(TARGETS render DESTINATION ${PLUGINS_INSTALL_PATH})
-set_property(TARGET render PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
 target_link_libraries(render psw_render ${LIBS} possumwood_sdk GLEW)

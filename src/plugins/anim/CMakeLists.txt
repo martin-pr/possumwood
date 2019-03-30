@@ -26,6 +26,5 @@ add_library(anim SHARED ${nodes_sources})
 SET_TARGET_PROPERTIES(anim PROPERTIES PREFIX "")
 
 install(TARGETS anim DESTINATION ${PLUGINS_INSTALL_PATH})
-set_property(TARGET anim PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
 target_link_libraries(anim psw_cgal psw_anim ${LIBS} possumwood_sdk)

@@ -35,6 +35,5 @@ add_library(images SHARED ${nodes_sources})
 SET_TARGET_PROPERTIES(images PROPERTIES PREFIX "")
 
 install(TARGETS images DESTINATION ${PLUGINS_INSTALL_PATH})
-set_property(TARGET images PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
 target_link_libraries(images psw_images psw_lua ${OPENEXR_IEX_LIBRARY} ${LIBS} OpenImageIO)

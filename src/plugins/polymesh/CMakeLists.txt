@@ -26,6 +26,5 @@ add_library(polymesh SHARED ${nodes_sources})
 SET_TARGET_PROPERTIES(polymesh PROPERTIES PREFIX "")
 
 install(TARGETS polymesh DESTINATION ${PLUGINS_INSTALL_PATH})
-set_property(TARGET polymesh PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
 target_link_libraries(polymesh psw_polymesh psw_render ${LIBS} possumwood_sdk GLEW)

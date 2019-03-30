@@ -14,7 +14,6 @@ add_library(maths SHARED ${sources})
 SET_TARGET_PROPERTIES(maths PROPERTIES PREFIX "")
 
 install(TARGETS maths DESTINATION ${PLUGINS_INSTALL_PATH})
-set_property(TARGET maths PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
 target_link_libraries(maths ${LIBS} possumwood_sdk)
 
