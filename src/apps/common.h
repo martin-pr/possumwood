@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 /// A RAII class loading plugins (assumes an App instance already exists).
 /// Will unload plugins on destruction.
@@ -13,5 +14,5 @@ class PluginsRAII {
 		PluginsRAII(const PluginsRAII&) = delete;
 		PluginsRAII& operator = (const PluginsRAII&) = delete;
 
-		std::vector<void*> m_pluginHandles;
+		std::vector<std::pair<void*, std::string>> m_pluginHandles;
 };

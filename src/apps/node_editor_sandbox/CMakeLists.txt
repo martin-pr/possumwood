@@ -11,5 +11,6 @@ file(GLOB sources_sandbox *.cpp)
 include_directories(./)
 
 add_executable(nodeeditor_sandbox ${sources_sandbox})
+install(TARGETS nodeeditor_sandbox DESTINATION bin)
 
 target_link_libraries(nodeeditor_sandbox nodeeditor ${LIBS})

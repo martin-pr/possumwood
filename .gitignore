@@ -4,3 +4,8 @@ build/*
 tmp/*
 _archive
 plugins/*.so
+
+parts
+stage
+snap
+prime

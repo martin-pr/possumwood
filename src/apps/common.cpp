@@ -17,7 +17,7 @@ PluginsRAII::PluginsRAII() {
 		if(fs::is_regular_file(itr->status()) && itr->path().extension() == ".so") {
 			void* ptr = dlopen(itr->path().string().c_str(), RTLD_NOW);
 			if(ptr)
-				m_pluginHandles.push_back(ptr);
+				m_pluginHandles.push_back(std::make_pair(ptr, itr->path().string()));
 			else
 				std::cout << dlerror() << std::endl;
 		}
@@ -27,7 +27,7 @@ PluginsRAII::PluginsRAII() {
 PluginsRAII::~PluginsRAII() {
 	// unload all plugins
 	while(!m_pluginHandles.empty()) {
-		dlclose(m_pluginHandles.back());
+		dlclose(m_pluginHandles.back().first);
 		m_pluginHandles.pop_back();
 	}
 

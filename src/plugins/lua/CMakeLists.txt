@@ -12,12 +12,29 @@ pkg_search_module(LUABIND REQUIRED)
 include_directories(${LUABIND_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${LUABIND_LIBRARIES})
 
-######################################
-
-file(GLOB_RECURSE expr_sources *.cpp)
-
 include_directories(./)
 
-add_library(lua SHARED ${expr_sources})
+#####
 
-target_link_libraries(lua ${LIBS})
+file(GLOB sources *.cpp datatypes/*.cpp ui/*.cpp)
+file(GLOB_RECURSE headers *.h)
+
+QT5_WRAP_CPP(headers_moc ${headers})
+
+add_library(psw_lua SHARED ${sources} ${headers_moc})
+
+install(TARGETS psw_lua DESTINATION lib)
+
+target_link_libraries(psw_lua ${LIBS} possumwood_sdk)
+
+#####
+
+file(GLOB_RECURSE nodes_sources nodes/*.cpp)
+
+add_library(lua SHARED ${nodes_sources})
+SET_TARGET_PROPERTIES(lua PROPERTIES PREFIX "")
+
+install(TARGETS lua DESTINATION ${PLUGINS_INSTALL_PATH})
+
+target_link_libraries(lua psw_lua ${LIBS} possumwood_sdk)
+

@@ -21,9 +21,46 @@
 
 #include "config.inl"
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
 namespace possumwood {
 
 App* App::s_instance = NULL;
+
+namespace {
+
+boost::filesystem::path expandEnvvars(const boost::filesystem::path& p) {
+	boost::filesystem::path result = p;
+
+	bool expanded = true;
+	while(expanded) {
+		expanded = false;
+
+		for(auto it = result.begin(); it != result.end(); ++it) {
+			const std::string part = it->string();
+			if(!part.empty() && part[0] == '$') {
+				const char* envvar = getenv(part.substr(1).c_str());
+				if(envvar != nullptr) {
+					boost::filesystem::path tmp;
+					for(auto it2 = result.begin(); it2 != result.end(); ++it2)
+						if(it2 != it)
+							tmp /= *it2;
+						else
+							tmp /= envvar;
+					result = tmp;
+
+					expanded = true;
+					break;
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
+}
 
 App::App() : m_mainWindow(NULL), m_time(0.0f) {
 	assert(s_instance == nullptr);
@@ -44,24 +81,46 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 	                                   "Scene's frames-per-second value"));
 
 	///////////////////////
-	// expressions
+	// resolving paths from possumwood.conf
 
-	// find the config file
-	boost::filesystem::path full_path(boost::filesystem::current_path());
-	while(!full_path.empty()) {
-		if(boost::filesystem::exists(full_path / "possumwood.conf"))
+	boost::filesystem::path conf_path;
+
+	// conf path can be explicitly defined during the build (at which point we just use it)
+#ifdef POSSUMWOOD_CONF_PATH
+	conf_path = boost::filesystem::path(TOSTRING(POSSUMWOOD_CONF_PATH));
+
+	conf_path = expandEnvvars(conf_path);
+
+	// however, if that path doesn't exist (for development only)
+	if(!boost::filesystem::exists(conf_path)) {
+#endif
+
+	// find the config file in the current or parent directories
+	conf_path = boost::filesystem::path(boost::filesystem::current_path());
+	while(!conf_path.empty()) {
+		if(boost::filesystem::exists(conf_path / "possumwood.conf")) {
+			conf_path = conf_path / "possumwood.conf";
 			break;
-
-		full_path = full_path.parent_path();
+		}
+		else
+			conf_path = conf_path.parent_path();
 	}
 
-	if(!full_path.empty()) {
-		std::ifstream cfg(((full_path / "possumwood.conf").string()));
+#ifdef POSSUMWOOD_CONF_PATH
+	}
+#endif
+
+	if(!conf_path.empty()) {
+		// parent directory for the config file - used for resolving relative paths
+		const boost::filesystem::path full_path = conf_path.parent_path();
+
+		std::ifstream cfg(conf_path.string());
 		while(!cfg.eof() && cfg.good()) {
 			std::string line;
 			std::getline(cfg, line);
 
 			if(!line.empty()) {
+				// read the key/value pair of key->path from the file
 				std::string key;
 				std::string value;
 
@@ -84,9 +143,15 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 				}
 
 				boost::filesystem::path path(value);
+
+				// expand any env vars
+				path = expandEnvvars(path);
+
+				// resolve relative paths to absolute
 				if(path.is_relative())
 					path = full_path / path;
 
+				// store this path variable
 				m_pathVariables[key] = path.string();
 			}
 		}

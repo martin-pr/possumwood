@@ -3,8 +3,10 @@
 namespace dependency_graph {
 
 std::map<std::string, std::function<std::unique_ptr<BaseData>()>>& BaseData::factories() {
-	static std::map<std::string, std::function<std::unique_ptr<BaseData>()>> s_factories;
-	return s_factories;
+	static std::unique_ptr<std::map<std::string, std::function<std::unique_ptr<BaseData>()>>> s_factories;
+	if(s_factories == nullptr)
+		s_factories = std::unique_ptr<std::map<std::string, std::function<std::unique_ptr<BaseData>()>>>(new std::map<std::string, std::function<std::unique_ptr<BaseData>()>>());
+	return *s_factories;
 }
 
 BaseData::BaseData() {

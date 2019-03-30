@@ -3,6 +3,7 @@
 #include <boost/noncopyable.hpp>
 
 #include <functional>
+#include <typeindex>
 
 #include <dependency_graph/rtti.h>
 #include <dependency_graph/data.inl>
@@ -20,11 +21,11 @@ class IOBase : public boost::noncopyable {
 		typedef std::function<void(possumwood::io::json&, const dependency_graph::BaseData&)> to_fn;
 		typedef std::function<void(const possumwood::io::json&, dependency_graph::BaseData&)> from_fn;
 
-		IOBase(const std::string& type, to_fn toJson, from_fn fromJson);
+		IOBase(const std::type_index& type, to_fn toJson, from_fn fromJson);
 		virtual ~IOBase();
 
 	private:
-		std::string m_type;
+		std::type_index m_type;
 };
 
 template<typename T>
@@ -34,7 +35,7 @@ class IO : public IOBase {
 		typedef std::function<void(const possumwood::io::json&, T&)> from_fn;
 
 		IO(to_fn toJson, from_fn fromJson) : IOBase(
-			dependency_graph::unmangledTypeId<T>(),
+			typeid(T),
 			[toJson](possumwood::io::json& json, const dependency_graph::BaseData& data) {
 				const dependency_graph::Data<T>& typed = dynamic_cast<const dependency_graph::Data<T>&>(data);
 				toJson(json, typed.value);
