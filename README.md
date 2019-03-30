@@ -16,7 +16,7 @@ Possumwood has been tested only on Linux (several distributions). While it shoul
 
 ### Installation using [Snap](https://snapcraft.io/)
 
-Currently, Possumwood is released in Snap as a development/testing package only. The latest build and its status can be accessed her [here](https://build.snapcraft.io/user/martin-pr/possumwood).
+Currently, Possumwood is released in Snap as a development/testing package only. The latest build and its status can be accessed [here](https://build.snapcraft.io/user/martin-pr/possumwood).
 
 To install a testing version, please run:
 
