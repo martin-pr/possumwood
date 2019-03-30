@@ -16,7 +16,7 @@ add_library(psw_render SHARED ${sources} ${headers_moc})
 
 install(TARGETS psw_render DESTINATION lib)
 
-target_link_libraries(psw_render ${LIBS} possumwood_sdk)
+target_link_libraries(psw_render psw_images psw_cgal psw_anim ${LIBS} possumwood_sdk)
 
 #####
 
@@ -28,4 +28,4 @@ SET_TARGET_PROPERTIES(render PROPERTIES PREFIX "")
 install(TARGETS render DESTINATION ${PLUGINS_INSTALL_PATH})
 set_property(TARGET render PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
-target_link_libraries(render psw_render psw_images psw_cgal psw_anim ${LIBS} possumwood_sdk GLEW)
+target_link_libraries(render psw_render ${LIBS} possumwood_sdk GLEW)
