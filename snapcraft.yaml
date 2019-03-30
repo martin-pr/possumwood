@@ -38,6 +38,8 @@ apps:
   possumwood:
     command: desktop-launch possumwood
     plugs: [opengl, home, desktop, gsettings, wayland, x11]
+    environment:
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/x86_64-linux-gnu/blas:$SNAP/usr/lib/x86_64-linux-gnu/lapack
 
   run-bash:
     command: desktop-launch bash
