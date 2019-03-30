@@ -260,5 +260,6 @@ parts:
   config:
     plugin: nil
     after: [core]
-    prepare: printf 'EXAMPLES $SNAP/share/possumwood/examples\nTOOLBARS $SNAP/share/possumwood/toolbars\nPLUGINS $SNAP/lib/possumwood/plugins\n' > $SNAPCRAFT_STAGE/share/possumwood/possumwood.conf
-    install: mkdir -p $SNAPCRAFT_PART_INSTALL/share/possumwood && cp -p $SNAPCRAFT_STAGE/share/possumwood/possumwood.conf $SNAPCRAFT_PART_INSTALL/share/possumwood
+    override-build: |
+      printf 'EXAMPLES $SNAP/share/possumwood/examples\nTOOLBARS $SNAP/share/possumwood/toolbars\nPLUGINS $SNAP/lib/possumwood/plugins\n' > $SNAPCRAFT_STAGE/share/possumwood/possumwood.conf
+      mkdir -p $SNAPCRAFT_PART_INSTALL/share/possumwood && cp -p $SNAPCRAFT_STAGE/share/possumwood/possumwood.conf $SNAPCRAFT_PART_INSTALL/share/possumwood
