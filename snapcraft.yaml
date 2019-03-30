@@ -60,6 +60,32 @@ plugs:
     default-provider: gtk-common-themes:sounds-themes
 
 parts:
+  desktop-qt5:
+    source-type: git
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers
+    source-subdir: qt
+    plugin: make
+    make-parameters: ["FLAVOR=qt5"]
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - dpkg-dev
+    stage-packages:
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libqt5gui5
+      - libgdk-pixbuf2.0-0
+      - libqt5svg5 # for loading icon themes which are svg
+      - try: [appmenu-qt5] # not available on core18
+      - locales-all
+      - xdg-user-dirs
+      - fcitx-frontend-qt5
+
   cgal:
     plugin: cmake
     source: https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-4.13/CGAL-4.13.tar.xz
@@ -72,9 +98,6 @@ parts:
       - libboost-thread1.65.1
       - libboost-test1.65.1
       - libboost-program-options1.65.1
-      - libboost-chrono1.62.0
-      - libboost-date-time1.62.0
-      - libboost-atomic1.62.0
 
   core:
     plugin: cmake
@@ -83,7 +106,7 @@ parts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCONF_PATH='$SNAP/share/possumwood/possumwood.conf'
       - -DMAKE_CONF_FILE=OFF
-    after: [cgal, desktop-qt5]
+    after: [cgal]
     stage-packages:
       - libgl1
       - libboost-filesystem1.65.1
@@ -94,48 +117,16 @@ parts:
       - libboost-test1.65.1
       - libboost-program-options1.65.1
 
-
-      - libboost-filesystem1.62.0
-      - libboost-serialization1.62.0
-      - libboost-system1.62.0
-      - libboost-regex1.62.0
-      - libboost-thread1.62.0
-      - libboost-test1.62.0
-      - libboost-program-options1.62.0
-      - libboost-chrono1.62.0
-      - libboost-date-time1.62.0
-      - libboost-atomic1.62.0
-
-
-      - libqt5opengl5
-      - libopencolorio1v5
-      - libopenimageio1.7
-      - libarmadillo8
-      - libgdal20
-      - libluabind0.9.1v5
-      - libhdf4-0
-      - libogdi3.2
-      - libusb-1.0-0
-      - libcharls1
-      - libglew2.0
-      - libglu1
-      - libilmbase12
-      - libqt5core5a
-      - libqt5gui5
-      - libqt5widgets5
-      - libxc4
-      - libxinerama1
-      - libxrandr2
-      - libxrender1
       - libaec0
+      - libarmadillo8
       - libarpack2
-      - osmo-libasn1c0
       - libavcodec57
       - libavformat57
       - libavutil55
       - libblas3
       - libbluray-bin
       - libcairo2
+      - libcharls1
       - libchromaprint1
       - libcroco3
       - libcrystalhd3
@@ -151,6 +142,7 @@ parts:
       - libfreetype6
       - libfreexl1
       - libfyba0
+      - libgdal20
       - libgdcm2.8
       - libgdk-pixbuf2.0-0
       - libgeos-3.6.2
@@ -158,7 +150,9 @@ parts:
       - libgeotiff2
       - libgfortran5
       - libgif7
+      - libglew2.0
       - libglfw3
+      - libglu1
       - libgme0
       - libgomp1
       - libgphoto2-6
@@ -168,9 +162,11 @@ parts:
       - libgssapi3-heimdal
       - libharfbuzz0b
       - libhcrypto4-heimdal
+      - libhdf4-0
       - libheimbase1-heimdal
       - libheimntlm0-heimdal
       - libhx509-5-heimdal
+      - libilmbase12
       - libjbig0
       - libjpeg8
       - libkmlbase1
@@ -182,6 +178,7 @@ parts:
       - libldap-2.4-2
       - libltdl7
       - liblua5.2-0
+      - libluabind0.9.1v5
       - libminizip1
       - libmp3lame0
       - libmpg123-0
@@ -194,11 +191,14 @@ parts:
       - libnuma1
       - libodbc1
       - libodbcinstq4-1
+      - libogdi3.2
       - libogg0
+      - libopencolorio1v5
       - libopencv-core3.2
       - libopencv-imgcodecs3.2
       - libopencv-imgproc3.2
       - libopencv-videoio3.2
+      - libopenimageio1.7
       - libopenjp2-7
       - libopenmpt0
       - libopus0
@@ -212,6 +212,10 @@ parts:
       - libproj12
       - libpsl5
       - libqhull7
+      - libqt5core5a
+      - libqt5gui5
+      - libqt5opengl5
+      - libqt5widgets5
       - libquadmath0
       - libraw1394-11
       - libraw16
@@ -235,6 +239,7 @@ parts:
       - libtinyxml2-6
       - libtwolame0
       - liburiparser1
+      - libusb-1.0-0
       - libva-drm2
       - libva-x11-2
       - libva2
@@ -249,13 +254,18 @@ parts:
       - libwind0-heimdal
       - libx264-152
       - libx265-146
+      - libxc4
       - libxcb-render0
       - libxcb-shm0
       - libxerces-c3.2
+      - libxinerama1
       - libxml2
+      - libxrandr2
+      - libxrender1
       - libxvidcore4
       - libyaml-cpp0.3v5
       - libzvbi0
+      - osmo-libasn1c0
 
   config:
     plugin: nil
