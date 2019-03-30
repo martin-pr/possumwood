@@ -10,6 +10,38 @@ Possumwood is built on top of a simple graph-evaluation engine and a Qt-based no
 
 [![Build Status](https://travis-ci.org/martin-pr/possumwood.svg?branch=master)](https://travis-ci.org/martin-pr/possumwood) [![Snap Status](https://build.snapcraft.io/badge/martin-pr/possumwood.svg)](https://build.snapcraft.io/user/martin-pr/possumwood)
 
+## Installation
+
+Possumwood has been tested only on Linux (several distributions). While it should work on Windows, it has not been compiled or tested there. No support for MacOS is planned for the time being due to heavy dependency on OpenGL.
+
+### Installation using [Snap](https://snapcraft.io/)
+
+Currently, Possumwood is released in Snap as a development/testing package only. The latest build and its status can be accessed her [here](https://build.snapcraft.io/user/martin-pr/possumwood).
+
+To install a testing version, please run:
+
+```
+sudo snap install --edge possumwood --devmode
+```
+
+This will download and install the latest successful build of Possumwood with its dependencies. To start the application, run `possumwood` from the command line. As a dev build, snap will not automatically update this installation. Moreover, snap skin support is currently rather rudimentary, making Possumwood not inherit the system look correctly.
+
+### Building from source
+
+The project is structured as a standard CMake-built project. To build, just run these in the directory of the repository on any Linux distro:
+
+```
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install && make -j
+```
+
+This will build Possumwood and all its plugins, and install the result inside `./install` directory. Installation is necessary to make sure Possumwood is able to find its plugins and its dependencies. After that, you can run the build via:
+
+```
+./install/bin/possumwood
+```
+
 ## Tutorials
 
 ### Basics
@@ -144,24 +176,6 @@ possumwood::NodeImplementation s_impl("maths/add", init);
 
 }
 ```
-
-## Installation
-
-The project is structured as a standard CMake-built project. To build, just run these in the directory of the repository on any Linux distro:
-
-```
-mkdir build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install && make -j
-```
-
-This will build Possumwood and all its plugins, and install the result inside `./install` directory. Installation is necessary to make sure Possumwood is able to find its plugins and its dependencies. After that, you can run the build via:
-
-```
-./install/bin/possumwood
-```
-
-The code has been tested only on Linux (several distributions). While it should work on Windows, it has not been compiled or tested there. No support for MacOS is planned for the time being due to heavy dependency on OpenGL.
 
 ## API Reference
 
