@@ -13,13 +13,10 @@
 
 namespace node_editor {
 
-Node::Node(const QString& name, const QString& type, const QPointF& position, const QColor& color) : m_state(kOk), m_typeString(type), m_color(color) {
+Node::Node(const QString& name, const QPointF& position, const QColor& color) : m_state(kOk), m_color(color) {
 	setPos(position);
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
 	setZValue(-1);
-
-	m_type = new QGraphicsTextItem(type, this);
-	m_type->setDefaultTextColor(m_color);
 
 	m_titleBackground = new QGraphicsRectItem(this);
 	m_title = new QGraphicsTextItem(name, this);
@@ -82,16 +79,6 @@ void Node::updateRect() {
 	m_title->setPos((width - m_title->boundingRect().width()) / 2, 0);
 	for(auto& p : m_ports)
 		p->setWidth(width);
-
-	QFont f(m_type->font());
-	f.setPointSizeF(50);
-
-	QFontMetrics metrics(f);
-	const float factor = (float)(width-8) / metrics.width(m_typeString);
-
-	f.setPointSizeF(f.pointSizeF() * factor);
-	m_type->setFont(f);
-	m_type->setPos(2, (height - m_type->boundingRect().height() + m_title->boundingRect().height()) / 2);
 
 	setRect(0, 0, width, height);
 }

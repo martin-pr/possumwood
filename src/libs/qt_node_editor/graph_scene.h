@@ -29,7 +29,6 @@ class GraphScene : public QGraphicsScene {
 		unsigned edgeCount() const;
 
 		Node& addNode(const QString& name,
-		              const QString& type,
 		              const QPointF& position,
 		              const QColor& color = QColor(64, 64, 64));
 

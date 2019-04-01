@@ -278,7 +278,7 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 
 		// make the new node
 		node_editor::Node& newNode = m_graphWidget->scene().addNode(
-			node.name().c_str(), typeString.c_str(), QPointF(data.position().x, data.position().y), nodeColor);
+			node.name().c_str(), QPointF(data.position().x, data.position().y), nodeColor);
 		uiNode = &newNode;
 
 		// add all ports, based on the node's metadata

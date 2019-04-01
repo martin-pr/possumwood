@@ -56,11 +56,10 @@ unsigned GraphScene::edgeCount() const {
 }
 
 Node& GraphScene::addNode(const QString& name,
-                          const QString& type,
                           const QPointF& position,
                           const QColor& color) {
 
-	Node* n = new Node(name, type, position, color);
+	Node* n = new Node(name, position, color);
 	m_nodes.push_back(n);
 	addItem(n);
 
