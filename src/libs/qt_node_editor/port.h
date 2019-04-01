@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QGraphicsTextItem>
-#include <QGraphicsTextItem>
+#include <QGraphicsEllipseItem>
 #include <QSet>
 
 namespace node_editor {
@@ -23,11 +23,13 @@ class Port : public QGraphicsRectItem {
 		Node& parentNode();
 		const Node& parentNode() const;
 
+	private:
+		float circleSize() const;
+
 		static constexpr const float margin() {
 			return 5;
 		}
 
-	private:
 		void setWidth(unsigned w);
 		unsigned minWidth() const;
 
@@ -37,8 +39,8 @@ class Port : public QGraphicsRectItem {
 
 		QColor m_color;
 
-		QGraphicsRectItem* m_in;
-		QGraphicsRectItem* m_out;
+		QGraphicsEllipseItem* m_in;
+		QGraphicsEllipseItem* m_out;
 
 		QSet<ConnectedEdge*> m_edges;
 		Node* m_parent;

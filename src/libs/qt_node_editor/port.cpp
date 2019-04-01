@@ -12,9 +12,10 @@
 
 namespace node_editor {
 
-Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsigned id) : QGraphicsRectItem(parent), m_color(color), m_in(NULL), m_out(NULL), m_parent(parent), m_id(id) {
+Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsigned id) : QGraphicsRectItem(parent),
+	m_color(color), m_in(NULL), m_out(NULL), m_parent(parent), m_id(id) {
 	m_name = new QGraphicsTextItem(name, this);
-	m_name->setPos(m_name->boundingRect().height(), 0);
+	m_name->setPos(margin()+m_name->boundingRect().height()/2, 0);
 	m_name->setDefaultTextColor(QColor(192, 192, 192));
 
 	QFont font = m_name->font();
@@ -22,24 +23,24 @@ Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsign
 	m_name->setFont(font);
 
 	if(t & kInput) {
-		m_in = new QGraphicsRectItem(
-		    margin(), margin(),
-		    m_name->boundingRect().height() - 2 * margin(), m_name->boundingRect().height() - 2 * margin(),
+		m_in = new QGraphicsEllipseItem(
+		    -circleSize()/2, margin(),
+		    circleSize(), circleSize(),
 		    this);
 		m_in->setBrush(m_color);
 		m_in->setPen(Qt::NoPen);
 	}
 
 	if(t & kOutput) {
-		m_out = new QGraphicsRectItem(
-		    m_name->boundingRect().height() + m_name->boundingRect().width() + margin(), margin(),
-		    m_name->boundingRect().height() - 2 * margin(), m_name->boundingRect().height() - 2 * margin(),
+		m_out = new QGraphicsEllipseItem(
+		    minWidth() - circleSize()/2, margin(),
+		    circleSize(), circleSize(),
 		    this);
 		m_out->setBrush(m_color);
 		m_out->setPen(Qt::NoPen);
 	}
 
-	setRect(QRect(rect().x(), rect().y(), minWidth(), m_name->boundingRect().height()));
+	setRect(QRect(rect().left(), rect().top(), minWidth(), m_name->boundingRect().height()));
 
 	setPen(Qt::NoPen);
 
@@ -47,20 +48,21 @@ Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsign
 }
 
 unsigned Port::minWidth() const {
-	return m_name->boundingRect().width() + m_name->boundingRect().height() * 2;
+	return m_name->boundingRect().width() + 2 * margin() + circleSize();
 }
 
 void Port::setWidth(unsigned w) {
 	setRect(QRect(rect().x(), rect().y(), w, m_name->boundingRect().height()));
 
 	if(m_in)
-		m_name->setPos(m_name->boundingRect().height(), 0);
+		m_name->setPos(margin() + circleSize()/2, 0);
 	else
-		m_name->setPos(w - m_name->boundingRect().height() - m_name->boundingRect().width(), 0);
+		m_name->setPos(w - m_name->boundingRect().width() - margin() - circleSize()/2, 0);
 
 	if(m_out)
-		m_out->setRect(w - m_name->boundingRect().height() + margin(), margin(),
-		               m_name->boundingRect().height() - 2 * margin(), m_name->boundingRect().height() - 2 * margin());
+		m_out->setRect(w - circleSize()/2, margin(),
+		               circleSize(), circleSize());
+
 }
 
 const QString Port::name() const {
@@ -97,6 +99,10 @@ Node& Port::parentNode() {
 const Node& Port::parentNode() const {
 	assert(m_parent);
 	return *m_parent;
+}
+
+float Port::circleSize() const {
+	return m_name->boundingRect().height() - 2 * margin();
 }
 
 }

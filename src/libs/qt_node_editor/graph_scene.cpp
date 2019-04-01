@@ -160,9 +160,9 @@ QPointF GraphScene::findConnectionPoint(QPointF pos, Port::Type portType) const 
 	if(port && (!(port->portType() & portType) || port->portType() == Port::kInputOutput)) {
 		const QRectF bbox = port->boundingRect();
 		if(portType == Port::kOutput)
-			pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
+			pos = QPointF(bbox.x(), bbox.y() + bbox.height() / 2);
 		else
-			pos = QPointF(bbox.x() + bbox.width() - bbox.height() / 2, bbox.y() + bbox.height() / 2);
+			pos = QPointF(bbox.x() + bbox.width(), bbox.y() + bbox.height() / 2);
 		pos = port->mapToScene(pos);
 	}
 
@@ -193,9 +193,9 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 				{
 					const QRectF bbox = port->boundingRect();
 					if(portType == Port::kInput)
-						pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
+						pos = QPointF(bbox.x(), bbox.y() + bbox.height() / 2);
 					else
-						pos = QPointF(bbox.x() + bbox.width() - bbox.height() / 2, bbox.y() + bbox.height() / 2);
+						pos = QPointF(bbox.x() + bbox.width(), bbox.y() + bbox.height() / 2);
 					pos = port->mapToScene(pos);
 				}
 
