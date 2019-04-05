@@ -64,12 +64,12 @@ const unsigned Port::index() const {
 }
 
 const Port::Type Port::portType() const {
-	if(m_in && m_out)
-		return kInputOutput;
-	else if(m_in)
+	if(m_in)
 		return kInput;
-	else
+	else {
+		assert(m_out);
 		return kOutput;
+	}
 }
 
 void Port::adjustEdges() {

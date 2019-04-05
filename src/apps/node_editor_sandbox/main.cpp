@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
 	n1.addPort(Node::PortDefinition{"b", Port::kOutput, Qt::red});
 
 	Node& n2 = scene.addNode("second", QPointF(50, 20));
-	n2.addPort(Node::PortDefinition{"xxxxxxxxxxxxxxxx", Port::kInputOutput, Qt::red});
+	n2.addPort(Node::PortDefinition{"xxxxxxxxxxxxxxxx", Port::kInput, Qt::red});
 
 	scene.connect(n1.port(1), n2.port(0));
 
@@ -121,14 +121,12 @@ int main(int argc, char* argv[]) {
 			std::stringstream name;
 			name << "port_" << p;
 
-			const unsigned pi = rand() % 3;
+			const unsigned pi = rand() % 2;
 
 			if(pi == 0)
 				node.addPort(Node::PortDefinition{name.str().c_str(), Port::kInput, randomColor()});
-			else if(pi == 1)
-				node.addPort(Node::PortDefinition{name.str().c_str(), Port::kOutput, randomColor()});
 			else
-				node.addPort(Node::PortDefinition{name.str().c_str(), Port::kInputOutput, randomColor()});
+				node.addPort(Node::PortDefinition{name.str().c_str(), Port::kOutput, randomColor()});
 		}
 	}, NULL));
 

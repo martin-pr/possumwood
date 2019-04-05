@@ -156,7 +156,7 @@ QPointF GraphScene::findConnectionPoint(QPointF pos, Port::Type portType) const 
 	Port* port = findConnectionPort(pos);
 
 	// if a port was found, and it was the opposite type than portType, snap
-	if(port && (!(port->portType() & portType) || port->portType() == Port::kInputOutput)) {
+	if(port && (!(port->portType() & portType))) {
 		const QRectF bbox = port->boundingRect();
 		if(portType == Port::kOutput)
 			pos = QPointF(bbox.x() + bbox.height() / 2, bbox.y() + bbox.height() / 2);
@@ -180,12 +180,6 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 				portType = port->portType();
 			else if((port->portType() == Port::kOutput) && (bbox.width() - pos.x() <= bbox.height()))
 				portType = port->portType();
-			else if(port->portType() == Port::kInputOutput) {
-				if(pos.x() <= bbox.height())
-					portType = Port::kInput;
-				else if(pos.x() >= bbox.width() - bbox.height())
-					portType = Port::kOutput;
-			}
 
 			if(portType == Port::kInput || portType == Port::kOutput) {
 				QPointF pos;
