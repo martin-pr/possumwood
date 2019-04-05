@@ -18,7 +18,7 @@ QPointF pointFromPort(const Port& p, Port::Type t) {
 	const QRectF bb = p.mapRectToScene(p.boundingRect());
 
 	float x = 0;
-	if(t == Port::kInput)
+	if(t == Port::Type::kInput)
 		x = bb.left();
 	else
 		x = bb.right();
@@ -30,13 +30,13 @@ QPointF pointFromPort(const Port& p, Port::Type t) {
 }
 
 ConnectedEdge::ConnectedEdge(Port& p1, Port& p2) :
-	Edge(pointFromPort(p1, Port::kOutput), pointFromPort(p2, Port::kInput)),
+	Edge(pointFromPort(p1, Port::Type::kOutput), pointFromPort(p2, Port::Type::kInput)),
 	m_p1(&p1), m_p2(&p2) {
 
 	setFlags(ItemIsSelectable);
 
-	assert(p1.portType() & Port::kOutput);
-	assert(p2.portType() & Port::kInput);
+	assert(p1.portType() == Port::Type::kOutput);
+	assert(p2.portType() == Port::Type::kInput);
 
 	p1.m_edges.insert(this);
 	p2.m_edges.insert(this);

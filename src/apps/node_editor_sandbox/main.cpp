@@ -87,11 +87,11 @@ int main(int argc, char* argv[]) {
 	GraphScene& scene = graph->scene();
 
 	Node& n1 = scene.addNode("first", QPointF(-50, 20));
-	n1.addPort(Node::PortDefinition{"aaaaa", Port::kInput, Qt::blue});
-	n1.addPort(Node::PortDefinition{"b", Port::kOutput, Qt::red});
+	n1.addPort(Node::PortDefinition{"aaaaa", Port::Type::kInput, Qt::blue});
+	n1.addPort(Node::PortDefinition{"b", Port::Type::kOutput, Qt::red});
 
 	Node& n2 = scene.addNode("second", QPointF(50, 20));
-	n2.addPort(Node::PortDefinition{"xxxxxxxxxxxxxxxx", Port::kInput, Qt::red});
+	n2.addPort(Node::PortDefinition{"xxxxxxxxxxxxxxxx", Port::Type::kInput, Qt::red});
 
 	scene.connect(n1.port(1), n2.port(0));
 
@@ -102,13 +102,13 @@ int main(int argc, char* argv[]) {
 	graph->addAction(makeAction("Add single input node", [&]() {
 		QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
 		Node& n = scene.addNode(makeUniqueNodeName(), pos);
-		n.addPort(Node::PortDefinition{"input", Port::kInput, randomColor()});
+		n.addPort(Node::PortDefinition{"input", Port::Type::kInput, randomColor()});
 	}, NULL));
 
 	graph->addAction(makeAction("Add single output node", [&]() {
 		QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
 		Node& n = scene.addNode(makeUniqueNodeName(), pos);
-		n.addPort(Node::PortDefinition{"output", Port::kOutput, randomColor()});
+		n.addPort(Node::PortDefinition{"output", Port::Type::kOutput, randomColor()});
 	}, NULL));
 
 	graph->addAction(makeAction("Add random more complex node", [&]() {
@@ -124,9 +124,9 @@ int main(int argc, char* argv[]) {
 			const unsigned pi = rand() % 2;
 
 			if(pi == 0)
-				node.addPort(Node::PortDefinition{name.str().c_str(), Port::kInput, randomColor()});
+				node.addPort(Node::PortDefinition{name.str().c_str(), Port::Type::kInput, randomColor()});
 			else
-				node.addPort(Node::PortDefinition{name.str().c_str(), Port::kOutput, randomColor()});
+				node.addPort(Node::PortDefinition{name.str().c_str(), Port::Type::kOutput, randomColor()});
 		}
 	}, NULL));
 

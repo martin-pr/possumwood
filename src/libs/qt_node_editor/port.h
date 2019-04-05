@@ -11,7 +11,7 @@ class ConnectedEdge;
 
 class Port : public QGraphicsItem {
 	public:
-		enum Type { kUnknown = 0, kInput = 1, kOutput = 2 };
+		enum struct Type { kUnknown = 0, kInput = 1, kOutput = 2 };
 
 		Port(const QString& name, Type t, QColor color, Node* parent, unsigned id);
 

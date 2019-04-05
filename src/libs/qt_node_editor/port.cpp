@@ -24,7 +24,7 @@ Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsign
 	font.setPixelSize(12);
 	m_name->setFont(font);
 
-	if(t & kInput) {
+	if(t == Type::kInput) {
 		m_in = new QGraphicsEllipseItem(
 		    -circleSize()/2, margin(),
 		    circleSize(), circleSize(),
@@ -35,7 +35,7 @@ Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsign
 		m_in->setParentItem(this);
 	}
 
-	if(t & kOutput) {
+	if(t == Type::kOutput) {
 		m_out = new QGraphicsEllipseItem(
 		    minWidth() - circleSize()/2, margin(),
 		    circleSize(), circleSize(),
@@ -65,10 +65,10 @@ const unsigned Port::index() const {
 
 const Port::Type Port::portType() const {
 	if(m_in)
-		return kInput;
+		return Type::kInput;
 	else {
 		assert(m_out);
-		return kOutput;
+		return Type::kOutput;
 	}
 }
 

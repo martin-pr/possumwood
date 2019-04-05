@@ -78,7 +78,7 @@ void GraphScene::removeNode(Node& n) {
 }
 
 void GraphScene::connect(Port& p1, Port& p2) {
-	if((p1.portType() == Port::kOutput) && (p2.portType() == Port::kInput)) {
+	if((p1.portType() == Port::Type::kOutput) && (p2.portType() == Port::Type::kInput)) {
 		if(!isConnected(p1, p2)) {
 			ConnectedEdge* e = new ConnectedEdge(p1, p2);
 			m_edges.push_back(e);
@@ -190,7 +190,7 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 
 void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 	if(m_editedEdge->isVisible()) {
-		if(m_connectedSide == Port::kInput)
+		if(m_connectedSide == Port::Type::kInput)
 			m_editedEdge->setPoints(findConnectionPoint(mouseEvent->scenePos(), m_connectedSide), m_editedEdge->target());
 		else
 			m_editedEdge->setPoints(m_editedEdge->origin(), findConnectionPoint(mouseEvent->scenePos(), m_connectedSide));
@@ -209,7 +209,7 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 		Port* portTo = findConnectionPort(m_editedEdge->target());
 
 		if(portFrom != NULL && portTo != NULL && portFrom != portTo &&
-		        portFrom->portType() == Port::kOutput && portTo->portType() == Port::kInput) {
+		        portFrom->portType() == Port::Type::kOutput && portTo->portType() == Port::Type::kInput) {
 
 			if(!isConnected(*portFrom, *portTo)) {
 				connect(*portFrom, *portTo);
