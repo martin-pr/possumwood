@@ -28,6 +28,8 @@ class Port : public QGraphicsItem {
 
 		void setRect(const QRectF& rect);
 
+		QPointF connectionPoint() const;
+
 		float circleSize() const;
 
 	private:

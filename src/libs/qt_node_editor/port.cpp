@@ -135,4 +135,13 @@ void Port::setRect(const QRectF& rect) {
 		               circleSize(), circleSize());
 }
 
+QPointF Port::connectionPoint() const {
+	assert(m_in || m_out);
+
+	if(m_in)
+		return m_in->mapToScene(m_in->boundingRect().center());
+	else
+		return m_out->mapToScene(m_out->boundingRect().center());
+}
+
 }
