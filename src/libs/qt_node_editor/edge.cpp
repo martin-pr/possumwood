@@ -67,7 +67,7 @@ QRectF Edge::boundingRect() const {
 	const float yMin = std::min(p1.y(), p2.y());
 	const float yMax = std::max(p1.y(), p2.y());
 
-	const QRectF box(xMin - 2, yMin - 2, xMax - xMin + 4, yMax - yMin + 4);
+	const QRectF box(xMin - 3, yMin - 3, xMax - xMin + 6, yMax - yMin + 6);
 
 	return box;
 }
@@ -122,10 +122,10 @@ void Edge::setPoints(QPointF origin, QPointF target) {
 	m_origin = origin;
 	m_target = target;
 
+	prepareGeometryChange();
+
 	if(scene())
 		scene()->update(boundingRect().united(origBbox));
-
-	prepareGeometryChange();
 }
 
 const QPointF& Edge::origin() const {

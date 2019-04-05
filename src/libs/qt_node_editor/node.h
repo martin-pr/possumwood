@@ -9,7 +9,7 @@
 
 namespace node_editor {
 
-class Node : public QGraphicsRectItem {
+class Node : public QGraphicsItem {
 	public:
 		enum State {
 			kOk = 0,
@@ -22,6 +22,7 @@ class Node : public QGraphicsRectItem {
 			QString name;
 			Port::Type type;
 			QColor color;
+			Port::Orientation orientation;
 		};
 
 		Node(const QString& name, const QPointF& position = QPointF(0, 0), const QColor& color = QColor(64, 64, 64));
@@ -40,9 +41,13 @@ class Node : public QGraphicsRectItem {
 		void setState(const State& s);
 		const State& state() const;
 
+		virtual QRectF boundingRect() const override;
+
 	protected:
 		virtual QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
+
+		void setRect(const QRectF& rect);
 
 	private:
 		void updateRect();
@@ -54,6 +59,7 @@ class Node : public QGraphicsRectItem {
 		State m_state;
 
 		QColor m_color;
+		QRectF m_rect;
 };
 
 }

@@ -21,18 +21,15 @@ Node::Node(const QString& name, const QPointF& position, const QColor& color) : 
 	m_titleBackground = new QGraphicsRectItem(this);
 	m_title = new QGraphicsTextItem(name, this);
 
-	QColor brushColor(m_color.red(), m_color.green(), m_color.blue(), 127);
-	setBrush(brushColor);
 
 	m_titleBackground->setPen(Qt::NoPen);
-	m_titleBackground->setBrush(m_color);
+	m_titleBackground->setBrush(QColor(m_color.red() + 32, m_color.green() + 32, m_color.blue() + 32));
 	m_title->setDefaultTextColor(Qt::white);
 
 	QFont font = m_title->font();
 	font.setPixelSize(12);
 	m_title->setFont(font);
 
-	setPen(QPen(m_color, 3));
 
 	updateRect();
 }
@@ -65,6 +62,8 @@ void Node::setName(const QString& name) {
 }
 
 void Node::updateRect() {
+	prepareGeometryChange();
+
 	unsigned height = m_title->boundingRect().height() + 4;
 	unsigned width = m_title->boundingRect().width() + 4;
 
@@ -78,9 +77,9 @@ void Node::updateRect() {
 	m_titleBackground->setRect(3, 3, width - 6, m_title->boundingRect().height() - 4);
 	m_title->setPos((width - m_title->boundingRect().width()) / 2, 0);
 	for(auto& p : m_ports)
-		p->setWidth(width);
+		p->setRect(QRectF(p->rect().x(), p->rect().y(), width, p->rect().height()));
 
-	setRect(0, 0, width, height);
+	setRect(QRectF(0, 0, width, height));
 }
 
 unsigned Node::portCount() const {
@@ -127,29 +126,61 @@ void Node::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 	// paint as if not selected
 	QStyleOptionGraphicsItem optionCopy(*option);
 	optionCopy.state = optionCopy.state & (~QStyle::State_Selected);
-	QGraphicsRectItem::paint(painter, &optionCopy, widget);
 
-	if(option->state & QStyle::State_Selected) {
-		// and paint the white outline if selected
-		painter->setPen(QPen(Qt::white, 3, Qt::DotLine));
-		painter->setBrush(Qt::NoBrush);
-		painter->drawRect(QRect(0,0,boundingRect().width()-3,boundingRect().height()-3));
+	QPen pen;
+	QBrush brush(m_color);
+	switch(m_state) {
+		case kOk:
+			pen = QPen(QColor(m_color.red() + 32, m_color.green() + 32, m_color.blue() + 32), 3);
+			break;
+		case kInfo:
+			pen = QPen(QColor(64, 64, 128), 3);
+			break;
+		case kWarning:
+			pen = QPen(QColor(128, 128, 64), 3);
+			brush.setColor(QColor(128, 128, 0));
+			break;
+		case kError:
+			pen = QPen(QColor(255, 64, 64), 3);
+			brush.setColor(QColor(192, 0, 0));
+			break;
 	}
+
+
+
+	painter->setPen(pen);
+	painter->setBrush(brush);
+
+	if(option->state & QStyle::State_Selected)
+		// and paint the white outline if selected
+		painter->setPen(QPen(Qt::white, 3));
+
+	QRectF rect(m_rect.left()+1, m_rect.top()+1, m_rect.width()-2, m_rect.height()-2);
+	painter->drawRoundedRect(rect, 3, 3);
 }
 
 void Node::setState(const State& s) {
 	m_state = s;
 
-	switch(m_state) {
-		case kOk: setPen(QPen(QColor(64, 64, 64), 3)); break;
-		case kInfo: setPen(QPen(QColor(64, 64, 128), 3)); break;
-		case kWarning: setPen(QPen(QColor(128, 128, 64), 3)); break;
-		case kError: setPen(QPen(QColor(255, 64, 64), 3)); break;
-	}
+	update();
 }
 
 const Node::State& Node::state() const {
 	return m_state;
+}
+
+QRectF Node::boundingRect() const {
+	QRectF result = m_titleBackground->boundingRect();
+	result |= m_rect;
+
+	for(auto& p : m_ports)
+		result |= p->mapToParent(p->boundingRect()).boundingRect();
+
+	return result;
+}
+
+void Node::setRect(const QRectF& rect) {
+	m_rect = rect;
 }
 
 }

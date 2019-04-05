@@ -9,7 +9,7 @@ namespace node_editor {
 class Node;
 class ConnectedEdge;
 
-class Port : public QGraphicsRectItem {
+class Port : public QGraphicsItem {
 	public:
 		enum Type { kUnknown = 0, kInput = 1, kOutput = 2, kInputOutput = 3 };
 
@@ -23,20 +23,27 @@ class Port : public QGraphicsRectItem {
 		Node& parentNode();
 		const Node& parentNode() const;
 
-	private:
+		virtual QRectF boundingRect() const override;
+		QRectF rect() const;
+
+		void setRect(const QRectF& rect);
+
 		float circleSize() const;
+
+	private:
+		virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0) override;
 
 		static constexpr const float margin() {
 			return 5;
 		}
 
-		void setWidth(unsigned w);
 		unsigned minWidth() const;
 
 		void adjustEdges();
 
 		QGraphicsTextItem* m_name;
 
+		QRectF m_rect;
 		QColor m_color;
 
 		QGraphicsEllipseItem* m_in;
