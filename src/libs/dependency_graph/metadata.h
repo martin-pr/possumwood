@@ -53,9 +53,9 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(InAttr<T>& in, const std::string& name, const T& defaultValue = T());
+		void addAttribute(InAttr<T>& in, const std::string& name, const T& defaultValue = T(), unsigned flags = 0);
 
-		void addAttribute(InAttr<void>& in, const std::string& name);
+		void addAttribute(InAttr<void>& in, const std::string& name, unsigned flags = 0);
 
 		/// registers an output attribute.
 		/// Each attribute instance should be held statically in the
@@ -63,9 +63,9 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(OutAttr<T>& out, const std::string& name, const T& defaultValue = T());
+		void addAttribute(OutAttr<T>& out, const std::string& name, const T& defaultValue = T(), unsigned flags = 0);
 
-		void addAttribute(OutAttr<void>& in, const std::string& name);
+		void addAttribute(OutAttr<void>& in, const std::string& name, unsigned flags = 0);
 
 		/// compute method of this node
 		void setCompute(std::function<State(Values&)> compute);
@@ -90,7 +90,7 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		virtual std::unique_ptr<NodeBase> createNode(const std::string& name, Network& parent, const UniqueId& id = UniqueId()) const;
 
 	protected:
-		unsigned doAddAttribute(const std::string& name, Attr::Category cat, const BaseData& data);
+		unsigned doAddAttribute(const std::string& name, Attr::Category cat, const BaseData& data, unsigned flags);
 		virtual void doAddAttribute(Attr& attr);
 
 	private:

@@ -29,6 +29,7 @@ class Attr {
 		const Category& category() const;
 		const unsigned& offset() const;
 		const std::type_info& type() const;
+		unsigned flags() const;
 
 		bool isValid() const;
 
@@ -39,7 +40,7 @@ class Attr {
 		std::unique_ptr<BaseData> createData() const;
 
 	protected:
-		Attr(const std::string& name, Category cat, const BaseData& data);
+		Attr(const std::string& name, Category cat, const BaseData& data, unsigned flags);
 
 		void setOffset(unsigned o);
 
@@ -55,13 +56,13 @@ class Attr {
 template<typename T>
 class TypedAttr : public Attr {
 	protected:
-		TypedAttr(const std::string& name, Category cat, const T& defaultValue);
+		TypedAttr(const std::string& name, Category cat, const T& defaultValue, unsigned flags);
 };
 
 template<>
 class TypedAttr<void> : public Attr {
 	public:
-		TypedAttr(const std::string& name, Category cat);
+		TypedAttr(const std::string& name, Category cat, unsigned flags);
 };
 
 /// Input attribute type (constructed by Metadata class)
@@ -71,7 +72,7 @@ class InAttr final : public TypedAttr<T> {
 		InAttr();
 
 	protected:
-		InAttr(const std::string& name, const T& defaultValue);
+		InAttr(const std::string& name, const T& defaultValue, unsigned flags);
 
 		friend class Metadata;
 };
@@ -82,7 +83,7 @@ class InAttr<void> final : public TypedAttr<void> {
 		InAttr();
 
 	protected:
-		InAttr(const std::string& name);
+		InAttr(const std::string& name, unsigned flags);
 
 		friend class Metadata;
 };
@@ -94,7 +95,7 @@ class OutAttr final : public TypedAttr<T> {
 		OutAttr();
 
 	protected:
-		OutAttr(const std::string& name, const T& defaultValue);
+		OutAttr(const std::string& name, const T& defaultValue, unsigned flags);
 
 		friend class Metadata;
 };
@@ -105,7 +106,7 @@ class OutAttr<void> final : public TypedAttr<void> {
 		OutAttr();
 
 	protected:
-		OutAttr(const std::string& name);
+		OutAttr(const std::string& name, unsigned flags);
 
 		friend class Metadata;
 };

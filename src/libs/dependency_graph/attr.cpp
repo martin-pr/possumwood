@@ -11,12 +11,13 @@ struct Attr::AttrData {
 	std::string name;
 	unsigned offset;
 	Category category;
+	unsigned flags;
 
 	std::unique_ptr<BaseData> data;
 };
 
-Attr::Attr(const std::string& name, Category cat, const BaseData& d)
-	: m_data(new AttrData{name, unsigned(-1), cat, d.clone()}) {
+Attr::Attr(const std::string& name, Category cat, const BaseData& d, unsigned flags)
+	: m_data(new AttrData{name, unsigned(-1), cat, flags, d.clone()}) {
 }
 
 Attr::~Attr() {
@@ -39,6 +40,7 @@ void Attr::setOffset(unsigned o) {
 		m_data->name,
 		o,
 		m_data->category,
+		m_data->flags,
 		m_data->data->clone()
 	});
 
@@ -47,6 +49,10 @@ void Attr::setOffset(unsigned o) {
 
 const std::type_info& Attr::type() const {
 	return m_data->data->typeinfo();
+}
+
+unsigned Attr::flags() const {
+	return m_data->flags;
 }
 
 std::unique_ptr<BaseData> Attr::createData() const {
@@ -80,20 +86,20 @@ std::ostream& operator << (std::ostream& out, const Attr& attr) {
 
 /////////
 
-TypedAttr<void>::TypedAttr(const std::string& name, Category cat) :
-	Attr(name, cat, Data<void>()) {
+TypedAttr<void>::TypedAttr(const std::string& name, Category cat, unsigned flags) :
+	Attr(name, cat, Data<void>(), flags) {
 }
 
-InAttr<void>::InAttr() : TypedAttr<void>("", Attr::kInput) {
+InAttr<void>::InAttr() : TypedAttr<void>("", Attr::kInput, 0) {
 }
 
-InAttr<void>::InAttr(const std::string& name) : TypedAttr<void>(name, Attr::kInput) {
+InAttr<void>::InAttr(const std::string& name, unsigned flags) : TypedAttr<void>(name, Attr::kInput, flags) {
 }
 
-OutAttr<void>::OutAttr() : TypedAttr<void>("", Attr::kOutput) {
+OutAttr<void>::OutAttr() : TypedAttr<void>("", Attr::kOutput, 0) {
 }
 
-OutAttr<void>::OutAttr(const std::string& name) : TypedAttr<void>(name, Attr::kOutput) {
+OutAttr<void>::OutAttr(const std::string& name, unsigned flags) : TypedAttr<void>(name, Attr::kOutput, flags) {
 }
 
 }
