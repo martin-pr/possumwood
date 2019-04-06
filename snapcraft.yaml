@@ -109,7 +109,7 @@ parts:
       - -DMAKE_CONF_FILE=OFF
     after: [cgal]
     stage-packages:
-      - libgl1
+      # - libgl1
       - libboost-filesystem1.65.1
       - libboost-serialization1.65.1
       - libboost-system1.65.1
@@ -118,152 +118,152 @@ parts:
       - libboost-test1.65.1
       - libboost-program-options1.65.1
 
-      - libaec0
+      # - libaec0
       - libarmadillo8
-      - libarpack2
-      - libavcodec57
-      - libavformat57
-      - libavutil55
-      - libblas3
-      - libbluray-bin
-      - libcairo2
+      # - libarpack2
+      # - libavcodec57
+      # - libavformat57
+      # - libavutil55
+      # - libblas3
+      # - libbluray-bin
+      # - libcairo2
       - libcharls1
-      - libchromaprint1
-      - libcroco3
-      - libcurl3-gnutls
-      - libdap25
-      - libdapclient6v5
-      - libdatrie1
-      - libdc1394-22
-      - libdouble-conversion1
-      - libepsilon1
-      - libexif12
-      - libfontconfig
-      - libfreetype6
-      - libfreexl1
-      - libfyba0
+      # - libchromaprint1
+      # - libcroco3
+      # - libcurl3-gnutls
+      # - libdap25
+      # - libdapclient6v5
+      # - libdatrie1
+      # - libdc1394-22
+      # - libdouble-conversion1
+      # - libepsilon1
+      # - libexif12
+      # - libfontconfig
+      # - libfreetype6
+      # - libfreexl1
+      # - libfyba0
       - libgdal20
-      - libgdcm2.8
-      - libgdk-pixbuf2.0-0
-      - libgeos-3.6.2
-      - libgeos-c1v5
-      - libgeotiff2
-      - libgfortran5
-      - libgif7
+      # - libgdcm2.8
+      # - libgdk-pixbuf2.0-0
+      # - libgeos-3.6.2
+      # - libgeos-c1v5
+      # - libgeotiff2
+      # - libgfortran5
+      # - libgif7
       - libglew2.0
       - libglfw3
       - libglu1
-      - libgme0
-      - libgomp1
-      - libgphoto2-6
-      - libgphoto2-port12
-      - libgraphite2-3
-      - libgsm0710-0
-      - libgssapi3-heimdal
-      - libharfbuzz0b
-      - libhcrypto4-heimdal
-      - libhdf4-0
-      - libheimbase1-heimdal
-      - libheimntlm0-heimdal
-      - libhx509-5-heimdal
+      # - libgme0
+      # - libgomp1
+      # - libgphoto2-6
+      # - libgphoto2-port12
+      # - libgraphite2-3
+      # - libgsm0710-0
+      # - libgssapi3-heimdal
+      # - libharfbuzz0b
+      # - libhcrypto4-heimdal
+      # - libhdf4-0
+      # - libheimbase1-heimdal
+      # - libheimntlm0-heimdal
+      # - libhx509-5-heimdal
       - libilmbase12
-      - libjbig0
-      - libjpeg8
-      - libkmlbase1
-      - libkmldom1
-      - libkmlengine1
-      - libkrb5-3
-      - liblapack3
-      - liblcms2-2
-      - libldap-2.4-2
-      - libltdl7
-      - liblua5.2-0
+      # - libjbig0
+      # - libjpeg8
+      # - libkmlbase1
+      # - libkmldom1
+      # - libkmlengine1
+      # - libkrb5-3
+      # - liblapack3
+      # - liblcms2-2
+      # - libldap-2.4-2
+      # - libltdl7
+      # - liblua5.2-0
       - libluabind0.9.1v5
-      - libminizip1
-      - libmp3lame0
-      - libmpg123-0
-      - libmysqlclient20
-      - libnetcdf-c++4
-      - libnghttp2-14
-      - libnspr4
-      - libnss3
-      - libnss3-tools
-      - libodbc1
-      - libodbcinstq4-1
+      # - libminizip1
+      # - libmp3lame0
+      # - libmpg123-0
+      # - libmysqlclient20
+      # - libnetcdf-c++4
+      # - libnghttp2-14
+      # - libnspr4
+      # - libnss3
+      # - libnss3-tools
+      # - libodbc1
+      # - libodbcinstq4-1
       - libogdi3.2
-      - libogg0
+      # - libogg0
       - libopencolorio1v5
       - libopencv-core3.2
       - libopencv-imgcodecs3.2
       - libopencv-imgproc3.2
       - libopencv-videoio3.2
       - libopenimageio1.7
-      - libopenjp2-7
-      - libopenmpt0
-      - libopus0
-      - libpango-1.0-0
-      - libpangocairo-1.0-0
-      - libpangoft2-1.0-0
-      - libpixman-1-0
-      - libpng16-16
-      - libpoppler73
-      - libpq5
-      - libproj12
-      - libpsl5
-      - libqhull7
-      - libqt5core5a
-      - libqt5gui5
-      - libqt5opengl5
-      - libqt5widgets5
+      # - libopenjp2-7
+      # - libopenmpt0
+      # - libopus0
+      # - libpango-1.0-0
+      # - libpangocairo-1.0-0
+      # - libpangoft2-1.0-0
+      # - libpixman-1-0
+      # - libpng16-16
+      # - libpoppler73
+      # - libpq5
+      # - libproj12
+      # - libpsl5
+      # - libqhull7
+      # - libqt5core5a
+      # - libqt5gui5
+      # - libqt5opengl5
+      # - libqt5widgets5
       - libraw1394-11
       - libraw16
-      - libroken18-heimdal
-      - librsvg2-2
-      - librtmp1
-      - libsasl2-2
-      - libshine3
-      - libsnappy1v5
-      - libspatialite7
-      - libspeex1
-      - libssh-gcrypt-4
-      - libsuperlu5
-      - libswresample2
-      - libswscale4
-      - libsz2
-      - libtbb2
-      - libthai0
-      - libtheora0
-      - libtiff5
-      - libtinyxml2-6
-      - libtwolame0
-      - liburiparser1
+      # - libroken18-heimdal
+      # - librsvg2-2
+      # - librtmp1
+      # - libsasl2-2
+      # - libshine3
+      # - libsnappy1v5
+      # - libspatialite7
+      # - libspeex1
+      # - libssh-gcrypt-4
+      # - libsuperlu5
+      # - libswresample2
+      # - libswscale4
+      # - libsz2
+      # - libtbb2
+      # - libthai0
+      # - libtheora0
+      # - libtiff5
+      # - libtinyxml2-6
+      # - libtwolame0
+      # - liburiparser1
       - libusb-1.0-0
-      - libva-drm2
-      - libva-x11-2
-      - libva2
-      - libvdpau1
-      - libvorbis0a
-      - libvorbisenc2
-      - libvorbisfile3
-      - libvpx5
-      - libwavpack1
-      - libwebp6
-      - libwebpmux3
-      - libwind0-heimdal
-      - libx264-152
-      - libx265-146
-      - libxc4
-      - libxcb-render0
-      - libxcb-shm0
-      - libxerces-c3.2
+      # - libva-drm2
+      # - libva-x11-2
+      # - libva2
+      # - libvdpau1
+      # - libvorbis0a
+      # - libvorbisenc2
+      # - libvorbisfile3
+      # - libvpx5
+      # - libwavpack1
+      # - libwebp6
+      # - libwebpmux3
+      # - libwind0-heimdal
+      # - libx264-152
+      # - libx265-146
+      # - libxc4
+      # - libxcb-render0
+      # - libxcb-shm0
+      # - libxerces-c3.2
       - libxinerama1
-      - libxml2
+      # - libxml2
       - libxrandr2
-      - libxrender1
-      - libxvidcore4
-      - libyaml-cpp0.3v5
-      - libzvbi0
-      - osmo-libasn1c0
+      # - libxrender1
+      # - libxvidcore4
+      # - libyaml-cpp0.3v5
+      # - libzvbi0
+      # - osmo-libasn1c0
 
   config:
     plugin: nil
