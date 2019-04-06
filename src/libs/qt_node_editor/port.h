@@ -13,12 +13,18 @@ class Port : public QGraphicsItem {
 	public:
 		enum struct Type { kUnknown = 0, kInput = 1, kOutput = 2 };
 
-		Port(const QString& name, Type t, QColor color, Node* parent, unsigned id);
+		enum struct Orientation {
+			kHorizontal = 0,
+			kVertical
+		};
+
+		Port(const QString& name, Type t, Orientation o, QColor color, Node* parent, unsigned id);
 
 		const QString name() const;
 		const Type portType() const;
 		const QColor color() const;
 		const unsigned index() const;
+		const Orientation orientation() const;
 
 		Node& parentNode();
 		const Node& parentNode() const;
@@ -36,14 +42,15 @@ class Port : public QGraphicsItem {
 		virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0) override;
 
 		static constexpr const float margin() {
-			return 5;
+			return 6;
 		}
 
-		unsigned minWidth() const;
+		qreal minWidth() const;
 
 		void adjustEdges();
 
 		QGraphicsTextItem* m_name;
+		Orientation m_orientation;
 
 		QRectF m_rect;
 		QColor m_color;

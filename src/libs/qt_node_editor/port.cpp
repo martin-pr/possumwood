@@ -1,57 +1,49 @@
 #include "port.h"
 
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
 #include <QBrush>
-#include <QPen>
 #include <QFont>
 #include <QPainter>
+#include <QPen>
 
 #include "connected_edge.h"
 #include "node.h"
 
 namespace node_editor {
 
-Port::Port(const QString& name, Port::Type t, QColor color, Node* parent, unsigned id) : QGraphicsItem(parent),
-	m_color(color), m_in(NULL), m_out(NULL), m_parent(parent), m_id(id) {
+Port::Port(const QString& name, Port::Type t, Port::Orientation o, QColor color,
+           Node* parent, unsigned id)
+	: QGraphicsItem(parent), m_orientation(o), m_color(color), m_in(NULL), m_out(NULL),
+	  m_parent(parent), m_id(id) {
 	m_name = new QGraphicsTextItem(name, this);
-	m_name->setPos(margin()+m_name->boundingRect().height()/2, 0);
+	m_name->setPos(margin() + m_name->boundingRect().height() / 2, 0);
 	m_name->setDefaultTextColor(QColor(192, 192, 192));
-	m_name->setParentItem(this);
 
 	QFont font = m_name->font();
 	font.setPixelSize(12);
 	m_name->setFont(font);
 
 	if(t == Type::kInput) {
-		m_in = new QGraphicsEllipseItem(
-		    -circleSize()/2, margin(),
-		    circleSize(), circleSize(),
-		    this);
+		m_in = new QGraphicsEllipseItem(0, 0, circleSize(), circleSize(), this);
 		m_in->setBrush(m_color);
 		m_in->setPen(Qt::NoPen);
-
-		m_in->setParentItem(this);
 	}
 
 	if(t == Type::kOutput) {
-		m_out = new QGraphicsEllipseItem(
-		    minWidth() - circleSize()/2, margin(),
-		    circleSize(), circleSize(),
-		    this);
+		m_out = new QGraphicsEllipseItem(0, 0, circleSize(), circleSize(), this);
 		m_out->setBrush(m_color);
 		m_out->setPen(Qt::NoPen);
-
-		m_out->setParentItem(this);
 	}
 
-	setRect(QRect(rect().left(), rect().top(), minWidth(), m_name->boundingRect().height()));
+	setRect(
+	    QRect(rect().left(), rect().top(), minWidth(), m_name->boundingRect().height()));
 
 	setZValue(1);
 }
 
-unsigned Port::minWidth() const {
+qreal Port::minWidth() const {
 	return m_name->boundingRect().width() + 2 * margin() + circleSize();
 }
 
@@ -81,6 +73,10 @@ const QColor Port::color() const {
 	return m_color;
 }
 
+const Port::Orientation Port::orientation() const {
+	return m_orientation;
+}
+
 Node& Port::parentNode() {
 	assert(m_parent);
 	return *m_parent;
@@ -108,7 +104,8 @@ QRectF Port::boundingRect() const {
 	return result;
 }
 
-void Port::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void Port::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+                 QWidget* widget) {
 	// nothing
 
 	// painter->setPen(QPen(Qt::red, 1, Qt::DotLine));
@@ -123,16 +120,33 @@ QRectF Port::rect() const {
 void Port::setRect(const QRectF& rect) {
 	prepareGeometryChange();
 
-	m_rect = QRectF(rect.x(), rect.y(), std::max(rect.width(), m_name->boundingRect().width()), m_name->boundingRect().height());
+	m_rect =
+	    QRectF(rect.x(), rect.y(), std::max(rect.width(), m_name->boundingRect().width()),
+	           m_name->boundingRect().height());
 
-	if(m_in)
-		m_name->setPos(margin() + circleSize()/2, 0);
-	else
-		m_name->setPos(m_rect.width() - m_name->boundingRect().width() - margin() - circleSize()/2, 0);
+	assert(m_in || m_out);
+	if(m_in) {
+		if(m_orientation == Orientation::kHorizontal) {
+			m_name->setPos(margin() + circleSize() / 2 + rect.x(), rect.y());
+			m_in->setPos(-circleSize() / 2 + rect.x(), margin() + rect.y());
+		}
+		else {
+			m_name->setPos((rect.width() - m_name->boundingRect().width()) / 2 + rect.x(), rect.y());
+			m_in->setPos((rect.width()-circleSize()) / 2 + rect.x(), -circleSize() / 2 + rect.y());
+		}
+	}
+	else if(m_out) {
+		if(m_orientation == Orientation::kHorizontal) {
+			m_name->setPos(m_rect.width() - m_name->boundingRect().width() - margin() -
+			               circleSize() / 2 + rect.x(), rect.y());
 
-	if(m_out)
-		m_out->setRect(m_rect.width() - circleSize()/2, margin(),
-		               circleSize(), circleSize());
+			m_out->setPos(m_rect.width() - circleSize() / 2 + rect.x(), margin() + rect.y());
+		}
+		else {
+			m_name->setPos((rect.width() - m_name->boundingRect().width()) / 2 + rect.x(), rect.y());
+			m_out->setPos((rect.width()-circleSize()) / 2 + rect.x(), rect.height() - circleSize() / 2 + rect.y());
+		}
+	}
 }
 
 QPointF Port::connectionPoint() const {
@@ -144,4 +158,4 @@ QPointF Port::connectionPoint() const {
 		return m_out->mapToScene(m_out->boundingRect().center());
 }
 
-}
+}  // namespace node_editor

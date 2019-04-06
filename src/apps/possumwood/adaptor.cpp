@@ -291,8 +291,9 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 
 			newNode.addPort(node_editor::Node::PortDefinition {
 				attr.name().c_str(),
-				attr.category() == dependency_graph::Attr::kInput ? node_editor::Port::kInput : node_editor::Port::kOutput,
-				QColor(colour[0]*255, colour[1]*255, colour[2]*255)
+				attr.category() == dependency_graph::Attr::kInput ? node_editor::Port::Type::kInput : node_editor::Port::Type::kOutput,
+				QColor(colour[0]*255, colour[1]*255, colour[2]*255),
+				node_editor::Port::Orientation::kHorizontal
 			});
 		}
 	}

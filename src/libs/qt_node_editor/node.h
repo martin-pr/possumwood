@@ -19,6 +19,9 @@ class Node : public QGraphicsItem {
 		};
 
 		struct PortDefinition {
+			PortDefinition(const QString& n, const Port::Type& t = Port::Type::kInput, const QColor& c = QColor(255, 255, 255), const Port::Orientation& o = Port::Orientation::kHorizontal) : name(n), type(t), color(c), orientation(o) {
+			}
+
 			QString name;
 			Port::Type type;
 			QColor color;
@@ -46,8 +49,6 @@ class Node : public QGraphicsItem {
 	protected:
 		virtual QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
-
-		void setRect(const QRectF& rect);
 
 	private:
 		void updateRect();
