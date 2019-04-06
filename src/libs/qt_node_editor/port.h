@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QGraphicsTextItem>
-#include <QGraphicsTextItem>
+#include <QGraphicsEllipseItem>
 #include <QSet>
 
 namespace node_editor {
@@ -9,36 +9,54 @@ namespace node_editor {
 class Node;
 class ConnectedEdge;
 
-class Port : public QGraphicsRectItem {
+class Port : public QGraphicsItem {
 	public:
-		enum Type { kUnknown = 0, kInput = 1, kOutput = 2, kInputOutput = 3 };
+		enum struct Type { kUnknown = 0, kInput = 1, kOutput = 2 };
 
-		Port(const QString& name, Type t, QColor color, Node* parent, unsigned id);
+		enum struct Orientation {
+			kHorizontal = 0,
+			kVertical
+		};
+
+		Port(const QString& name, Type t, Orientation o, QColor color, Node* parent, unsigned id);
 
 		const QString name() const;
 		const Type portType() const;
 		const QColor color() const;
 		const unsigned index() const;
+		const Orientation orientation() const;
 
 		Node& parentNode();
 		const Node& parentNode() const;
 
-		static constexpr const float margin() {
-			return 5;
-		}
+		virtual QRectF boundingRect() const override;
+		QRectF rect() const;
+
+		void setRect(const QRectF& rect);
+
+		QPointF connectionPoint() const;
+
+		float circleSize() const;
 
 	private:
-		void setWidth(unsigned w);
-		unsigned minWidth() const;
+		virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0) override;
+
+		static constexpr const float margin() {
+			return 6;
+		}
+
+		qreal minWidth() const;
 
 		void adjustEdges();
 
 		QGraphicsTextItem* m_name;
+		Orientation m_orientation;
 
+		QRectF m_rect;
 		QColor m_color;
 
-		QGraphicsRectItem* m_in;
-		QGraphicsRectItem* m_out;
+		QGraphicsEllipseItem* m_in;
+		QGraphicsEllipseItem* m_out;
 
 		QSet<ConnectedEdge*> m_edges;
 		Node* m_parent;

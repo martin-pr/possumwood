@@ -25,17 +25,17 @@ void Metadata::setEditor() {
 }
 
 template<typename T>
-void Metadata::addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, const T& defaultValue) {
+void Metadata::addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, const T& defaultValue, unsigned flags) {
 	Colours::registerColour(typeid(T), Traits<T>::colour());
 
-	dependency_graph::Metadata::addAttribute(in, name, defaultValue);
+	dependency_graph::Metadata::addAttribute(in, name, defaultValue, flags);
 }
 
 template<typename T>
-void Metadata::addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue) {
+void Metadata::addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue, unsigned flags) {
 	Colours::registerColour(typeid(T), Traits<T>::colour());
 
-	dependency_graph::Metadata::addAttribute(out, name, defaultValue);
+	dependency_graph::Metadata::addAttribute(out, name, defaultValue, flags);
 }
 
 }

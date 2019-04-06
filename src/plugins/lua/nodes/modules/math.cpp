@@ -25,8 +25,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inContext, "in_context");
-	meta.addAttribute(a_outContext, "out_context");
+	meta.addAttribute(a_inContext, "in_context", possumwood::lua::Context(), possumwood::Metadata::kVertical);
+	meta.addAttribute(a_outContext, "out_context", possumwood::lua::Context(), possumwood::Metadata::kVertical);
 
 	meta.addInfluence(a_inContext, a_outContext);
 

@@ -338,6 +338,8 @@ MainWindow::MainWindow() : QMainWindow() {
 		if(res == QMessageBox::Yes) {
 			m_properties->show({});
 			possumwood::App::instance().newFile();
+
+			m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
 		}
 	});
 
@@ -352,6 +354,8 @@ MainWindow::MainWindow() : QMainWindow() {
 			try {
 				m_properties->show({});
 				possumwood::App::instance().loadFile(boost::filesystem::path(filename.toStdString()));
+
+				m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error loading file...", "Error loading " + filename + ":\n" + err.what());

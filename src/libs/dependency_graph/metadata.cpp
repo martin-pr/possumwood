@@ -36,26 +36,26 @@ const Attr& Metadata::attr(size_t index) const {
 	return m_attrs[index];
 }
 
-void Metadata::addAttribute(InAttr<void>& in, const std::string& name) {
+void Metadata::addAttribute(InAttr<void>& in, const std::string& name, unsigned flags) {
 	assert(!in.isValid());
 
-	in = InAttr<void>(name);
+	in = InAttr<void>(name, flags);
 	doAddAttribute(in);
 
 	assert(in.isValid());
 }
 
-void Metadata::addAttribute(OutAttr<void>& out, const std::string& name) {
+void Metadata::addAttribute(OutAttr<void>& out, const std::string& name, unsigned flags) {
 	assert(!out.isValid());
 
-	out = OutAttr<void>(name);
+	out = OutAttr<void>(name, flags);
 	doAddAttribute(out);
 
 	assert(out.isValid());
 }
 
-unsigned Metadata::doAddAttribute(const std::string& name, Attr::Category cat, const BaseData& data) {
-	Attr tmp(name, cat, data);
+unsigned Metadata::doAddAttribute(const std::string& name, Attr::Category cat, const BaseData& data, unsigned flags) {
+	Attr tmp(name, cat, data, flags);
 	doAddAttribute(tmp);
 	return tmp.offset();
 }

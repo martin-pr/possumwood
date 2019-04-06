@@ -18,6 +18,11 @@ class ActionsAccess;
 
 class Metadata : public dependency_graph::Metadata {
 	public:
+		enum Flags {
+			kHorizontal = 0, // default
+			kVertical = 1,
+		};
+
 		Metadata(const std::string& nodeType);
 		virtual ~Metadata();
 
@@ -29,7 +34,7 @@ class Metadata : public dependency_graph::Metadata {
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, const T& defaultValue = T());
+		void addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, const T& defaultValue = T(), unsigned flags = 0);
 
 		/// registers an output attribute.
 		/// Each attribute instance should be held statically in the
@@ -37,7 +42,7 @@ class Metadata : public dependency_graph::Metadata {
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue = T());
+		void addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue = T(), unsigned flags = 0);
 
 		using dependency_graph::Metadata::addInfluence;
 		using dependency_graph::Metadata::setCompute;

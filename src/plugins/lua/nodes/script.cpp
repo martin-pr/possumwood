@@ -114,7 +114,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_src, "source", std::string("variable = 10\n"));
-	meta.addAttribute(a_context, "context");
+	meta.addAttribute(a_context, "context", possumwood::lua::Context(), possumwood::Metadata::kVertical);
 	meta.addAttribute(a_state, "state");
 
 	meta.addInfluence(a_src, a_state);

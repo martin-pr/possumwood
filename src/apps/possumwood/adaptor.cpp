@@ -278,7 +278,7 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 
 		// make the new node
 		node_editor::Node& newNode = m_graphWidget->scene().addNode(
-			node.name().c_str(), typeString.c_str(), QPointF(data.position().x, data.position().y), nodeColor);
+			node.name().c_str(), QPointF(data.position().x, data.position().y), nodeColor);
 		uiNode = &newNode;
 
 		// add all ports, based on the node's metadata
@@ -289,10 +289,15 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 			if(meta)
 				colour = possumwood::Colours::get(attr.type());
 
+			node_editor::Port::Orientation ori = node_editor::Port::Orientation::kHorizontal;
+			if(attr.flags() & possumwood::Metadata::kVertical)
+				ori = node_editor::Port::Orientation::kVertical;
+
 			newNode.addPort(node_editor::Node::PortDefinition {
 				attr.name().c_str(),
-				attr.category() == dependency_graph::Attr::kInput ? node_editor::Port::kInput : node_editor::Port::kOutput,
-				QColor(colour[0]*255, colour[1]*255, colour[2]*255)
+				attr.category() == dependency_graph::Attr::kInput ? node_editor::Port::Type::kInput : node_editor::Port::Type::kOutput,
+				QColor(colour[0]*255, colour[1]*255, colour[2]*255),
+				ori
 			});
 		}
 	}
@@ -562,6 +567,9 @@ void Adaptor::setCurrentNetwork(dependency_graph::Network& n, bool recordHistory
 
 		onRemoveNode(*node);
 	}
+
+	// clear the index - either its empty (all nodes have been remove using above), or its data are going to be invalidated anyway
+	m_index.clear();
 
 	// set the m_currentNetwork, which will represent the network everywhere in this class
 	m_currentNetwork = &n;

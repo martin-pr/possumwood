@@ -9,7 +9,7 @@
 
 namespace node_editor {
 
-class Node : public QGraphicsRectItem {
+class Node : public QGraphicsItem {
 	public:
 		enum State {
 			kOk = 0,
@@ -19,12 +19,16 @@ class Node : public QGraphicsRectItem {
 		};
 
 		struct PortDefinition {
+			PortDefinition(const QString& n, const Port::Type& t = Port::Type::kInput, const QColor& c = QColor(255, 255, 255), const Port::Orientation& o = Port::Orientation::kHorizontal) : name(n), type(t), color(c), orientation(o) {
+			}
+
 			QString name;
 			Port::Type type;
 			QColor color;
+			Port::Orientation orientation;
 		};
 
-		Node(const QString& name, const QString& type, const QPointF& position = QPointF(0, 0), const QColor& color = QColor(64, 64, 64));
+		Node(const QString& name, const QPointF& position = QPointF(0, 0), const QColor& color = QColor(64, 64, 64));
 		virtual ~Node();
 
 
@@ -40,6 +44,8 @@ class Node : public QGraphicsRectItem {
 		void setState(const State& s);
 		const State& state() const;
 
+		virtual QRectF boundingRect() const override;
+
 	protected:
 		virtual QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
@@ -48,13 +54,13 @@ class Node : public QGraphicsRectItem {
 		void updateRect();
 
 		QGraphicsRectItem* m_titleBackground;
-		QGraphicsTextItem *m_title, *m_type;
+		QGraphicsTextItem *m_title;
 		QVector<Port*> m_ports;
 
 		State m_state;
-		QString m_typeString;
 
 		QColor m_color;
+		QRectF m_rect;
 };
 
 }

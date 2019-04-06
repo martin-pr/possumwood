@@ -3,6 +3,8 @@
 #include <QGraphicsLineItem>
 #include <QPen>
 
+#include "port.h"
+
 namespace node_editor {
 
 class GraphWidget;
@@ -25,11 +27,14 @@ class Edge : public QGraphicsItem {
 		const QPointF& origin() const;
 		const QPointF& target() const;
 
+		void setDirection(Port::Orientation ori, Port::Orientation tgt);
+
 	private:
 		QPointF bezierPoint(float t) const;
 		QPainterPath makePath() const;
 
 		QPointF m_origin, m_target;
+		Port::Orientation m_originDirection, m_targetDirection;
 		QPen m_pen;
 
 		friend class GraphScene;

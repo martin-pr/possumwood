@@ -24,8 +24,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 234.787338256836,
-                    "y": 395.034027099609
+                    "x": 228.653030395508,
+                    "y": 315.287963867188
                 }
             },
             "name": "image",
@@ -49,8 +49,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 300.970245361328,
-                    "y": 581.0576171875
+                    "x": 343.910430908203,
+                    "y": 421.565490722656
                 }
             },
             "connections": [
@@ -300,7 +300,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 179.645111083984,
+                    "x": 87.6304168701172,
                     "y": 233.891342163086
                 }
             },
@@ -316,6 +316,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAAAAAAAQ6AAACMwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADB/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADBwAAAI4BAAADAAAAAQAAAagAAAMH/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAB3QAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACSQAAASkAAACgAQAAAwAAAnAAAAMHAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAagAAAME/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAAA7QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABXAAAAhYAAACGAQAAAwAAAnAAAAMEAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

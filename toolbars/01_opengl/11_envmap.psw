@@ -136,8 +136,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 157.0,
-                            "y": 336.0
+                            "x": 232.91911315918,
+                            "y": 384.459014892578
                         }
                     },
                     "name": "background",
@@ -158,8 +158,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 455.609375,
-                            "y": 883.609375
+                            "x": 579.987487792969,
+                            "y": 652.621459960938
                         }
                     },
                     "name": "draw",
@@ -169,8 +169,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 62.0,
-                            "y": 219.0
+                            "x": 16.7715930938721,
+                            "y": 280.381408691406
                         }
                     },
                     "name": "fragment_shader",
@@ -183,8 +183,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 45.609375,
-                            "y": 787.609375
+                            "x": 190.986389160156,
+                            "y": 626.079345703125
                         }
                     },
                     "name": "fragment_shader",
@@ -197,8 +197,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 68.0357894897461,
-                            "y": 956.417419433594
+                            "x": 213.412811279297,
+                            "y": 794.887390136719
                         }
                     },
                     "name": "polymesh",
@@ -208,8 +208,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -54.7270317077637,
-                            "y": 465.366180419922
+                            "x": 408.864135742188,
+                            "y": 148.767333984375
                         }
                     },
                     "name": "env_image",
@@ -219,8 +219,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 223.0,
-                            "y": 149.0
+                            "x": 218.154098510742,
+                            "y": 208.76611328125
                         }
                     },
                     "name": "program",
@@ -230,8 +230,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 218.609375,
-                            "y": 734.609375
+                            "x": 363.986389160156,
+                            "y": 573.079345703125
                         }
                     },
                     "name": "program",
@@ -241,8 +241,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 140.96875,
-                            "y": 448.90625
+                            "x": 572.25390625,
+                            "y": 125.846199035645
                         }
                     },
                     "name": "texture",
@@ -255,8 +255,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 236.84375,
-                            "y": 898.640625
+                            "x": 382.220764160156,
+                            "y": 737.110595703125
                         }
                     },
                     "name": "vertex_data",
@@ -266,8 +266,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 72.0,
-                            "y": 86.0
+                            "x": 34.8480949401855,
+                            "y": 148.996704101562
                         }
                     },
                     "name": "vertex_shader",
@@ -280,8 +280,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 59.5606231689453,
-                            "y": 659.417602539062
+                            "x": 204.937637329102,
+                            "y": 497.887573242188
                         }
                     },
                     "name": "vertex_shader",
@@ -294,8 +294,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 329.308441162109,
-                            "y": 608.261474609375
+                            "x": 578.064697265625,
+                            "y": 456.423248291016
                         }
                     },
                     "name": "viewport",
@@ -310,6 +310,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAAWkAAAQ6AAADnAAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIFAAADB/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADBwAAAI4BAAADAAAAAQAAAgcAAAMH/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAABQAAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABrAAAAcYAAACGAQAAAwAAAp0AAAMHAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAANWAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAgcAAAME/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABPwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABrgAAAcQAAACGAQAAAwAAAUwAAAMEAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

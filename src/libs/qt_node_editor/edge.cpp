@@ -16,7 +16,7 @@ namespace node_editor {
 
 namespace {
 
-const float s_curvature = 50.0f;
+const float s_curvature = 1.0f;
 
 float min(float a, float b, float c, float d) {
 	return std::min(std::min(a, b), std::min(c, d));
@@ -33,10 +33,6 @@ QPointF evalBezier(float t, const QPointF& p0, const QPointF& p1, const QPointF&
 	           3.0 * (1.0 - t) * t * t * p2 +
 	           t * t * t * p3
 	       );
-}
-
-float length(const QPointF& p) {
-	return sqrt(p.x() * p.x() + p.y() * p.y());
 }
 
 }
@@ -62,24 +58,49 @@ QRectF Edge::boundingRect() const {
 	const QPointF p1 = m_origin;
 	const QPointF p2 = m_target;
 
-	const float xMin = min(p1.x(), p2.x(), p1.x() + s_curvature, p2.x() - s_curvature);
-	const float xMax = max(p1.x(), p2.x(), p1.x() + s_curvature, p2.x() - s_curvature);
-	const float yMin = std::min(p1.y(), p2.y());
-	const float yMax = std::max(p1.y(), p2.y());
+	const float x_tangent = s_curvature * (m_target.x() - m_origin.x());
+	const float y_tangent = s_curvature * (m_target.y() - m_origin.y());
 
-	const QRectF box(xMin - 2, yMin - 2, xMax - xMin + 4, yMax - yMin + 4);
+	const float xMin = min(p1.x(), p2.x(),
+	                       p1.x() + x_tangent * (m_originDirection == Port::Orientation::kHorizontal),
+	                       p2.x() - x_tangent * (m_targetDirection == Port::Orientation::kHorizontal));
+	const float xMax = max(p1.x(), p2.x(),
+	                       p1.x() + x_tangent * (m_originDirection == Port::Orientation::kHorizontal),
+	                       p2.x() - x_tangent * (m_targetDirection == Port::Orientation::kHorizontal));
+	const float yMin = min(p1.y(), p2.y(),
+	                       p1.y() + y_tangent * (m_originDirection == Port::Orientation::kVertical),
+	                       p2.y() - y_tangent * (m_targetDirection == Port::Orientation::kVertical));
+	const float yMax = max(p1.y(), p2.y(),
+	                       p1.y() + y_tangent * (m_originDirection == Port::Orientation::kVertical),
+	                       p2.y() - y_tangent * (m_targetDirection == Port::Orientation::kVertical));
+
+	const QRectF box(xMin - 3, yMin - 3, xMax - xMin + 6, yMax - yMin + 6);
 
 	return box;
 }
 
 QPointF Edge::bezierPoint(float t) const {
-	const QPointF tangent = QPointF(s_curvature, 0) * pow(length(m_origin - m_target) / 20.0f, 0.25);
+	const float x_tangent = s_curvature * (m_target.x() - m_origin.x());
+	const float y_tangent = s_curvature * (m_target.y() - m_origin.y());
+
+	QPointF p1_tangent;
+	if(m_originDirection == Port::Orientation::kHorizontal)
+		p1_tangent = QPointF(x_tangent, 0);
+	else
+		p1_tangent = QPointF(0, y_tangent);
+
+	QPointF p2_tangent;
+	if(m_targetDirection == Port::Orientation::kHorizontal)
+		p2_tangent = QPointF(x_tangent, 0);
+	else
+		p2_tangent = QPointF(0, y_tangent);
+
 
 	return evalBezier(
 	           t,
 	           m_origin,
-	           m_origin + tangent,
-	           m_target - tangent,
+	           m_origin + p1_tangent,
+	           m_target - p2_tangent,
 	           m_target
 	       );
 }
@@ -122,10 +143,10 @@ void Edge::setPoints(QPointF origin, QPointF target) {
 	m_origin = origin;
 	m_target = target;
 
+	prepareGeometryChange();
+
 	if(scene())
 		scene()->update(boundingRect().united(origBbox));
-
-	prepareGeometryChange();
 }
 
 const QPointF& Edge::origin() const {
@@ -142,6 +163,13 @@ void Edge::setPen(QPen pen) {
 
 const QPen& Edge::pen() const {
 	return m_pen;
+}
+
+void Edge::setDirection(Port::Orientation ori, Port::Orientation tgt) {
+	m_originDirection = ori;
+	m_targetDirection = tgt;
+
+	setPoints(m_origin, m_target);
 }
 
 }

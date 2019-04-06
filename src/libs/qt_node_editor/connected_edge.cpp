@@ -12,31 +12,14 @@
 
 namespace node_editor {
 
-namespace {
-
-QPointF pointFromPort(const Port& p, Port::Type t) {
-	const QRectF bb = p.mapRectToScene(p.boundingRect());
-
-	float x = 0;
-	if(t == Port::kInput)
-		x = bb.x() + Port::margin();
-	else
-		x = bb.x() + bb.width() - Port::margin();
-	const float y = bb.y() + bb.height() / 2;
-
-	return QPoint(x, y);
-}
-
-}
-
 ConnectedEdge::ConnectedEdge(Port& p1, Port& p2) :
-	Edge(pointFromPort(p1, Port::kOutput), pointFromPort(p2, Port::kInput)),
+	Edge(p1.connectionPoint(), p2.connectionPoint()),
 	m_p1(&p1), m_p2(&p2) {
 
 	setFlags(ItemIsSelectable);
 
-	assert(p1.portType() & Port::kOutput);
-	assert(p2.portType() & Port::kInput);
+	assert(p1.portType() == Port::Type::kOutput);
+	assert(p2.portType() == Port::Type::kInput);
 
 	p1.m_edges.insert(this);
 	p2.m_edges.insert(this);
@@ -66,15 +49,7 @@ ConnectedEdge::~ConnectedEdge() {
 }
 
 void ConnectedEdge::adjust() {
-	const QRectF bb1 = m_p1->mapRectToScene(m_p1->boundingRect());
-	const QRectF bb2 = m_p2->mapRectToScene(m_p2->boundingRect());
-
-	const float x1 = bb1.x() + bb1.width() - Port::margin();
-	const float y1 = bb1.y() + bb1.height() / 2;
-	const float x2 = bb2.x() + Port::margin();
-	const float y2 = bb2.y() + bb2.height() / 2;
-
-	setPoints(QPointF(x1, y1), QPointF(x2, y2));
+	setPoints(m_p1->connectionPoint(), m_p2->connectionPoint());
 }
 
 const Port& ConnectedEdge::fromPort() const {

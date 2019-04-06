@@ -110,4 +110,14 @@ Index::iterator Index::find(const dependency_graph::UniqueId& id) {
 	return m_data.find(id);
 }
 
+bool Index::empty() const {
+	return m_data.empty();
+}
+
+void Index::clear() {
+	m_data.clear();
+	m_uiIndex.clear();
+	m_nodeIndex.clear();
+}
+
 }
