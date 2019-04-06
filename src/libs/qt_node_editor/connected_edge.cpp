@@ -12,25 +12,8 @@
 
 namespace node_editor {
 
-namespace {
-
-QPointF pointFromPort(const Port& p, Port::Type t) {
-	const QRectF bb = p.mapRectToScene(p.boundingRect());
-
-	float x = 0;
-	if(t == Port::Type::kInput)
-		x = bb.left();
-	else
-		x = bb.right();
-	const float y = bb.center().y();
-
-	return QPoint(x, y);
-}
-
-}
-
 ConnectedEdge::ConnectedEdge(Port& p1, Port& p2) :
-	Edge(pointFromPort(p1, Port::Type::kOutput), pointFromPort(p2, Port::Type::kInput)),
+	Edge(p1.connectionPoint(), p2.connectionPoint()),
 	m_p1(&p1), m_p2(&p2) {
 
 	setFlags(ItemIsSelectable);
@@ -66,15 +49,7 @@ ConnectedEdge::~ConnectedEdge() {
 }
 
 void ConnectedEdge::adjust() {
-	const QRectF bb1 = m_p1->mapRectToScene(m_p1->boundingRect());
-	const QRectF bb2 = m_p2->mapRectToScene(m_p2->boundingRect());
-
-	const float x1 = bb1.right();
-	const float y1 = bb1.center().y();
-	const float x2 = bb2.left();
-	const float y2 = bb2.center().y();
-
-	setPoints(QPointF(x1, y1), QPointF(x2, y2));
+	setPoints(m_p1->connectionPoint(), m_p2->connectionPoint());
 }
 
 const Port& ConnectedEdge::fromPort() const {
