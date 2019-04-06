@@ -18,6 +18,11 @@ class ActionsAccess;
 
 class Metadata : public dependency_graph::Metadata {
 	public:
+		enum Flags {
+			kHorizontal = 0, // default
+			kVertical = 1,
+		};
+
 		Metadata(const std::string& nodeType);
 		virtual ~Metadata();
 
