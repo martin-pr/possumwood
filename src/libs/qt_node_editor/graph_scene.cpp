@@ -81,6 +81,7 @@ void GraphScene::connect(Port& p1, Port& p2) {
 	if((p1.portType() == Port::Type::kOutput) && (p2.portType() == Port::Type::kInput)) {
 		if(!isConnected(p1, p2)) {
 			ConnectedEdge* e = new ConnectedEdge(p1, p2);
+			e->setDirection(p1.orientation(), p2.orientation());
 			m_edges.push_back(e);
 			addItem(e);
 		}

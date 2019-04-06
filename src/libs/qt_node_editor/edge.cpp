@@ -62,10 +62,20 @@ QRectF Edge::boundingRect() const {
 	const QPointF p1 = m_origin;
 	const QPointF p2 = m_target;
 
-	const float xMin = min(p1.x(), p2.x(), p1.x() + s_curvature, p2.x() - s_curvature);
-	const float xMax = max(p1.x(), p2.x(), p1.x() + s_curvature, p2.x() - s_curvature);
-	const float yMin = std::min(p1.y(), p2.y());
-	const float yMax = std::max(p1.y(), p2.y());
+	const float tangent = s_curvature * pow(length(m_origin - m_target) / 20.0f, 0.25);
+
+	const float xMin = min(p1.x(), p2.x(),
+	                       p1.x() + tangent * (m_originDirection == Port::Orientation::kHorizontal),
+	                       p2.x() - tangent * (m_targetDirection == Port::Orientation::kHorizontal));
+	const float xMax = max(p1.x(), p2.x(),
+	                       p1.x() + tangent * (m_originDirection == Port::Orientation::kHorizontal),
+	                       p2.x() - tangent * (m_targetDirection == Port::Orientation::kHorizontal));
+	const float yMin = min(p1.y(), p2.y(),
+	                       p1.y() + tangent * (m_originDirection == Port::Orientation::kVertical),
+	                       p2.y() - tangent * (m_targetDirection == Port::Orientation::kVertical));
+	const float yMax = max(p1.y(), p2.y(),
+	                       p1.y() + tangent * (m_originDirection == Port::Orientation::kVertical),
+	                       p2.y() - tangent * (m_targetDirection == Port::Orientation::kVertical));
 
 	const QRectF box(xMin - 3, yMin - 3, xMax - xMin + 6, yMax - yMin + 6);
 
@@ -73,13 +83,26 @@ QRectF Edge::boundingRect() const {
 }
 
 QPointF Edge::bezierPoint(float t) const {
-	const QPointF tangent = QPointF(s_curvature, 0) * pow(length(m_origin - m_target) / 20.0f, 0.25);
+	const float tangent = s_curvature * pow(length(m_origin - m_target) / 20.0f, 0.25);
+
+	QPointF p1_tangent;
+	if(m_originDirection == Port::Orientation::kHorizontal)
+		p1_tangent = QPointF(tangent, 0);
+	else
+		p1_tangent = QPointF(0, tangent);
+
+	QPointF p2_tangent;
+	if(m_targetDirection == Port::Orientation::kHorizontal)
+		p2_tangent = QPointF(tangent, 0);
+	else
+		p2_tangent = QPointF(0, tangent);
+
 
 	return evalBezier(
 	           t,
 	           m_origin,
-	           m_origin + tangent,
-	           m_target - tangent,
+	           m_origin + p1_tangent,
+	           m_target - p2_tangent,
 	           m_target
 	       );
 }
@@ -142,6 +165,13 @@ void Edge::setPen(QPen pen) {
 
 const QPen& Edge::pen() const {
 	return m_pen;
+}
+
+void Edge::setDirection(Port::Orientation ori, Port::Orientation tgt) {
+	m_originDirection = ori;
+	m_targetDirection = tgt;
+
+	setPoints(m_origin, m_target);
 }
 
 }
