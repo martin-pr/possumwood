@@ -49,6 +49,9 @@ class Index {
 		const_iterator end() const;
 		const_iterator find(const dependency_graph::UniqueId& id) const;
 
+		bool empty() const;
+		void clear();
+
 	private:
 		/// this should be implemented using multiindex, but the move semantics in multiindex
 		/// library seem a bit iffy in current version of boost.

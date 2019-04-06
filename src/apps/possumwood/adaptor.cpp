@@ -568,6 +568,9 @@ void Adaptor::setCurrentNetwork(dependency_graph::Network& n, bool recordHistory
 		onRemoveNode(*node);
 	}
 
+	// clear the index - either its empty (all nodes have been remove using above), or its data are going to be invalidated anyway
+	m_index.clear();
+
 	// set the m_currentNetwork, which will represent the network everywhere in this class
 	m_currentNetwork = &n;
 
