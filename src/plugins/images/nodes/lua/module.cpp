@@ -36,8 +36,8 @@ dependency_graph::State compute(dependency_graph::Values& data, const std::strin
 
 template<typename PIXMAP>
 void init(possumwood::Metadata& meta, const std::string& suffix, Params& params) {
-	meta.addAttribute(params.a_inContext, "in_context");
-	meta.addAttribute(params.a_outContext, "out_context");
+	meta.addAttribute(params.a_inContext, "in_context", possumwood::lua::Context(), possumwood::Metadata::kVertical);
+	meta.addAttribute(params.a_outContext, "out_context", possumwood::lua::Context(), possumwood::Metadata::kVertical);
 
 	meta.addInfluence(params.a_inContext, params.a_outContext);
 

@@ -140,7 +140,7 @@ struct Drawable : public possumwood::Drawable {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_program, "program");
 	meta.addAttribute(a_vertexData, "vertex_data");
-	meta.addAttribute(a_uniforms, "uniforms", defaultUniforms());
+	meta.addAttribute(a_uniforms, "uniforms", defaultUniforms(), possumwood::Metadata::kVertical);
 
 	meta.setDrawable<Drawable>();
 }

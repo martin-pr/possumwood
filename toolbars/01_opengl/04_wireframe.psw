@@ -53,8 +53,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 71.0,
-                    "y": 313.0
+                    "x": 37.0856666564941,
+                    "y": 340.555389404297
                 }
             },
             "name": "fragment_shader",
@@ -67,8 +67,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 64.0,
-                    "y": 191.0
+                    "x": 42.803539276123,
+                    "y": 214.316101074219
                 }
             },
             "name": "geometry_shader",
@@ -117,8 +117,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 86.0,
-                    "y": 62.0
+                    "x": 66.9231872558594,
+                    "y": 95.9143295288086
                 }
             },
             "name": "vertex_shader",
@@ -133,6 +133,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAwAAANMAAAanAAAC/gAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIJAAADB/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADBwAAAGwBAAADAAAAAQAAAbAAAAMH/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAABrAAAA9QAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAawAAAwcAAACgAQAAAwAAAvAAAAMHAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIJAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAbAAAAME/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAABrAAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAbgAAAwQAAACGAQAAAwAAAvAAAAMEAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

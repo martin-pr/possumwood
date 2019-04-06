@@ -42,8 +42,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 157.0,
-                    "y": 336.0
+                    "x": 142.462295532227,
+                    "y": 426.456817626953
                 }
             },
             "name": "background",
@@ -64,8 +64,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 62.0,
-                    "y": 219.0
+                    "x": 16.7715969085693,
+                    "y": 314.302703857422
                 }
             },
             "name": "fragment_shader",
@@ -78,8 +78,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 56.0,
-                    "y": 482.0
+                    "x": 276.842864990234,
+                    "y": 80.1412811279297
                 }
             },
             "name": "load",
@@ -92,8 +92,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 223.0,
-                    "y": 149.0
+                    "x": 208.462295532227,
+                    "y": 239.456802368164
                 }
             },
             "name": "program",
@@ -103,8 +103,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 223.0,
-                    "y": 445.0
+                    "x": 426.52783203125,
+                    "y": 96.0951614379883
                 }
             },
             "name": "texture",
@@ -117,8 +117,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 72.0,
-                    "y": 86.0
+                    "x": 34.8480987548828,
+                    "y": 176.456802368164
                 }
             },
             "name": "vertex_shader",
@@ -133,6 +133,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAABkAAAQ6AAACNQAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJpAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAagAAAMe/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAABlAAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACAAAAAYkAAACGAQAAAwAAApgAAAMeAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJpAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAagAAAME/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABhgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB9QAAAX0AAACGAQAAAwAAApgAAAMEAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
