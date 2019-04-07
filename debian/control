@@ -1,0 +1,18 @@
+Source: possumwood
+Section: unknown
+Priority: optional
+Maintainer: Martin Prazak <martin.prazak@gmail.com>
+Build-Depends: debhelper (>= 10)
+Standards-Version: 4.1.2
+Homepage: https://github.com/martin-pr/possumwood
+#Vcs-Git: https://anonscm.debian.org/git/collab-maint/possumwood.git
+#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/possumwood.git
+
+Package: possumwood
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Possumwood is a graph-based procedural authoring sandbox.
+  Possumwood is a graph-based procedural authoring tool, in concept not dissimilar to popular CG
+  packages like Houdini, Blender or Maya. It is intended to serve as a sandbox for computer graphics
+  algorithms and libraries, providing a user-friendly and coding-free UI for libraries that would
+  otherwise be inaccessible for an average user.
