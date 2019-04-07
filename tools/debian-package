@@ -1,0 +1,21 @@
+#!/bin/bash
+
+tar -cvzf ../possumwood_0.1.orig.tar.gz CMakeLists.txt examples possumwood.conf README.md src toolbars
+
+# build package manually
+#debian/rules clean
+#dpkg-source -b .
+#debian/rules build
+#fakeroot debian/rules binary
+
+# build package automatically, without signing it
+dpkg-buildpackage -us -uc
+
+# only build source package
+#depbuild -S
+
+# building and signing source package
+#dpkg-buildpackage -us -uc --build=source
+#debsign ../possumwood_0.1-1_source.changes
+# and upload it to launchpad
+#dput -c tools/dput.config possumwood ../possumwood_0.1-1_source.changes
