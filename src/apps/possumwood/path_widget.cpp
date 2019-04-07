@@ -3,6 +3,7 @@
 #include <QAction>
 
 #include <possumwood_sdk/app.h>
+#include <dependency_graph/nodes.inl>
 
 PathWidget::Path::Path() {
 }

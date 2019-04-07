@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "nodes.inl"
+
 namespace dependency_graph {
 
 struct Graph::Signals {
