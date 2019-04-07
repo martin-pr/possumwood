@@ -1,0 +1,2 @@
+# Ignore built plugins
+extend-diff-ignore = "^plugins/[a-z._]+$"

@@ -1,0 +1,5 @@
+possumwood (0.1-1) bionic; urgency=medium
+
+  * Snapshot release - automatically triggered on each merge on Github
+
+ -- Martin Prazak <martin.prazak@gmail.com>
