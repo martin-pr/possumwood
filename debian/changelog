@@ -1,3 +1,9 @@
+possumwood (0.1-1ubuntu1) UNRELEASED; urgency=medium
+
+  * Snapshot release for Launchpad - attemptint to update changelog to make sure it gets picked up by Launchpad recipe
+
+ -- Martin Prazak <martin.prazak@gmail.com>  Sun, 07 Apr 2019 23:04:18 +0100
+
 possumwood (0.1-1) bionic; urgency=medium
 
   * Snapshot release - automatically triggered on each merge on Github
