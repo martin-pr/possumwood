@@ -1,12 +1,12 @@
 Source: possumwood
-Section: unknown
+Section: Graphics
 Priority: optional
 Maintainer: Martin Prazak <martin.prazak@gmail.com>
 Build-Depends: debhelper (>= 10)
 Standards-Version: 4.1.2
 Homepage: https://github.com/martin-pr/possumwood
-#Vcs-Git: https://anonscm.debian.org/git/collab-maint/possumwood.git
-#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/possumwood.git
+Vcs-Git: https://github.com/martin-pr/possumwood
+Vcs-Browser: https://github.com/martin-pr/possumwood
 
 Package: possumwood
 Architecture: any
