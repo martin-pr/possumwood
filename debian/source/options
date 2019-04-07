@@ -1,2 +1,2 @@
 # Ignore built plugins
-extend-diff-ignore = "^plugins/[a-z._]+$"
+extend-diff-ignore = "^(plugins/[a-z._]+)|(tools/.*)|(regression.*)|(doc/.*)|(restructuring.ods)|(.travis.yml)|(.ycm_extra_conf.py)|(Doxyfile)|(LICENSE)|(snapcraft.yaml)$"
