@@ -20,7 +20,7 @@ target_link_libraries(psw_anim psw_cgal ${LIBS} possumwood_sdk)
 
 #####
 
-file(GLOB nodes_sources *.cpp datatypes/*.cpp ui/*.cpp)
+file(GLOB_RECURSE nodes_sources nodes/*.cpp)
 
 add_library(anim SHARED ${nodes_sources})
 SET_TARGET_PROPERTIES(anim PROPERTIES PREFIX "")

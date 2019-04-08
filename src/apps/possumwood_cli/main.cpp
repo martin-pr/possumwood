@@ -10,6 +10,7 @@
 
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/viewport_state.h>
+#include <possumwood_sdk/config.inl>
 
 #include "common.h"
 #include "options.h"

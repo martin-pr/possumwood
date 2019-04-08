@@ -33,6 +33,10 @@ include_directories($ENV{BOB_WORLD_SLOT_ilmbase}/include/OpenEXR)
 
 set(LIBS "")
 
+# looking for pthreads + friends
+find_package (Threads REQUIRED)
+set(LIBS ${LIBS} Threads::Threads)
+
 # looking for boost
 find_package(Boost REQUIRED COMPONENTS
 	filesystem system

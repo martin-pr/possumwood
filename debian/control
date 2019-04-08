@@ -1,0 +1,18 @@
+Source: possumwood
+Section: graphics
+Priority: optional
+Maintainer: Martin Prazak <martin.prazak@gmail.com>
+Build-Depends: debhelper (>= 10), cmake, libboost-all-dev, libcgal-dev, libqt5opengl5-dev, pyqt5-dev, libglew-dev, libglu1-mesa-dev, libbtbb-dev, libpthread-stubs0-dev, libopenimageio-dev, libopenexr-dev, libilmbase-dev, libpthread-workqueue-dev, freeglut3-dev, libluabind-dev, libglfw3-dev, pkg-config
+Standards-Version: 4.1.2
+Homepage: https://github.com/martin-pr/possumwood
+Vcs-Git: https://github.com/martin-pr/possumwood
+Vcs-Browser: https://github.com/martin-pr/possumwood
+
+Package: possumwood
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Possumwood is a graph-based procedural authoring sandbox.
+  Possumwood is a graph-based procedural authoring tool, in concept not dissimilar to popular CG
+  packages like Houdini, Blender or Maya. It is intended to serve as a sandbox for computer graphics
+  algorithms and libraries, providing a user-friendly and coding-free UI for libraries that would
+  otherwise be inaccessible for an average user.

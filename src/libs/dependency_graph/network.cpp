@@ -2,6 +2,7 @@
 
 #include "graph.h"
 #include "metadata_register.h"
+#include "nodes.inl"
 
 namespace dependency_graph {
 

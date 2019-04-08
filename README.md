@@ -6,13 +6,25 @@ Possumwood (named after [Sandbox Tree](https://en.wikipedia.org/wiki/Hura_crepit
 
 Possumwood is built on top of a simple graph-evaluation engine and a Qt-based node graph editor, with an OpenGL viewport. Its main strength is its extensibility - it is trivial to implement new plugins supporting new libraries and data types, which allows free and user-friendly experimentation with parameters of each algorithm.
 
-**Possumwood is a sandbox, not a production tool.** As a sandbox, it is quite open to radical changes and redesign, and for the time being it does not guarantee any form backwards compatibility.
+**Possumwood is a sandbox, not a production tool.** As a sandbox, it is quite open to radical changes and redesign, and for the time being it does not guarantee any form of backwards compatibility.
 
 [![Build Status](https://travis-ci.org/martin-pr/possumwood.svg?branch=master)](https://travis-ci.org/martin-pr/possumwood) [![Snap Status](https://build.snapcraft.io/badge/martin-pr/possumwood.svg)](https://build.snapcraft.io/user/martin-pr/possumwood)
 
 ## Installation
 
 Possumwood has been tested only on Linux (several distributions). While it should work on Windows, it has not been compiled or tested there. No support for MacOS is planned for the time being due to heavy dependency on OpenGL.
+
+### Launchpad PPA for Ubuntu 18.04+
+
+On Ubuntu, the easiest way to install Possumwood is to use the [snapshots PPA](https://code.launchpad.net/~martin-prazak/+archive/ubuntu/possumwood):
+
+```
+sudo add-apt-repository ppa:martin-prazak/possumwood
+sudo apt-get update
+sudo apt-get install possumwood
+```
+
+This will install Possumwood to your system, enabling to simply run `possumwood` command from any terminal.
 
 ### Installation using [Snap](https://snapcraft.io/)
 
