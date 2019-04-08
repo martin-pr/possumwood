@@ -1,5 +1,5 @@
 Source: possumwood
-Section: Graphics
+Section: graphics
 Priority: optional
 Maintainer: Martin Prazak <martin.prazak@gmail.com>
 Build-Depends: debhelper (>= 10)
