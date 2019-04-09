@@ -20,7 +20,7 @@ class TreeWidget : public QWidget {
 		virtual ~TreeWidget();
 
 	public slots:
-		void onSelectionChanged(dependency_graph::Selection selection);
+		void onSelectionChanged(const dependency_graph::Selection& selection);
 
 	private slots:
 		void onCurrentNetworkChanged(const dependency_graph::NodeBase& node);

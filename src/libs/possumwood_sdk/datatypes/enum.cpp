@@ -18,6 +18,9 @@ Enum::Enum(std::initializer_list<std::pair<std::string, int>> options) : m_optio
 		m_value = m_options[0];
 }
 
+Enum::Enum(const Enum& fn) : m_value(fn.m_value), m_options(fn.m_options) {
+}
+
 const std::string& Enum::value() const {
 	return m_value.first;
 }

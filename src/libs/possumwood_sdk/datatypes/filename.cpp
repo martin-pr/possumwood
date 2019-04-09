@@ -5,7 +5,9 @@
 namespace possumwood {
 
 Filename::Filename(std::initializer_list<std::string> extensions) : m_extensions(extensions) {
+}
 
+Filename::Filename(const Filename& fn) : m_filename(fn.m_filename), m_extensions(fn.m_extensions) {
 }
 
 const boost::filesystem::path Filename::filename(bool makeAbsolute) const {

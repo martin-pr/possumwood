@@ -161,7 +161,7 @@ const Port& NodeBase::port(size_t index) const {
 	return m_ports[index];
 }
 
-const size_t NodeBase::portCount() const {
+size_t NodeBase::portCount() const {
 	return m_ports.size();
 }
 

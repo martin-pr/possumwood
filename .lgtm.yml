@@ -28,3 +28,6 @@ extraction:
       build_command:
         - cd build
         - make
+
+queries:
+    - exclude: cpp/useless-expression

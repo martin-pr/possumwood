@@ -89,7 +89,7 @@ MainWindow::MainWindow() : QMainWindow() {
 
 	// connect the selection signal
 	connect(m_adaptor, &Adaptor::selectionChanged,
-			[editorDock, this](dependency_graph::Selection selection) {
+			[editorDock, this](const dependency_graph::Selection& selection) {
 
 				// show the selection in the properties dock
 				m_properties->show(selection);

@@ -29,9 +29,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			throw std::runtime_error("Error loading " + filename.filename().string());
 
 		const ImageSpec &spec = in->spec();
-		int xres = spec.width;
-		int yres = spec.height;
-		int channels = spec.nchannels;
+		std::size_t xres = spec.width;
+		std::size_t yres = spec.height;
+		std::size_t channels = spec.nchannels;
 		if(spec.nchannels != 3)
 			throw std::runtime_error("Error loading " + filename.filename().string() + " - only images with 3 channels are supported at the moment!");
 
@@ -41,8 +41,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		result = std::shared_ptr<possumwood::LDRPixmap>(new possumwood::LDRPixmap(xres, yres));
 
-		for(int y=0; y < yres; ++y) {
-			for(int x=0; x<xres; ++x)
+		for(std::size_t y=0; y < yres; ++y) {
+			for(std::size_t x=0; x<xres; ++x)
 				(*result)(x, y).setValue(possumwood::LDRPixmap::pixel_t::value_t{{
 					pixels[(x+y*xres)*3],
 					pixels[(x+y*xres)*3+1],

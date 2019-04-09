@@ -21,10 +21,10 @@ class Port : public QGraphicsItem {
 		Port(const QString& name, Type t, Orientation o, QColor color, Node* parent, unsigned id);
 
 		const QString name() const;
-		const Type portType() const;
+		Type portType() const;
 		const QColor color() const;
-		const unsigned index() const;
-		const Orientation orientation() const;
+		unsigned index() const;
+		Orientation orientation() const;
 
 		Node& parentNode();
 		const Node& parentNode() const;
@@ -41,7 +41,7 @@ class Port : public QGraphicsItem {
 	private:
 		virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0) override;
 
-		static constexpr const float margin() {
+		static constexpr float margin() {
 			return 6;
 		}
 

@@ -114,20 +114,20 @@ namespace {
 					assert(normals.size() == fi->size());
 
 					auto ni = normals.begin();
-					auto f = fBegin;
+					auto fn = fBegin;
 
-					for(; f != fEnd; ++f, ++ni)
-						f->set(normalsHandle, n[*ni]);
+					for(; fn != fEnd; ++fn, ++ni)
+						fn->set(normalsHandle, n[*ni]);
 				}
 
 				if(!uvs.empty()) {
 					assert(uvs.size() == fi->size());
 
 					auto uvi = uvs.begin();
-					auto f = fBegin;
+					auto fn = fBegin;
 
-					for(; f != fEnd; ++f, ++uvi)
-						f->set(uvHandle, uv[*uvi]);
+					for(; fn != fEnd; ++fn, ++uvi)
+						fn->set(uvHandle, uv[*uvi]);
 				}
 			}
 		}

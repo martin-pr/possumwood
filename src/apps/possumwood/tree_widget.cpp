@@ -77,7 +77,7 @@ void TreeWidget::onCurrentNetworkChanged(const dependency_graph::NodeBase& node)
 		it->second->setExpanded(true);
 }
 
-void TreeWidget::onSelectionChanged(dependency_graph::Selection selection) {
+void TreeWidget::onSelectionChanged(const dependency_graph::Selection& selection) {
 	bool originalBlock = m_tree->blockSignals(true);
 
 	m_tree->clearSelection();

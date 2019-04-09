@@ -35,7 +35,7 @@ class NodeBase {
 
 		Port& port(size_t index);
 		const Port& port(size_t index) const;
-		const size_t portCount() const;
+		size_t portCount() const;
 
 		/// returns the unique numeric ID of this node, used for saving connections.
 		/// This ID can be used in Graph::operator[] to get this node from the graph.

@@ -71,7 +71,7 @@ class Nodes : public boost::noncopyable {
 		              boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>(),
 		              const UniqueId& id = UniqueId());
 
-		iterator erase(iterator i);
+		iterator erase(const iterator& i);
 		void clear();
 
 	private:
