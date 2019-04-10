@@ -24,6 +24,7 @@ class Enum {
 
 	const std::vector<std::pair<std::string, int>>& options() const;
 
+	Enum(const Enum& fn);
 	Enum& operator=(const Enum& fn);
 
 	bool operator==(const Enum& fn) const;

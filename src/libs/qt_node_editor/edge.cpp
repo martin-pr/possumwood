@@ -26,7 +26,7 @@ float max(float a, float b, float c, float d) {
 	return std::max(std::max(a, b), std::max(c, d));
 }
 
-QPointF evalBezier(float t, const QPointF& p0, const QPointF& p1, const QPointF& p2, const QPointF& p3) {
+QPointF evalBezier(qreal t, const QPointF& p0, const QPointF& p1, const QPointF& p2, const QPointF& p3) {
 	return QPointF(
 	           powf(1.0f - t, 3) * p0 +
 	           3.0 * (1.0 - t) * (1.0 - t) * t * p1 +

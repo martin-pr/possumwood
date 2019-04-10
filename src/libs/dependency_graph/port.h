@@ -17,9 +17,9 @@ class Port : public boost::noncopyable {
 		~Port();
 
 		const std::string& name() const;
-		const Attr::Category category() const;
-		const unsigned index() const;
-		const std::string type() const;
+		Attr::Category category() const;
+		unsigned index() const;
+		std::string type() const;
 
 		/// sets a value on the port.
 		/// Marks all downstream values dirty.

@@ -1,0 +1,33 @@
+extraction:
+  cpp:
+    prepare:
+      packages:
+        - cmake
+        - libboost-all-dev
+        - libcgal-dev
+        - libqt5opengl5-dev
+        - pyqt5-dev
+        - libglew-dev
+        - libglu1-mesa-dev
+        - libbtbb-dev
+        - libpthread-stubs0-dev
+        - libopenimageio-dev
+        - libopenexr-dev
+        - libilmbase-dev
+        - libpthread-workqueue-dev
+        - freeglut3-dev
+        - libluabind-dev
+        - libglfw3-dev
+        - pkg-config
+    configure:
+      command:
+        - mkdir build
+        - cd build
+        - cmake ..
+    index:
+      build_command:
+        - cd build
+        - make
+
+queries:
+    - exclude: cpp/useless-expression

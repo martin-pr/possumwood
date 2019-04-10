@@ -51,11 +51,11 @@ const QString Port::name() const {
 	return m_name->toPlainText();
 }
 
-const unsigned Port::index() const {
+unsigned Port::index() const {
 	return m_id;
 }
 
-const Port::Type Port::portType() const {
+Port::Type Port::portType() const {
 	if(m_in)
 		return Type::kInput;
 	else {
@@ -73,7 +73,7 @@ const QColor Port::color() const {
 	return m_color;
 }
 
-const Port::Orientation Port::orientation() const {
+Port::Orientation Port::orientation() const {
 	return m_orientation;
 }
 

@@ -21,6 +21,7 @@ class Filename {
 
 		const std::set<std::string>& extensions() const;
 
+		Filename(const Filename& fn);
 		Filename& operator = (const Filename& fn);
 
 		bool operator == (const Filename& fn) const;

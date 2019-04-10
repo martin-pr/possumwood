@@ -21,16 +21,16 @@ void ViewportState::lookAt(const Imath::V3f& eyePosition, const Imath::V3f& look
 	m_upVector = upVector;
 }
 
-void ViewportState::resize(unsigned width, unsigned height) {
+void ViewportState::resize(std::size_t width, std::size_t height) {
 	m_width = width;
 	m_height = height;
 }
 
-unsigned ViewportState::width() const {
+std::size_t ViewportState::width() const {
 	return m_width;
 }
 
-unsigned ViewportState::height() const {
+std::size_t ViewportState::height() const {
 	return m_height;
 }
 
@@ -46,15 +46,15 @@ const Imath::V3f& ViewportState::upVector() const {
 	return m_upVector;
 }
 
-const float ViewportState::fowInDegrees() const {
+float ViewportState::fowInDegrees() const {
 	return m_fovyInDegrees;
 }
 
-const float ViewportState::znear() const {
+float ViewportState::znear() const {
 	return m_znear;
 }
 
-const float ViewportState::zfar() {
+float ViewportState::zfar() {
 	return m_zfar;
 }
 

@@ -65,7 +65,7 @@ class Adaptor : public QWidget {
 
 	signals:
 		void currentNetworkChanged(dependency_graph::Network&);
-		void selectionChanged(dependency_graph::Selection current);
+		void selectionChanged(const dependency_graph::Selection& current);
 
 	protected:
 	private:

@@ -33,7 +33,7 @@ using namespace OIIO;
 // global viewport state
 possumwood::ViewportState viewport;
 // rendering options
-std::unique_ptr<RenderContext> ctx;
+std::unique_ptr<RenderContext> renderContext;
 
 // global application instance
 std::unique_ptr<possumwood::App> papp;
@@ -144,7 +144,7 @@ std::vector<Action> render(const Options::Item& option) {
 		current.perspective(viewport.fowInDegrees(), viewVec.length() / 10.0f, viewVec.length() * 10.0f);
 		current.lookAt(viewport.target() + viewVec, current.target());
 
-		result.push_back(ctx->render(current, callback));
+		result.push_back(renderContext->render(current, callback));
 	}
 
 	return result;
@@ -249,8 +249,8 @@ int main(int argc, char* argv[]) {
 
 	if(renderParamIt != options.end()) {
 		// use GL-based loop
-		ctx = std::unique_ptr<RenderContext>(new RenderContext(viewport));
-		ctx->run(s);
+		renderContext = std::unique_ptr<RenderContext>(new RenderContext(viewport));
+		renderContext->run(s);
 	}
 
 	else {

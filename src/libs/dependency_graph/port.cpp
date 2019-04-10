@@ -38,15 +38,15 @@ const std::string& Port::name() const {
 	return m_parent->metadata()->attr(m_id).name();
 }
 
-const Attr::Category Port::category() const {
+Attr::Category Port::category() const {
 	return m_parent->metadata()->attr(m_id).category();
 }
 
-const unsigned Port::index() const {
+unsigned Port::index() const {
 	return m_id;
 }
 
-const std::string Port::type() const {
+std::string Port::type() const {
 	std::string t = unmangledName(m_parent->metadata()->attr(m_id).type().name());
 
 	// void port "type" can be determined by any connected other ports
