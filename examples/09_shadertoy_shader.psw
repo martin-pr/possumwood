@@ -1,10 +1,10 @@
 {
     "connections": [
         {
-            "in_node": "background_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "background_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "program_0",
@@ -13,31 +13,20 @@
             "out_port": "shader"
         },
         {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
             "in_node": "program_0",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
-        },
-        {
-            "in_node": "background_0",
-            "in_port": "vertex_data",
-            "out_node": "background_1",
-            "out_port": "vertex_data"
         }
     ],
     "nodes": {
         "background_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 328.0,
-                    "y": 394.0
-                }
-            },
-            "name": "background",
-            "type": "render/draw"
-        },
-        "background_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -47,6 +36,17 @@
             },
             "name": "background",
             "type": "render/vertex_data/background"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 328.0,
+                    "y": 394.0
+                }
+            },
+            "name": "background",
+            "type": "render/draw"
         },
         "fragment_shader_0": {
             "blind_data": {
@@ -83,7 +83,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130\n\n// input position from the CPU\nin vec3 position;\n\n// near and far per-vertex world positions, useable for raytracing in the fragment shader\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// do not do any transformation - this should lead to a single quad covering the whole viewport\n\tgl_Position = vec4(position.x, position.y, position.z, 1); \n\t// just pass the near and far positions - they'll get linearly interpolated\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n}\n"
+                "source": "#version 130\n\n// input position from the CPU\nin vec3 P;\n\n// near and far per-vertex world positions, useable for raytracing in the fragment shader\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// do not do any transformation - this should lead to a single quad covering the whole viewport\n\tgl_Position = vec4(P.x, P.y, P.z, 1); \n\t// just pass the near and far positions - they'll get linearly interpolated\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n}\n"
             },
             "type": "render/vertex_shader"
         }
@@ -93,6 +93,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB10AAAQBAAAAAQAAABcAAAdcAAAD/QAAAAAAAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHUAAADmfwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABOAAADmQAAAFkA////AAAAAQAAAkYAAAOZ/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABOAAABYwAAAFkA////+wAAAAwAZQBkAGkAdABvAHIBAAABtwAAAjAAAAB3AP////sAAAAGAGwAbwBnAAAAArIAAAFXAAAAWQD///8AAAM2AAADmQAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAABAAAAAAAABqkAAAOeAAAAAwAAABkAAAanAAADnAAAAAAAAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHUAAAC//wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAAC/wAAAJgBAAADAAAAAQAAAkYAAAL//AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABDgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABfQAAAfAAAACGAQAAA/sAAAAGAGwAbwBnAAAAArIAAAFXAAAAAAAAAAAAAAKJAAAC/wAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }
