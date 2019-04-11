@@ -52,4 +52,14 @@ std::string VertexData::glslDeclaration() const {
 std::size_t VertexData::vboCount() const {
 	return m_vbos.size();
 }
+
+std::set<std::string> VertexData::names() const {
+	std::set<std::string> result;
+
+	for(auto& vbo : m_vbos)
+		result.insert(vbo.name);
+
+	return result;
+}
+
 }

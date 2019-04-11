@@ -42,6 +42,9 @@ class VertexData : public boost::noncopyable {
 	/// returns the number of VBOs in this object
 	std::size_t vboCount() const;
 
+	/// returns the names of all uniforms that have been registered (todo: change to iterators)
+	std::set<std::string> names() const;
+
   private:
 	struct VBOHolder {
 		std::string name, glslType;

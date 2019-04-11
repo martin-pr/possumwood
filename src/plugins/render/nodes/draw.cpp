@@ -88,6 +88,28 @@ std::set<std::string> getUniforms(GLuint prog) {
 	return result;
 }
 
+// source: https://www.khronos.org/opengl/wiki/Program_Introspection#Interface_query
+std::set<std::string> getInputs(GLuint prog) {
+	std::set<std::string> result;
+
+	GLint numInputs = 0;
+	glGetProgramInterfaceiv(prog, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numInputs);
+	const GLenum properties[4] = {GL_TYPE, GL_NAME_LENGTH, GL_LOCATION};
+
+	for(int unif = 0; unif < numInputs; ++unif) {
+		GLint values[3];
+		glGetProgramResourceiv(prog, GL_PROGRAM_INPUT, unif, 3, properties, 3, NULL, values);
+
+		// Get the name.
+		std::vector<char> tmp(values[1]);
+		glGetProgramResourceName(prog, GL_PROGRAM_INPUT, unif, tmp.size(), NULL, &tmp[0]);
+
+		result.insert(std::string(&tmp.front()));
+	}
+
+	return result;
+}
+
 struct Drawable : public possumwood::Drawable {
 	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)), m_vao(0) {
 		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([this](float t) {
@@ -127,8 +149,12 @@ struct Drawable : public possumwood::Drawable {
 				glGenVertexArrays(1, &m_vao);
 			assert(m_vao != 0);
 
+			GL_CHECK_ERR;
+
 			// use the program
 			glUseProgram(program->id());
+
+			GL_CHECK_ERR;
 
 			// feed in the uniforms
 			assert(uniforms);
@@ -146,10 +172,30 @@ struct Drawable : public possumwood::Drawable {
 						undefinedUniforms.insert(u);
 
 				if(!undefinedUniforms.empty())
-					state.addWarning("These uniforms are used in the shader code, but are not defined as shader inputs: " + boost::algorithm::join(undefinedUniforms, ", "));
+					state.addWarning("These uniforms are used in the shader code, but are not defined: " + boost::algorithm::join(undefinedUniforms, ", "));
 			}
 
+			GL_CHECK_ERR;
+
+			// get all the inputs and test them
+			{
+				const std::set<std::string> usedInputs = getInputs(program->id());
+				const std::set<std::string> inputInputs = vertexData->names();
+
+				std::set<std::string> undefinedInputs;
+				for(auto& u : usedInputs)
+					if(inputInputs.find(u) == inputInputs.end())
+						undefinedInputs.insert(u);
+
+				if(!undefinedInputs.empty())
+					state.addWarning("These shader inputs are used in the shader code, but are not defined: " + boost::algorithm::join(undefinedInputs, ", "));
+			}
+
+			GL_CHECK_ERR;
+
 			glBindVertexArray(m_vao);
+
+			GL_CHECK_ERR;
 
 			// use the vertex data
 			dependency_graph::State vdState = vertexData->use(program->id(), viewport());
@@ -157,6 +203,8 @@ struct Drawable : public possumwood::Drawable {
 
 			// and execute draw
 			glDrawArrays(vertexData->drawElementType(), 0, vertexData->size());
+
+			GL_CHECK_ERR;
 
 			// disconnect everything
 			glUseProgram(0);
