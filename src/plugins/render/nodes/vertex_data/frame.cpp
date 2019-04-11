@@ -29,7 +29,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// there will be one position vector per bone. Root will simply be zero-length
 		vd->addVBO<Imath::V3f>(
-			"position",
+			"P",
 			skeleton.size() * 2,
 			possumwood::VertexData::kStatic,
 			[skeleton](possumwood::Buffer<float>& buffer, const possumwood::ViewportState& vs) {
