@@ -68,4 +68,16 @@ std::string Uniforms::glslDeclaration() const {
 	return result.str();
 }
 
+std::set<std::string> Uniforms::names() const {
+	std::set<std::string> result;
+
+	for(auto& u : m_uniforms)
+		result.insert(u.name);
+
+	for(auto& t : m_textures)
+		result.insert(t.name);
+
+	return result;
+}
+
 }

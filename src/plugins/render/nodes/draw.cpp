@@ -2,6 +2,9 @@
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
 
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+
 #include <GL/glew.h>
 #include <GL/glut.h>
 
@@ -58,6 +61,33 @@ std::shared_ptr<const possumwood::Program> defaultProgram() {
 	return s_program;
 }
 
+// source: https://www.khronos.org/opengl/wiki/Program_Introspection#Interface_query
+std::set<std::string> getUniforms(GLuint prog) {
+	std::set<std::string> result;
+
+	GLint numUniforms = 0;
+	glGetProgramInterfaceiv(prog, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numUniforms);
+	const GLenum properties[4] = {GL_BLOCK_INDEX, GL_TYPE, GL_NAME_LENGTH,
+	                              GL_LOCATION};
+
+	for(int unif = 0; unif < numUniforms; ++unif) {
+		GLint values[4];
+		glGetProgramResourceiv(prog, GL_UNIFORM, unif, 4, properties, 4, NULL, values);
+
+		// Skip any uniforms that are in a block.
+		if(values[0] != -1)
+			continue;
+
+		// Get the name.
+		std::vector<char> tmp(values[2]);
+		glGetProgramResourceName(prog, GL_UNIFORM, unif, tmp.size(), NULL, &tmp[0]);
+
+		result.insert(std::string(&tmp.front()));
+	}
+
+	return result;
+}
+
 struct Drawable : public possumwood::Drawable {
 	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)), m_vao(0) {
 		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([this](float t) {
@@ -104,6 +134,20 @@ struct Drawable : public possumwood::Drawable {
 			assert(uniforms);
 			dependency_graph::State uniState = uniforms->use(program->id(), viewport());
 			state.append(uniState);
+
+			// get all the uniforms and test them
+			{
+				const std::set<std::string> usedUniforms = getUniforms(program->id());
+				const std::set<std::string> inputUniforms = uniforms->names();
+
+				std::set<std::string> undefinedUniforms;
+				for(auto& u : usedUniforms)
+					if(inputUniforms.find(u) == inputUniforms.end() && !boost::algorithm::starts_with(u, "gl_"))
+						undefinedUniforms.insert(u);
+
+				if(!undefinedUniforms.empty())
+					state.addWarning("These uniforms are used in the shader code, but are not defined as shader inputs: " + boost::algorithm::join(undefinedUniforms, ", "));
+			}
 
 			glBindVertexArray(m_vao);
 

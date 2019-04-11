@@ -40,6 +40,9 @@ class Uniforms {
 	/// returns the GLSL declaration of all values in this container
 	std::string glslDeclaration() const;
 
+	/// returns the names of all uniforms that have been registered (todo: change to iterators)
+	std::set<std::string> names() const;
+
 	private:
 		struct DataBase {
 			virtual ~DataBase() {};
