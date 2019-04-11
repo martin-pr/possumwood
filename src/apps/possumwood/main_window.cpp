@@ -3,6 +3,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/filesystem.hpp>
 
 #include <QMenuBar>
@@ -569,17 +570,28 @@ void MainWindow::updateStatusBar() {
 	for(auto& n : selection.nodes()) {
 		for(auto& msg : index[n.get().index()].graphNode->state()) {
 			if(msg.first == dependency_graph::State::kInfo)
-				infos += msg.second;
+				infos += msg.second + "\n";
 			if(msg.first == dependency_graph::State::kWarning)
-				warnings += msg.second;
+				warnings += msg.second + "\n";
 			if(msg.first == dependency_graph::State::kError)
-				errors += msg.second;
+				errors += msg.second + "\n";
 		}
+
+		boost::optional<possumwood::Drawable&> drw = possumwood::Metadata::getDrawable(n);
+		if(drw)
+			for(auto& msg : drw->drawState()) {
+				if(msg.first == dependency_graph::State::kInfo)
+					infos += msg.second + "\n";
+				if(msg.first == dependency_graph::State::kWarning)
+					warnings += msg.second + "\n";
+				if(msg.first == dependency_graph::State::kError)
+					errors += msg.second + "\n";
+			}
 	}
 
-	std::replace(errors.begin(), errors.end(), '\n', '\t');
-	std::replace(warnings.begin(), warnings.end(), '\n', '\t');
-	std::replace(infos.begin(), infos.end(), '\n', '\t');
+	errors = boost::trim_copy(errors);
+	warnings = boost::trim_copy(warnings);
+	infos = boost::trim_copy(infos);
 
 	if(!errors.empty()) {
 		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-error").pixmap(QSize(16,16)));
