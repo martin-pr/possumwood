@@ -9,7 +9,9 @@ namespace possumwood {
 VertexData::VertexData(GLenum drawElementType) : m_drawElementType(drawElementType) {
 }
 
-void VertexData::use(GLuint programId, const ViewportState& vs) const {
+dependency_graph::State VertexData::use(GLuint programId, const ViewportState& vs) const {
+	dependency_graph::State state;
+
 	// do the updates, if needed
 	for(auto& v : m_vbos)
 		if(v.updateType == kPerDraw || v.buffer == nullptr)
@@ -20,7 +22,11 @@ void VertexData::use(GLuint programId, const ViewportState& vs) const {
 		GLint attrLocation = glGetAttribLocation(programId, v.name.c_str());
 		if(attrLocation >= 0)
 			v.vbo->use(attrLocation);
+		// else
+		// 	state.addWarning("VBO '" + v.name + "' cannot be mapped to an attribute location - not used in any of the programs?");
 	}
+
+	return state;
 }
 
 GLenum VertexData::drawElementType() const {

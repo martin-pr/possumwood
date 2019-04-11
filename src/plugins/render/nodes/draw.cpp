@@ -26,38 +26,36 @@ dependency_graph::InAttr<std::shared_ptr<const possumwood::Program>> a_program;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::VertexData>> a_vertexData;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_uniforms;
 
-namespace {
-	std::shared_ptr<const possumwood::Uniforms> defaultUniforms() {
-		static std::shared_ptr<const possumwood::Uniforms> s_uniforms;
-		if(s_uniforms == nullptr) {
-			std::unique_ptr<possumwood::Uniforms> newUniforms(new possumwood::Uniforms());
+std::shared_ptr<const possumwood::Uniforms> defaultUniforms() {
+	static std::shared_ptr<const possumwood::Uniforms> s_uniforms;
+	if(s_uniforms == nullptr) {
+		std::unique_ptr<possumwood::Uniforms> newUniforms(new possumwood::Uniforms());
 
-			possumwood::addViewportUniforms(*newUniforms);
+		possumwood::addViewportUniforms(*newUniforms);
 
-			s_uniforms = std::shared_ptr<const possumwood::Uniforms>(newUniforms.release());
-		}
-
-		return s_uniforms;
+		s_uniforms = std::shared_ptr<const possumwood::Uniforms>(newUniforms.release());
 	}
 
-	std::shared_ptr<const possumwood::Program> defaultProgram() {
-		static std::shared_ptr<const possumwood::Program> s_program;
+	return s_uniforms;
+}
 
-		if(s_program == nullptr) {
-			std::unique_ptr<possumwood::Program> program(new possumwood::Program());
+std::shared_ptr<const possumwood::Program> defaultProgram() {
+	static std::shared_ptr<const possumwood::Program> s_program;
 
-			program->addShader(possumwood::defaultVertexShader());
-			program->addShader(possumwood::defaultFragmentShader());
+	if(s_program == nullptr) {
+		std::unique_ptr<possumwood::Program> program(new possumwood::Program());
 
-			program->link();
+		program->addShader(possumwood::defaultVertexShader());
+		program->addShader(possumwood::defaultFragmentShader());
 
-			assert(!program->state().errored());
+		program->link();
 
-			s_program = std::shared_ptr<const possumwood::Program>(program.release());
-		}
+		assert(!program->state().errored());
 
-		return s_program;
+		s_program = std::shared_ptr<const possumwood::Program>(program.release());
 	}
+
+	return s_program;
 }
 
 struct Drawable : public possumwood::Drawable {
@@ -104,12 +102,14 @@ struct Drawable : public possumwood::Drawable {
 
 			// feed in the uniforms
 			assert(uniforms);
-			uniforms->use(program->id(), viewport());
+			dependency_graph::State uniState = uniforms->use(program->id(), viewport());
+			state.append(uniState);
 
 			glBindVertexArray(m_vao);
 
 			// use the vertex data
-			vertexData->use(program->id(), viewport());
+			dependency_graph::State vdState = vertexData->use(program->id(), viewport());
+			state.append(vdState);
 
 			// and execute draw
 			glDrawArrays(vertexData->drawElementType(), 0, vertexData->size());

@@ -29,7 +29,7 @@ class VertexData : public boost::noncopyable {
 	            std::function<void(Buffer<typename VBOTraits<T>::element>&, const ViewportState& viewport)> updateFn);
 
 	/// updates and uses the program
-	void use(GLuint programId, const ViewportState& vs) const;
+	dependency_graph::State use(GLuint programId, const ViewportState& vs) const;
 
 	/// returns the drawing element primitive type
 	GLenum drawElementType() const;
