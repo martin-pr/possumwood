@@ -38,13 +38,19 @@ void Uniforms::addUniform(
 	};
 
 	uniform.useFunctor = [size](GLuint programId, const std::string& name,
-	                            const DataBase& baseData) {
+	                            const DataBase& baseData) -> dependency_graph::State {
+		dependency_graph::State state;
+
 		const Data<T>& data = dynamic_cast<const Data<T>&>(baseData);
 		assert(data.data.size() == size);
 
 		GLint attr = glGetUniformLocation(programId, name.c_str());
 		if(attr >= 0)
 			GLSLTraits<T>::applyUniform(attr, size, &(data.data[0]));
+		// else
+		// 	state.addWarning("Uniform '" + name + "' cannot be mapped to an attribute location - not used in any of the programs?");
+
+		return state;
 	};
 
 	// if(updateType != kPerDraw)

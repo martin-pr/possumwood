@@ -29,7 +29,7 @@ class VertexData : public boost::noncopyable {
 	            std::function<void(Buffer<typename VBOTraits<T>::element>&, const ViewportState& viewport)> updateFn);
 
 	/// updates and uses the program
-	void use(GLuint programId, const ViewportState& vs) const;
+	dependency_graph::State use(GLuint programId, const ViewportState& vs) const;
 
 	/// returns the drawing element primitive type
 	GLenum drawElementType() const;
@@ -41,6 +41,9 @@ class VertexData : public boost::noncopyable {
 	std::string glslDeclaration() const;
 	/// returns the number of VBOs in this object
 	std::size_t vboCount() const;
+
+	/// returns the names of all uniforms that have been registered (todo: change to iterators)
+	std::set<std::string> names() const;
 
   private:
 	struct VBOHolder {

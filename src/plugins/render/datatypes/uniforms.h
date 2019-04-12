@@ -32,13 +32,16 @@ class Uniforms {
 	void addTexture(const std::string& name, const LDRPixmap& pixmap);
 	void addTexture(const std::string& name, const HDRPixmap& pixmap);
 
-	void use(GLuint programId, const ViewportState&) const;
+	dependency_graph::State use(GLuint programId, const ViewportState&) const;
 
 	/// returns the number of uniforms and textures stored in this container
 	std::size_t size() const;
 
 	/// returns the GLSL declaration of all values in this container
 	std::string glslDeclaration() const;
+
+	/// returns the names of all uniforms that have been registered (todo: change to iterators)
+	std::set<std::string> names() const;
 
 	private:
 		struct DataBase {
@@ -69,8 +72,7 @@ class Uniforms {
 			mutable bool initialised = false; // ugly :(
 
 			std::function<void(DataBase&, const ViewportState&)> updateFunctor;
-			std::function<void(GLuint, const std::string&,
-			                   const DataBase&)> useFunctor;
+			std::function<dependency_graph::State(GLuint, const std::string&, const DataBase&)> useFunctor;
 		};
 
 	std::vector<UniformHolder> m_uniforms;

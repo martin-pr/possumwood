@@ -490,7 +490,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130\n\n// input position from the CPU\nin vec3 position;\n\n// near and far per-vertex world positions, useable for raytracing in the fragment shader\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// do not do any transformation - this should lead to a single quad covering the whole viewport\n\tgl_Position = vec4(position.x, position.y, position.z, 1); \n\t// just pass the near and far positions - they'll get linearly interpolated\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n}\n"
+                "source": "#version 130\n\n// input position from the CPU\nin vec3 P;\n\n// near and far per-vertex world positions, useable for raytracing in the fragment shader\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// do not do any transformation - this should lead to a single quad covering the whole viewport\n\tgl_Position = vec4(P.x, P.y, P.z, 1); \n\t// just pass the near and far positions - they'll get linearly interpolated\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n}\n"
             },
             "type": "render/vertex_shader"
         },
@@ -511,6 +511,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAABcAAAd/AAAEHwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADHvwCAAAAAfwAAABrAAADHgAAAKIBAAAb+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAowEAAAP7AAAACgBnAHIAYQBwAGgBAAAAAAAAAlQAAABgAQAAAwAAAAEAAAJBAAADHvwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAawAAAx4AAABsAQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAAIUAAADHgAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADBPwCAAAAAfwAAABuAAADBAAAAMYBAAAb+gAAAAABAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAtwEAAAP7AAAACgBnAHIAYQBwAGgBAAAAAAAAAlQAAACtAQAAAwAAAAEAAAJBAAADBPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAbgAAAwQAAAB2AQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAAIUAAADBAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

@@ -25,7 +25,9 @@ void Uniforms::addTexture(const std::string& name, const HDRPixmap& pixmap) {
 	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(pixmap));
 }
 
-void Uniforms::use(GLuint programId, const ViewportState& vs) const {
+dependency_graph::State Uniforms::use(GLuint programId, const ViewportState& vs) const {
+	dependency_graph::State state;
+
 	const bool timeUpdate = m_currentTime != possumwood::App::instance().time();
 	m_currentTime = possumwood::App::instance().time();
 
@@ -35,14 +37,19 @@ void Uniforms::use(GLuint programId, const ViewportState& vs) const {
 			u.initialised = true;
 		}
 
-		u.useFunctor(programId, u.name, *u.data);
+		dependency_graph::State tmp = u.useFunctor(programId, u.name, *u.data);
+		state.append(tmp);
 	}
 
 	for(unsigned tex = 0; tex < m_textures.size(); ++tex) {
 		GLint attr = glGetUniformLocation(programId, m_textures[tex].name.c_str());
 		if(attr >= 0)
 			m_textures[tex].texture->use(attr, GL_TEXTURE0 + tex);
+		// else
+		// 	state.addWarning("Texture '" + m_textures[tex].name + "' cannot be mapped to an attribute location - not used in any of the programs?");
 	}
+
+	return state;
 }
 
 std::size_t Uniforms::size() const {
@@ -59,6 +66,18 @@ std::string Uniforms::glslDeclaration() const {
 		result << t.glslType << std::endl;
 
 	return result.str();
+}
+
+std::set<std::string> Uniforms::names() const {
+	std::set<std::string> result;
+
+	for(auto& u : m_uniforms)
+		result.insert(u.name);
+
+	for(auto& t : m_textures)
+		result.insert(t.name);
+
+	return result;
 }
 
 }
