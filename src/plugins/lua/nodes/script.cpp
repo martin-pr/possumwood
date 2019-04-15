@@ -58,6 +58,78 @@ class Editor : public possumwood::SourceEditor {
 				SourceEditor::valueChanged(attr);
 		}
 
+		std::string luaType(int type) {
+			switch(type) {
+				case LUA_TNONE: return "LUA_TNONE";
+
+				case LUA_TNIL: return "LUA_TNIL";
+				case LUA_TBOOLEAN: return "LUA_TBOOLEAN";
+				case LUA_TLIGHTUSERDATA: return "LUA_TLIGHTUSERDATA";
+				case LUA_TNUMBER: return "LUA_TNUMBER";
+				case LUA_TSTRING: return "LUA_TSTRING";
+				case LUA_TTABLE: return "LUA_TTABLE";
+				case LUA_TFUNCTION: return "LUA_TFUNCTION";
+				case LUA_TUSERDATA: return "LUA_TUSERDATA";
+				case LUA_TTHREAD: return "LUA_TTHREAD";
+			}
+
+			return "unknown";
+		}
+
+		void printItem(const luabind::object& o, const std::string& name, std::size_t offset = 0, char prefix = '*') {
+			for(std::size_t i=0;i<offset;++i)
+				std::cout << "  ";
+
+			std::cout << " " << prefix << " " << name << "  " << luaType(luabind::type(o)) << std::endl;
+		}
+
+		void printObject(const luabind::object& o, std::size_t offset = 0, char prefix = '*', bool recurse = false) {
+			if(o.is_valid() && luabind::type(o) == LUA_TTABLE) {
+				for(luabind::iterator j(o); j != luabind::iterator(); ++j) {
+					std::stringstream ss;
+					ss << j.key();
+
+					printItem(*j, ss.str(), offset, prefix);
+
+					if(recurse)
+						printObject(o, offset+1, prefix, true);
+				}
+			}
+		}
+
+		void printMeta(const luabind::object& o, std::size_t offset = 0) {
+			if(o.is_valid()) {
+				auto meta = luabind::getmetatable(o);
+				if(meta.is_valid() && luabind::type(meta) == LUA_TTABLE)
+					printObject(meta, offset, 'm', false);
+
+				if(meta["__luabind_classrep"].operator luabind::object().is_valid()) {
+					// std::cout << "lua class" << std::endl;
+
+					// auto ci = luabind::get_class_info(o);
+				}
+			}
+		}
+
+		void printGlobals(const luabind::object& o, std::string name = "(root)", std::size_t offset = 0) {
+			if(o.is_valid()) {
+				printItem(o, name, offset, '-');
+
+				if(luabind::type(o) == LUA_TUSERDATA) {
+					printMeta(o, offset+1);
+				}
+
+				if(luabind::type(o) == LUA_TTABLE) {
+					// printMeta(o, offset+1);
+
+					for(luabind::iterator j(o); j != luabind::iterator(); ++j)
+						printGlobals(*j, luabind::object_cast<std::string>(j.key()), offset+1);
+				}
+			}
+
+			// std::cout << std::endl;
+		}
+
 		void populateVariableList() {
 			if(m_popup)
 				m_popup->deleteLater();
@@ -74,12 +146,19 @@ class Editor : public possumwood::SourceEditor {
 				editorWidget()->insertPlainText(text);
 			});
 
+			// make a dummy state
+			possumwood::lua::State state(values().get(a_context));
+
+			printGlobals(state.globals());
+
 			// variables
 			unsigned ctr = 0;
 			for(auto& s : values().get(a_context).variables()) {
 				m_popup->addItem(s.name() + "\t" + s.str());
 				++ctr;
 			}
+
+			std::cout << std::endl;
 		}
 
 	private:
