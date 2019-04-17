@@ -76,58 +76,73 @@ class Editor : public possumwood::SourceEditor {
 			return "unknown";
 		}
 
-		void printItem(const luabind::object& o, const std::string& name, std::size_t offset = 0, char prefix = '*') {
-			for(std::size_t i=0;i<offset;++i)
-				std::cout << "  ";
-
-			std::cout << " " << prefix << " " << name << "  " << luaType(luabind::type(o)) << std::endl;
+		// add one item to the menu
+		// TODO: extend to add values as well
+		void addItem(QMenu* menu, const luabind::object& o, const std::string& name) {
+			menu->addAction((name + "\t" + luaType(luabind::type(o))).c_str());
 		}
 
-		void printObject(const luabind::object& o, std::size_t offset = 0, char prefix = '*', bool recurse = false) {
-			if(o.is_valid() && luabind::type(o) == LUA_TTABLE) {
-				for(luabind::iterator j(o); j != luabind::iterator(); ++j) {
-					std::stringstream ss;
-					ss << j.key();
-
-					printItem(*j, ss.str(), offset, prefix);
-
-					if(recurse)
-						printObject(o, offset+1, prefix, true);
-				}
-			}
+		// add a submenu to the popup
+		QMenu* addMenu(QMenu* menu, const luabind::object& o, const std::string& name) {
+			return menu->addMenu((name + "\t" + luaType(luabind::type(o))).c_str());
 		}
 
-		void printMeta(const luabind::object& o, std::size_t offset = 0) {
+		// parses the metadata table (non-recursively, to avoid infinite recursion, as all tables have a meta table)
+		void parseMeta(QMenu* menu, const luabind::object& o) {
 			if(o.is_valid()) {
 				auto meta = luabind::getmetatable(o);
+
 				if(meta.is_valid() && luabind::type(meta) == LUA_TTABLE)
-					printObject(meta, offset, 'm', false);
+					parseGlobals(menu, meta, false);
 
 				if(meta["__luabind_classrep"].operator luabind::object().is_valid()) {
-					// std::cout << "lua class" << std::endl;
-
 					// auto ci = luabind::get_class_info(o);
+
+					addItem(menu, meta, "metadata");
 				}
 			}
 		}
 
-		void printGlobals(const luabind::object& o, std::string name = "(root)", std::size_t offset = 0) {
-			if(o.is_valid()) {
-				printItem(o, name, offset, '-');
+		// parse a table and add its content to the menu - first explicitly on globals, then recurse
+		void parseGlobals(QMenu* menu, const luabind::object& o, bool recurse = true) {
+			assert(o.is_valid());
+			assert(luabind::type(o) == LUA_TTABLE);
 
-				if(luabind::type(o) == LUA_TUSERDATA) {
-					printMeta(o, offset+1);
+			// iterate over the items of this table
+			for(luabind::iterator j(o); j != luabind::iterator(); ++j)
+				if((*j).operator luabind::object().is_valid()) {
+
+					// try to obtain a key as a string - this might be a number of an array, so treat that appropriately
+					std::string key;
+
+					auto s = luabind::object_cast_nothrow<std::string>(j.key());
+					if(s)
+						key = *s;
+
+					auto n = luabind::object_cast_nothrow<double>(j.key());
+					if(n)
+						key = std::to_string(*n);
+
+					// the current object is a table - add a submenu and proceed recursively
+					if(luabind::type(*j) == LUA_TTABLE) {
+						QMenu* m = addMenu(menu, *j, key);
+
+						if(recurse)
+							parseGlobals(m, *j);
+					}
+
+					// a userdata object (C++ bound class) - parse its metadata
+					else if(luabind::type(*j) == LUA_TUSERDATA) {
+						QMenu* m = addMenu(menu, *j, key);
+
+						if(recurse)
+							parseMeta(m, *j);
+					}
+
+					// functions, numbers, strings ... just add them to the menu
+					else
+						addItem(menu, *j, key);
 				}
-
-				if(luabind::type(o) == LUA_TTABLE) {
-					// printMeta(o, offset+1);
-
-					for(luabind::iterator j(o); j != luabind::iterator(); ++j)
-						printGlobals(*j, luabind::object_cast<std::string>(j.key()), offset+1);
-				}
-			}
-
-			// std::cout << std::endl;
 		}
 
 		void populateVariableList() {
@@ -148,17 +163,11 @@ class Editor : public possumwood::SourceEditor {
 
 			// make a dummy state
 			possumwood::lua::State state(values().get(a_context));
+			// add the class info function - needed to query bound functions
+			luabind::bind_class_info(state);
 
-			printGlobals(state.globals());
-
-			// variables
-			unsigned ctr = 0;
-			for(auto& s : values().get(a_context).variables()) {
-				m_popup->addItem(s.name() + "\t" + s.str());
-				++ctr;
-			}
-
-			std::cout << std::endl;
+			// parse the global variables of the state (includes injected vars and modules)
+			parseGlobals(m_popup, state.globals());
 		}
 
 	private:
