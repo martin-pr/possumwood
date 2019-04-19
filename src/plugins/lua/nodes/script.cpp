@@ -78,15 +78,38 @@ class Editor : public possumwood::SourceEditor {
 			return "unknown";
 		}
 
+		// sorting mechanism for new items
+		QAction* findPosition(QMenu* menu, const QString& name) {
+			QList<QAction*> actions = menu->actions();
+
+			// find the item
+			auto it = std::lower_bound(actions.begin(), actions.end(), name, [](QAction* a, const QString& n) {
+				if(a != nullptr)
+					return a->text().mid(0, a->text().indexOf('\t')) < n;
+				return true;
+			});
+
+			// return the value if valid, null otherwise
+			if(it != actions.end())
+				return *it;
+			return nullptr;
+		}
+
 		// add one item to the menu
 		// TODO: extend to add values as well
 		void addItem(QMenu* menu, const luabind::object& o, const std::string& name) {
-			menu->addAction((name + "\t" + luaType(o)).c_str());
+			QAction* newAction = new QAction(QString::fromStdString(name + "\t" + luaType(o)));
+
+			menu->insertAction(findPosition(menu, name.c_str()), newAction);
 		}
 
 		// add a submenu to the popup
 		QMenu* addMenu(QMenu* menu, const luabind::object& o, const std::string& name) {
-			return menu->addMenu((name + "\t" + luaType(o)).c_str());
+			QMenu* newMenu = new QMenu(QString::fromStdString(name + "\t" + luaType(o)));
+
+			menu->insertMenu(findPosition(menu, name.c_str()), newMenu);
+
+			return newMenu;
 		}
 
 		void parseClass(QMenu* menu, const luabind::object& o, int recurse) {
