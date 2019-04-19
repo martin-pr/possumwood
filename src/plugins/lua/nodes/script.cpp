@@ -101,7 +101,7 @@ class Editor : public possumwood::SourceEditor {
 			if(luabind::type(o) == LUA_TFUNCTION)
 				instanceText += "()";
 
-			QAction* newAction = new QAction(QString::fromStdString(name + "\t" + luaType(o)));
+			QAction* newAction = new QAction(QString::fromStdString(name + "\t" + luaType(o)), nullptr);
 			newAction->setData(QString::fromStdString(instanceText));
 
 			menu->insertAction(findPosition(menu, name.c_str()), newAction);
