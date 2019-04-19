@@ -97,8 +97,12 @@ class Editor : public possumwood::SourceEditor {
 
 		// add one item to the menu
 		// TODO: extend to add values as well
-		void addItem(QMenu* menu, const luabind::object& o, const std::string& name) {
+		void addItem(QMenu* menu, const luabind::object& o, const std::string& name, std::string instanceText) {
+			if(luabind::type(o) == LUA_TFUNCTION)
+				instanceText += "()";
+
 			QAction* newAction = new QAction(QString::fromStdString(name + "\t" + luaType(o)));
+			newAction->setData(QString::fromStdString(instanceText));
 
 			menu->insertAction(findPosition(menu, name.c_str()), newAction);
 		}
@@ -112,7 +116,7 @@ class Editor : public possumwood::SourceEditor {
 			return newMenu;
 		}
 
-		void parseClass(QMenu* menu, const luabind::object& o, int recurse) {
+		void parseClass(QMenu* menu, const luabind::object& o, const std::string& prepend, int recurse) {
 			o.push(o.interpreter());
 			luabind::detail::object_rep* obj = luabind::detail::get_instance(o.interpreter(), -1);
 			if(obj && obj->crep()) {
@@ -120,7 +124,7 @@ class Editor : public possumwood::SourceEditor {
 				luabind::object ooo(luabind::from_stack(o.interpreter(), -1));
 
 				if(recurse > 0)
-					parseGlobals(menu, ooo, recurse-1);
+					parseGlobals(menu, ooo, prepend, recurse-1);
 
 				lua_settop(o.interpreter(), 0);
 			}
@@ -157,26 +161,26 @@ class Editor : public possumwood::SourceEditor {
 		}
 
 		// parses the metadata table
-		void parseMeta(QMenu* menu, const luabind::object& o, int recurse = 10) {
+		void parseMeta(QMenu* menu, const luabind::object& o, const std::string& prepend, int recurse) {
 			if(o.is_valid()) {
 				assert(!isClass(o));
 
 				// adds all members for this instance
 				if(isClassInstance(o))
-					parseClass(menu, o, recurse-1);
+					parseClass(menu, o, prepend, recurse-1);
 
 				// just descends recursively
 				else {
 					auto meta = luabind::getmetatable(o);
 
 					if(meta.is_valid() && luabind::type(meta) == LUA_TTABLE)
-						parseGlobals(menu, meta, recurse-1);
+						parseGlobals(menu, meta, prepend, recurse-1);
 				}
 			}
 		}
 
 		// parse a table and add its content to the menu - first explicitly on globals, then recurse
-		void parseGlobals(QMenu* menu, const luabind::object& o, int recurse = 10) {
+		void parseGlobals(QMenu* menu, const luabind::object& o, const std::string& prepend = "", int recurse = 10) {
 			assert(o.is_valid());
 			assert(luabind::type(o) == LUA_TTABLE);
 
@@ -193,24 +197,24 @@ class Editor : public possumwood::SourceEditor {
 							QMenu* m = addMenu(menu, obj, *key);
 
 							if(recurse > 0)
-								parseGlobals(m, obj, recurse - 1);
+								parseGlobals(m, obj, prepend + *key + ".", recurse - 1);
 						}
 
 						// a luabind class - only show it as a single item
 						else if(luabind::type(obj) == LUA_TUSERDATA && isClass(obj))
-							addItem(menu, obj, *key);
+							addItem(menu, obj, *key, prepend + *key + ":");
 
 						// a userdata object - either an inbuilt class or a luabind instance
 						else if(luabind::type(obj) == LUA_TUSERDATA) {
 							if(recurse > 0) {
 								QMenu* m = addMenu(menu, obj, *key);
-								parseMeta(m, obj, recurse - 1);
+								parseMeta(m, obj, prepend + *key + ":", recurse - 1);
 							}
 						}
 
 						// functions, numbers, strings ... just add them to the menu
 						else
-							addItem(menu, obj, *key);
+							addItem(menu, obj, *key, prepend + *key);
 					}
 				}
 			}
@@ -223,13 +227,7 @@ class Editor : public possumwood::SourceEditor {
 			m_popup = new QMenu(m_varsButton);
 
 			m_popup->connect(m_popup, &QMenu::triggered, [this](QAction* action) {
-				QString text = action->text();
-				while(!text.isEmpty() && !QChar(text[0]).isLetterOrNumber())
-					text = text.mid(1, text.length()-1);
-				if(text.indexOf('\t') >= 0)
-					text = text.mid(0, text.indexOf('\t'));
-
-				editorWidget()->insertPlainText(text);
+				editorWidget()->insertPlainText(action->data().toString());
 			});
 
 			// parse the global variables of the state from the output (includes injected vars and modules)
