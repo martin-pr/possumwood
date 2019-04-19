@@ -12,6 +12,7 @@
 #include <actions/traits.h>
 
 #include "variable.h"
+#include "state.h"
 
 namespace possumwood { namespace lua {
 
