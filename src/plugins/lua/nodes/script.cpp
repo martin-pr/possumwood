@@ -252,7 +252,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	try {
 		// load all standard Lua libraries
-		// luaL_openlibs(*state);
+		luaL_openlibs(*state);
 
 		// luabind class info function - allows introspection of luabind classes
 		luabind::bind_class_info(*state);

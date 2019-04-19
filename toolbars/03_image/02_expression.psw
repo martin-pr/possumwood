@@ -5,8 +5,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -88.6470718383789,
-                    "y": 247.418121337891
+                    "x": 206.978729248047,
+                    "y": 378.807373046875
                 }
             },
             "connections": [
@@ -29,19 +29,13 @@
                     "out_port": "data"
                 },
                 {
-                    "in_node": "images_0",
-                    "in_port": "in_context",
-                    "out_node": "math_0",
-                    "out_port": "out_context"
-                },
-                {
                     "in_node": "image_0",
                     "in_port": "state",
                     "out_node": "script_0",
                     "out_port": "state"
                 },
                 {
-                    "in_node": "math_0",
+                    "in_node": "images_0",
                     "in_port": "in_context",
                     "out_node": "unsigned_0",
                     "out_port": "out_context"
@@ -78,23 +72,12 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -349.022308349609,
-                            "y": -68.1881637573242
+                            "x": -324.792816162109,
+                            "y": 49.7287445068359
                         }
                     },
                     "name": "petals",
                     "type": "input"
-                },
-                "math_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": -184.825271606445,
-                            "y": 87.3988571166992
-                        }
-                    },
-                    "name": "math",
-                    "type": "lua/modules/math"
                 },
                 "network_0": {
                     "blind_data": {
@@ -365,8 +348,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -194.755508422852,
-                            "y": -88.33203125
+                            "x": -170.526000976562,
+                            "y": 29.5848770141602
                         }
                     },
                     "name": "unsigned",
@@ -387,6 +370,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACTwAAAAACAAAABqs=",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJTAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAeYAAAME/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAAA4gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABUQAAAiEAAACGAQAAAwAAAnAAAAMEAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
