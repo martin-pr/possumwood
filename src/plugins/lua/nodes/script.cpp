@@ -20,19 +20,6 @@ dependency_graph::InAttr<std::string> a_src;
 dependency_graph::InAttr<possumwood::lua::Context> a_context;
 dependency_graph::OutAttr<std::shared_ptr<const possumwood::lua::State>> a_state;
 
-class Popup : public QMenu {
-	public:
-		Popup(QWidget* parent) : QMenu(parent) {
-		}
-
-		void addItem(const std::string& name) {
-			addAction(name.c_str());
-		}
-
-	private:
-};
-
-
 class Editor : public possumwood::SourceEditor {
 	public:
 		Editor() : SourceEditor(a_src), m_popup(nullptr) {
@@ -40,6 +27,11 @@ class Editor : public possumwood::SourceEditor {
 			buttonsLayout()->insertWidget(0, m_varsButton);
 
 			widget()->connect(m_varsButton, &QPushButton::pressed, [this]() {
+				// lazily populate variable list on first click
+				if(m_popup == nullptr)
+					populateVariableList();
+
+				// if the populating succeeded, show the menu
 				if(m_popup)
 					m_popup->popup(
 						m_varsButton->mapToGlobal(QPoint(0,-m_popup->sizeHint().height()))
@@ -49,11 +41,12 @@ class Editor : public possumwood::SourceEditor {
 
 	protected:
 		virtual void valueChanged(const dependency_graph::Attr& attr) override {
-			if(attr == a_state) {
-				if(m_popup)
+			// update the menu on each change of the "state" attribute (i.e., evaluation)
+			if(attr == a_state && values().get(a_state) != nullptr) {
+				if(m_popup) {
 					m_popup->deleteLater();
-
-				populateVariableList();
+					m_popup = nullptr;
+				}
 			}
 
 			else
@@ -204,9 +197,9 @@ class Editor : public possumwood::SourceEditor {
 			if(m_popup)
 				m_popup->deleteLater();
 
-			m_popup = new Popup(m_varsButton);
+			m_popup = new QMenu(m_varsButton);
 
-			m_popup->connect(m_popup, &Popup::triggered, [this](QAction* action) {
+			m_popup->connect(m_popup, &QMenu::triggered, [this](QAction* action) {
 				QString text = action->text();
 				while(!text.isEmpty() && !QChar(text[0]).isLetterOrNumber())
 					text = text.mid(1, text.length()-1);
@@ -225,7 +218,7 @@ class Editor : public possumwood::SourceEditor {
 	private:
 		QPushButton* m_varsButton;
 
-		Popup* m_popup;
+		QMenu* m_popup;
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
