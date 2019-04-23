@@ -8,10 +8,33 @@
 
 namespace anim {
 
-/// a placeholder structure for storing keyframed animation (until a proper one is implemented)
-struct Animation {
-	std::vector<Skeleton> frames;
-	float fps;
+/// keyframed animation
+/// Explicit setter to allow for error/consistency checking
+class Animation {
+	public:
+		Animation(float fps = 24.0f);
+
+		void addFrame(const Skeleton& f);
+		void setFrame(const Skeleton& f, std::size_t index);
+
+		const Skeleton& frame(std::size_t index) const;
+
+		bool empty() const;
+		std::size_t size() const;
+
+		float fps() const;
+		void setFps(float fps);
+
+		typedef std::vector<Skeleton>::const_iterator const_iterator;
+		const_iterator begin() const;
+		const_iterator end() const;
+
+		const Skeleton& front() const;
+		const Skeleton& back() const;
+
+	private:
+		std::vector<Skeleton> m_frames;
+		float m_fps;
 };
 
 }

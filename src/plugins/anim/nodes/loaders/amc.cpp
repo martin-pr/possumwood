@@ -158,10 +158,8 @@ std::unique_ptr<anim::Animation> doLoad(const boost::filesystem::path& filename,
 	std::ifstream in(filename.string());
 	AmcTokenizer tokenizer(in);
 
-	std::unique_ptr<anim::Animation> result(new anim::Animation());
-
 	// assuming the CMU database at 120 FPS
-	result->fps = 120;
+	std::unique_ptr<anim::Animation> result(new anim::Animation(120));
 
 	unsigned frameNo = 1;
 
@@ -191,8 +189,10 @@ std::unique_ptr<anim::Animation> doLoad(const boost::filesystem::path& filename,
 			throw std::runtime_error("expecting frame #" + boost::lexical_cast<std::string>(frameNo) + " but found #" + tokenizer.current().value);
 
 		// add a frame and read it
-		result->frames.push_back(skel);
-		readFrame(tokenizer, result->frames.back(), jointIds);
+		anim::Skeleton frame = skel;
+		readFrame(tokenizer, frame, jointIds);
+		result->addFrame(frame);
+
 
 		++frameNo;
 	}

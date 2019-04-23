@@ -13,8 +13,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	std::shared_ptr<const anim::Animation> anim = data.get(a_inAnim);
 	if(anim) {
-		result = std::unique_ptr<anim::Animation>(new anim::Animation(*anim));
-		result->fps *= data.get(a_retime);
+		result = std::unique_ptr<anim::Animation>(new anim::Animation(data.get(a_retime)));
 	}
 
 	data.set(a_outAnim, std::shared_ptr<const anim::Animation>(result.release()));

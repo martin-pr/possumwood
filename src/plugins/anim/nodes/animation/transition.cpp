@@ -107,10 +107,10 @@ class Editor : public possumwood::Editor {
 
 				std::shared_ptr<const anim::Animation> animA = values().get(a_animA);
 				std::shared_ptr<const anim::Animation> animB = values().get(a_animB);
-				if(animA != nullptr && !animA->frames.empty() && animB != nullptr && !animB->frames.empty()) {
+				if(animA != nullptr && !animA->empty() && animB != nullptr && !animB->empty()) {
 					m_widget->init(*animA, *animB);
 
-					m_fps = animA->fps;
+					m_fps = animA->fps();
 				}
 
 				timeChanged(possumwood::App::instance().time());
@@ -148,15 +148,14 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 	// if anything goes wrong, just reset the output
 	values.set(a_outAnim, std::shared_ptr<const anim::Animation>());
 
-	if(anim_a != nullptr && anim_b != nullptr && !anim_a->frames.empty() && !anim_b->frames.empty()) {
-		if(not anim_a->frames[0].isCompatibleWith(anim_b->frames[0]))
+	if(anim_a != nullptr && anim_b != nullptr && !anim_a->empty() && !anim_b->empty()) {
+		if(not anim_a->frame(0).isCompatibleWith(anim_b->frame(0)))
 			throw(std::runtime_error("Animation skeletons don't seem to be compatible."));
-		if((anim_a->frames[0].size() == 0) || (anim_b->frames[0].size() == 0))
+		if((anim_a->frame(0).size() == 0) || (anim_b->frame(0).size() == 0))
 			throw(std::runtime_error("Empty animations cannot be blended."));
 
 		// make a new animation instance
-		std::unique_ptr<anim::Animation> out(new anim::Animation());
-		out->fps = anim_a->fps;
+		std::unique_ptr<anim::Animation> out(new anim::Animation(anim_a->fps()));
 
 		const unsigned tr_a = values.get(a_trA);
 		const unsigned tr_b = values.get(a_trB);
@@ -166,13 +165,13 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 		const unsigned tr_start = tr_len / 2;
 		const unsigned tr_end = tr_len - tr_len / 2;
 
-		if(tr_a > tr_start && anim_a->frames.size() > tr_a + tr_end) {
+		if(tr_a > tr_start && anim_a->size() > tr_a + tr_end) {
 			// "before" transition - just copy animation frames from anim A
 			for(unsigned fi = 0; fi < tr_a - tr_start; ++fi)
-				out->frames.push_back(anim_a->frames[fi]);
+				out->addFrame(anim_a->frame(fi));
 
 			// transition itself
-			if(tr_b > tr_start && anim_b->frames.size() > tr_b + tr_end) {
+			if(tr_b > tr_start && anim_b->size() > tr_b + tr_end) {
 				for(unsigned fi = 0; fi < tr_len; ++fi) {
 					// weight from 0..1 (excluding 0 and 1)
 					const float weight = (float)(fi+1) / (float)(tr_len + 1);
@@ -183,12 +182,12 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 					unsigned fb_index = tr_b - tr_start + fi;
 					assert(fb_index > 0);
 
-					anim::Skeleton f1 = anim_a->frames[fa_index];
-					anim::Skeleton f2 = anim_b->frames[fb_index];
+					anim::Skeleton f1 = anim_a->frame(fa_index);
+					anim::Skeleton f2 = anim_b->frame(fb_index);
 
 					// make them into "delta" frames by making their root relative to previous frame
-					f1[0].tr() = anim_a->frames[fa_index-1][0].tr().inverse() * f1[0].tr();
-					f2[0].tr() = anim_b->frames[fb_index-1][0].tr().inverse() * f2[0].tr();
+					f1[0].tr() = anim_a->frame(fa_index-1)[0].tr().inverse() * f1[0].tr();
+					f2[0].tr() = anim_b->frame(fb_index-1)[0].tr().inverse() * f2[0].tr();
 
 					// blend them
 					for(unsigned bi=0;bi<f1.size();++bi) {
@@ -210,28 +209,28 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 					}
 
 					// add the root of previous frame (if any)
-					if(!out->frames.empty())
-						f1[0].tr() = out->frames.back()[0].tr() * f1[0].tr();
+					if(!out->empty())
+						f1[0].tr() = out->back()[0].tr() * f1[0].tr();
 
 					// and push the frame to the output
-					out->frames.push_back(f1);
+					out->addFrame(f1);
 				}
 
 				// frames after transition
-				for(unsigned fi=tr_b + tr_end; fi < anim_b->frames.size(); ++fi) {
+				for(unsigned fi=tr_b + tr_end; fi < anim_b->size(); ++fi) {
 					// get the frame
-					anim::Skeleton f = anim_b->frames[fi];
+					anim::Skeleton f = anim_b->frame(fi);
 
 					// make into "differential" frame
 					assert(fi > 0);
-					f[0].tr() = anim_b->frames[fi-1][0].tr().inverse() * f[0].tr();
+					f[0].tr() = anim_b->frame(fi-1)[0].tr().inverse() * f[0].tr();
 
 					// "add" it to the end of the output animation
-					assert(!out->frames.empty());
-					f[0].tr() = out->frames.back()[0].tr() * f[0].tr();
+					assert(!out->empty());
+					f[0].tr() = out->back()[0].tr() * f[0].tr();
 
 					// and add this to the end of the animation
-					out->frames.push_back(f);
+					out->addFrame(f);
 				}
 			}
 		}

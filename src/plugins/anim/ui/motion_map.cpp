@@ -37,32 +37,34 @@ MotionMap::MotionMap() : m_pixmap(new QGraphicsPixmapItem()) {
 }
 
 void MotionMap::init(const anim::Animation& anim) {
-	std::vector<float> matrix(anim.frames.size() * anim.frames.size());
-	float maxVal = 0.0f;
-	float minVal = compare(anim.frames[0], anim.frames[0]);
+	assert(!anim.empty());
 
-	for(unsigned a = 0; a < anim.frames.size(); ++a)
-		for(unsigned b = a; b < anim.frames.size(); ++b) {
-			auto& f1 = anim.frames[a];
-			auto& f2 = anim.frames[b];
+	std::vector<float> matrix(anim.size() * anim.size());
+	float maxVal = 0.0f;
+	float minVal = compare(anim.frame(0), anim.frame(0));
+
+	for(unsigned a = 0; a < anim.size(); ++a)
+		for(unsigned b = a; b < anim.size(); ++b) {
+			auto& f1 = anim.frame(a);
+			auto& f2 = anim.frame(b);
 
 			const float res = compare(f1, f2);
 			maxVal = std::max(res, maxVal);
 			minVal = std::min(res, minVal);
 
-			matrix[a + b * anim.frames.size()] = res;
-			matrix[b + a * anim.frames.size()] = res;
+			matrix[a + b * anim.size()] = res;
+			matrix[b + a * anim.size()] = res;
 		}
 
 	if(maxVal > 0.0f)
 		for(auto& f : matrix)
 			f = (f - minVal) / (maxVal - minVal) * 255.0f;
 
-	QImage img = QImage(anim.frames.size(), anim.frames.size(), QImage::Format_RGB32);
+	QImage img = QImage(anim.size(), anim.size(), QImage::Format_RGB32);
 
-	for(unsigned a = 0; a < anim.frames.size(); ++a)
-		for(unsigned b = 0; b < anim.frames.size(); ++b) {
-			const float val = matrix[a + b * anim.frames.size()];
+	for(unsigned a = 0; a < anim.size(); ++a)
+		for(unsigned b = 0; b < anim.size(); ++b) {
+			const float val = matrix[a + b * anim.size()];
 			img.setPixel(a, b, qRgb(val, val, val));
 		}
 
@@ -70,31 +72,31 @@ void MotionMap::init(const anim::Animation& anim) {
 }
 
 void MotionMap::init(const anim::Animation& ax, const anim::Animation& ay) {
-	std::vector<float> matrix(ax.frames.size() * ay.frames.size());
+	std::vector<float> matrix(ax.size() * ay.size());
 	float maxVal = 0.0f;
-	float minVal = compare(ax.frames[0], ay.frames[0]);
+	float minVal = compare(ax.frame(0), ay.frame(0));
 
-	for(unsigned a = 0; a < ax.frames.size(); ++a)
-		for(unsigned b = 0; b < ay.frames.size(); ++b) {
-			auto& f1 = ax.frames[a];
-			auto& f2 = ay.frames[b];
+	for(unsigned a = 0; a < ax.size(); ++a)
+		for(unsigned b = 0; b < ay.size(); ++b) {
+			auto& f1 = ax.frame(a);
+			auto& f2 = ay.frame(b);
 
 			const float res = compare(f1, f2);
 			maxVal = std::max(res, maxVal);
 			minVal = std::min(res, minVal);
 
-			matrix[a + b * ax.frames.size()] = res;
+			matrix[a + b * ax.size()] = res;
 		}
 
 	if(maxVal > 0.0f)
 		for(auto& f : matrix)
 			f = (f - minVal) / (maxVal - minVal) * 255.0f;
 
-	QImage img = QImage(ax.frames.size(), ay.frames.size(), QImage::Format_RGB32);
+	QImage img = QImage(ax.size(), ay.size(), QImage::Format_RGB32);
 
-	for(unsigned a = 0; a < ax.frames.size(); ++a)
-		for(unsigned b = 0; b < ay.frames.size(); ++b) {
-			const float val = matrix[a + b * ax.frames.size()];
+	for(unsigned a = 0; a < ax.size(); ++a)
+		for(unsigned b = 0; b < ay.size(); ++b) {
+			const float val = matrix[a + b * ax.size()];
 			img.setPixel(a, b, qRgb(val, val, val));
 		}
 

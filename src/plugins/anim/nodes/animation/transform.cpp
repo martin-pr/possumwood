@@ -33,9 +33,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		const Imath::Matrix44<float> matrix = m1 * m2 * m3;
 
 		// and construct the new animation
-		std::unique_ptr<anim::Animation> newAnim(new anim::Animation(*anim));
-		for(auto& f : newAnim->frames)
-			f *= matrix;
+		std::unique_ptr<anim::Animation> newAnim(new anim::Animation(anim->fps()));
+		for(auto& f : *anim) {
+			auto frame = f;
+			frame *= matrix;
+			newAnim->addFrame(frame);
+		}
 
 		data.set(a_outAnim, std::shared_ptr<const anim::Animation>(newAnim.release()));
 	}

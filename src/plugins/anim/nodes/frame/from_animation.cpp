@@ -18,14 +18,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const float time = data.get(a_time);
 	std::shared_ptr<const anim::Animation> anim = data.get(a_anim);
 
-	if(anim && !anim->frames.empty()) {
-		const int frameId = time * anim->fps;
+	if(anim && !anim->empty()) {
+		const int frameId = time * anim->fps();
 		if(frameId < 0)
-			data.set(a_frame, anim->frames.front());
-		else if(frameId >= (int)anim->frames.size())
-			data.set(a_frame, anim->frames.back());
+			data.set(a_frame, anim->front());
+		else if(frameId >= (int)anim->size())
+			data.set(a_frame, anim->back());
 		else
-			data.set(a_frame, anim->frames[frameId]);
+			data.set(a_frame, anim->frame(frameId));
 	}
 	else
 		data.set(a_frame, anim::Skeleton());
