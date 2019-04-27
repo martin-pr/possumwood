@@ -23,9 +23,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inAnim, "anim");
+	meta.addAttribute(a_inAnim, "anim", std::shared_ptr<const anim::Animation>(new anim::Animation(24.0f)), possumwood::Metadata::Flags::kVertical);
 	meta.addAttribute(a_retime, "retime", 1.0f);
-	meta.addAttribute(a_outAnim, "out_anim");
+	meta.addAttribute(a_outAnim, "out_anim", std::shared_ptr<const anim::Animation>(new anim::Animation(24.0f)), possumwood::Metadata::Flags::kVertical);
 
 	meta.addInfluence(a_inAnim, a_outAnim);
 	meta.addInfluence(a_retime, a_outAnim);

@@ -53,10 +53,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_skeleton, "skeleton");
-	meta.addAttribute(a_inMeshes, "in_meshes");
+	meta.addAttribute(a_skeleton, "skeleton", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_inMeshes, "in_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::Metadata::Flags::kVertical);
 	meta.addAttribute(a_editorData, "mapping");
-	meta.addAttribute(a_outMeshes, "out_meshes");
+	meta.addAttribute(a_outMeshes, "out_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::Metadata::Flags::kVertical);
 
 	meta.addInfluence(a_skeleton, a_outMeshes);
 	meta.addInfluence(a_inMeshes, a_outMeshes);

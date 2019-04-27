@@ -50,11 +50,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inAnim, "in_anim");
+	meta.addAttribute(a_inAnim, "in_anim", std::shared_ptr<const anim::Animation>(new anim::Animation(24.0f)), possumwood::Metadata::Flags::kVertical);
 	meta.addAttribute(a_translation, "translation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_rotation, "rotation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_scale, "scale", 1.0f);
-	meta.addAttribute(a_outAnim, "out_anim");
+	meta.addAttribute(a_outAnim, "out_anim", std::shared_ptr<const anim::Animation>(new anim::Animation(24.0f)), possumwood::Metadata::Flags::kVertical);
 
 	meta.addInfluence(a_inAnim, a_outAnim);
 	meta.addInfluence(a_translation, a_outAnim);

@@ -418,7 +418,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
 		"ASF files (*.asf)",
 	}));
-	meta.addAttribute(a_skel, "skeleton");
+	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::Metadata::kVertical);
 
 	meta.addInfluence(a_filename, a_skel);
 

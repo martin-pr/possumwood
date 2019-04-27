@@ -281,8 +281,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
 		"BVH files (*.bvh)",
 	}));
-	meta.addAttribute(a_anim, "anim");
-	meta.addAttribute(a_skel, "skeleton");
+	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_anim, "anim", std::shared_ptr<const anim::Animation>(new anim::Animation(24.0f)), possumwood::Metadata::Flags::kVertical);
 
 	meta.addInfluence(a_filename, a_anim);
 	meta.addInfluence(a_filename, a_skel);

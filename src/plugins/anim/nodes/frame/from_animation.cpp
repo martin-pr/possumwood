@@ -34,9 +34,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_anim, "animation");
+	meta.addAttribute(a_anim, "animation", std::shared_ptr<const anim::Animation>(new anim::Animation(24.0f)), possumwood::Metadata::Flags::kVertical);
 	meta.addAttribute(a_time, "time");
-	meta.addAttribute(a_frame, "frame");
+	meta.addAttribute(a_frame, "frame", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
 
 	meta.addInfluence(a_anim, a_frame);
 	meta.addInfluence(a_time, a_frame);

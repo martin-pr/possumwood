@@ -116,7 +116,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_baseSkeleton, "base_skeleton");
-	meta.addAttribute(a_posedSkeleton, "posed_skeleton");
+	meta.addAttribute(a_posedSkeleton, "posed_skeleton", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
 	meta.addAttribute(a_inMeshes, "meshes");
 	meta.addAttribute(a_posedMeshes, "posed_meshes");
 

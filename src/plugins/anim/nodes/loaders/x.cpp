@@ -535,8 +535,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
 		"X files (*.x)",
 	}));
-	meta.addAttribute(a_skel, "skeleton");
-	meta.addAttribute(a_meshes, "meshes");
+	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_meshes, "meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::Metadata::Flags::kVertical);
 
 	meta.addInfluence(a_filename, a_skel);
 	meta.addInfluence(a_filename, a_meshes);

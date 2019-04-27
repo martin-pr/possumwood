@@ -80,8 +80,8 @@ QRectF Edge::boundingRect() const {
 }
 
 QPointF Edge::bezierPoint(float t) const {
-	const float x_tangent = s_curvature * (m_target.x() - m_origin.x());
-	const float y_tangent = s_curvature * (m_target.y() - m_origin.y());
+	const float x_tangent = s_curvature * (m_target.x() - m_origin.x()) / 2.0f;
+	const float y_tangent = s_curvature * (m_target.y() - m_origin.y()) / 2.0f;
 
 	QPointF p1_tangent;
 	if(m_originDirection == Port::Orientation::kHorizontal)
