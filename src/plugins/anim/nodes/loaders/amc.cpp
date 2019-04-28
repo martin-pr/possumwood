@@ -204,7 +204,7 @@ std::unique_ptr<anim::Animation> doLoad(const boost::filesystem::path& filename,
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::InAttr<anim::Skeleton> a_skel;
-dependency_graph::OutAttr<std::shared_ptr<const anim::Animation>> a_anim;
+dependency_graph::OutAttr<anim::Animation> a_anim;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State out;
@@ -213,11 +213,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const anim::Skeleton skel = data.get(a_skel);
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename()) && !skel.empty()) {
-		std::shared_ptr<const anim::Animation> ptr(doLoad(filename.filename(), skel).release());
-		data.set(a_anim, ptr);
+		std::unique_ptr<anim::Animation> ptr(doLoad(filename.filename(), skel).release());
+		data.set(a_anim, *ptr);
 	}
 	else {
-		data.set(a_anim, std::shared_ptr<const anim::Animation>());
+		data.set(a_anim, anim::Animation());
 		out.addError("Cannot load filename " + filename.filename().string());
 	}
 
@@ -229,7 +229,7 @@ void init(possumwood::Metadata& meta) {
 		"AMC files (*.amc)",
 	}));
 	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::Metadata::kVertical);
-	meta.addAttribute(a_anim, "animation", std::shared_ptr<const anim::Animation>(new anim::Animation(24.0f)), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_anim, "animation", anim::Animation(), possumwood::Metadata::Flags::kVertical);
 
 	meta.addInfluence(a_filename, a_anim);
 	meta.addInfluence(a_skel, a_anim);

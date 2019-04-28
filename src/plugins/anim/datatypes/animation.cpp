@@ -67,4 +67,18 @@ const Skeleton& Animation::back() const {
 	return m_frames.back();
 }
 
+bool Animation::operator == (const Animation& anim) const {
+	return m_frames == anim.m_frames && m_fps == anim.m_fps;
+}
+
+bool Animation::operator != (const Animation& anim) const {
+	return m_frames != anim.m_frames || m_fps != anim.m_fps;
+}
+
+std::ostream& operator <<(std::ostream& out, const Animation& anim) {
+	out << "(animation with " << anim.size() << " frames)";
+
+	return out;
+}
+
 }

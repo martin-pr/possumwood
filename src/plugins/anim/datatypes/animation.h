@@ -32,17 +32,22 @@ class Animation {
 		const Skeleton& front() const;
 		const Skeleton& back() const;
 
+		bool operator == (const Animation& anim) const;
+		bool operator != (const Animation& anim) const;
+
 	private:
 		std::vector<Skeleton> m_frames;
 		float m_fps;
 };
+
+std::ostream& operator <<(std::ostream& out, const Animation& anim);
 
 }
 
 namespace possumwood {
 
 template<>
-struct Traits<std::shared_ptr<const anim::Animation>> {
+struct Traits<anim::Animation> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0, 1.0, 0}};
 	}

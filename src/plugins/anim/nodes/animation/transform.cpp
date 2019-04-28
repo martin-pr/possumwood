@@ -8,18 +8,18 @@
 
 namespace {
 
-dependency_graph::InAttr<std::shared_ptr<const anim::Animation>> a_inAnim;
+dependency_graph::InAttr<anim::Animation> a_inAnim;
 dependency_graph::InAttr<Imath::Vec3<float>> a_translation, a_rotation;
 dependency_graph::InAttr<float> a_scale;
-dependency_graph::OutAttr<std::shared_ptr<const anim::Animation>> a_outAnim;
+dependency_graph::OutAttr<anim::Animation> a_outAnim;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const std::shared_ptr<const anim::Animation> anim = data.get(a_inAnim);
+	const anim::Animation anim = data.get(a_inAnim);
 	const Imath::Vec3<float> tr = data.get(a_translation);
 	const Imath::Vec3<float> rot = data.get(a_rotation);
 	const float sc = data.get(a_scale);
 
-	if(anim) {
+	if(!anim.empty()) {
 		// assemble the transform
 		Imath::Matrix44<float> m1, m2, m3;
 		m1 = Imath::Euler<float>(Imath::Vec3<float>(
@@ -33,28 +33,28 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		const Imath::Matrix44<float> matrix = m1 * m2 * m3;
 
 		// and construct the new animation
-		std::unique_ptr<anim::Animation> newAnim(new anim::Animation(anim->fps()));
-		for(auto& f : *anim) {
+		anim::Animation newAnim(anim.fps());
+		for(auto& f : anim) {
 			auto frame = f;
 			frame *= matrix;
-			newAnim->addFrame(frame);
+			newAnim.addFrame(frame);
 		}
 
-		data.set(a_outAnim, std::shared_ptr<const anim::Animation>(newAnim.release()));
+		data.set(a_outAnim, newAnim);
 	}
 	else
-		data.set(a_outAnim, std::shared_ptr<const anim::Animation>());
+		data.set(a_outAnim, anim::Animation());
 
 	return dependency_graph::State();
 
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inAnim, "in_anim", std::shared_ptr<const anim::Animation>(new anim::Animation(24.0f)), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_inAnim, "in_anim", anim::Animation(), possumwood::Metadata::Flags::kVertical);
 	meta.addAttribute(a_translation, "translation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_rotation, "rotation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_scale, "scale", 1.0f);
-	meta.addAttribute(a_outAnim, "out_anim", std::shared_ptr<const anim::Animation>(new anim::Animation(24.0f)), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_outAnim, "out_anim", anim::Animation(), possumwood::Metadata::Flags::kVertical);
 
 	meta.addInfluence(a_inAnim, a_outAnim);
 	meta.addInfluence(a_translation, a_outAnim);

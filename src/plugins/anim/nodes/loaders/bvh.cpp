@@ -239,7 +239,7 @@ namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<anim::Skeleton> a_skel;
-dependency_graph::OutAttr<std::shared_ptr<const anim::Animation>> a_anim;
+dependency_graph::OutAttr<anim::Animation> a_anim;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State out;
@@ -250,7 +250,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		std::ifstream in(filename.filename().string());
 
 		std::vector<Joint> joints;
-		std::shared_ptr<anim::Animation> result(new anim::Animation());
+		anim::Animation result;
 		anim::Skeleton skeleton;
 
 		BvhTokenizer tokenizer(in);
@@ -261,16 +261,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				skeleton = convertHierarchy(joints);
 			}
 			else if(tokenizer.current().value == "MOTION")
-				readMotion(tokenizer, *result, joints, skeleton);
+				readMotion(tokenizer, result, joints, skeleton);
 			else
 				throw std::runtime_error("unknown keyword " + tokenizer.current().value);
 		}
 
 		data.set(a_skel, skeleton);
-		data.set(a_anim, std::shared_ptr<const anim::Animation>(result));
+		data.set(a_anim, anim::Animation(result));
 	}
 	else {
-		data.set(a_anim, std::shared_ptr<const anim::Animation>());
+		data.set(a_anim, anim::Animation());
 		out.addError("Cannot load filename " + filename.filename().string());
 	}
 
@@ -282,7 +282,7 @@ void init(possumwood::Metadata& meta) {
 		"BVH files (*.bvh)",
 	}));
 	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
-	meta.addAttribute(a_anim, "anim", std::shared_ptr<const anim::Animation>(new anim::Animation(24.0f)), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_anim, "anim", anim::Animation(), possumwood::Metadata::Flags::kVertical);
 
 	meta.addInfluence(a_filename, a_anim);
 	meta.addInfluence(a_filename, a_skel);
