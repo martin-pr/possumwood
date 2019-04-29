@@ -132,7 +132,7 @@ class Editor : public possumwood::Editor {
 
 				anim::Animation anim = values().get(a_inAnim);
 				if(!anim.empty()) {
-					m_widget->init(anim);
+					m_widget->init(::anim::MotionMap(anim, ::anim::metric::LocalAngle()));
 
 					m_fps = anim.fps();
 				}

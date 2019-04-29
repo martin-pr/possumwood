@@ -4,6 +4,7 @@
 #include <QGraphicsPixmapItem>
 
 #include "datatypes/animation.h"
+#include "datatypes/motion_map.h"
 
 namespace anim { namespace ui {
 
@@ -13,8 +14,7 @@ class MotionMap : public QGraphicsView {
 	public:
 		MotionMap();
 
-		void init(const anim::Animation& a);
-		void init(const anim::Animation& ax, const anim::Animation& ay);
+		void init(const ::anim::MotionMap& mmap);
 
 		std::size_t width() const;
 		std::size_t height() const;
