@@ -2,23 +2,28 @@
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/metadata.inl>
 #include <possumwood_sdk/gl_renderable.h>
+#include <possumwood_sdk/gl.h>
 
 #include <GL/glut.h>
+
+#include <maths/io/vec3.h>
 
 #include "datatypes/skeleton.h"
 
 namespace {
 
 dependency_graph::InAttr<anim::Skeleton> a_skel;
+dependency_graph::InAttr<Imath::V3f> a_colour;
 
 const std::string& fragmentShaderSource() {
 	static const std::string s_source =
 	    " \
 		#version 150 \n \
+		uniform vec3 colour; \n \
 		out vec4 out_color; \n \
 		\n \
 		void main(void) { \n \
-		    out_color = vec4(1,0,0,1.0); \n \
+		    out_color = vec4(colour, 1.0); \n \
 		}";
 
 	return s_source;
@@ -31,7 +36,7 @@ class Skeleton : public possumwood::Drawable {
 	      m_renderable(GL_LINES, possumwood::GLRenderable::defaultVertexShader(),
 	                   fragmentShaderSource()) {
 		m_timeChangedConnection =
-		    possumwood::App::instance().onTimeChanged([this](float t) { refresh(); });
+		    possumwood::App::instance().onTimeChanged([](float t) { refresh(); });
 	}
 
 	~Skeleton() {
@@ -39,6 +44,8 @@ class Skeleton : public possumwood::Drawable {
 	}
 
 	dependency_graph::State draw() {
+		GL_CHECK_ERR;
+
 		anim::Skeleton skel = values().get(a_skel);
 
 		{
@@ -65,7 +72,15 @@ class Skeleton : public possumwood::Drawable {
 				vbo.data.clear();
 		}
 
+		GL_CHECK_ERR;
+
+		m_renderable.setUniform("colour", values().get(a_colour));
+
+		GL_CHECK_ERR;
+
 		m_renderable.draw(viewport().projection(), viewport().modelview());
+
+		GL_CHECK_ERR;
 
 		return dependency_graph::State();
 	}
@@ -78,6 +93,7 @@ class Skeleton : public possumwood::Drawable {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_colour, "colour", Imath::V3f(1,1,1));
 
 	meta.setDrawable<Skeleton>();
 }
