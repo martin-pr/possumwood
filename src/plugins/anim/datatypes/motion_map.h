@@ -2,6 +2,7 @@
 
 #include "animation.h"
 #include "metric.h"
+#include "filter.h"
 
 namespace anim {
 
@@ -17,6 +18,8 @@ class MotionMap {
 
 		float max() const;
 		float min() const;
+
+		void filter(filter::Base& filter);
 
 	protected:
 	private:

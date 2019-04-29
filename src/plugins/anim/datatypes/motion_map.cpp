@@ -91,5 +91,40 @@ float MotionMap::min() const {
 	return m_min;
 }
 
+void MotionMap::filter(filter::Base& filter) {
+	filter.init(*this);
+
+	std::atomic<float> minVal(std::numeric_limits<float>::max());
+	std::atomic<float> maxVal(std::numeric_limits<float>::min());
+
+	std::vector<float> data = m_data;
+
+	tbb::parallel_for(std::size_t(0), height(), [&](std::size_t y) {
+		for(std::size_t x=0; x<width(); ++x) {
+			const std::size_t index = x + y*m_width;
+
+			const float val = filter.eval(*this, x, y);
+
+			data[index] = val;
+
+			{
+				float tmp = val;
+				while(tmp < minVal)
+					tmp = minVal.exchange(tmp);
+			}
+
+			{
+				float tmp = val;
+				while(tmp > maxVal)
+					tmp = maxVal.exchange(tmp);
+			}
+		}
+	});
+
+	m_data = data;
+
+	m_min = minVal;
+	m_max = maxVal;
+}
 
 }

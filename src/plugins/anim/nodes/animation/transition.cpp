@@ -14,6 +14,7 @@
 #include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
 #include "ui/motion_map.h"
+#include "datatypes/filter.h"
 
 namespace {
 
@@ -108,7 +109,12 @@ class Editor : public possumwood::Editor {
 				anim::Animation animA = values().get(a_animA);
 				anim::Animation animB = values().get(a_animB);
 				if(!animA.empty() && !animB.empty()) {
-					m_widget->init(::anim::MotionMap(animA, animB, ::anim::metric::LocalAngle()));
+					::anim::MotionMap mmap(animA, animB, ::anim::metric::LocalAngle());
+
+					::anim::filter::LinearTransition filter(values().get(a_transitionLength));
+					mmap.filter(filter);
+
+					m_widget->init(mmap);
 
 					m_fps = animA.fps();
 				}
