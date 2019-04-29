@@ -42,7 +42,7 @@ std::pair<unsigned, unsigned> startAndEndFrame(const dependency_graph::Values& v
 class Editor : public possumwood::Editor {
 	public:
 		Editor() {
-			m_widget = new anim::MotionMap();
+			m_widget = new anim::ui::MotionMap();
 
 			m_lineX = new QGraphicsLineItem();
 			m_widget->scene()->addItem(m_lineX);
@@ -62,7 +62,7 @@ class Editor : public possumwood::Editor {
 				timeChanged(t);
 			});
 
-			QObject::connect(m_widget, &anim::MotionMap::mousePress, [this](QMouseEvent* event) {
+			QObject::connect(m_widget, &anim::ui::MotionMap::mousePress, [this](QMouseEvent* event) {
 				if(event->button() == Qt::LeftButton) {
 					const QPointF scenePos = m_widget->mapToScene(event->pos());
 					if(scenePos.x() >= 0.0f && scenePos.x() < (float)m_widget->width() &&
@@ -74,7 +74,7 @@ class Editor : public possumwood::Editor {
 				}
 			});
 
-			QObject::connect(m_widget, &anim::MotionMap::mouseMove, [this](QMouseEvent* event) {
+			QObject::connect(m_widget, &anim::ui::MotionMap::mouseMove, [this](QMouseEvent* event) {
 				if(event->buttons() & Qt::LeftButton) {
 					const QPointF scenePos = m_widget->mapToScene(event->pos());
 					if(scenePos.x() >= 0.0f && scenePos.x() < (float)m_widget->width() &&
@@ -155,7 +155,7 @@ class Editor : public possumwood::Editor {
 		}
 
 	private:
-		anim::MotionMap* m_widget;
+		anim::ui::MotionMap* m_widget;
 
 		QGraphicsLineItem *m_lineX, *m_lineY;
 		QGraphicsRectItem* m_rect;

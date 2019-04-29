@@ -5,7 +5,7 @@
 
 #include "datatypes/animation.h"
 
-namespace anim {
+namespace anim { namespace ui {
 
 class MotionMap : public QGraphicsView {
 	Q_OBJECT
@@ -37,4 +37,4 @@ class MotionMap : public QGraphicsView {
 		QPoint m_mousePos;
 };
 
-}
+} }

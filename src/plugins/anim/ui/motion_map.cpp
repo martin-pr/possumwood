@@ -5,7 +5,7 @@
 #include <QWidget>
 #include <QScrollBar>
 
-namespace anim {
+namespace anim { namespace ui {
 
 namespace {
 
@@ -158,4 +158,4 @@ void MotionMap::wheelEvent(QWheelEvent* mouseEvent) {
 	adjustScrollBar(verticalScrollBar(), sc, pos.y() / (float)QGraphicsView::height());
 }
 
-}
+} }
