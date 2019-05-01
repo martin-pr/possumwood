@@ -21,6 +21,8 @@ class MotionMap {
 
 		void filter(filter::Base& filter);
 
+		std::vector<std::pair<std::size_t, std::size_t>> localMinima(std::size_t count) const;
+
 	protected:
 	private:
 		std::size_t m_width;

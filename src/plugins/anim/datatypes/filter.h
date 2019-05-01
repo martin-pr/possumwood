@@ -32,4 +32,15 @@ class LinearTransition : public Base {
 		int m_halfWindowWidth;
 };
 
+class IgnoreIdentity : public Base {
+	public:
+		IgnoreIdentity(const std::size_t transitionLength);
+
+	protected:
+		virtual float eval(const MotionMap& mmap, std::size_t x, std::size_t y) const override;
+
+	private:
+		std::size_t m_halfWindowWidth;
+};
+
 } }

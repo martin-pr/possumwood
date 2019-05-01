@@ -27,4 +27,20 @@ float LinearTransition::eval(const MotionMap& mmap, std::size_t x, std::size_t y
 	return result;
 }
 
+////////
+
+IgnoreIdentity::IgnoreIdentity(const std::size_t transitionLength) : m_halfWindowWidth(transitionLength / 2 + transitionLength % 2) {
+}
+
+float IgnoreIdentity::eval(const MotionMap& mmap, std::size_t x, std::size_t y) const {
+	if(x >= y && x - y <= m_halfWindowWidth)
+		return mmap.max();
+
+	if(x <= y && y - x <= m_halfWindowWidth)
+		return mmap.max();
+
+	return mmap(x, y);
+}
+
+
 } }

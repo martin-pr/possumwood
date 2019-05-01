@@ -127,4 +127,47 @@ void MotionMap::filter(filter::Base& filter) {
 	m_max = maxVal;
 }
 
+namespace {
+
+struct InvertedComparator {
+	bool operator()(float a, float b) const {
+		return b <= a;
+	}
+};
+
+}
+
+std::vector<std::pair<std::size_t, std::size_t>> MotionMap::localMinima(std::size_t count) const {
+	std::vector<std::pair<std::size_t, std::size_t>> result;
+
+	if(width() >= 3 && height() >= 3) {
+		// collect the minima in an ordered container
+		std::map<float, std::pair<std::size_t, std::size_t>, InvertedComparator> minima;
+
+		// for each pixel outside the boundary
+		for(std::size_t y=1; y<height()-1; ++y)
+			for(std::size_t x=1; x<width()-1; ++x) {
+				// test all surrounding pixels, to determine if the current pixel is a local minimum
+				bool minimum = true;
+				for(int a=0;a<9;++a)
+					if(a != 4)
+						minimum &= (*this)(x, y) <= (*this)((x + (a%3))-1, (y + (a/3))-1);
+
+				// insert the minimum into the sorted container, and keep only 'count' number of elements
+				if(minimum) {
+					minima.insert(std::make_pair((*this)(x, y), std::make_pair(x, y)));
+
+					if(minima.size() > count)
+						minima.erase(minima.begin());
+				}
+			}
+
+		// convert the sorted container into a vector for return
+		for(auto& i : minima)
+			result.push_back(i.second);
+	}
+
+	return result;
+}
+
 }
