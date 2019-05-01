@@ -297,7 +297,8 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 				attr.name().c_str(),
 				attr.category() == dependency_graph::Attr::kInput ? node_editor::Port::Type::kInput : node_editor::Port::Type::kOutput,
 				QColor(colour[0]*255, colour[1]*255, colour[2]*255),
-				ori
+				ori,
+				!(possumwood::AttrFlags(attr.flags()) & possumwood::AttrFlags::kHidden)
 			});
 		}
 	}

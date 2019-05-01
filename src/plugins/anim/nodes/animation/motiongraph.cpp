@@ -20,6 +20,7 @@ namespace {
 dependency_graph::InAttr<anim::Animation> a_inAnim;
 dependency_graph::InAttr<unsigned> a_transitionCount;
 dependency_graph::InAttr<unsigned> a_transitionLength;
+dependency_graph::InAttr<unsigned> a_test;
 
 class Editor : public possumwood::Editor {
 	public:
@@ -72,6 +73,8 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inAnim, "in_anim", anim::Animation(24.0f), possumwood::AttrFlags::kVertical);
+
+	meta.addAttribute(a_test, "test", 50u, possumwood::AttrFlags::kHidden);
 	meta.addAttribute(a_transitionCount, "transition_count", 50u);
 	meta.addAttribute(a_transitionLength, "transition_length", 10u);
 

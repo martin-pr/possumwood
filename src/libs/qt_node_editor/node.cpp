@@ -68,7 +68,7 @@ void Node::updateRect() {
 	qreal hin_width = 0, hin_height = 0;
 	qreal hout_width = 0, hout_height = 0;
 	for(auto& p : m_ports)
-		if((p->orientation() == Port::Orientation::kVertical)) {
+		if((p->orientation() == Port::Orientation::kVertical) && p->isVisible()) {
 			if(p->portType() == Port::Type::kInput) {
 				hin_width += p->minWidth();
 				hin_height = std::max(hin_height, p->rect().height());
@@ -81,7 +81,7 @@ void Node::updateRect() {
 
 	// horizontal ones
 	for(auto& p : m_ports)
-		if(p->orientation() == Port::Orientation::kHorizontal)
+		if(p->orientation() == Port::Orientation::kHorizontal && p->isVisible())
 			width = std::max(width, p->minWidth());
 
 	// and finally placement
@@ -93,13 +93,14 @@ void Node::updateRect() {
 	if(hin_width > 0) {
 		qreal x = 0;
 		for(auto& p : m_ports)
-			if(p->orientation() == Port::Orientation::kVertical && p->portType() == Port::Type::kInput) {
+			if(p->orientation() == Port::Orientation::kVertical && p->portType() == Port::Type::kInput && p->isVisible()) {
 				qreal delta_width = p->minWidth() * width / hin_width;
 				p->setRect(QRect(x, 0, delta_width, hin_height));
 				x += delta_width;
 			}
 
-		height += hin_height;
+		if(x > 0)
+			height += hin_height;
 	}
 
 	m_titleBackground->setRect(3, height + 3, width - 6, m_title->boundingRect().height() - 4);
@@ -107,7 +108,7 @@ void Node::updateRect() {
 	height += m_title->boundingRect().height() - 4;
 
 	for(auto& p : m_ports)
-		if(p->orientation() == Port::Orientation::kHorizontal) {
+		if(p->orientation() == Port::Orientation::kHorizontal && p->isVisible()) {
 			p->setRect(QRectF(p->rect().x(), height, width, p->rect().height()));
 			height += p->rect().height();
 		}
@@ -115,13 +116,14 @@ void Node::updateRect() {
 	if(hout_width > 0) {
 		qreal x = 0;
 		for(auto& p : m_ports)
-			if(p->orientation() == Port::Orientation::kVertical && p->portType() == Port::Type::kOutput) {
+			if(p->orientation() == Port::Orientation::kVertical && p->portType() == Port::Type::kOutput && p->isVisible()) {
 				qreal delta_width = p->minWidth() * width / hout_width;
 				p->setRect(QRect(x, height, delta_width, hout_height));
 				x += delta_width;
 			}
 
-		height += hout_height;
+		if(x > 0)
+			height += hout_height;
 	}
 
 	m_rect = QRectF(0, 0, width, height);
@@ -138,6 +140,8 @@ Port& Node::port(unsigned i) {
 
 void Node::addPort(const PortDefinition& def) {
 	m_ports.push_back(new Port(def.name, def.type, def.orientation, def.color, this, m_ports.size()));
+	if(!def.visible)
+		m_ports.back()->setVisible(false);
 
 	updateRect();
 }

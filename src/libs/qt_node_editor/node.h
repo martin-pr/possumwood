@@ -19,13 +19,14 @@ class Node : public QGraphicsItem {
 		};
 
 		struct PortDefinition {
-			PortDefinition(const QString& n, const Port::Type& t = Port::Type::kInput, const QColor& c = QColor(255, 255, 255), const Port::Orientation& o = Port::Orientation::kHorizontal) : name(n), type(t), color(c), orientation(o) {
+			PortDefinition(const QString& n, const Port::Type& t = Port::Type::kInput, const QColor& c = QColor(255, 255, 255), const Port::Orientation& o = Port::Orientation::kHorizontal, bool vis = true) : name(n), type(t), color(c), orientation(o), visible(vis) {
 			}
 
 			QString name;
 			Port::Type type;
 			QColor color;
 			Port::Orientation orientation;
+			bool visible;
 		};
 
 		Node(const QString& name, const QPointF& position = QPointF(0, 0), const QColor& color = QColor(64, 64, 64));

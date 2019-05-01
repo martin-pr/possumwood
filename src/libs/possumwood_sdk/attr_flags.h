@@ -6,6 +6,9 @@ namespace possumwood {
 enum class AttrFlags {
 	kHorizontal = 0, //< default
 	kVertical = 1,
+
+	kVisible = 0,
+	kHidden = 2,     //< a port not visible in the UI
 };
 
 /// flags combination operator
