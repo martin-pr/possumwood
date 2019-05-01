@@ -130,8 +130,8 @@ void MotionMap::filter(filter::Base& filter) {
 	m_max = maxVal;
 }
 
-std::vector<std::pair<std::size_t, std::size_t>> MotionMap::localMinima(std::size_t count) const {
-	std::vector<std::pair<std::size_t, std::size_t>> result;
+void MotionMap::computeLocalMinima(std::size_t count) {
+	m_minima.clear();
 
 	if(width() >= 3 && height() >= 3) {
 		// collect the minima in an ordered container
@@ -153,13 +153,15 @@ std::vector<std::pair<std::size_t, std::size_t>> MotionMap::localMinima(std::siz
 
 		// convert the sorted container into a vector for return
 		auto it = minima.begin();
-		while(it != minima.end() && result.size() < count) {
-			result.push_back(it->second);
+		while(it != minima.end() && m_minima.size() < count) {
+			m_minima.push_back(it->second);
 			++it;
 		}
 	}
+}
 
-	return result;
+const std::vector<std::pair<std::size_t, std::size_t>>& MotionMap::localMinima() const {
+	return m_minima;
 }
 
 bool MotionMap::operator ==(const MotionMap& mmap) const {

@@ -22,7 +22,8 @@ class MotionMap {
 
 		void filter(filter::Base& filter);
 
-		std::vector<std::pair<std::size_t, std::size_t>> localMinima(std::size_t count) const;
+		void computeLocalMinima(std::size_t count);
+		const std::vector<std::pair<std::size_t, std::size_t>>& localMinima() const;
 
 		bool operator ==(const MotionMap& mmap) const;
 		bool operator !=(const MotionMap& mmap) const;
@@ -33,6 +34,8 @@ class MotionMap {
 		std::vector<float> m_data;
 
 		float m_min, m_max;
+
+		std::vector<std::pair<std::size_t, std::size_t>> m_minima;
 };
 
 std::ostream& operator <<(std::ostream& out, const MotionMap& mmap);

@@ -40,8 +40,7 @@ class Editor : public possumwood::Editor {
 
 			m_widget->init(mmap);
 
-			auto minima = mmap.localMinima(values().get(a_transitionCount));
-			for(auto& m : minima) {
+			for(auto& m : mmap.localMinima()) {
 				m_widget->setPixel(m.first-1, m.second, QColor(255, 0, 0));
 				m_widget->setPixel(m.first, m.second, QColor(255, 0, 0));
 				m_widget->setPixel(m.first+1, m.second, QColor(255, 0, 0));
@@ -64,6 +63,8 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 
 	::anim::filter::IgnoreIdentity ident(values.get(a_transitionLength));
 	mmap.filter(ident);
+
+	mmap.computeLocalMinima(values.get(a_transitionCount));
 
 	values.set(a_mmap, mmap);
 
