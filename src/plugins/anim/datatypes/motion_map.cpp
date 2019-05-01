@@ -130,7 +130,7 @@ void MotionMap::filter(filter::Base& filter) {
 	m_max = maxVal;
 }
 
-void MotionMap::computeLocalMinima(std::size_t count) {
+void MotionMap::computeLocalMinima(std::size_t count, std::size_t cleanNeighbourhood) {
 	m_minima.clear();
 
 	if(width() >= 3 && height() >= 3) {
@@ -152,10 +152,34 @@ void MotionMap::computeLocalMinima(std::size_t count) {
 			}
 
 		// convert the sorted container into a vector for return
-		auto it = minima.begin();
-		while(it != minima.end() && m_minima.size() < count) {
-			m_minima.push_back(it->second);
-			++it;
+		if(cleanNeighbourhood == 0) {
+			auto it = minima.begin();
+			while(it != minima.end() && m_minima.size() < count) {
+				m_minima.push_back(it->second);
+				++it;
+			}
+		}
+
+		else {
+			std::multimap<int, int> neighbours;
+
+			auto it = minima.begin();
+			while(it != minima.end() && m_minima.size() < count) {
+				// search the neighbours for overlapping transitions
+				auto a = neighbours.lower_bound((int)it->second.first - (int)cleanNeighbourhood);
+				auto b = neighbours.upper_bound((int)it->second.first + (int)cleanNeighbourhood);
+
+				auto i = a;
+				while(i != b && abs((int)it->second.second - i->second) > (int)cleanNeighbourhood)
+					++i;
+
+				if(i == b) {
+					m_minima.push_back(it->second);
+					neighbours.insert(it->second);
+				}
+
+				++it;
+			}
 		}
 	}
 }

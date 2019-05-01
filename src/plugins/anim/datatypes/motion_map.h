@@ -22,7 +22,7 @@ class MotionMap {
 
 		void filter(filter::Base& filter);
 
-		void computeLocalMinima(std::size_t count);
+		void computeLocalMinima(std::size_t count, std::size_t cleanNeighbourhood = 0);
 		const std::vector<std::pair<std::size_t, std::size_t>>& localMinima() const;
 
 		bool operator ==(const MotionMap& mmap) const;
