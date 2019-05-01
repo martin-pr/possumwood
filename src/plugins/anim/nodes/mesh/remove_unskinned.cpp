@@ -92,10 +92,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inSkel, "in_skeleton", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
-	meta.addAttribute(a_inMeshes, "in_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::Metadata::Flags::kVertical);
-	meta.addAttribute(a_outSkel, "out_skeleton", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
-	meta.addAttribute(a_outMeshes, "out_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_inSkel, "in_skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inMeshes, "in_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outSkel, "out_skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outMeshes, "out_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inMeshes, a_outMeshes);
 	meta.addInfluence(a_inSkel, a_outMeshes);

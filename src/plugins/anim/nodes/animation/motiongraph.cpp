@@ -71,7 +71,7 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inAnim, "in_anim", anim::Animation(24.0f), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_inAnim, "in_anim", anim::Animation(24.0f), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_transitionCount, "transition_count", 50u);
 	meta.addAttribute(a_transitionLength, "transition_length", 10u);
 

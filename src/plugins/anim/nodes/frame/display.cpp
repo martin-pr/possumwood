@@ -92,7 +92,7 @@ class Skeleton : public possumwood::Drawable {
 };
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_colour, "colour", Imath::V3f(1,1,1));
 
 	meta.setDrawable<Skeleton>();

@@ -34,9 +34,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_anim, "animation", anim::Animation(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_anim, "animation", anim::Animation(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_time, "time");
-	meta.addAttribute(a_frame, "frame", anim::Skeleton(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_frame, "frame", anim::Skeleton(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_anim, a_frame);
 	meta.addInfluence(a_time, a_frame);

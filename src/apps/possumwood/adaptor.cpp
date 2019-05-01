@@ -290,7 +290,7 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 				colour = possumwood::Colours::get(attr.type());
 
 			node_editor::Port::Orientation ori = node_editor::Port::Orientation::kHorizontal;
-			if(attr.flags() & possumwood::Metadata::kVertical)
+			if(possumwood::AttrFlags(attr.flags()) & possumwood::AttrFlags::kVertical)
 				ori = node_editor::Port::Orientation::kVertical;
 
 			newNode.addPort(node_editor::Node::PortDefinition {

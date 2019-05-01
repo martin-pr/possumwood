@@ -85,8 +85,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_base, "base_pose");
 	meta.addAttribute(a_mode, "mode",
 	                  possumwood::Enum({"World-space", "Skinning"}));
-	meta.addAttribute(a_inUniforms, "in_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::Metadata::kVertical);
-	meta.addAttribute(a_outUniforms, "out_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::Metadata::kVertical);
+	meta.addAttribute(a_inUniforms, "in_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outUniforms, "out_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_frame, a_outUniforms);
 	meta.addInfluence(a_base, a_outUniforms);

@@ -248,12 +248,12 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_animA, "anim_a", anim::Animation(), possumwood::Metadata::Flags::kVertical);
-	meta.addAttribute(a_animB, "anim_b", anim::Animation(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_animA, "anim_a", anim::Animation(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_animB, "anim_b", anim::Animation(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_transitionLength, "transition_length", 11u);
 	meta.addAttribute(a_trA, "transition_a");
 	meta.addAttribute(a_trB, "transition_b");
-	meta.addAttribute(a_outAnim, "out_anim", anim::Animation(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_outAnim, "out_anim", anim::Animation(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_animA, a_outAnim);
 	meta.addInfluence(a_animB, a_outAnim);

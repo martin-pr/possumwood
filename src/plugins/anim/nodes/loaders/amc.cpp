@@ -228,8 +228,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
 		"AMC files (*.amc)",
 	}));
-	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::Metadata::kVertical);
-	meta.addAttribute(a_anim, "animation", anim::Animation(), possumwood::Metadata::Flags::kVertical);
+	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_anim, "animation", anim::Animation(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_anim);
 	meta.addInfluence(a_skel, a_anim);

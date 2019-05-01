@@ -44,8 +44,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_name, "name", std::string("uniform_value"));
 	meta.addAttribute(a_value, "value", 0u);
-	meta.addAttribute(a_inUniforms, "in_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::Metadata::kVertical);
-	meta.addAttribute(a_outUniforms, "out_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::Metadata::kVertical);
+	meta.addAttribute(a_inUniforms, "in_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outUniforms, "out_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_name, a_outUniforms);
 	meta.addInfluence(a_value, a_outUniforms);
