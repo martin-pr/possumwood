@@ -20,7 +20,7 @@ namespace {
 dependency_graph::InAttr<anim::Animation> a_inAnim;
 dependency_graph::InAttr<unsigned> a_transitionCount;
 dependency_graph::InAttr<unsigned> a_transitionLength;
-dependency_graph::InAttr<unsigned> a_test;
+dependency_graph::OutAttr<anim::MotionMap> a_mmap;
 
 class Editor : public possumwood::Editor {
 	public:
@@ -36,26 +36,17 @@ class Editor : public possumwood::Editor {
 		virtual void valueChanged(const dependency_graph::Attr& attr) override {
 			QPixmap pixmap;
 
-			anim::Animation anim = values().get(a_inAnim);
-			if(!anim.empty()) {
-				::anim::MotionMap mmap(anim, ::anim::metric::LocalAngle());
+			const anim::MotionMap& mmap = values().get(a_mmap);
 
-				::anim::filter::LinearTransition lin(values().get(a_transitionLength));
-				mmap.filter(lin);
+			m_widget->init(mmap);
 
-				::anim::filter::IgnoreIdentity ident(values().get(a_transitionLength));
-				mmap.filter(ident);
-
-				m_widget->init(mmap);
-
-				auto minima = mmap.localMinima(values().get(a_transitionCount));
-				for(auto& m : minima) {
-					m_widget->setPixel(m.first-1, m.second, QColor(255, 0, 0));
-					m_widget->setPixel(m.first, m.second, QColor(255, 0, 0));
-					m_widget->setPixel(m.first+1, m.second, QColor(255, 0, 0));
-					m_widget->setPixel(m.first, m.second-1, QColor(255, 0, 0));
-					m_widget->setPixel(m.first, m.second+1, QColor(255, 0, 0));
-				}
+			auto minima = mmap.localMinima(values().get(a_transitionCount));
+			for(auto& m : minima) {
+				m_widget->setPixel(m.first-1, m.second, QColor(255, 0, 0));
+				m_widget->setPixel(m.first, m.second, QColor(255, 0, 0));
+				m_widget->setPixel(m.first+1, m.second, QColor(255, 0, 0));
+				m_widget->setPixel(m.first, m.second-1, QColor(255, 0, 0));
+				m_widget->setPixel(m.first, m.second+1, QColor(255, 0, 0));
 			}
 
 			m_widget->repaint();
@@ -66,7 +57,15 @@ class Editor : public possumwood::Editor {
 };
 
 dependency_graph::State compute(dependency_graph::Values& values) {
-	// nothing (for now)
+	::anim::MotionMap mmap(values.get(a_inAnim), ::anim::metric::LocalAngle());
+
+	::anim::filter::LinearTransition lin(values.get(a_transitionLength));
+	mmap.filter(lin);
+
+	::anim::filter::IgnoreIdentity ident(values.get(a_transitionLength));
+	mmap.filter(ident);
+
+	values.set(a_mmap, mmap);
 
 	return dependency_graph::State();
 }
@@ -74,9 +73,13 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inAnim, "in_anim", anim::Animation(24.0f), possumwood::AttrFlags::kVertical);
 
-	meta.addAttribute(a_test, "test", 50u, possumwood::AttrFlags::kHidden);
+	meta.addAttribute(a_mmap, "motion_map", anim::MotionMap(), possumwood::AttrFlags::kHidden);
 	meta.addAttribute(a_transitionCount, "transition_count", 50u);
 	meta.addAttribute(a_transitionLength, "transition_length", 10u);
+
+	meta.addInfluence(a_inAnim, a_mmap);
+	meta.addInfluence(a_transitionCount, a_mmap);
+	meta.addInfluence(a_transitionLength, a_mmap);
 
 	meta.setEditor<Editor>();
 	meta.setCompute(compute);

@@ -4,6 +4,9 @@
 
 namespace anim {
 
+MotionMap::MotionMap() : m_width(0), m_min(0.0f), m_max(0.0f) {
+}
+
 MotionMap::MotionMap(const anim::Animation& a, const ::anim::metric::Base& metric) : m_width(a.size()), m_data(a.size()*a.size()), m_min(std::numeric_limits<float>::max()), m_max(std::numeric_limits<float>::min()) {
 	std::atomic<float> minVal(m_min);
 	std::atomic<float> maxVal(m_max);
@@ -127,47 +130,49 @@ void MotionMap::filter(filter::Base& filter) {
 	m_max = maxVal;
 }
 
-namespace {
-
-struct InvertedComparator {
-	bool operator()(float a, float b) const {
-		return b <= a;
-	}
-};
-
-}
-
 std::vector<std::pair<std::size_t, std::size_t>> MotionMap::localMinima(std::size_t count) const {
 	std::vector<std::pair<std::size_t, std::size_t>> result;
 
 	if(width() >= 3 && height() >= 3) {
 		// collect the minima in an ordered container
-		std::map<float, std::pair<std::size_t, std::size_t>, InvertedComparator> minima;
+		std::multimap<float, std::pair<std::size_t, std::size_t>> minima;
 
 		// for each pixel outside the boundary
-		for(std::size_t y=1; y<height()-1; ++y)
-			for(std::size_t x=1; x<width()-1; ++x) {
+		for(std::size_t y=0; y<height()-2; ++y)
+			for(std::size_t x=0; x<width()-2; ++x) {
 				// test all surrounding pixels, to determine if the current pixel is a local minimum
 				bool minimum = true;
 				for(int a=0;a<9;++a)
 					if(a != 4)
-						minimum &= (*this)(x, y) <= (*this)((x + (a%3))-1, (y + (a/3))-1);
+						minimum &= (*this)(x+1, y+1) <= (*this)((x + (a%3)), (y + (a/3)));
 
-				// insert the minimum into the sorted container, and keep only 'count' number of elements
-				if(minimum) {
-					minima.insert(std::make_pair((*this)(x, y), std::make_pair(x, y)));
-
-					if(minima.size() > count)
-						minima.erase(minima.begin());
-				}
+				// insert the minimum into the sorted container
+				if(minimum)
+					minima.insert(std::make_pair((*this)(x+1, y+1), std::make_pair(x+1, y+1)));
 			}
 
 		// convert the sorted container into a vector for return
-		for(auto& i : minima)
-			result.push_back(i.second);
+		auto it = minima.begin();
+		while(it != minima.end() && result.size() < count) {
+			result.push_back(it->second);
+			++it;
+		}
 	}
 
 	return result;
+}
+
+bool MotionMap::operator ==(const MotionMap& mmap) const {
+	return m_min == mmap.m_min && m_max == mmap.m_max && m_data == mmap.m_data;
+}
+
+bool MotionMap::operator !=(const MotionMap& mmap) const {
+	return m_min != mmap.m_min || m_max != mmap.m_max || m_data != mmap.m_data;
+}
+
+std::ostream& operator <<(std::ostream& out, const MotionMap& mmap) {
+	out << "(motion map " << mmap.width() << "x" << mmap.height() << ")";
+	return out;
 }
 
 }

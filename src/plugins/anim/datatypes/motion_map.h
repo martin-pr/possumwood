@@ -8,6 +8,7 @@ namespace anim {
 
 class MotionMap {
 	public:
+		MotionMap();
 		MotionMap(const anim::Animation& a, const ::anim::metric::Base& metric);
 		MotionMap(const anim::Animation& ax, const anim::Animation& ay, const ::anim::metric::Base& metric);
 
@@ -23,12 +24,28 @@ class MotionMap {
 
 		std::vector<std::pair<std::size_t, std::size_t>> localMinima(std::size_t count) const;
 
+		bool operator ==(const MotionMap& mmap) const;
+		bool operator !=(const MotionMap& mmap) const;
+
 	protected:
 	private:
 		std::size_t m_width;
 		std::vector<float> m_data;
 
 		float m_min, m_max;
+};
+
+std::ostream& operator <<(std::ostream& out, const MotionMap& mmap);
+
+}
+
+namespace possumwood {
+
+template<>
+struct Traits<anim::MotionMap> {
+	static constexpr std::array<float, 3> colour() {
+		return std::array<float, 3>{{0, 0, 0}};
+	}
 };
 
 }
