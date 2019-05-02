@@ -22,8 +22,6 @@ class Metadata : public dependency_graph::Metadata {
 		Metadata(const std::string& nodeType);
 		virtual ~Metadata();
 
-		using dependency_graph::Metadata::addAttribute;
-
 		/// registers an input attribute.
 		/// Each attribute instance should be held statically in the
 		/// implementation of the "node" concept of the target application.
@@ -39,6 +37,9 @@ class Metadata : public dependency_graph::Metadata {
 		/// that it will be available throughout the application run.
 		template<typename T>
 		void addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue = T(), AttrFlags flags = AttrFlags::kHorizontal | AttrFlags::kVisible);
+
+		void addAttribute(dependency_graph::InAttr<void>& in, const std::string& name, AttrFlags flags = AttrFlags::kHorizontal | AttrFlags::kVisible);
+		void addAttribute(dependency_graph::OutAttr<void>& in, const std::string& name, AttrFlags flags = AttrFlags::kHorizontal | AttrFlags::kVisible);
 
 		using dependency_graph::Metadata::addInfluence;
 		using dependency_graph::Metadata::setCompute;
