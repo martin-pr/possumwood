@@ -44,6 +44,7 @@ addons:
       - libqt5opengl5-dev
       - libopenimageio-dev
       - libluabind-dev
+      - libtbb-dev
 
 # Run build
 script:

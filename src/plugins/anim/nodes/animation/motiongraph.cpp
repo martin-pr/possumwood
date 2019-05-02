@@ -23,11 +23,13 @@ dependency_graph::OutAttr<anim::MotionMap> a_mmap;
 
 class Editor : public possumwood::Editor {
 	public:
-		Editor() {
-			m_widget = new anim::ui::MotionMap();
+		Editor() : m_widget(nullptr) {
 		}
 
 		virtual QWidget* widget() override {
+			if(!m_widget)
+				m_widget = new anim::ui::MotionMap();
+
 			return m_widget;
 		}
 
@@ -37,8 +39,13 @@ class Editor : public possumwood::Editor {
 
 			const anim::MotionMap& mmap = values().get(a_mmap);
 
+			// make sure widget is initialised
+			widget();
+
+			// draw the motion map
 			m_widget->init(mmap);
 
+			// and draw the local minima
 			for(auto& m : mmap.localMinima()) {
 				m_widget->setPixel(m.first-1, m.second, QColor(255, 0, 0));
 				m_widget->setPixel(m.first, m.second, QColor(255, 0, 0));
