@@ -1,5 +1,7 @@
 #include "motion_map.h"
 
+#include <atomic>
+
 #include <tbb/parallel_for.h>
 
 namespace anim {
