@@ -1,22 +1,40 @@
 {
     "connections": [
         {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "transition_1",
-            "in_port": "anim_b",
-            "out_node": "periodic_0",
-            "out_port": "out_anim"
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "anim_frame_0",
+            "out_port": "vertex_data"
         },
         {
             "in_node": "transform_0",
             "in_port": "in_anim",
             "out_node": "bvh_0",
             "out_port": "anim"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_anim",
+            "out_node": "bvh_1",
+            "out_port": "anim"
+        },
+        {
+            "in_node": "transform_2",
+            "in_port": "in_anim",
+            "out_node": "bvh_2",
+            "out_port": "anim"
+        },
+        {
+            "in_node": "anim_frame_0",
+            "in_port": "frame",
+            "out_node": "edit_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
         },
         {
             "in_node": "display_0",
@@ -31,16 +49,22 @@
             "out_port": "frame"
         },
         {
-            "in_node": "transform_1",
-            "in_port": "in_anim",
-            "out_node": "bvh_1",
-            "out_port": "anim"
+            "in_node": "transition_1",
+            "in_port": "anim_b",
+            "out_node": "periodic_0",
+            "out_port": "out_anim"
         },
         {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
+            "in_node": "transition_0",
+            "in_port": "anim_a",
+            "out_node": "periodic_1",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
         },
         {
             "in_node": "from_animation_0",
@@ -55,15 +79,9 @@
             "out_port": "out_anim"
         },
         {
-            "in_node": "from_animation_0",
-            "in_port": "animation",
-            "out_node": "transition_1",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "transition_1",
-            "in_port": "anim_a",
-            "out_node": "transition_0",
+            "in_node": "periodic_0",
+            "in_port": "in_anim",
+            "out_node": "transform_1",
             "out_port": "out_anim"
         },
         {
@@ -73,40 +91,22 @@
             "out_port": "out_anim"
         },
         {
-            "in_node": "periodic_0",
-            "in_port": "in_anim",
-            "out_node": "transform_1",
-            "out_port": "out_anim"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "transform_2",
-            "in_port": "in_anim",
-            "out_node": "bvh_2",
-            "out_port": "anim"
-        },
-        {
-            "in_node": "transition_0",
+            "in_node": "transition_1",
             "in_port": "anim_a",
-            "out_node": "periodic_1",
+            "out_node": "transition_0",
             "out_port": "out_anim"
         },
         {
-            "in_node": "anim_frame_0",
-            "in_port": "frame",
-            "out_node": "edit_0",
-            "out_port": "out_frame"
+            "in_node": "from_animation_0",
+            "in_port": "animation",
+            "out_node": "transition_1",
+            "out_port": "out_anim"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "anim_frame_0",
-            "out_port": "vertex_data"
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
         }
     ],
     "nodes": {
@@ -114,8 +114,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1308.7265625,
-                    "y": 82.3007812500001
+                    "x": 1366.32312011719,
+                    "y": 1039.28881835938
                 }
             },
             "name": "anim_frame",
@@ -125,8 +125,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -238.25,
-                    "y": 213.390625
+                    "x": 245.761672973633,
+                    "y": -201.122482299805
                 }
             },
             "name": "walk",
@@ -139,8 +139,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -217.46875,
-                    "y": 660.265625
+                    "x": 672.466003417969,
+                    "y": -29.4276008605957
                 }
             },
             "name": "stand",
@@ -153,8 +153,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -226.921875,
-                    "y": 439.09375
+                    "x": 455.039916992188,
+                    "y": -16.2668075561523
                 }
             },
             "name": "walk2stand",
@@ -167,8 +167,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 948.859375,
-                    "y": 538.78125
+                    "x": 1006.45587158203,
+                    "y": 1495.76928710938
                 }
             },
             "name": "display",
@@ -178,8 +178,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1497.09765625,
-                    "y": 57.5351562500001
+                    "x": 1554.69421386719,
+                    "y": 1014.52319335938
                 }
             },
             "name": "draw",
@@ -189,8 +189,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 940.0820295811,
-                    "y": 351.78516186987
+                    "x": 997.678527832031,
+                    "y": 1308.77319335938
                 }
             },
             "name": "edit",
@@ -209,8 +209,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1133.974609375,
-                    "y": -49.6357421874999
+                    "x": 1191.57116699219,
+                    "y": 907.352294921875
                 }
             },
             "name": "fragment_shader",
@@ -223,8 +223,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 779.328125,
-                    "y": 470.03125
+                    "x": 680.586120605469,
+                    "y": 928.084533691406
                 }
             },
             "name": "from_animation",
@@ -234,8 +234,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 127.296875,
-                    "y": 632.6875
+                    "x": 707.291381835938,
+                    "y": 365.390747070312
                 }
             },
             "name": "periodic",
@@ -250,8 +250,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 156.4375,
-                    "y": 208.0
+                    "x": 296.714447021484,
+                    "y": 154.047332763672
                 }
             },
             "name": "periodic",
@@ -266,8 +266,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1305.09765625,
-                    "y": -98.9648513793944
+                    "x": 1362.69421386719,
+                    "y": 858.023193359375
                 }
             },
             "name": "program",
@@ -277,8 +277,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 647.6875,
-                    "y": 695.03125
+                    "x": 529.74560546875,
+                    "y": 991.25732421875
                 }
             },
             "name": "time",
@@ -288,8 +288,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -33.953125,
-                    "y": 209.484375
+                    "x": 303.295776367188,
+                    "y": -61.8166465759277
                 }
             },
             "name": "transform",
@@ -312,8 +312,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -29.890625,
-                    "y": 633.0
+                    "x": 714.673950195312,
+                    "y": 132.56233215332
                 }
             },
             "name": "transform",
@@ -336,8 +336,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -40.515625,
-                    "y": 416.984375
+                    "x": 481.746246337891,
+                    "y": 123.481834411621
                 }
             },
             "name": "transform",
@@ -376,8 +376,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 563.086181640625,
-                    "y": 434.42236328125
+                    "x": 532.064270019531,
+                    "y": 638.648620605469
                 }
             },
             "name": "transition",
@@ -392,8 +392,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1128.59765625,
-                    "y": -173.964859008789
+                    "x": 1186.19421386719,
+                    "y": 783.023193359375
                 }
             },
             "name": "vertex_shader",
@@ -408,6 +408,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADu/wCAAAAAfwAAABOAAADuwAAAJIBAAAa+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAApwD////7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAABGAP///wAAAAEAAAHJAAADu/wCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAATgAAA0UAAABZAP////sAAAAGAGwAbwBnAQAAA5kAAABwAAAAWQD///8AAAKMAAADuwAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAGgBkAG8AYwBrAHMAXwB0AG8AbwBsAGIAYQByAQAAAAD/////AAAAAAAAAAA="
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAAB38AAAQfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMfAAADhPwCAAAAAfwAAABuAAADhAAAALQBAAAb+gAAAAEBAAAAAvsAAAAMAGUAZABpAHQAbwByAQAAAAD/////AAAAowEAAAP7AAAACgBnAHIAYQBwAGgBAAAAAAAAAx8AAACtAQAAAwAAAAEAAAHJAAADhPwCAAAAAvsAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAAbgAAA4QAAAB2AQAAA/sAAAAGAGwAbwBnAQAAA5kAAABwAAAAAAAAAAAAAAKWAAADhAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

@@ -1,0 +1,365 @@
+{
+    "connections": [
+        {
+            "in_node": "transition_0",
+            "in_port": "anim_a",
+            "out_node": "bvh_0",
+            "out_port": "anim"
+        },
+        {
+            "in_node": "transition_0",
+            "in_port": "anim_b",
+            "out_node": "bvh_1",
+            "out_port": "anim"
+        },
+        {
+            "in_node": "transition_1",
+            "in_port": "anim_b",
+            "out_node": "bvh_2",
+            "out_port": "anim"
+        },
+        {
+            "in_node": "transition_2",
+            "in_port": "anim_b",
+            "out_node": "bvh_3",
+            "out_port": "anim"
+        },
+        {
+            "in_node": "random_walk_0",
+            "in_port": "motion_graph",
+            "out_node": "create_0",
+            "out_port": "motion_graph"
+        },
+        {
+            "in_node": "display_0",
+            "in_port": "skeleton",
+            "out_node": "edit_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "display_1",
+            "in_port": "skeleton",
+            "out_node": "edit_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "edit_0",
+            "in_port": "in_frame",
+            "out_node": "from_animation_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "edit_1",
+            "in_port": "in_frame",
+            "out_node": "from_animation_1",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "from_animation_0",
+            "in_port": "animation",
+            "out_node": "random_walk_0",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "from_animation_0",
+            "in_port": "time",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "from_animation_1",
+            "in_port": "time",
+            "out_node": "time_1",
+            "out_port": "time"
+        },
+        {
+            "in_node": "transition_1",
+            "in_port": "anim_a",
+            "out_node": "transition_0",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "transition_2",
+            "in_port": "anim_a",
+            "out_node": "transition_1",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "create_0",
+            "in_port": "in_anim",
+            "out_node": "transition_2",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "from_animation_1",
+            "in_port": "animation",
+            "out_node": "transition_2",
+            "out_port": "out_anim"
+        }
+    ],
+    "nodes": {
+        "bvh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -138.612442016602,
+                    "y": -158.428298950195
+                }
+            },
+            "name": "walk",
+            "ports": {
+                "filename": "$EXAMPLES/accad_mocap/Male1_B3_Walk.bvh"
+            },
+            "type": "anim/loaders/bvh"
+        },
+        "bvh_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 136.621704101562,
+                    "y": -166.706024169922
+                }
+            },
+            "name": "walk2stand",
+            "ports": {
+                "filename": "$EXAMPLES/accad_mocap/Male1_B2_WalkToStand.bvh"
+            },
+            "type": "anim/loaders/bvh"
+        },
+        "bvh_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 249.334655761719,
+                    "y": 16.4440231323242
+                }
+            },
+            "name": "stand",
+            "ports": {
+                "filename": "$EXAMPLES/accad_mocap/Male1_A1_Stand.bvh"
+            },
+            "type": "anim/loaders/bvh"
+        },
+        "bvh_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 409.043182373047,
+                    "y": 228.055389404297
+                }
+            },
+            "name": "walk",
+            "ports": {
+                "filename": "$EXAMPLES/accad_mocap/Male1_B3_Walk.bvh"
+            },
+            "type": "anim/loaders/bvh"
+        },
+        "create_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 181.66438293457,
+                    "y": 750.664184570312
+                }
+            },
+            "name": "motiongraph",
+            "ports": {
+                "remove_self_transitions": 50,
+                "transition_count": 400,
+                "transition_length": 10
+            },
+            "type": "anim/animation/motiongraph/create"
+        },
+        "display_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 244.324783325195,
+                    "y": 1536.17346191406
+                }
+            },
+            "name": "display",
+            "ports": {
+                "colour": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0
+                }
+            },
+            "type": "anim/frame/display"
+        },
+        "display_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 624.306213378906,
+                    "y": 1115.75402832031
+                }
+            },
+            "name": "display",
+            "ports": {
+                "colour": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/frame/display"
+        },
+        "edit_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 238.324783325195,
+                    "y": 1328.17346191406
+                }
+            },
+            "name": "edit",
+            "ports": {
+                "rotations": null,
+                "scale": 0.00999999977648258,
+                "translate": {
+                    "x": 0.0,
+                    "y": -1.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/frame/edit"
+        },
+        "edit_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 618.306213378906,
+                    "y": 907.754028320312
+                }
+            },
+            "name": "edit",
+            "ports": {
+                "rotations": null,
+                "scale": 0.00999999977648258,
+                "translate": {
+                    "x": 0.0,
+                    "y": -1.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/frame/edit"
+        },
+        "from_animation_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 183.689315795898,
+                    "y": 1179.279296875
+                }
+            },
+            "name": "from_animation",
+            "type": "anim/frame/from_animation"
+        },
+        "from_animation_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 563.670715332031,
+                    "y": 758.85986328125
+                }
+            },
+            "name": "from_animation",
+            "type": "anim/frame/from_animation"
+        },
+        "random_walk_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 193.173690795898,
+                    "y": 952.73828125
+                }
+            },
+            "name": "random_walk",
+            "ports": {
+                "random_seed": 9813,
+                "target_length": 1000,
+                "transition_probability": 0.100000001490116
+            },
+            "type": "anim/animation/motiongraph/random_walk"
+        },
+        "time_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 91.3247833251953,
+                    "y": 1202.17346191406
+                }
+            },
+            "name": "time",
+            "type": "time"
+        },
+        "time_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 471.306213378906,
+                    "y": 781.754028320312
+                }
+            },
+            "name": "time",
+            "type": "time"
+        },
+        "transition_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -24.6618614196777,
+                    "y": 16.2228565216064
+                }
+            },
+            "name": "transition",
+            "ports": {
+                "transition_a": 171,
+                "transition_b": 12,
+                "transition_length": 11
+            },
+            "type": "anim/animation/transition"
+        },
+        "transition_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 169.051116943359,
+                    "y": 251.249633789062
+                }
+            },
+            "name": "transition",
+            "ports": {
+                "transition_a": 377,
+                "transition_b": 10,
+                "transition_length": 11
+            },
+            "type": "anim/animation/transition"
+        },
+        "transition_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 335.417938232422,
+                    "y": 463.951477050781
+                }
+            },
+            "name": "transition",
+            "ports": {
+                "transition_a": 546,
+                "transition_b": 37,
+                "transition_length": 11
+            },
+            "type": "anim/animation/transition"
+        }
+    },
+    "scene_config": {
+        "end_time": 25.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACTgAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADAPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADAAAAAJgBAAADAAAAAQAAAagAAAMA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABAQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABcAAAAf4AAACGAQAAAwAAAnAAAAMAAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
