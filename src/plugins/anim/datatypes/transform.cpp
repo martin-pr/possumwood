@@ -17,6 +17,9 @@ Transform::Transform(const Imath::V3f& tr) : translation(tr), rotation(1, 0, 0, 
 Transform::Transform(const Imath::Quatf& rot, const Imath::V3f& tr) :
 	translation(tr), rotation(rot) {
 
+	// the quaternion should always be a unit quat to represent rotation. Let's re-normalize, to avoid accumulation
+	//   of floating point errors
+	rotation.normalize();
 }
 
 Transform::Transform(const Imath::M44f& m) {
