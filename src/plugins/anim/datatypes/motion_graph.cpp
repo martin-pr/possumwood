@@ -134,6 +134,10 @@ MotionGraph::MotionGraph(const anim::Animation& a, const std::vector<std::pair<s
 	}
 }
 
+bool MotionGraph::empty() const {
+	return m_snippets.empty();
+}
+
 bool MotionGraph::operator ==(const MotionGraph& mgraph) const {
 	return m_snippets == mgraph.m_snippets;
 }

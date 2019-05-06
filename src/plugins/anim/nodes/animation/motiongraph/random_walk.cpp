@@ -18,7 +18,10 @@ dependency_graph::InAttr<unsigned> a_targetLength, a_randomSeed;
 dependency_graph::InAttr<float> a_transitionProbability;
 
 dependency_graph::State compute(dependency_graph::Values& values) {
-	values.set(a_outAnim, values.get(a_mgraph).randomWalk(values.get(a_targetLength), values.get(a_transitionProbability), values.get(a_randomSeed)));
+	if(!values.get(a_mgraph).empty())
+		values.set(a_outAnim, values.get(a_mgraph).randomWalk(values.get(a_targetLength), values.get(a_transitionProbability), values.get(a_randomSeed)));
+	else
+		values.set(a_outAnim, anim::Animation());
 
 	return dependency_graph::State();
 }

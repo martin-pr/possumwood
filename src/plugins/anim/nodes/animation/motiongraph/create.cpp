@@ -80,7 +80,12 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 	}
 
 	// make a motion graph out of this
-	values.set(a_mgraph, anim::MotionGraph(values.get(a_inAnim), values.get(a_mmap).localMinima()));
+	const anim::Animation& input = values.get(a_inAnim);
+
+	if(!input.empty())
+		values.set(a_mgraph, anim::MotionGraph(input, values.get(a_mmap).localMinima()));
+	else
+		values.set(a_mgraph, anim::MotionGraph());
 
 	return dependency_graph::State();
 }

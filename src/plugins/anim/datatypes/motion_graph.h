@@ -11,6 +11,8 @@ class MotionGraph {
 		MotionGraph();
 		MotionGraph(const Animation& a, const std::vector<std::pair<std::size_t, std::size_t>>& transitions);
 
+		bool empty() const;
+
 		anim::Animation randomWalk(std::size_t targetFrameCount, float transitionProbability = 0.1, std::size_t seed = 0) const;
 
 		bool operator ==(const MotionGraph& mgraph) const;
