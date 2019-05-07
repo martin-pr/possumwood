@@ -4,6 +4,8 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextBrowser>
 
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/editor.h>
@@ -39,6 +41,10 @@ class MainWindow : public QMainWindow {
 		QStatusBar* m_statusBar;
 		QLabel* m_statusIcon;
 		QLabel* m_statusText;
+		QPushButton* m_statusDetail;
+
+		QDialog* m_statusDialog;
+		QTextBrowser* m_statusContent;
 
 		SearchableMenu* m_newNodeMenu;
 };

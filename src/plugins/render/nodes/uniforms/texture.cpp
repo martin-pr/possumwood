@@ -49,8 +49,8 @@ template<typename PIXMAP>
 void init(possumwood::Metadata& meta, Params<PIXMAP>& params) {
 	meta.addAttribute(params.a_name, "name", std::string("image"));
 	meta.addAttribute(params.a_value, "value");
-	meta.addAttribute(params.a_inUniforms, "in_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::Metadata::kVertical);
-	meta.addAttribute(params.a_outUniforms, "out_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::Metadata::kVertical);
+	meta.addAttribute(params.a_inUniforms, "in_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(params.a_outUniforms, "out_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(params.a_name, params.a_outUniforms);
 	meta.addInfluence(params.a_value, params.a_outUniforms);

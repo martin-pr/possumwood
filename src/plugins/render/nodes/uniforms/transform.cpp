@@ -63,8 +63,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_translation, "translation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_rotation, "rotation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_scale, "scale", Imath::Vec3<float>(1, 1, 1));
-	meta.addAttribute(a_inUniforms, "in_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::Metadata::kVertical);
-	meta.addAttribute(a_outUniforms, "out_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::Metadata::kVertical);
+	meta.addAttribute(a_inUniforms, "in_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outUniforms, "out_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_name, a_outUniforms);
 	meta.addInfluence(a_translation, a_outUniforms);

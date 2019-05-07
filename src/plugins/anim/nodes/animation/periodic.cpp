@@ -17,21 +17,20 @@
 
 namespace {
 
-dependency_graph::InAttr<std::shared_ptr<const anim::Animation>> a_inAnim;
+dependency_graph::InAttr<anim::Animation> a_inAnim;
 dependency_graph::InAttr<unsigned> a_startFrame;
 dependency_graph::InAttr<unsigned> a_endFrame;
 dependency_graph::InAttr<unsigned> a_repetitions;
 
-dependency_graph::OutAttr<std::shared_ptr<const anim::Animation>> a_outAnim;
+dependency_graph::OutAttr<anim::Animation> a_outAnim;
 
 std::pair<unsigned, unsigned> startAndEndFrame(const dependency_graph::Values& vals, unsigned frameCount) {
+	frameCount = std::max(frameCount, 1u);
+
 	unsigned startFrame = vals.get(a_startFrame);
 	unsigned endFrame = vals.get(a_endFrame);
 
-	startFrame = std::max(0u, startFrame);
 	startFrame = std::min(startFrame, frameCount-1);
-
-	endFrame = std::max(0u, endFrame);
 	endFrame = std::min(endFrame, frameCount-1);
 
 	if(startFrame > endFrame)
@@ -43,7 +42,7 @@ std::pair<unsigned, unsigned> startAndEndFrame(const dependency_graph::Values& v
 class Editor : public possumwood::Editor {
 	public:
 		Editor() {
-			m_widget = new anim::MotionMap();
+			m_widget = new anim::ui::MotionMap();
 
 			m_lineX = new QGraphicsLineItem();
 			m_widget->scene()->addItem(m_lineX);
@@ -63,7 +62,7 @@ class Editor : public possumwood::Editor {
 				timeChanged(t);
 			});
 
-			QObject::connect(m_widget, &anim::MotionMap::mousePress, [this](QMouseEvent* event) {
+			QObject::connect(m_widget, &anim::ui::MotionMap::mousePress, [this](QMouseEvent* event) {
 				if(event->button() == Qt::LeftButton) {
 					const QPointF scenePos = m_widget->mapToScene(event->pos());
 					if(scenePos.x() >= 0.0f && scenePos.x() < (float)m_widget->width() &&
@@ -75,7 +74,7 @@ class Editor : public possumwood::Editor {
 				}
 			});
 
-			QObject::connect(m_widget, &anim::MotionMap::mouseMove, [this](QMouseEvent* event) {
+			QObject::connect(m_widget, &anim::ui::MotionMap::mouseMove, [this](QMouseEvent* event) {
 				if(event->buttons() & Qt::LeftButton) {
 					const QPointF scenePos = m_widget->mapToScene(event->pos());
 					if(scenePos.x() >= 0.0f && scenePos.x() < (float)m_widget->width() &&
@@ -131,20 +130,20 @@ class Editor : public possumwood::Editor {
 				QPixmap pixmap;
 				m_fps = 0.0f;
 
-				std::shared_ptr<const anim::Animation> anim = values().get(a_inAnim);
-				if(anim != nullptr && !anim->frames.empty()) {
-					m_widget->init(*anim);
+				anim::Animation anim = values().get(a_inAnim);
+				if(!anim.empty()) {
+					m_widget->init(::anim::MotionMap(anim, ::anim::metric::LocalAngle()));
 
-					m_fps = anim->fps;
+					m_fps = anim.fps();
 				}
 
 				timeChanged(possumwood::App::instance().time());
 			}
 
 			if(attr == a_startFrame || attr == a_endFrame || attr == a_inAnim) {
-				std::shared_ptr<const anim::Animation> anim = values().get(a_inAnim);
-				if(anim != nullptr) {
-					std::pair<unsigned, unsigned> interval = startAndEndFrame(values(), anim->frames.size());
+				anim::Animation anim = values().get(a_inAnim);
+				if(!anim.empty()) {
+					std::pair<unsigned, unsigned> interval = startAndEndFrame(values(), anim.size());
 
 					m_rect->setRect(interval.first, interval.first, interval.second - interval.first, interval.second - interval.first);
 				}
@@ -156,7 +155,7 @@ class Editor : public possumwood::Editor {
 		}
 
 	private:
-		anim::MotionMap* m_widget;
+		anim::ui::MotionMap* m_widget;
 
 		QGraphicsLineItem *m_lineX, *m_lineY;
 		QGraphicsRectItem* m_rect;
@@ -168,25 +167,24 @@ class Editor : public possumwood::Editor {
 dependency_graph::State compute(dependency_graph::Values& values) {
 	auto& anim = values.get(a_inAnim);
 
-	if(anim != nullptr && anim->frames.size() > 0) {
-		std::pair<unsigned, unsigned> interval = startAndEndFrame(values, (unsigned)anim->frames.size());
+	if(!anim.empty()) {
+		std::pair<unsigned, unsigned> interval = startAndEndFrame(values, anim.size());
 
 		// if the interval makes sense
 		if(interval.first != interval.second) {
 			// make a new animation instance
-			std::unique_ptr<anim::Animation> out(new anim::Animation());
-			out->fps = anim->fps;
+			anim::Animation out(anim.fps());
 
 			// root transformation difference between first and last frame =
 			//   the "global delta" transformation between periods
-			const anim::Transform periodRootTr = anim->frames[interval.second][0].tr() * anim->frames[interval.first][0].tr().inverse();
+			const anim::Transform periodRootTr = anim.frame(interval.second)[0].tr() * anim.frame(interval.first)[0].tr().inverse();
 
 			// the difference frame between first and last frame =
 			//   the "local transform difference"
 			//   (inverse multiplication order, because how transforms vs quats work)
-			anim::Skeleton periotTr = anim->frames[interval.second];
+			anim::Skeleton periotTr = anim.frame(interval.second);
 			for(unsigned bi=0;bi<periotTr.size();++bi)
-				periotTr[bi].tr() = anim->frames[interval.first][bi].tr().inverse() * periotTr[bi].tr();
+				periotTr[bi].tr() = anim.frame(interval.first)[bi].tr().inverse() * periotTr[bi].tr();
 
 			// iterate over the entire interval
 			anim::Transform rootTr;
@@ -195,10 +193,10 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 				// compute a frame id inside a single period
 				std::size_t frameId = a % (interval.second - interval.first) + interval.first;
 				// just a safety when the input values are not correct
-				frameId = std::min(frameId, anim->frames.size()-1);
+				frameId = std::min(frameId, anim.size()-1);
 
 				// get the source frame
-				anim::Skeleton fr = anim->frames[frameId];
+				anim::Skeleton fr = anim.frame(frameId);
 
 				// the weight of how much of "delta" should be blended into the "local" frame
 				//   -> from 0.5f to -0.5f through each period, so first and last frame end up
@@ -237,26 +235,26 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 				fr[0].tr() = rootTr * fr[0].tr();
 
 				// and store the result
-				out->frames.push_back(fr);
+				out.addFrame(fr);
 			}
 
-			values.set(a_outAnim, std::shared_ptr<const anim::Animation>(out.release()));
+			values.set(a_outAnim, out);
 		}
 		else
-			values.set(a_outAnim, std::shared_ptr<const anim::Animation>());
+			values.set(a_outAnim, anim::Animation());
 	}
 	else
-		values.set(a_outAnim, std::shared_ptr<const anim::Animation>());
+		values.set(a_outAnim, anim::Animation());
 
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inAnim, "in_anim");
+	meta.addAttribute(a_inAnim, "in_anim", anim::Animation(24.0f), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_startFrame, "start_frame");
 	meta.addAttribute(a_endFrame, "end_frame");
 	meta.addAttribute(a_repetitions, "repetitions", 2u);
-	meta.addAttribute(a_outAnim, "out_anim");
+	meta.addAttribute(a_outAnim, "out_anim", anim::Animation(24.0f), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inAnim, a_outAnim);
 	meta.addInfluence(a_startFrame, a_outAnim);

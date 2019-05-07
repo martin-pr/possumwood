@@ -46,6 +46,10 @@ class GLRenderable : public boost::noncopyable {
 	/// destruction, the data are moved to be held by GLRenderable.
 	VBO updateVertexData(const std::string& attrName = "in_Position");
 
+	/// sets a single uniform value.
+	/// TODO: generalize to other data types
+	void setUniform(const std::string& name, const Imath::V3f& value);
+
   private:
 	struct VBOData {
 		bool needsUpdate = true;
@@ -67,6 +71,7 @@ class GLRenderable : public boost::noncopyable {
 	unsigned m_drawType;
 
 	std::map<std::string, VBOData> m_vbos;
+	std::map<std::string, Imath::V3f> m_uniforms;
 
 	friend class VBO;
 };

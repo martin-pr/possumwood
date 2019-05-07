@@ -47,11 +47,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inFrame, "in_frame");
+	meta.addAttribute(a_inFrame, "in_frame", anim::Skeleton(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_translate, "translate", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_scale, "scale", 1.0f);
 	meta.addAttribute(a_editorData, "rotations");
-	meta.addAttribute(a_outFrame, "out_frame");
+	meta.addAttribute(a_outFrame, "out_frame", anim::Skeleton(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
 	meta.addInfluence(a_editorData, a_outFrame);

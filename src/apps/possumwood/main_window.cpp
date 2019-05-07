@@ -17,6 +17,8 @@
 #include <QToolBar>
 #include <QLabel>
 #include <QInputDialog>
+#include <QDialogButtonBox>
+#include <QScreen>
 
 #include <dependency_graph/values.inl>
 #include <dependency_graph/metadata_register.h>
@@ -531,6 +533,25 @@ MainWindow::MainWindow() : QMainWindow() {
 	m_statusText = new QLabel();
 	m_statusText->setWordWrap(true);
 	m_statusBar->addPermanentWidget(m_statusText, 1);
+
+	m_statusDetail = new QPushButton();
+	m_statusDetail->setText("more...");
+	m_statusDetail->setStyleSheet("padding: 0 3px;");
+	m_statusDetail->setFlat(true);
+	m_statusDetail->setVisible(false);
+	m_statusBar->addPermanentWidget(m_statusDetail, 0);
+
+	m_statusDialog = new QDialog(this);
+	m_statusDialog->resize(qApp->primaryScreen()->size().width() * 3 / 4, qApp->primaryScreen()->size().height() * 3 / 4);
+	QVBoxLayout* diaLayout = new QVBoxLayout(m_statusDialog);
+	// diaLayout->setContentsMargins(0, 0, 0, 0);
+	m_statusContent = new QTextBrowser();
+	diaLayout->addWidget(m_statusContent, 1);
+	QDialogButtonBox* diaButtons = new QDialogButtonBox(QDialogButtonBox::Ok);
+	diaLayout->addWidget(diaButtons, 0);
+
+	connect(diaButtons, &QDialogButtonBox::accepted, m_statusDialog, &QDialog::reject);
+	connect(m_statusDetail, &QPushButton::pressed, m_statusDialog, &QDialog::show);
 }
 
 MainWindow::~MainWindow() {
@@ -595,18 +616,40 @@ void MainWindow::updateStatusBar() {
 
 	if(!errors.empty()) {
 		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-error").pixmap(QSize(16,16)));
+		m_statusContent->setText(errors.c_str());
+
+		auto lineend = errors.find('\n');
+		if(lineend != std::string::npos)
+			errors = errors.substr(0, lineend) + " ...";
+
 		m_statusText->setText(errors.c_str());
+		m_statusDetail->setVisible(lineend != std::string::npos);
 	}
 	else if(!warnings.empty()) {
 		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(QSize(16,16)));
+		m_statusContent->setText(warnings.c_str());
+
+		auto lineend = warnings.find('\n');
+		if(lineend != std::string::npos)
+			warnings = warnings.substr(0, lineend) + " ...";
+
 		m_statusText->setText(warnings.c_str());
+		m_statusDetail->setVisible(lineend != std::string::npos);
 	}
 	else if(!infos.empty()) {
 		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-information").pixmap(QSize(16,16)));
+		m_statusContent->setText(infos.c_str());
+
+		auto lineend = infos.find('\n');
+		if(lineend != std::string::npos)
+			infos = infos.substr(0, lineend) + " ...";
+
 		m_statusText->setText(infos.c_str());
+		m_statusDetail->setVisible(lineend != std::string::npos);
 	}
 	else {
 		m_statusIcon->setPixmap(QPixmap());
 		m_statusText->setText("");
+		m_statusDetail->setVisible(false);
 	}
 }

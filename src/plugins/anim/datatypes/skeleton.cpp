@@ -199,6 +199,12 @@ bool Skeleton::isCompatibleWith(const Skeleton& s) const {
 	return m_hierarchy->isCompatibleWith(*s.m_hierarchy);
 }
 
+void Skeleton::makeConsistentWith(Skeleton& s) {
+	assert(isCompatibleWith(s));
+
+	m_hierarchy = s.m_hierarchy;
+}
+
 Skeleton Skeleton::operator *(const Imath::M44f& m) const {
 	Skeleton result = *this;
 	result *= m;

@@ -290,14 +290,15 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 				colour = possumwood::Colours::get(attr.type());
 
 			node_editor::Port::Orientation ori = node_editor::Port::Orientation::kHorizontal;
-			if(attr.flags() & possumwood::Metadata::kVertical)
+			if(possumwood::AttrFlags(attr.flags()) & possumwood::AttrFlags::kVertical)
 				ori = node_editor::Port::Orientation::kVertical;
 
 			newNode.addPort(node_editor::Node::PortDefinition {
 				attr.name().c_str(),
 				attr.category() == dependency_graph::Attr::kInput ? node_editor::Port::Type::kInput : node_editor::Port::Type::kOutput,
 				QColor(colour[0]*255, colour[1]*255, colour[2]*255),
-				ori
+				ori,
+				!(possumwood::AttrFlags(attr.flags()) & possumwood::AttrFlags::kHidden)
 			});
 		}
 	}

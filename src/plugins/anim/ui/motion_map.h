@@ -4,8 +4,9 @@
 #include <QGraphicsPixmapItem>
 
 #include "datatypes/animation.h"
+#include "datatypes/motion_map.h"
 
-namespace anim {
+namespace anim { namespace ui {
 
 class MotionMap : public QGraphicsView {
 	Q_OBJECT
@@ -13,8 +14,9 @@ class MotionMap : public QGraphicsView {
 	public:
 		MotionMap();
 
-		void init(const anim::Animation& a);
-		void init(const anim::Animation& ax, const anim::Animation& ay);
+		void init(const ::anim::MotionMap& mmap);
+
+		void setPixel(std::size_t x, std::size_t y, const QColor& color);
 
 		std::size_t width() const;
 		std::size_t height() const;
@@ -30,11 +32,16 @@ class MotionMap : public QGraphicsView {
 		virtual void mouseReleaseEvent(QMouseEvent* mouseEvent) override;
 		virtual void wheelEvent(QWheelEvent* mouseEvent) override;
 
+		virtual void paintEvent(QPaintEvent *event) override;
+
 	private:
 		QGraphicsScene* m_scene;
 		QGraphicsPixmapItem* m_pixmap;
 
 		QPoint m_mousePos;
+
+		QImage m_image;
+		bool m_imageChanged;
 };
 
-}
+} }

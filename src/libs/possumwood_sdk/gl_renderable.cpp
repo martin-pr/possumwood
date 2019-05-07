@@ -136,6 +136,10 @@ GLRenderable::VBO GLRenderable::updateVertexData(const std::string& attrName) {
 	return GLRenderable::VBO(this, attrName);
 }
 
+void GLRenderable::setUniform(const std::string& name, const Imath::V3f& value) {
+	m_uniforms[name] = value;
+}
+
 void GLRenderable::draw(const Imath::M44f& projection, const Imath::M44f& modelview) {
 	if(!m_vbos.empty()) {
 		// initialisation, only to be done first time around
@@ -150,7 +154,15 @@ void GLRenderable::draw(const Imath::M44f& projection, const Imath::M44f& modelv
 		// use the VAO
 		glBindVertexArray(m_vao);
 
+		// use the program
 		glUseProgram(m_program);
+
+		// apply all uniforms
+		for(auto uniform : m_uniforms) {
+			GLint attr = glGetUniformLocation(m_program, uniform.first.c_str());
+			if(attr >= 0)
+				glUniform3fv(attr, 1, reinterpret_cast<float*>(&uniform.second));
+		}
 
 		// update the VBOs, if needed
 		const std::size_t size = m_vbos.begin()->second.data.size();

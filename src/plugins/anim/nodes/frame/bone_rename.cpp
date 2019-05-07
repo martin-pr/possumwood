@@ -38,9 +38,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inSkeleton, "in_skeleton");
+	meta.addAttribute(a_inSkeleton, "in_skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_regex, "regex", std::string(".*"));
-	meta.addAttribute(a_outSkeleton, "out_skeleton");
+	meta.addAttribute(a_outSkeleton, "out_skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inSkeleton, a_outSkeleton);
 	meta.addInfluence(a_regex, a_outSkeleton);

@@ -16,7 +16,7 @@ add_library(psw_anim SHARED ${sources} ${headers_moc})
 
 install(TARGETS psw_anim DESTINATION lib)
 
-target_link_libraries(psw_anim psw_cgal ${LIBS} possumwood_sdk)
+target_link_libraries(psw_anim psw_cgal ${LIBS} possumwood_sdk tbb)
 
 #####
 

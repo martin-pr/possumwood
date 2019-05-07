@@ -52,7 +52,7 @@ bool FrameEditorData::operator!=(const FrameEditorData& d) const {
 }
 
 std::ostream& operator << (std::ostream& out, const FrameEditorData& d) {
-	std::cout << "(frame editor data)";
+	out << "(frame editor data)";
 	return out;
 }
 

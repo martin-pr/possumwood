@@ -95,12 +95,18 @@ class Skeleton {
 		bool operator != (const Skeleton& skel) const;
 
 	protected:
+		/// makes two skeletons share the same hierarchy structure (assumes isCompatibleWith() == true).
+		/// Used by the Animation class.
+		void makeConsistentWith(Skeleton& s);
+
 	private:
 		// exists only so I can return references to joints, not instances
 		std::vector<Joint> m_joints;
 		// stores the hierachy of joints, shared between all "compatible" skeleton instances
 		// (instances whose poses can be directly assigned).
 		std::shared_ptr<Hierarchy> m_hierarchy;
+
+	friend class Animation;
 };
 
 std::ostream& operator << (std::ostream& out, const Skeleton& skel);

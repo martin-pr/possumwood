@@ -176,15 +176,15 @@ namespace {
 			throw std::runtime_error("MOTION section should contain with Frame Time: keyword, " + tokenizer.current().value + " found instead.");
 		if(tokenizer.next().value != "Time:")
 			throw std::runtime_error("MOTION section should contain with Frame Time: keyword, " + tokenizer.current().value + " found instead.");
-		anim.fps = 1.0f / boost::lexical_cast<float>(tokenizer.next().value);
+		anim.setFps(1.0f / boost::lexical_cast<float>(tokenizer.next().value));
 
 		// read the frame data
 		for(unsigned f=0;f<frameCount;++f) {
 			// make a new frame
-			anim.frames.push_back(skeleton);
+			anim::Skeleton frame = skeleton;
 
 			// reset it to identity
-			for(auto& j : anim.frames.back())
+			for(auto& j : frame)
 				j.tr() = anim::Transform();
 
 			// and process all joints
@@ -196,10 +196,13 @@ namespace {
 					tr *= makeTransform(boost::lexical_cast<float>(tokenizer.next().value), ch);
 
 				const unsigned targetId = joints[ji].targetId;
-				anim.frames.back()[targetId].tr() = skeleton[targetId].tr() * tr;
+				frame[targetId].tr() = skeleton[targetId].tr() * tr;
 
 				++ji;
 			}
+
+			// and add it to the animation
+			anim.addFrame(frame);
 		}
 
 		tokenizer.next();
@@ -236,7 +239,7 @@ namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<anim::Skeleton> a_skel;
-dependency_graph::OutAttr<std::shared_ptr<const anim::Animation>> a_anim;
+dependency_graph::OutAttr<anim::Animation> a_anim;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State out;
@@ -247,7 +250,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		std::ifstream in(filename.filename().string());
 
 		std::vector<Joint> joints;
-		std::shared_ptr<anim::Animation> result(new anim::Animation);
+		anim::Animation result;
 		anim::Skeleton skeleton;
 
 		BvhTokenizer tokenizer(in);
@@ -258,16 +261,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				skeleton = convertHierarchy(joints);
 			}
 			else if(tokenizer.current().value == "MOTION")
-				readMotion(tokenizer, *result, joints, skeleton);
+				readMotion(tokenizer, result, joints, skeleton);
 			else
 				throw std::runtime_error("unknown keyword " + tokenizer.current().value);
 		}
 
 		data.set(a_skel, skeleton);
-		data.set(a_anim, std::shared_ptr<const anim::Animation>(result));
+		data.set(a_anim, anim::Animation(result));
 	}
 	else {
-		data.set(a_anim, std::shared_ptr<const anim::Animation>());
+		data.set(a_anim, anim::Animation());
 		out.addError("Cannot load filename " + filename.filename().string());
 	}
 
@@ -278,8 +281,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
 		"BVH files (*.bvh)",
 	}));
-	meta.addAttribute(a_anim, "anim");
-	meta.addAttribute(a_skel, "skeleton");
+	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_anim, "anim", anim::Animation(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_anim);
 	meta.addInfluence(a_filename, a_skel);

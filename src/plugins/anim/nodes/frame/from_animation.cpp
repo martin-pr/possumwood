@@ -8,7 +8,7 @@
 
 namespace {
 
-dependency_graph::InAttr<std::shared_ptr<const anim::Animation>> a_anim;
+dependency_graph::InAttr<anim::Animation> a_anim;
 dependency_graph::InAttr<float> a_time;
 dependency_graph::OutAttr<anim::Skeleton> a_frame;
 
@@ -16,16 +16,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State out;
 
 	const float time = data.get(a_time);
-	std::shared_ptr<const anim::Animation> anim = data.get(a_anim);
+	anim::Animation anim = data.get(a_anim);
 
-	if(anim && !anim->frames.empty()) {
-		const int frameId = time * anim->fps;
+	if(!anim.empty()) {
+		const int frameId = time * anim.fps();
 		if(frameId < 0)
-			data.set(a_frame, anim->frames.front());
-		else if(frameId >= (int)anim->frames.size())
-			data.set(a_frame, anim->frames.back());
+			data.set(a_frame, anim.front());
+		else if(frameId >= (int)anim.size())
+			data.set(a_frame, anim.back());
 		else
-			data.set(a_frame, anim->frames[frameId]);
+			data.set(a_frame, anim.frame(frameId));
 	}
 	else
 		data.set(a_frame, anim::Skeleton());
@@ -34,9 +34,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_anim, "animation");
+	meta.addAttribute(a_anim, "animation", anim::Animation(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_time, "time");
-	meta.addAttribute(a_frame, "frame");
+	meta.addAttribute(a_frame, "frame", anim::Skeleton(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_anim, a_frame);
 	meta.addInfluence(a_time, a_frame);

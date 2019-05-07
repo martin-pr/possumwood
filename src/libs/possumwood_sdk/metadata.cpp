@@ -32,6 +32,14 @@ Metadata::Metadata(const std::string& nodeType) : dependency_graph::Metadata(nod
 Metadata::~Metadata() {
 }
 
+void Metadata::addAttribute(dependency_graph::InAttr<void>& in, const std::string& name, AttrFlags flags) {
+	dependency_graph::Metadata::addAttribute(in, name, static_cast<unsigned>(flags));
+}
+
+void Metadata::addAttribute(dependency_graph::OutAttr<void>& in, const std::string& name, AttrFlags flags) {
+	dependency_graph::Metadata::addAttribute(in, name, static_cast<unsigned>(flags));
+}
+
 void Metadata::setDrawable(std::function<dependency_graph::State(const dependency_graph::Values&, const possumwood::ViewportState&)> fn) {
 	m_drawableFactory = [fn](dependency_graph::Values&& vals) {
 		return std::unique_ptr<possumwood::Drawable>(

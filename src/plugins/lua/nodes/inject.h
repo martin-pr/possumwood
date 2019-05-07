@@ -47,9 +47,9 @@ struct Inject {
 
 		meta.addAttribute(s_params.a_name, "name", std::string("constant"));
 		meta.addAttribute(s_params.a_value, "value", T());
-		meta.addAttribute(s_params.a_inContext, "in_context", possumwood::lua::Context(), possumwood::Metadata::kVertical);
+		meta.addAttribute(s_params.a_inContext, "in_context", possumwood::lua::Context(), possumwood::AttrFlags::kVertical);
 
-		meta.addAttribute(s_params.a_outContext, "out_context", possumwood::lua::Context(), possumwood::Metadata::kVertical);
+		meta.addAttribute(s_params.a_outContext, "out_context", possumwood::lua::Context(), possumwood::AttrFlags::kVertical);
 
 		meta.addInfluence(s_params.a_name, s_params.a_outContext);
 		meta.addInfluence(s_params.a_value, s_params.a_outContext);
