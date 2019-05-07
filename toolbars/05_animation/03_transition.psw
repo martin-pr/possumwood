@@ -25,9 +25,21 @@
             "out_port": "anim"
         },
         {
+            "in_node": "transform_4",
+            "in_port": "in_anim",
+            "out_node": "bvh_4",
+            "out_port": "anim"
+        },
+        {
             "in_node": "random_walk_0",
             "in_port": "motion_graph",
             "out_node": "create_0",
+            "out_port": "motion_graph"
+        },
+        {
+            "in_node": "random_walk_1",
+            "in_port": "motion_graph",
+            "out_node": "create_1",
             "out_port": "motion_graph"
         },
         {
@@ -43,9 +55,21 @@
             "out_port": "frame"
         },
         {
+            "in_node": "display_2",
+            "in_port": "skeleton",
+            "out_node": "from_animation_2",
+            "out_port": "frame"
+        },
+        {
             "in_node": "from_animation_0",
             "in_port": "animation",
             "out_node": "random_walk_0",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "from_animation_2",
+            "in_port": "animation",
+            "out_node": "random_walk_1",
             "out_port": "out_anim"
         },
         {
@@ -58,6 +82,12 @@
             "in_node": "from_animation_1",
             "in_port": "time",
             "out_node": "time_1",
+            "out_port": "time"
+        },
+        {
+            "in_node": "from_animation_2",
+            "in_port": "time",
+            "out_node": "time_2",
             "out_port": "time"
         },
         {
@@ -82,6 +112,12 @@
             "in_node": "y_project_3",
             "in_port": "in_anim",
             "out_node": "transform_3",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "y_project_4",
+            "in_port": "in_anim",
+            "out_node": "transform_4",
             "out_port": "out_anim"
         },
         {
@@ -130,6 +166,12 @@
             "in_node": "transition_2",
             "in_port": "anim_b",
             "out_node": "y_project_3",
+            "out_port": "out_anim"
+        },
+        {
+            "in_node": "create_1",
+            "in_port": "in_anim",
+            "out_node": "y_project_4",
             "out_port": "out_anim"
         }
     ],
@@ -190,6 +232,20 @@
             },
             "type": "anim/loaders/bvh"
         },
+        "bvh_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -793.032104492188,
+                    "y": -6.62101459503174
+                }
+            },
+            "name": "bvh",
+            "ports": {
+                "filename": "$EXAMPLES/accad_mocap/Male2_Extended_1.bvh"
+            },
+            "type": "anim/loaders/bvh"
+        },
         "create_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -202,6 +258,22 @@
             "ports": {
                 "remove_self_transitions": 50,
                 "transition_count": 400,
+                "transition_length": 10
+            },
+            "type": "anim/animation/motiongraph/create"
+        },
+        "create_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -576.695373535156,
+                    "y": 521.614318847656
+                }
+            },
+            "name": "motiongraph",
+            "ports": {
+                "remove_self_transitions": 50,
+                "transition_count": 100,
                 "transition_length": 10
             },
             "type": "anim/animation/motiongraph/create"
@@ -242,6 +314,24 @@
             },
             "type": "anim/frame/display"
         },
+        "display_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -424.911529541016,
+                    "y": 1112.41784667969
+                }
+            },
+            "name": "display",
+            "ports": {
+                "colour": {
+                    "x": 0.0,
+                    "y": 1.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/frame/display"
+        },
         "from_animation_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -264,6 +354,17 @@
             "name": "from_animation",
             "type": "anim/frame/from_animation"
         },
+        "from_animation_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -469.891815185547,
+                    "y": 953.822387695312
+                }
+            },
+            "name": "from_animation",
+            "type": "anim/frame/from_animation"
+        },
         "random_walk_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -277,6 +378,22 @@
                 "random_seed": 9813,
                 "target_length": 1000,
                 "transition_probability": 0.100000001490116
+            },
+            "type": "anim/animation/motiongraph/random_walk"
+        },
+        "random_walk_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -565.186096191406,
+                    "y": 723.688415527344
+                }
+            },
+            "name": "random_walk",
+            "ports": {
+                "random_seed": 9813,
+                "target_length": 1000,
+                "transition_probability": 0.5
             },
             "type": "anim/animation/motiongraph/random_walk"
         },
@@ -297,6 +414,17 @@
                 "value": {
                     "x": 390.199523925781,
                     "y": 653.322448730469
+                }
+            },
+            "name": "time",
+            "type": "time"
+        },
+        "time_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -562.25634765625,
+                    "y": 976.716552734375
                 }
             },
             "name": "time",
@@ -380,6 +508,30 @@
                 "value": {
                     "x": 559.955810546875,
                     "y": -132.096313476562
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": 0.00999999977648258,
+                "translation": {
+                    "x": 0.0,
+                    "y": -1.0,
+                    "z": 0.0
+                }
+            },
+            "type": "anim/animation/transform"
+        },
+        "transform_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -665.954895019531,
+                    "y": 119.369941711426
                 }
             },
             "name": "transform",
@@ -501,6 +653,20 @@
                 "ground_level": 0.0
             },
             "type": "anim/animation/trajectory/y_project"
+        },
+        "y_project_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -566.391967773438,
+                    "y": 359.912567138672
+                }
+            },
+            "name": "y_project",
+            "ports": {
+                "ground_level": 0.0
+            },
+            "type": "anim/animation/trajectory/y_project"
         }
     },
     "scene_config": {
@@ -509,5 +675,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACTgAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADAPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADAAAAAJgBAAADAAAAAQAAAagAAAMA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABAQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABcAAAAf4AAACGAQAAAwAAAnAAAAMAAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKKAAADAPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADAAAAAJgBAAADAAAAAQAAAagAAAMA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABAQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABcAAAAf4AAACGAQAAAwAAAncAAAMAAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
