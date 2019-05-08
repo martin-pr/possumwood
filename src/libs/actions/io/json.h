@@ -11918,7 +11918,7 @@ class basic_json
               locale's decimal point is used instead of `.` to work with the
               locale-dependent converters.
         */
-        token_type scan_number()
+        token_type scan_number()  // lgtm [cpp/use-of-goto]
         {
             // reset yytext to store the number's bytes
             reset();
