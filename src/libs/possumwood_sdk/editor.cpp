@@ -2,9 +2,12 @@
 
 #include <dependency_graph/node.h>
 
+#include <QVBoxLayout>
+
 namespace possumwood {
 
 Editor::Editor() {
+	setLayout(new QVBoxLayout(this));
 }
 
 Editor::~Editor() {

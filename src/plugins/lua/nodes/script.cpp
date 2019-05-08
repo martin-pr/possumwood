@@ -26,7 +26,7 @@ class Editor : public possumwood::SourceEditor {
 			m_varsButton = new QPushButton("Globals");
 			buttonsLayout()->insertWidget(0, m_varsButton);
 
-			widget()->connect(m_varsButton, &QPushButton::pressed, [this]() {
+			connect(m_varsButton, &QPushButton::pressed, [this]() {
 				// lazily populate variable list on first click
 				if(m_popup == nullptr)
 					populateVariableList();

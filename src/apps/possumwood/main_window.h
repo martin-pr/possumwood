@@ -36,7 +36,7 @@ class MainWindow : public QMainWindow {
 		Adaptor* m_adaptor;
 		Properties* m_properties;
 		TimelineWidget* m_timeline;
-		std::unique_ptr<possumwood::Editor> m_editor;
+		possumwood::Editor* m_editor;
 
 		QStatusBar* m_statusBar;
 		QLabel* m_statusIcon;

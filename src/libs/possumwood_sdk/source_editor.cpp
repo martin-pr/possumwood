@@ -12,9 +12,8 @@
 namespace possumwood {
 
 SourceEditor::SourceEditor(dependency_graph::InAttr<std::string>& src) : m_src(&src), m_blockedSignals(false) {
-	m_widget = new QWidget();
-
-	QVBoxLayout* layout = new QVBoxLayout(m_widget);
+	QVBoxLayout* layout = dynamic_cast<QVBoxLayout*>(this->layout());
+	assert(layout != nullptr);
 
 	m_editor = new QPlainTextEdit();
 	layout->addWidget(m_editor, 1);
@@ -32,11 +31,11 @@ SourceEditor::SourceEditor(dependency_graph::InAttr<std::string>& src) : m_src(&
 	QWidget* spacer = new QWidget();
 	m_buttonsLayout->addWidget(spacer, 1);
 
-	QAction* applyAction = new QAction(m_widget);
+	QAction* applyAction = new QAction(this);
 	applyAction->setText("Apply (CTRL+Return)");
-	applyAction->setIcon(m_widget->style()->standardIcon(QStyle::SP_DialogOkButton));
+	applyAction->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
 	applyAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Return));
-	m_widget->addAction(applyAction);
+	addAction(applyAction);
 
 	QObject::connect(applyAction, &QAction::triggered, [this]() {
 		m_blockedSignals = true;
@@ -58,10 +57,6 @@ SourceEditor::SourceEditor(dependency_graph::InAttr<std::string>& src) : m_src(&
 }
 
 SourceEditor::~SourceEditor() {
-}
-
-QWidget* SourceEditor::widget() {
-	return m_widget;
 }
 
 void SourceEditor::valueChanged(const dependency_graph::Attr& attr) {
