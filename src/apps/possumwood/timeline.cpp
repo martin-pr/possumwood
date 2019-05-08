@@ -90,7 +90,7 @@ void Timeline::setRange(std::pair<float, float> range) {
 
 	m_value = std::min(std::max(m_value, m_range.first), m_range.second);
 
-	repaint();
+	update();
 }
 
 const std::pair<float, float>& Timeline::range() const {
@@ -100,7 +100,7 @@ const std::pair<float, float>& Timeline::range() const {
 void Timeline::setValue(float val) {
 	m_value = std::min(std::max(val, m_range.first), m_range.second);
 
-	repaint();
+	update();
 }
 
 float Timeline::value() const {
