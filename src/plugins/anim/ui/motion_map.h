@@ -12,7 +12,7 @@ class MotionMap : public QGraphicsView {
 	Q_OBJECT
 
 	public:
-		MotionMap();
+		MotionMap(QWidget* parent);
 
 		void init(const ::anim::MotionMap& mmap);
 

@@ -4,10 +4,11 @@
 #include <QGraphicsWidget>
 #include <QWidget>
 #include <QScrollBar>
+#include <QLayout>
 
 namespace anim { namespace ui {
 
-MotionMap::MotionMap() : m_pixmap(new QGraphicsPixmapItem()), m_imageChanged(false) {
+MotionMap::MotionMap(QWidget* parent) : QGraphicsView(parent), m_pixmap(new QGraphicsPixmapItem()), m_imageChanged(false) {
 	m_scene = new QGraphicsScene(this);
 	setScene(m_scene);
 

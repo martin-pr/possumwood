@@ -47,7 +47,7 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 
 }
 
-MainWindow::MainWindow() : QMainWindow() {
+MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 	possumwood::App::instance().setMainWindow(this);
 
 	QWidget* centralWidget = new QWidget();
@@ -99,6 +99,12 @@ MainWindow::MainWindow() : QMainWindow() {
 
 				// instantiate the editor
 				{
+					if(m_editor != nullptr) {
+						m_editor->deleteLater();
+						m_editor = nullptr;
+					}
+
+
 					unsigned editorCounter = 0;
 					for(auto& n : selection.nodes()) {
 						const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
@@ -111,23 +117,19 @@ MainWindow::MainWindow() : QMainWindow() {
 						editorWidget->setAlignment(Qt::AlignCenter);
 						editorWidget->setMinimumHeight(100);
 						editorDock->setWidget(editorWidget);
-
-						m_editor.reset();
 					}
 					else if(editorCounter > 1) {
 						QLabel* editorWidget = new QLabel("More than one editable node selected");
 						editorWidget->setAlignment(Qt::AlignCenter);
 						editorWidget->setMinimumHeight(100);
 						editorDock->setWidget(editorWidget);
-
-						m_editor.reset();
 					}
 					else {
 						for(auto& n : selection.nodes()) {
 							const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
 							if(meta != nullptr && meta->hasEditor()) {
-								m_editor = meta->createEditor(n);
-								editorDock->setWidget(m_editor->widget());
+								m_editor = meta->createEditor(n).release();
+								editorDock->setWidget(m_editor);
 							}
 						}
 					}

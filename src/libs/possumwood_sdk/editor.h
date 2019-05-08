@@ -1,14 +1,18 @@
 #pragma once
 
+#include <QWidget>
+
+// avoid problems with Qt's foreach macro, conflicting with boost
+#ifdef foreach
+#undef foreach
+#endif
+
 #include <vector>
 
-#include <boost/noncopyable.hpp>
 #include <boost/signals2.hpp>
 
 #include <dependency_graph/attr.h>
 #include <dependency_graph/values.h>
-
-class QWidget;
 
 namespace possumwood {
 
@@ -16,13 +20,10 @@ class Metadata;
 class Node;
 
 /// A simple class allowing to edit a Node's values using a custom widget.
-class Editor : public boost::noncopyable {
+class Editor : public QWidget {
 	public:
 		Editor();
-		virtual ~Editor() = 0;
-
-		/// should be reimplemented to return the QWidget held by this Editor
-		virtual QWidget* widget() = 0;
+		virtual ~Editor();
 
 	protected:
 		/// callback for changes of values of associated node

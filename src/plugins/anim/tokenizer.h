@@ -8,6 +8,11 @@
 
 #include "lexical_cast.h"
 
+// working around Qt's ugly
+#ifdef emit
+#undef emit
+#endif
+
 namespace anim {
 
 /// a passive tokenizer class built on std::functions to do the main work - makes the code C++-like
@@ -30,34 +35,34 @@ class Tokenizer : public boost::noncopyable {
 		};
 
 		Tokenizer(std::istream& in);
-		
+
 		// true if nothing more is to be read
 		bool eof() const;
-		
+
 		// reads a next token and returns it
 		const Token& next();
 		// returns the current token
 		const Token& current() const;
-	
+
 	protected:
 		class State final : public boost::noncopyable {
 			public:
 				State(Tokenizer* parent);
-				
+
 				State& operator = (const std::function<void(char)>& parser);
 
 				void setActive();
-				
+
 			private:
 				Tokenizer* m_parent;
 				std::function<void(char)> m_parse;
 
 			friend class Tokenizer;
 		};
-		
+
 		// emit current token (on exit, of course)
 		void emit(bool acceptEmptyTokens = false);
-		
+
 		// accepts a character (can be case-converted if needed)
 		void accept(char c);
 		// accepts a string (multiple characters at the same time - usable for hash-bangs)
@@ -67,7 +72,7 @@ class Tokenizer : public boost::noncopyable {
 
 		// returns the currently processed token
 		const std::string currentToken() const;
-	
+
 	private:
 		std::istream& m_input;
 

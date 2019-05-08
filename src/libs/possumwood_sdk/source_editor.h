@@ -12,8 +12,6 @@ class SourceEditor : public possumwood::Editor {
 		SourceEditor(dependency_graph::InAttr<std::string>& src);
 		virtual ~SourceEditor();
 
-		virtual QWidget* widget() override;
-
 	protected:
 		QHBoxLayout* buttonsLayout() const;
 		QPlainTextEdit* editorWidget() const;
@@ -23,7 +21,6 @@ class SourceEditor : public possumwood::Editor {
 	private:
 		dependency_graph::InAttr<std::string>* m_src;
 
-		QWidget* m_widget;
 		QHBoxLayout* m_buttonsLayout;
 
 		QPlainTextEdit* m_editor;

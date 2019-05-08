@@ -10,6 +10,7 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QMouseEvent>
+#include <QLayout>
 
 #include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
@@ -26,7 +27,8 @@ dependency_graph::OutAttr<anim::Animation> a_outAnim;
 class Editor : public possumwood::Editor {
 	public:
 		Editor() {
-			m_widget = new anim::ui::MotionMap();
+			m_widget = new anim::ui::MotionMap(this);
+			layout()->addWidget(m_widget);
 
 			m_lineX = new QGraphicsLineItem();
 			m_widget->scene()->addItem(m_lineX);
@@ -71,10 +73,6 @@ class Editor : public possumwood::Editor {
 
 		virtual ~Editor() {
 			m_timeConnection.disconnect();
-		}
-
-		virtual QWidget* widget() override {
-			return m_widget;
 		}
 
 	protected:

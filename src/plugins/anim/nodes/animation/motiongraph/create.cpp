@@ -10,6 +10,7 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QMouseEvent>
+#include <QLayout>
 
 #include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
@@ -25,14 +26,9 @@ dependency_graph::OutAttr<anim::MotionGraph> a_mgraph;
 
 class Editor : public possumwood::Editor {
 	public:
-		Editor() : m_widget(nullptr) {
-		}
-
-		virtual QWidget* widget() override {
-			if(!m_widget)
-				m_widget = new anim::ui::MotionMap();
-
-			return m_widget;
+		Editor() {
+			m_widget = new anim::ui::MotionMap(this);
+			layout()->addWidget(m_widget);
 		}
 
 	protected:
@@ -40,9 +36,6 @@ class Editor : public possumwood::Editor {
 			QPixmap pixmap;
 
 			const anim::MotionMap& mmap = values().get(a_mmap);
-
-			// make sure widget is initialised
-			widget();
 
 			// draw the motion map
 			m_widget->init(mmap);
