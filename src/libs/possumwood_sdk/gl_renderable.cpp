@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include "gl.h"
+
 namespace possumwood {
 
 namespace {
@@ -46,6 +48,8 @@ GLRenderable::GLRenderable(GLenum drawType, const std::string& vertexShaderSrc,
 }
 
 GLRenderable::~GLRenderable() {
+	GL_CHECK_ERR;
+
 	if(m_vertexShader != 0)
 		glDeleteShader(m_vertexShader);
 
@@ -61,9 +65,13 @@ GLRenderable::~GLRenderable() {
 
 	if(m_vao != 0)
 		glDeleteVertexArrays(1, &m_vao);
+
+	GL_CHECK_ERR;
 }
 
 void GLRenderable::initialise() {
+	GL_CHECK_ERR;
+
 	// make sure nothing is initialised - this should be run only once
 	assert(m_vao == 0);
 	assert(m_program == 0);
@@ -113,9 +121,13 @@ void GLRenderable::initialise() {
 	glUseProgram(m_program);
 
 	glBindVertexArray(0);
+
+	GL_CHECK_ERR;
 }
 
 void GLRenderable::updateVBO(GLuint index, VBOData& data) {
+	GL_CHECK_ERR;
+
 	assert(data.needsUpdate);
 
 	// generate the buffer, if needed
@@ -130,6 +142,8 @@ void GLRenderable::updateVBO(GLuint index, VBOData& data) {
 	glEnableVertexAttribArray(index);
 
 	data.needsUpdate = false;
+
+	GL_CHECK_ERR;
 }
 
 GLRenderable::VBO GLRenderable::updateVertexData(const std::string& attrName) {
@@ -142,6 +156,8 @@ void GLRenderable::setUniform(const std::string& name, const Imath::V3f& value) 
 
 void GLRenderable::draw(const Imath::M44f& projection, const Imath::M44f& modelview) {
 	if(!m_vbos.empty()) {
+		GL_CHECK_ERR;
+
 		// initialisation, only to be done first time around
 		if(m_vao == 0) {
 			assert(m_program == 0);
@@ -151,11 +167,30 @@ void GLRenderable::draw(const Imath::M44f& projection, const Imath::M44f& modelv
 			initialise();
 		}
 
-		// use the VAO
-		glBindVertexArray(m_vao);
+		assert(m_vao != 0);
+		assert(m_program != 0);
+		assert(m_vertexShader != 0);
+		assert(m_fragmentShader != 0);
+
+		GL_CHECK_ERR;
 
 		// use the program
 		glUseProgram(m_program);
+
+		GL_CHECK_ERR;
+
+		// upload the projection and modelview uniforms
+		GLint projectionLoc = glGetUniformLocation(m_program, "in_Projection");
+		assert(projectionLoc != -1);
+		glUniformMatrix4fv(projectionLoc, 1, false, projection.getValue());
+
+		GL_CHECK_ERR;
+
+		GLint modelviewLoc = glGetUniformLocation(m_program, "in_Modelview");
+		assert(modelviewLoc != -1);
+		glUniformMatrix4fv(modelviewLoc, 1, false, modelview.getValue());
+
+		GL_CHECK_ERR;
 
 		// apply all uniforms
 		for(auto uniform : m_uniforms) {
@@ -164,13 +199,22 @@ void GLRenderable::draw(const Imath::M44f& projection, const Imath::M44f& modelv
 				glUniform3fv(attr, 1, reinterpret_cast<float*>(&uniform.second));
 		}
 
+		GL_CHECK_ERR;
+
+		// use the VAO
+		glBindVertexArray(m_vao);
+
+		GL_CHECK_ERR;
+
 		// update the VBOs, if needed
 		const std::size_t size = m_vbos.begin()->second.data.size();
 		{
 			GLuint counter = 0;
 			for(auto& vbo : m_vbos) {
-				if(vbo.second.needsUpdate)
+				if(vbo.second.needsUpdate) {
 					updateVBO(counter, vbo.second);
+					assert(!vbo.second.needsUpdate);
+				}
 				++counter;
 
 				assert(vbo.second.VBOId != 0);
@@ -179,22 +223,21 @@ void GLRenderable::draw(const Imath::M44f& projection, const Imath::M44f& modelv
 			assert(counter == m_vbos.size());
 		}
 
-		// upload the projection and modelview uniforms
-		GLint projectionLoc = glGetUniformLocation(m_program, "in_Projection");
-		assert(projectionLoc != -1);
-		glUniformMatrix4fv(projectionLoc, 1, false, projection.getValue());
-
-		GLint modelviewLoc = glGetUniformLocation(m_program, "in_Modelview");
-		assert(modelviewLoc != -1);
-		glUniformMatrix4fv(modelviewLoc, 1, false, modelview.getValue());
+		GL_CHECK_ERR;
 
 		// do the drawing
 		glDrawArrays(m_drawType, 0, size);
 
-		glUseProgram(0);
+		GL_CHECK_ERR;
 
 		// and unbind the vertex array
 		glBindVertexArray(0);
+
+		GL_CHECK_ERR;
+
+		glUseProgram(0);
+
+		GL_CHECK_ERR;
 	}
 }
 

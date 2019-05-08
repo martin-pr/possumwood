@@ -2,6 +2,8 @@
 #include <string>
 #include <stdexcept>
 
+#include <GL/glew.h>
+
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
@@ -70,6 +72,10 @@ int main(int argc, char* argv[]) {
 			// way higher than currently supported - will fall back to highest
 			format.setVersion(6, 0);
 			format.setProfile(QSurfaceFormat::CoreProfile);
+
+			#ifndef NDEBUG
+			format.setOption(QSurfaceFormat::DebugContext);
+			#endif
 
 			format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
 
