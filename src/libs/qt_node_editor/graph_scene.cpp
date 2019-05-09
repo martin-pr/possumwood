@@ -166,7 +166,7 @@ QPointF GraphScene::findConnectionPoint(QPointF pos, Port::Type portType) const 
 void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 	if(mouseEvent->button() == Qt::LeftButton) {
 		Port* port = findItem<Port>(itemAt(mouseEvent->scenePos(), QTransform()));
-		if(port) {
+		if(port && port->inActiveRegion(mouseEvent->scenePos())) {
 			QPointF pos = port->connectionPoint();
 
 			m_editedEdge->setVisible(true);
@@ -177,7 +177,7 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 			mouseEvent->accept();
 		}
 
-		if(!port) {
+		else {
 			m_editedEdge->setVisible(false);
 
 			m_leftMouseDown = true;
