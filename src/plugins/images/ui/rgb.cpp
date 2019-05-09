@@ -109,7 +109,7 @@ ColourWidget::~ColourWidget() {
 void ColourWidget::setColour(const QColor& c) {
 	m_colour = c;
 
-	repaint();
+	update();
 }
 
 void ColourWidget::paintEvent(QPaintEvent *event) {

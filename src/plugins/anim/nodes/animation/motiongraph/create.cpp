@@ -49,7 +49,7 @@ class Editor : public possumwood::Editor {
 				m_widget->setPixel(m.first, m.second+1, QColor(255, 0, 0));
 			}
 
-			m_widget->repaint();
+			m_widget->update();
 		}
 
 	private:
