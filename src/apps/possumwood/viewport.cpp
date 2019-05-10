@@ -1,5 +1,3 @@
-#include <GL/glew.h>
-
 #include "viewport.h"
 
 #include <cassert>
@@ -11,6 +9,7 @@
 #include <possumwood_sdk/gl.h>
 
 #include "gl_init.h"
+#include "gl_debug.h"
 
 Viewport::Viewport(QWidget* parent)
     : QOpenGLWidget(parent), m_sceneDistance(10), m_sceneRotationX(30),
@@ -59,24 +58,12 @@ Imath::V3f eyePosition(float sceneRotX, float sceneRotY, float sceneDist) {
 	return eye;
 }
 
-#ifndef NDEBUG
-void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
-                                GLsizei length, const GLchar* message, const void* userParam) {
-	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-	        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), type, severity,
-	        message);
-}
-#endif
-
 }
 
 void Viewport::paintGL() {
-
-	// During init, enable debug output
+	// in debug mode, create a scoped "debug" object, turning on OpenGL debugging
 	#ifndef NDEBUG
-	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(MessageCallback, 0);
-	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	GlDebug scoped_gl_debug;
 	#endif
 
 	GL_CHECK_ERR;
@@ -102,10 +89,6 @@ void Viewport::paintGL() {
 	emit render(dt);
 
 	GL_CHECK_ERR;
-
-	#ifndef NDEBUG
-	glDisable(GL_DEBUG_OUTPUT);
-	#endif
 }
 
 void Viewport::resizeGL(int w, int h) {
