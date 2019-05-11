@@ -158,4 +158,10 @@ QPointF Port::connectionPoint() const {
 		return m_out->mapToScene(m_out->boundingRect().center());
 }
 
+bool Port::inActiveRegion(const QPointF& position) const {
+	float width = std::min(boundingRect().height(), boundingRect().width());
+
+	return (position - connectionPoint()).manhattanLength() < width;
+}
+
 }  // namespace node_editor

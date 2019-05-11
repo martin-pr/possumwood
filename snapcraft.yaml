@@ -34,6 +34,7 @@ build-packages:
   - libopenimageio-dev
   - libglfw3-dev
   - libpng-dev
+  - libtbb-dev
 
 apps:
   possumwood:
@@ -230,7 +231,7 @@ parts:
       # - libswresample2
       # - libswscale4
       # - libsz2
-      # - libtbb2
+      - libtbb2
       # - libthai0
       # - libtheora0
       # - libtiff5

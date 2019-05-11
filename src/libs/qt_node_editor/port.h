@@ -35,6 +35,7 @@ class Port : public QGraphicsItem {
 		void setRect(const QRectF& rect);
 
 		QPointF connectionPoint() const;
+		bool inActiveRegion(const QPointF& position) const;
 
 		float circleSize() const;
 

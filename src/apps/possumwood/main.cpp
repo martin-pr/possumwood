@@ -2,8 +2,6 @@
 #include <string>
 #include <stdexcept>
 
-#include <GL/glew.h>
-
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
