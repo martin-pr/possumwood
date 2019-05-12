@@ -55,7 +55,7 @@ const std::string& vertexShaderSource() {
 class Drawable : public possumwood::Drawable {
   public:
 	Drawable(dependency_graph::Values&& vals)
-	    : possumwood::Drawable(std::move(vals)), m_renderable(GL_POINTS, vertexShaderSource(), fragmentShaderSource()) {
+	    : possumwood::Drawable(std::move(vals)), m_points(GL_POINTS, vertexShaderSource(), fragmentShaderSource()), m_lines(GL_LINES, vertexShaderSource(), fragmentShaderSource()) {
 	}
 
 	~Drawable() {
@@ -72,16 +72,19 @@ class Drawable : public possumwood::Drawable {
 
 			const anim::Constraints& constraints = values().get(a_constraints);
 
-			std::size_t totalCount = 0;
-			for(auto& c : constraints)
-				totalCount += c.second.size();
+			std::size_t pointCount = 0, lineCount = 0;
+			for(auto& c : constraints) {
+				pointCount += c.second.size();
+				for(auto& i : c.second)
+					lineCount += i.endFrame() - i.startFrame();
+			}
 
 			{
-				auto vbo = m_renderable.updateVertexData();
+				auto vbo = m_points.updateVertexData();
 
-				if(totalCount > 0) {
+				if(pointCount > 0) {
 
-					vbo.data.resize(totalCount);
+					vbo.data.resize(pointCount);
 
 					std::size_t ctr = 0;
 					for(auto& c : constraints)
@@ -95,13 +98,37 @@ class Drawable : public possumwood::Drawable {
 					vbo.data.clear();
 			}
 
+			{
+				auto vbo = m_lines.updateVertexData();
+
+				if(lineCount > 0) {
+
+					vbo.data.resize(lineCount * 2);
+
+					std::size_t ctr = 0;
+					for(auto& c : constraints)
+						for(auto& i : c.second)
+							for(std::size_t fr=i.startFrame(); fr<i.endFrame(); ++fr) {
+								vbo.data[ctr] = c.second.frames()[fr].tr().translation;
+								++ctr;
+								vbo.data[ctr] = c.second.frames()[fr+1].tr().translation;
+								++ctr;
+							}
+					assert(ctr == lineCount * 2);
+				}
+				else
+					vbo.data.clear();
+			}
+
 			GL_CHECK_ERR;
 
-			m_renderable.setUniform("colour", values().get(a_colour));
+			m_points.setUniform("colour", values().get(a_colour));
+			m_lines.setUniform("colour", values().get(a_colour));
 
 			GL_CHECK_ERR;
 
-			m_renderable.draw(viewport().projection(), viewport().modelview());
+			m_points.draw(viewport().projection(), viewport().modelview());
+			m_lines.draw(viewport().projection(), viewport().modelview());
 
 			GL_CHECK_ERR;
 		}
@@ -112,7 +139,7 @@ class Drawable : public possumwood::Drawable {
 	}
 
   private:
-	possumwood::GLRenderable m_renderable;
+	possumwood::GLRenderable m_points, m_lines;
 
 	boost::signals2::connection m_timeChangedConnection;
 };
