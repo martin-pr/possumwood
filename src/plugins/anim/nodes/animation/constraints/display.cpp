@@ -64,46 +64,47 @@ class Drawable : public possumwood::Drawable {
 	dependency_graph::State draw() {
 		GL_CHECK_ERR;
 
-		glEnable(GL_POINT_SPRITE);
-		glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-
-		const anim::Constraints& constraints = values().get(a_constraints);
-
-		std::size_t totalCount = 0;
-		for(auto& c : constraints)
-			totalCount += c.second.size();
-
 		{
-			auto vbo = m_renderable.updateVertexData();
+			// possumwood::ScopedEnable sprite(GL_POINT_SPRITE); // removed in 3.2
+			possumwood::ScopedEnable point_size(GL_VERTEX_PROGRAM_POINT_SIZE);
 
-			if(totalCount > 0) {
+			GL_CHECK_ERR;
 
-				vbo.data.resize(totalCount);
+			const anim::Constraints& constraints = values().get(a_constraints);
 
-				std::size_t ctr = 0;
-				for(auto& c : constraints)
-					for(auto& i : c.second) {
-						vbo.data[ctr] = i.origin().translation;
+			std::size_t totalCount = 0;
+			for(auto& c : constraints)
+				totalCount += c.second.size();
 
-						++ctr;
-					}
+			{
+				auto vbo = m_renderable.updateVertexData();
+
+				if(totalCount > 0) {
+
+					vbo.data.resize(totalCount);
+
+					std::size_t ctr = 0;
+					for(auto& c : constraints)
+						for(auto& i : c.second) {
+							vbo.data[ctr] = i.origin().translation;
+
+							++ctr;
+						}
+				}
+				else
+					vbo.data.clear();
 			}
-			else
-				vbo.data.clear();
+
+			GL_CHECK_ERR;
+
+			m_renderable.setUniform("colour", values().get(a_colour));
+
+			GL_CHECK_ERR;
+
+			m_renderable.draw(viewport().projection(), viewport().modelview());
+
+			GL_CHECK_ERR;
 		}
-
-		GL_CHECK_ERR;
-
-		m_renderable.setUniform("colour", values().get(a_colour));
-
-		GL_CHECK_ERR;
-
-		m_renderable.draw(viewport().projection(), viewport().modelview());
-
-		GL_CHECK_ERR;
-
-		glDisable(GL_POINT_SPRITE);
-		glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
 		GL_CHECK_ERR;
 

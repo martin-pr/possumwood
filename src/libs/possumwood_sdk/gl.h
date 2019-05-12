@@ -2,9 +2,20 @@
 
 #include <string>
 
+#include <boost/noncopyable.hpp>
+
 namespace possumwood {
 
 void glCheckError(const std::string& file, unsigned line);
+
+class ScopedEnable : public boost::noncopyable {
+	public:
+		ScopedEnable(unsigned id);
+		~ScopedEnable();
+
+	private:
+		unsigned m_id;
+};
 
 }
 
