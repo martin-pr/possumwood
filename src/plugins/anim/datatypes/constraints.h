@@ -29,11 +29,13 @@ class Constraints {
 		class Frame {
 			public:
 				const anim::Transform& tr() const;
+				float value() const;
 
 			private:
-				Frame(const anim::Transform& tr);
+				Frame(const anim::Transform& tr, float value);
 
 				anim::Transform m_tr;
+				float m_constraintValue;
 
 			friend class Channel;
 			friend class Constraints;
@@ -76,6 +78,8 @@ class Constraints {
 			private:
 				Frames();
 
+				void clear();
+
 				std::vector<Frame> m_frames;
 
 			friend class Channel;
@@ -97,6 +101,8 @@ class Constraints {
 
 			private:
 				Channel(Constraints* parent);
+
+				void clear();
 
 				/// Adds a new constraint to the channel. All constraints should be non-overlapping.
 				void addConstraint(std::size_t startFrame, std::size_t endFrame, const anim::Transform& origin);

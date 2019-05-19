@@ -39,6 +39,11 @@ void Constraints::Channel::addConstraint(std::size_t startFrame, std::size_t end
 	m_values.push_back(Constraint(origin, startFrame, endFrame));
 }
 
+void Constraints::Channel::clear() {
+	m_values.clear();
+	m_frames.clear();
+}
+
 Constraints::Channel::const_iterator Constraints::Channel::begin() const {
 	return m_values.begin();
 }
@@ -65,16 +70,24 @@ bool Constraints::Channel::operator != (const Channel& c) const {
 
 ////
 
+Constraints::Frame::Frame(const anim::Transform& tr, float value) : m_tr(tr), m_constraintValue(value) {
+}
+
 const anim::Transform& Constraints::Frame::tr() const {
 	return m_tr;
 }
 
-Constraints::Frame::Frame(const anim::Transform& tr) : m_tr(tr) {
+float Constraints::Frame::value() const {
+	return m_constraintValue;
 }
 
 ////
 
 Constraints::Frames::Frames() {
+}
+
+void Constraints::Frames::clear() {
+	m_frames.clear();
 }
 
 const Constraints::Frame& Constraints::Frames::operator[](std::size_t index) const {
@@ -190,6 +203,19 @@ anim::Transform average(const std::vector<Constraints::Frame>& tr, std::size_t s
 	return anim::Transform(rotation.normalized(), translation / (float)(end-start+1));
 }
 
+std::size_t findJointId(const std::string& name, const anim::Animation& anim) {
+	assert(!anim.empty());
+
+	std::size_t jointId = std::numeric_limits<std::size_t>::max();
+	for(auto& j : anim.frame(0))
+		if(j.name() == name)
+			jointId = j.index();
+	if(jointId == std::numeric_limits<std::size_t>::max())
+		throw std::runtime_error("Joint '" + name + "' not found in the animation data!");
+
+	return jointId;
+}
+
 }
 
 void Constraints::addVelocityConstraint(const std::string& jointName, float velocityThreshold) {
@@ -197,27 +223,26 @@ void Constraints::addVelocityConstraint(const std::string& jointName, float velo
 		throw std::runtime_error("Cannot detect constraints - animation data is empty.");
 
 	// find the joint ID
-	std::size_t jointId = std::numeric_limits<std::size_t>::max();
-	for(auto& j : m_anim->frame(0))
-		if(j.name() == jointName)
-			jointId = j.index();
-	if(jointId == std::numeric_limits<std::size_t>::max())
-		throw std::runtime_error("Joint '" + jointName + "' not found in the animation data!");
+	const std::size_t jointId = findJointId(jointName, *m_anim);
 
 	std::map<std::string, Channel>::iterator cit = m_channels.insert(std::make_pair(jointName, Channel(this))).first;
 	Channel& channel = cit->second;
+	cit->second.clear();
 
 	// extract the transforms in world space
 	Frames& frames = channel.m_frames;
 	for(auto& fr : *m_anim)
-		frames.m_frames.push_back(fr[jointId].world());
+		frames.m_frames.push_back(Frame(fr[jointId].world(), 0.0f));
 
 	// simple velocity thresholding, with averaging of the world space transform to derive the position of the constraint
 	std::size_t begin = std::numeric_limits<std::size_t>::max();
 	std::size_t end = 0;
 
 	for(std::size_t frameIndex=0; frameIndex < frames.size(); ++frameIndex) {
-		if(velocity(frames.m_frames, frameIndex, m_anim->fps()).length() < velocityThreshold) {
+		const float currentVelocity = velocity(frames.m_frames, frameIndex, m_anim->fps()).length();
+		frames.m_frames[frameIndex].m_constraintValue = currentVelocity / velocityThreshold;
+
+		if(currentVelocity < velocityThreshold) {
 			if(begin > end)
 				begin = frameIndex;
 			end = frameIndex;
@@ -241,8 +266,12 @@ std::ostream& operator <<(std::ostream& out, const Constraints& c) {
 	if(c.empty())
 		out << "  (empty)" << std::endl;
 
-	for(auto& i : c)
-		out << "  " << i.first << " - " << i.second.size() << " records" << std::endl;
+	for(auto& i : c) {
+		out << "  " << i.first << " -";
+		for(auto& ci : i.second)
+			out << " (" << ci.startFrame() << " - " << ci.endFrame() << ")";
+		out << std::endl;
+	}
 
 	return out;
 }
