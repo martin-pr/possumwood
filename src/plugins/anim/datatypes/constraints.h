@@ -9,7 +9,7 @@
 
 #include <actions/traits.h>
 
-#include "transform.h"
+#include "constraints/frame.h"
 
 namespace anim {
 
@@ -25,21 +25,6 @@ class Constraints {
 		const Constraints& operator = (const Constraints& c);
 
 		class Channel;
-
-		class Frame {
-			public:
-				const anim::Transform& tr() const;
-				float value() const;
-
-			private:
-				Frame(const anim::Transform& tr, float value);
-
-				anim::Transform m_tr;
-				float m_constraintValue;
-
-			friend class Channel;
-			friend class Constraints;
-		};
 
 		class Constraint {
 			public:
@@ -66,9 +51,9 @@ class Constraints {
 
 		class Frames {
 			public:
-				const Frame& operator[](std::size_t index) const;
+				const constraints::Frame& operator[](std::size_t index) const;
 
-				typedef std::vector<Frame>::const_iterator const_iterator;
+				typedef std::vector<constraints::Frame>::const_iterator const_iterator;
 				const_iterator begin() const;
 				const_iterator end() const;
 
@@ -80,7 +65,7 @@ class Constraints {
 
 				void clear();
 
-				std::vector<Frame> m_frames;
+				std::vector<constraints::Frame> m_frames;
 
 			friend class Channel;
 			friend class Constraints;

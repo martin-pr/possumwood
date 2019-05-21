@@ -7,7 +7,7 @@ include_directories(./ ../cgal)
 
 #####
 
-file(GLOB sources *.cpp datatypes/*.cpp ui/*.cpp)
+file(GLOB sources *.cpp datatypes/*.cpp datatypes/*/*.cpp ui/*.cpp)
 file(GLOB_RECURSE headers *.h)
 
 QT5_WRAP_CPP(headers_moc ${headers})

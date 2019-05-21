@@ -70,19 +70,6 @@ bool Constraints::Channel::operator != (const Channel& c) const {
 
 ////
 
-Constraints::Frame::Frame(const anim::Transform& tr, float value) : m_tr(tr), m_constraintValue(value) {
-}
-
-const anim::Transform& Constraints::Frame::tr() const {
-	return m_tr;
-}
-
-float Constraints::Frame::value() const {
-	return m_constraintValue;
-}
-
-////
-
 Constraints::Frames::Frames() {
 }
 
@@ -90,7 +77,7 @@ void Constraints::Frames::clear() {
 	m_frames.clear();
 }
 
-const Constraints::Frame& Constraints::Frames::operator[](std::size_t index) const {
+const constraints::Frame& Constraints::Frames::operator[](std::size_t index) const {
 	assert(index < m_frames.size());
 	return m_frames[index];
 }
@@ -168,7 +155,7 @@ std::size_t Constraints::size() const {
 
 namespace {
 
-Imath::V3f velocity(const std::vector<Constraints::Frame>& source, std::size_t frame, float fps) {
+Imath::V3f velocity(const std::vector<constraints::Frame>& source, std::size_t frame, float fps) {
 	assert(frame < source.size());
 
 	if(source.size() <= 1)
@@ -185,7 +172,7 @@ Imath::V3f velocity(const std::vector<Constraints::Frame>& source, std::size_t f
 		source[frame+1].tr().translation - source[frame].tr().translation) / 2.0f * fps;
 }
 
-anim::Transform average(const std::vector<Constraints::Frame>& tr, std::size_t start, std::size_t end) {
+anim::Transform average(const std::vector<constraints::Frame>& tr, std::size_t start, std::size_t end) {
 	assert(start <= end);
 	assert(end < tr.size());
 
@@ -232,7 +219,7 @@ void Constraints::addVelocityConstraint(const std::string& jointName, float velo
 	// extract the transforms in world space
 	Frames& frames = channel.m_frames;
 	for(auto& fr : *m_anim)
-		frames.m_frames.push_back(Frame(fr[jointId].world(), 0.0f));
+		frames.m_frames.push_back(constraints::Frame(fr[jointId].world(), 0.0f));
 
 	// simple velocity thresholding, with averaging of the world space transform to derive the position of the constraint
 	std::size_t begin = std::numeric_limits<std::size_t>::max();
