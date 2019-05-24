@@ -4,111 +4,15 @@
 
 namespace anim {
 
-const anim::Transform& Constraints::Constraint::origin() const {
-	return m_origin;
-}
-
-std::size_t Constraints::Constraint::startFrame() const {
-	return m_startFrame;
-}
-
-std::size_t Constraints::Constraint::endFrame() const {
-	return m_endFrame;
-}
-
-Constraints::Constraint::Constraint(const anim::Transform& origin, std::size_t start, std::size_t end) : m_origin(origin), m_startFrame(start), m_endFrame(end) {
-	assert(start <= end);
-}
-
-bool Constraints::Constraint::operator == (const Constraint& c) const {
-	return m_origin == c.m_origin && m_startFrame == c.m_startFrame && m_endFrame == c.m_endFrame;
-}
-
-bool Constraints::Constraint::operator != (const Constraint& c) const {
-	return m_origin != c.m_origin || m_startFrame != c.m_startFrame || m_endFrame != c.m_endFrame;
-}
-
-/////
-
-Constraints::Channel::Channel(Constraints* parent) : m_parent(parent) {
-}
-
-void Constraints::Channel::addConstraint(std::size_t startFrame, std::size_t endFrame, const anim::Transform& origin) {
-	assert(m_values.empty() || m_values.back().endFrame() < startFrame);
-
-	m_values.push_back(Constraint(origin, startFrame, endFrame));
-}
-
-void Constraints::Channel::clear() {
-	m_values.clear();
-	m_frames.clear();
-}
-
-Constraints::Channel::const_iterator Constraints::Channel::begin() const {
-	return m_values.begin();
-}
-
-Constraints::Channel::const_iterator Constraints::Channel::end() const {
-	return m_values.end();
-}
-
-std::size_t Constraints::Channel::size() const {
-	return m_values.size();
-}
-
-const Constraints::Frames& Constraints::Channel::frames() const {
-	return m_frames;
-}
-
-bool Constraints::Channel::operator == (const Channel& c) const {
-	return m_values == c.m_values;
-}
-
-bool Constraints::Channel::operator != (const Channel& c) const {
-	return m_values != c.m_values;
-}
-
-////
-
-Constraints::Frames::Frames() {
-}
-
-void Constraints::Frames::clear() {
-	m_frames.clear();
-}
-
-const constraints::Frame& Constraints::Frames::operator[](std::size_t index) const {
-	assert(index < m_frames.size());
-	return m_frames[index];
-}
-
-Constraints::Frames::const_iterator Constraints::Frames::begin() const {
-	return m_frames.begin();
-}
-
-Constraints::Frames::const_iterator Constraints::Frames::end() const {
-	return m_frames.end();
-}
-
-bool Constraints::Frames::empty() const {
-	return m_frames.empty();
-}
-
-std::size_t Constraints::Frames::size() const {
-	return m_frames.size();
-}
-
-////
-
 Constraints::Constraints(const anim::Animation& a) : m_anim(new anim::Animation(a)) {
 }
 
 Constraints::Constraints(const Constraints& c) {
 	for(auto& val : c) {
-		std::map<std::string, Channel>::iterator it = m_channels.insert(std::make_pair(val.first, Channel(this))).first;
-		it->second.m_values = val.second.m_values;
+		std::pair<std::string, constraints::Channel> value = std::make_pair(std::string(val.first), constraints::Channel(this));
 
-		it->second.m_frames = val.second.m_frames;
+		std::map<std::string, constraints::Channel>::iterator it = m_channels.insert(value).first;
+		it->second = val.second;
 	}
 
 	m_anim = c.m_anim;
@@ -118,10 +22,8 @@ const Constraints& Constraints::operator = (const Constraints& c) {
 	m_channels.clear();
 
 	for(auto& val : c) {
-		std::map<std::string, Channel>::iterator it = m_channels.insert(std::make_pair(val.first, Channel(this))).first;
-		it->second.m_values = val.second.m_values;
-
-		it->second.m_frames = val.second.m_frames;
+		std::map<std::string, constraints::Channel>::iterator it = m_channels.insert(std::make_pair(val.first, constraints::Channel(this))).first;
+		it->second = val.second;
 	}
 
 	m_anim = c.m_anim;
@@ -212,12 +114,12 @@ void Constraints::addVelocityConstraint(const std::string& jointName, float velo
 	// find the joint ID
 	const std::size_t jointId = findJointId(jointName, *m_anim);
 
-	std::map<std::string, Channel>::iterator cit = m_channels.insert(std::make_pair(jointName, Channel(this))).first;
-	Channel& channel = cit->second;
+	std::map<std::string, constraints::Channel>::iterator cit = m_channels.insert(std::make_pair(jointName, constraints::Channel(this))).first;
+	constraints::Channel& channel = cit->second;
 	cit->second.clear();
 
 	// extract the transforms in world space
-	Frames& frames = channel.m_frames;
+	constraints::Frames& frames = channel.m_frames;
 	for(auto& fr : *m_anim)
 		frames.m_frames.push_back(constraints::Frame(fr[jointId].world(), 0.0f));
 

@@ -9,7 +9,7 @@
 
 #include <actions/traits.h>
 
-#include "constraints/frame.h"
+#include "constraints/channel.h"
 
 namespace anim {
 
@@ -24,83 +24,7 @@ class Constraints {
 		Constraints(const Constraints& c);
 		const Constraints& operator = (const Constraints& c);
 
-		class Channel;
-
-		class Constraint {
-			public:
-				const anim::Transform& origin() const;
-				std::size_t startFrame() const;
-				std::size_t endFrame() const;
-
-				// typedef boost::iterator_range<std::vector<Frame>::const_iterator> FrameRange;
-				// typedef FrameRange::const_iterator const_iterator;
-				// const_iterator begin() const;
-				// const_iterator end() const;
-
-				bool operator == (const Constraint& c) const;
-				bool operator != (const Constraint& c) const;
-
-			private:
-				Constraint(const anim::Transform& origin, std::size_t start, std::size_t end);
-
-				anim::Transform m_origin;
-				std::size_t m_startFrame, m_endFrame;
-
-			friend class Channel;
-		};
-
-		class Frames {
-			public:
-				const constraints::Frame& operator[](std::size_t index) const;
-
-				typedef std::vector<constraints::Frame>::const_iterator const_iterator;
-				const_iterator begin() const;
-				const_iterator end() const;
-
-				bool empty() const;
-				std::size_t size() const;
-
-			private:
-				Frames();
-
-				void clear();
-
-				std::vector<constraints::Frame> m_frames;
-
-			friend class Channel;
-			friend class Constraints;
-		};
-
-		class Channel {
-			public:
-				typedef std::vector<Constraint>::const_iterator const_iterator;
-				const_iterator begin() const;
-				const_iterator end() const;
-
-				std::size_t size() const;
-
-				const Frames& frames() const;
-
-				bool operator == (const Channel& c) const;
-				bool operator != (const Channel& c) const;
-
-			private:
-				Channel(Constraints* parent);
-
-				void clear();
-
-				/// Adds a new constraint to the channel. All constraints should be non-overlapping.
-				void addConstraint(std::size_t startFrame, std::size_t endFrame, const anim::Transform& origin);
-
-				std::vector<Constraint> m_values;
-				Constraints* m_parent;
-
-				Frames m_frames;
-
-			friend class Constraints;
-		};
-
-		typedef std::map<std::string, Channel>::const_iterator const_iterator;
+		typedef std::map<std::string, constraints::Channel>::const_iterator const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
 
@@ -120,7 +44,7 @@ class Constraints {
 		std::shared_ptr<const anim::Animation> m_anim;
 
 		// joint -> channel (set of non-overlapping constraints)
-		std::map<std::string, Channel> m_channels;
+		std::map<std::string, constraints::Channel> m_channels;
 };
 
 std::ostream& operator <<(std::ostream& out, const Constraints& c);

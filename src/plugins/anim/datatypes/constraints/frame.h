@@ -4,10 +4,11 @@
 
 namespace anim {
 
-class Channel;
 class Constraints;
 
 namespace constraints {
+
+class Channel;
 
 /// A single frame of constraint data.
 /// Transformation represents the position of the constraint (i.e., contact point);
@@ -23,7 +24,7 @@ class Frame {
 		anim::Transform m_tr;
 		float m_constraintValue;
 
-	friend class ::anim::Channel;
+	friend class Channel;
 	friend class ::anim::Constraints;
 };
 
