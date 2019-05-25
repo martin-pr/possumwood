@@ -40,6 +40,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 	});
 
+	std::cout << "Stationary (" << data.get(a_joint) << "):" << std::endl;
+	std::cout << constraints << std::endl;
+	std::cout << std::endl;
 
 	data.set(a_outConstraints, constraints);
 
