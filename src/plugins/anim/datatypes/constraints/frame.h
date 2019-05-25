@@ -16,7 +16,9 @@ class Channel;
 class Frame {
 	public:
 		const anim::Transform& tr() const;
+
 		float value() const;
+		void setValue(const float& value);
 
 	private:
 		Frame(const anim::Transform& tr, float value);

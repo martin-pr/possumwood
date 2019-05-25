@@ -28,6 +28,13 @@ class Constraints {
 		const_iterator begin() const;
 		const_iterator end() const;
 
+		/// Adds a new constraint to the set, for a joint named jointName.
+		/// Frames are pre-filled with world-space transformations of the selected joint.
+		/// If this joint is processed for the first time, all values in constraints are 0.
+		/// Otherwise, the initial value is the value of the previous constraint (and can be changed).
+		/// The constraint value is assumed to be normalized - threshold is hardwired to be 1.0f.
+		void process(const std::string& jointName, std::function<void(constraints::Frames& fr)> fn);
+
 		// detect constraints by world-space velocity thresholding.
 		// TODO: move to a separate header file, to avoid mixing containers and algorithms?
 		void addVelocityConstraint(const std::string& jointName, float velocityThreshold);

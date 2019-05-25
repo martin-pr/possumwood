@@ -16,11 +16,24 @@ const Frame& Frames::operator[](std::size_t index) const {
 	return m_frames[index];
 }
 
+Frame& Frames::operator[](std::size_t index) {
+	assert(index < m_frames.size());
+	return m_frames[index];
+}
+
 Frames::const_iterator Frames::begin() const {
 	return m_frames.begin();
 }
 
 Frames::const_iterator Frames::end() const {
+	return m_frames.end();
+}
+
+Frames::iterator Frames::begin() {
+	return m_frames.begin();
+}
+
+Frames::iterator Frames::end() {
 	return m_frames.end();
 }
 

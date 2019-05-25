@@ -16,10 +16,15 @@ class Channel;
 class Frames {
 	public:
 		const Frame& operator[](std::size_t index) const;
+		Frame& operator[](std::size_t index);
 
 		typedef std::vector<Frame>::const_iterator const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
+
+		typedef std::vector<Frame>::iterator iterator;
+		iterator begin();
+		iterator end();
 
 		bool empty() const;
 		std::size_t size() const;

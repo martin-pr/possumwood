@@ -57,7 +57,7 @@ std::size_t Constraints::size() const {
 
 namespace {
 
-Imath::V3f velocity(const std::vector<constraints::Frame>& source, std::size_t frame, float fps) {
+Imath::V3f velocity(const constraints::Frames& source, std::size_t frame, float fps) {
 	assert(frame < source.size());
 
 	if(source.size() <= 1)
@@ -80,16 +80,23 @@ anim::Transform average(const std::vector<constraints::Frame>& tr, std::size_t s
 
 	Imath::V3f translation(0,0,0);
 	Imath::Quatf rotation(0,0,0,0);
+	float norm = 0.0f;
 	for(std::size_t i=start; i<=end; ++i) {
-		translation += tr[i].tr().translation;
+		assert(tr[i].value() <= 1.0f);
+
+		const float weight = (1.0f-tr[i].value());
+
+		norm += weight;
+
+		translation += tr[i].tr().translation * weight;
 
 		if((rotation ^ tr[i].tr().rotation) > 0)
-			rotation += tr[i].tr().rotation;
+			rotation += tr[i].tr().rotation * weight;
 		else
-			rotation += -tr[i].tr().rotation;
+			rotation += -tr[i].tr().rotation * weight;
 	}
 
-	return anim::Transform(rotation.normalized(), translation / (float)(end-start+1));
+	return anim::Transform(rotation.normalized(), translation / norm);
 }
 
 std::size_t findJointId(const std::string& name, const anim::Animation& anim) {
@@ -107,31 +114,37 @@ std::size_t findJointId(const std::string& name, const anim::Animation& anim) {
 
 }
 
-void Constraints::addVelocityConstraint(const std::string& jointName, float velocityThreshold) {
+void Constraints::process(const std::string& jointName, std::function<void(constraints::Frames& fr)> fn) {
 	if(m_anim == nullptr || m_anim->empty())
 		throw std::runtime_error("Cannot detect constraints - animation data is empty.");
 
 	// find the joint ID
 	const std::size_t jointId = findJointId(jointName, *m_anim);
 
+	// get the frames of the constraint
 	std::map<std::string, constraints::Channel>::iterator cit = m_channels.insert(std::make_pair(jointName, constraints::Channel(this))).first;
 	constraints::Channel& channel = cit->second;
-	cit->second.clear();
 
-	// extract the transforms in world space
-	constraints::Frames& frames = channel.m_frames;
-	for(auto& fr : *m_anim)
-		frames.m_frames.push_back(constraints::Frame(fr[jointId].world(), 0.0f));
+	// if empty, make a new array of world transforms
+	constraints::Frames frames = channel.m_frames;
+	if(frames.empty() || frames.size() != m_anim->size()) {
+		frames.clear();
+		for(auto& fr : *m_anim)
+			frames.m_frames.push_back(constraints::Frame(fr[jointId].world(), 0.0f));
+	}
 
-	// simple velocity thresholding, with averaging of the world space transform to derive the position of the constraint
+	// process the frames
+	fn(frames);
+
+	// and create the constraints
+	channel.m_frames = frames;
+	channel.m_values.clear();
+
 	std::size_t begin = std::numeric_limits<std::size_t>::max();
 	std::size_t end = 0;
 
 	for(std::size_t frameIndex=0; frameIndex < frames.size(); ++frameIndex) {
-		const float currentVelocity = velocity(frames.m_frames, frameIndex, m_anim->fps()).length();
-		frames.m_frames[frameIndex].m_constraintValue = currentVelocity / velocityThreshold;
-
-		if(currentVelocity < velocityThreshold) {
+		if(frames.m_frames[frameIndex].m_constraintValue < 1.0f) {
 			if(begin > end)
 				begin = frameIndex;
 			end = frameIndex;
@@ -147,6 +160,15 @@ void Constraints::addVelocityConstraint(const std::string& jointName, float velo
 
 	if(begin <= end)
 		channel.addConstraint(begin, end, average(frames.m_frames, begin, end));
+}
+
+void Constraints::addVelocityConstraint(const std::string& jointName, float velocityThreshold) {
+	process(jointName, [&](constraints::Frames& frames) {
+		for(std::size_t frameIndex=0; frameIndex < frames.size(); ++frameIndex) {
+			const float currentVelocity = velocity(frames, frameIndex, m_anim->fps()).length();
+			frames[frameIndex].setValue(currentVelocity / velocityThreshold);
+		}
+	});
 }
 
 std::ostream& operator <<(std::ostream& out, const Constraints& c) {

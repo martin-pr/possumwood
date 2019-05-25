@@ -13,4 +13,8 @@ float Frame::value() const {
 	return m_constraintValue;
 }
 
+void Frame::setValue(const float& value) {
+	m_constraintValue = value;
+}
+
 } }
