@@ -35,15 +35,14 @@ class Constraints {
 		/// The constraint value is assumed to be normalized - threshold is hardwired to be 1.0f.
 		void process(const std::string& jointName, std::function<void(constraints::Frames& fr)> fn);
 
-		// detect constraints by world-space velocity thresholding.
-		// TODO: move to a separate header file, to avoid mixing containers and algorithms?
-		void addVelocityConstraint(const std::string& jointName, float velocityThreshold);
-
 		bool empty() const;
 		std::size_t size() const;
 
 		bool operator == (const Constraints& c) const;
 		bool operator != (const Constraints& c) const;
+
+		/// returns a reference to the source animation
+		const anim::Animation& anim() const;
 
 	private:
 		// source animation - shared ptr, because it doesn't need to be copied or changed.

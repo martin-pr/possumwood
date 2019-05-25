@@ -55,24 +55,12 @@ std::size_t Constraints::size() const {
 	return m_channels.size();
 }
 
-namespace {
-
-Imath::V3f velocity(const constraints::Frames& source, std::size_t frame, float fps) {
-	assert(frame < source.size());
-
-	if(source.size() <= 1)
-		return Imath::V3f(0, 0, 0);
-
-	else if(frame == 0)
-		return (source[1].tr().translation - source[0].tr().translation) * fps;
-
-	else if(frame == source.size()-1)
-		return (source[source.size()-1].tr().translation - source[source.size()-2].tr().translation) * fps;
-
-	// frames in the middle - average velocity from previous and next frame differential
-	return (source[frame].tr().translation - source[frame-1].tr().translation +
-		source[frame+1].tr().translation - source[frame].tr().translation) / 2.0f * fps;
+const anim::Animation& Constraints::anim() const {
+	assert(m_anim != nullptr);
+	return *m_anim;
 }
+
+namespace {
 
 anim::Transform average(const std::vector<constraints::Frame>& tr, std::size_t start, std::size_t end) {
 	assert(start <= end);
@@ -160,15 +148,6 @@ void Constraints::process(const std::string& jointName, std::function<void(const
 
 	if(begin <= end)
 		channel.addConstraint(begin, end, average(frames.m_frames, begin, end));
-}
-
-void Constraints::addVelocityConstraint(const std::string& jointName, float velocityThreshold) {
-	process(jointName, [&](constraints::Frames& frames) {
-		for(std::size_t frameIndex=0; frameIndex < frames.size(); ++frameIndex) {
-			const float currentVelocity = velocity(frames, frameIndex, m_anim->fps()).length();
-			frames[frameIndex].setValue(currentVelocity / velocityThreshold);
-		}
-	});
 }
 
 std::ostream& operator <<(std::ostream& out, const Constraints& c) {
