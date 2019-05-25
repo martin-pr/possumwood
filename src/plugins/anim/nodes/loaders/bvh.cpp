@@ -49,11 +49,65 @@ namespace {
 		private:
 	};
 
+	enum Channel {
+		kUnknown = 0,
+		kXposition = 1,
+		kYposition = 2,
+		kZposition = 4,
+		kXrotation = 8,
+		kYrotation = 16,
+		kZrotation = 32
+	};
+
+	class Channels {
+		public:
+			Channels() : m_total(0) {
+			}
+
+			typedef std::vector<Channel>::const_iterator const_iterator;
+			const_iterator begin() const {
+				return m_channels.begin();
+			}
+
+			const_iterator end() const {
+				return m_channels.end();
+			}
+
+			void add(Channel c) {
+				m_channels.push_back(c);
+				m_total |= static_cast<unsigned>(c);
+			}
+
+			bool contains(Channel c) const {
+				return static_cast<unsigned>(m_total) & static_cast<unsigned>(c);
+			}
+
+		private:
+			std::vector<Channel> m_channels;
+			unsigned m_total;
+	};
+
+	Channel strToChannel(const std::string& str) {
+		if(str == "Xposition")
+			return kXposition;
+		else if(str == "Yposition")
+			return kYposition;
+		else if(str == "Zposition")
+			return kZposition;
+		else if(str == "Xrotation")
+			return kXrotation;
+		else if(str == "Yrotation")
+			return kYrotation;
+		else if(str == "Zrotation")
+			return kZrotation;
+		return kUnknown;
+	}
+
 	struct Joint {
 		std::string name;
 		Imath::V3f offset;
 		int parent;
-		std::vector<std::string> channels;
+		Channels channels;
 
 		unsigned targetId;
 	};
@@ -69,12 +123,18 @@ namespace {
 		return Imath::V3f(x, y, z);
 	}
 
-	std::vector<std::string> readChannels(anim::Tokenizer& tokenizer) {
-		std::vector<std::string> result;
+	Channels readChannels(anim::Tokenizer& tokenizer) {
+		Channels result;
 
 		unsigned count = boost::lexical_cast<unsigned>(tokenizer.next().value);
-		for(unsigned a=0;a<count;++a)
-			result.push_back(tokenizer.next().value);
+		for(unsigned a=0;a<count;++a) {
+			const std::string str = tokenizer.next().value;
+			Channel tmp = strToChannel(str);
+			if(tmp == kUnknown)
+				throw std::runtime_error("Unrecognized channel '" + str + "'");
+
+			result.add(tmp);
+		}
 
 		tokenizer.next();
 
@@ -136,31 +196,26 @@ namespace {
 		readJointData(tokenizer, joints, -1);
 	}
 
-	anim::Transform makeTransform(float val, const std::string& key) {
-		if(key == "Xposition")
-			return anim::Transform(Imath::V3f(val, 0, 0));
-		else if(key == "Yposition")
-			return anim::Transform(Imath::V3f(0, val, 0));
-		else if(key == "Zposition")
-			return anim::Transform(Imath::V3f(0, 0, val));
+	anim::Transform makeTransform(float val, Channel c) {
+		Imath::Quatf q;
 
-		else if(key == "Xrotation") {
-			Imath::Quatf q;
-			q.setAxisAngle(Imath::V3f(1,0,0), val / 180.0f * M_PI);
-			return anim::Transform(q);
+		switch(c) {
+			case kXposition: return anim::Transform(Imath::V3f(val, 0, 0));
+			case kYposition: return anim::Transform(Imath::V3f(0, val, 0));
+			case kZposition: return anim::Transform(Imath::V3f(0, 0, val));
+
+			case kXrotation:
+				q.setAxisAngle(Imath::V3f(1,0,0), val / 180.0f * M_PI);
+				return anim::Transform(q);
+			case kYrotation:
+				q.setAxisAngle(Imath::V3f(0,1,0), val / 180.0f * M_PI);
+				return anim::Transform(q);
+			case kZrotation:
+				q.setAxisAngle(Imath::V3f(0,0,1), val / 180.0f * M_PI);
+				return anim::Transform(q);
+
+			default: throw std::runtime_error("unknown channel type");
 		}
-		else if(key == "Yrotation") {
-			Imath::Quatf q;
-			q.setAxisAngle(Imath::V3f(0,1,0), val / 180.0f * M_PI);
-			return anim::Transform(q);
-		}
-		else if(key == "Zrotation") {
-			Imath::Quatf q;
-			q.setAxisAngle(Imath::V3f(0,0,1), val / 180.0f * M_PI);
-			return anim::Transform(q);
-		}
-		else
-			throw std::runtime_error("unknown channel type " + key);
 	}
 
 	void readMotion(anim::Tokenizer& tokenizer, anim::Animation& anim, const std::vector<Joint>& joints, const anim::Skeleton& skeleton) {
@@ -196,7 +251,12 @@ namespace {
 					tr *= makeTransform(boost::lexical_cast<float>(tokenizer.next().value), ch);
 
 				const unsigned targetId = joints[ji].targetId;
-				frame[targetId].tr() = skeleton[targetId].tr() * tr;
+
+				// use translation if set explicitly, otherwise use base
+				if(joint.channels.contains(kXposition) || joint.channels.contains(kYposition) || joint.channels.contains(kZposition))
+					frame[targetId].tr() = tr;
+				else
+					frame[targetId].tr() = skeleton[targetId].tr() * tr;
 
 				++ji;
 			}
