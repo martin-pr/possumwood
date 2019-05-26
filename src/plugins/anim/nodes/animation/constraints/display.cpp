@@ -14,6 +14,7 @@ namespace {
 
 dependency_graph::InAttr<anim::Constraints> a_constraints;
 dependency_graph::InAttr<Imath::V3f> a_colour;
+dependency_graph::InAttr<bool> a_showTrajectory, a_showConstrained;
 
 const std::string& fragmentShaderSource() {
 	static const std::string s_source =
@@ -75,8 +76,13 @@ class Drawable : public possumwood::Drawable {
 			std::size_t pointCount = 0, lineCount = 0;
 			for(auto& c : constraints) {
 				pointCount += c.second.size();
-				for(auto& i : c.second)
-					lineCount += i.endFrame() - i.startFrame();
+
+				if(values().get(a_showTrajectory) && !c.second.frames().empty())
+					lineCount += c.second.frames().size() - 1;
+
+				else if(values().get(a_showConstrained))
+					for(auto& i : c.second)
+						lineCount += i.endFrame() - i.startFrame();
 			}
 
 			{
@@ -88,11 +94,8 @@ class Drawable : public possumwood::Drawable {
 
 					std::size_t ctr = 0;
 					for(auto& c : constraints)
-						for(auto& i : c.second) {
-							vbo.data[ctr] = i.origin().translation;
-
-							++ctr;
-						}
+						for(auto& i : c.second)
+							vbo.data[ctr++] = i.origin().translation;
 				}
 				else
 					vbo.data.clear();
@@ -102,18 +105,36 @@ class Drawable : public possumwood::Drawable {
 				auto vbo = m_lines.updateVertexData();
 
 				if(lineCount > 0) {
-
 					vbo.data.resize(lineCount * 2);
 
 					std::size_t ctr = 0;
 					for(auto& c : constraints)
-						for(auto& i : c.second)
-							for(std::size_t fr=i.startFrame(); fr<i.endFrame(); ++fr) {
-								vbo.data[ctr] = c.second.frames()[fr].tr().translation;
-								++ctr;
-								vbo.data[ctr] = c.second.frames()[fr+1].tr().translation;
-								++ctr;
+						if(values().get(a_showTrajectory)) {
+							auto it2 = c.second.frames().begin();
+							auto it = it2;
+							++it2;
+
+							vbo.data[ctr++] = it->tr().translation;
+							++it;
+							++it2;
+
+							while(it2 != c.second.frames().end()) {
+								vbo.data[ctr++] = it->tr().translation;
+								vbo.data[ctr++] = it->tr().translation;
+
+								++it;
+								++it2;
 							}
+							vbo.data[ctr++] = it->tr().translation;
+						}
+
+						else if(values().get(a_showConstrained))
+							for(auto& i : c.second)
+								for(std::size_t fr=i.startFrame(); fr<i.endFrame(); ++fr) {
+									vbo.data[ctr++] = c.second.frames()[fr].tr().translation;
+									vbo.data[ctr++] = c.second.frames()[fr+1].tr().translation;
+								}
+
 					assert(ctr == lineCount * 2);
 				}
 				else
@@ -147,6 +168,8 @@ class Drawable : public possumwood::Drawable {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_constraints, "constraints", anim::Constraints(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_colour, "colour", Imath::V3f(1,1,1));
+	meta.addAttribute(a_showTrajectory, "show_trajectory", false);
+	meta.addAttribute(a_showConstrained, "show_constrained", true);
 
 	meta.setDrawable<Drawable>();
 }
