@@ -36,8 +36,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 240.868041992188,
-                    "y": 175.916687011719
+                    "x": 270.044281005859,
+                    "y": 295.539306640625
                 }
             },
             "name": "walk",
@@ -78,7 +78,7 @@
                 "scale": 0.00999999977648258,
                 "translate": {
                     "x": 0.0,
-                    "y": -1.0,
+                    "y": 0.0,
                     "z": 0.0
                 }
             },
@@ -99,15 +99,15 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 290.151214599609,
-                    "y": 388.014465332031
+                    "x": 319.327453613281,
+                    "y": 450.743408203125
                 }
             },
             "name": "periodic",
             "ports": {
-                "end_frame": 166,
+                "end_frame": 132,
                 "repetitions": 10,
-                "start_frame": 31
+                "start_frame": 64
             },
             "type": "anim/animation/periodic"
         },
@@ -128,6 +128,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACTgAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADAPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADAAAAAJgBAAADAAAAAQAAAagAAAMA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABWAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABxwAAAacAAACGAQAAAwAAAnAAAAMAAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACUwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADAPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADAAAAAJgBAAADAAAAAQAAAagAAAMA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABVwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABxgAAAagAAACCAQAAAwAAAnAAAAMAAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

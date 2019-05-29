@@ -25,9 +25,21 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "display_1",
+            "in_port": "skeleton",
+            "out_node": "edit_1",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "edit_0",
             "in_port": "in_frame",
             "out_node": "from_animation_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "edit_1",
+            "in_port": "in_frame",
+            "out_node": "from_animation_1",
             "out_port": "frame"
         },
         {
@@ -35,18 +47,6 @@
             "in_port": "time",
             "out_node": "time_0",
             "out_port": "time"
-        },
-        {
-            "in_node": "display_1",
-            "in_port": "skeleton",
-            "out_node": "edit_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "edit_1",
-            "in_port": "in_frame",
-            "out_node": "from_animation_1",
-            "out_port": "frame"
         },
         {
             "in_node": "from_animation_1",
@@ -148,7 +148,7 @@
                 "scale": 0.00999999977648258,
                 "translate": {
                     "x": 0.0,
-                    "y": -1.0,
+                    "y": 0.0,
                     "z": 0.0
                 }
             },
@@ -165,7 +165,7 @@
             "name": "edit",
             "ports": {
                 "rotations": null,
-                "scale": 0.100000001490116,
+                "scale": 0.0799999982118607,
                 "translate": {
                     "x": 0.0,
                     "y": 0.0,
@@ -224,6 +224,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACTgAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADAPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADAAAAAJgBAAADAAAAAQAAAagAAAMA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAACQgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACsQAAAL0AAACGAQAAAwAAAnAAAAMAAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACUwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADAPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADAAAAAJgBAAADAAAAAQAAAagAAAMA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABsAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACHwAAAU8AAACGAQAAAwAAAnAAAAMAAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
