@@ -80,6 +80,10 @@ Toolbar::Toolbar() {
 				QToolButton* toolButton = (QToolButton*)tb->widgetForAction(action);
 				toolButton->setAutoRaise(false);
 
+				QFont font = toolButton->font();
+				font.setPointSize(7);
+				toolButton->setFont(font);
+
 				QAction::connect(action, &QAction::triggered, [setupPath]() {
 					try {
 						std::ifstream file(setupPath.string());
