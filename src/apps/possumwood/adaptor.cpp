@@ -303,7 +303,12 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 		}
 	}
 
+	// add the node to the index (uiNode might be null when not displayed)
 	addToIndex(m_index, &node, uiNode);
+
+	// and update its status
+	if(uiNode != nullptr)
+		onStateChanged(node);
 }
 
 namespace {
