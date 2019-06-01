@@ -16,6 +16,14 @@ void glCheckError(const std::string& file, unsigned line) {
 	}
 }
 
+ScopedEnable::ScopedEnable(unsigned id) : m_id(id) {
+	glEnable(id);
+}
+
+ScopedEnable::~ScopedEnable() {
+	glDisable(m_id);
+}
+
 };
 
 #define GL_CHECK_ERR possumwood::glCheckError(__FILE__, __LINE__);

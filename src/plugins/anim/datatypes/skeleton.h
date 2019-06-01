@@ -35,8 +35,12 @@ class Skeleton {
 				Joint& parent();
 				const Joint& parent() const;
 
+				// local space transformation
 				Transform& tr();
 				const Transform& tr() const;
+
+				// compute world space transformation
+				Transform world() const;
 
 				/// returns joint attributes (shared between all hierarchy instances)
 				Attributes& attributes();

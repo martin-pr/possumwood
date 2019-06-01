@@ -62,6 +62,18 @@ const Transform& Skeleton::Joint::tr() const {
 	return m_transformation;
 }
 
+Transform Skeleton::Joint::world() const {
+	Transform result = m_transformation;
+
+	const Skeleton::Joint* jnt = this;
+	while(jnt->hasParent()) {
+		jnt = &jnt->parent();
+		result = jnt->m_transformation * result;
+	}
+
+	return result;
+}
+
 Attributes& Skeleton::Joint::attributes() {
 	return m_skeleton->m_hierarchy->itemAttributes(m_id);
 }
