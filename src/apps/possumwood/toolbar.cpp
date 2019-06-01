@@ -49,7 +49,7 @@ Toolbar::Toolbar() {
 					std::string name = entry.path().filename().stem().string();
 					if(std::regex_match(name, regex))
 						name = name.substr(name.find('_')+1);
-					std::replace(name.begin(), name.end(), '_', ' ');
+					std::replace(name.begin(), name.end(), '_', '\n');
 
 					setups[entry.path().filename()] = name;
 				}
@@ -83,6 +83,8 @@ Toolbar::Toolbar() {
 				QFont font = toolButton->font();
 				font.setPointSize(7);
 				toolButton->setFont(font);
+
+				toolButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 				QAction::connect(action, &QAction::triggered, [setupPath]() {
 					try {
