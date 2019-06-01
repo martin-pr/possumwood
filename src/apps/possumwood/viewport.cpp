@@ -16,6 +16,8 @@ Viewport::Viewport(QWidget* parent)
       m_sceneRotationY(30), m_origin(0, 0, 0), m_mouseX(0), m_mouseY(0) {
 	setMouseTracking(true);
 
+	setFocusPolicy(Qt::ClickFocus);
+
 	GL_CHECK_ERR;
 }
 
