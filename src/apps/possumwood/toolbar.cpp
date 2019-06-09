@@ -66,7 +66,10 @@ Toolbar::Toolbar() {
 					fnss >> index;
 
 					if(index > currentIndex) {
-						tb->addSeparator();
+						QFrame* separator = new QFrame();
+						separator->setMinimumSize(QSize(10, 1));
+						tb->addWidget(separator);
+
 						currentIndex = index;
 					}
 
