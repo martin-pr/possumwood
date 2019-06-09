@@ -66,7 +66,7 @@ float Interval::max() const {
 void Interval::setType(Type t) {
 	if(t == kLog) {
 		m_min = std::max(m_min, s_minLog);
-		m_max = std::max(m_min, s_minLog);
+		m_max = std::max(m_max, s_minLog);
 	}
 
 	m_type = t;
