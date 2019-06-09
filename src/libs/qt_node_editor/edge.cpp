@@ -38,7 +38,9 @@ QPointF evalBezier(qreal t, const QPointF& p0, const QPointF& p1, const QPointF&
 }
 
 
-Edge::Edge(QPointF origin, QPointF target) : m_origin(origin), m_target(target) {
+Edge::Edge(QPointF origin, QPointF target) : m_origin(origin), m_target(target), 
+	m_originDirection(Port::Orientation::kHorizontal), m_targetDirection(Port::Orientation::kHorizontal) {
+
 	setFlags(ItemIsSelectable);
 
 	setPoints(origin, target);
