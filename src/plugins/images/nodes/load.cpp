@@ -32,8 +32,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		std::size_t xres = spec.width;
 		std::size_t yres = spec.height;
 		std::size_t channels = spec.nchannels;
-		if(spec.nchannels != 3)
-			throw std::runtime_error("Error loading " + filename.filename().string() + " - only images with 3 channels are supported at the moment!");
+		if(spec.nchannels != 3 && spec.nchannels != 1)
+			throw std::runtime_error("Error loading " + filename.filename().string() + " - only images with 1 or 3 channels are supported at the moment, " + std::to_string(spec.nchannels) + " found!");
 
 		std::vector<unsigned char> pixels(xres*yres*channels);
 		in->read_image(TypeDesc::UINT8, &pixels[0]);
@@ -41,14 +41,25 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		result = std::shared_ptr<possumwood::LDRPixmap>(new possumwood::LDRPixmap(xres, yres));
 
-		for(std::size_t y=0; y < yres; ++y) {
-			for(std::size_t x=0; x<xres; ++x)
-				(*result)(x, y).setValue(possumwood::LDRPixmap::pixel_t::value_t{{
-					pixels[(x+y*xres)*3],
-					pixels[(x+y*xres)*3+1],
-					pixels[(x+y*xres)*3+2]
-				}});
-		}
+		if(spec.nchannels == 3)
+			for(std::size_t y=0; y < yres; ++y) {
+				for(std::size_t x=0; x<xres; ++x)
+					(*result)(x, y).setValue(possumwood::LDRPixmap::pixel_t::value_t{{
+						pixels[(x+y*xres)*3],
+						pixels[(x+y*xres)*3+1],
+						pixels[(x+y*xres)*3+2]
+					}});
+			}
+
+		if(spec.nchannels == 1)
+			for(std::size_t y=0; y < yres; ++y) {
+				for(std::size_t x=0; x<xres; ++x)
+					(*result)(x, y).setValue(possumwood::LDRPixmap::pixel_t::value_t{{
+						pixels[(x+y*xres)],
+						pixels[(x+y*xres)],
+						pixels[(x+y*xres)]
+					}});
+			}
 	}
 
 	data.set(a_image, std::shared_ptr<const possumwood::LDRPixmap>(result));
@@ -63,7 +74,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
 		"All supported images (*.png *.jpg *.jpeg)",
 		"PNG images (*.png)",
-		"JPG images (*.jpg; *.jpeg)"
+		"JPG images (*.jpg; *.jpeg)",
+		"PGM images (*.pgm)",
 	}));
 	meta.addAttribute(a_image, "image");
 
