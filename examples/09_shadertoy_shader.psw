@@ -30,8 +30,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 171.0,
-                    "y": 517.0
+                    "x": 162.788162231445,
+                    "y": 556.006225585938
                 }
             },
             "name": "background",
@@ -52,8 +52,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 35.0,
-                    "y": 451.0
+                    "x": 20.6292972564697,
+                    "y": 430.470428466797
                 }
             },
             "name": "shader",
@@ -77,8 +77,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 36.0,
-                    "y": 329.0
+                    "x": -13.2709836959839,
+                    "y": 310.523376464844
                 }
             },
             "name": "vertex_shader",
@@ -93,6 +93,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAABAAAAAAAABqkAAAOeAAAAAwAAABkAAAanAAADnAAAAAAAAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHUAAAC//wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAAC/wAAAJgBAAADAAAAAQAAAkYAAAL//AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABDgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABfQAAAfAAAACGAQAAA/sAAAAGAGwAbwBnAAAAArIAAAFXAAAAAAAAAAAAAAKJAAAC/wAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAACAAAAAAAABqUAAAOZAAAABAAAABkAAAajAAADlwAAAAAAAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHUAAAC7/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC7wAAAJgBAAADAAAAAQAAAkYAAALv/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABAQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABdwAAAe0AAACGAQAAA/sAAAAGAGwAbwBnAAAAArIAAAFXAAAAAAAAAAAAAAKEAAAC7wAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

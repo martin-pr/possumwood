@@ -19,6 +19,12 @@
             "out_port": "shader"
         },
         {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
+        },
+        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
@@ -41,12 +47,6 @@
             "in_port": "uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "texture_0",
-            "in_port": "value",
-            "out_node": "load_0",
-            "out_port": "image"
         }
     ],
     "nodes": {
@@ -76,8 +76,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 91.9375,
-                    "y": 891.625
+                    "x": 522.454711914062,
+                    "y": 153.222793579102
                 }
             },
             "name": "float",
@@ -104,8 +104,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -129.4375,
-                    "y": 662.5625
+                    "x": -113.782325744629,
+                    "y": -47.1385612487793
                 }
             },
             "name": "load",
@@ -129,8 +129,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 79.9375,
-                    "y": 704.75
+                    "x": 74.719108581543,
+                    "y": 185.52018737793
                 }
             },
             "name": "texture",
@@ -143,8 +143,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -41.5625038146973,
-                    "y": 905.0625
+                    "x": 373.299499511719,
+                    "y": 211.016616821289
                 }
             },
             "name": "time",
@@ -154,13 +154,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 77.0625,
+                    "x": 74.4533081054688,
                     "y": 430.3125
                 }
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130\n\n// input position from the CPU\nin vec3 position;\n\n// near and far per-vertex world positions, useable for raytracing in the fragment shader\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// do not do any transformation - this should lead to a single quad covering the whole viewport\n\tgl_Position = vec4(position.x, position.y, position.z, 1); \n\t// just pass the near and far positions - they'll get linearly interpolated\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n}\n"
+                "source": "#version 130\n\n// input position from the CPU\nin vec3 P;\n\n// near and far per-vertex world positions, useable for raytracing in the fragment shader\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// do not do any transformation - this should lead to a single quad covering the whole viewport\n\tgl_Position = vec4(P.x, P.y, P.z, 1); \n\t// just pass the near and far positions - they'll get linearly interpolated\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n}\n"
             },
             "type": "render/vertex_shader"
         },
@@ -168,8 +168,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 254.75,
-                    "y": 887.625
+                    "x": 453.048828125,
+                    "y": 368.395172119141
                 }
             },
             "name": "viewport",
@@ -181,6 +181,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAABkAAAQ6AAACNQAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ4AAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAm0AAAMe/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAB0gAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAAUsAAACGAQAAA/sAAAAGAGwAbwBnAQAAAqUAAAFcAAAAAAAAAAAAAAHEAAADHgAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIiAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAhcAAAL5/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAATsAAACGAQAAA/sAAAAGAGwAbwBnAQAAAqUAAAFcAAAAAAAAAAAAAAJwAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }
