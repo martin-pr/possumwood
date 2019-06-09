@@ -1,0 +1,516 @@
+{
+    "connections": [
+        {
+            "in_node": "draw_2",
+            "in_port": "vertex_data",
+            "out_node": "background_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_3",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "uniforms",
+            "out_node": "float_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "draw_3",
+            "in_port": "uniforms",
+            "out_node": "float_2",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_1",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_1",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_1",
+            "in_port": "value",
+            "out_node": "load_1",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_2",
+            "in_port": "value",
+            "out_node": "load_2",
+            "out_port": "image"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_3",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_2",
+            "in_port": "program",
+            "out_node": "program_1",
+            "out_port": "program"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "in_uniforms",
+            "out_node": "texture_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_1",
+            "in_port": "in_uniforms",
+            "out_node": "texture_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_2",
+            "in_port": "in_uniforms",
+            "out_node": "texture_2",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_1",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_1",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "texture_1",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "texture_2",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        }
+    ],
+    "nodes": {
+        "background_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 547.309448242188,
+                    "y": 1170.29467773438
+                }
+            },
+            "name": "background",
+            "type": "render/vertex_data/background"
+        },
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 124.436019897461,
+                    "y": 317.818206787109
+                }
+            },
+            "name": "cgal",
+            "type": "render/vertex_data/cgal"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 538.1875,
+                    "y": 263.5625
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "draw_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 907.510498046875,
+                    "y": 576.836791992188
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "draw_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 745.059448242188,
+                    "y": 1077.79467773438
+                }
+            },
+            "name": "ground_v2",
+            "type": "render/draw"
+        },
+        "draw_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 719.451354980469,
+                    "y": 398.776611328125
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "float_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 552.110595703125,
+                    "y": 61.803050994873
+                }
+            },
+            "name": "offset",
+            "ports": {
+                "name": "iOffset",
+                "value": 7.0
+            },
+            "type": "render/uniforms/float"
+        },
+        "float_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1007.11413574219,
+                    "y": 342.915313720703
+                }
+            },
+            "name": "offset",
+            "ports": {
+                "name": "iOffset",
+                "value": -7.0
+            },
+            "type": "render/uniforms/float"
+        },
+        "float_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 792.958862304688,
+                    "y": 175.451354980469
+                }
+            },
+            "name": "offset",
+            "ports": {
+                "name": "iOffset",
+                "value": 0.0
+            },
+            "type": "render/uniforms/float"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -154.489044189453,
+                    "y": 648.28466796875
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\nuniform sampler2D tex;\n\nout vec4 color;\n\nin vec3 vertexNormal;\n\nvoid main() {\n\tvec3 norm = normalize(vertexNormal);\n\n\tcolor = texture(tex, vec2(norm.x, -norm.y) / 2.02 + 0.5, 10.0);\n}\n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "fragment_shader_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 354.809448242188,
+                    "y": 1082.79467773438
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\n// generic attributes\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\nuniform vec2 iResolution;  // viewport resolution\n\n// attributes useable for raytracing\nin vec3 iNearPosition;     // position of fragment-corresponding point on near plane\nin vec3 iFarPosition;      // position of fragment-corresponding point on far plane\n\n// output colour\nout vec4 color;\n\n// a simple integer-based checkerboard pattern\nfloat tile(vec2 pos) {\n\treturn mod(\n\t\tint(pos.x + max(0.0, sign(pos.x))) + \n\t\tint(pos.y + max(0.0, sign(pos.y))),\n\t \t2.0);\n}\n\n// computes Z-buffer depth value, and converts the range.\n// ref: https://stackoverflow.com/questions/10264949/glsl-gl-fragcoord-z-calculation-and-setting-gl-fragdepth\nfloat computeDepth(vec3 pos) {\n\t// get the clip-space coordinates\n\tvec4 eye_space_pos = iModelView * vec4(pos.xyz, 1.0);\n\tvec4 clip_space_pos = iProjection * eye_space_pos;\n\n\t// get the depth value in normalized device coordinates\n\tfloat ndc_depth = clip_space_pos.z / clip_space_pos.w;\n\n\t// and compute the range based on gl_DepthRange settings (usually not necessary, but still)\n\tfloat far = gl_DepthRange.far; \n\tfloat near = gl_DepthRange.near;\n\n\tfloat depth = (((far-near) * ndc_depth) + near + far) / 2.0;\n\n\t// and return the result\n\treturn depth;\n}\n\nvoid main() {\n\t// find the t parameter where Y = 0 (intersection with ground plane)\n\tfloat t = iNearPosition.y / (iNearPosition.y - iFarPosition.y);\n\n\t// not intersecting with ground plane at all - discard\n\tif(t < 0.0 || iFarPosition.y > iNearPosition.y) {\n\t\tcolor = vec4(1,1,1,1);\n\t\tgl_FragDepth = 1.0;\n\t}\n\t\n\telse {\n\t\t// find the intersecting position\n\t\tvec3 pos = iNearPosition + t * (iFarPosition - iNearPosition);\n\n\t\t// and make the checkerboard pattern\n\t\tfloat col = tile(pos.xz) * 0.3;\n\t\tcol = col + tile(pos.xz / 10.0) * 0.15;\n\t\tcol = col + tile(pos.xz / 100.0) * 0.075;\n\n\t\t// simple attenuation with distance\n\t\tfloat dist = sqrt(pos.x*pos.x + pos.z*pos.z);\n\t\tfloat dim = max(0.0, 1.0 - dist/50.0);\n\t\tcol = col * dim + (1.0 - dim);\n\n\t\t// output colour\n\t\tcolor = vec4(col, col, col, 1);\n\n\t\t// convert the world-space position to a depth value, to keep Z buffer working\n\t\tgl_FragDepth = computeDepth(pos + vec3(0,0.05,0));\n\t}\n}\n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "load_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 432.986755371094,
+                    "y": -106.769592285156
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "$EXAMPLES/matcap_textures/00034.png"
+            },
+            "type": "images/load"
+        },
+        "load_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 974.158874511719,
+                    "y": 124.921417236328
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "$EXAMPLES/matcap_textures/00022.png"
+            },
+            "type": "images/load"
+        },
+        "load_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 740.427368164062,
+                    "y": -25.1385860443115
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "$EXAMPLES/matcap_textures/00007.png"
+            },
+            "type": "images/load"
+        },
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 133.555358886719,
+                    "y": -235.26091003418
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "$EXAMPLES/stanford_models/armadillo.obj",
+                "name": "mesh"
+            },
+            "type": "cgal/loader"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 98.6627960205078,
+                    "y": 144.985321044922
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 101.515823364258,
+                    "y": 584.640747070312
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "program_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 547.257873535156,
+                    "y": 989.552551269531
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "texture_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 567.498413085938,
+                    "y": -128.717056274414
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "tex"
+            },
+            "type": "render/uniforms/texture"
+        },
+        "texture_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1107.08923339844,
+                    "y": 104.504089355469
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "tex"
+            },
+            "type": "render/uniforms/texture"
+        },
+        "texture_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 867.818664550781,
+                    "y": -46.5465354919434
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "tex"
+            },
+            "type": "render/uniforms/texture"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 130.467620849609,
+                    "y": -64.5292739868164
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 90.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.0500000007450581,
+                    "y": 0.0500000007450581,
+                    "z": 0.0500000007450581
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 2.70000004768372,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/transform"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -136.809768676758,
+                    "y": 526.963928222656
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;                // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n}"
+            },
+            "type": "render/vertex_shader"
+        },
+        "vertex_shader_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 348.309448242188,
+                    "y": 978.294677734375
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130\n\n// input position from the CPU\nin vec3 P;\n\n// near and far per-vertex world positions, useable for raytracing in the fragment shader\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// do not do any transformation - this should lead to a single quad covering the whole viewport\n\tgl_Position = vec4(P.x, P.y, P.z, 1); \n\t// just pass the near and far positions - they'll get linearly interpolated\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n}\n"
+            },
+            "type": "render/vertex_shader"
+        },
+        "viewport_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 899.83935546875,
+                    "y": -422.206909179688
+                }
+            },
+            "name": "viewport",
+            "type": "render/uniforms/viewport"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAkEAAAL5/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABiAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB/gAAAXAAAACGAQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAAIUAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+}
