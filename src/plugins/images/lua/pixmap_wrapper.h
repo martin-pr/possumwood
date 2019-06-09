@@ -15,6 +15,8 @@ class PixmapWrapper {
 		}
 
 		PixmapWrapper(std::shared_ptr<const PIXMAP> ptr) : m_constPixmap(ptr) {
+			if(m_constPixmap == nullptr)
+				m_constPixmap = std::shared_ptr<const PIXMAP>(new PIXMAP(0,0));
 		}
 
 		void setPixel(std::size_t x, std::size_t y, const luabind::object& value) {
