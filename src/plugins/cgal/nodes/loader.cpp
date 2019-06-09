@@ -46,7 +46,7 @@ void init(possumwood::Metadata& meta) {
 	                                              "OBJ files (*.obj)",
 	                                          }));
 	meta.addAttribute(a_name, "name", std::string("mesh"));
-	meta.addAttribute(a_polyhedron, "polyhedron");
+	meta.addAttribute(a_polyhedron, "polyhedron", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_name, a_polyhedron);
 	meta.addInfluence(a_filename, a_polyhedron);

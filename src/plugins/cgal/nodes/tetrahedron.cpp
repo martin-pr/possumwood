@@ -45,7 +45,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_v2, "v2", Imath::V3f(0, 1, 0));
 	meta.addAttribute(a_v3, "v3", Imath::V3f(0, 0, 1));
 
-	meta.addAttribute(a_mesh, "mesh");
+	meta.addAttribute(a_mesh, "mesh", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_v0, a_mesh);
 	meta.addInfluence(a_v1, a_mesh);

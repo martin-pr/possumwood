@@ -50,11 +50,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inMesh, "in_mesh");
+	meta.addAttribute(a_inMesh, "in_mesh", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_translation, "translation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_rotation, "rotation", Imath::Vec3<float>(0, 0, 0));
 	meta.addAttribute(a_scale, "scale", Imath::Vec3<float>(1, 1, 1));
-	meta.addAttribute(a_outMesh, "out_mesh");
+	meta.addAttribute(a_outMesh, "out_mesh", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inMesh, a_outMesh);
 	meta.addInfluence(a_translation, a_outMesh);
