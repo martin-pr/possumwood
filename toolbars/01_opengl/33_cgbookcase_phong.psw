@@ -1,0 +1,354 @@
+{
+    "connections": [
+        {
+            "in_node": "float_1",
+            "in_port": "in_uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "texture_1",
+            "in_port": "in_uniforms",
+            "out_node": "float_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "in_uniforms",
+            "out_node": "float_2",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "geometry_shader",
+            "out_node": "geometry_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_1",
+            "in_port": "value",
+            "out_node": "load_1",
+            "out_port": "image"
+        },
+        {
+            "in_node": "texture_2",
+            "in_port": "value",
+            "out_node": "load_2",
+            "out_port": "image"
+        },
+        {
+            "in_node": "vertex_data_0",
+            "in_port": "generic_mesh",
+            "out_node": "loader_0",
+            "out_port": "generic_polymesh"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "viewport_0",
+            "in_port": "in_uniforms",
+            "out_node": "texture_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "in_uniforms",
+            "out_node": "texture_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_2",
+            "in_port": "in_uniforms",
+            "out_node": "texture_2",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_2",
+            "in_port": "value",
+            "out_node": "time_0",
+            "out_port": "time"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "vertex_data_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        }
+    ],
+    "nodes": {
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 523.146301269531,
+                    "y": 493.292602539062
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "float_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 481.133575439453,
+                    "y": -387.914001464844
+                }
+            },
+            "name": "float",
+            "ports": {
+                "name": "displacement",
+                "value": 0.200000002980232
+            },
+            "type": "render/uniforms/float"
+        },
+        "float_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 494.1025390625,
+                    "y": -203.5732421875
+                }
+            },
+            "name": "float",
+            "ports": {
+                "name": "normals",
+                "value": 0.100000001490116
+            },
+            "type": "render/uniforms/float"
+        },
+        "float_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 474.515747070312,
+                    "y": -580.166015625
+                }
+            },
+            "name": "time",
+            "ports": {
+                "name": "time"
+            },
+            "type": "render/uniforms/float"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -18.8521556854248,
+                    "y": 538.487731933594
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 140 \n \nout vec4 colour;\n \nin vec3 fragPosition; \nin vec2 fragUV;\n\nin vec3 fragNormal;\nin vec3 fragBinormal;\nin vec3 fragTangent;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n\nuniform sampler2D normalmap; \nuniform sampler2D colourmap; \n\nuniform float time; \n\n// constant \"colour\" of the surface\n//vec3 diffuse_color = vec3(1, 0.5, 0.5);\n// \"shininess\" parameter\nfloat alpha = 100.0;\n\nvec3 phong(vec3 n) {\n\t// light position, as a circular trajectory\n\tvec3 light_pos = vec3(sin(time * 3.14 / 2), 0, cos(time * 3.14 / 2)) * 5.0;\n\n\t// light direction from the surface\n\tvec3 light_vector = normalize(light_pos - fragPosition);\n\t// surface normal (as read from the input file)\n\tvec3 normal = normalize(n);\n\n\t// lambertial term\n//\tvec3 result = vec3(max(0.0, dot(light_vector, normal))) * diffuse_color;\n\tvec3 result = vec3(max(0.1, dot(light_vector, normal))) * texture(colourmap, fragUV).xyz;\n\n\t// reflection vector\n\tvec3 reflection = 2.0*dot(light_vector, normal)*normal - light_vector;\n\t// camera position, as the inverse of the scene transformation\n\tvec3 campos = vec3(inverse(iModelView) * vec4(0,0,0,1));\n\t// view vector, determined from the modelview matrix and surface position\n\tvec3 view = normalize(campos + fragPosition);\n\t\n\t// phong reflective term\n\tresult += pow(max(0.0, dot(reflection, view)), alpha);\n\n\treturn result;\n}\n\nvoid main() { \n\t//vec3 dx = dFdx(fragPosition); \n\t//vec3 dy = dFdy(fragPosition); \n\n\tvec3 dx = fragTangent;\n\tvec3 dy = fragBinormal;\n\n\t// ortho correct\n\tdx = normalize(cross(cross(dx, fragNormal), fragNormal));\n\tdy = normalize(cross(cross(dy, fragNormal), fragNormal));\n \n\t//vec3 norm = normalize(fragNormal);\t\n\t//vec3 norm = normalize(cross(dx, dy));\n\tvec3 norm = normalize(texture(normalmap, fragUV).xyz - 0.5);\n\tnorm = \n\t\tnorm.x * dx +\n\t\tnorm.y * dy +\n\t\tnorm.z * fragNormal;\n\n\tcolour = vec4(phong(norm), 1);\n\n\t//float val = abs(norm.z);\n\t//colour = vec4(val, val, val, 1); \n\n\t//colour = vec4(texture(normalmap, fragUV).xyz, 1);\n} \n\n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "geometry_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -35.5293922424316,
+                    "y": 435.487762451172
+                }
+            },
+            "name": "geometry_shader",
+            "ports": {
+                "source": "#version 150\n\nlayout(triangles) in;\nlayout(triangle_strip, max_vertices = 3) out;\n\nin vec3 vertexPosition[];\nin vec2 vertexUV[];\nin vec3 vertexNormal[];\n\nout vec3 fragPosition;\nout vec2 fragUV;\n\nout vec3 fragNormal;\nout vec3 fragBinormal;\nout vec3 fragTangent;\n\nuniform sampler2D height; \nuniform float displacement;\n\nvoid main() { \n\tvec3 E1 = vertexPosition[1] - vertexPosition[0];\n\tvec3 E2 = vertexPosition[1] - vertexPosition[2];\n\n\tvec2 S1 = vertexUV[1] - vertexUV[0];\n\tvec2 S2 = vertexUV[1] - vertexUV[2];\n\n\tmat3 S = (mat3(\n\t\tvec3(S2.y, -S2.x, 0),\n\t\tvec3(-S1.y, S1.x, 0),\n\t\tvec3(0, 0, 0)));\n\tmat3 E = transpose(mat3(E1, E2, vec3(0,0,0)));\n\n\tmat3 TB = S * E;\n\n\tvec3 T = TB[0];\n\tvec3 B = TB[1];\n\n\tfor(int i = 0; i < 3; i++) { \n\t\tfragPosition = vertexPosition[i];\n\t\tfragUV = vertexUV[i];\n\t\tfragNormal = vertexNormal[i];\n\t\tfragBinormal = B;\n\t\tfragTangent = T;\n\n\t\tgl_Position = gl_in[i].gl_Position + vec4(vertexNormal[i].xyz * texture(height, vertexUV[i]).xyz * displacement, 1); \n\t\tEmitVertex(); \n\t} \n\tEndPrimitive(); \n} \n"
+            },
+            "type": "render/geometry_shader"
+        },
+        "load_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 380.851226806641,
+                    "y": 174.569808959961
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "$EXAMPLES/cgbookcase_materials/seaside-rocks-01/Seaside_rocks_01_2K_Height.png"
+            },
+            "type": "images/load"
+        },
+        "load_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 345.522247314453,
+                    "y": 0.293676495552063
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "$EXAMPLES/cgbookcase_materials/seaside-rocks-01/Seaside_rocks_01_2K_Normal.png"
+            },
+            "type": "images/load"
+        },
+        "load_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 340.373596191406,
+                    "y": -736.715209960938
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "$EXAMPLES/cgbookcase_materials/seaside-rocks-01/Seaside_rocks_01_2K_Base_Color.png"
+            },
+            "type": "images/load"
+        },
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -13.0048398971558,
+                    "y": 684.229125976562
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "$EXAMPLES/sphere_hires.obj"
+            },
+            "type": "polymesh/loader"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 184.995162963867,
+                    "y": 441.229156494141
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "texture_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 517.775634765625,
+                    "y": 163.529602050781
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "height"
+            },
+            "type": "render/uniforms/texture"
+        },
+        "texture_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 495.429656982422,
+                    "y": -9.19127368927002
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "normalmap"
+            },
+            "type": "render/uniforms/texture"
+        },
+        "texture_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 474.815338134766,
+                    "y": -785.817138671875
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "colourmap"
+            },
+            "type": "render/uniforms/texture"
+        },
+        "time_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 361.408966064453,
+                    "y": -539.516723632812
+                }
+            },
+            "name": "time",
+            "type": "time"
+        },
+        "vertex_data_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 212.995162963867,
+                    "y": 648.229125976562
+                }
+            },
+            "name": "vertex_data",
+            "type": "polymesh/vertex_data"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -7.8521556854248,
+                    "y": 315.487762451172
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n\nin vec3 P;\nin vec3 N;\nin vec2 uv;\n\nout vec3 vertexPosition;\nout vec2 vertexUV;\nout vec3 vertexNormal;\n \nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n\nvoid main() {\n\tvec3 pos = P;\n\n\t//pos = pos + N * texture(height, uv).xyz * displacement;\n\n\tvec4 pos4 = vec4(pos, 1);\n\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tvertexPosition = pos;\n\tvertexUV = uv;\n\tvertexNormal = N;\n} \n"
+            },
+            "type": "render/vertex_shader"
+        },
+        "viewport_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 536.731567382812,
+                    "y": 343.854187011719
+                }
+            },
+            "name": "viewport",
+            "type": "render/uniforms/viewport"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAcgAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA1AAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABSgAAAiQAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

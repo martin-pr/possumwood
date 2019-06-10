@@ -1,0 +1,138 @@
+{
+    "connections": [
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "background_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "texture_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        }
+    ],
+    "nodes": {
+        "background_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 142.462295532227,
+                    "y": 426.456817626953
+                }
+            },
+            "name": "background",
+            "type": "render/vertex_data/background"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 419.0,
+                    "y": 313.0
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 16.7715969085693,
+                    "y": 314.302703857422
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\nuniform sampler2D background;\n\nin vec3 vertexPosition;\nin vec3 iNearPosition;\nin vec3 iFarPosition;\n\nout vec4 color;\n\nvoid main() {\n\tvec3 dir = normalize(iFarPosition - iNearPosition);\n\n\tfloat lng = acos(dir.y) / 3.1415;\n\tfloat lat = atan(dir.x, -dir.z) / 3.1415 / 2.0;\n\t\n\tcolor = texture(\tbackground, vec2(lat, lng));\n}\n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "load_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 276.842864990234,
+                    "y": 80.1412811279297
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "$EXAMPLES/hdrihaven_envmaps/misty_pines_4k.png"
+            },
+            "type": "images/load"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 208.462295532227,
+                    "y": 239.456802368164
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "texture_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 426.52783203125,
+                    "y": 96.0951614379883
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "background"
+            },
+            "type": "render/uniforms/texture"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 34.8480987548828,
+                    "y": 176.456802368164
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130\n\nin vec3 P;\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\n\nout vec3 vertexPosition;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// pass all parameters unchanged\n\tvertexPosition = P;\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n\n\t// the position of each vertex in screen space\n\tvec4 pos4 = vec4(P.x, P.y, 1, 1);\n\tgl_Position = pos4;\n}"
+            },
+            "type": "render/vertex_shader"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJpAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAagAAAME/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABhgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB9QAAAX0AAACGAQAAAwAAApgAAAMEAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

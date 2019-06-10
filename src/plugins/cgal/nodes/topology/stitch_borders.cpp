@@ -28,8 +28,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inMesh, "input");
-	meta.addAttribute(a_outMesh, "output");
+	meta.addAttribute(a_inMesh, "input", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outMesh, "output", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inMesh, a_outMesh);
 

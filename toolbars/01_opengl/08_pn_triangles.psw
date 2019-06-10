@@ -1,0 +1,138 @@
+{
+    "connections": [
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "geometry_shader",
+            "out_node": "geometry_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "vertex_data_0",
+            "in_port": "generic_mesh",
+            "out_node": "loader_0",
+            "out_port": "generic_polymesh"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "vertex_data_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        }
+    ],
+    "nodes": {
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 563.03125,
+                    "y": 485.171875
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 76.75,
+                    "y": 376.78125
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\nout vec4 color;\n\nin vec3 vertexPosition;\nin vec3 vertexNormal;\n\nvoid main() {\n    vec3 norm = normalize(vertexNormal);\n    //vec3 norm = normalize(cross(dFdx(vertexPosition), dFdy(vertexPosition)));\n\n    float val = abs(norm.z);\n    color = vec4(val, val, val, 1);\n}"
+            },
+            "type": "render/fragment_shader"
+        },
+        "geometry_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 73.0302734375,
+                    "y": 252.392822265625
+                }
+            },
+            "name": "geometry_shader",
+            "ports": {
+                "source": "#version 150\n\n// 1 = no subdivision (pass-thru)\n// 2 = 4x subdiv\n// 3 = 9x subdiv\n// 4 = 16x subdiv\n// ...\n\n//#define SUBDIV_LEVEL 1\n//#define MAX_VERTS 3 // 3\n\n//#define SUBDIV_LEVEL 2\n//#define MAX_VERTS 8 // 3+5\n\n//#define SUBDIV_LEVEL 5\n//#define MAX_VERTS 35\n\n#define SUBDIV_LEVEL 10\n#define MAX_VERTS 120\n\n//#define SUBDIV_LEVEL 15\n//#define MAX_VERTS 255 // arithmetic progression 15*(6+(15-1)*2)/2\n\nlayout(triangles) in;\nlayout(triangle_strip, max_vertices = MAX_VERTS) out;\n\nuniform mat4 iProjection;\n\nin vec3 normal[];\nin vec3 position[];\n\nout vec3 vertexNormal;\nout vec3 vertexPosition;\n\nstruct PCoeffs {\n\tvec3 b300, b030, b003,\n\t\tb210, b120, b021, b012, b102, b201,\n\t\tb111;\n};\n\nstruct NCoeffs {\n\tvec3 n200, n020, n002, n110, n011, n101;\n};\n\nvec3 weights(int s, int t) {\n\tvec3 result;\n\tresult.x = float(s) / float(SUBDIV_LEVEL);\n\tresult.y = float(t) / float(SUBDIV_LEVEL);\n\tresult.z = 1.0 - result.x - result.y;\n\n\treturn result;\n}\n\nvoid emitVertex(int s, int t, PCoeffs c, NCoeffs nc) {\n\tvec3 w = weights(s, t);\n\n\tvertexPosition =\n\t\tc.b300 * pow(w[2], 3) + c.b030 * pow(w[0], 3) + c.b003*pow(w[1], 3) +\n\t\tc.b210*3*w[2]*w[2]*w[0] + c.b120*3*w[2]*w[0]*w[0] + c.b201*3*w[2]*w[2]*w[1] +\n\t\tc.b021*3*w[0]*w[0]*w[1] + c.b102*3*w[2]*w[1]*w[1] + c.b012*3*w[0]*w[1]*w[1] +\n\t\tc.b111*6*w[0]*w[1]*w[2];\n\n\tw = weights(s, t);\n\n\tvertexNormal = normalize(\n\t\tnc.n200*w[2]*w[2] + nc.n020*w[0]*w[0] + nc.n002*w[1]*w[1] +\n\t\tnc.n110*w[2]*w[0] + nc.n011*w[0]*w[1] + nc.n101*w[2]*w[1]\n\t);\n\n\tgl_Position = iProjection * vec4(vertexPosition, 1);\n\n\tEmitVertex();\n}\n\nfloat nv(vec3 p1, vec3 n1, vec3 p2, vec3 n2) {\n\treturn 2.0 * dot(p2-p1, n1+n2) / dot(p2-p1, p2-p1);\n}\n\nvoid main() {\n\tPCoeffs c;\n\tc.b300 = position[0];\n\tc.b030 = position[1];\n\tc.b003 = position[2];\n\n\tvec3 n[3];\n\tn[0] = normalize(normal[0]);\n\tn[1] = normalize(normal[1]);\n\tn[2] = normalize(normal[2]);\n\n\tfloat w12 = dot(position[1] - position[0], n[0]);\n\tfloat w21 = dot(position[0] - position[1], n[1]);\n\tfloat w23 = dot(position[2] - position[1], n[1]);\n\tfloat w32 = dot(position[1] - position[2], n[2]);\n\tfloat w31 = dot(position[0] - position[2], n[2]);\n\tfloat w13 = dot(position[2] - position[0], n[0]);\n\n\tc.b210 = (2*position[0] + position[1] - w12*n[0]) / 3.0;\n\tc.b120 = (2*position[1] + position[0] - w21*n[1]) / 3.0;\n\tc.b021 = (2*position[1] + position[2] - w23*n[1]) / 3.0;\n\tc.b012 = (2*position[2] + position[1] - w32*n[2]) / 3.0;\n\tc.b102 = (2*position[2] + position[0] - w31*n[2]) / 3.0;\n\tc.b201 = (2*position[0] + position[2] - w13*n[0]) / 3.0;\n\n\tvec3 E = (c.b210 + c.b120 + c.b021 + c.b012 + c.b102 + c.b201) / 6.0;\n\tvec3 V = (position[0] + position[1] + position[2]) / 3.0;\n\tc.b111 = E + (E - V) / 2.0;\n\n\t////\n\n\tNCoeffs nc;\n\n\tnc.n200 = n[0];\n\tnc.n020 = n[1];\n\tnc.n002 = n[2];\n\n\tnc.n110 = normalize(n[0] + n[1] - nv(position[0], n[0], position[1], n[1])*(position[1]-position[0]));\n\tnc.n011 = normalize(n[1] + n[2] - nv(position[1], n[1], position[2], n[2])*(position[2]-position[1]));\n\tnc.n101 = normalize(n[2] + n[0] - nv(position[2], n[2], position[0], n[0])*(position[0]-position[2]));\n\n\t////\n\n\tfor(int level = 0; level < SUBDIV_LEVEL; ++level) {\n\t\tfor(int s = 0; s <= level; ++s) {\n\t\t\temitVertex(s, level-s+1, c, nc);\n\t\t\temitVertex(s, level-s, c, nc);\n\t\t}\n\t\temitVertex(level+1, 0, c, nc);\n\n\t\tEndPrimitive();\n\t}\n}"
+            },
+            "type": "render/geometry_shader"
+        },
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 46.0,
+                    "y": 545.96875
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "$EXAMPLES/tetrahedron.obj"
+            },
+            "type": "polymesh/loader"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 253.765625,
+                    "y": 242.421875
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "vertex_data_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 272.0,
+                    "y": 467.0
+                }
+            },
+            "name": "vertex_data",
+            "type": "polymesh/vertex_data"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 80.796875,
+                    "y": 128.09375
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n\nout vec3 normal;\nout vec3 position;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \nvoid main() {\n\tnormal = (iModelViewNormal * vec4(N.x, N.y, N.z, 0)).xyz;\n\tposition = (iModelView * vec4(P.x, P.y, P.z, 1)).xyz;\n} \n"
+            },
+            "type": "render/vertex_shader"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABwAAASlAAACXQAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGdAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAI4BAAADAAAAAQAAApwAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABzQAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACQwAAAZ4AAACGAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

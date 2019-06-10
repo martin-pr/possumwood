@@ -19,24 +19,6 @@
             "out_port": "skeleton"
         },
         {
-            "in_node": "detect_stationary_1",
-            "in_port": "in_constraints",
-            "out_node": "detect_stationary_0",
-            "out_port": "out_constraints"
-        },
-        {
-            "in_node": "filter_median_0",
-            "in_port": "in_constraints",
-            "out_node": "detect_stationary_1",
-            "out_port": "out_constraints"
-        },
-        {
-            "in_node": "display_0",
-            "in_port": "constraints",
-            "out_node": "filter_median_0",
-            "out_port": "out_constraints"
-        },
-        {
             "in_node": "draw_0",
             "in_port": "uniforms",
             "out_node": "float_0",
@@ -55,12 +37,6 @@
             "out_port": "frame"
         },
         {
-            "in_node": "detect_stationary_0",
-            "in_port": "in_constraints",
-            "out_node": "from_animation_1",
-            "out_port": "constraints"
-        },
-        {
             "in_node": "program_0",
             "in_port": "geometry_shader",
             "out_node": "geometry_shader_0",
@@ -77,12 +53,6 @@
             "in_port": "time",
             "out_node": "time_0",
             "out_port": "time"
-        },
-        {
-            "in_node": "from_animation_1",
-            "in_port": "animation",
-            "out_node": "transform_0",
-            "out_port": "out_anim"
         },
         {
             "in_node": "from_animation_0",
@@ -149,56 +119,6 @@
             },
             "type": "anim/loaders/asf"
         },
-        "detect_stationary_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -207.005676269531,
-                    "y": 618.080139160156
-                }
-            },
-            "name": "detect_stationary",
-            "ports": {
-                "joint": "rfoot",
-                "velocity_threshold": 0.5
-            },
-            "type": "anim/constraints/detect_stationary"
-        },
-        "detect_stationary_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -209.58154296875,
-                    "y": 801.877685546875
-                }
-            },
-            "name": "detect_stationary",
-            "ports": {
-                "joint": "lfoot",
-                "velocity_threshold": 0.5
-            },
-            "type": "anim/constraints/detect_stationary"
-        },
-        "display_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -195.897338867188,
-                    "y": 1103.77575683594
-                }
-            },
-            "name": "display",
-            "ports": {
-                "colour": {
-                    "x": 1.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "show_constrained": true,
-                "show_trajectory": true
-            },
-            "type": "anim/constraints/display"
-        },
         "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -210,20 +130,6 @@
             "name": "draw",
             "type": "render/draw"
         },
-        "filter_median_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -206.516021728516,
-                    "y": 963.224426269531
-                }
-            },
-            "name": "filter_median",
-            "ports": {
-                "median_width": 9
-            },
-            "type": "anim/constraints/filter_median"
-        },
         "float_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -232,7 +138,7 @@
                     "y": 336.014221191406
                 }
             },
-            "name": "float",
+            "name": "bone_width",
             "ports": {
                 "name": "width",
                 "value": 0.0500000007450581
@@ -263,17 +169,6 @@
             },
             "name": "from_animation",
             "type": "anim/frame/from_animation"
-        },
-        "from_animation_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -213.758422851562,
-                    "y": 469.965515136719
-                }
-            },
-            "name": "from_animation",
-            "type": "anim/constraints/from_animation"
         },
         "geometry_shader_0": {
             "blind_data": {
@@ -339,11 +234,11 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 745.4375,
-                    "y": 169.73274230957
+                    "x": 737.225646972656,
+                    "y": 165.626831054688
                 }
             },
-            "name": "vec3",
+            "name": "material_color",
             "ports": {
                 "name": "material",
                 "value": {
@@ -385,6 +280,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQTAAAFPQAAABwAAAd/AAACXQAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJVAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAI4BAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABJQAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABmwAAAkYAAACGAQAAAwAAA4EAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABkAAAQ6AAACWQAAAAACAAAAB4AAAAAAAAAAHQAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADZ/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADZwAAAJgBAAADAAAAAQAAAagAAANn/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABJAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABmgAAAkIAAACGAQAAAwAAA0UAAANnAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

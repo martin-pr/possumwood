@@ -231,7 +231,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inMesh, "input");
+	meta.addAttribute(a_inMesh, "input", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(
 	    a_stopCondition, "stop_condition",
 	    possumwood::Enum({std::make_pair("Count_stop_predicate", 1),
@@ -244,7 +244,7 @@ void init(possumwood::Metadata& meta) {
 	                  possumwood::Enum({std::make_pair("Midpoint_placement", 100),
 	                                    std::make_pair("LindstromTurk_placement", 200)}));
 	meta.addAttribute(a_stopParam, "stop_parameter", 1000.0f);
-	meta.addAttribute(a_outMesh, "output");
+	meta.addAttribute(a_outMesh, "output", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inMesh, a_outMesh);
 	meta.addInfluence(a_stopCondition, a_outMesh);

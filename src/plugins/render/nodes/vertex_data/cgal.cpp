@@ -290,7 +290,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_vd, "vertex_data");
-	meta.addAttribute(a_mesh, "mesh");
+	meta.addAttribute(a_mesh, "mesh", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_mesh, a_vd);
 

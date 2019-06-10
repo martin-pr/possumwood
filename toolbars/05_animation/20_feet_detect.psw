@@ -284,7 +284,7 @@
                             "y": 336.014221191406
                         }
                     },
-                    "name": "float",
+                    "name": "bone_width",
                     "ports": {
                         "name": "width"
                     },
@@ -370,7 +370,7 @@
                             "y": 169.73274230957
                         }
                     },
-                    "name": "vec3",
+                    "name": "material_color",
                     "ports": {
                         "name": "material"
                     },
@@ -453,6 +453,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQTAAAFPQAAABwAAAd/AAACXQAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKgAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAI4BAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABAAAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABdgAAAmsAAACgAQAAAwAAAzYAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALDAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA3QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABUwAAAhsAAACGAQAAAwAAAj4AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

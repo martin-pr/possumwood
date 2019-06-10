@@ -1,0 +1,115 @@
+{
+    "connections": [
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "background_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        }
+    ],
+    "nodes": {
+        "background_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 49.6826171875,
+                    "y": 763.6064453125
+                }
+            },
+            "name": "background",
+            "type": "render/vertex_data/background"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 282.1044921875,
+                    "y": 734.3095703125
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -141.0205078125,
+                    "y": 651.5751953125
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130\n\nout vec4 color; \n \nin vec3 vertexPosition; \nin vec3 near;\nin vec3 far;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\n\nfloat checkerboard(vec2 R, float scale) {\n\treturn float((\n\t\tint(floor(R.x / scale)) + \n\t\tint(floor(R.y / scale))\n\t) % 2);\n}\n\n// computes Z-buffer depth value, and converts the range.\n// ref: https://stackoverflow.com/questions/10264949/glsl-gl-fragcoord-z-calculation-and-setting-gl-fragdepth\nfloat computeDepth(vec3 pos) {\n\t// get the clip-space coordinates\n\tvec4 clip_space_pos = iProjection * iModelView * vec4(pos.xyz, 1.0);\n\n\t// get the depth value in normalized device coordinates\n\tfloat clip_space_depth = clip_space_pos.z / clip_space_pos.w;\n\n\t// and compute the range based on gl_DepthRange settings (not necessary with default settings, but left for completeness)\n\tfloat far = gl_DepthRange.far;\n\tfloat near = gl_DepthRange.near;\n\n\tfloat depth = (((far-near) * clip_space_depth) + near + far) / 2.0;\n\n\t// and return the result\n\treturn depth;\n}\n \nvoid main() { \n\tfloat t = -near.y / (far.y-near.y);\n\n\tvec3 R = near + t * (far-near);\n\n\tfloat c =\n\t\tcheckerboard(R.xz, 1) * 0.3 +\n\t\tcheckerboard(R.xz, 10) * 0.2 +\n\t\tcheckerboard(R.xz, 100) * 0.1 +\n\t\t0.1;\n\tc = c * float(t > 0);\n\n\tfloat spotlight = min(1.0, 1.5 - 0.02*length(R.xz));\n\n\tcolor = vec4(vec3(c*spotlight), 1); \n\n\tgl_FragDepth = computeDepth(R);\n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 37.9638671875,
+                    "y": 572.2001953125
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -139.7705078125,
+                    "y": 527.2783203125
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec3 P;\n\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\n\nout vec3 vertexPosition;\nout vec3 near;\nout vec3 far;\n \nvoid main() {\n\tvertexPosition = P;\n\tnear = iNearPositionVert;\n\tfar = iFarPositionVert;\n\n   \tgl_Position = vec4(P, 1);\n} \n"
+            },
+            "type": "render/vertex_shader"
+        },
+        "viewport_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 292.917266845703,
+                    "y": 605.253295898438
+                }
+            },
+            "name": "viewport",
+            "type": "render/uniforms/viewport"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIlAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAhQAAAME/AIAAAAC/AAAAG4AAAMEAAAAogEAABv6AAAAAAEAAAAC+wAAAAwAZQBkAGkAdABvAHIBAAAAAP////8AAACjAQAAA/sAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAElwAAAhQAAAGoAQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAAJwAAADBAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+}

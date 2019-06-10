@@ -1,0 +1,98 @@
+{
+    "connections": [
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "background_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        }
+    ],
+    "nodes": {
+        "background_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 162.788162231445,
+                    "y": 556.006225585938
+                }
+            },
+            "name": "background",
+            "type": "render/vertex_data/background"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 328.0,
+                    "y": 394.0
+                }
+            },
+            "name": "background",
+            "type": "render/draw"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 20.6292972564697,
+                    "y": 430.470428466797
+                }
+            },
+            "name": "shader",
+            "ports": {
+                "source": "#version 130\n\n// fake attributes\nuniform vec2 iMouse;\n\n// generic attributes\nuniform float iTime;\nuniform mat4 iProjection;  // projection matrix\nuniform mat4 iModelView;   // modelview matrix\nuniform vec2 iResolution;  // viewport resolution\n\n// attributes useable for raytracing\nin vec3 iNearPosition;     // position of fragment-corresponding point on near plane\nin vec3 iFarPosition;      // position of fragment-corresponding point on far plane\n\n// output colour\nout vec4 color;\n\n// The MIT License\n// Original shader - Copyright © 2013 Inigo Quilez\n// Modifications for Possumwood - 2017 Martin Prazak\n\n// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n    \n\n// A list of useful distance function to simple primitives, and an example on how to \n// do some interesting boolean operations, repetition and displacement.\n//\n// More info here: http://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm\n\n\n//------------------------------------------------------------------\n\nfloat sdPlane( vec3 p )\n{\n\treturn p.y;\n}\n\nfloat sdSphere( vec3 p, float s )\n{\n    return length(p)-s;\n}\n\nfloat sdBox( vec3 p, vec3 b )\n{\n    vec3 d = abs(p) - b;\n    return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));\n}\n\nfloat sdEllipsoid( in vec3 p, in vec3 r )\n{\n    return (length( p/r ) - 1.0) * min(min(r.x,r.y),r.z);\n}\n\nfloat udRoundBox( vec3 p, vec3 b, float r )\n{\n    return length(max(abs(p)-b,0.0))-r;\n}\n\nfloat sdTorus( vec3 p, vec2 t )\n{\n    return length( vec2(length(p.xz)-t.x,p.y) )-t.y;\n}\n\nfloat sdHexPrism( vec3 p, vec2 h )\n{\n    vec3 q = abs(p);\n#if 0\n    return max(q.z-h.y,max((q.x*0.866025+q.y*0.5),q.y)-h.x);\n#else\n    float d1 = q.z-h.y;\n    float d2 = max((q.x*0.866025+q.y*0.5),q.y)-h.x;\n    return length(max(vec2(d1,d2),0.0)) + min(max(d1,d2), 0.);\n#endif\n}\n\nfloat sdCapsule( vec3 p, vec3 a, vec3 b, float r )\n{\n\tvec3 pa = p-a, ba = b-a;\n\tfloat h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );\n\treturn length( pa - ba*h ) - r;\n}\n\nfloat sdTriPrism( vec3 p, vec2 h )\n{\n    vec3 q = abs(p);\n#if 0\n    return max(q.z-h.y,max(q.x*0.866025+p.y*0.5,-p.y)-h.x*0.5);\n#else\n    float d1 = q.z-h.y;\n    float d2 = max(q.x*0.866025+p.y*0.5,-p.y)-h.x*0.5;\n    return length(max(vec2(d1,d2),0.0)) + min(max(d1,d2), 0.);\n#endif\n}\n\nfloat sdCylinder( vec3 p, vec2 h )\n{\n  vec2 d = abs(vec2(length(p.xz),p.y)) - h;\n  return min(max(d.x,d.y),0.0) + length(max(d,0.0));\n}\n\nfloat sdCone( in vec3 p, in vec3 c )\n{\n    vec2 q = vec2( length(p.xz), p.y );\n    float d1 = -q.y-c.z;\n    float d2 = max( dot(q,c.xy), q.y);\n    return length(max(vec2(d1,d2),0.0)) + min(max(d1,d2), 0.);\n}\n\nfloat sdConeSection( in vec3 p, in float h, in float r1, in float r2 )\n{\n    float d1 = -p.y - h;\n    float q = p.y - h;\n    float si = 0.5*(r1-r2)/h;\n    float d2 = max( sqrt( dot(p.xz,p.xz)*(1.0-si*si)) + q*si - r2, q );\n    return length(max(vec2(d1,d2),0.0)) + min(max(d1,d2), 0.);\n}\n\nfloat sdPryamid4(vec3 p, vec3 h ) // h = { cos a, sin a, height }\n{\n    // Tetrahedron = Octahedron - Cube\n    float box = sdBox( p - vec3(0,-2.0*h.z,0), vec3(2.0*h.z) );\n \n    float d = 0.0;\n    d = max( d, abs( dot(p, vec3( -h.x, h.y, 0 )) ));\n    d = max( d, abs( dot(p, vec3(  h.x, h.y, 0 )) ));\n    d = max( d, abs( dot(p, vec3(  0, h.y, h.x )) ));\n    d = max( d, abs( dot(p, vec3(  0, h.y,-h.x )) ));\n    float octa = d - h.z;\n    return max(-box,octa); // Subtraction\n }\n\nfloat length2( vec2 p )\n{\n\treturn sqrt( p.x*p.x + p.y*p.y );\n}\n\nfloat length6( vec2 p )\n{\n\tp = p*p*p; p = p*p;\n\treturn pow( p.x + p.y, 1.0/6.0 );\n}\n\nfloat length8( vec2 p )\n{\n\tp = p*p; p = p*p; p = p*p;\n\treturn pow( p.x + p.y, 1.0/8.0 );\n}\n\nfloat sdTorus82( vec3 p, vec2 t )\n{\n    vec2 q = vec2(length2(p.xz)-t.x,p.y);\n    return length8(q)-t.y;\n}\n\nfloat sdTorus88( vec3 p, vec2 t )\n{\n    vec2 q = vec2(length8(p.xz)-t.x,p.y);\n    return length8(q)-t.y;\n}\n\nfloat sdCylinder6( vec3 p, vec2 h )\n{\n    return max( length6(p.xz)-h.x, abs(p.y)-h.y );\n}\n\n//------------------------------------------------------------------\n\nfloat opS( float d1, float d2 )\n{\n    return max(-d2,d1);\n}\n\nvec2 opU( vec2 d1, vec2 d2 )\n{\n\treturn (d1.x<d2.x) ? d1 : d2;\n}\n\nvec3 opRep( vec3 p, vec3 c )\n{\n    return mod(p,c)-0.5*c;\n}\n\nvec3 opTwist( vec3 p )\n{\n    float  c = cos(10.0*p.y+10.0);\n    float  s = sin(10.0*p.y+10.0);\n    mat2   m = mat2(c,-s,s,c);\n    return vec3(m*p.xz,p.y);\n}\n\n//------------------------------------------------------------------\n\nvec2 map( in vec3 pos )\n{\n    vec2 res = opU( vec2( sdPlane(     pos), 1.0 ),\n\t                vec2( sdSphere(    pos-vec3( 0.0,0.25, 0.0), 0.25 ), 46.9 ) );\n    res = opU( res, vec2( sdBox(       pos-vec3( 1.0,0.25, 0.0), vec3(0.25) ), 3.0 ) );\n    res = opU( res, vec2( udRoundBox(  pos-vec3( 1.0,0.25, 1.0), vec3(0.15), 0.1 ), 41.0 ) );\n\tres = opU( res, vec2( sdTorus(     pos-vec3( 0.0,0.25, 1.0), vec2(0.20,0.05) ), 25.0 ) );\n    res = opU( res, vec2( sdCapsule(   pos,vec3(-1.3,0.10,-0.1), vec3(-0.8,0.50,0.2), 0.1  ), 31.9 ) );\n\tres = opU( res, vec2( sdTriPrism(  pos-vec3(-1.0,0.25,-1.0), vec2(0.25,0.05) ),43.5 ) );\n\tres = opU( res, vec2( sdCylinder(  pos-vec3( 1.0,0.30,-1.0), vec2(0.1,0.2) ), 8.0 ) );\n\tres = opU( res, vec2( sdCone(      pos-vec3( 0.0,0.50,-1.0), vec3(0.8,0.6,0.3) ), 55.0 ) );\n\tres = opU( res, vec2( sdTorus82(   pos-vec3( 0.0,0.25, 2.0), vec2(0.20,0.05) ),50.0 ) );\n\tres = opU( res, vec2( sdTorus88(   pos-vec3(-1.0,0.25, 2.0), vec2(0.20,0.05) ),43.0 ) );\n\tres = opU( res, vec2( sdCylinder6( pos-vec3( 1.0,0.30, 2.0), vec2(0.1,0.2) ), 12.0 ) );\n\tres = opU( res, vec2( sdHexPrism(  pos-vec3(-1.0,0.20, 1.0), vec2(0.25,0.05) ),17.0 ) );\n\tres = opU( res, vec2( sdPryamid4(  pos-vec3(-1.0,0.15,-2.0), vec3(0.8,0.6,0.25) ),37.0 ) );\n    res = opU( res, vec2( opS( udRoundBox(  pos-vec3(-2.0,0.2, 1.0), vec3(0.15),0.05),\n\t                           sdSphere(    pos-vec3(-2.0,0.2, 1.0), 0.25)), 13.0 ) );\n    res = opU( res, vec2( opS( sdTorus82(  pos-vec3(-2.0,0.2, 0.0), vec2(0.20,0.1)),\n\t                           sdCylinder(  opRep( vec3(atan(pos.x+2.0,pos.z)/6.2831, pos.y, 0.02+0.5*length(pos-vec3(-2.0,0.2, 0.0))), vec3(0.05,1.0,0.05)), vec2(0.02,0.6))), 51.0 ) );\n\tres = opU( res, vec2( 0.5*sdSphere(    pos-vec3(-2.0,0.25,-1.0), 0.2 ) + 0.03*sin(50.0*pos.x)*sin(50.0*pos.y)*sin(50.0*pos.z), 65.0 ) );\n\tres = opU( res, vec2( 0.5*sdTorus( opTwist(pos-vec3(-2.0,0.25, 2.0)),vec2(0.20,0.05)), 46.7 ) );\n    res = opU( res, vec2( sdConeSection( pos-vec3( 0.0,0.35,-2.0), 0.15, 0.2, 0.1 ), 13.67 ) );\n    res = opU( res, vec2( sdEllipsoid( pos-vec3( 1.0,0.35,-2.0), vec3(0.15, 0.2, 0.05) ), 43.17 ) );\n        \n    return res;\n}\n\nvec2 castRay( in vec3 ro, in vec3 rd )\n{\n    float tmin = 1.0;\n    float tmax = 20.0;\n   \n#if 1\n    // bounding volume\n    float tp1 = (0.0-ro.y)/rd.y; if( tp1>0.0 ) tmax = min( tmax, tp1 );\n    float tp2 = (1.6-ro.y)/rd.y; if( tp2>0.0 ) { if( ro.y>1.6 ) tmin = max( tmin, tp2 );\n                                                 else           tmax = min( tmax, tp2 ); }\n#endif\n    \n    float t = tmin;\n    float m = -1.0;\n    for( int i=0; i<64; i++ )\n    {\n\t    float precis = 0.0005*t;\n\t    vec2 res = map( ro+rd*t );\n        if( res.x<precis || t>tmax ) break;\n        t += res.x;\n\t    m = res.y;\n    }\n\n    if( t>tmax ) m=-1.0;\n    return vec2( t, m );\n}\n\n\nfloat softshadow( in vec3 ro, in vec3 rd, in float mint, in float tmax )\n{\n\tfloat res = 1.0;\n    float t = mint;\n    for( int i=0; i<16; i++ )\n    {\n\t\tfloat h = map( ro + rd*t ).x;\n        res = min( res, 8.0*h/t );\n        t += clamp( h, 0.02, 0.10 );\n        if( h<0.001 || t>tmax ) break;\n    }\n    return clamp( res, 0.0, 1.0 );\n}\n\nvec3 calcNormal( in vec3 pos )\n{\n    vec2 e = vec2(1.0,-1.0)*0.5773*0.0005;\n    return normalize( e.xyy*map( pos + e.xyy ).x + \n\t\t\t\t\t  e.yyx*map( pos + e.yyx ).x + \n\t\t\t\t\t  e.yxy*map( pos + e.yxy ).x + \n\t\t\t\t\t  e.xxx*map( pos + e.xxx ).x );\n    /*\n\tvec3 eps = vec3( 0.0005, 0.0, 0.0 );\n\tvec3 nor = vec3(\n\t    map(pos+eps.xyy).x - map(pos-eps.xyy).x,\n\t    map(pos+eps.yxy).x - map(pos-eps.yxy).x,\n\t    map(pos+eps.yyx).x - map(pos-eps.yyx).x );\n\treturn normalize(nor);\n\t*/\n}\n\nfloat calcAO( in vec3 pos, in vec3 nor )\n{\n\tfloat occ = 0.0;\n    float sca = 1.0;\n    for( int i=0; i<5; i++ )\n    {\n        float hr = 0.01 + 0.12*float(i)/4.0;\n        vec3 aopos =  nor * hr + pos;\n        float dd = map( aopos ).x;\n        occ += -(dd-hr)*sca;\n        sca *= 0.95;\n    }\n    return clamp( 1.0 - 3.0*occ, 0.0, 1.0 );    \n}\n\nvec3 render( in vec3 ro, in vec3 rd )\n{ \n    vec3 col = vec3(0.7, 0.9, 1.0) +rd.y*0.8;\n    vec2 res = castRay(ro,rd);\n    float t = res.x;\n\tfloat m = res.y;\n    if( m>-0.5 )\n    {\n        vec3 pos = ro + t*rd;\n        vec3 nor = calcNormal( pos );\n        vec3 ref = reflect( rd, nor );\n        \n        // material        \n\t\tcol = 0.45 + 0.35*sin( vec3(0.05,0.08,0.10)*(m-1.0) );\n        if( m<1.5 )\n        {\n            \n            float f = mod( floor(5.0*pos.z) + floor(5.0*pos.x), 2.0);\n            col = 0.3 + 0.1*f*vec3(1.0);\n        }\n\n        // lighitng        \n        float occ = calcAO( pos, nor );\n\t\tvec3  lig = normalize( vec3(-0.4, 0.7, -0.6) );\n\t\tfloat amb = clamp( 0.5+0.5*nor.y, 0.0, 1.0 );\n        float dif = clamp( dot( nor, lig ), 0.0, 1.0 );\n        float bac = clamp( dot( nor, normalize(vec3(-lig.x,0.0,-lig.z))), 0.0, 1.0 )*clamp( 1.0-pos.y,0.0,1.0);\n        float dom = smoothstep( -0.1, 0.1, ref.y );\n        float fre = pow( clamp(1.0+dot(nor,rd),0.0,1.0), 2.0 );\n\t\tfloat spe = pow(clamp( dot( ref, lig ), 0.0, 1.0 ),16.0);\n        \n        dif *= softshadow( pos, lig, 0.02, 2.5 );\n        dom *= softshadow( pos, ref, 0.02, 2.5 );\n\n\t\tvec3 lin = vec3(0.0);\n        lin += 1.30*dif*vec3(1.00,0.80,0.55);\n\t\tlin += 2.00*spe*vec3(1.00,0.90,0.70)*dif;\n        lin += 0.40*amb*vec3(0.40,0.60,1.00)*occ;\n        lin += 0.50*dom*vec3(0.40,0.60,1.00)*occ;\n        lin += 0.50*bac*vec3(0.25,0.25,0.25)*occ;\n        lin += 0.25*fre*vec3(1.00,1.00,1.00)*occ;\n\t\tcol = col*lin;\n\n    \tcol = mix( col, vec3(0.8,0.9,1.0), 1.0-exp( -0.0002*t*t*t ) );\n    }\n\n\treturn vec3( clamp(col,0.0,1.0) );\n}\n\nvoid main()\n{\n\t// starting position and \n\tvec3 ro = iNearPosition;\n\tvec3 rd = normalize(iFarPosition - iNearPosition);\n\n    // render\t\n    vec3 col = render( ro, rd );\n\n\t// gamma\n    col = pow( col, vec3(0.4545) );\n\n\t// and result\n\tcolor = vec4(col, 1);\n\n\t// just to get rid of the grid\n\tgl_FragDepth = -1;\n}"
+            },
+            "type": "render/fragment_shader"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 155.0,
+                    "y": 373.0
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -13.2709836959839,
+                    "y": 310.523376464844
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130\n\n// input position from the CPU\nin vec3 P;\n\n// near and far per-vertex world positions, useable for raytracing in the fragment shader\nin vec3 iNearPositionVert;\nin vec3 iFarPositionVert;\nout vec3 iNearPosition;\nout vec3 iFarPosition;\n\nvoid main() {\n\t// do not do any transformation - this should lead to a single quad covering the whole viewport\n\tgl_Position = vec4(P.x, P.y, P.z, 1); \n\t// just pass the near and far positions - they'll get linearly interpolated\n\tiNearPosition = iNearPositionVert;\n\tiFarPosition = iFarPositionVert;\n}\n"
+            },
+            "type": "render/vertex_shader"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAACAAAAAAAABqUAAAOZAAAABAAAABkAAAajAAADlwAAAAAAAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHUAAAC7/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC7wAAAJgBAAADAAAAAQAAAkYAAALv/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABAQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABdwAAAe0AAACGAQAAA/sAAAAGAGwAbwBnAAAAArIAAAFXAAAAAAAAAAAAAAKEAAAC7wAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+}

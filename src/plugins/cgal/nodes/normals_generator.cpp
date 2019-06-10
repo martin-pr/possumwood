@@ -149,8 +149,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_mode, "mode",
 	                  possumwood::Enum({"Per-face normals", "Per-vertex normals"}));
-	meta.addAttribute(a_inMeshes, "input");
-	meta.addAttribute(a_outMesh, "output");
+	meta.addAttribute(a_inMeshes, "input", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outMesh, "output", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_mode, a_outMesh);
 	meta.addInfluence(a_inMeshes, a_outMesh);

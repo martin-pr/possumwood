@@ -1,0 +1,331 @@
+{
+    "connections": [
+        {
+            "in_node": "text_0",
+            "in_port": "font",
+            "out_node": "font_0",
+            "out_port": "font"
+        },
+        {
+            "in_node": "text_1",
+            "in_port": "font",
+            "out_node": "font_1",
+            "out_port": "font"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_1",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_1",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "texture_0",
+            "in_port": "value",
+            "out_node": "load_0",
+            "out_port": "image"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "program",
+            "out_node": "program_1",
+            "out_port": "program"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "text_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "text_1",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "viewport_0",
+            "in_port": "in_uniforms",
+            "out_node": "texture_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "transform_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "uniforms",
+            "out_node": "transform_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_1",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_1",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        }
+    ],
+    "nodes": {
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 353.264495849609,
+                    "y": 432.896484375
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "draw_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 541.12646484375,
+                    "y": 839.930725097656
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "font_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -52.2355155944824,
+                    "y": 478.396484375
+                }
+            },
+            "name": "font",
+            "ports": {
+                "font_def_file": "$EXAMPLES/fonts/opensans_64.json"
+            },
+            "type": "render/font"
+        },
+        "font_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 135.626449584961,
+                    "y": 885.430725097656
+                }
+            },
+            "name": "font",
+            "ports": {
+                "font_def_file": "$EXAMPLES/fonts/opensans_64.json"
+            },
+            "type": "render/font"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -46.7355155944824,
+                    "y": 364.896484375
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130 \n \nout vec4 color; \n \nin vec2 vertexUV;\n\nuniform sampler2D font;\n\nvoid main() {\n\tfloat sample = texture(font, vertexUV).x;\n\tfloat scale = 1.0 / fwidth(sample);\n\tfloat signedDistance = (sample - 0.5) * scale;\n\n\tfloat value = smoothstep(-0.5, 0.5, signedDistance);\n\n\tif(value <= 0.0)\n\t\tdiscard;\n\tcolor = vec4(value, value, value,1);\n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "fragment_shader_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 141.126449584961,
+                    "y": 771.930725097656
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130 \n \nout vec4 color; \n \nin vec2 vertexUV;\n\nuniform sampler2D font;\n\nvoid main() {\n\tfloat sample = texture(font, vertexUV).x;\n\n\tif(sample > 0.1) {\n\t\t//color = vec4(vec3(1), 0);\n\t\tcolor = vec4(vec3(sample), 0);\n\t}\n\telse\n\t\tdiscard;\n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "load_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 413.565307617188,
+                    "y": -162.654434204102
+                }
+            },
+            "name": "load",
+            "ports": {
+                "filename": "$EXAMPLES/fonts/opensans_64.pgm"
+            },
+            "type": "images/load"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 143.26448059082,
+                    "y": 288.896484375
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "program_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 331.126434326172,
+                    "y": 695.930725097656
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "text_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 137.26448059082,
+                    "y": 463.896484375
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "text": "ABCD",
+                "vert_align": "Top"
+            },
+            "type": "render/vertex_data/text"
+        },
+        "text_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 325.126434326172,
+                    "y": 870.930725097656
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "text": "ABCD",
+                "vert_align": "Bottom"
+            },
+            "type": "render/vertex_data/text"
+        },
+        "texture_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 558.2734375,
+                    "y": -215.152130126953
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "name": "font"
+            },
+            "type": "render/uniforms/texture"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 551.571166992188,
+                    "y": 87.8621215820312
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "name": "transform",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "render/uniforms/transform"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -26.7355155944824,
+                    "y": 265.896484375
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec2 position;\nin vec2 uv;\n \nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 transform;\n\nout vec2 vertexUV;\n \nvoid main() {\n\tvec4 pos4 = vec4(position.x, position.y, 0, 1);\n\n   \tgl_Position = iProjection * iModelView * transform * pos4;\n\n\tvertexUV = uv;\n} \n"
+            },
+            "type": "render/vertex_shader"
+        },
+        "vertex_shader_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 161.126449584961,
+                    "y": 672.930725097656
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec2 position;\nin vec2 uv;\n \nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 transform;\n\nout vec2 vertexUV;\n \nvoid main() {\n\tvec4 pos4 = vec4(position.x, position.y, 0, 1);\n\n   \tgl_Position = iProjection * iModelView * transform * pos4;\n\n\tvertexUV = uv;\n} \n"
+            },
+            "type": "render/vertex_shader"
+        },
+        "viewport_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 555.407104492188,
+                    "y": -57.9723930358887
+                }
+            },
+            "name": "viewport",
+            "type": "render/uniforms/viewport"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABwAAASlAAACXQAAAAACAAAAB4A=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAItAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAI4BAAADAAAAAQAAAagAAANs/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABsAAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACJgAAAbsAAACGAQAAA/sAAAAGAGwAbwBnAQAAAaIAAAJnAAAAAAAAAAAAAAOpAAADbAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+}

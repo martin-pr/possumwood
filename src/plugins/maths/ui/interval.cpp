@@ -129,8 +129,6 @@ QWidget* interval_ui::widget() {
 }
 
 void interval_ui::onFlagsChanged(unsigned flags) {
-	assert((!(flags & kOutput)) && "Interval should never be used as an output.");
-
 	m_slider->setDisabled(flags & kDisabled);
 	m_detailsButton->setDisabled(flags & kDisabled);
 }

@@ -4,6 +4,7 @@ build/*
 tmp/*
 _archive
 plugins/*.so
+.*.kra
 
 parts
 stage
