@@ -29,8 +29,8 @@ class Uniforms {
 	void addUniform(const std::string& name, std::size_t size,
 	                const UpdateType& updateType, std::function<void(T*, std::size_t, const ViewportState&)> updateFunctor);
 
-	void addTexture(const std::string& name, const unsigned char* data, std::size_t width, std::size_t height);
-	void addTexture(const std::string& name, const float* data, std::size_t width, std::size_t height);
+	void addTexture(const std::string& name, const unsigned char* data, std::size_t width, std::size_t height, std::size_t row_byte_align = 4);
+	void addTexture(const std::string& name, const float* data, std::size_t width, std::size_t height, std::size_t row_byte_align = 4);
 
 	dependency_graph::State use(GLuint programId, const ViewportState&) const;
 

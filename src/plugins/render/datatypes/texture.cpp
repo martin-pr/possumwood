@@ -2,7 +2,11 @@
 
 namespace possumwood {
 
-Texture::Texture(const unsigned char* data, std::size_t width, std::size_t height) : m_id(0) {
+Texture::Texture(const unsigned char* data, std::size_t width, std::size_t height, std::size_t row_byte_align) : m_id(0) {
+	int original_alignment;
+	glGetIntegerv(GL_UNPACK_ALIGNMENT, &original_alignment);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, row_byte_align);
+
 	glGenTextures(1, &m_id);
 
 	glBindTexture(GL_TEXTURE_2D, m_id);
@@ -13,9 +17,15 @@ Texture::Texture(const unsigned char* data, std::size_t width, std::size_t heigh
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, original_alignment);
 }
 
-Texture::Texture(const float* data, std::size_t width, std::size_t height) : m_id(0) {
+Texture::Texture(const float* data, std::size_t width, std::size_t height, std::size_t row_byte_align) : m_id(0) {
+	int original_alignment;
+	glGetIntegerv(GL_UNPACK_ALIGNMENT, &original_alignment);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, row_byte_align);
+
 	glGenTextures(1, &m_id);
 
 	glBindTexture(GL_TEXTURE_2D, m_id);
@@ -26,6 +36,8 @@ Texture::Texture(const float* data, std::size_t width, std::size_t height) : m_i
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, original_alignment);
 }
 
 Texture::~Texture() {

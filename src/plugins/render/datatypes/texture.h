@@ -9,8 +9,8 @@ namespace possumwood {
 
 class Texture : public boost::noncopyable {
 	public:
-		Texture(const unsigned char* data, std::size_t width, std::size_t height);
-		Texture(const float* data, std::size_t width, std::size_t height);
+		Texture(const unsigned char* data, std::size_t width, std::size_t height, std::size_t row_byte_align = 4);
+		Texture(const float* data, std::size_t width, std::size_t height, std::size_t row_byte_align = 4);
 		~Texture();
 
 		GLuint id() const;
