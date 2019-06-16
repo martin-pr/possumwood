@@ -45,6 +45,7 @@ addons:
       - libopenimageio-dev
       - libluabind-dev
       - libtbb-dev
+      - libopencv-dev
 
 # Run build
 script:
