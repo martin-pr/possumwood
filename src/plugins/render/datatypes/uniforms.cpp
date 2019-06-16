@@ -9,20 +9,20 @@ namespace possumwood {
 Uniforms::Uniforms() : m_currentTime(std::numeric_limits<float>::infinity()) {
 }
 
-void Uniforms::addTexture(const std::string& name, const unsigned char* data, std::size_t width, std::size_t height, std::size_t row_byte_align) {
+void Uniforms::addTexture(const std::string& name, const unsigned char* data, std::size_t width, std::size_t height, const Texture::Format& format) {
 	m_textures.push_back(TextureHolder());
 
 	m_textures.back().name = name;
 	m_textures.back().glslType = "uniform sampler2D " + name + ";";
-	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(data, width, height, row_byte_align));
+	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(data, width, height, format));
 }
 
-void Uniforms::addTexture(const std::string& name, const float* data, std::size_t width, std::size_t height, std::size_t row_byte_align) {
+void Uniforms::addTexture(const std::string& name, const float* data, std::size_t width, std::size_t height, const Texture::Format& format) {
 	m_textures.push_back(TextureHolder());
 
 	m_textures.back().name = name;
 	m_textures.back().glslType = "uniform sampler2D " + name + ";";
-	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(data, width, height, row_byte_align));
+	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(data, width, height, format));
 }
 
 dependency_graph::State Uniforms::use(GLuint programId, const ViewportState& vs) const {

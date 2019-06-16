@@ -9,8 +9,21 @@ namespace possumwood {
 
 class Texture : public boost::noncopyable {
 	public:
-		Texture(const unsigned char* data, std::size_t width, std::size_t height, std::size_t row_byte_align = 4);
-		Texture(const float* data, std::size_t width, std::size_t height, std::size_t row_byte_align = 4);
+		enum ChannelOrder {
+			kRGB = 0,
+			kBGR = 1
+		};
+
+		struct Format {
+			Format(unsigned char rba = 4, ChannelOrder order = kRGB) : row_byte_align(rba), channel_order(order) {
+			}
+
+			unsigned char row_byte_align;
+			ChannelOrder channel_order;
+		};
+
+		Texture(const unsigned char* data, std::size_t width, std::size_t height, const Format& format = Format());
+		Texture(const float* data, std::size_t width, std::size_t height, const Format& format = Format());
 		~Texture();
 
 		GLuint id() const;
