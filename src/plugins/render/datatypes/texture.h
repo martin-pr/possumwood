@@ -11,7 +11,8 @@ class Texture : public boost::noncopyable {
 	public:
 		enum ChannelOrder {
 			kRGB = 0,
-			kBGR = 1
+			kBGR = 1,
+			kGray = 2
 		};
 
 		struct Format {
