@@ -5,14 +5,12 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include <images/datatypes/pixmap.h>
-
 namespace possumwood {
 
 class Texture : public boost::noncopyable {
 	public:
-		Texture(const LDRPixmap& pixmap);
-		Texture(const HDRPixmap& pixmap);
+		Texture(const unsigned char* data, std::size_t width, std::size_t height);
+		Texture(const float* data, std::size_t width, std::size_t height);
 		~Texture();
 
 		GLuint id() const;
