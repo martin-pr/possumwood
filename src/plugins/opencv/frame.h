@@ -11,7 +11,7 @@ namespace possumwood { namespace opencv {
 
 class Frame {
 	public:
-		Frame(const cv::Mat& data = cv::Mat());
+		Frame(const cv::Mat& data = cv::Mat(), bool copy = true);
 
 		const cv::Mat& operator*() const;
 
