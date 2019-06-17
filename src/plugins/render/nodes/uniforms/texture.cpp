@@ -6,6 +6,8 @@
 
 #include "datatypes/uniforms.inl"
 
+#include <images/datatypes/pixmap.h>
+
 namespace {
 
 template<typename PIXMAP>
@@ -36,7 +38,9 @@ dependency_graph::State compute(dependency_graph::Values& data, Params<PIXMAP>& 
 	if(value) {
 		uniforms->addTexture(
 			data.get(params.a_name),
-			*value
+			&(*value)(0,0).value()[0],
+			value->width(),
+			value->height()
 		);
 	}
 

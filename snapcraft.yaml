@@ -35,6 +35,7 @@ build-packages:
   - libglfw3-dev
   - libpng-dev
   - libtbb-dev
+  - libopencv-dev
 
 apps:
   possumwood:
