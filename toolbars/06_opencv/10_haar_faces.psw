@@ -48,7 +48,9 @@
             },
             "name": "cascade",
             "ports": {
-                "cascade_filename": "$EXAMPLES/opencv/haarcascades/haarcascade_frontalface_alt.xml"
+                "cascade_filename": "$EXAMPLES/opencv/haarcascades/haarcascade_frontalface_alt.xml",
+                "min_neighbors": 3,
+                "scale_factor": 1.20000004768372
             },
             "type": "opencv/clasifier/cascade"
         },
@@ -95,7 +97,7 @@
             },
             "name": "image",
             "ports": {
-                "filename": "$EXAMPLES/pexels/career-corporate-job-776615.jpg"
+                "filename": "$EXAMPLES/pexels/adorable-beautiful-beauty-2418886.jpg"
             },
             "type": "opencv/capture/image"
         },
@@ -342,6 +344,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAAAAAAAQ6AAACQQAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGLAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABfAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB8gAAAXwAAACGAQAAAwAAA3YAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAAAAAAASlAAACQQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAChAAAAV0AAACGAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
