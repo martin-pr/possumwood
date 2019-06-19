@@ -31,7 +31,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Frame& value = data.get(a_value);
 	const cv::Mat& mat = *value;
 
-	if(mat.type() == CV_8UC3)
+	if(mat.type() == CV_8UC1)
+		uniforms->addTexture(
+			data.get(a_name),
+			mat.data,
+			mat.cols,
+			mat.rows,
+			possumwood::Texture::Format(1, possumwood::Texture::kGray) // tightly packed
+		);
+
+	else if(mat.type() == CV_8UC3)
 		uniforms->addTexture(
 			data.get(a_name),
 			mat.data,
