@@ -31,6 +31,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(in4.cols > 0 && in4.rows > 0)
 		in.push_back(*data.get(a_inFrame4));
 
+	// handling of 2D arrays - merge needs 1, 3 or 4 valid inputs, fails with 2
+	if(in.size() == 2)
+		in.push_back(cv::Mat::zeros(in[0].rows, in[0].cols, in[0].type()));
+
 	cv::Mat out;
 
 	cv::merge(in, out);
@@ -58,4 +62,3 @@ void init(possumwood::Metadata& meta) {
 possumwood::NodeImplementation s_impl("opencv/merge", init);
 
 }
-	
