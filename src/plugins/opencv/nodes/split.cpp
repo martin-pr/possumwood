@@ -29,11 +29,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inFrame, "in");
-	meta.addAttribute(a_outFrame1, "out_1");
-	meta.addAttribute(a_outFrame2, "out_2");
-	meta.addAttribute(a_outFrame3, "out_3");
-	meta.addAttribute(a_outFrame4, "out_4");
+	meta.addAttribute(a_inFrame, "in", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outFrame1, "out_1", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outFrame2, "out_2", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outFrame3, "out_3", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outFrame4, "out_4", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame1);
 	meta.addInfluence(a_inFrame, a_outFrame2);

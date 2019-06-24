@@ -39,7 +39,7 @@ void init(possumwood::Metadata& meta) {
 		"MP4 files (*.mp4)",
 	}));
 	meta.addAttribute(a_offset, "offset");
-	meta.addAttribute(a_frame, "frame");
+	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
 	meta.addInfluence(a_offset, a_frame);

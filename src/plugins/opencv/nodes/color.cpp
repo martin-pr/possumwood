@@ -112,7 +112,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inFrame, "in_frame");
+	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_mode, "mode", 
 		possumwood::Enum({
 			"BGR2GRAY", "BGR2RGB", "RGB2BGR", "GRAY2BGR", "GRAY2RGB", "BGR2XYZ", 
@@ -123,7 +123,7 @@ void init(possumwood::Metadata& meta) {
 			"LRGB2Lab", "LBGR2Luv", "LRGB2Luv", "Lab2LBGR", "Lab2LRGB", "Luv2LBGR", 
 			"Luv2LRGB", "BGR2YUV", "RGB2YUV", "YUV2BGR", "YUV2RGB"
 		}));
-	meta.addAttribute(a_outFrame, "out_frame");
+	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
 	meta.addInfluence(a_mode, a_outFrame);

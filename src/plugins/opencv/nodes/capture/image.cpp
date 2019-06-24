@@ -24,7 +24,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
 		"Image files (*.png *.jpg *.jpe *.jpeg)",
 	}));
-	meta.addAttribute(a_frame, "frame");
+	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
 

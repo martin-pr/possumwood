@@ -41,8 +41,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_prevFrame, "prev_frame");
-	meta.addAttribute(a_nextFrame, "next_frame");
+	meta.addAttribute(a_prevFrame, "prev_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_nextFrame, "next_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_pyrScale, "pyramid/scale", 0.5f);
 	meta.addAttribute(a_levels, "pyramid/levels", 1u);
 	meta.addAttribute(a_winSize, "window_size", 21u);
@@ -53,7 +53,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_flags, "flags", 
 		possumwood::Enum({"USE_INITIAL_FLOW", "FARNEBACK_GAUSSIAN"}));
 
-	meta.addAttribute(a_outFrame, "out_frame");
+	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_prevFrame, a_outFrame);
 	meta.addInfluence(a_nextFrame, a_outFrame);

@@ -19,6 +19,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "color_2",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "merge_0",
             "in_port": "in_2",
             "out_node": "convert_0",
@@ -83,12 +89,6 @@
             "in_port": "in_frame",
             "out_node": "video_frame_1",
             "out_port": "frame"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "color_2",
-            "out_port": "out_frame"
         }
     ],
     "nodes": {
@@ -96,8 +96,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 311.329803466797,
-                    "y": 598.574890136719
+                    "x": 679.599182128906,
+                    "y": 149.762161254883
                 }
             },
             "name": "color_next",
@@ -110,8 +110,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 316.64501953125,
-                    "y": 416.57861328125
+                    "x": 454.983062744141,
+                    "y": 138.161468505859
                 }
             },
             "name": "color_prev",
@@ -124,8 +124,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1128.62426757812,
-                    "y": 960.339477539062
+                    "x": 538.575378417969,
+                    "y": 1154.21264648438
                 }
             },
             "name": "to_lab",
@@ -138,8 +138,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 767.925109863281,
-                    "y": 807.418518066406
+                    "x": 565.153381347656,
+                    "y": 790.205078125
                 }
             },
             "name": "convert",
@@ -154,8 +154,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 767.925109863281,
-                    "y": 1006.55535888672
+                    "x": 676.569396972656,
+                    "y": 784.910461425781
                 }
             },
             "name": "convert",
@@ -170,8 +170,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 448.194763183594,
-                    "y": 600.124816894531
+                    "x": 579.584106445312,
+                    "y": 327.081298828125
                 }
             },
             "name": "dense",
@@ -190,8 +190,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -139.537719726562,
-                    "y": 477.853210449219
+                    "x": 155.599136352539,
+                    "y": -162.162658691406
                 }
             },
             "name": "frame",
@@ -201,8 +201,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1019.37933349609,
-                    "y": 744.1875
+                    "x": 475.691436767578,
+                    "y": 1030.78271484375
                 }
             },
             "name": "merge",
@@ -212,8 +212,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1237.42932128906,
-                    "y": 1150.84375
+                    "x": 546.229187011719,
+                    "y": 1306.78527832031
                 }
             },
             "connections": [
@@ -435,8 +435,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -18.9089984893799,
-                    "y": 590.867797851562
+                    "x": 276.227874755859,
+                    "y": -49.148078918457
                 }
             },
             "connections": [
@@ -578,8 +578,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 646.333557128906,
-                    "y": 873.435852050781
+                    "x": 545.738525390625,
+                    "y": 641.451538085938
                 }
             },
             "name": "split",
@@ -589,8 +589,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 58.6352348327637,
-                    "y": 361.828186035156
+                    "x": 428.573364257812,
+                    "y": -182.503845214844
                 }
             },
             "name": "video_frame_prev",
@@ -603,8 +603,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 84.7272033691406,
-                    "y": 608.80322265625
+                    "x": 644.99755859375,
+                    "y": -41.4775009155273
                 }
             },
             "name": "video_frame_next",
@@ -619,6 +619,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAAAAAAAQ6AAACQQAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAByAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAATAAAACGAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACGAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

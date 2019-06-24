@@ -33,11 +33,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_frame, "frame");
+	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_filename, "cascade_filename");
 	meta.addAttribute(a_scaleFactor, "scale_factor", 1.1f);
 	meta.addAttribute(a_minNeighbors, "min_neighbors", 3u);
-	meta.addAttribute(a_features, "features");
+	meta.addAttribute(a_features, "features", std::vector<cv::Rect>(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_frame, a_features);
 	meta.addInfluence(a_filename, a_features);
