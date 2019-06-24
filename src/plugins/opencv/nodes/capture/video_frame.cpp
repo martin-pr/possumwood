@@ -19,7 +19,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// open the capture device
 	cv::VideoCapture cap(filename.filename().string());
 	// seek to the requested frame
-	cap.set(cv::CAP_PROP_POS_FRAMES, data.get(a_offset));
+	#if CV_MAJOR_VERSION > 2
+		cap.set(cv::CAP_PROP_POS_FRAMES, data.get(a_offset));
+	#else
+		cap.set(CV_CAP_PROP_POS_FRAMES, data.get(a_offset));
+	#endif
 
 	// and get the frame
 	cv::Mat frame;
