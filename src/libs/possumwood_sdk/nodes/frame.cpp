@@ -1,5 +1,6 @@
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/config.inl>
 
 namespace {
 
