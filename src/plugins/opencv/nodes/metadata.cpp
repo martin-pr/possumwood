@@ -22,7 +22,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_width, "width", 0u);
 	meta.addAttribute(a_height, "height", 0u);
 
-	meta.addAttribute(a_frame, "frame");
+	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_frame, a_width);
 	meta.addInfluence(a_frame, a_height);

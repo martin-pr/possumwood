@@ -13,7 +13,7 @@
             "out_port": "shader"
         },
         {
-            "in_node": "opencv_metadata_0",
+            "in_node": "metadata_0",
             "in_port": "frame",
             "out_node": "image_0",
             "out_port": "frame"
@@ -27,13 +27,13 @@
         {
             "in_node": "unsigned_1",
             "in_port": "value",
-            "out_node": "opencv_metadata_0",
+            "out_node": "metadata_0",
             "out_port": "width"
         },
         {
             "in_node": "unsigned_0",
             "in_port": "value",
-            "out_node": "opencv_metadata_0",
+            "out_node": "metadata_0",
             "out_port": "height"
         },
         {
@@ -114,8 +114,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 63.0,
-                    "y": 246.0
+                    "x": 592.666381835938,
+                    "y": -80.1492462158203
                 }
             },
             "name": "image",
@@ -124,12 +124,12 @@
             },
             "type": "opencv/capture/image"
         },
-        "opencv_metadata_0": {
+        "metadata_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 232.0,
-                    "y": 112.0
+                    "x": 709.482482910156,
+                    "y": 109.390808105469
                 }
             },
             "name": "opencv_metadata",
@@ -164,8 +164,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 636.755126953125,
-                    "y": 238.576248168945
+                    "x": 928.98486328125,
+                    "y": 204.656723022461
                 }
             },
             "name": "unsigned height",
@@ -178,8 +178,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 633.291320800781,
-                    "y": 53.0083427429199
+                    "x": 941.176208496094,
+                    "y": 19.0888195037842
                 }
             },
             "name": "unsigned width",
@@ -220,5 +220,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ+AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABPwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABtQAAAiwAAACGAQAAAwAAAZgAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABPwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABtQAAAiwAAACGAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

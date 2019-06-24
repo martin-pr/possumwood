@@ -13,16 +13,16 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "color_1",
-            "in_port": "in_frame",
-            "out_node": "image_0",
-            "out_port": "frame"
-        },
-        {
             "in_node": "color_0",
             "in_port": "in_frame",
             "out_node": "denoise_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "color_1",
+            "in_port": "in_frame",
+            "out_node": "image_0",
+            "out_port": "frame"
         }
     ],
     "nodes": {
@@ -30,8 +30,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 164.199798583984,
-                    "y": 335.147369384766
+                    "x": 320.751525878906,
+                    "y": 215.124389648438
                 }
             },
             "name": "to_bgr",
@@ -44,8 +44,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -156.302322387695,
-                    "y": 224.416854858398
+                    "x": 323.789611816406,
+                    "y": -161.744049072266
                 }
             },
             "name": "to_gray",
@@ -58,8 +58,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -8.49985504150391,
-                    "y": 238.835205078125
+                    "x": 307.212768554688,
+                    "y": -11.6475439071655
                 }
             },
             "name": "denoise",
@@ -75,8 +75,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -297.160675048828,
-                    "y": 233.208648681641
+                    "x": 323.827819824219,
+                    "y": -275.584442138672
                 }
             },
             "name": "image",
@@ -314,6 +314,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAAAAAAASlAAACQQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIeAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAChAAAAV0AAACGAQAAAwAAA7gAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIeAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAA7gAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

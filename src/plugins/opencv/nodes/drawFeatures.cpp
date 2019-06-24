@@ -31,11 +31,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inFrame, "in_frame");
-	meta.addAttribute(a_features, "features");
+	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_features, "features", std::vector<cv::Rect>(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_color, "draw/color", Imath::V3f(0,0,255));
 	meta.addAttribute(a_thickness, "draw/thickness", 3u);
-	meta.addAttribute(a_outFrame, "out_frame");
+	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
 	meta.addInfluence(a_features, a_outFrame);

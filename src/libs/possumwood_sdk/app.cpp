@@ -324,9 +324,12 @@ void App::setTime(float time) {
 		m_timeChanged(time);
 
 		// TERRIBLE HACK - a special node type that outputs time is handled here
-		for(dependency_graph::Nodes::iterator i = graph().nodes().begin(dependency_graph::Nodes::kRecursive); i != graph().nodes().end(); ++i)
+		for(dependency_graph::Nodes::iterator i = graph().nodes().begin(dependency_graph::Nodes::kRecursive); i != graph().nodes().end(); ++i) {
 			if(i->metadata()->type() == "time")
 				i->port(0).set<float>(time);
+			if(i->metadata()->type() == "frame")
+				i->port(0).set<unsigned>(time * possumwood::App::instance().sceneConfig()["fps"].as<float>());
+		}
 	}
 }
 
