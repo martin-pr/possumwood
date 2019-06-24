@@ -85,7 +85,7 @@
                 },
                 "draw/thickness": 4
             },
-            "type": "opencv/draw_features"
+            "type": "opencv/clasifier/draw_features"
         },
         "image_0": {
             "blind_data": {
