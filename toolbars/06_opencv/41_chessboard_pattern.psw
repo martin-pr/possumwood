@@ -48,16 +48,16 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 345.535491943359,
-                    "y": 91.0775985717773
+                    "x": 393.994506835938,
+                    "y": 55.5410003662109
                 }
             },
             "name": "create_pattern",
             "ports": {
-                "size/height": 11,
-                "size/width": 4,
+                "size/height": 9,
+                "size/width": 6,
                 "square_size": 30.0,
-                "type": "Asymmetric circles grid"
+                "type": "Chessboard"
             },
             "type": "opencv/calibration/create_pattern"
         },
@@ -65,8 +65,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 81.5118637084961,
-                    "y": 584.036865234375
+                    "x": 104.683372497559,
+                    "y": 564.351928710938
                 }
             },
             "name": "draw_pattern",
@@ -76,8 +76,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 280.705871582031,
-                    "y": 719.798950195312
+                    "x": 290.610656738281,
+                    "y": 680.492553710938
                 }
             },
             "name": "draw_pattern",
@@ -87,8 +87,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 167.7041015625,
-                    "y": 306.812835693359
+                    "x": 180.626495361328,
+                    "y": 274.5068359375
                 }
             },
             "name": "find_pattern",
@@ -105,13 +105,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 79.9049911499023,
-                    "y": 85.6326522827148
+                    "x": 108.980392456055,
+                    "y": 77.55615234375
                 }
             },
             "name": "image",
             "ports": {
-                "filename": "$EXAMPLES/opencv/circles_grid_01.jpg"
+                "filename": "$EXAMPLES/opencv/chessboard_01.jpg"
             },
             "type": "opencv/capture/image"
         },
@@ -119,8 +119,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 326.937774658203,
-                    "y": 851.231994628906
+                    "x": 227.002136230469,
+                    "y": 832.924499511719
                 }
             },
             "connections": [
@@ -344,6 +344,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAAAAAAAQ6AAACQQAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAByAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAATAAAACGAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIsAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA4QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABVwAAAhcAAACGAQAAAwAAAtUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

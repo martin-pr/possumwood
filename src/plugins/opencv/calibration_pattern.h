@@ -12,11 +12,13 @@ namespace possumwood { namespace opencv {
 class CalibrationPattern {
 	public:
 		enum Type {
-			kSymmetricGrid,
-			kAsymmetricGrid,
+			kSymmetricCirclesGrid,
+			kAsymmetricCirclesGrid,
+			kChessboard,
 		};
 
-		CalibrationPattern(const cv::Mat& data = cv::Mat(), const cv::Size& size = cv::Size(0,0), bool wasFound = false, const Type& type = kSymmetricGrid);
+		CalibrationPattern(const cv::Mat& data = cv::Mat(), const cv::Size& size = cv::Size(0,0),
+			bool wasFound = false, const Type& type = kSymmetricCirclesGrid);
 
 		const cv::Mat& operator*() const;
 		const cv::Size& size() const;

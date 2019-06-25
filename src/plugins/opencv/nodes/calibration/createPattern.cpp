@@ -19,9 +19,11 @@ dependency_graph::OutAttr<possumwood::opencv::CalibrationPattern> a_pattern;
 
 possumwood::opencv::CalibrationPattern::Type typeToEnum(const std::string& flags) {
 	if(flags == "Symmetric circles grid")
-		return possumwood::opencv::CalibrationPattern::kSymmetricGrid;
+		return possumwood::opencv::CalibrationPattern::kSymmetricCirclesGrid;
 	else if(flags == "Asymmetric circles grid")
-		return possumwood::opencv::CalibrationPattern::kAsymmetricGrid;
+		return possumwood::opencv::CalibrationPattern::kAsymmetricCirclesGrid;
+	else if(flags == "Chessboard")
+		return possumwood::opencv::CalibrationPattern::kChessboard;
 
 	throw std::runtime_error("Unknown value " + flags);
 }
@@ -34,7 +36,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const float squareSize = data.get(a_squareSize);
 
 	// asymmetric
-	if(type == possumwood::opencv::CalibrationPattern::kAsymmetricGrid) {
+	if(type == possumwood::opencv::CalibrationPattern::kAsymmetricCirclesGrid) {
 		for(unsigned r = 0; r < data.get(a_sizeHeight); ++r)
 			for(unsigned c = 0; c < data.get(a_sizeWidth); ++c) {
 				float* ptr = pattern.ptr<float>(r*data.get(a_sizeWidth) + c, 0);
@@ -65,7 +67,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_type, "type",
-		possumwood::Enum({"Symmetric circles grid", "Asymmetric circles grid"}));
+		possumwood::Enum({"Symmetric circles grid", "Asymmetric circles grid", "Chessboard"}));
 	meta.addAttribute(a_sizeWidth, "size/width", 4u);
 	meta.addAttribute(a_sizeHeight, "size/height", 11u);
 	meta.addAttribute(a_squareSize, "square_size", 30.0f);
