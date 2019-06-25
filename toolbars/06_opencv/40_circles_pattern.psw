@@ -8,7 +8,7 @@
         },
         {
             "in_node": "draw_pattern_1",
-            "in_port": "circles_grid",
+            "in_port": "pattern",
             "out_node": "create_pattern_0",
             "out_port": "pattern"
         },
@@ -26,7 +26,7 @@
         },
         {
             "in_node": "draw_pattern_0",
-            "in_port": "circles_grid",
+            "in_port": "pattern",
             "out_node": "find_pattern_0",
             "out_port": "out_pattern"
         },

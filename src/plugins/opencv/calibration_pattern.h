@@ -9,22 +9,22 @@
 
 namespace possumwood { namespace opencv {
 
-class CirclesGrid {
+class CalibrationPattern {
 	public:
 		enum Type {
 			kSymmetricGrid,
 			kAsymmetricGrid,
 		};
 
-		CirclesGrid(const cv::Mat& data = cv::Mat(), const cv::Size& size = cv::Size(0,0), bool wasFound = false, const Type& type = kSymmetricGrid);
+		CalibrationPattern(const cv::Mat& data = cv::Mat(), const cv::Size& size = cv::Size(0,0), bool wasFound = false, const Type& type = kSymmetricGrid);
 
 		const cv::Mat& operator*() const;
 		const cv::Size& size() const;
 		Type type() const;
 		bool wasFound() const;
 
-		bool operator == (const CirclesGrid& f) const;
-		bool operator != (const CirclesGrid& f) const;
+		bool operator == (const CalibrationPattern& f) const;
+		bool operator != (const CalibrationPattern& f) const;
 
 	private:
 		std::shared_ptr<const cv::Mat> m_features; // 2D or 3D list of points
@@ -33,12 +33,12 @@ class CirclesGrid {
 		Type m_type;
 };
 
-std::ostream& operator << (std::ostream& out, const CirclesGrid& f);
+std::ostream& operator << (std::ostream& out, const CalibrationPattern& f);
 
 }
 
 template<>
-struct Traits<opencv::CirclesGrid> {
+struct Traits<opencv::CalibrationPattern> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0.3, 0.3, 0}};
 	}
