@@ -1,65 +1,108 @@
 {
     "connections": [
         {
+            "in_node": "find_pattern_0",
+            "in_port": "in_pattern",
+            "out_node": "create_pattern_0",
+            "out_port": "pattern"
+        },
+        {
+            "in_node": "draw_pattern_1",
+            "in_port": "circles_grid",
+            "out_node": "create_pattern_0",
+            "out_port": "pattern"
+        },
+        {
+            "in_node": "draw_pattern_1",
+            "in_port": "in_frame",
+            "out_node": "draw_pattern_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "network_0",
             "in_port": "frame",
-            "out_node": "draw_pattern_0",
+            "out_node": "draw_pattern_1",
             "out_port": "out_frame"
         },
         {
             "in_node": "draw_pattern_0",
             "in_port": "circles_grid",
-            "out_node": "find_circles_0",
-            "out_port": "circles_grid"
+            "out_node": "find_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
+            "in_node": "find_pattern_0",
+            "in_port": "frame",
+            "out_node": "image_0",
+            "out_port": "frame"
         },
         {
             "in_node": "draw_pattern_0",
             "in_port": "in_frame",
             "out_node": "image_0",
             "out_port": "frame"
-        },
-        {
-            "in_node": "find_circles_0",
-            "in_port": "frame",
-            "out_node": "image_0",
-            "out_port": "frame"
         }
     ],
     "nodes": {
+        "create_pattern_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 289.0,
+                    "y": 104.0
+                }
+            },
+            "name": "create_pattern",
+            "ports": {
+                "size/height": 11,
+                "size/width": 4,
+                "square_size": 30.0,
+                "type": "Asymmetric circles grid"
+            },
+            "type": "opencv/calibration/create_pattern"
+        },
         "draw_pattern_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 159.232803344727,
-                    "y": 327.77490234375
+                    "x": 115.433166503906,
+                    "y": 454.812835693359
                 }
             },
             "name": "draw_pattern",
             "type": "opencv/calibration/draw_pattern"
         },
-        "find_circles_0": {
+        "draw_pattern_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 294.305999755859,
-                    "y": 106.159606933594
+                    "x": 183.787887573242,
+                    "y": 567.960754394531
                 }
             },
-            "name": "find_circles",
-            "ports": {
-                "clustering": true,
-                "flags": "Asymmetric grid",
-                "pattern_size/height": 11,
-                "pattern_size/width": 4
+            "name": "draw_pattern",
+            "type": "opencv/calibration/draw_pattern"
+        },
+        "find_pattern_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 167.7041015625,
+                    "y": 306.812835693359
+                }
             },
-            "type": "opencv/calibration/find_circles"
+            "name": "find_pattern",
+            "ports": {
+                "clustering": false
+            },
+            "type": "opencv/calibration/find_pattern"
         },
         "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 215.74560546875,
-                    "y": -87.960205078125
+                    "x": 108.980392456055,
+                    "y": 77.55615234375
                 }
             },
             "name": "image",
@@ -72,8 +115,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 207.737411499023,
-                    "y": 463.390960693359
+                    "x": 239.711578369141,
+                    "y": 723.623291015625
                 }
             },
             "connections": [
@@ -150,7 +193,7 @@
                     "out_port": "out_uniforms"
                 }
             ],
-            "name": "network",
+            "name": "display",
             "nodes": {
                 "background_0": {
                     "blind_data": {
@@ -297,6 +340,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAAAAAAASlAAACQQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAChAAAAV0AAACGAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ7AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAA1sAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

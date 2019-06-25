@@ -11,10 +11,16 @@ namespace possumwood { namespace opencv {
 
 class CirclesGrid {
 	public:
-		CirclesGrid(const cv::Mat& data = cv::Mat(), const cv::Size& size = cv::Size(0,0), bool wasFound = false);
+		enum Type {
+			kSymmetricGrid,
+			kAsymmetricGrid,
+		};
+
+		CirclesGrid(const cv::Mat& data = cv::Mat(), const cv::Size& size = cv::Size(0,0), bool wasFound = false, const Type& type = kSymmetricGrid);
 
 		const cv::Mat& operator*() const;
 		const cv::Size& size() const;
+		Type type() const;
 		bool wasFound() const;
 
 		bool operator == (const CirclesGrid& f) const;
@@ -24,6 +30,7 @@ class CirclesGrid {
 		std::shared_ptr<const cv::Mat> m_features; // 2D or 3D list of points
 		cv::Size m_size;
 		bool m_wasFound;
+		Type m_type;
 };
 
 std::ostream& operator << (std::ostream& out, const CirclesGrid& f);

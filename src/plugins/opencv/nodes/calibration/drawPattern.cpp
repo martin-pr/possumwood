@@ -8,6 +8,7 @@
 
 #include "frame.h"
 #include "circles_grid.h"
+#include "tools.h"
 
 namespace {
 
