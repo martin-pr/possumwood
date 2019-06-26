@@ -15,6 +15,10 @@ const cv::Mat& Frame::operator*() const {
 	return *m_frame;
 }
 
+cv::Size Frame::size() const {
+	return cv::Size(m_frame->cols, m_frame->rows);
+}
+
 bool Frame::operator == (const Frame& f) const {
 	return m_frame == f.m_frame;
 }

@@ -1,103 +1,117 @@
 {
     "connections": [
         {
-            "in_node": "draw_features_0",
-            "in_port": "features",
-            "out_node": "cascade_0",
-            "out_port": "features"
+            "in_node": "find_pattern_0",
+            "in_port": "in_pattern",
+            "out_node": "create_pattern_0",
+            "out_port": "pattern"
         },
         {
-            "in_node": "cascade_0",
-            "in_port": "frame",
-            "out_node": "color_0",
+            "in_node": "draw_pattern_1",
+            "in_port": "pattern",
+            "out_node": "create_pattern_0",
+            "out_port": "pattern"
+        },
+        {
+            "in_node": "draw_pattern_1",
+            "in_port": "in_frame",
+            "out_node": "draw_pattern_0",
             "out_port": "out_frame"
         },
         {
             "in_node": "network_0",
             "in_port": "frame",
-            "out_node": "draw_features_0",
+            "out_node": "draw_pattern_1",
             "out_port": "out_frame"
         },
         {
-            "in_node": "resize_0",
-            "in_port": "in_frame",
+            "in_node": "draw_pattern_0",
+            "in_port": "pattern",
+            "out_node": "find_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
+            "in_node": "find_pattern_0",
+            "in_port": "frame",
             "out_node": "image_0",
             "out_port": "frame"
         },
         {
-            "in_node": "color_0",
+            "in_node": "draw_pattern_0",
             "in_port": "in_frame",
-            "out_node": "resize_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "draw_features_0",
-            "in_port": "in_frame",
-            "out_node": "resize_0",
-            "out_port": "out_frame"
+            "out_node": "image_0",
+            "out_port": "frame"
         }
     ],
     "nodes": {
-        "cascade_0": {
+        "create_pattern_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 424.834350585938,
-                    "y": 4.20236778259277
+                    "x": 345.535491943359,
+                    "y": 91.0775985717773
                 }
             },
-            "name": "cascade",
+            "name": "create_pattern",
             "ports": {
-                "cascade_filename": "$EXAMPLES/opencv/haarcascades/haarcascade_frontalface_alt.xml",
-                "min_neighbors": 3,
-                "scale_factor": 1.20000004768372
+                "size/height": 11,
+                "size/width": 4,
+                "square_size": 30.0,
+                "type": "Asymmetric circles grid"
             },
-            "type": "opencv/clasifier/cascade"
+            "type": "opencv/calibration/create_pattern"
         },
-        "color_0": {
+        "draw_pattern_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 447.230407714844,
-                    "y": -169.542251586914
+                    "x": 81.5118637084961,
+                    "y": 584.036865234375
                 }
             },
-            "name": "to_gray",
-            "ports": {
-                "mode": "BGR2GRAY"
-            },
-            "type": "opencv/color"
+            "name": "draw_pattern",
+            "type": "opencv/calibration/draw_pattern"
         },
-        "draw_features_0": {
+        "draw_pattern_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 288.521820068359,
-                    "y": 233.162002563477
+                    "x": 280.705871582031,
+                    "y": 719.798950195312
                 }
             },
-            "name": "draw_features",
-            "ports": {
-                "draw/color": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 255.0
-                },
-                "draw/thickness": 4
+            "name": "draw_pattern",
+            "type": "opencv/calibration/draw_pattern"
+        },
+        "find_pattern_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 167.7041015625,
+                    "y": 306.812835693359
+                }
             },
-            "type": "opencv/clasifier/draw_features"
+            "name": "find_pattern",
+            "ports": {
+                "chessboard/adaptive_threshold": false,
+                "chessboard/fast_check": false,
+                "chessboard/filter_quads": false,
+                "chessboard/normalize_image": false,
+                "circles_grid/clustering": false
+            },
+            "type": "opencv/calibration/find_pattern"
         },
         "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 350.277954101562,
-                    "y": -473.260620117188
+                    "x": 79.9049911499023,
+                    "y": 85.6326522827148
                 }
             },
             "name": "image",
             "ports": {
-                "filename": "$EXAMPLES/pexels/adorable-beautiful-beauty-2418886.jpg"
+                "filename": "$EXAMPLES/opencv/circles_grid_01.jpg"
             },
             "type": "opencv/capture/image"
         },
@@ -105,8 +119,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 334.490203857422,
-                    "y": 410.398742675781
+                    "x": 326.937774658203,
+                    "y": 851.231994628906
                 }
             },
             "connections": [
@@ -183,7 +197,7 @@
                     "out_port": "out_uniforms"
                 }
             ],
-            "name": "network",
+            "name": "display",
             "nodes": {
                 "background_0": {
                     "blind_data": {
@@ -323,20 +337,6 @@
                 }
             },
             "type": "network"
-        },
-        "resize_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 341.807434082031,
-                    "y": -347.82177734375
-                }
-            },
-            "name": "resize",
-            "ports": {
-                "scale": 0.300000011920929
-            },
-            "type": "opencv/resize"
         }
     },
     "scene_config": {
@@ -344,6 +344,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAAAAAAAQ6AAACQQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAByAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAATAAAACGAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

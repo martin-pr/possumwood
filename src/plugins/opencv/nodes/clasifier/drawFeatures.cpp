@@ -45,6 +45,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/draw_features", init);
+possumwood::NodeImplementation s_impl("opencv/clasifier/draw_features", init);
 
 }
