@@ -15,25 +15,28 @@ dependency_graph::InAttr<unsigned> a_excludeRange, a_maxBits;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	cv::Ptr<cv::AlignMTB> align = cv::createAlignMTB();
-
-	align->setCut(data.get(a_cut));
-	align->setExcludeRange(data.get(a_excludeRange));
-	align->setMaxBits(data.get(a_maxBits));
-
-	const cv::Mat& original = *data.get(a_original);
-	const cv::Mat& toAlign = *data.get(a_toAlign);
-
-	cv::Mat origGray;
-	cvtColor(original, origGray, cv::COLOR_BGR2GRAY);
-
-	cv::Mat alignGray;
-	cvtColor(toAlign, alignGray, cv::COLOR_BGR2GRAY);
-
-	const cv::Point shift = align->calculateShift(origGray, alignGray);
-
 	cv::Mat mat;
-	align->shiftMat(toAlign, mat, shift);
+
+	if(!data.get(a_original).empty() && !data.get(a_toAlign).empty()) {
+		cv::Ptr<cv::AlignMTB> align = cv::createAlignMTB();
+
+		align->setCut(data.get(a_cut));
+		align->setExcludeRange(data.get(a_excludeRange));
+		align->setMaxBits(data.get(a_maxBits));
+
+		const cv::Mat& original = *data.get(a_original);
+		const cv::Mat& toAlign = *data.get(a_toAlign);
+
+		cv::Mat origGray;
+		cvtColor(original, origGray, cv::COLOR_BGR2GRAY);
+
+		cv::Mat alignGray;
+		cvtColor(toAlign, alignGray, cv::COLOR_BGR2GRAY);
+
+		const cv::Point shift = align->calculateShift(origGray, alignGray);
+
+		align->shiftMat(toAlign, mat, shift);
+	}
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
 
