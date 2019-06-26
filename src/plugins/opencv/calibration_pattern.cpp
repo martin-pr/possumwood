@@ -4,7 +4,7 @@
 
 namespace possumwood { namespace opencv {
 
-CalibrationPattern::CalibrationPattern(const cv::Mat& data, const cv::Size& size, bool wasFound, const Type& type) : m_size(size), m_wasFound(wasFound), m_type(type) {
+CalibrationPattern::CalibrationPattern(const cv::Mat& data, const cv::Size& size, bool wasFound, const Type& type, const cv::Size& imageSize) : m_size(size), m_imageSize(imageSize), m_wasFound(wasFound), m_type(type) {
 	m_features = std::shared_ptr<const cv::Mat>(new cv::Mat(data.clone()));
 }
 
@@ -14,6 +14,10 @@ const cv::Mat& CalibrationPattern::operator*() const {
 
 const cv::Size& CalibrationPattern::size() const {
 	return m_size;
+}
+
+const cv::Size& CalibrationPattern::imageSize() const {
+	return m_imageSize;
 }
 
 bool CalibrationPattern::wasFound() const {
@@ -33,7 +37,7 @@ bool CalibrationPattern::operator != (const CalibrationPattern& f) const {
 }
 
 std::ostream& operator << (std::ostream& out, const CalibrationPattern& f) {
-	out << "(" << (*f).rows << " circles, size = " << f.size().width << "x" << f.size().height << ", found=" << f.wasFound() << ")";
+	out << "(" << (*f).rows << " circles, image size = " << f.imageSize().width << "x" << f.imageSize().height << ", found=" << f.wasFound() << ")";
 	return out;
 }
 

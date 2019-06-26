@@ -18,10 +18,11 @@ class CalibrationPattern {
 		};
 
 		CalibrationPattern(const cv::Mat& data = cv::Mat(), const cv::Size& size = cv::Size(0,0),
-			bool wasFound = false, const Type& type = kSymmetricCirclesGrid);
+			bool wasFound = false, const Type& type = kSymmetricCirclesGrid, const cv::Size& imageSize = cv::Size(0,0));
 
 		const cv::Mat& operator*() const;
 		const cv::Size& size() const;
+		const cv::Size& imageSize() const;
 		Type type() const;
 		bool wasFound() const;
 
@@ -30,7 +31,7 @@ class CalibrationPattern {
 
 	private:
 		std::shared_ptr<const cv::Mat> m_features; // 2D or 3D list of points
-		cv::Size m_size;
+		cv::Size m_size, m_imageSize;
 		bool m_wasFound;
 		Type m_type;
 };

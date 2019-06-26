@@ -59,7 +59,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(!success)
 		status.addWarning("Pattern not found in the input image!");
 
-	const possumwood::opencv::CalibrationPattern grid(result, inPattern.size(), success, inPattern.type());
+	const possumwood::opencv::CalibrationPattern grid(result, inPattern.size(), success, inPattern.type(), data.get(a_frame).size());
 	data.set(a_outPattern, grid);
 
 	return status;
