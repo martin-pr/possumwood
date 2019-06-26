@@ -45,8 +45,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	}
 	points.addLayer(layer);
 
-	std::cout << points << std::endl;
-
 	data.set(a_outPoints, points);
 
 	return dependency_graph::State();
