@@ -35,4 +35,5 @@ target_link_libraries(opencv
 	psw_opencv
 	psw_render
 	${LIBS}
+	OpenImageIO
 )
