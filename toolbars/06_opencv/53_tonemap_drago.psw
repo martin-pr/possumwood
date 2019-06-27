@@ -535,8 +535,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 729.764221191406,
-                            "y": 1858.36413574219
+                            "x": 725.951416015625,
+                            "y": 1859.63513183594
                         }
                     },
                     "name": "add_exif",
@@ -672,7 +672,7 @@
                     "name": "calibrate_debevec",
                     "ports": {
                         "lambda": 150.0,
-                        "random": false,
+                        "random": true,
                         "samples": 70
                     },
                     "type": "opencv/hdr/calibrate_debevec"
@@ -802,8 +802,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 1299.01293945312,
-                            "y": 1879.43310546875
+                            "x": 1310.74731445312,
+                            "y": 1905.25756835938
                         }
                     },
                     "name": "output",
@@ -823,8 +823,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 382.153869628906,
-                    "y": 434.733795166016
+                    "x": 384.905395507812,
+                    "y": 418.398040771484
                 }
             },
             "name": "tonemap_drago",
