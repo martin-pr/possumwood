@@ -8,6 +8,7 @@
 #include <actions/traits.h>
 
 #include "frame.h"
+#include "exif.h"
 
 namespace {
 
@@ -15,6 +16,7 @@ using namespace OIIO;
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
+dependency_graph::OutAttr<possumwood::opencv::Exif> a_exif;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::Filename filename = data.get(a_filename);
@@ -23,12 +25,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// data.set(a_frame, possumwood::opencv::Frame(cv::imread(filename.filename().string())));
 
 	cv::Mat result;
+	possumwood::opencv::Exif exif;
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
 		auto in = ImageInput::open(filename.filename().string());
 		if (!in)
 			throw std::runtime_error("Error loading " + filename.filename().string());
 
+		// get the image spec
 		const ImageSpec &spec = in->spec();
 		std::size_t xres = spec.width;
 		std::size_t yres = spec.height;
@@ -36,10 +40,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if(spec.nchannels != 3 && spec.nchannels != 1)
 			throw std::runtime_error("Error loading " + filename.filename().string() + " - only images with 1 or 3 channels are supported at the moment, " + std::to_string(spec.nchannels) + " found!");
 
+		// load the raw data
 		std::vector<unsigned char> pixels(xres*yres*channels);
 		in->read_image(TypeDesc::UINT8, pixels.data());
 		in->close();
 
+		// convert the raw data to a cv::Mat type
 		if(spec.nchannels == 3) {
 			result = cv::Mat(yres, xres, CV_8UC3);
 
@@ -66,6 +72,35 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			throw std::runtime_error(ss.str());
 		}
+
+		// process metadata (EXIF)
+		float exposure = 0.0f;
+		{
+			auto it = spec.extra_attribs.find("ExposureTime");
+			if(it != spec.extra_attribs.end())
+				// exposure = (*static_cast<const float*>(it->data()));
+				exposure = it->get_float();
+		}
+
+		float fnumber = 0.0f;
+		{
+			auto it = spec.extra_attribs.find("FNumber");
+			if(it != spec.extra_attribs.end())
+				fnumber = it->get_float();
+		}
+
+		float iso = 100.0f;
+		{
+			auto it = spec.extra_attribs.find("Exif:PhotographicSensitivity");
+			if(it != spec.extra_attribs.end())
+				iso = it->get_float();
+		}
+
+		// for(auto& a : spec.extra_attribs)
+		// 	std::cout << a.name() << "  " << a.get_float() << std::endl;
+
+		exif = possumwood::opencv::Exif(exposure, fnumber, iso);
+		data.set(a_exif, exif);
 	}
 
 	data.set(a_frame, possumwood::opencv::Frame(result));
@@ -78,8 +113,10 @@ void init(possumwood::Metadata& meta) {
 		"Image files (*.png *.jpg *.jpe *.jpeg *.png)",
 	}));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_exif, "exif", possumwood::opencv::Exif(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
+	meta.addInfluence(a_filename, a_exif);
 
 	meta.setCompute(compute);
 }
