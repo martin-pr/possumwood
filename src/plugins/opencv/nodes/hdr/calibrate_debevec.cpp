@@ -19,11 +19,11 @@ dependency_graph::InAttr<unsigned> a_samples;
 dependency_graph::OutAttr<possumwood::opencv::CameraResponse> a_response;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	cv::Ptr<cv::CalibrateDebevec> tonemap = cv::createCalibrateDebevec();
+	cv::Ptr<cv::CalibrateDebevec> calibrate = cv::createCalibrateDebevec();
 
-	tonemap->setLambda(data.get(a_lambda));
-	tonemap->setRandom(data.get(a_random));
-	tonemap->setSamples(data.get(a_samples));
+	calibrate->setLambda(data.get(a_lambda));
+	calibrate->setRandom(data.get(a_random));
+	calibrate->setSamples(data.get(a_samples));
 
 	// collect input frames - doesn't copy, just uses shared references
 	std::vector<cv::Mat> inputs;
@@ -33,7 +33,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// build an array of exposures from exif
 	std::vector<float> exposures;
 	for(auto& e : data.get(a_exifSequence))
-		exposures.push_back(e.exposure() * e.iso() / 100.0f);
+		if(e.valid())
+			exposures.push_back(e.exposure() * e.iso() / 100.0f);
 
 	// std::cout << "Exposures:";
 	// for(auto& e : data.get(a_exifSequence))
@@ -56,7 +57,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// std::cout << std::endl;
 
 	cv::Mat mat;
-	tonemap->process(inputs, mat, exposures);
+
+	if(inputs.size() != exposures.size())
+		throw std::runtime_error("Inputs and exif data counts need to match!");
+
+	if(!inputs.empty() && !exposures.empty())
+		calibrate->process(inputs, mat, exposures);
 
 	data.set(a_response, possumwood::opencv::CameraResponse(mat, exposures));
 

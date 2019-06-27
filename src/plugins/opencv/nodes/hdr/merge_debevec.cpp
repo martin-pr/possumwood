@@ -23,8 +23,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	for(auto& in : data.get(a_in))
 		inputs.push_back(*in);
 
+	const possumwood::opencv::CameraResponse& response = data.get(a_response);
+
+	if(response.exposures().size() != inputs.size())
+		throw std::runtime_error("Image input count and exif metadata count (from camera response data) need to match!");
+
 	cv::Mat result;
-	merger->process(inputs, result, data.get(a_response).exposures(), data.get(a_response).matrix());
+
+	if(!inputs.empty())
+		merger->process(inputs, result, data.get(a_response).exposures(), data.get(a_response).matrix());
 
 	data.set(a_out, possumwood::opencv::Frame(result));
 

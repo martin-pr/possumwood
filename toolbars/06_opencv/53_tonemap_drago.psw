@@ -24,7 +24,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 402.92724609375,
+                    "x": 404.198181152344,
                     "y": 629.129943847656
                 }
             },
@@ -269,36 +269,6 @@
             },
             "connections": [
                 {
-                    "in_node": "image_1",
-                    "in_port": "filename",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "image_2",
-                    "in_port": "filename",
-                    "out_node": "input_1",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "image_0",
-                    "in_port": "filename",
-                    "out_node": "input_2",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "image_3",
-                    "in_port": "filename",
-                    "out_node": "input_3",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "image_4",
-                    "in_port": "filename",
-                    "out_node": "input_4",
-                    "out_port": "data"
-                },
-                {
                     "in_node": "add_exif_1",
                     "in_port": "in_sequence",
                     "out_node": "add_exif_0",
@@ -477,6 +447,36 @@
                     "in_port": "exif",
                     "out_node": "image_4",
                     "out_port": "exif"
+                },
+                {
+                    "in_node": "image_1",
+                    "in_port": "filename",
+                    "out_node": "input_0",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "image_2",
+                    "in_port": "filename",
+                    "out_node": "input_1",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "image_0",
+                    "in_port": "filename",
+                    "out_node": "input_2",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "image_3",
+                    "in_port": "filename",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "image_4",
+                    "in_port": "filename",
+                    "out_node": "input_4",
+                    "out_port": "data"
                 },
                 {
                     "in_node": "output_0",
