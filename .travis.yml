@@ -23,6 +23,7 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
+      - sourceline: 'ppa:martin-prazak/cgi-daily'
     packages:
       - libboost-all-dev
       - doxygen
@@ -42,17 +43,14 @@ addons:
       - qt5-default
       - qtdeclarative5-dev
       - libqt5opengl5-dev
-      - libopenimageio-dev
       - libluabind-dev
       - libtbb-dev
-      - libopencv-dev
+      - libopencv-daily
+      - libcgal-daily
+      - libopenimageio-daily
 
 # Run build
 script:
-  - wget http://www.mprazak.info/cgal-releases-CGAL-4.11.tar.gz
-  - tar xzf cgal-releases-CGAL-4.11.tar.gz
-  - pushd cgal-releases-CGAL-4.11 && mkdir build && pushd build && cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/usr -DWITH_examples=OFF -DWITH_demos=OFF -DWITH_tests=OFF && make && sudo make install && popd && popd
-
   - export CXX=g++-5
   - export CC=gcc-5
   - cd $TRAVIS_BUILD_DIR

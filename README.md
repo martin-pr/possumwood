@@ -26,6 +26,8 @@ sudo apt-get install possumwood
 
 This will install Possumwood to your system, enabling to simply run `possumwood` command from any terminal.
 
+Daily build of Possumwood is built against a number of packages that are newer than most distros provide out of the box. These are contained in the [`ppa:martin-prazak/cgi-daily`](https://launchpad.net/~martin-prazak/+archive/ubuntu/cgi-daily) PPA. Some packages might conflict with the system versions (OpenImageIO, OpenCV), requiring the original system packages to be uninstalled first.
+
 ### Installation using [Snap](https://snapcraft.io/)
 
 Currently, Possumwood is released in Snap as a development/testing package only. The latest build and its status can be accessed [here](https://build.snapcraft.io/user/martin-pr/possumwood).
