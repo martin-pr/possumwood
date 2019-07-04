@@ -16,6 +16,7 @@ class Frame {
 		const cv::Mat& operator*() const;
 
 		cv::Size size() const;
+		bool empty() const;
 
 		bool operator == (const Frame& f) const;
 		bool operator != (const Frame& f) const;
