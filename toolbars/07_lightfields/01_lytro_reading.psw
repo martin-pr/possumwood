@@ -15,7 +15,19 @@
         {
             "in_node": "convert_0",
             "in_port": "in_frame",
+            "out_node": "divide_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "divide_0",
+            "in_port": "in_frame_1",
             "out_node": "lytro_lightfield_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "divide_0",
+            "in_port": "in_frame_2",
+            "out_node": "lytro_lightfield_1",
             "out_port": "frame"
         }
     ],
@@ -24,8 +36,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 135.0,
-                    "y": 272.0
+                    "x": 208.714782714844,
+                    "y": 533.814575195312
                 }
             },
             "name": "color",
@@ -38,8 +50,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 135.661544799805,
-                    "y": 68.6277389526367
+                    "x": 209.376327514648,
+                    "y": 330.442321777344
                 }
             },
             "name": "convert",
@@ -49,6 +61,20 @@
                 "mode": "CV_8U"
             },
             "type": "opencv/convert"
+        },
+        "divide_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 154.831008911133,
+                    "y": 124.84593963623
+                }
+            },
+            "name": "divide",
+            "ports": {
+                "scale": 0.200000002980232
+            },
+            "type": "opencv/divide"
         },
         "lytro_lightfield_0": {
             "blind_data": {
@@ -64,12 +90,26 @@
             },
             "type": "opencv/capture/lytro_lightfield"
         },
+        "lytro_lightfield_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 277.530212402344,
+                    "y": -38.1564865112305
+                }
+            },
+            "name": "lytro_lightfield",
+            "ports": {
+                "filename": "$EXAMPLES/lytro/calibration.lfr"
+            },
+            "type": "opencv/capture/lytro_lightfield"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 142.278411865234,
-                    "y": 411.017272949219
+                    "x": 218.535095214844,
+                    "y": 674.102783203125
                 }
             },
             "connections": [
@@ -270,6 +310,7 @@
                     },
                     "name": "opencv_texture",
                     "ports": {
+                        "mode": "Nearest",
                         "name": "image"
                     },
                     "type": "render/uniforms/opencv_texture"
@@ -323,7 +364,7 @@
                     },
                     "name": "vertex_shader",
                     "ports": {
-                        "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n\nuniform uint image_width;\nuniform uint image_height;\nuniform vec2 iResolution;\nuniform float zoom;\n\nout vec2 uv;                   // uv texturing parameters\n \nvoid main() {\n\t// compute the aspect ratio from image width and height\n\tfloat aspect = float(image_width) / float(image_height);\n\n\t// compute the screen aspect ratio\n\tfloat screen_aspect = iResolution.x / iResolution.y;\n\n\tgl_Position = vec4(P.x, P.y, 0, 1);\n\n\t// UV parameters are just untransformed world-space position\n\tuv = vec2(P/pow(2.0, zoom));\n\tuv.y *= aspect / screen_aspect;\n\tuv += 0.5;\n} \n"
+                        "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n\nuniform uint image_width;\nuniform uint image_height;\nuniform vec2 iResolution;\nuniform float zoom;\n\nout vec2 uv;                   // uv texturing parameters\n \nvoid main() {\n\t// compute the aspect ratio from image width and height\n\tfloat aspect = float(image_width) / float(image_height);\n\n\t// compute the screen aspect ratio\n\tfloat screen_aspect = iResolution.x / iResolution.y;\n\n\tgl_Position = vec4(P.x, P.y, 0, 1);\n\n\t// UV parameters are just untransformed world-space position\n\tuv = vec2(P/pow(2.0, zoom));\n\tuv.y *= aspect / screen_aspect;\n\tuv += vec2(-iModelView[3][0], -iModelView[3][1]) / zoom;\n\tuv += 0.5;\n} \n"
                     },
                     "type": "render/vertex_shader"
                 },
@@ -345,7 +386,7 @@
                     "max": 8.0,
                     "min": 1.0,
                     "type": "linear",
-                    "value": 1.0
+                    "value": 5.10200023651123
                 }
             },
             "type": "network"
@@ -356,6 +397,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAAAAAAASlAAACQQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIlAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAA7EAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ7AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAA1sAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
