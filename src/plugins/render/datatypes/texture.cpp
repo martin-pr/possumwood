@@ -24,6 +24,9 @@ Texture::Texture(const unsigned char* data, std::size_t width, std::size_t heigh
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, format.interpolation);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, format.interpolation);
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, original_alignment);
@@ -57,6 +60,8 @@ Texture::Texture(const float* data, std::size_t width, std::size_t height, const
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, format.interpolation);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, format.interpolation);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, original_alignment);
