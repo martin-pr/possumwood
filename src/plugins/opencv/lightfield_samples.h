@@ -22,9 +22,9 @@ class LightfieldSamples {
 		};
 
 		struct Sample {
-			cv::Vec2i source;
-			cv::Vec2f target;
-			Color color;
+			cv::Vec2i source; ///< Integer position of the source pixel in source image
+			cv::Vec2f target; ///< Target position in the target image (normalized between 0..1!)
+			Color color; ///< Target colour channel, based on the Bayer pattern
 		};
 
 		LightfieldSamples();
