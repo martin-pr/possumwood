@@ -46,11 +46,11 @@ unsigned Port::index() const {
 	return m_id;
 }
 
-std::type_index Port::type() const {
-	std::type_index t = m_parent->metadata()->attr(m_id).type();
+std::string Port::type() const {
+	std::string t = unmangledName(m_parent->metadata()->attr(m_id).type().name());
 
 	// void port "type" can be determined by any connected other ports
-	if(t == typeid(void)) {
+	if(t == unmangledTypeId<void>()) {
 		if(category() == Attr::kInput) {
 			auto out = node().network().connections().connectedFrom(*this);
 			if(out)
@@ -185,7 +185,7 @@ void Port::connect(Port& p) {
 
 	// test for datatype
 	{
-		const unsigned voidCount = (type() == typeid(void)) + (p.type() == typeid(void));
+		const unsigned voidCount = (type() == unmangledTypeId<void>()) + (p.type() == unmangledTypeId<void>());
 		if((type() != p.type() && (voidCount != 1)) || voidCount == 2) {
 			std::stringstream msg;
 			msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
@@ -263,7 +263,7 @@ void Port::disconnect(Port& p) {
 
 	// disconnecting a non-saveable or untyped input port should reset the data, otherwise
 	//   if the scene is saved, this data will not be in the file
-	if(p.type() == typeid(void) || !io::isSaveable(p.m_parent->datablock().data(p.m_id))) {
+	if(p.type() == unmangledTypeId<void>() || !io::isSaveable(p.m_parent->datablock().data(p.m_id))) {
 		// set to default (i.e., reset)
 		p.m_parent->datablock().reset(p.m_id);
 
@@ -274,7 +274,7 @@ void Port::disconnect(Port& p) {
 	}
 
 	// disconnecting an untyped output port should reset the data, to keep the behaviour consistent
-	if(type() == typeid(void))
+	if(type() == unmangledTypeId<void>())
 		// set to default (i.e., reset)
 		m_parent->datablock().reset(m_id);
 

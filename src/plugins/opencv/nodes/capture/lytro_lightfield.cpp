@@ -8,12 +8,16 @@
 #include <actions/traits.h>
 #include <actions/io/json.h>
 
+#include <opencv2/opencv.hpp>
+
 #include "frame.h"
+#include "lightfield_pattern.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
+dependency_graph::OutAttr<possumwood::opencv::LightfieldPattern> a_pattern;
 
 struct Block {
 	char id = '\0';
@@ -116,6 +120,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::Filename filename = data.get(a_filename);
 
 	cv::Mat result;
+	possumwood::opencv::LightfieldPattern pattern;
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
 		int width = 0, height = 0;
@@ -171,6 +176,23 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 				checkThrow(metadata["image"]["rawDetails"]["mosaic"]["tile"].get<std::string>(), std::string("r,gr:gb,b"), "mosaic/tile");
 				checkThrow(metadata["image"]["rawDetails"]["mosaic"]["upperLeftPixel"].get<std::string>(), std::string("b"), "mosaic/upperLeftPixel");
+
+				// assemble the lightfield pattern
+				pattern = possumwood::opencv::LightfieldPattern(
+					metadata["devices"]["mla"]["lensPitch"].get<double>(),
+					metadata["devices"]["sensor"]["pixelPitch"].get<double>(),
+					metadata["devices"]["mla"]["rotation"].get<double>(),
+					cv::Vec2f(
+						metadata["devices"]["mla"]["scaleFactor"]["x"].get<double>(),
+						metadata["devices"]["mla"]["scaleFactor"]["y"].get<double>()
+					),
+					cv::Vec3f(
+						metadata["devices"]["mla"]["sensorOffset"]["x"].get<double>(),
+						metadata["devices"]["mla"]["sensorOffset"]["y"].get<double>(),
+						metadata["devices"]["mla"]["sensorOffset"]["z"].get<double>()
+					),
+					cv::Vec2i(width, height)
+				);
 			}
 			else if(block.name == imageRef) {
 				result = decodeData(block.data.data(), width, height, black, white);
@@ -183,6 +205,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	}
 
 	data.set(a_frame, possumwood::opencv::Frame(result));
+	data.set(a_pattern, pattern);
 
 	return dependency_graph::State();
 }
@@ -192,8 +215,10 @@ void init(possumwood::Metadata& meta) {
 		"Lytro files (*.lfr)",
 	}));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", possumwood::opencv::LightfieldPattern(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
+	meta.addInfluence(a_filename, a_pattern);
 
 	meta.setCompute(compute);
 }
