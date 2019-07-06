@@ -28,8 +28,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			unsigned char* color = mat.ptr<unsigned char>(y, x);
 			float current = value[2]*value[2] + value[3]*value[3];
-			if(current > 0.25f)
-				color[2] += (current - 0.25) * 1000.0;
+			if(current > 1.0)
+				color[2] += (current - 1.0) * 250.0;
 		}
 
 	data.set(a_out, possumwood::opencv::Frame(mat));

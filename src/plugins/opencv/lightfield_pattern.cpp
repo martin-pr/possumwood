@@ -64,6 +64,9 @@ cv::Vec4f LightfieldPattern::sample(const cv::Vec2i& pixelPos) const {
 
 	result[3] = fmod(result[3] + 100.5, 1.0) - 0.5;
 
+	result[2] *= 2.0f;
+	result[3] *= 2.0f;
+
 	return result;
 }
 
