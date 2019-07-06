@@ -5,7 +5,7 @@ namespace possumwood { namespace opencv {
 LightfieldPattern::LightfieldPattern() : m_lensPitch(0.0), m_pixelPitch(0.0), m_rotation(0.0) {
 }
 
-LightfieldPattern::LightfieldPattern(double lensPitch, double pixelPitch, double rotation, 
+LightfieldPattern::LightfieldPattern(double lensPitch, double pixelPitch, double rotation,
 	cv::Vec2d scaleFactor, cv::Vec3d sensorOffset, cv::Vec2i sensorResolution) :
 	m_lensPitch(lensPitch), m_pixelPitch(pixelPitch), m_rotation(rotation),
 	m_scaleFactor(scaleFactor), m_sensorOffset(sensorOffset), m_sensorResolution(sensorResolution)
@@ -13,8 +13,8 @@ LightfieldPattern::LightfieldPattern(double lensPitch, double pixelPitch, double
 }
 
 bool LightfieldPattern::operator == (const LightfieldPattern& f) const {
-	return m_lensPitch == f.m_lensPitch && 
-		m_pixelPitch == f.m_pixelPitch && 
+	return m_lensPitch == f.m_lensPitch &&
+		m_pixelPitch == f.m_pixelPitch &&
 		m_rotation == f.m_rotation &&
 		m_scaleFactor == f.m_scaleFactor &&
 		m_sensorOffset == f.m_sensorOffset &&
@@ -22,8 +22,8 @@ bool LightfieldPattern::operator == (const LightfieldPattern& f) const {
 }
 
 bool LightfieldPattern::operator != (const LightfieldPattern& f) const {
-	return m_lensPitch != f.m_lensPitch || 
-		m_pixelPitch != f.m_pixelPitch || 
+	return m_lensPitch != f.m_lensPitch ||
+		m_pixelPitch != f.m_pixelPitch ||
 		m_rotation != f.m_rotation ||
 		m_scaleFactor != f.m_scaleFactor ||
 		m_sensorOffset != f.m_sensorOffset ||
@@ -40,13 +40,13 @@ cv::Vec4f LightfieldPattern::sample(const cv::Vec2i& pixelPos) const {
 	const double yDiff = m_lensPitch / m_pixelPitch * sqrt(3.0/4.0) * m_scaleFactor[1];
 
 	cv::Vec2d vect(
-		(double)pixelPos[0] / m_scaleFactor[0], 
+		(double)pixelPos[0] / m_scaleFactor[0],
 		(double)pixelPos[1] / m_scaleFactor[1]
 	);
 
 	const double cs = cos(m_rotation);
 	const double sn = sin(m_rotation);
-	
+
 	vect = cv::Vec2d (
 		(vect[0] * cs + vect[1] * sn),
 		(-vect[0] * sn + vect[1] * cs)
@@ -68,6 +68,10 @@ cv::Vec4f LightfieldPattern::sample(const cv::Vec2i& pixelPos) const {
 	result[3] *= 2.0f;
 
 	return result;
+}
+
+const cv::Vec2i& LightfieldPattern::sensorResolution() const {
+	return m_sensorResolution;
 }
 
 std::ostream& operator << (std::ostream& out, const LightfieldPattern& f) {
