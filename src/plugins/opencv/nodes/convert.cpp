@@ -18,12 +18,10 @@ dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 int modeToEnum(const std::string& mode) {
 	if(mode == "CV_8U")
 		return CV_8U;
-	else if(mode == "CV_8UC3")
-		return CV_8UC3;
+	else if(mode == "CV_16U")
+		return CV_16U;
 	else if(mode == "CV_32F")
 		return CV_32F;
-	else if(mode == "CV_32FC3")
-		return CV_32FC3;
 
 	throw std::runtime_error("Unknown conversion mode " + mode);
 }
@@ -41,7 +39,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_mode, "mode", 
-		possumwood::Enum({"CV_8U", "CV_8UC3", "CV_32F", "CV_32FC3"}));
+		possumwood::Enum({"CV_8U", "CV_16U", "CV_32F"}));
 	meta.addAttribute(a_a, "a", 1.0f);
 	meta.addAttribute(a_b, "b", 0.0f);
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
