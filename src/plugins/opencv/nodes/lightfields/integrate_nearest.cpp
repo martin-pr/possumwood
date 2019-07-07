@@ -17,11 +17,31 @@ dependency_graph::InAttr<possumwood::opencv::LightfieldSamples> a_samples;
 dependency_graph::InAttr<unsigned> a_width, a_height;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
+void add1channel(float* color, float* n, int colorIndex, const float* value) {
+	color[colorIndex] += value[0];
+	n[colorIndex] += 1.0f;
+}
+
+void add3channel(float* color, float* n, int colorIndex, const float* value) {
+	color[0] += value[0];
+	n[0] += 1.0f;
+
+	color[1] += value[1];
+	n[1] += 1.0f;
+
+	color[2] += value[2];
+	n[2] += 1.0f;
+}
+
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::LightfieldSamples& samples = data.get(a_samples);
 
-	if((*data.get(a_in)).type() != CV_32FC1)
-		throw std::runtime_error("Only 16-bit single-float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
+	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
+		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
+
+	auto applyFn = &add1channel;
+	if((*data.get(a_in)).type() == CV_32FC3)
+		applyFn = &add3channel;
 
 	const cv::Mat& input = *data.get(a_in);
 
@@ -42,9 +62,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			float* color = mat.ptr<float>(floor(target_y), floor(target_x));
 			float* n = norm.ptr<float>(floor(target_y), floor(target_x));
 
-			const float value = input.at<float>(it->source[1], it->source[0]);
-			color[(int)it->color] += value;
-			n[(int)it->color] += 1.0f;
+			const float* value = input.ptr<float>(it->source[1], it->source[0]);
+			(*applyFn)(color, n, it->color, value);
 		}
 	});
 

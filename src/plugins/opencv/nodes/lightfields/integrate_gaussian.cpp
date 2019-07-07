@@ -18,11 +18,31 @@ dependency_graph::InAttr<unsigned> a_width, a_height;
 dependency_graph::InAttr<float> a_sigma2;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
+void add1channel(float* color, float* n, int colorIndex, const float* value, float gauss) {
+	color[colorIndex] += value[0] * gauss;
+	n[colorIndex] += gauss;
+}
+
+void add3channel(float* color, float* n, int colorIndex, const float* value, float gauss) {
+	color[0] += value[0] * gauss;
+	n[0] += gauss;
+
+	color[1] += value[1] * gauss;
+	n[1] += gauss;
+
+	color[2] += value[2] * gauss;
+	n[2] += gauss;
+}
+
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::LightfieldSamples& samples = data.get(a_samples);
 
-	if((*data.get(a_in)).type() != CV_32FC1)
-		throw std::runtime_error("Only 16-bit single-float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
+	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
+		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
+
+	auto applyFn = &add1channel;
+	if((*data.get(a_in)).type() == CV_32FC3)
+		applyFn = &add3channel;
 
 	const cv::Mat& input = *data.get(a_in);
 
@@ -43,9 +63,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			const float target_y = it->target[1] * (float)height;
 
 			int xFrom = std::max((int)floor(target_x - 3.0f*sigma2), 0);
-			int xTo = std::min((int)floor(target_x + 3.0f*sigma2 + 1.0f), (int)width);
+			int xTo = std::min((int)ceil(target_x + 3.0f*sigma2 + 1.0f), (int)width);
 			int yFrom = std::max((int)floor(target_y - 3.0f*sigma2), 0);
-			int yTo = std::min((int)floor(target_y + 3.0f*sigma2 + 1.0f), (int)height);
+			int yTo = std::min((int)ceil(target_y + 3.0f*sigma2 + 1.0f), (int)height);
 
 			for(int yt=yFrom; yt<yTo; ++yt) {
 				for(int xt=xFrom; xt<xTo; ++xt) {
@@ -55,9 +75,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					float* color = mat.ptr<float>(yt, xt);
 					float* n = norm.ptr<float>(yt, xt);
 
-					const float value = input.at<float>(it->source[1], it->source[0]);
-					color[(int)it->color] += value * gauss;
-					n[(int)it->color] += gauss;
+					const float* value = input.ptr<float>(it->source[1], it->source[0]);
+					(*applyFn)(color, n, it->color, value, gauss);
 				}
 			}
 		}
