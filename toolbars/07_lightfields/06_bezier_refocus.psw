@@ -90,7 +90,7 @@
             },
             "name": "gamma",
             "ports": {
-                "gamma": 1.0,
+                "gamma": 0.699999988079071,
                 "normalization_coef": 1.0
             },
             "type": "opencv/gamma"
@@ -99,12 +99,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 134.0,
-                    "y": 358.0
+                    "x": 146.0,
+                    "y": 330.0
                 }
             },
             "name": "integrate_bezier",
             "ports": {
+                "levels": 4,
+                "offset": 7,
                 "size/height": 1000,
                 "size/width": 1000
             },
@@ -435,7 +437,7 @@
             },
             "name": "samples_refocus",
             "ports": {
-                "uv_offset": 60.0,
+                "uv_offset": 30.0,
                 "uv_threshold": 1.0
             },
             "type": "opencv/lightfields/samples_refocus"
@@ -447,5 +449,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALTAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACGAQAAAwAAAwMAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKwAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACGAQAAAwAAAyYAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

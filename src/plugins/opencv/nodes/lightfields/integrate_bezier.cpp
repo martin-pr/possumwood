@@ -9,14 +9,19 @@
 #include "frame.h"
 #include "lightfield_samples.h"
 #include "tools.h"
-#include "bspline.h"
+#include "bspline_hierarchy.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<possumwood::opencv::LightfieldSamples> a_samples;
-dependency_graph::InAttr<unsigned> a_width, a_height;
+dependency_graph::InAttr<unsigned> a_width, a_height, a_levels, a_offset;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
+
+struct Sample {
+	cv::Vec2d target;
+	float value;
+};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::LightfieldSamples& samples = data.get(a_samples);
@@ -31,7 +36,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
 
-	// debug output of a small window into a text file - useful for gnuplot
 	// {
 	// 	std::vector<cv::Vec2d> points;
 	// 	for(auto& s : samples) 
@@ -47,29 +51,50 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// 		data << std::setprecision(15) << p[0] << "\t" << std::setprecision(15) << p[1] << std::endl;
 	// }
 
-	// lets make a single B-spline, to test this
-	possumwood::opencv::BSpline bspline[3] = {
-		possumwood::opencv::BSpline(128),
-		possumwood::opencv::BSpline(128),
-		possumwood::opencv::BSpline(128)
-	};
+	std::vector<Sample> cache[3];
 	for(auto s : samples)
-		bspline[s.color].addSample(s.target[0], s.target[1], input.at<float>(s.source[1], s.source[0]));
+		cache[s.color].push_back(Sample{
+			s.target,
+			input.at<float>(s.source[1], s.source[0])
+		});
 
+	const std::size_t levels = data.get(a_levels);
+	const std::size_t offset = data.get(a_offset);
+
+	// lets make a hierarchy of b splines
+	possumwood::opencv::BSplineHierarchy splines[3] = {
+		possumwood::opencv::BSplineHierarchy(levels, offset),
+		possumwood::opencv::BSplineHierarchy(levels, offset),
+		possumwood::opencv::BSplineHierarchy(levels, offset)
+	};
+
+	for(std::size_t c=0;c<3;++c) {
+		for(std::size_t a=0;a<levels;++a) {
+			auto& spline = splines[c].level(a);
+
+			tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
+				auto& s = cache[c][a];
+				spline.addSample(s.target[0], s.target[1], s.value);
+			});
+
+			// if(a < levels-1)
+				tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
+					auto& s = cache[c][a];
+					s.value -= spline.sample(s.target[0], s.target[1]);
+				});
+		}
+	}
 
 	cv::Mat mat = cv::Mat::zeros(height, width, CV_32FC3);
-	tbb::parallel_for(0, mat.rows, [&](int y) {
-		for(int x=0;x<mat.cols;++x)
-			for(int a=0;a<3;++a)
-				mat.ptr<float>(y,x)[a] = bspline[a].sample(
+	for(int a=0;a<3;++a)
+		tbb::parallel_for(0, mat.rows, [&](int y) {
+			for(int x=0;x<mat.cols;++x)
+				// mat.ptr<float>(y,x)[a] = splines[a].level(levels-1).sample(
+				mat.ptr<float>(y,x)[a] = splines[a].sample(
 					(float)x / (float)(mat.cols-1),
 					(float)y / (float)(mat.rows-1)
 				);
-	});
-
-	// debug printout of the bspline controls
-	// for(unsigned a=0;a<3;++a)
-	// 	std::cout << bspline[a] << std::endl;
+		});
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
 
@@ -81,12 +106,16 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_samples, "samples", possumwood::opencv::LightfieldSamples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_width, "size/width", 300u);
 	meta.addAttribute(a_height, "size/height", 300u);
+	meta.addAttribute(a_levels, "levels", 3u);
+	meta.addAttribute(a_offset, "offset", 6u);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_samples, a_out);
 	meta.addInfluence(a_width, a_out);
 	meta.addInfluence(a_height, a_out);
+	meta.addInfluence(a_levels, a_out);
+	meta.addInfluence(a_offset, a_out);
 
 	meta.setCompute(compute);
 }
