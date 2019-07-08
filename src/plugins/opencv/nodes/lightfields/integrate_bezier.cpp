@@ -1,5 +1,7 @@
 #include <possumwood_sdk/node_implementation.h>
 
+#include <fstream>
+
 #include <tbb/parallel_for.h>
 
 #include <opencv2/opencv.hpp>
@@ -36,27 +38,35 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
 
-	// {
-	// 	std::vector<cv::Vec2d> points;
-	// 	for(auto& s : samples) 
-	// 		if(s.color == 0) {
-	// 			cv::Vec2d pt = s.target;
+	{
+		std::vector<std::pair<cv::Vec2d, float>> points;
+		for(auto& s : samples)
+			if(s.color == 0) {
+				cv::Vec2d pt = s.target;
 
-	// 			if(pt[0] > 0.48 && pt[0] < 0.52 && pt[1] > 0.48 && pt[1] < 0.52)
-	// 				points.push_back(pt);
-	// 		}
-		
-	// 	std::ofstream data("data.txt");
-	// 	for(auto& p : points)
-	// 		data << std::setprecision(15) << p[0] << "\t" << std::setprecision(15) << p[1] << std::endl;
-	// }
+				if(pt[0] > 0.48 && pt[0] < 0.52 && pt[1] > 0.48 && pt[1] < 0.52)
+					points.push_back(std::make_pair(pt, input.at<float>(s.source[1], s.source[0])));
+			}
+
+		std::ofstream data("data.txt");
+		for(auto& p : points)
+			data << std::setprecision(15) << p.first[0] << "\t" << std::setprecision(15) << p.first[1] << "\t" << p.second << std::endl;
+	}
 
 	std::vector<Sample> cache[3];
-	for(auto s : samples)
-		cache[s.color].push_back(Sample{
-			s.target,
-			input.at<float>(s.source[1], s.source[0])
-		});
+	if((*data.get(a_in)).type() == CV_32FC1)
+		for(auto s : samples)
+			cache[s.color].push_back(Sample{
+				s.target,
+				input.at<float>(s.source[1], s.source[0])
+			});
+	else
+		for(auto s : samples)
+			for(int c=0;c<3;++c)
+				cache[c].push_back(Sample{
+					s.target,
+					*(input.ptr<float>(s.source[1], s.source[0]) + c)
+				});
 
 	const std::size_t levels = data.get(a_levels);
 	const std::size_t offset = data.get(a_offset);
@@ -77,7 +87,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				spline.addSample(s.target[0], s.target[1], s.value);
 			});
 
-			// if(a < levels-1)
+			if(a < levels-1)
 				tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
 					auto& s = cache[c][a];
 					s.value -= spline.sample(s.target[0], s.target[1]);
