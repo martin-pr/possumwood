@@ -30,8 +30,8 @@ bool LightfieldPattern::operator != (const LightfieldPattern& f) const {
 		m_sensorResolution != f.m_sensorResolution;
 }
 
-cv::Vec4f LightfieldPattern::sample(const cv::Vec2i& pixelPos) const {
-	cv::Vec4f result;
+cv::Vec4d LightfieldPattern::sample(const cv::Vec2i& pixelPos) const {
+	cv::Vec4d result;
 
 	result[0] = (double)pixelPos[0];
 	result[1] = (double)pixelPos[1];
@@ -64,8 +64,8 @@ cv::Vec4f LightfieldPattern::sample(const cv::Vec2i& pixelPos) const {
 
 	result[3] = fmod(result[3] + 100.5, 1.0) - 0.5;
 
-	result[2] *= 2.0f;
-	result[3] *= 2.0f;
+	result[2] *= 2.0;
+	result[3] *= 2.0;
 
 	return result;
 }

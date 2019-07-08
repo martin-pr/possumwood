@@ -15,7 +15,7 @@ class LightfieldPattern {
 		LightfieldPattern(double lensPitch, double pixelPitch, double rotation,
 			cv::Vec2d scaleFactor, cv::Vec3d sensorOffset, cv::Vec2i sensorResolution);
 
-		cv::Vec4f sample(const cv::Vec2i& pixelPos) const;
+		cv::Vec4d sample(const cv::Vec2i& pixelPos) const;
 		const cv::Vec2i& sensorResolution() const;
 
 		bool operator == (const LightfieldPattern& f) const;
