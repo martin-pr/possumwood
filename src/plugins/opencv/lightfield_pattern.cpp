@@ -2,7 +2,7 @@
 
 namespace possumwood { namespace opencv {
 
-LightfieldPattern::LightfieldPattern() : m_lensPitch(0.0), m_pixelPitch(0.0), m_rotation(0.0) {
+LightfieldPattern::LightfieldPattern() : m_lensPitch(1.0), m_pixelPitch(1.0), m_rotation(0.0), m_scaleFactor(1.0, 1.0), m_sensorResolution(100, 100) {
 }
 
 LightfieldPattern::LightfieldPattern(double lensPitch, double pixelPitch, double rotation,
