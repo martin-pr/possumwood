@@ -38,7 +38,7 @@ double B(double t, unsigned k) {
 
 }
 
-BSpline::BSpline(std::size_t subdiv) : m_subdiv(subdiv), m_controls(cv::Mat::zeros(subdiv+3, subdiv+3, CV_32FC1)), m_norm(cv::Mat::zeros(subdiv+3, subdiv+3, CV_32FC1)) {
+BSpline::BSpline(std::size_t subdiv) : m_subdiv(subdiv), m_controls((subdiv+3) * (subdiv+3), std::make_pair(0.0f, 0.0f)) {
 	assert(subdiv > 0);
 }
 
@@ -57,9 +57,12 @@ void BSpline::addSample(double x, double y, double value) {
 
 	for(unsigned a=0;a<4;++a)
 		for(unsigned b=0;b<4;++b) {
-			const double weight = B(x, a) * B(y, b);
-			m_controls.at<float>(b+offs_y, a+offs_x) += weight * value;
-			m_norm.at<float>(b+offs_y, a+offs_x) += weight;
+			const double weight = B(x, a) * B(y, b)*m_subdiv;
+
+			const std::size_t index = (a+offs_x) + (b+offs_y)*m_subdiv;
+
+			m_controls[index].first += weight * value;
+			m_controls[index].second += weight;
 		}
 }
 
@@ -81,24 +84,13 @@ double BSpline::sample(double x, double y) const {
 	for(unsigned a=0;a<4;++a)
 		for(unsigned b=0;b<4;++b) {
 			const double weight = B(x, a) * B(y, b);
-			result += m_controls.at<float>(b+offs_y, a+offs_x) / 
-				m_norm.at<float>(b+offs_y, a+offs_x) * weight;
+
+			const std::size_t index = (a+offs_x) + (b+offs_y)*m_subdiv;
+
+			result += m_controls[index].first / m_controls[index].second * weight;
 		}
 
 	return result;
-}
-
-std::ostream& operator << (std::ostream& out, const BSpline& bs) {
-	for(int a=0;a<bs.m_controls.rows;++a) {
-		for(int b=0;b<bs.m_controls.cols;++b) {
-			out << (bs.m_controls.at<float>(a,b) / bs.m_norm.at<float>(a,b)) << "  ";
-		}
-
-		out << std::endl;
-	}
-	out << std::endl;
-
-	return out;
 }
 
 } }

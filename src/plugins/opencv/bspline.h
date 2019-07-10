@@ -13,12 +13,9 @@ class BSpline {
 
 	private:
 		std::size_t m_subdiv;
-		cv::Mat m_controls;
-		cv::Mat m_norm;
+		std::vector<std::pair<float, float>> m_controls;
 
 	friend std::ostream& operator << (std::ostream& out, const BSpline& bs);
 };
-
-std::ostream& operator << (std::ostream& out, const BSpline& bs);
 
 } }
