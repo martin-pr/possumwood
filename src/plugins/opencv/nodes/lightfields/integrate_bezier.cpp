@@ -12,6 +12,7 @@
 #include "lightfield_samples.h"
 #include "tools.h"
 #include "bspline_hierarchy.h"
+#include "bspline.inl"
 
 namespace {
 

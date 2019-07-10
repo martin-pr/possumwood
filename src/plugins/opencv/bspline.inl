@@ -4,45 +4,28 @@
 
 namespace possumwood { namespace opencv {
 
-namespace {
-
-double B0(double t) {
-	return std::pow(1.0-t, 3) / 6.0;
-}
-
-double B1(double t) {
-	return (3.0*std::pow(t, 3) - 6.0*t*t + 4.0) / 6.0;
-}
-
-double B2(double t) {
-	return (-3.0*std::pow(t, 3) + 3.0*t*t + 3.0*t + 1) / 6.0;
-}
-
-double B3(double t) {
-	return std::pow(t, 3) / 6.0;
-}
-
-double B(double t, unsigned k) {
+template<unsigned DEGREE>
+double BSpline<DEGREE>::B(double t, unsigned k) {
 	assert(t >= 0.0 && t <= 1.0);
 	assert(k < 4);
 
 	if(k == 0)
-		return B0(t);
+		return std::pow(1.0-t, 3) / 6.0;
 	else if(k == 1)
-		return B1(t);
+		return (3.0*std::pow(t, 3) - 6.0*t*t + 4.0) / 6.0;
 	else if(k == 2)
-		return B2(t);
+		return (-3.0*std::pow(t, 3) + 3.0*t*t + 3.0*t + 1) / 6.0;
 	else
-		return B3(t);
+		return std::pow(t, 3) / 6.0;
 }
 
-}
-
-BSpline::BSpline(std::size_t subdiv) : m_subdiv(subdiv), m_controls((subdiv+3) * (subdiv+3), std::make_pair(0.0f, 0.0f)) {
+template<unsigned DEGREE>
+BSpline<DEGREE>::BSpline(std::size_t subdiv) : m_subdiv(subdiv), m_controls((subdiv+3) * (subdiv+3), std::make_pair(0.0f, 0.0f)) {
 	assert(subdiv > 0);
 }
 
-void BSpline::addSample(const std::array<double, 2>& _coords, double value) {
+template<unsigned DEGREE>
+void BSpline<DEGREE>::addSample(const std::array<double, DEGREE>& _coords, double value) {
 	std::array<double, 2> coords = _coords;
 
 	for(std::size_t d=0; d<coords.size(); ++d)
@@ -74,7 +57,8 @@ void BSpline::addSample(const std::array<double, 2>& _coords, double value) {
 	}
 }
 
-double BSpline::sample(const std::array<double, 2>& _coords) const {
+template<unsigned DEGREE>
+double BSpline<DEGREE>::sample(const std::array<double, DEGREE>& _coords) const {
 	std::array<double, 2> coords = _coords;
 
 	for(std::size_t d=0; d<coords.size(); ++d)
