@@ -96,8 +96,6 @@ void skipBracketedSection(anim::Tokenizer& tokenizer) {
 	while(!tokenizer.eof() && (tokenizer.current() != "}"))
 		if(tokenizer.next() == "{")
 			skipBracketedSection(tokenizer);
-		else
-			;
 
 	tokenizer.next();
 }

@@ -2,6 +2,8 @@
 
 #include "nodes_iterator.h"
 
+#include "node_base.inl"
+
 namespace dependency_graph {
 
 template<typename ITERATOR>

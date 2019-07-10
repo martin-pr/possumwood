@@ -10,7 +10,7 @@
 using std::cout;
 using std::endl;
 
-const float compareMatrices(const Imath::M44f& m1, const Imath::M44f& m2) {
+float compareMatrices(const Imath::M44f& m1, const Imath::M44f& m2) {
 	// cout << m1 << endl << m2 << endl << endl;
 
 	float result = 0.0f;
@@ -20,7 +20,7 @@ const float compareMatrices(const Imath::M44f& m1, const Imath::M44f& m2) {
 	return result;
 }
 
-const float compareMatrices(const Imath::M33f& m1, const Imath::M33f& m2) {
+float compareMatrices(const Imath::M33f& m1, const Imath::M33f& m2) {
 	// cout << m1 << endl << m2 << endl << endl;
 
 	float result = 0.0f;
@@ -30,7 +30,7 @@ const float compareMatrices(const Imath::M33f& m1, const Imath::M33f& m2) {
 	return result;
 }
 
-const float compareTransforms(const anim::Transform& m1, const anim::Transform& m2) {
+float compareTransforms(const anim::Transform& m1, const anim::Transform& m2) {
 	// cout << m1 << endl << m2 << endl << endl;
 
 	// antipodality - two possible solutions to matrix-to-quat transformation - make sure we handle both

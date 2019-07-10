@@ -430,9 +430,9 @@ void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
 
 void Adaptor::onMetadataChanged(dependency_graph::NodeBase& node) {
 	if(&node.network() == m_currentNetwork) {
+#ifndef NDEBUG
 		auto& n = m_index[node.index()];
 
-#ifndef NDEBUG
 		// make sure there are no connections
 		for(unsigned ei=0;ei<m_graphWidget->scene().edgeCount();++ei) {
 			auto& e = m_graphWidget->scene().edge(ei);

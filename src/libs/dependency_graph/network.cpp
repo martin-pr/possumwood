@@ -3,6 +3,7 @@
 #include "graph.h"
 #include "metadata_register.h"
 #include "nodes.inl"
+#include "node_base.inl"
 
 namespace dependency_graph {
 

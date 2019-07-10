@@ -18,11 +18,15 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
 }
 
 GlDebug::GlDebug() {
+#ifndef NDEBUG
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(MessageCallback, 0);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
 }
 
 GlDebug::~GlDebug() {
+#ifndef NDEBUG
 	glDisable(GL_DEBUG_OUTPUT);
+#endif
 }

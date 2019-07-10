@@ -5,6 +5,7 @@
 #include <dependency_graph/graph.h>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/values.inl>
+#include <dependency_graph/nodes_iterator.inl>
 
 #include <possumwood_sdk/app.h>
 #include <actions/actions.h>
