@@ -20,7 +20,14 @@ double BSpline<DEGREE>::B(double t, unsigned k) {
 }
 
 template<unsigned DEGREE>
-BSpline<DEGREE>::BSpline(unsigned subdiv) : m_subdiv(subdiv), m_controls((subdiv+3) * (subdiv+3), std::make_pair(0.0f, 0.0f)) {
+std::array<double, DEGREE> BSpline<DEGREE>::initArray(double val) {
+	std::array<double, DEGREE> result;
+	result.fill(val);
+	return result;
+}
+
+template<unsigned DEGREE>
+BSpline<DEGREE>::BSpline(unsigned subdiv, const std::array<double, DEGREE>& min, const std::array<double, DEGREE>& max) : m_subdiv(subdiv), m_controls((subdiv+3) * (subdiv+3), std::make_pair(0.0f, 0.0f)), m_min(min), m_max(max) {
 	assert(subdiv > 0);
 }
 
@@ -30,6 +37,8 @@ void BSpline<DEGREE>::visit(const std::array<double, DEGREE>& _coords, std::func
 	std::array<unsigned, DEGREE> offset;
 
 	for(unsigned d=0; d<coords.size(); ++d) {
+		coords[d] = (coords[d] - m_min[d]) / (m_max[d] - m_min[d]);
+
 		assert(coords[d] >= 0.0 && coords[d] <= 1.0);
 
 		coords[d] *= (double)m_subdiv;
