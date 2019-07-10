@@ -1,29 +1,37 @@
-project (possumwood)
+project (possumwood CXX)
 
 # set(CMAKE_CXX_COMPILER "clang")
 
-cmake_minimum_required (VERSION 2.8.4)
+cmake_minimum_required (VERSION 3.0.0)
 # set(CMAKE_VERBOSE_MAKEFILE true)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_BUILD_TYPE Debug)
-#set(CMAKE_BUILD_TYPE Release)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+# this is an anti-pattern, but CMAKE does seem to be picking up CMAKE_CXX_FLAGS_RELEASE and CMAKE_CXX_FLAGS_DEBUG
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function")
+if(CMAKE_BUILD_TYPE STREQUAL Debug)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
+elseif(CMAKE_BUILD_TYPE STREQUAL Release)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG")
+else()
+	message(ERROR "Unknown build type.")
+endif()
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_definitions(-Wall -Werror -g)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 add_definitions(-Wl,--no-undefined)
 
 # required by CGAL
 add_definitions(-DBOOST_PARAMETER_MAX_ARITY=12)
 
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 # DNEG-specific hack, should have no impact for anything else
 include_directories($ENV{BOB_WORLD_SLOT_ilmbase}/include/OpenEXR)
@@ -87,3 +95,5 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib:${PLUGINS_INSTALL_PATH}")
 
 include_directories(src/libs)
 add_subdirectory(src)
+
+unset(CMAKE_BUILD_TYPE CACHE)
