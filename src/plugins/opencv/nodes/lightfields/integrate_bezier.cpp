@@ -84,13 +84,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
 				auto& s = cache[c][a];
-				spline.addSample(s.target[0], s.target[1], s.value);
+				spline.addSample({s.target[0], s.target[1]}, s.value);
 			});
 
 			if(a < levels-1)
 				tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
 					auto& s = cache[c][a];
-					s.value -= spline.sample(s.target[0], s.target[1]);
+					s.value -= spline.sample({s.target[0], s.target[1]});
 				});
 		}
 	}

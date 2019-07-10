@@ -42,53 +42,68 @@ BSpline::BSpline(std::size_t subdiv) : m_subdiv(subdiv), m_controls((subdiv+3) *
 	assert(subdiv > 0);
 }
 
-void BSpline::addSample(double x, double y, double value) {
-	assert(x >= 0.0 && x <= 1.0);
-	assert(y >= 0.0 && y <= 1.0);
+void BSpline::addSample(const std::array<double, 2>& _coords, double value) {
+	std::array<double, 2> coords = _coords;
 
-	x = x * (double)m_subdiv;
-	y = y * (double)m_subdiv;
+	for(std::size_t d=0; d<coords.size(); ++d)
+		assert(coords[d] >= 0.0 && coords[d] <= 1.0);
 
-	const std::size_t offs_x = floor(x);
-	const std::size_t offs_y = floor(y);
+	for(std::size_t d=0; d<coords.size(); ++d)
+		coords[d] *= (double)m_subdiv;
 
-	x = fmod(x, 1.0);
-	y = fmod(y, 1.0);
+	std::array<std::size_t, 2> offset;
+	for(std::size_t d=0; d<coords.size(); ++d) {
+		offset[d] = floor(coords[d]);
+		coords[d] = fmod(coords[d], 1.0);
+	}
 
-	for(unsigned a=0;a<4;++a)
-		for(unsigned b=0;b<4;++b) {
-			const double weight = B(x, a) * B(y, b)*m_subdiv;
+	for(std::size_t i=0;i<pow(4, coords.size()); ++i) {
+		double weight = 1.0f;
+		std::size_t j = i;
+		std::size_t index = 0;
 
-			const std::size_t index = (a+offs_x) + (b+offs_y)*m_subdiv;
+		for(std::size_t d=0; d<coords.size(); ++d) {
+			weight *= B(coords[d], j % 4);
+			index = index * m_subdiv + j%4 + offset[d];
 
-			m_controls[index].first += weight * value;
-			m_controls[index].second += weight;
+			j /= 4;
 		}
+
+		m_controls[index].first += weight * value;
+		m_controls[index].second += weight;
+	}
 }
 
-double BSpline::sample(double x, double y) const {
-	assert(x >= 0.0 && x <= 1.0);
-	assert(y >= 0.0 && y <= 1.0);
+double BSpline::sample(const std::array<double, 2>& _coords) const {
+	std::array<double, 2> coords = _coords;
 
-	x = x * (double)m_subdiv;
-	y = y * (double)m_subdiv;
+	for(std::size_t d=0; d<coords.size(); ++d)
+		assert(coords[d] >= 0.0 && coords[d] <= 1.0);
 
-	const std::size_t offs_x = floor(x);
-	const std::size_t offs_y = floor(y);
+	for(std::size_t d=0; d<coords.size(); ++d)
+		coords[d] *= (double)m_subdiv;
 
-	x = fmod(x, 1.0);
-	y = fmod(y, 1.0);
+	std::array<std::size_t, 2> offset;
+	for(std::size_t d=0; d<coords.size(); ++d) {
+		offset[d] = floor(coords[d]);
+		coords[d] = fmod(coords[d], 1.0);
+	}
 
 	double result = 0;
+	for(std::size_t i=0;i<pow(4, coords.size()); ++i) {
+		double weight = 1.0f;
+		std::size_t j = i;
+		std::size_t index = 0;
 
-	for(unsigned a=0;a<4;++a)
-		for(unsigned b=0;b<4;++b) {
-			const double weight = B(x, a) * B(y, b);
+		for(std::size_t d=0; d<coords.size(); ++d) {
+			weight *= B(coords[d], j % 4);
+			index = index * m_subdiv + j%4 + offset[d];
 
-			const std::size_t index = (a+offs_x) + (b+offs_y)*m_subdiv;
-
-			result += m_controls[index].first / m_controls[index].second * weight;
+			j /= 4;
 		}
+
+		result += m_controls[index].first / m_controls[index].second * weight;
+	}
 
 	return result;
 }
