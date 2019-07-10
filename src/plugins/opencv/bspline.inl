@@ -20,74 +20,54 @@ double BSpline<DEGREE>::B(double t, unsigned k) {
 }
 
 template<unsigned DEGREE>
-BSpline<DEGREE>::BSpline(std::size_t subdiv) : m_subdiv(subdiv), m_controls((subdiv+3) * (subdiv+3), std::make_pair(0.0f, 0.0f)) {
+BSpline<DEGREE>::BSpline(unsigned subdiv) : m_subdiv(subdiv), m_controls((subdiv+3) * (subdiv+3), std::make_pair(0.0f, 0.0f)) {
 	assert(subdiv > 0);
 }
 
 template<unsigned DEGREE>
-void BSpline<DEGREE>::addSample(const std::array<double, DEGREE>& _coords, double value) {
-	std::array<double, 2> coords = _coords;
+void BSpline<DEGREE>::visit(const std::array<double, DEGREE>& _coords, std::function<void(unsigned, float)> fn) const {
+	std::array<double, DEGREE> coords = _coords;
+	std::array<unsigned, DEGREE> offset;
 
-	for(std::size_t d=0; d<coords.size(); ++d)
+	for(unsigned d=0; d<coords.size(); ++d) {
 		assert(coords[d] >= 0.0 && coords[d] <= 1.0);
 
-	for(std::size_t d=0; d<coords.size(); ++d)
 		coords[d] *= (double)m_subdiv;
 
-	std::array<std::size_t, 2> offset;
-	for(std::size_t d=0; d<coords.size(); ++d) {
 		offset[d] = floor(coords[d]);
 		coords[d] = fmod(coords[d], 1.0);
 	}
 
-	for(std::size_t i=0;i<pow(4, coords.size()); ++i) {
+	for(unsigned i=0;i<pow(4, coords.size()); ++i) {
 		double weight = 1.0f;
-		std::size_t j = i;
+		unsigned j = i;
 		std::size_t index = 0;
 
-		for(std::size_t d=0; d<coords.size(); ++d) {
+		for(unsigned d=0; d<coords.size(); ++d) {
 			weight *= B(coords[d], j % 4);
 			index = index * m_subdiv + j%4 + offset[d];
 
 			j /= 4;
 		}
 
-		m_controls[index].first += weight * value;
-		m_controls[index].second += weight;
+		fn(index, weight);
 	}
 }
 
 template<unsigned DEGREE>
-double BSpline<DEGREE>::sample(const std::array<double, DEGREE>& _coords) const {
-	std::array<double, 2> coords = _coords;
+void BSpline<DEGREE>::addSample(const std::array<double, DEGREE>& coords, double value) {
+	visit(coords, [&](unsigned index, double weight) {
+		m_controls[index].first += weight * value;
+		m_controls[index].second += weight;
+	});
+}
 
-	for(std::size_t d=0; d<coords.size(); ++d)
-		assert(coords[d] >= 0.0 && coords[d] <= 1.0);
-
-	for(std::size_t d=0; d<coords.size(); ++d)
-		coords[d] *= (double)m_subdiv;
-
-	std::array<std::size_t, 2> offset;
-	for(std::size_t d=0; d<coords.size(); ++d) {
-		offset[d] = floor(coords[d]);
-		coords[d] = fmod(coords[d], 1.0);
-	}
-
+template<unsigned DEGREE>
+double BSpline<DEGREE>::sample(const std::array<double, DEGREE>& coords) const {
 	double result = 0;
-	for(std::size_t i=0;i<pow(4, coords.size()); ++i) {
-		double weight = 1.0f;
-		std::size_t j = i;
-		std::size_t index = 0;
-
-		for(std::size_t d=0; d<coords.size(); ++d) {
-			weight *= B(coords[d], j % 4);
-			index = index * m_subdiv + j%4 + offset[d];
-
-			j /= 4;
-		}
-
+	visit(coords, [&](unsigned index, double weight) {
 		result += m_controls[index].first / m_controls[index].second * weight;
-	}
+	});
 
 	return result;
 }
