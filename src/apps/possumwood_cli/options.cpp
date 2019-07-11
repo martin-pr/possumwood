@@ -7,7 +7,7 @@
 Options::Options(int argc, char* argv[]) {
 	for(int current=1; current<argc; ++current) {
 		if(boost::starts_with(argv[current], "--"))
-			m_items.push_back({{argv[current]}});
+			m_items.push_back(Item(argv[current]));
 
 		else if(!m_items.empty())
 			m_items.back().parameters.push_back(argv[current]);

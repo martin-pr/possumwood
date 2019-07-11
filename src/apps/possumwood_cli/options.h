@@ -9,6 +9,9 @@
 class Options {
 	public:
 		struct Item {
+			Item(const std::string& n) : name(n) {
+			}
+
 			std::string name;
 			std::vector<std::string> parameters;
 		};

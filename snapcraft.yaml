@@ -11,6 +11,14 @@ grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: devmode # use 'strict' once you have the right plugs and slots
 base: core18
 
+parts:
+  prepare:
+    plugin: nil
+    prepare: |
+      echo "deb sudo add-apt-repository ppa:martin-prazak/cgi-daily xenial main" | tee /etc/apt/sources.list.d/cgi-daily.list
+      apt update
+    prime: [-*]
+
 build-packages:
   - gcc
   - libc6-dev
@@ -31,11 +39,12 @@ build-packages:
   - libxmu-dev
   - libluabind-dev
   - libglew-dev
-  - libopenimageio-dev
   - libglfw3-dev
   - libpng-dev
   - libtbb-dev
-  - libopencv-dev
+  - libopencv-daily
+  - libopenimageio-daily
+  - libcgal-daily
 
 apps:
   possumwood:
@@ -89,19 +98,6 @@ parts:
       - xdg-user-dirs
       - fcitx-frontend-qt5
 
-  cgal:
-    plugin: cmake
-    source: https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-4.13/CGAL-4.13.tar.xz
-    configflags: [-DCMAKE_BUILD_TYPE=Release -DWITH_examples=OFF -DWITH_demos=OFF -DWITH_tests=OFF]
-    stage-packages:
-      - libboost-system1.65.1
-      - libboost-filesystem1.65.1
-      - libboost-serialization1.65.1
-      - libboost-regex1.65.1
-      - libboost-thread1.65.1
-      - libboost-test1.65.1
-      - libboost-program-options1.65.1
-
   core:
     plugin: cmake
     source: .
@@ -109,7 +105,6 @@ parts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCONF_PATH='$SNAP/share/possumwood/possumwood.conf'
       - -DMAKE_CONF_FILE=OFF
-    after: [cgal]
     stage-packages:
       # - libgl1
       - libboost-filesystem1.65.1
