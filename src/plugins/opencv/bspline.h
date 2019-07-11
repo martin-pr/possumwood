@@ -15,10 +15,14 @@ class BSpline {
 		void addSample(const std::array<double, DEGREE>& coords, double value);
 		double sample(const std::array<double, DEGREE>& coords) const;
 
+		bool operator ==(const BSpline& b) const;
+		bool operator !=(const BSpline& b) const;
+
 	private:
 		static double B(double t, unsigned k);
 
-		void visit(const std::array<double, DEGREE>& coords, std::function<void(unsigned, float)> fn) const;
+		template<typename FN>
+		inline void visit(const std::array<double, DEGREE>& coords, const FN& fn) const;
 		static std::array<double, DEGREE> initArray(double val);
 
 		std::size_t m_subdiv;
