@@ -1,50 +1,68 @@
 {
     "connections": [
         {
-            "in_node": "concat_0",
+            "in_node": "divide_0",
             "in_port": "in_frame_2",
             "out_node": "color_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_0",
-            "in_port": "in_frame",
-            "out_node": "concat_0",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "concat_1",
-            "in_port": "in_frame_1",
-            "out_node": "convert_0",
+            "in_port": "in_frame_2",
+            "out_node": "color_1",
             "out_port": "out_frame"
         },
         {
-            "in_node": "divide_0",
-            "in_port": "in_frame_1",
-            "out_node": "gamma_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_0",
-            "in_port": "in_frame_1",
-            "out_node": "gamma_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "color_0",
-            "in_port": "in_frame",
-            "out_node": "gamma_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "color_1",
-            "in_port": "in_frame",
-            "out_node": "gamma_1",
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_0",
             "out_port": "out_frame"
         },
         {
             "in_node": "gamma_0",
             "in_port": "in_frame",
+            "out_node": "concat_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "convert_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_2",
+            "in_port": "in_frame_1",
+            "out_node": "convert_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "gamma_1",
+            "in_port": "in_frame",
+            "out_node": "divide_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "gamma_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "gamma_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "divide_0",
+            "in_port": "in_frame_1",
+            "out_node": "integrate_mosaic_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_1",
+            "in_port": "in_frame_1",
             "out_node": "integrate_mosaic_0",
             "out_port": "out_frame"
         },
@@ -79,33 +97,51 @@
             "out_port": "vignetting"
         },
         {
-            "in_node": "gamma_1",
+            "in_node": "vignetting_mosaic_1",
+            "in_port": "vignetting",
+            "out_node": "vignetting_create_0",
+            "out_port": "vignetting"
+        },
+        {
+            "in_node": "color_0",
             "in_port": "in_frame",
             "out_node": "vignetting_mosaic_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_1",
+            "in_node": "color_1",
             "in_port": "in_frame",
-            "out_node": "divide_0",
+            "out_node": "vignetting_mosaic_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "concat_1",
+            "in_node": "color_2",
+            "in_port": "in_frame",
+            "out_node": "vignetting_mosaic_1",
             "out_port": "out_frame"
         },
         {
-            "in_node": "divide_0",
+            "in_node": "concat_0",
             "in_port": "in_frame_2",
-            "out_node": "color_1",
+            "out_node": "concat_2",
             "out_port": "out_frame"
         },
         {
-            "in_node": "concat_1",
+            "in_node": "gamma_2",
+            "in_port": "in_frame",
+            "out_node": "color_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_2",
             "in_port": "in_frame_2",
-            "out_node": "convert_1",
+            "out_node": "convert_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_2",
+            "in_port": "in_frame",
+            "out_node": "gamma_2",
             "out_port": "out_frame"
         }
     ],
@@ -114,8 +150,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 379.683013916016,
-                    "y": 905.061584472656
+                    "x": 401.384124755859,
+                    "y": 641.20458984375
                 }
             },
             "name": "color",
@@ -128,8 +164,22 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 592.4150390625,
-                    "y": 894.04150390625
+                    "x": 144.050415039062,
+                    "y": 691.111633300781
+                }
+            },
+            "name": "color",
+            "ports": {
+                "mode": "GRAY2BGR"
+            },
+            "type": "opencv/color"
+        },
+        "color_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 613.630737304688,
+                    "y": 640.100708007812
                 }
             },
             "name": "color",
@@ -142,8 +192,22 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 282.423767089844,
-                    "y": 1063.48388671875
+                    "x": 252.630279541016,
+                    "y": 1763.08703613281
+                }
+            },
+            "name": "concat",
+            "ports": {
+                "mode": "Vertical"
+            },
+            "type": "opencv/concat"
+        },
+        "concat_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 40.728199005127,
+                    "y": 840.125915527344
                 }
             },
             "name": "concat",
@@ -152,12 +216,12 @@
             },
             "type": "opencv/concat"
         },
-        "concat_1": {
+        "concat_2": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 374.449035644531,
-                    "y": 1442.96447753906
+                    "x": 430.9560546875,
+                    "y": 1552.97534179688
                 }
             },
             "name": "concat",
@@ -170,8 +234,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 337.340484619141,
-                    "y": 1216.75805664062
+                    "x": 95.644889831543,
+                    "y": 1283.90783691406
                 }
             },
             "name": "convert",
@@ -186,13 +250,29 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 541.175903320312,
-                    "y": 1223.90783691406
+                    "x": 364.752044677734,
+                    "y": 1281.38891601562
                 }
             },
             "name": "convert",
             "ports": {
-                "a": 150.0,
+                "a": 200.0,
+                "b": 0.0,
+                "mode": "CV_8U"
+            },
+            "type": "opencv/convert"
+        },
+        "convert_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 614.414794921875,
+                    "y": 1295.27416992188
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 2000.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -202,8 +282,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 501.09326171875,
-                    "y": 1061.03002929688
+                    "x": 319.55322265625,
+                    "y": 833.697387695312
                 }
             },
             "name": "divide",
@@ -216,8 +296,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 292.402465820312,
-                    "y": 590.165161132812
+                    "x": 64.2343444824219,
+                    "y": 1054.94763183594
                 }
             },
             "name": "gamma",
@@ -231,8 +311,23 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 503.857025146484,
-                    "y": 592.218078613281
+                    "x": 339.06591796875,
+                    "y": 1051.71362304688
+                }
+            },
+            "name": "gamma",
+            "ports": {
+                "gamma": 1.5,
+                "normalization_coef": 1.0
+            },
+            "type": "opencv/gamma"
+        },
+        "gamma_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 589.636474609375,
+                    "y": 1059.68176269531
                 }
             },
             "name": "gamma",
@@ -246,8 +341,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 282.615753173828,
-                    "y": 170.415130615234
+                    "x": 141.59001159668,
+                    "y": 177.082504272461
                 }
             },
             "name": "integrate_mosaic",
@@ -262,8 +357,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 412.373260498047,
-                    "y": 25.2691211700439
+                    "x": 271.347503662109,
+                    "y": 33.564754486084
                 }
             },
             "name": "lytro_lightfield",
@@ -276,8 +371,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 440.929321289062,
-                    "y": 1604.9130859375
+                    "x": 315.683959960938,
+                    "y": 1955.29138183594
                 }
             },
             "connections": [
@@ -563,8 +658,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 507.501434326172,
-                    "y": 204.548324584961
+                    "x": 366.475677490234,
+                    "y": 212.843963623047
                 }
             },
             "name": "vignetting_create",
@@ -577,13 +672,31 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 499.858642578125,
-                    "y": 385.381072998047
+                    "x": 367.521453857422,
+                    "y": 393.084533691406
                 }
             },
             "name": "vignetting_mosaic",
             "ports": {
                 "elements": 8,
+                "mode": "XY-UV",
+                "size/height": 500,
+                "size/width": 500
+            },
+            "type": "opencv/lightfields/vignetting_mosaic"
+        },
+        "vignetting_mosaic_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 581.912475585938,
+                    "y": 397.597686767578
+                }
+            },
+            "name": "vignetting_mosaic",
+            "ports": {
+                "elements": 12,
+                "mode": "UV-XY",
                 "size/height": 500,
                 "size/width": 500
             },
@@ -595,6 +708,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAAAAAAAQ6AAACQQAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHMAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA5QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABWwAAAhMAAACGAQAAAwAAAzUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqs=",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKPAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABgQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB9wAAAXcAAACGAQAAAwAAAnIAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
