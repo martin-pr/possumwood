@@ -15,7 +15,7 @@
         {
             "in_node": "gamma_0",
             "in_port": "in_frame",
-            "out_node": "integrate_frequency_0",
+            "out_node": "integrate_bezier_0",
             "out_port": "out_frame"
         },
         {
@@ -25,7 +25,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_frequency_0",
+            "in_node": "integrate_bezier_0",
             "in_port": "in_frame",
             "out_node": "convert_2",
             "out_port": "out_frame"
@@ -67,7 +67,7 @@
             "out_port": "frame"
         },
         {
-            "in_node": "integrate_frequency_0",
+            "in_node": "integrate_bezier_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
             "out_port": "samples"
@@ -165,7 +165,7 @@
             },
             "type": "opencv/gamma"
         },
-        "integrate_frequency_0": {
+        "integrate_bezier_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -173,14 +173,14 @@
                     "y": 330.0
                 }
             },
-            "name": "integrate_frequency",
+            "name": "integrate_bezier",
             "ports": {
                 "levels": 1,
                 "offset": 7,
                 "size/height": 1000,
                 "size/width": 1000
             },
-            "type": "opencv/lightfields/integrate_frequency"
+            "type": "opencv/lightfields/integrate_bezier"
         },
         "interval_0": {
             "blind_data": {

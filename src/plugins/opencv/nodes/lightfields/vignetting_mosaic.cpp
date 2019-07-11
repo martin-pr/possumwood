@@ -1,0 +1,73 @@
+#include <possumwood_sdk/node_implementation.h>
+
+#include <thread>
+#include <mutex>
+
+#include <tbb/parallel_for.h>
+
+#include <opencv2/opencv.hpp>
+
+#include <actions/traits.h>
+
+#include "frame.h"
+#include "lightfield_vignetting.h"
+#include "tools.h"
+
+namespace {
+
+dependency_graph::InAttr<possumwood::opencv::LightfieldVignetting> a_vignetting;
+dependency_graph::InAttr<unsigned> a_width, a_height, a_elements;
+dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
+
+dependency_graph::State compute(dependency_graph::Values& data) {
+	const possumwood::opencv::LightfieldVignetting& vignetting = data.get(a_vignetting);
+
+	const unsigned width = data.get(a_width);
+	const unsigned height = data.get(a_height);
+	const unsigned elements = data.get(a_elements);
+
+	cv::Mat mat = cv::Mat::zeros(height, width, CV_32FC1);
+
+	tbb::parallel_for(0u, height, [&](unsigned y) {
+		for(unsigned x = 0; x < width; ++x) {
+			float xf = (float)x / (float)(width) * (float)elements;
+			float yf = (float)y / (float)(height) * (float)elements;
+
+			float uf = ((floor(xf) + 0.5) / (float)(elements) - 0.5) * 2.0;
+			float vf = ((floor(yf) + 0.5) / (float)(elements) - 0.5) * 2.0;
+
+			xf = std::fmod(xf, 1.0f);
+			yf = std::fmod(yf, 1.0f);
+
+			const double sample = vignetting.sample(cv::Vec4f(xf, yf, uf, vf));
+
+			mat.at<float>(y, x) = sample;
+		}
+	});
+
+	data.set(a_out, possumwood::opencv::Frame(mat));
+
+	return dependency_graph::State();
+}
+
+void init(possumwood::Metadata& meta) {
+	meta.addAttribute(a_vignetting, "vignetting", possumwood::opencv::LightfieldVignetting(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_width, "size/width", 300u);
+	meta.addAttribute(a_height, "size/height", 300u);
+	meta.addAttribute(a_elements, "elements", 5u);
+	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+
+	meta.addInfluence(a_vignetting, a_out);
+	meta.addInfluence(a_width, a_out);
+	meta.addInfluence(a_height, a_out);
+	meta.addInfluence(a_elements, a_out);
+
+	meta.setCompute(compute);
+}
+
+
+possumwood::NodeImplementation s_impl("opencv/lightfields/vignetting_mosaic", init);
+
+}
+
+
