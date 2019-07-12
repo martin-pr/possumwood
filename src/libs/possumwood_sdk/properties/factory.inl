@@ -7,7 +7,7 @@
 namespace possumwood { namespace properties {
 
 template<typename T>
-std::string factory_typed<T>::type() const {
+std::type_index factory_typed<T>::type() const {
 	return m_type;
 }
 
@@ -17,9 +17,7 @@ std::unique_ptr<property_base> factory_typed<T>::create() {
 }
 
 template<typename T>
-factory_typed<T>::factory_typed() {
-	m_type = dependency_graph::unmangledName(typeid(typename T::result_type).name());
-
+factory_typed<T>::factory_typed() : m_type(typeid(typename T::result_type)) {
 	factories::singleton().add(this);
 }
 

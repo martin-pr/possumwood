@@ -90,12 +90,12 @@ BOOST_AUTO_TEST_CASE(void_simple_out) {
 	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
 
 	BOOST_REQUIRE(voidNode.portCount() == 2);
-	BOOST_REQUIRE(voidNode.port(0).type() == unmangledTypeId<float>());
-	BOOST_REQUIRE(voidNode.port(1).type() == unmangledTypeId<void>());
+	BOOST_REQUIRE(voidNode.port(0).type() == typeid(float));
+	BOOST_REQUIRE(voidNode.port(1).type() == typeid(void));
 
 	BOOST_REQUIRE(floatNode.portCount() == 2);
-	BOOST_REQUIRE(floatNode.port(0).type() == unmangledTypeId<float>());
-	BOOST_REQUIRE(floatNode.port(1).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(floatNode.port(0).type() == typeid(float));
+	BOOST_REQUIRE(floatNode.port(1).type() == typeid(float));
 
 
 	// what about getting a value BEFORE connection, should that work?
@@ -157,12 +157,12 @@ void untyped_handle_error_test(const HandleRegistrar& voidHandle) {
 	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
 
 	BOOST_REQUIRE(voidNode.portCount() == 2);
-	BOOST_REQUIRE(voidNode.port(0).type() == unmangledTypeId<float>());
-	BOOST_REQUIRE(voidNode.port(1).type() == unmangledTypeId<void>());
+	BOOST_REQUIRE(voidNode.port(0).type() == typeid(float));
+	BOOST_REQUIRE(voidNode.port(1).type() == typeid(void));
 
 	BOOST_REQUIRE(floatNode.portCount() == 2);
-	BOOST_REQUIRE(floatNode.port(0).type() == unmangledTypeId<float>());
-	BOOST_REQUIRE(floatNode.port(1).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(floatNode.port(0).type() == typeid(float));
+	BOOST_REQUIRE(floatNode.port(1).type() == typeid(float));
 
 	// the void output doesn't have a type yet as its not connected - reading should throw
 	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
@@ -331,12 +331,12 @@ BOOST_AUTO_TEST_CASE(void_simple_in) {
 	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
 
 	BOOST_REQUIRE(voidNode.portCount() == 2);
-	BOOST_REQUIRE(voidNode.port(0).type() == unmangledTypeId<void>());
-	BOOST_REQUIRE(voidNode.port(1).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(voidNode.port(0).type() == typeid(void));
+	BOOST_REQUIRE(voidNode.port(1).type() == typeid(float));
 
 	BOOST_REQUIRE(floatNode.portCount() == 2);
-	BOOST_REQUIRE(floatNode.port(0).type() == unmangledTypeId<float>());
-	BOOST_REQUIRE(floatNode.port(1).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(floatNode.port(0).type() == typeid(float));
+	BOOST_REQUIRE(floatNode.port(1).type() == typeid(float));
 
 	// the void input doesn't have a type yet as its not connected - reading should throw
 	BOOST_CHECK_THROW(voidNode.port(0).get<float>(), std::runtime_error);
@@ -396,12 +396,12 @@ void untyped_input_handle_error_test(const HandleRegistrar& voidHandle) {
 	NodeBase& floatNode = g.nodes().add(floatHandle, "float_node");
 
 	BOOST_REQUIRE(voidNode.portCount() == 2);
-	BOOST_REQUIRE(voidNode.port(0).type() == unmangledTypeId<void>());
-	BOOST_REQUIRE(voidNode.port(1).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(voidNode.port(0).type() == typeid(void));
+	BOOST_REQUIRE(voidNode.port(1).type() == typeid(float));
 
 	BOOST_REQUIRE(floatNode.portCount() == 2);
-	BOOST_REQUIRE(floatNode.port(0).type() == unmangledTypeId<float>());
-	BOOST_REQUIRE(floatNode.port(1).type() == unmangledTypeId<float>());
+	BOOST_REQUIRE(floatNode.port(0).type() == typeid(float));
+	BOOST_REQUIRE(floatNode.port(1).type() == typeid(float));
 
 	// the void intpu doesn't have a type yet as its not connected - reading should error, but not throw
 	BOOST_CHECK_NO_THROW(voidNode.port(1).get<float>());
