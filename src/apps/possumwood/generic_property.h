@@ -17,5 +17,6 @@ class GenericProperty : public possumwood::properties::property_base {
 
 	private:
 		QLabel* m_widget;
+
 		std::type_index m_type;
 };
