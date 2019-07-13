@@ -10,6 +10,8 @@
 
 #include <actions/actions.h>
 
+#include "generic_property.h"
+
 Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 	// setRootIsDecorated(false);
 
@@ -137,6 +139,18 @@ Properties::PropertyHolder::PropertyHolder(dependency_graph::Port& port) {
 		// run the update functions for the first time to set up the UI
 		updateFlags();
 		ui->valueFromPort(port);
+	}
+
+	// generic property
+	else {
+		ui = std::unique_ptr<possumwood::properties::property_base>(new GenericProperty());
+
+		ui->valueFromPort(port);
+
+		possumwood::properties::property_base* prop = ui.get();
+		graphValueConnection = port.valueCallback([prop, &port]() {
+			prop->valueFromPort(port);
+		});
 	}
 }
 
