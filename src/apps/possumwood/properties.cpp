@@ -148,8 +148,9 @@ Properties::PropertyHolder::PropertyHolder(dependency_graph::Port& port) {
 		ui->valueFromPort(port);
 
 		possumwood::properties::property_base* prop = ui.get();
-		graphValueConnection = port.valueCallback([prop, &port]() {
-			prop->valueFromPort(port);
+		dependency_graph::Port* portptr = &port;
+		graphValueConnection = port.valueCallback([prop, portptr]() {
+			prop->valueFromPort(*portptr);
 		});
 	}
 }
