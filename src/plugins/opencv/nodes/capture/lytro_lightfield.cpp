@@ -57,14 +57,16 @@ Block readBlock(std::ifstream& file) {
 	if(result.id != 'P') {
 		// read the name
 		{
-			char name[80];
+			char name[81];
 			file.read(name, 80);
+			name[80] = '\0';
 			result.name = name;
 		}
 
 		// and read the data block
-		result.data.resize(length);
+		result.data.resize(length+1);
 		file.read(result.data.data(), length);
+		result.data[length] = '\0';
 
 		// handle any padding
 		while(file.tellg() % 16 != 0)
@@ -75,8 +77,6 @@ Block readBlock(std::ifstream& file) {
 }
 
 cv::Mat decodeData(const char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
-	std::cout << "  -> decoding " << width << "x" << height << std::endl;
-
 	cv::Mat result(width, height, CV_32F);
 
 	for(std::size_t i=0; i<width*height; ++i) {
