@@ -6,10 +6,11 @@
 
 namespace possumwood { namespace opencv {
 
-LightfieldVignetting::LightfieldVignetting() : m_bspline(1) {
+LightfieldVignetting::LightfieldVignetting() : m_bspline(1, {0, 0, -1, -1}, {1, 1, 1, 1}) {
+	m_bspline.addSample({0.5, 0.5, 0, 0}, 1.0f);
 }
 
-LightfieldVignetting::LightfieldVignetting(std::size_t subdiv, const LightfieldPattern& pattern, const cv::Mat& image) : 
+LightfieldVignetting::LightfieldVignetting(std::size_t subdiv, const LightfieldPattern& pattern, const cv::Mat& image) :
 
 m_bspline(subdiv, {0, 0, -1, -1}, {1, 1, 1, 1}) {
 	if(image.rows != pattern.sensorResolution()[1] || image.cols != pattern.sensorResolution()[0])
@@ -25,9 +26,9 @@ m_bspline(subdiv, {0, 0, -1, -1}, {1, 1, 1, 1}) {
 				const double yf = (double)y / (double)(image.rows-1);
 
 				m_bspline.addSample({
-						xf, yf, 
+						xf, yf,
 						coord[2], coord[3]
-					}, 
+					},
 					image.at<float>(y, x));
 			}
 		}

@@ -36,10 +36,6 @@ Block readBlock(std::ifstream& file) {
 		if(file.eof())
 			return result;
 
-		for(unsigned a=0;a<8;++a)
-			std::cout << std::hex << (int)header[a] << " " << std::dec;
-		std::cout << std::endl;
-
 		if(header[0] != 0x89 || header[1] != 'L' || header[2] != 'F')
 			throw std::runtime_error("Lytro file magic sequence not matching - wrong file type?");
 
@@ -131,7 +127,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		Block block = readBlock(file);
 		while(block.id != '\0') {
-			std::cout << block.id << " - " << block.name << " - " << block.data.size() << std::endl;
 			block = readBlock(file);
 
 			if(block.id == 'M') {
@@ -212,7 +207,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-		"Lytro files (*.lfr)",
+		"Lytro files (*.lfr, *.RAW)",
 	}));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_pattern, "pattern", possumwood::opencv::LightfieldPattern(), possumwood::AttrFlags::kVertical);

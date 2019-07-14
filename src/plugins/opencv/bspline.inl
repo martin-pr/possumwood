@@ -16,6 +16,17 @@ double BSpline<DEGREE>::B(double t, unsigned k) {
 		case 3: return t*t*t / 6.0;
 		default: return 0.0;
 	}
+
+	// t = t - 0.5;
+
+	// switch(k) {
+	// 	case 0: return std::pow(2.0 + t, 3);
+	// 	case 1: return 4.0 - 6.0*t*t - 3.0*t*t*t;
+	// 	case 2: return 4.0 - 6.0*t*t + 3.0*t*t*t;
+	// 	case 3: return std::pow(2.0 - t, 3);
+
+	// 	default: assert(false); return 0.0;
+	// }
 }
 
 template<unsigned DEGREE>
