@@ -193,12 +193,12 @@ void NodeBase::computeInput(size_t index) {
 	datablock().setData(index, srcData.data(out->index()));
 	assert(datablock().data(index).isEqual(srcData.data(out->index())));
 
-	// run the watcher callbacks
-	port(index).m_valueCallbacks();
-
 	// and mark as not dirty
 	port(index).setDirty(false);
 	assert(not port(index).isDirty());
+
+	// run the watcher callbacks
+	port(index).m_valueCallbacks();
 }
 
 void NodeBase::computeOutput(size_t index) {

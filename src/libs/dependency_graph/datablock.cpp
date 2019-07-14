@@ -4,6 +4,7 @@
 #include "attr.h"
 #include "port.h"
 #include "node_base.h"
+#include "rtti.h"
 
 namespace dependency_graph {
 
@@ -65,7 +66,7 @@ void Datablock::set(size_t index, const Port& port) {
 	assert(m_data[index]->typeinfo() != typeid(void));
 
 	// and assign the value
-	assert(m_data[index]->type() == port.type());
+	assert(m_data[index]->type() == dependency_graph::unmangledTypeId(port.type()));
 	m_data[index]->assign(*port.node().datablock().m_data[port.index()]);
 }
 

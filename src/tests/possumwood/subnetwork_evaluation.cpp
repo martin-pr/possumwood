@@ -202,9 +202,9 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		BOOST_CHECK_EQUAL(network->metadata()->attributeCount(), 2u);
 		BOOST_CHECK_EQUAL(network->portCount(), 2u);
 
-		BOOST_CHECK_EQUAL(network->port(0).type(), dependency_graph::unmangledTypeId<float>());
+		BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(network->port(0).type()), dependency_graph::unmangledTypeId<float>());
 		BOOST_CHECK_EQUAL(network->port(0).category(), dependency_graph::Attr::kInput);
-		BOOST_CHECK_EQUAL(network->port(1).type(), dependency_graph::unmangledTypeId<float>());
+		BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(network->port(1).type()), dependency_graph::unmangledTypeId<float>());
 		BOOST_CHECK_EQUAL(network->port(1).category(), dependency_graph::Attr::kOutput);
 
 	/////

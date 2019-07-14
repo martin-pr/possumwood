@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <typeindex>
 
 #include <boost/noncopyable.hpp>
 
@@ -20,7 +21,7 @@ class factories : public boost::noncopyable {
 	public:
 		static factories& singleton();
 
-		std::unique_ptr<property_base> create(const std::string& type);
+		std::unique_ptr<property_base> create(const std::type_index& type);
 
 	private:
 		factories();
@@ -28,7 +29,7 @@ class factories : public boost::noncopyable {
 		void add(factory* f);
 		void remove(factory* f);
 
-		std::map<std::string, factory*> m_factories;
+		std::map<std::type_index, factory*> m_factories;
 
 		template<typename T>
 		friend class factory_typed;
@@ -38,7 +39,7 @@ class factory : public boost::noncopyable {
 	public:
 		virtual ~factory();
 
-		virtual std::string type() const = 0;
+		virtual std::type_index type() const = 0;
 		virtual std::unique_ptr<property_base> create() = 0;
 
 	protected:
@@ -50,7 +51,7 @@ class factory : public boost::noncopyable {
 template<typename T>
 class factory_typed : public factory {
 	public:
-		virtual std::string type() const override;
+		virtual std::type_index type() const override;
 		virtual std::unique_ptr<property_base> create() override;
 
 	protected:
@@ -60,7 +61,7 @@ class factory_typed : public factory {
 		template<typename VALUE, typename DERIVED>
 		friend class property;
 
-		std::string m_type;
+		std::type_index m_type;
 };
 
 } }

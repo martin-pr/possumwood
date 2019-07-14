@@ -37,7 +37,7 @@ void factories::remove(factory* f) {
 	m_factories.erase(it);
 }
 
-std::unique_ptr<property_base> factories::create(const std::string& type) {
+std::unique_ptr<property_base> factories::create(const std::type_index& type) {
 	auto it = m_factories.find(type);
 
 	if(it == m_factories.end())

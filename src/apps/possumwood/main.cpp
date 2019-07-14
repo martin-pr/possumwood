@@ -57,12 +57,11 @@ int main(int argc, char* argv[]) {
 	///////////////////////////////
 
 	// create the possumwood application
-	possumwood::App papp;
+	std::unique_ptr<possumwood::App> papp(new possumwood::App());
+	// load all plugins into an RAII container - loading of plugins requires path expansion from the main app instance
+	std::unique_ptr<PluginsRAII> plugins(new PluginsRAII());
 
 	{
-		// load all plugins into an RAII container
-		PluginsRAII plugins;
-
 		GL_CHECK_ERR;
 
 		{
@@ -114,6 +113,10 @@ int main(int argc, char* argv[]) {
 
 		GL_CHECK_ERR;
 	}
+
+	// delete the application before unloading plugins - app will need metadata from plugins to close cleanly
+	papp.reset();
+	plugins.reset();
 
 	return 0;
 }

@@ -180,7 +180,7 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 				dependency_graph::NodeBase& node = detail::findNode(toNodeId);
 
 				// only on non-void ports, though
-				if(*data == nullptr && node.port(toPort).type() != dependency_graph::unmangledName(typeid(void).name()))
+				if(*data == nullptr && node.port(toPort).type() != typeid(void))
 					*data = node.port(toPort).getData().clone();
 			},
 
@@ -241,7 +241,7 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 				assert(toPort >= 0);
 
 				// only on non-void ports, though
-				if(*data == nullptr && node.port(toPort).type() != dependency_graph::unmangledName(typeid(void).name()))
+				if(*data == nullptr && node.port(toPort).type() != typeid(void))
 					*data = node.port(toPort).getData().clone();
 			},
 

@@ -64,6 +64,7 @@ filename_ui::filename_ui() {
 
 filename_ui::~filename_ui() {
 	QObject::disconnect(m_lineEditConnection);
+	QObject::disconnect(m_buttonConnection);
 }
 
 void filename_ui::get(possumwood::Filename& value) const {

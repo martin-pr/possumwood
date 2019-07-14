@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <typeindex>
 
 #include <boost/noncopyable.hpp>
 #include <boost/signals2.hpp>
@@ -19,7 +20,7 @@ class Port : public boost::noncopyable {
 		const std::string& name() const;
 		Attr::Category category() const;
 		unsigned index() const;
-		std::string type() const;
+		std::type_index type() const;
 
 		/// sets a value on the port.
 		/// Marks all downstream values dirty.

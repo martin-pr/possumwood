@@ -98,4 +98,6 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib:${PLUGINS_INSTALL_PATH}")
 include_directories(src/libs)
 add_subdirectory(src)
 
+
 unset(CMAKE_BUILD_TYPE CACHE)
+

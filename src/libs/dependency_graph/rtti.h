@@ -2,6 +2,7 @@
 
 #include <string>
 #include <typeinfo>
+#include <typeindex>
 
 namespace dependency_graph {
 
@@ -18,6 +19,11 @@ const std::string unmangledTypeId() {
 template<class T>
 const std::string unmangledTypeId(const T&) {
         return unmangledName(typeid(T).name());
+}
+
+template<>
+inline const std::string unmangledTypeId<std::type_index>(const std::type_index& index) {
+        return unmangledName(index.name());
 }
 
 }

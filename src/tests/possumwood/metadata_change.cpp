@@ -23,7 +23,7 @@ namespace {
 		if(p.category() != cat)
 			return false;
 
-		if(p.type() != unmangledTypeId<T>())
+		if(p.type() != typeid(T))
 			return false;
 
 		return true;
