@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QLabel>
+#include <QToolButton>
 
 #include <possumwood_sdk/properties/property.h>
 
@@ -16,7 +17,13 @@ class GenericProperty : public possumwood::properties::property_base {
 		virtual void valueFromPort(dependency_graph::Port& port) override;
 
 	private:
-		QLabel* m_widget;
+		QWidget* m_widget;
 
+		QToolButton* m_detailButton;
+		QLabel* m_label;
+
+		std::string m_value;
 		std::type_index m_type;
+
+		QMetaObject::Connection m_buttonConnection;
 };

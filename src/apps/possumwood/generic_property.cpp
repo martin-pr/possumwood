@@ -1,15 +1,65 @@
 #include "generic_property.h"
 
-GenericProperty::GenericProperty() : m_widget(new QLabel()), m_type(typeid(void)) {
-	// m_widget->setEnabled(false);
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QStyle>
+#include <QDialog>
+#include <QMainWindow>
+#include <QTextEdit>
+#include <QDialogButtonBox>
+#include <QDesktopWidget>
+
+GenericProperty::GenericProperty() : m_type(typeid(void)) {
+	m_widget = new QWidget(NULL);
+
+	QHBoxLayout* layout = new QHBoxLayout(m_widget);
+	layout->setContentsMargins(0,0,0,0);
+
+
+	m_label = new QLabel();
+	layout->addWidget(m_label, 1);
 
 	// allow copying of the content
-	m_widget->setTextInteractionFlags(Qt::TextSelectableByMouse);
+	m_label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
 	// make the label look like a disabled widget, without actually making it disabled (to allow copying of the text)
-	QPalette palette = m_widget->palette();
+	// m_label->setEnabled(false);
+	QPalette palette = m_label->palette();
 	palette.setColor(QPalette::Text, palette.color(QPalette::Disabled, QPalette::Text));
-	m_widget->setPalette(palette);
+	m_label->setPalette(palette);
+
+
+	m_detailButton = new QToolButton();
+	m_detailButton->setIcon(m_detailButton->style()->standardIcon(QStyle::SP_MessageBoxInformation));
+	layout->addWidget(m_detailButton);
+
+	m_buttonConnection = QObject::connect(
+		m_detailButton,
+		&QToolButton::released,
+		[this]() -> void {
+			QDialog* dialog = new QDialog(possumwood::App::instance().mainWindow());
+			dialog->resize(QDesktopWidget().availableGeometry().size() * 0.7); // arbitrary "sensible" size of 70% of available space
+
+			QVBoxLayout* layout = new QVBoxLayout(dialog);
+			layout->setContentsMargins(0,0,0,0);
+
+			QTextEdit* view = new QTextEdit();
+			view->setReadOnly(true);
+			view->setText(m_value.c_str());
+			layout->addWidget(view, 1);
+
+			QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok);
+			layout->addWidget(buttons, 0);
+
+			QDialog::connect(buttons, &QDialogButtonBox::accepted, [=]() {
+				dialog->accept();
+				dialog->deleteLater();
+			});
+
+			dialog->show();
+		}
+	);
+
 }
 
 GenericProperty::~GenericProperty() {
@@ -34,12 +84,12 @@ void GenericProperty::valueFromPort(dependency_graph::Port& port) {
 	ss << port.getData();
 
 	// show only first row
-	const std::string& text = ss.str();
-	auto pos = text.find('\n');
+	m_value = ss.str();
+	auto pos = m_value.find('\n');
 	if(pos != std::string::npos)
-		m_widget->setText(ss.str().substr(0, pos).c_str());
+		m_label->setText(ss.str().substr(0, pos).c_str());
 	else
-		m_widget->setText(ss.str().c_str());
+		m_label->setText(ss.str().c_str());
 
 	m_widget->setToolTip(ss.str().c_str());
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <typeindex>
 
 #include <boost/noncopyable.hpp>
 #include <boost/signals2.hpp>
