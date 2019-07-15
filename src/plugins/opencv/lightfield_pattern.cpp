@@ -1,5 +1,8 @@
 #include "lightfield_pattern.h"
 
+#include <OpenEXR/ImathMatrix.h>
+#include <OpenEXR/ImathVec.h>
+
 namespace possumwood { namespace opencv {
 
 LightfieldPattern::LightfieldPattern() : m_lensPitch(1.0), m_pixelPitch(1.0), m_rotation(0.0), m_scaleFactor(1.0, 1.0), m_sensorResolution(100, 100) {
@@ -33,39 +36,46 @@ bool LightfieldPattern::operator != (const LightfieldPattern& f) const {
 cv::Vec4d LightfieldPattern::sample(const cv::Vec2i& pixelPos) const {
 	cv::Vec4d result;
 
-	result[0] = (double)pixelPos[0];
-	result[1] = (double)pixelPos[1];
-
-	const double xDiff = m_lensPitch / m_pixelPitch * m_scaleFactor[0];
-	const double yDiff = m_lensPitch / m_pixelPitch * sqrt(3.0/4.0) * m_scaleFactor[1];
-
-	cv::Vec2d vect(
-		(double)pixelPos[0] / m_scaleFactor[0],
-		(double)pixelPos[1] / m_scaleFactor[1]
-	);
-
 	const double cs = cos(m_rotation);
 	const double sn = sin(m_rotation);
 
-	vect = cv::Vec2d (
-		(vect[0] * cs + vect[1] * sn),
-		(-vect[0] * sn + vect[1] * cs)
+	Imath::M44d transform;
+	transform.makeIdentity();
+
+	transform[0][0] = 1.0/m_scaleFactor[0] * cs;
+	transform[0][1] = 1.0/m_scaleFactor[1] * -sn;
+	transform[1][0] = 1.0/m_scaleFactor[0] * sn;
+	transform[1][1] = 1.0/m_scaleFactor[1] * cs;
+
+	// "projection" - additional
+	// transform[2][3] = -1;
+	// pos[2] = m_sensorOffset[2];
+
+	Imath::V4d pos;
+	pos[0] = (double)pixelPos[0] * m_pixelPitch + m_sensorOffset[0];
+	pos[1] = (double)pixelPos[1] * m_pixelPitch + m_sensorOffset[1];
+	pos[3] = 1.0;
+
+	pos = pos * transform;
+
+	cv::Vec2d vect(
+		pos[0] / pos[3] / m_lensPitch,
+		pos[1] / pos[3] / m_lensPitch / sqrt(3.0/4.0)
 	);
 
-	vect[0] += m_sensorOffset[0] / m_pixelPitch;
-	vect[1] += m_sensorOffset[1] / m_pixelPitch;
+	if(((int)round(vect[1] + 100.0)) % 2 == 1)
+		vect[0] += 0.5;
 
-	result[3] = vect[1] / yDiff;
+	result[2] = (vect[0] + 100.0 - round(vect[0] + 100.0)) * 2.0;
+	result[3] = (vect[1] + 100.0 - round(vect[1] + 100.0)) * 2.0;
 
-	if(((int)round(result[3])) % 2 == 0)
-		result[2] = fmod(vect[0] / xDiff + 100.5, 1.0) - 0.5;
-	else
-		result[2] = fmod(vect[0] / xDiff + 100.0, 1.0) - 0.5;
+	// "centered" version - all pixels of a lens are centered on that lens
+	result[0] = round(vect[0]) * m_lensPitch / m_pixelPitch;
+	result[1] = round(vect[1]) * m_lensPitch / m_pixelPitch;
 
-	result[3] = fmod(result[3] + 100.5, 1.0) - 0.5;
-
-	result[2] *= 2.0;
-	result[3] *= 2.0;
+	// "original" version - pixel coordinates are the same as on the
+	// result[0] = (double)pixelPos[0];
+	// result[1] = (double)pixelPos[1];
 
 	return result;
 }
