@@ -66,16 +66,19 @@ cv::Vec4d LightfieldPattern::sample(const cv::Vec2i& pixelPos) const {
 	if(((int)round(vect[1] + 100.0)) % 2 == 1)
 		vect[0] += 0.5;
 
-	result[2] = (vect[0] + 100.0 - round(vect[0] + 100.0)) * 2.0;
-	result[3] = (vect[1] + 100.0 - round(vect[1] + 100.0)) * 2.0;
+	result[2] = (vect[0] + 100.0 - round(vect[0] + 100.0));
+	result[3] = (vect[1] + 100.0 - round(vect[1] + 100.0));
 
 	// "centered" version - all pixels of a lens are centered on that lens
-	result[0] = round(vect[0]) * m_lensPitch / m_pixelPitch;
-	result[1] = round(vect[1]) * m_lensPitch / m_pixelPitch;
+	result[0] = (double)pixelPos[0] - result[2] * m_lensPitch / m_pixelPitch * m_scaleFactor[0];
+	result[1] = (double)pixelPos[1] - result[3] * m_lensPitch * sqrt(3.0/4.0) / m_pixelPitch * m_scaleFactor[1];
 
-	// "original" version - pixel coordinates are the same as on the
+	// "original" version - pixel coordinates are the same as on the sensor
 	// result[0] = (double)pixelPos[0];
 	// result[1] = (double)pixelPos[1];
+
+	result[2] *= 2.0;
+	result[3] *= 2.0;
 
 	return result;
 }

@@ -25,9 +25,15 @@ void LightfieldSamples::const_iterator::incrementUntilValid() {
 		const cv::Vec4f coords = m_parent->m_pattern.sample(cv::Vec2i(x,y));
 
 		const double uv_magnitude_2 = coords[2]*coords[2] + coords[3]*coords[3];
-		if(uv_magnitude_2 <= m_parent->m_uvThreshold) {
+		if(uv_magnitude_2 <= m_parent->m_uvThreshold*m_parent->m_uvThreshold) {
 			m_value.source = cv::Vec2i(x, y);
-			m_value.target = cv::Vec2f((coords[0] + coords[2]*m_parent->m_uvOffset) / (float)size[0], (coords[1] + coords[3]*m_parent->m_uvOffset) / (float)size[1]);
+			m_value.target = cv::Vec2f(
+				(coords[0] + coords[2]*m_parent->m_uvOffset) / (float)size[0],
+				(coords[1] + coords[3]*m_parent->m_uvOffset) / (float)size[1]
+
+				// (coords[0]) / (float)size[0],
+				// (coords[1]) / (float)size[1]
+			);
 			m_value.color = possumwood::opencv::LightfieldSamples::Color((x%2) + (y%2)); // hardcoded bayer pattern, for now
 
 			if(m_value.target[0] >= 0.0f && m_value.target[1] >= 0.0f && m_value.target[0] < 1.0f && m_value.target[1] < 1.0f)
