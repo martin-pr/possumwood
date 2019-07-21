@@ -28,7 +28,7 @@ class LightfieldSamples {
 		};
 
 		LightfieldSamples();
-		LightfieldSamples(const LightfieldPattern& pattern, float uvOffset, float uvThreshold);
+		LightfieldSamples(const LightfieldPattern& pattern, float uvOffset, float uvThreshold, float xy_scale);
 
 		class const_iterator : public boost::iterator_facade<const_iterator, const Sample, boost::forward_traversal_tag> {
 			public:
@@ -59,7 +59,7 @@ class LightfieldSamples {
 
 	private:
 		LightfieldPattern m_pattern;
-		double m_uvOffset, m_uvThreshold;
+		double m_uvOffset, m_uvThreshold, m_xyScale;
 };
 
 std::ostream& operator << (std::ostream& out, const LightfieldSamples& f);
