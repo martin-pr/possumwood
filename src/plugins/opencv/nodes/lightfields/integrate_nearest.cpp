@@ -55,9 +55,20 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		const auto end = samples.end(y);
-		for(auto it = samples.begin(y); it != end; ++it) {
+		const auto begin = samples.begin(y);
+		assert(begin <= end);
+
+		for(auto it = begin; it != end; ++it) {
 			const float target_x = it->target[0] * (float)width;
 			const float target_y = it->target[1] * (float)height;
+
+			// sanity checks
+			assert(it->source[0] < input.rows);
+			assert(it->source[1] < input.cols);
+			assert(floor(target_x) >= 0);
+			assert(floor(target_y) >= 0);
+			assert(floor(target_x) < width);
+			assert(floor(target_y) < height);
 
 			float* color = mat.ptr<float>(floor(target_y), floor(target_x));
 			float* n = norm.ptr<float>(floor(target_y), floor(target_x));

@@ -56,11 +56,14 @@ cv::Vec4d LightfieldPattern::sample(const cv::Vec2i& pixelPos) const {
 	pos[1] = (double)pixelPos[1] * m_pixelPitch + m_sensorOffset[1];
 	pos[3] = 1.0;
 
+	// transform and normalize - we are now in a "normalized" set of coordinates - straightened, with scale applied, the grid is now axis-aligned
 	pos = pos * transform;
+	pos /= pos.w;
+
 
 	cv::Vec2d vect(
-		pos[0] / pos[3] / m_lensPitch,
-		pos[1] / pos[3] / m_lensPitch / sqrt(3.0/4.0)
+		pos[0] / m_lensPitch,
+		pos[1] / m_lensPitch / sqrt(3.0/4.0)
 	);
 
 	if(((int)round(vect[1] + 100.0)) % 2 == 1)
