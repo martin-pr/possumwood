@@ -7,6 +7,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "integrate_nearest_0",
+            "in_port": "in_frame",
+            "out_node": "divide_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "convert_0",
             "in_port": "in_frame",
             "out_node": "gamma_0",
@@ -15,20 +21,32 @@
         {
             "in_node": "gamma_0",
             "in_port": "in_frame",
-            "out_node": "integrate_mosaic_0",
+            "out_node": "integrate_nearest_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_mosaic_0",
-            "in_port": "in_frame",
+            "in_node": "divide_0",
+            "in_port": "in_frame_2",
             "out_node": "lytro_lightfield_0",
             "out_port": "frame"
         },
         {
-            "in_node": "integrate_mosaic_0",
+            "in_node": "samples_refocus_0",
             "in_port": "pattern",
             "out_node": "lytro_lightfield_0",
             "out_port": "pattern"
+        },
+        {
+            "in_node": "divide_0",
+            "in_port": "in_frame_1",
+            "out_node": "lytro_lightfield_1",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "integrate_nearest_0",
+            "in_port": "samples",
+            "out_node": "samples_refocus_0",
+            "out_port": "samples"
         }
     ],
     "nodes": {
@@ -36,24 +54,38 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 142.0478515625,
-                    "y": 465.68701171875
+                    "x": 182.320999145508,
+                    "y": 770.460266113281
                 }
             },
             "name": "convert",
             "ports": {
-                "a": 350.0,
+                "a": 150.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
             "type": "opencv/convert"
         },
+        "divide_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -14.2833518981934,
+                    "y": 26.489013671875
+                }
+            },
+            "name": "divide",
+            "ports": {
+                "scale": 1.0
+            },
+            "type": "opencv/divide"
+        },
         "gamma_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 126.27904510498,
-                    "y": 277.80615234375
+                    "x": 126.270942687988,
+                    "y": 571.0
                 }
             },
             "name": "gamma",
@@ -63,33 +95,46 @@
             },
             "type": "opencv/gamma"
         },
-        "integrate_mosaic_0": {
+        "integrate_nearest_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 126.757102966309,
-                    "y": 51.0340538024902
+                    "x": 150.691040039062,
+                    "y": 349.048095703125
                 }
             },
-            "name": "integrate_mosaic",
+            "name": "integrate_nearest",
             "ports": {
-                "elements": 5,
-                "size/height": 500,
-                "size/width": 500
+                "size/height": 300,
+                "size/width": 300
             },
-            "type": "opencv/lightfields/integrate_mosaic"
+            "type": "opencv/lightfields/integrate_nearest"
         },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 131.962051391602,
-                    "y": -106.821403503418
+                    "y": -104.212211608887
                 }
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/tea.lfr"
+                "filename": "$EXAMPLES/lytro/calibration.lfr"
+            },
+            "type": "opencv/capture/lytro_lightfield"
+        },
+        "lytro_lightfield_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -140.483154296875,
+                    "y": -129.138931274414
+                }
+            },
+            "name": "lytro_lightfield",
+            "ports": {
+                "filename": "$EXAMPLES/lytro/coin.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -97,8 +142,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 162.665863037109,
-                    "y": 687.681640625
+                    "x": 192.529907226562,
+                    "y": 961.346313476562
                 }
             },
             "connections": [
@@ -241,7 +286,7 @@
                     },
                     "name": "fragment_shader",
                     "ports": {
-                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform sampler2D image;\n\nvoid main() { \n\tif(uv.y < 0.0 || uv.y > 1.0)\n\t\tcolor = vec4(0,0,0,1);\n\telse\n\t\tcolor = vec4(texture(image, vec2(uv.x, 1.0-uv.y))); \n} \n"
+                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform sampler2D image;\n\nvoid main() { \n\tif(uv.y < 0.0 || uv.y > 1.0 || uv.x < 0.0 || uv.x > 1.0 )\n\t\tcolor = vec4(0,0,0,1);\n\telse\n\t\tcolor = vec4(texture(image, vec2(uv.x, 1.0-uv.y))); \n} \n"
                     },
                     "type": "render/fragment_shader"
                 },
@@ -379,6 +424,22 @@
                 }
             },
             "type": "network"
+        },
+        "samples_refocus_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 196.623977661133,
+                    "y": 144.4150390625
+                }
+            },
+            "name": "samples_refocus",
+            "ports": {
+                "uv_offset": 3.0,
+                "uv_threshold": 2.0,
+                "xy_scale": 50.0
+            },
+            "type": "opencv/lightfields/samples_refocus"
         }
     },
     "scene_config": {
@@ -387,5 +448,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK9AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACGAQAAAwAAAxkAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAa0AAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACGAQAAAwAAA4AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

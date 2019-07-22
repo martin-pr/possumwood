@@ -31,16 +31,10 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "tonemap_reinhard_0",
+            "in_node": "gamma_0",
             "in_port": "in_frame",
             "out_node": "integrate_gaussian_0",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "samples_refocus_0",
-            "in_port": "uv_offset",
-            "out_node": "interval_0",
-            "out_port": "out"
         },
         {
             "in_node": "divide_0",
@@ -69,7 +63,7 @@
         {
             "in_node": "convert_2",
             "in_port": "in_frame",
-            "out_node": "tonemap_reinhard_0",
+            "out_node": "gamma_0",
             "out_port": "out_frame"
         }
     ],
@@ -116,7 +110,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 350.0,
+                "a": 150.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -150,6 +144,21 @@
             },
             "type": "opencv/divide"
         },
+        "gamma_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 125.514465332031,
+                    "y": 974.111755371094
+                }
+            },
+            "name": "gamma",
+            "ports": {
+                "gamma": 0.699999988079071,
+                "normalization_coef": 1.0
+            },
+            "type": "opencv/gamma"
+        },
         "integrate_gaussian_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -160,31 +169,11 @@
             },
             "name": "integrate_gaussian",
             "ports": {
-                "sigma2": 2.0,
+                "sigma2": 1.0,
                 "size/height": 1000,
                 "size/width": 1000
             },
             "type": "opencv/lightfields/integrate_gaussian"
-        },
-        "interval_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -228.203887939453,
-                    "y": 269.493225097656
-                }
-            },
-            "name": "refocus",
-            "ports": {
-                "interval": {
-                    "in_progress_updates": false,
-                    "max": 60.0,
-                    "min": -40.0,
-                    "type": "linear",
-                    "value": 15.0999984741211
-                }
-            },
-            "type": "maths/interval"
         },
         "lytro_lightfield_0": {
             "blind_data": {
@@ -210,7 +199,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/tea.lfr"
+                "filename": "$EXAMPLES/lytro/coin.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -511,26 +500,10 @@
             },
             "name": "samples_refocus",
             "ports": {
+                "uv_offset": 15.0999984741211,
                 "uv_threshold": 1.0
             },
             "type": "opencv/lightfields/samples_refocus"
-        },
-        "tonemap_reinhard_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 105.989227294922,
-                    "y": 965.270080566406
-                }
-            },
-            "name": "tonemap_reinhard",
-            "ports": {
-                "color_adaptation": 1.0,
-                "gamma": 0.699999988079071,
-                "intensity": 0.0,
-                "light_adaptation": 0.0
-            },
-            "type": "opencv/hdr/tonemap_reinhard"
         }
     },
     "scene_config": {
@@ -538,6 +511,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACNQAAAawAAACGAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIbAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAA7sAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
