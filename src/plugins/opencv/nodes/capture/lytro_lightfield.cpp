@@ -2,6 +2,7 @@
 #include <possumwood_sdk/datatypes/filename.h>
 
 #include <sstream>
+#include <fstream>
 
 #include <boost/filesystem.hpp>
 
