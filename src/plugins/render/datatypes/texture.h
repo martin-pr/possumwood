@@ -15,12 +15,18 @@ class Texture : public boost::noncopyable {
 			kGray = 2
 		};
 
+		enum Interpolation {
+			kLinear = GL_LINEAR,
+			kNearest = GL_NEAREST
+		};
+
 		struct Format {
-			Format(unsigned char rba = 4, ChannelOrder order = kRGB) : row_byte_align(rba), channel_order(order) {
+			Format(unsigned char rba = 4, ChannelOrder order = kRGB, Interpolation interp = kLinear) : row_byte_align(rba), channel_order(order), interpolation(interp) {
 			}
 
 			unsigned char row_byte_align;
 			ChannelOrder channel_order;
+			Interpolation interpolation;
 		};
 
 		Texture(const unsigned char* data, std::size_t width, std::size_t height, const Format& format = Format());
