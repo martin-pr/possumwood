@@ -20,7 +20,7 @@ class Raw {
 		const std::vector<char> image() const;
 
 	private:
-		class Pimpl;
+		struct Pimpl;
 
 		std::shared_ptr<const Pimpl> m_pimpl;
 

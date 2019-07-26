@@ -8,13 +8,13 @@ struct LightfieldSamples::Pimpl {
 
 	std::vector<Sample> m_samples;
 	std::vector<std::size_t> m_rowOffsets;
-	cv::Vec2i size;
+	Imath::V2i size;
 };
 
 LightfieldSamples::LightfieldSamples() : m_pimpl(new Pimpl()) {
 }
 
-LightfieldSamples::LightfieldSamples(const LightfieldPattern& pattern, float uvOffset, float uvThreshold, float xy_scale) {
+LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float uvOffset, float uvThreshold, float xy_scale) {
 	std::unique_ptr<Pimpl> impl(new Pimpl());
 
 	impl->size = pattern.sensorResolution();
@@ -27,13 +27,13 @@ LightfieldSamples::LightfieldSamples(const LightfieldPattern& pattern, float uvO
 		for(std::size_t x=0; x<(std::size_t)impl->size[1]; ++x) {
 			Sample& sample = impl->m_samples[y*impl->size[0] + x];
 
-			const cv::Vec4f coords = pattern.sample(cv::Vec2i(x,y));
+			const Imath::V4f coords = pattern.sample(Imath::V2i(x,y));
 
 			// input image pixel position, integer in pixels
-			sample.source = cv::Vec2i(x, y);
+			sample.source = Imath::V2i(x, y);
 
 			// target pixel position, normalized (0..1) - adding the UV offset to handle displacement
-			sample.target = cv::Vec2f(
+			sample.target = Imath::V2f(
 				(coords[0] + coords[2]*uvOffset) / (float)(impl->size[0]),
 				(coords[1] + coords[3]*uvOffset) / (float)(impl->size[1])
 
@@ -42,7 +42,7 @@ LightfieldSamples::LightfieldSamples(const LightfieldPattern& pattern, float uvO
 			);
 
 			// compute detail scaling (usable to visualise details in the centre of the view, or crop edges of an image)
-			sample.target = (sample.target - cv::Vec2f(0.5f, 0.5f)) * xy_scale + cv::Vec2f(0.5f, 0.5f);
+			sample.target = (sample.target - Imath::V2f(0.5f, 0.5f)) * xy_scale + Imath::V2f(0.5f, 0.5f);
 
 			// hardcoded bayer pattern, for now
 			sample.color = possumwood::opencv::LightfieldSamples::Color((x%2) + (y%2));

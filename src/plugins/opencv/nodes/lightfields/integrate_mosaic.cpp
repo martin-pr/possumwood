@@ -13,7 +13,7 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
-dependency_graph::InAttr<possumwood::opencv::LightfieldPattern> a_pattern;
+dependency_graph::InAttr<lightfields::Pattern> a_pattern;
 dependency_graph::InAttr<unsigned> a_width, a_height, a_elements;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
@@ -34,7 +34,7 @@ void add3channel(float* color, float* n, int colorIndex, const float* value) {
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::LightfieldPattern& pattern = data.get(a_pattern);
+	const lightfields::Pattern& pattern = data.get(a_pattern);
 
 	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
@@ -56,7 +56,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		for(int x = 0; x < input.cols; ++x) {
-			const cv::Vec4d& sample = pattern.sample(cv::Vec2i(x, y));
+			const Imath::V4d& sample = pattern.sample(Imath::V2i(x, y));
 
 			const double uv_magnitude_2 = sample[2]*sample[2] + sample[3]*sample[3];
 			if(uv_magnitude_2 < 1.0) {
@@ -97,7 +97,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", possumwood::opencv::LightfieldPattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_width, "size/width", 300u);
 	meta.addAttribute(a_height, "size/height", 300u);
 	meta.addAttribute(a_elements, "elements", 5u);

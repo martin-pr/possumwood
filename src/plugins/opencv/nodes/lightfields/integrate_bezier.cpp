@@ -22,7 +22,7 @@ dependency_graph::InAttr<unsigned> a_width, a_height, a_levels, a_offset;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 struct Sample {
-	cv::Vec2d target;
+	Imath::V2d target;
 	float value;
 };
 
@@ -40,10 +40,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
 
 	{
-		std::vector<std::pair<cv::Vec2d, float>> points;
+		std::vector<std::pair<Imath::V2d, float>> points;
 		for(auto& s : samples)
 			if(s.color == 0) {
-				cv::Vec2d pt = s.target;
+				Imath::V2d pt = s.target;
 
 				if(pt[0] > 0.48 && pt[0] < 0.52 && pt[1] > 0.48 && pt[1] < 0.52)
 					points.push_back(std::make_pair(pt, input.at<float>(s.source[1], s.source[0])));
@@ -85,13 +85,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
 				auto& s = cache[c][a];
-				spline.addSample({s.target[0], s.target[1]}, s.value);
+				spline.addSample({{s.target[0], s.target[1]}}, s.value);
 			});
 
 			if(a < levels-1)
 				tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
 					auto& s = cache[c][a];
-					s.value -= spline.sample({s.target[0], s.target[1]});
+					s.value -= spline.sample({{s.target[0], s.target[1]}});
 				});
 		}
 	}

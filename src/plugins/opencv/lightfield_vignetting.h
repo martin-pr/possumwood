@@ -15,7 +15,7 @@ namespace possumwood { namespace opencv {
 class LightfieldVignetting {
 	public:
 		LightfieldVignetting();
-		LightfieldVignetting(std::size_t subdiv, const LightfieldPattern& pattern, const cv::Mat& image);
+		LightfieldVignetting(std::size_t subdiv, const lightfields::Pattern& pattern, const cv::Mat& image);
 
 		double sample(const cv::Vec4f& coord) const;
 

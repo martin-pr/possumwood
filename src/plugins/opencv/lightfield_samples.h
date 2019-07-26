@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 
+#include <opencv2/opencv.hpp>
+
 #include <actions/traits.h>
 
 #include "lightfield_pattern.h"
@@ -20,13 +22,13 @@ class LightfieldSamples {
 		};
 
 		struct Sample {
-			cv::Vec2i source; ///< Integer position of the source pixel in source image
-			cv::Vec2f target; ///< Target position in the target image (normalized between 0..1!)
+			Imath::V2i source; ///< Integer position of the source pixel in source image
+			Imath::V2f target; ///< Target position in the target image (normalized between 0..1!)
 			Color color; ///< Target colour channel, based on the Bayer pattern
 		};
 
 		LightfieldSamples();
-		LightfieldSamples(const LightfieldPattern& pattern, float uvOffset, float uvThreshold, float xy_scale);
+		LightfieldSamples(const ::lightfields::Pattern& pattern, float uvOffset, float uvThreshold, float xy_scale);
 		~LightfieldSamples();
 
 		using const_iterator = std::vector<Sample>::const_iterator;

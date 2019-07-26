@@ -11,11 +11,11 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
-dependency_graph::InAttr<possumwood::opencv::LightfieldPattern> a_pattern;
+dependency_graph::InAttr<lightfields::Pattern> a_pattern;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::LightfieldPattern& pattern = data.get(a_pattern);
+	const lightfields::Pattern& pattern = data.get(a_pattern);
 
 	if((*data.get(a_in)).type() != CV_8UC3)
 		throw std::runtime_error("Only 8-bit RGB format supported, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
@@ -24,7 +24,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	for(int y=0;y<mat.rows;++y)
 		for(int x=0;x<mat.cols;++x) {
-			const cv::Vec4f value = pattern.sample(cv::Vec2i(x, y));
+			const Imath::V4f value = pattern.sample(Imath::V2i(x, y));
 
 			unsigned char* color = mat.ptr<unsigned char>(y, x);
 			float current = value[2]*value[2] + value[3]*value[3];
@@ -41,7 +41,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", possumwood::opencv::LightfieldPattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
