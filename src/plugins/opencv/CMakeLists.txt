@@ -36,4 +36,5 @@ target_link_libraries(opencv
 	psw_render
 	${LIBS}
 	OpenImageIO
+	lightfields
 )
