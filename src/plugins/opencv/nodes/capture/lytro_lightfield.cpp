@@ -13,65 +13,13 @@
 
 #include "frame.h"
 #include "lightfield_pattern.h"
+#include "lightfields/block.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
 dependency_graph::OutAttr<possumwood::opencv::LightfieldPattern> a_pattern;
-
-struct Block {
-	char id = '\0';
-	std::string name;
-	std::vector<char> data;
-};
-
-Block readBlock(std::ifstream& file) {
-	Block result;
-
-	// read the header
-	{
-		unsigned char header[8];
-		file.read((char*)header, 8);
-
-		if(file.eof())
-			return result;
-
-		if(header[0] != 0x89 || header[1] != 'L' || header[2] != 'F')
-			throw std::runtime_error("Lytro file magic sequence not matching - wrong file type?");
-
-		result.id = header[3];
-	}
-
-	// skip the version
-	file.seekg(4, file.cur);
-
-	// read the big endian length
-	std::size_t length = 0;
-	for(std::size_t a=0;a<4;++a)
-		length = (length << 8) + (unsigned char)file.get();
-
-	if(result.id != 'P') {
-		// read the name
-		{
-			char name[81];
-			file.read(name, 80);
-			name[80] = '\0';
-			result.name = name;
-		}
-
-		// and read the data block
-		result.data.resize(length+1);
-		file.read(result.data.data(), length);
-		result.data[length] = '\0';
-
-		// handle any padding
-		while(file.tellg() % 16 != 0)
-			file.get();
-	}
-
-	return result;
-}
 
 cv::Mat decodeData(const char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
 	cv::Mat result(width, height, CV_32F);
@@ -125,10 +73,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		int black[4] = {0,0,0,0}, white[4] = {255,255,255,255};
 
 		std::ifstream file(filename.filename().string(), std::ios::binary);
+		lightfields::Block block;
 
-		Block block = readBlock(file);
+		// skip the initial block
+		file >> block;
+		checkThrow(block.id, 'P', "Initial P block of a lytro raw file not found.");
+
 		while(block.id != '\0') {
-			block = readBlock(file);
+			file >> block;
 
 			if(block.id == 'M') {
 				std::stringstream ss(block.data.data());
