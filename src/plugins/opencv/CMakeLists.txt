@@ -7,6 +7,13 @@ set(LIBS ${LIBS} Qt5::Widgets Qt5::OpenGL)
 find_package(OpenCV REQUIRED)
 set(LIBS ${LIBS} ${OpenCV_LIBS})
 
+# pkg-config to find jsoncpp
+find_package(PkgConfig REQUIRED)
+pkg_search_module(JSONCPP REQUIRED jsoncpp)
+
+include_directories(${JSONCPP_INCLUDE_DIRS})
+set(LIBS ${LIBS} ${JSONCPP_LIBRARIES})
+
 include_directories(./)
 
 #####

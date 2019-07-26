@@ -1,8 +1,6 @@
 ###########################################################
 # INSTALL TARGETS
 
-message("***** Install prefix = ${CMAKE_INSTALL_PREFIX} *****")
-
 set(DATA_PREFIX "${CMAKE_INSTALL_PREFIX}/share/possumwood" CACHE STRING "")
 
 option(MAKE_CONF_FILE "Generate config file" ON)

@@ -5,6 +5,8 @@ namespace lightfields {
 std::istream& operator >> (std::istream& in, Block& block) {
 	// read the header
 	block.id = '\0';
+	block.name.clear();
+	block.data.clear();
 
 	unsigned char header[8];
 	in.read((char*)header, 8);
@@ -42,10 +44,6 @@ std::istream& operator >> (std::istream& in, Block& block) {
 		// handle any padding
 		while(in.tellg() % 16 != 0)
 			in.get();
-	}
-	else {
-		block.name.clear();
-		block.data.clear();
 	}
 
 	return in;
