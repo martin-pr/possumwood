@@ -48,6 +48,7 @@ addons:
       - libopencv-daily
       - libcgal-daily
       - libopenimageio-daily
+      - libjsoncpp-dev
 
 # Run build
 script:
