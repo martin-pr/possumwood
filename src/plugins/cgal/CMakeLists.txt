@@ -9,6 +9,10 @@ set(LIBS ${LIBS} Qt5::Widgets Qt5::OpenGL)
 
 add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
+# Find CGAL
+find_package(CGAL)
+set(LIBS ${LIBS} CGAL::CGAL)
+
 include_directories(./)
 
 #####
