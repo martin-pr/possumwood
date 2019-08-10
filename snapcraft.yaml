@@ -130,7 +130,6 @@ parts:
       - libopencv-imgcodecs3.2
       - libopencv-imgproc3.2
       - libopencv-videoio3.2
-      - libopenimageio1.7
       - libraw1394-11
       - libraw16
       - libtbb2

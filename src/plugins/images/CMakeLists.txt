@@ -12,6 +12,13 @@ pkg_search_module(LUABIND REQUIRED)
 include_directories(${LUABIND_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${LUABIND_LIBRARIES})
 
+# Find OpenImageIO
+pkg_check_modules (OIIO OpenImageIO)
+
+pkg_search_module(OIIO REQUIRED)
+include_directories(${OIIO_INCLUDE_DIRS}/..) # make sure OpenImageIO/ include prefix is maintained
+set(LIBS ${LIBS} ${OIIO_LIBRARIES})
+
 include_directories(./)
 
 #####
@@ -36,4 +43,4 @@ SET_TARGET_PROPERTIES(images PROPERTIES PREFIX "")
 
 install(TARGETS images DESTINATION ${PLUGINS_INSTALL_PATH})
 
-target_link_libraries(images psw_images psw_lua ${OPENEXR_IEX_LIBRARY} ${LIBS} OpenImageIO)
+target_link_libraries(images psw_images psw_lua ${OPENEXR_IEX_LIBRARY} ${LIBS})
