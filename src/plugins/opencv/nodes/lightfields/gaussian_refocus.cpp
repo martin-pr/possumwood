@@ -11,13 +11,13 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
-dependency_graph::InAttr<possumwood::opencv::LightfieldPattern> a_pattern;
+dependency_graph::InAttr<lightfields::Pattern> a_pattern;
 dependency_graph::InAttr<unsigned> a_width, a_height;
 dependency_graph::InAttr<float> a_uvScale, a_sigma2;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::LightfieldPattern& pattern = data.get(a_pattern);
+	const lightfields::Pattern& pattern = data.get(a_pattern);
 
 	if((*data.get(a_in)).type() != CV_32FC1)
 		throw std::runtime_error("Only 16-bit single-float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
@@ -37,9 +37,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		std::cout << "\r" << (float)(y) / (input.rows) * 100.0f << std::flush;
 
 		for(int x=0;x<input.cols;++x) {
-			const cv::Vec4f coords = pattern.sample(cv::Vec2i(x, y));
+			const Imath::V4f coords = pattern.sample(Imath::V2i(x, y));
 
-			const cv::Vec2f pos(coords[0] + coords[2]*uvScale, coords[1] + coords[3]*uvScale);
+			const Imath::V2f pos(coords[0] + coords[2]*uvScale, coords[1] + coords[3]*uvScale);
 
 			const double uv_magnitude_2 = coords[2]*coords[2] + coords[3]*coords[3];
 
@@ -90,7 +90,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", possumwood::opencv::LightfieldPattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_width, "size/width", 300u);
 	meta.addAttribute(a_height, "size/height", 300u);
 	meta.addAttribute(a_uvScale, "uv_scale", 0.0f);

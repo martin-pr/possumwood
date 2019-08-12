@@ -13,65 +13,14 @@
 
 #include "frame.h"
 #include "lightfield_pattern.h"
+#include "lightfields/block.h"
+#include "lightfields/raw.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
-dependency_graph::OutAttr<possumwood::opencv::LightfieldPattern> a_pattern;
-
-struct Block {
-	char id = '\0';
-	std::string name;
-	std::vector<char> data;
-};
-
-Block readBlock(std::ifstream& file) {
-	Block result;
-
-	// read the header
-	{
-		unsigned char header[8];
-		file.read((char*)header, 8);
-
-		if(file.eof())
-			return result;
-
-		if(header[0] != 0x89 || header[1] != 'L' || header[2] != 'F')
-			throw std::runtime_error("Lytro file magic sequence not matching - wrong file type?");
-
-		result.id = header[3];
-	}
-
-	// skip the version
-	file.seekg(4, file.cur);
-
-	// read the big endian length
-	std::size_t length = 0;
-	for(std::size_t a=0;a<4;++a)
-		length = (length << 8) + (unsigned char)file.get();
-
-	if(result.id != 'P') {
-		// read the name
-		{
-			char name[81];
-			file.read(name, 80);
-			name[80] = '\0';
-			result.name = name;
-		}
-
-		// and read the data block
-		result.data.resize(length+1);
-		file.read(result.data.data(), length);
-		result.data[length] = '\0';
-
-		// handle any padding
-		while(file.tellg() % 16 != 0)
-			file.get();
-	}
-
-	return result;
-}
+dependency_graph::OutAttr<lightfields::Pattern> a_pattern;
 
 cv::Mat decodeData(const char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
 	cv::Mat result(width, height, CV_32F);
@@ -117,7 +66,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::Filename filename = data.get(a_filename);
 
 	cv::Mat result;
-	possumwood::opencv::LightfieldPattern pattern;
+	lightfields::Pattern pattern;
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
 		int width = 0, height = 0;
@@ -125,79 +74,41 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		int black[4] = {0,0,0,0}, white[4] = {255,255,255,255};
 
 		std::ifstream file(filename.filename().string(), std::ios::binary);
+		lightfields::Raw raw;
+		file >> raw;
 
-		Block block = readBlock(file);
-		while(block.id != '\0') {
-			block = readBlock(file);
+		width = raw.metadata()["image"]["width"].asInt();
+		height = raw.metadata()["image"]["height"].asInt();
 
-			if(block.id == 'M') {
-				std::stringstream ss(block.data.data());
-				possumwood::io::json metadata;
-				ss >> metadata;
+		black[0] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].asInt();
+		black[1] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].asInt();
+		black[2] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].asInt();
+		black[3] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].asInt();
 
-				if(metadata["frames"].size() != 1)
-					throw std::runtime_error("Only single-frame raw images supported at the moment.");
+		white[0] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].asInt();
+		white[1] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].asInt();
+		white[2] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].asInt();
+		white[3] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
 
-				metadataRef = metadata["frames"][0]["frame"]["metadataRef"];
-				imageRef = metadata["frames"][0]["frame"]["imageRef"];
-			}
+		// assemble the lightfield pattern
+		pattern = lightfields::Pattern(
+			raw.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
+			raw.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
+			raw.metadata()["devices"]["mla"]["rotation"].asDouble(),
+			Imath::V2f(
+				raw.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
+				raw.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()
+			),
+			Imath::V3f(
+				raw.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
+				raw.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
+				raw.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
+			),
+			Imath::V2i(width, height)
+		);
 
-			else if(block.name == metadataRef) {
-				std::stringstream ss(block.data.data());
-				possumwood::io::json metadata;
-				ss >> metadata;
-
-				width = metadata["image"]["width"].get<int>();
-				height = metadata["image"]["height"].get<int>();
-
-				checkThrow(metadata["image"]["orientation"].get<int>(), 1, "orientation");
-				checkThrow(metadata["image"]["representation"].get<std::string>(), std::string("rawPacked"), "representation");
-				checkThrow(metadata["image"]["rawDetails"]["pixelFormat"]["rightShift"].get<int>(), 0, "rightShift");
-
-				checkThrow(metadata["image"]["rawDetails"]["pixelFormat"]["black"].size(), std::size_t(4), "black size");
-				checkThrow(metadata["image"]["rawDetails"]["pixelFormat"]["white"].size(), std::size_t(4), "white size");
-
-				black[0] = metadata["image"]["rawDetails"]["pixelFormat"]["black"]["b"].get<int>();
-				black[1] = metadata["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].get<int>();
-				black[2] = metadata["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].get<int>();
-				black[3] = metadata["image"]["rawDetails"]["pixelFormat"]["black"]["r"].get<int>();
-
-				white[0] = metadata["image"]["rawDetails"]["pixelFormat"]["white"]["b"].get<int>();
-				white[1] = metadata["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].get<int>();
-				white[2] = metadata["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].get<int>();
-				white[3] = metadata["image"]["rawDetails"]["pixelFormat"]["white"]["r"].get<int>();
-
-				checkThrow(metadata["image"]["rawDetails"]["pixelPacking"]["endianness"].get<std::string>(), std::string("big"), "endianness");
-				checkThrow(metadata["image"]["rawDetails"]["pixelPacking"]["bitsPerPixel"].get<int>(), 12, "bitsPerPixel");
-
-				checkThrow(metadata["image"]["rawDetails"]["mosaic"]["tile"].get<std::string>(), std::string("r,gr:gb,b"), "mosaic/tile");
-				checkThrow(metadata["image"]["rawDetails"]["mosaic"]["upperLeftPixel"].get<std::string>(), std::string("b"), "mosaic/upperLeftPixel");
-
-				// assemble the lightfield pattern
-				pattern = possumwood::opencv::LightfieldPattern(
-					metadata["devices"]["mla"]["lensPitch"].get<double>(),
-					metadata["devices"]["sensor"]["pixelPitch"].get<double>(),
-					metadata["devices"]["mla"]["rotation"].get<double>(),
-					cv::Vec2f(
-						metadata["devices"]["mla"]["scaleFactor"]["x"].get<double>(),
-						metadata["devices"]["mla"]["scaleFactor"]["y"].get<double>()
-					),
-					cv::Vec3f(
-						metadata["devices"]["mla"]["sensorOffset"]["x"].get<double>(),
-						metadata["devices"]["mla"]["sensorOffset"]["y"].get<double>(),
-						metadata["devices"]["mla"]["sensorOffset"]["z"].get<double>()
-					),
-					cv::Vec2i(width, height)
-				);
-			}
-			else if(block.name == imageRef) {
-				result = decodeData(block.data.data(), width, height, black, white);
-			}
-
-			// temporary - printouts
-			if((block.data.size() > 1) && (block.data[0] == '{'))
-				std::cout << block.data.data() << std::endl;
-		}
+		assert(!raw.image().empty());
+		result = decodeData(raw.image().data(), width, height, black, white);
 	}
 
 	data.set(a_frame, possumwood::opencv::Frame(result));
@@ -211,7 +122,7 @@ void init(possumwood::Metadata& meta) {
 		"Lytro files (*.lfr *.RAW)",
 	}));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", possumwood::opencv::LightfieldPattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
 	meta.addInfluence(a_filename, a_pattern);

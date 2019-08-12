@@ -10,12 +10,12 @@
 
 namespace {
 
-dependency_graph::InAttr<possumwood::opencv::LightfieldPattern> a_pattern;
+dependency_graph::InAttr<lightfields::Pattern> a_pattern;
 dependency_graph::InAttr<float> a_uvOffset, a_uvThreshold, a_xyScale;
 dependency_graph::OutAttr<possumwood::opencv::LightfieldSamples> a_samples;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::LightfieldPattern& pattern = data.get(a_pattern);
+	const lightfields::Pattern& pattern = data.get(a_pattern);
 
 	data.set(a_samples, possumwood::opencv::LightfieldSamples(pattern, data.get(a_uvOffset), data.get(a_uvThreshold), data.get(a_xyScale)));
 
@@ -23,7 +23,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_pattern, "pattern", possumwood::opencv::LightfieldPattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_uvOffset, "uv_offset", 0.0f);
 	meta.addAttribute(a_uvThreshold, "uv_threshold", 1.0f);
 	meta.addAttribute(a_xyScale, "xy_scale", 1.0f);
