@@ -38,46 +38,30 @@ Imath::V4d Pattern::sample(const Imath::V2i& pixelPos) const {
 	const double cs = cos(m_rotation);
 	const double sn = sin(m_rotation);
 
-	Imath::M44d transform;
+	Imath::M33d transform;
 	transform.makeIdentity();
 
-	transform[0][0] = 1.0/m_scaleFactor[0] * cs;
-	transform[0][1] = 1.0/m_scaleFactor[1] * -sn;
-	transform[1][0] = 1.0/m_scaleFactor[0] * sn;
-	transform[1][1] = 1.0/m_scaleFactor[1] * cs;
+	const double scale = m_pixelPitch / m_lensPitch;
 
-	// "projection" - additional
-	// transform[2][3] = -1;
-	// pos[2] = m_sensorOffset[2];
+	transform[0][0] = scale/m_scaleFactor[0] * cs;
+	transform[0][1] = scale/m_scaleFactor[1] * -sn / sqrt(3.0/4.0);
+	transform[1][0] = scale/m_scaleFactor[0] * sn;
+	transform[1][1] = scale/m_scaleFactor[1] * cs / sqrt(3.0/4.0);
+	transform[2][0] = m_sensorOffset[0] / m_pixelPitch * (scale/m_scaleFactor[0]);
+	transform[2][1] = m_sensorOffset[1] / m_pixelPitch * (scale/m_scaleFactor[1] / sqrt(3.0/4.0));
 
-	Imath::V4d pos;
-	pos[0] = (double)pixelPos[0] * m_pixelPitch + m_sensorOffset[0];
-	pos[1] = (double)pixelPos[1] * m_pixelPitch + m_sensorOffset[1];
-	pos[3] = 1.0;
+	Imath::V3d pos(pixelPos[0], pixelPos[1], 1.0);
 
-	// transform and normalize - we are now in a "normalized" set of coordinates - straightened, with scale applied, the grid is now axis-aligned
 	pos = pos * transform;
-	pos /= pos.w;
 
+	if(((int)round(pos[1] + 100.0)) % 2 == 1)
+		pos[0] += 0.5;
 
-	Imath::V2d vect(
-		pos[0] / m_lensPitch,
-		pos[1] / m_lensPitch / sqrt(3.0/4.0)
-	);
+	result[2] = (pos[0] + 100.0 - round(pos[0] + 100.0));
+	result[3] = (pos[1] + 100.0 - round(pos[1] + 100.0));
 
-	if(((int)round(vect[1] + 100.0)) % 2 == 1)
-		vect[0] += 0.5;
-
-	result[2] = (vect[0] + 100.0 - round(vect[0] + 100.0));
-	result[3] = (vect[1] + 100.0 - round(vect[1] + 100.0));
-
-	// "centered" version - all pixels of a lens are centered on that lens
 	result[0] = (double)pixelPos[0] - result[2] * m_lensPitch / m_pixelPitch * m_scaleFactor[0];
 	result[1] = (double)pixelPos[1] - result[3] * m_lensPitch * sqrt(3.0/4.0) / m_pixelPitch * m_scaleFactor[1];
-
-	// "original" version - pixel coordinates are the same as on the sensor
-	// result[0] = (double)pixelPos[0];
-	// result[1] = (double)pixelPos[1];
 
 	result[2] *= 2.0;
 	result[3] *= 2.0;
