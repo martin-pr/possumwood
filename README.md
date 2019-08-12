@@ -20,6 +20,7 @@ On Ubuntu, the easiest way to install Possumwood is to use the [snapshots PPA](h
 
 ```
 sudo add-apt-repository ppa:martin-prazak/possumwood
+sudo add-apt-repository ppa:martin-prazak/cgi-daily
 sudo apt-get update
 sudo apt-get install possumwood
 ```
