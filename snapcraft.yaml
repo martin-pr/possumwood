@@ -39,6 +39,7 @@ build-packages:
   - libtbb-dev
   - software-properties-common
   - dirmngr
+  - libjsoncpp-dev
 
 apps:
   possumwood:
