@@ -45,9 +45,9 @@ addons:
       - libqt5opengl5-dev
       - libluabind-dev
       - libtbb-dev
-      - libopencv-daily
-      - libcgal-daily
-      - libopenimageio-daily
+      - libopencv-daily-dev
+      - libcgal-daily-dev
+      - libopenimageio-daily-dev
       - libjsoncpp-dev
 
 # Run build

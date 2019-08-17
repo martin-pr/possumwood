@@ -40,6 +40,9 @@ build-packages:
   - software-properties-common
   - dirmngr
   - libjsoncpp-dev
+  - libopencv-daily-dev
+  - libopenimageio-daily-dev
+  - libcgal-daily-dev
 
 apps:
   possumwood:
