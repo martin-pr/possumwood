@@ -70,7 +70,7 @@ parts:
   add-ppa:
     plugin: nil
     override-pull: |
-      echo "deb http://ppa.launchpad.net/martin-prazak/cgi-daily/ubuntu bionic main" | tee /etc/apt/sources.list.d/cgi-daily.list
+      echo "deb http://ppa.launchpad.net/cgi-daily-devs/cgi-daily/ubuntu bionic main" | tee /etc/apt/sources.list.d/cgi-daily.list
       apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AD1F7ADEA6EC2DD8E462467C210C13FD18B9423F
       apt update
       apt upgrade -yy
