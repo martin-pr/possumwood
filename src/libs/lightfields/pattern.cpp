@@ -41,27 +41,28 @@ Imath::V4d Pattern::sample(const Imath::V2i& pixelPos) const {
 	Imath::M33d transform;
 	transform.makeIdentity();
 
-	const double scale = m_pixelPitch / m_lensPitch;
+	const double scale_x = m_pixelPitch / m_lensPitch / m_scaleFactor[0];
+	const double scale_y = m_pixelPitch / m_lensPitch / m_scaleFactor[1] / sqrt(3.0/4.0);
 
-	transform[0][0] = scale/m_scaleFactor[0] * cs;
-	transform[0][1] = scale/m_scaleFactor[1] * -sn / sqrt(3.0/4.0);
-	transform[1][0] = scale/m_scaleFactor[0] * sn;
-	transform[1][1] = scale/m_scaleFactor[1] * cs / sqrt(3.0/4.0);
-	transform[2][0] = m_sensorOffset[0] / m_pixelPitch * (scale/m_scaleFactor[0]);
-	transform[2][1] = m_sensorOffset[1] / m_pixelPitch * (scale/m_scaleFactor[1] / sqrt(3.0/4.0));
+	transform[0][0] = scale_x * cs;
+	transform[0][1] = scale_y * -sn;
+	transform[1][0] = scale_x * sn;
+	transform[1][1] = scale_y * cs;
+	transform[2][0] = scale_x * m_sensorOffset[0] / m_pixelPitch;
+	transform[2][1] = scale_y * m_sensorOffset[1] / m_pixelPitch;
 
 	Imath::V3d pos(pixelPos[0], pixelPos[1], 1.0);
 
 	pos = pos * transform;
 
-	if(((int)round(pos[1] + 100.0)) % 2 == 1)
-		pos[0] += 0.5;
+	if(((int)floor(pos[1] - 0.5)) % 2 == 0)
+		pos[0] -= 0.5;
 
-	result[2] = (pos[0] + 100.0 - round(pos[0] + 100.0));
-	result[3] = (pos[1] + 100.0 - round(pos[1] + 100.0));
+	result[2] = (pos[0] - floor(pos[0] + 0.5));
+	result[3] = (pos[1] - floor(pos[1] + 0.5));
 
-	result[0] = (double)pixelPos[0] - result[2] * m_lensPitch / m_pixelPitch * m_scaleFactor[0];
-	result[1] = (double)pixelPos[1] - result[3] * m_lensPitch * sqrt(3.0/4.0) / m_pixelPitch * m_scaleFactor[1];
+	result[0] = (double)pixelPos[0] - result[2] / scale_x;
+	result[1] = (double)pixelPos[1] - result[3] / scale_y;
 
 	result[2] *= 2.0;
 	result[3] *= 2.0;
