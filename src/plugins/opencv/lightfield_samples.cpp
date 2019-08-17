@@ -27,7 +27,7 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 		for(std::size_t x=0; x<(std::size_t)impl->size[1]; ++x) {
 			Sample& sample = impl->m_samples[y*impl->size[0] + x];
 
-			const Imath::V4f coords = pattern.sample(Imath::V2i(x,y));
+			const Imath::V4f coords = pattern.sample(Imath::V2i(x,y)).pos;
 
 			// input image pixel position, integer in pixels
 			sample.source = Imath::V2i(x, y);

@@ -56,7 +56,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		for(int x = 0; x < input.cols; ++x) {
-			const Imath::V4d& sample = pattern.sample(Imath::V2i(x, y));
+			const Imath::V4d& sample = pattern.sample(Imath::V2i(x, y)).pos;
 
 			const double uv_magnitude_2 = sample[2]*sample[2] + sample[3]*sample[3];
 			if(uv_magnitude_2 < 1.0) {

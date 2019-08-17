@@ -32,8 +32,8 @@ bool Pattern::operator != (const Pattern& f) const {
 		m_sensorResolution != f.m_sensorResolution;
 }
 
-Imath::V4d Pattern::sample(const Imath::V2i& pixelPos) const {
-	Imath::V4d result;
+Pattern::Sample Pattern::sample(const Imath::V2i& pixelPos) const {
+	Sample result;
 
 	const double cs = cos(m_rotation);
 	const double sn = sin(m_rotation);
@@ -58,14 +58,16 @@ Imath::V4d Pattern::sample(const Imath::V2i& pixelPos) const {
 	if(((int)floor(pos[1] - 0.5)) % 2 == 0)
 		pos[0] -= 0.5;
 
-	result[2] = (pos[0] - floor(pos[0] + 0.5));
-	result[3] = (pos[1] - floor(pos[1] + 0.5));
+	result.pos[2] = (pos[0] - floor(pos[0] + 0.5));
+	result.pos[3] = (pos[1] - floor(pos[1] + 0.5));
 
-	result[0] = (double)pixelPos[0] - result[2] / scale_x;
-	result[1] = (double)pixelPos[1] - result[3] / scale_y;
+	result.pos[0] = (double)pixelPos[0] - result.pos[2] / scale_x;
+	result.pos[1] = (double)pixelPos[1] - result.pos[3] / scale_y;
 
-	result[2] *= 2.0;
-	result[3] *= 2.0;
+	result.pos[2] *= 2.0;
+	result.pos[3] *= 2.0;
+
+	result.lens_id = floor(pos[0] + 0.5) + floor(pos[1] + 0.5) * m_sensorResolution[0] / m_lensPitch;
 
 	return result;
 }

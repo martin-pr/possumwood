@@ -18,7 +18,7 @@ m_bspline(subdiv, {{0, 0, -1, -1}}, {{1, 1, 1, 1}}) {
 
 	tbb::parallel_for(0, image.rows, [&](int y) {
 		for(int x=0;x<image.cols;++x) {
-			const Imath::V4d& coord = pattern.sample(Imath::V2i{x, y});
+			const Imath::V4d& coord = pattern.sample(Imath::V2i{x, y}).pos;
 
 			const double uv_magnitude_2 = coord[2]*coord[2] + coord[3]*coord[3];
 			if(uv_magnitude_2 < 1.0) {

@@ -24,14 +24,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	for(int y=0;y<mat.rows;++y)
 		for(int x=0;x<mat.cols;++x) {
-			const Imath::V4f value = pattern.sample(Imath::V2i(x, y));
+			const lightfields::Pattern::Sample value = pattern.sample(Imath::V2i(x, y));
 
 			unsigned char* color = mat.ptr<unsigned char>(y, x);
-			float current = value[2]*value[2] + value[3]*value[3];
+			float current = value.pos[2]*value.pos[2] + value.pos[3]*value.pos[3];
 			// if(current > 1.0)
 			// 	color[2] += (current - 1.0) * 250.0;
-			if(current < 1.0)
-				color[2] += (1.0 - current) * 128 + 127;
+			// if(current < 1.0)
+				// color[2] += (1.0 - current) * 128 + 127;
+				color[value.lens_id % 3] = (current) * 64 + 127;
 		}
 
 	data.set(a_out, possumwood::opencv::Frame(mat));

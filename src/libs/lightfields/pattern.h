@@ -6,11 +6,16 @@ namespace lightfields {
 
 class Pattern {
 	public:
+		struct Sample {
+			Imath::V4d pos;
+			std::size_t lens_id;
+		};
+
 		Pattern();
 		Pattern(double lensPitch, double pixelPitch, double rotation,
 			Imath::V2d scaleFactor, Imath::V3d sensorOffset, Imath::V2i sensorResolution);
 
-		Imath::V4d sample(const Imath::V2i& pixelPos) const;
+		Sample sample(const Imath::V2i& pixelPos) const;
 		const Imath::V2i& sensorResolution() const;
 
 		bool operator == (const Pattern& f) const;
