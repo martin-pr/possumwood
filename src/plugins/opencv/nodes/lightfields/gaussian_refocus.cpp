@@ -37,7 +37,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		std::cout << "\r" << (float)(y) / (input.rows) * 100.0f << std::flush;
 
 		for(int x=0;x<input.cols;++x) {
-			const Imath::V4f coords = pattern.sample(Imath::V2i(x, y)).pos;
+			const Imath::V4f coords = pattern.sample(Imath::V2i(x, y));
 
 			const Imath::V2f pos(coords[0] + coords[2]*uvScale, coords[1] + coords[3]*uvScale);
 
