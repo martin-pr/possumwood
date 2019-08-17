@@ -436,7 +436,7 @@
             "name": "samples_refocus",
             "ports": {
                 "uv_offset": 3.0,
-                "uv_threshold": 2.0,
+                "uv_threshold": 1.0,
                 "xy_scale": 50.0
             },
             "type": "opencv/lightfields/samples_refocus"

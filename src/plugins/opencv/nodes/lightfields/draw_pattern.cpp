@@ -33,7 +33,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			// if(current < 1.0)
 				// color[2] += (1.0 - current) * 128 + 127;
 				// color[value.lens_id % 3] = fmod((current) * 256, 64.0f) + 127;
-				color[value.lens_id % 3] = current * 64 + 127;
+
+			for(unsigned a=0;a<3;++a) {
+				if(value.lens_id & (1 << a))
+					color[a] = int(current * 64) + 127;
+				else
+					color[a] = 0;
+			}
 		}
 
 	data.set(a_out, possumwood::opencv::Frame(mat));

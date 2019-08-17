@@ -70,6 +70,9 @@ Pattern::Sample Pattern::sample(const Imath::V2i& pixelPos) const {
 			top[0] -= 1.0;
 	}
 
+	top[1] *= sqrt(3.0/4.0);
+	bottom[1] *= sqrt(3.0/4.0);
+
 	if(bottom.length2() < top.length2()) {
 		result.pos[2] = bottom[0];
 		result.pos[3] = bottom[1];
@@ -79,17 +82,13 @@ Pattern::Sample Pattern::sample(const Imath::V2i& pixelPos) const {
 		result.pos[3] = top[1];
 	}
 
-
-	// result.pos[2] = (pos[0] - floor(pos[0] + 0.5));
-	// result.pos[3] = (pos[1] - floor(pos[1] + 0.5));
-
-	result.pos[0] = (double)pixelPos[0] - result.pos[2] / scale_x;
+	result.pos[0] = (double)pixelPos[0] - result.pos[2] / scale_x * sqrt(3.0/4.0);
 	result.pos[1] = (double)pixelPos[1] - result.pos[3] / scale_y;
 
 	result.pos[2] *= 2.0;
 	result.pos[3] *= 2.0;
 
-	result.lens_id = 0 /*round(result.pos[0]) * 7 + round(result.pos[1])*/;
+	result.lens_id = (result.pos[2] > 0) + (result.pos[3] > 0) * 2;
 
 	return result;
 }
