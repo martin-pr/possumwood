@@ -55,11 +55,33 @@ Pattern::Sample Pattern::sample(const Imath::V2i& pixelPos) const {
 
 	pos = pos * transform;
 
-	if(((int)floor(pos[1] - 0.5)) % 2 == 0)
-		pos[0] -= 0.5;
 
-	result.pos[2] = (pos[0] - floor(pos[0] + 0.5));
-	result.pos[3] = (pos[1] - floor(pos[1] + 0.5));
+	Imath::V2f bottom(pos[0] - floor(pos[0] + 0.5), pos[1] - floor(pos[1] + 0.5));
+	Imath::V2f top(bottom[0], bottom[1]>0.0 ? -1.0+bottom[1] : 1.0+bottom[1]);
+
+	if(((int)floor(pos[1] + 0.5)) & 1) {
+		bottom[0] += 0.5;
+		if(bottom[0] > 0.5)
+			bottom[0] -= 1.0;
+	}
+	else {
+		top[0] += 0.5;
+		if(top[0] > 0.5)
+			top[0] -= 1.0;
+	}
+
+	if(bottom.length2() < top.length2()) {
+		result.pos[2] = bottom[0];
+		result.pos[3] = bottom[1];
+	}
+	else {
+		result.pos[2] = top[0];
+		result.pos[3] = top[1];
+	}
+
+
+	// result.pos[2] = (pos[0] - floor(pos[0] + 0.5));
+	// result.pos[3] = (pos[1] - floor(pos[1] + 0.5));
 
 	result.pos[0] = (double)pixelPos[0] - result.pos[2] / scale_x;
 	result.pos[1] = (double)pixelPos[1] - result.pos[3] / scale_y;
@@ -67,7 +89,7 @@ Pattern::Sample Pattern::sample(const Imath::V2i& pixelPos) const {
 	result.pos[2] *= 2.0;
 	result.pos[3] *= 2.0;
 
-	result.lens_id = floor(pos[0] + 0.5) + floor(pos[1] + 0.5) * m_sensorResolution[0] / m_lensPitch;
+	result.lens_id = 0 /*round(result.pos[0]) * 7 + round(result.pos[1])*/;
 
 	return result;
 }
