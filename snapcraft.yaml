@@ -40,9 +40,6 @@ build-packages:
   - software-properties-common
   - dirmngr
   - libjsoncpp-dev
-  - libopencv-daily-dev
-  - libopenimageio-daily-dev
-  - libcgal-daily-dev
 
 apps:
   possumwood:
@@ -73,10 +70,12 @@ parts:
   add-ppa:
     plugin: nil
     override-pull: |
-      echo "deb http://ppa.launchpad.net/cgi-daily-devs/cgi-daily/ubuntu bionic main" | tee /etc/apt/sources.list.d/cgi-daily.list
-      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AD1F7ADEA6EC2DD8E462467C210C13FD18B9423F
+      echo "deb http://ppa.launchpad.net/cgi-daily-devs/cgi-daily/ubuntu bionic main" | tee /etc/apt/sources.list.d/cgi-daily-devs-ubuntu-cgi-daily-bionic.list
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 76D7D91361199D07AA54B3C8C5CA855DF9AF9AC9
       apt update
       apt upgrade -yy
+
+      yes | apt install libopencv-daily-dev libopenimageio-daily-dev libcgal-daily-dev
 
   desktop-qt5:
     source-type: git
@@ -140,9 +139,9 @@ parts:
       - libusb-1.0-0
       - libxinerama1
       - libxrandr2
-      - libopencv-daily
-      - libopenimageio-daily
-      - libcgal-daily
+      #- libopencv-daily
+      #- libopenimageio-daily
+      #- libcgal-daily
 
   config:
     plugin: nil
