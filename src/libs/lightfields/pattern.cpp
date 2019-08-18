@@ -38,46 +38,52 @@ Imath::V4d Pattern::sample(const Imath::V2i& pixelPos) const {
 	const double cs = cos(m_rotation);
 	const double sn = sin(m_rotation);
 
-	Imath::M44d transform;
+	Imath::M33d transform;
 	transform.makeIdentity();
 
-	transform[0][0] = 1.0/m_scaleFactor[0] * cs;
-	transform[0][1] = 1.0/m_scaleFactor[1] * -sn;
-	transform[1][0] = 1.0/m_scaleFactor[0] * sn;
-	transform[1][1] = 1.0/m_scaleFactor[1] * cs;
+	const double scale_x = m_pixelPitch / m_lensPitch / m_scaleFactor[0];
+	const double scale_y = m_pixelPitch / m_lensPitch / m_scaleFactor[1] / sqrt(3.0/4.0);
 
-	// "projection" - additional
-	// transform[2][3] = -1;
-	// pos[2] = m_sensorOffset[2];
+	transform[0][0] = scale_x * cs;
+	transform[0][1] = scale_y * -sn;
+	transform[1][0] = scale_x * sn;
+	transform[1][1] = scale_y * cs;
+	transform[2][0] = scale_x * m_sensorOffset[0] / m_pixelPitch;
+	transform[2][1] = scale_y * m_sensorOffset[1] / m_pixelPitch;
 
-	Imath::V4d pos;
-	pos[0] = (double)pixelPos[0] * m_pixelPitch + m_sensorOffset[0];
-	pos[1] = (double)pixelPos[1] * m_pixelPitch + m_sensorOffset[1];
-	pos[3] = 1.0;
+	Imath::V3d pos(pixelPos[0], pixelPos[1], 1.0);
 
-	// transform and normalize - we are now in a "normalized" set of coordinates - straightened, with scale applied, the grid is now axis-aligned
 	pos = pos * transform;
-	pos /= pos.w;
 
 
-	Imath::V2d vect(
-		pos[0] / m_lensPitch,
-		pos[1] / m_lensPitch / sqrt(3.0/4.0)
-	);
+	Imath::V2f bottom(pos[0] - floor(pos[0] + 0.5), pos[1] - floor(pos[1] + 0.5));
+	Imath::V2f top(bottom[0], bottom[1]>0.0 ? -1.0+bottom[1] : 1.0+bottom[1]);
 
-	if(((int)round(vect[1] + 100.0)) % 2 == 1)
-		vect[0] += 0.5;
+	if(((int)floor(pos[1] + 0.5)) & 1) {
+		bottom[0] += 0.5;
+		if(bottom[0] > 0.5)
+			bottom[0] -= 1.0;
+	}
+	else {
+		top[0] += 0.5;
+		if(top[0] > 0.5)
+			top[0] -= 1.0;
+	}
 
-	result[2] = (vect[0] + 100.0 - round(vect[0] + 100.0));
-	result[3] = (vect[1] + 100.0 - round(vect[1] + 100.0));
+	top[1] *= sqrt(3.0/4.0);
+	bottom[1] *= sqrt(3.0/4.0);
 
-	// "centered" version - all pixels of a lens are centered on that lens
-	result[0] = (double)pixelPos[0] - result[2] * m_lensPitch / m_pixelPitch * m_scaleFactor[0];
-	result[1] = (double)pixelPos[1] - result[3] * m_lensPitch * sqrt(3.0/4.0) / m_pixelPitch * m_scaleFactor[1];
+	if(bottom.length2() < top.length2()) {
+		result[2] = bottom[0];
+		result[3] = bottom[1];
+	}
+	else {
+		result[2] = top[0];
+		result[3] = top[1];
+	}
 
-	// "original" version - pixel coordinates are the same as on the sensor
-	// result[0] = (double)pixelPos[0];
-	// result[1] = (double)pixelPos[1];
+	result[0] = (double)pixelPos[0] - result[2] / scale_x * sqrt(3.0/4.0);
+	result[1] = (double)pixelPos[1] - result[3] / scale_y;
 
 	result[2] *= 2.0;
 	result[3] *= 2.0;
