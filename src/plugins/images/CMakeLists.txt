@@ -13,11 +13,9 @@ include_directories(${LUABIND_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${LUABIND_LIBRARIES})
 
 # Find OpenImageIO
-pkg_check_modules (OIIO OpenImageIO)
-
-pkg_search_module(OIIO REQUIRED)
-include_directories(${OIIO_INCLUDE_DIRS}/..) # make sure OpenImageIO/ include prefix is maintained
-set(LIBS ${LIBS} ${OIIO_LIBRARIES})
+find_package(OpenImageIO REQUIRED)
+include_directories(${OPENIMAGEIO_INCLUDE_DIRS}/..) # make sure OpenImageIO/ include prefix is maintained
+set(LIBS ${LIBS} ${OPENIMAGEIO_LIBRARIES})
 
 include_directories(./)
 
