@@ -16,11 +16,11 @@ Possumwood has been tested only on Linux (several distributions). While it shoul
 
 ### Launchpad PPA for Ubuntu 18.04+
 
-On Ubuntu, the easiest way to install Possumwood is to use the [snapshots PPA](https://code.launchpad.net/~martin-prazak/+archive/ubuntu/possumwood):
+On Ubuntu, the easiest way to install Possumwood is to use the [snapshots PPA](https://code.launchpad.net/~martin-prazak/+archive/ubuntu/possumwood), which is built against daily builds of common CGI libraries in the [cg-daily PPA](https://code.launchpad.net/~cgi-daily-devs/+archive/ubuntu/cgi-daily):
 
 ```
 sudo add-apt-repository ppa:martin-prazak/possumwood
-sudo add-apt-repository ppa:martin-prazak/cgi-daily
+sudo add-apt-repository ppa:cgi-daily-devs/cgi-daily
 sudo apt-get update
 sudo apt-get install possumwood
 ```
