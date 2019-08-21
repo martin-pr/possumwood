@@ -8,11 +8,21 @@ Homepage: https://github.com/martin-pr/possumwood
 Vcs-Git: https://github.com/martin-pr/possumwood
 Vcs-Browser: https://github.com/martin-pr/possumwood
 
-Package: possumwood
-Architecture: any
+Package: possumwood-data
+Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Possumwood is a graph-based procedural authoring sandbox.
   Possumwood is a graph-based procedural authoring tool, in concept not dissimilar to popular CG
   packages like Houdini, Blender or Maya. It is intended to serve as a sandbox for computer graphics
   algorithms and libraries, providing a user-friendly and coding-free UI for libraries that would
   otherwise be inaccessible for an average user.
+
+Package: possumwood
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, possumwood-data
+Description: Possumwood is a graph-based procedural authoring sandbox.
+  Possumwood is a graph-based procedural authoring tool, in concept not dissimilar to popular CG
+  packages like Houdini, Blender or Maya. It is intended to serve as a sandbox for computer graphics
+  algorithms and libraries, providing a user-friendly and coding-free UI for libraries that would
+  otherwise be inaccessible for an average user.
+
