@@ -1,6 +1,6 @@
 # Basic parameters of the build
 sudo: required
-dist: xenial
+dist: bionic
 group: edge
 language: cpp
 compiler: gcc
