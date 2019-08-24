@@ -1,9 +1,21 @@
 {
     "connections": [
         {
-            "in_node": "concat_0",
-            "in_port": "in_frame_2",
+            "in_node": "color_0",
+            "in_port": "in_frame",
             "out_node": "circle_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "not_0",
+            "in_port": "in_frame",
+            "out_node": "circle_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "multiply_0",
+            "in_port": "in_frame_2",
+            "out_node": "color_0",
             "out_port": "out_frame"
         },
         {
@@ -15,14 +27,62 @@
         {
             "in_node": "circle_0",
             "in_port": "in_frame",
+            "out_node": "empty_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "metadata_0",
+            "in_port": "frame",
             "out_node": "image_0",
             "out_port": "frame"
         },
         {
-            "in_node": "concat_0",
+            "in_node": "multiply_0",
             "in_port": "in_frame_1",
             "out_node": "image_0",
             "out_port": "frame"
+        },
+        {
+            "in_node": "empty_0",
+            "in_port": "width",
+            "out_node": "metadata_0",
+            "out_port": "width"
+        },
+        {
+            "in_node": "empty_0",
+            "in_port": "height",
+            "out_node": "metadata_0",
+            "out_port": "height"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "multiply_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "inpaint_0",
+            "in_port": "frame",
+            "out_node": "multiply_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "inpaint_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "inpaint_0",
+            "in_port": "mask",
+            "out_node": "equalize_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "equalize_0",
+            "in_port": "in_frame",
+            "out_node": "not_0",
+            "out_port": "out_frame"
         }
     ],
     "nodes": {
@@ -30,29 +90,41 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 309.380767822266,
-                    "y": 330.768585205078
+                    "x": 482.330444335938,
+                    "y": 378.200256347656
                 }
             },
             "name": "circle",
             "ports": {
-                "center/x": 500.0,
-                "center/y": 480.0,
-                "color/b": 0.0,
-                "color/g": 0.0,
-                "color/r": 0.0,
+                "center/x": 455.0,
+                "center/y": 485.0,
+                "color": 0.0,
                 "fill": true,
-                "radius": 120,
-                "thickness": 1
+                "radius": 50,
+                "thickness": 2
             },
             "type": "opencv/draw/circle"
+        },
+        "color_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 367.906982421875,
+                    "y": 676.436157226562
+                }
+            },
+            "name": "color",
+            "ports": {
+                "mode": "GRAY2BGR"
+            },
+            "type": "opencv/color"
         },
         "concat_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 236.936935424805,
-                    "y": 647.233764648438
+                    "x": 326.185821533203,
+                    "y": 1298.51440429688
                 }
             },
             "name": "concat",
@@ -61,12 +133,38 @@
             },
             "type": "opencv/concat"
         },
+        "empty_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 485.790588378906,
+                    "y": 172.988250732422
+                }
+            },
+            "name": "empty",
+            "ports": {
+                "color": 1.0,
+                "mode": "CV_8UC1"
+            },
+            "type": "opencv/capture/empty"
+        },
+        "equalize_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 517.807800292969,
+                    "y": 885.497009277344
+                }
+            },
+            "name": "equalize",
+            "type": "opencv/equalize"
+        },
         "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 237.812835693359,
-                    "y": 157.030288696289
+                    "x": 248.720016479492,
+                    "y": 23.792163848877
                 }
             },
             "name": "image",
@@ -75,12 +173,49 @@
             },
             "type": "opencv/capture/image"
         },
+        "inpaint_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 455.06591796875,
+                    "y": 1069.93408203125
+                }
+            },
+            "name": "inpaint",
+            "ports": {
+                "method": "INPAINT_TELEA",
+                "radius": 30.0
+            },
+            "type": "opencv/inpaint"
+        },
+        "metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 347.041931152344,
+                    "y": 173.416076660156
+                }
+            },
+            "name": "metadata",
+            "type": "opencv/metadata"
+        },
+        "multiply_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 273.230529785156,
+                    "y": 869.98974609375
+                }
+            },
+            "name": "multiply",
+            "type": "opencv/multiply"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 290.593597412109,
-                    "y": 837.080688476562
+                    "x": 384.30322265625,
+                    "y": 1481.26916503906
                 }
             },
             "connections": [
@@ -298,6 +433,17 @@
                 }
             },
             "type": "network"
+        },
+        "not_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 526.019653320312,
+                    "y": 698.677978515625
+                }
+            },
+            "name": "not",
+            "type": "opencv/bitwise/not"
         }
     },
     "scene_config": {
@@ -305,6 +451,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABmwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACEQAAAV0AAACGAQAAAwAAAgUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
