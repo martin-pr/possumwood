@@ -16,7 +16,7 @@ dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat mat;
-	cv::subtract(*data.get(a_in1), *data.get(a_in2), mat);
+	cv::add(*data.get(a_in1), *data.get(a_in2), mat);
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
 
@@ -34,6 +34,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/subtract", init);
+possumwood::NodeImplementation s_impl("opencv/add", init);
 
 }
