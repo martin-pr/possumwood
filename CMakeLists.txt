@@ -71,6 +71,10 @@ set(LIBS ${LIBS} ${Boost_LIBRARIES})
 #include_directories(${GLUT_INCLUDE_DIR})
 #set(LIBS ${LIBS} ${GLUT_LIBRARY})
 
+# looking for GLFW
+find_package(glfw3 REQUIRED)
+include_directories(${glfw3_INCLUDE_DIR})
+
 # blindly adding tbb
 # set(LIBS ${LIBS} tbb)
 
