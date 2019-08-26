@@ -49,6 +49,7 @@ addons:
       - libcgal-daily-dev
       - libopenimageio-daily-dev
       - libjsoncpp-dev
+      - libeigen3-dev
 
 # Run build
 script:
