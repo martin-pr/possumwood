@@ -1,7 +1,10 @@
 #include <possumwood_sdk/node_implementation.h>
 
+#include <mutex>
+
 #include <opencv2/opencv.hpp>
 #include <Eigen/Sparse>
+#include <tbb/task_group.h>
 
 #include <actions/traits.h>
 
@@ -109,6 +112,8 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame, a_inMask;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	dependency_graph::State state;
+
 	const cv::Mat& image = *data.get(a_inFrame);
 	const cv::Mat& mask = *data.get(a_inMask);
 
@@ -133,13 +138,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		x[channel] = chol.solve(b);
 
 		if(chol.info() == Eigen::NumericalIssue)
-			throw std::runtime_error("Decomposition failed - Eigen::NumericalIssue");
+			state.addError("Decomposition failed - Eigen::NumericalIssue");
 		else if(chol.info() == Eigen::NoConvergence)
-			throw std::runtime_error("Decomposition failed - Eigen::NoConvergence");
+			state.addError("Decomposition failed - Eigen::NoConvergence");
 		else if(chol.info() == Eigen::InvalidInput)
-			throw std::runtime_error("Decomposition failed - Eigen::InvalidInput");
+			state.addError("Decomposition failed - Eigen::InvalidInput");
 		else if(chol.info() != Eigen::Success)
-			throw std::runtime_error("Decomposition failed - unknown error");
+			state.addError("Decomposition failed - unknown error");
 	}
 
 	cv::Mat result = image.clone();
@@ -150,7 +155,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
-	return dependency_graph::State();
+	return state;
 }
 
 void init(possumwood::Metadata& meta) {
