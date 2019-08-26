@@ -53,7 +53,7 @@ class Triplets {
 		friend class Row;
 };
 
-void buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<float>& A, Eigen::VectorXf& b) {
+void buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<float>& A, Eigen::VectorXf& b, int channel) {
 	Triplets triplets(image.rows, image.cols);
 	std::vector<float> values;
 
@@ -88,7 +88,7 @@ void buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatri
 
 			// non-masked
 			else {
-				values.push_back(image.at<float>(y, x));
+				values.push_back(image.ptr<float>(y, x)[channel]);
 				row.addValue(y, x, 1);
 			}
 		}
@@ -112,8 +112,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const cv::Mat& image = *data.get(a_inFrame);
 	const cv::Mat& mask = *data.get(a_inMask);
 
-	if(image.type() != CV_32FC1)
-		throw std::runtime_error("Laplacian inpainting - input image type has to be CV_32FC1.");
+	if(image.depth() != CV_32F)
+		throw std::runtime_error("Laplacian inpainting - input image type has to be CV_32F.");
 	if(mask.type() != CV_8UC1)
 		throw std::runtime_error("Laplacian inpainting - mask image type has to be CV_8UC1.");
 	if(image.empty() || mask.empty())
@@ -121,27 +121,32 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(image.size != mask.size)
 		throw std::runtime_error("Laplacian inpainting - input and mask image size have to match.");
 
-	Eigen::SparseMatrix<float> A;
-	Eigen::VectorXf b;
+	std::vector<Eigen::VectorXf> x(image.channels());
 
-	buildMatrices(image, mask, A, b);
+	for(int channel=0; channel<image.channels(); ++channel) {
+		Eigen::SparseMatrix<float> A;
+		Eigen::VectorXf b;
 
-	const Eigen::SparseLU<Eigen::SparseMatrix<float>> chol(A);
-	const Eigen::VectorXf x = chol.solve(b);
+		buildMatrices(image, mask, A, b, channel);
 
-	if(chol.info() == Eigen::NumericalIssue)
-		throw std::runtime_error("Decomposition failed - Eigen::NumericalIssue");
-	else if(chol.info() == Eigen::NoConvergence)
-		throw std::runtime_error("Decomposition failed - Eigen::NoConvergence");
-	else if(chol.info() == Eigen::InvalidInput)
-		throw std::runtime_error("Decomposition failed - Eigen::InvalidInput");
-	else if(chol.info() != Eigen::Success)
-		throw std::runtime_error("Decomposition failed - unknown error");
+		const Eigen::SparseLU<Eigen::SparseMatrix<float>> chol(A);
+		x[channel] = chol.solve(b);
+
+		if(chol.info() == Eigen::NumericalIssue)
+			throw std::runtime_error("Decomposition failed - Eigen::NumericalIssue");
+		else if(chol.info() == Eigen::NoConvergence)
+			throw std::runtime_error("Decomposition failed - Eigen::NoConvergence");
+		else if(chol.info() == Eigen::InvalidInput)
+			throw std::runtime_error("Decomposition failed - Eigen::InvalidInput");
+		else if(chol.info() != Eigen::Success)
+			throw std::runtime_error("Decomposition failed - unknown error");
+	}
 
 	cv::Mat result = image.clone();
 	for(int yi=0;yi<result.rows;++yi)
 		for(int xi=0;xi<result.cols;++xi)
-			result.at<float>(yi, xi) = x[yi*result.cols + xi];
+			for(int c=0;c<image.channels();++c)
+				result.ptr<float>(yi, xi)[c] = x[c][yi*result.cols + xi];
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
