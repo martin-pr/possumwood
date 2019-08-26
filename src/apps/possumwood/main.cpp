@@ -5,6 +5,8 @@
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
+#include <Eigen/Core>
+
 #include <QApplication>
 #include <QMainWindow>
 #include <QMenu>
@@ -78,6 +80,9 @@ int main(int argc, char* argv[]) {
 
 			QSurfaceFormat::setDefaultFormat(format);
 		}
+
+		// initialise eigen
+		Eigen::initParallel();
 
 		// create the application object
 		QApplication app(argc, argv);
