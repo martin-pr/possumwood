@@ -57,21 +57,12 @@ void buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatri
 	Triplets triplets(image.rows, image.cols);
 	std::vector<float> values;
 
-	if(image.type() != CV_32FC1)
-		throw std::runtime_error("Laplacian inpainting - input image type has to be CV_32FC1.");
-	if(mask.type() != CV_8UC1)
-		throw std::runtime_error("Laplacian inpainting - mask image type has to be CV_8UC1.");
-	if(image.empty() || mask.empty())
-		throw std::runtime_error("Laplacian inpainting - empty input image and/or mask.");
-	if(image.size != mask.size)
-		throw std::runtime_error("Laplacian inpainting - input and mask image size have to match.");
-
 	for(int y=0;y<image.rows;++y)
 		for(int x=0;x<image.cols;++x) {
 			Triplets::Row row = triplets.addRow();
 
 			// masked and/or edge
-			if(mask.at<unsigned char>(y, x) > 128 && x > 0 && y > 0 && x < image.cols-1 && y < image.rows-1) {
+			if(mask.at<unsigned char>(y, x) > 128) {
 				values.push_back(0.0f);
 
 				float current = 0.0f;
@@ -118,11 +109,22 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame, a_inMask;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	const cv::Mat& image = *data.get(a_inFrame);
+	const cv::Mat& mask = *data.get(a_inMask);
+
+	if(image.type() != CV_32FC1)
+		throw std::runtime_error("Laplacian inpainting - input image type has to be CV_32FC1.");
+	if(mask.type() != CV_8UC1)
+		throw std::runtime_error("Laplacian inpainting - mask image type has to be CV_8UC1.");
+	if(image.empty() || mask.empty())
+		throw std::runtime_error("Laplacian inpainting - empty input image and/or mask.");
+	if(image.size != mask.size)
+		throw std::runtime_error("Laplacian inpainting - input and mask image size have to match.");
 
 	Eigen::SparseMatrix<float> A;
 	Eigen::VectorXf b;
 
-	buildMatrices(*data.get(a_inFrame), *data.get(a_inMask), A, b);
+	buildMatrices(image, mask, A, b);
 
 	const Eigen::SparseLU<Eigen::SparseMatrix<float>> chol(A);
 	const Eigen::VectorXf x = chol.solve(b);
@@ -136,7 +138,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	else if(chol.info() != Eigen::Success)
 		throw std::runtime_error("Decomposition failed - unknown error");
 
-	cv::Mat result = (*data.get(a_inFrame)).clone();
+	cv::Mat result = image.clone();
 	for(int yi=0;yi<result.rows;++yi)
 		for(int xi=0;xi<result.cols;++xi)
 			result.at<float>(yi, xi) = x[yi*result.cols + xi];
