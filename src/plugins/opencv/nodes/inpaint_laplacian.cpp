@@ -1,5 +1,7 @@
 #include <possumwood_sdk/node_implementation.h>
 
+#define EIGEN_STACK_ALLOCATION_LIMIT 0
+
 #include <mutex>
 
 #include <opencv2/opencv.hpp>
@@ -126,26 +128,39 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(image.size != mask.size)
 		throw std::runtime_error("Laplacian inpainting - input and mask image size have to match.");
 
-	std::vector<Eigen::VectorXf> x(image.channels());
+	std::vector<std::vector<float>> x(image.channels(), std::vector<float>(image.rows * image.cols));
+
+	tbb::task_group tasks;
+	std::mutex solve_mutex;
 
 	for(int channel=0; channel<image.channels(); ++channel) {
-		Eigen::SparseMatrix<float> A;
-		Eigen::VectorXf b;
+		tasks.run([channel, &image, &mask, &x, &state, &solve_mutex]() {
+			Eigen::SparseMatrix<float> A;
+			Eigen::VectorXf b, tmp;
 
-		buildMatrices(image, mask, A, b, channel);
+			buildMatrices(image, mask, A, b, channel);
 
-		const Eigen::SparseLU<Eigen::SparseMatrix<float>> chol(A);
-		x[channel] = chol.solve(b);
+			const Eigen::SparseLU<Eigen::SparseMatrix<float>> chol(A);
+			tmp = chol.solve(b);
 
-		if(chol.info() == Eigen::NumericalIssue)
-			state.addError("Decomposition failed - Eigen::NumericalIssue");
-		else if(chol.info() == Eigen::NoConvergence)
-			state.addError("Decomposition failed - Eigen::NoConvergence");
-		else if(chol.info() == Eigen::InvalidInput)
-			state.addError("Decomposition failed - Eigen::InvalidInput");
-		else if(chol.info() != Eigen::Success)
-			state.addError("Decomposition failed - unknown error");
+			assert(tmp.size() == image.rows * image.cols);
+			for(int a=0;a<tmp.size();++a)
+				x[channel][a] = tmp[a];
+
+			std::lock_guard<std::mutex> guard(solve_mutex);
+
+			if(chol.info() == Eigen::NumericalIssue)
+				state.addError("Decomposition failed - Eigen::NumericalIssue");
+			else if(chol.info() == Eigen::NoConvergence)
+				state.addError("Decomposition failed - Eigen::NoConvergence");
+			else if(chol.info() == Eigen::InvalidInput)
+				state.addError("Decomposition failed - Eigen::InvalidInput");
+			else if(chol.info() != Eigen::Success)
+				state.addError("Decomposition failed - unknown error");
+		});
 	}
+
+	tasks.wait();
 
 	cv::Mat result = image.clone();
 	for(int yi=0;yi<result.rows;++yi)
