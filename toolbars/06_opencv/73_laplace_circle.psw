@@ -7,32 +7,26 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "multiply_2",
+            "in_port": "in_frame_2",
+            "out_node": "circle_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "multiply_1",
+            "in_port": "in_frame_2",
+            "out_node": "circle_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "multiply_0",
             "in_port": "in_frame_2",
             "out_node": "circle_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "metadata_0",
-            "in_port": "frame",
-            "out_node": "color_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "multiply_0",
-            "in_port": "in_frame_1",
-            "out_node": "color_0",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "network_0",
             "in_port": "frame",
-            "out_node": "color_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "color_1",
-            "in_port": "in_frame",
             "out_node": "concat_0",
             "out_port": "out_frame"
         },
@@ -61,8 +55,14 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "color_0",
-            "in_port": "in_frame",
+            "in_node": "metadata_0",
+            "in_port": "frame",
+            "out_node": "image_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "split_0",
+            "in_port": "in",
             "out_node": "image_0",
             "out_port": "frame"
         },
@@ -85,22 +85,58 @@
             "out_port": "height"
         },
         {
-            "in_node": "concat_0",
-            "in_port": "in_frame_1",
-            "out_node": "multiply_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "convert_0",
-            "in_port": "in_frame",
-            "out_node": "multiply_0",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "equalize_0",
             "in_port": "in_frame",
             "out_node": "not_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "multiply_0",
+            "in_port": "in_frame_1",
+            "out_node": "split_0",
+            "out_port": "out_1"
+        },
+        {
+            "in_node": "multiply_1",
+            "in_port": "in_frame_1",
+            "out_node": "split_0",
+            "out_port": "out_2"
+        },
+        {
+            "in_node": "multiply_2",
+            "in_port": "in_frame_1",
+            "out_node": "split_0",
+            "out_port": "out_3"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_1",
+            "out_node": "multiply_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_2",
+            "out_node": "multiply_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_3",
+            "out_node": "multiply_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "merge_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "merge_0",
+            "out_port": "out"
         }
     ],
     "nodes": {
@@ -108,8 +144,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 482.330444335938,
-                    "y": 378.200256347656
+                    "x": 478.115814208984,
+                    "y": 205.400314331055
                 }
             },
             "name": "circle",
@@ -122,34 +158,6 @@
                 "thickness": 2
             },
             "type": "opencv/draw/circle"
-        },
-        "color_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 234.370132446289,
-                    "y": -20.3685684204102
-                }
-            },
-            "name": "color",
-            "ports": {
-                "mode": "BGR2GRAY"
-            },
-            "type": "opencv/color"
-        },
-        "color_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 367.735015869141,
-                    "y": 1656.01135253906
-                }
-            },
-            "name": "color",
-            "ports": {
-                "mode": "GRAY2BGR"
-            },
-            "type": "opencv/color"
         },
         "concat_0": {
             "blind_data": {
@@ -201,8 +209,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 485.790588378906,
-                    "y": 172.988250732422
+                    "x": 481.575958251953,
+                    "y": 0.188307076692581
                 }
             },
             "name": "empty",
@@ -248,12 +256,23 @@
             "name": "inpaint_laplacian",
             "type": "opencv/inpaint_laplacian"
         },
+        "merge_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 246.658203125,
+                    "y": 796.565490722656
+                }
+            },
+            "name": "merge",
+            "type": "opencv/merge"
+        },
         "metadata_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 347.041931152344,
-                    "y": 173.416076660156
+                    "x": 342.827301025391,
+                    "y": 0.616133034229279
                 }
             },
             "name": "metadata",
@@ -263,8 +282,30 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 273.230529785156,
-                    "y": 727.843322753906
+                    "x": -133.891250610352,
+                    "y": 572.700866699219
+                }
+            },
+            "name": "multiply",
+            "type": "opencv/multiply"
+        },
+        "multiply_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 89.4215469360352,
+                    "y": 575.331298828125
+                }
+            },
+            "name": "multiply",
+            "type": "opencv/multiply"
+        },
+        "multiply_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 301.220184326172,
+                    "y": 576.153869628906
                 }
             },
             "name": "multiply",
@@ -274,8 +315,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 363.601654052734,
-                    "y": 1832.63952636719
+                    "x": 368.820037841797,
+                    "y": 1668.26025390625
                 }
             },
             "connections": [
@@ -504,6 +545,17 @@
             },
             "name": "not",
             "type": "opencv/bitwise/not"
+        },
+        "split_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 109.561470031738,
+                    "y": 262.583618164062
+                }
+            },
+            "name": "split",
+            "type": "opencv/split"
         }
     },
     "scene_config": {
@@ -511,6 +563,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAANiAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABmQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACDwAAAV8AAACGAQAAAwAAAZ8AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB1wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACTQAAAZQAAACGAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
