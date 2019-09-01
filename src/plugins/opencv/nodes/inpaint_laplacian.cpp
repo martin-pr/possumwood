@@ -71,6 +71,12 @@ class Triplets {
 		friend class Row;
 };
 
+static const cv::Mat kernel = (cv::Mat_<double>(3,3) <<
+	 0.0, -1.0,  0.0,
+	-1.0,  4.0, -1.0,
+	 0.0, -1.0,  0.0
+);
+
 float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<double>& A, Eigen::VectorXd& b, int channel) {
 	Triplets triplets(image.rows, image.cols);
 	std::vector<double> values;
@@ -85,25 +91,29 @@ float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatr
 			if(mask.at<unsigned char>(y, x) > 128) {
 				values.push_back(0.0f);
 
-				double current = 0.0f;
-				if(x > 0) {
-					row.addValue(y, x-1, 1.0f);
-					current -= 1.0f;
-				}
-				if(y > 0) {
-					row.addValue(y-1, x, 1.0f);
-					current -= 1.0f;
-				}
-				if(x < image.cols-1) {
-					row.addValue(y, x+1, 1.0f);
-					current -= 1.0f;
-				}
-				if(y < image.rows-1) {
-					row.addValue(y+1, x, 1.0f);
-					current -= 1.0f;
-				}
+				// convolution
+				for(int yi=0; yi<kernel.rows; ++yi)
+					for(int xi=0; xi<kernel.cols; ++xi) {
+						int ypos = y + yi - kernel.rows/2;
+						int xpos = x + xi - kernel.cols/2;
 
-				row.addValue(y, x, current);
+						// handling of edges - "clip" (or "mirror", commented out for now)
+						if(ypos < 0)
+							// ypos = -ypos;
+							ypos = 0;
+						if(ypos >= image.rows)
+							// ypos = (image.rows-1) - (ypos-image.rows);
+							ypos = image.rows-1;
+
+						if(xpos < 0)
+							// xpos = -xpos;
+							xpos = 0;
+						if(xpos >= image.cols)
+							// xpos = (image.cols-1) - (xpos-image.cols);
+							xpos = image.cols-1;
+
+						row.addValue(ypos, xpos, kernel.at<double>(yi, xi));
+					}
 
 				++interpolatedCtr;
 			}
