@@ -71,11 +71,32 @@ class Triplets {
 		friend class Row;
 };
 
+
 static const cv::Mat kernel = (cv::Mat_<double>(3,3) <<
 	 0.0, -1.0,  0.0,
 	-1.0,  4.0, -1.0,
 	 0.0, -1.0,  0.0
 );
+
+// static const cv::Mat kernel = (cv::Mat_<double>(3,3) <<
+// 	-1.0, -1.0, -1.0,
+// 	-1.0,  8.0, -1.0,
+// 	-1.0, -1.0, -1.0
+// );
+
+// static const cv::Mat kernel = (cv::Mat_<double>(3,3) <<
+// 	-1.0, -2.0, -1.0,
+// 	-2.0, 12.0, -2.0,
+// 	-1.0, -2.0, -1.0
+// );
+
+// static const cv::Mat kernel = (cv::Mat_<double>(5,5) <<
+// 	 0.0,  0.0,  1.0,  0.0,  0.0,
+// 	 0.0,  2.0, -8.0,  2.0,  0.0,
+// 	 1.0, -8.0, 20.0, -8.0,  1.0,
+// 	 0.0,  2.0, -8.0,  2.0,  0.0,
+// 	 0.0,  0.0,  1.0,  0.0,  0.0
+// );
 
 float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<double>& A, Eigen::VectorXd& b, int channel) {
 	Triplets triplets(image.rows, image.cols);
@@ -189,7 +210,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					if(ratio > 0.003) {
 						const char* stage = "solver construction";
 
-						Eigen::SparseLU<Eigen::SparseMatrix<double>> chol(A);
+						Eigen::SparseLU<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> chol(A);
 
 						if(chol.info() == Eigen::Success) {
 							stage = "analyze pattern";
