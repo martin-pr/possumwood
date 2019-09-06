@@ -87,7 +87,7 @@ boost::iterator_range<Context::const_var_iterator> Context::variables() const {
 }
 
 boost::iterator_range<Context::const_module_iterator> Context::modules() const {
-	auto fn = [](const std::pair<std::string, std::function<void(State&)>>& val) {
+	auto fn = [](const std::pair<std::string, std::function<void(State&)>>& val) -> std::string {
 		return val.first;
 	};
 
@@ -98,15 +98,15 @@ boost::iterator_range<Context::const_module_iterator> Context::modules() const {
 }
 
 std::ostream& operator << (std::ostream& out, const Context& st) {
-	std::cout << "Variables: ";
+	out << "Variables: ";
 	for(auto& v : st.variables())
-		std::cout << v.name() << "=" << v.str() << " ";
-	std::cout << std::endl;
+		out << v.name() << "=" << v.str() << " ";
+	out << std::endl;
 
-	std::cout << "Modules: ";
-	for(auto& m : st.modules())
-		std::cout << m << " ";
-	std::cout << std::endl;
+	out << "Modules: ";
+	for(auto m : st.modules())
+		out << m << " ";
+	out << std::endl;
 
 	return out;
 }
