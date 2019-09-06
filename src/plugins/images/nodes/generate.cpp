@@ -5,6 +5,7 @@
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/datatypes/filename.h>
 
+#include "maths/io/vec2u.h"
 #include "datatypes/pixmap.h"
 #include "datatypes/rgb.h"
 
@@ -12,7 +13,7 @@ namespace {
 
 template<typename PIXMAP>
 struct Params {
-	dependency_graph::InAttr<unsigned> a_width, a_height;
+	dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
 	dependency_graph::InAttr<QColor> a_colour;
 	dependency_graph::OutAttr<std::shared_ptr<const PIXMAP>> a_image;
 };
@@ -39,7 +40,7 @@ dependency_graph::State compute(dependency_graph::Values& data, Params<PIXMAP>& 
 	typename PIXMAP::pixel_t::value_t value;
 	extract(value, col);
 
-	std::shared_ptr<PIXMAP> result(new PIXMAP(data.get(params.a_width), data.get(params.a_height), value));
+	std::shared_ptr<PIXMAP> result(new PIXMAP(data.get(params.a_size)[0], data.get(params.a_size)[1], value));
 
 	data.set(params.a_image, std::shared_ptr<const PIXMAP>(result));
 
@@ -49,14 +50,12 @@ dependency_graph::State compute(dependency_graph::Values& data, Params<PIXMAP>& 
 
 template<typename PIXMAP>
 void init(possumwood::Metadata& meta, Params<PIXMAP>& params) {
-	meta.addAttribute(params.a_width, "width", 512u);
-	meta.addAttribute(params.a_height, "height", 512u);
+	meta.addAttribute(params.a_size, "size", Imath::Vec2<unsigned>(512u, 512u));
 	meta.addAttribute(params.a_colour, "colour", QColor(0,0,0));
 
 	meta.addAttribute(params.a_image, "image");
 
-	meta.addInfluence(params.a_width, params.a_image);
-	meta.addInfluence(params.a_height, params.a_image);
+	meta.addInfluence(params.a_size, params.a_image);
 	meta.addInfluence(params.a_colour, params.a_image);
 
 	meta.setCompute([&params](dependency_graph::Values& data) {
