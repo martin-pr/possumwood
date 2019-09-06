@@ -32,33 +32,91 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	const cv::Mat& input = *data.get(a_inFrame);
 	const cv::Mat& mask = *data.get(a_inMask);
-	cv::Mat result(input.rows, input.cols, input.type());
+
+	if(mask.rows != input.rows || mask.cols != input.cols)
+		throw std::runtime_error("Input and mask sizes have to match!");
+
+	if(mask.channels() > 1 && mask.channels() != input.channels())
+		throw std::runtime_error("The number of mask channels should be either 1 or the same as input image channels.");
 
 	const unsigned mosaic = data.get(a_mosaic);
 	const float radius = data.get(a_radius);
 	const int method = methodToEnum(data.get(a_method).value());
 
+	cv::Mat result;
+
 	tbb::task_group tasks;
 
-	for(unsigned a=0;a<mosaic; ++a) {
-		for(unsigned b=0;b<mosaic; ++b) {
-			cv::Rect2i roi;
-			roi.y = (a * input.rows) / mosaic;
-			roi.x = (b * input.cols) / mosaic;
-			roi.height = ((a+1) * input.rows) / mosaic - roi.y;
-			roi.width = ((b+1) * input.cols) / mosaic - roi.x;
+	// single mask mode - use all channels of the input image for inpainting
+	if(mask.channels() == 1) {
+		result = cv::Mat(input.rows, input.cols, input.type());
 
-			tasks.run([&input, &mask, &result, roi, &radius, &method]() {
-				cv::Mat inTile(input, roi);
-				cv::Mat inMask(mask, roi);
-				cv::Mat outResult(result, roi);
+		for(unsigned a=0;a<mosaic; ++a) {
+			for(unsigned b=0;b<mosaic; ++b) {
+				cv::Rect2i roi;
+				roi.y = (a * input.rows) / mosaic;
+				roi.x = (b * input.cols) / mosaic;
+				roi.height = ((a+1) * input.rows) / mosaic - roi.y;
+				roi.width = ((b+1) * input.cols) / mosaic - roi.x;
 
-				cv::inpaint(inTile, inMask, outResult, radius, method);
-			});
+				tasks.run([&input, &mask, &result, roi, &radius, &method]() {
+					cv::Mat inTile(input, roi);
+					cv::Mat inMask(mask, roi);
+
+					cv::Mat outResult(result, roi);
+
+					cv::inpaint(inTile, inMask, outResult, radius, method);
+				});
+			}
 		}
+
+		tasks.wait();
 	}
 
-	tasks.wait();
+	// per-channel mode - use each channel of the mask for separate inpaining of each channel of the input
+	else {
+		// split the inputs and masks per channel
+		std::vector<cv::Mat> inputs, masks;
+		cv::split(input, inputs);
+		cv::split(mask, masks);
+
+		// initialise output as separate images (can't use resize because cv::Mat copy shares data and is not const correct)
+		std::vector<cv::Mat> results;
+		for(std::size_t i=0;i<inputs.size();++i)
+			results.push_back(cv::Mat(input.rows, input.cols, input.depth()));
+
+		// spin a task per tile and per channel
+		for(unsigned a=0;a<mosaic; ++a) {
+			for(unsigned b=0;b<mosaic; ++b) {
+				cv::Rect2i roi;
+				roi.y = (a * input.rows) / mosaic;
+				roi.x = (b * input.cols) / mosaic;
+				roi.height = ((a+1) * input.rows) / mosaic - roi.y;
+				roi.width = ((b+1) * input.cols) / mosaic - roi.x;
+
+				for(std::size_t c=0;c<inputs.size();++c) {
+					tasks.run([&inputs, &masks, &results, roi, &radius, &method, c]() {
+						cv::Mat inTile(inputs[c], roi);
+
+						cv::Mat inMask;
+						if(masks.size() == 1)
+							inMask = cv::Mat(masks[0], roi);
+						else
+							inMask = cv::Mat(masks[c], roi);
+
+						cv::Mat outResult(results[c], roi);
+
+						cv::inpaint(inTile, inMask, outResult, radius, method);
+					});
+				}
+			}
+		}
+
+		tasks.wait();
+
+		// and assemble the result
+		cv::merge(results, result);
+	}
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
