@@ -5,7 +5,7 @@
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/datatypes/filename.h>
 
-#include "maths/io/vec2u.h"
+#include "maths/io/vec2.h"
 #include "datatypes/pixmap.h"
 #include "datatypes/rgb.h"
 
