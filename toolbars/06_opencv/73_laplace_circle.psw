@@ -73,16 +73,46 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "empty_0",
-            "in_port": "width",
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "merge_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "merge_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "make_vec2u_0",
+            "in_port": "x",
             "out_node": "metadata_0",
             "out_port": "width"
         },
         {
-            "in_node": "empty_0",
-            "in_port": "height",
+            "in_node": "make_vec2u_0",
+            "in_port": "y",
             "out_node": "metadata_0",
             "out_port": "height"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_1",
+            "out_node": "multiply_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_2",
+            "out_node": "multiply_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_3",
+            "out_node": "multiply_2",
+            "out_port": "out_frame"
         },
         {
             "in_node": "equalize_0",
@@ -109,33 +139,9 @@
             "out_port": "out_3"
         },
         {
-            "in_node": "merge_0",
-            "in_port": "in_1",
-            "out_node": "multiply_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "merge_0",
-            "in_port": "in_2",
-            "out_node": "multiply_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "merge_0",
-            "in_port": "in_3",
-            "out_node": "multiply_2",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_0",
-            "in_port": "in_frame_1",
-            "out_node": "merge_0",
-            "out_port": "out"
-        },
-        {
-            "in_node": "convert_0",
-            "in_port": "in_frame",
-            "out_node": "merge_0",
+            "in_node": "empty_0",
+            "in_port": "size",
+            "out_node": "make_vec2u_0",
             "out_port": "out"
         }
     ],
@@ -235,8 +241,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 247.104721069336,
-                    "y": -168.428558349609
+                    "x": 166.339691162109,
+                    "y": -207.195770263672
                 }
             },
             "name": "image",
@@ -256,6 +262,17 @@
             "name": "inpaint_laplacian",
             "type": "opencv/inpaint_laplacian"
         },
+        "make_vec2u_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 347.866485595703,
+                    "y": -27.6136093139648
+                }
+            },
+            "name": "make_vec2u",
+            "type": "maths/make_vec2u"
+        },
         "merge_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -271,8 +288,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 342.827301025391,
-                    "y": 0.616133034229279
+                    "x": 228.140960693359,
+                    "y": -51.073486328125
                 }
             },
             "name": "metadata",
@@ -563,6 +580,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB1wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACTQAAAZQAAACGAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABmQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACDwAAAV8AAACGAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

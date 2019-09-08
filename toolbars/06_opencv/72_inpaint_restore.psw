@@ -19,9 +19,33 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "concat_2",
+            "in_port": "in_frame_1",
+            "out_node": "concat_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_2",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "multiply_0",
             "in_port": "in_frame_2",
             "out_node": "convert_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "threshold_0",
+            "in_port": "in_frame",
+            "out_node": "dilate_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "normal_0",
+            "in_port": "in_frame",
+            "out_node": "empty_0",
             "out_port": "out_frame"
         },
         {
@@ -37,15 +61,21 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "make_vec2u_0",
+            "in_port": "x",
+            "out_node": "metadata_0",
+            "out_port": "width"
+        },
+        {
+            "in_node": "make_vec2u_0",
+            "in_port": "y",
+            "out_node": "metadata_0",
+            "out_port": "height"
+        },
+        {
             "in_node": "concat_0",
             "in_port": "in_frame_1",
             "out_node": "multiply_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "inpaint_0",
-            "in_port": "mask",
-            "out_node": "not_0",
             "out_port": "out_frame"
         },
         {
@@ -55,51 +85,9 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "not_0",
-            "in_port": "in_frame",
-            "out_node": "threshold_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "color_0",
-            "in_port": "in_frame",
-            "out_node": "threshold_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "normal_0",
-            "in_port": "in_frame",
-            "out_node": "empty_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "empty_0",
-            "in_port": "width",
-            "out_node": "metadata_0",
-            "out_port": "width"
-        },
-        {
-            "in_node": "empty_0",
-            "in_port": "height",
-            "out_node": "metadata_0",
-            "out_port": "height"
-        },
-        {
-            "in_node": "concat_2",
-            "in_port": "in_frame_1",
-            "out_node": "concat_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "concat_2",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "threshold_0",
-            "in_port": "in_frame",
-            "out_node": "dilate_0",
+            "in_node": "inpaint_0",
+            "in_port": "mask",
+            "out_node": "not_0",
             "out_port": "out_frame"
         },
         {
@@ -125,6 +113,24 @@
             "in_port": "in_frame_1",
             "out_node": "resize_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "not_0",
+            "in_port": "in_frame",
+            "out_node": "threshold_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "color_0",
+            "in_port": "in_frame",
+            "out_node": "threshold_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "empty_0",
+            "in_port": "size",
+            "out_node": "make_vec2u_0",
+            "out_port": "out"
         }
     ],
     "nodes": {
@@ -237,8 +243,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 111.92406463623,
-                    "y": -513.725402832031
+                    "x": 45.6967506408691,
+                    "y": -521.801879882812
                 }
             },
             "name": "image",
@@ -262,12 +268,23 @@
             },
             "type": "opencv/inpaint"
         },
+        "make_vec2u_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 252.032806396484,
+                    "y": -224.433166503906
+                }
+            },
+            "name": "make_vec2u",
+            "type": "maths/make_vec2u"
+        },
         "metadata_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 273.260925292969,
-                    "y": -221.980682373047
+                    "x": 119.807388305664,
+                    "y": -230.057189941406
                 }
             },
             "name": "metadata",
@@ -538,8 +555,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 100.397422790527,
-                    "y": -378.915588378906
+                    "x": 34.170108795166,
+                    "y": -386.992095947266
                 }
             },
             "name": "resize",
@@ -572,6 +589,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAAAAAAASlAAACQQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGrAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAABCsAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGrAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAByAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAATAAAACGAQAAAwAAA1YAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
