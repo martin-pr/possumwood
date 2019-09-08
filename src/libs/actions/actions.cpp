@@ -275,13 +275,15 @@ void paste(dependency_graph::Network& current, dependency_graph::Selection& sele
 	paste(current, selection, Clipboard::instance().clipboardContent());
 }
 
-void paste(dependency_graph::Network& current, dependency_graph::Selection& selection, const std::string& content) {
+dependency_graph::State paste(dependency_graph::Network& current, dependency_graph::Selection& selection, const std::string& content, bool haltOnError) {
+	dependency_graph::State state;
+
 	try {
 		// convert the clipboard content to a json object
 		auto json = possumwood::io::json::parse(content);
 
 		// and pass it to the paste() implementation
-		fromJson(current, selection, json);
+		state = fromJson(current, selection, json, haltOnError);
 	}
 	catch(std::exception& e) {
 		// do nothing
@@ -289,9 +291,11 @@ void paste(dependency_graph::Network& current, dependency_graph::Selection& sele
 		std::cout << e.what() << std::endl;
 		#endif
 	}
+
+	return state;
 }
 
-void fromJson(dependency_graph::Network& current, dependency_graph::Selection& selection, const possumwood::io::json& json) {
+dependency_graph::State fromJson(dependency_graph::Network& current, dependency_graph::Selection& selection, const possumwood::io::json& json, bool haltOnError) {
 	possumwood::UndoStack::Action action;
 
 	std::set<dependency_graph::UniqueId> pastedNodeIds;
@@ -300,11 +304,13 @@ void fromJson(dependency_graph::Network& current, dependency_graph::Selection& s
 	action.append(pasteNetwork(current.index(), json, &pastedNodeIds));
 
 	// execute the action (will actually make the nodes and connections)
-	possumwood::AppCore::instance().undoStack().execute(action);
+	dependency_graph::State state = possumwood::AppCore::instance().undoStack().execute(action, haltOnError);
 
 	// and make the selection based on added nodes
 	for(auto& n : pastedNodeIds)
 		selection.addNode(detail::findNode(n));
+
+	return state;
 }
 
 void move(const std::map<dependency_graph::NodeBase*, possumwood::NodeData::Point>& nodes) {
