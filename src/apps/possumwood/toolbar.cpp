@@ -14,6 +14,7 @@
 #include <actions/actions.h>
 
 #include "main_window.h"
+#include "error_dialog.h"
 
 Toolbar::Toolbar() {
 	const boost::filesystem::path path = possumwood::App::instance().expandPath("$TOOLBARS");
@@ -105,16 +106,16 @@ Toolbar::Toolbar() {
 						mw->adaptor().setSelection(selection);
 					}
 					catch(std::exception& e) {
-						std::cout << "Error inserting setup - " << e.what() << std::endl;
+						state.addError(std::string("Error inserting setup - ") + e.what());
 					}
 					catch(...) {
-						std::cout << "Error inserting setup." << std::endl;
+						state.addError("Error inserting setup - unknown exception.");
 					}
 
 					// if any non-critical error happened, let's just print it out for now
 					if(state.errored()) {
-						std::cout << "Error inserting setup." << std::endl;
-						std::cout << state << std::endl;
+						ErrorDialog* err = new ErrorDialog(state, possumwood::App::instance().mainWindow());
+						err->show();
 					}
 				});
 			}
