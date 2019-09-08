@@ -31,6 +31,7 @@
 #include "main_window.h"
 #include "gl_init.h"
 #include "common.h"
+#include "error_dialog.h"
 
 namespace po = boost::program_options;
 
@@ -108,8 +109,16 @@ int main(int argc, char* argv[]) {
 		GL_CHECK_ERR;
 
 		// open the scene file, if specified on the command line
-		if(vm.count("scene"))
-			possumwood::App::instance().loadFile(boost::filesystem::path(vm["scene"].as<std::string>()));
+		if(vm.count("scene")) {
+			const dependency_graph::State state = possumwood::App::instance().loadFile(boost::filesystem::path(vm["scene"].as<std::string>()));
+			if(state.errored()) {
+				std::stringstream ss;
+				ss << "Error loading " << vm["scene"].as<std::string>() << "...";
+
+				ErrorDialog* err = new ErrorDialog(state, &win, ss.str().c_str());
+				err->show();
+			}
+		}
 
 		GL_CHECK_ERR;
 
