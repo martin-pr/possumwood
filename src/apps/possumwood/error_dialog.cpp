@@ -24,7 +24,7 @@ ErrorDialog::ErrorDialog(const dependency_graph::State& state, QWidget* parent, 
 			pixmap = style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(QSize(16, 16));
 		else if(i.first == dependency_graph::State::kWarning)
 			pixmap = style()->standardIcon(QStyle::SP_MessageBoxWarning).pixmap(QSize(16, 16));
-		else if(i.first == dependency_graph::State::kError)
+		else if(i.first == dependency_graph::State::kInfo)
 			pixmap = style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(QSize(16, 16));
 		QLabel* icon = new QLabel();
 		icon->setPixmap(pixmap);
