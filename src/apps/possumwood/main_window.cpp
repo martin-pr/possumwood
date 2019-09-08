@@ -36,6 +36,7 @@
 #include "config_dialog.h"
 #include "grid.h"
 #include "toolbar.h"
+#include "error_dialog.h"
 
 namespace {
 
@@ -356,18 +357,17 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 										 tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty()) {
-			try {
-				m_properties->show({});
-				possumwood::App::instance().loadFile(boost::filesystem::path(filename.toStdString()));
+			m_properties->show({});
+			const dependency_graph::State state = possumwood::App::instance().loadFile(boost::filesystem::path(filename.toStdString()));
 
-				m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
-			}
-			catch(std::exception& err) {
-				QMessageBox::critical(this, "Error loading file...", "Error loading " + filename + ":\n" + err.what());
-			}
-			catch(...) {
-				QMessageBox::critical(this, "Error loading file...",
-									  "Error loading " + filename + ":\nUnhandled exception thrown during loading.");
+			m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
+
+			if(state.errored()) {
+				std::stringstream ss;
+				ss << "Error loading " << filename.toStdString() << "...";
+
+				ErrorDialog* err = new ErrorDialog(state, possumwood::App::instance().mainWindow(), ss.str().c_str());
+				err->show();
 			}
 		}
 	});

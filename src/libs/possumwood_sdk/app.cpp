@@ -179,13 +179,13 @@ void App::newFile() {
 	m_filename = "";
 }
 
-void App::loadFile(const possumwood::io::json& json) {
+dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 	// read the graph
 	graph().clear();
 	undoStack().clear();
 
 	dependency_graph::Selection selection; // throwaway
-	possumwood::actions::fromJson(graph(), selection, json);
+	const dependency_graph::State state = possumwood::actions::fromJson(graph(), selection, json, false);
 
 	undoStack().clear();
 
@@ -216,9 +216,11 @@ void App::loadFile(const possumwood::io::json& json) {
 			mainWindow()->restoreState(
 			    QByteArray::fromBase64(json["ui_state"].get<std::string>().c_str()));
 	}
+
+	return state;
 }
 
-void App::loadFile(const boost::filesystem::path& filename) {
+dependency_graph::State App::loadFile(const boost::filesystem::path& filename) {
 	if(!boost::filesystem::exists(filename))
 		throw std::runtime_error("Cannot open " + filename.string() +
 		                         " - file not found.");
@@ -228,18 +230,11 @@ void App::loadFile(const boost::filesystem::path& filename) {
 	in >> json;
 
 	// update the opened filename
-	const boost::filesystem::path oldFilename = m_filename;
 	m_filename = filename;
 
-	try {
-		loadFile(json);
-	}
-	catch(...) {
-		// something bad happened - return back the filename value
-		m_filename = oldFilename;
+	const dependency_graph::State state = loadFile(json);
 
-		throw;
-	}
+	return state;
 }
 
 void App::saveFile() {

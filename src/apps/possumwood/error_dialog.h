@@ -6,7 +6,7 @@
 
 class ErrorDialog : public QDialog {
 	public:
-		ErrorDialog(const dependency_graph::State& state, QWidget* parent);
+		ErrorDialog(const dependency_graph::State& state, QWidget* parent, QString title = "Error...");
 
 	private:
 };

@@ -7,8 +7,8 @@
 #include <QLabel>
 #include <QFrame>
 
-ErrorDialog::ErrorDialog(const dependency_graph::State& state, QWidget* parent) : QDialog(parent) {
-	setWindowTitle("Error...");
+ErrorDialog::ErrorDialog(const dependency_graph::State& state, QWidget* parent, QString title) : QDialog(parent) {
+	setWindowTitle(title);
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
 

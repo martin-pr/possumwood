@@ -28,8 +28,8 @@ class App : public AppCore {
 		const boost::filesystem::path& filename() const;
 
 		void newFile();
-		void loadFile(const boost::filesystem::path& fn);
-		void loadFile(const possumwood::io::json& json);
+		dependency_graph::State loadFile(const boost::filesystem::path& fn);
+		dependency_graph::State loadFile(const possumwood::io::json& json);
 		void saveFile();
 		void saveFile(const boost::filesystem::path& fn);
 		void saveFile(possumwood::io::json& json, bool saveSceneConfig = true);
