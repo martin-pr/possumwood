@@ -238,7 +238,8 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 						toPort = p;
 						break;
 					}
-				assert(toPort >= 0);
+				if(toPort < 0)
+					throw std::runtime_error("Port '" + toPortName + "' not found on node '" + node.name() + "'.");
 
 				// only on non-void ports, though
 				if(*data == nullptr && node.port(toPort).type() != typeid(void))
@@ -255,7 +256,8 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 						toPort = p;
 						break;
 					}
-				assert(toPort >= 0);
+				if(toPort < 0)
+					throw std::runtime_error("Port '" + toPortName + "' not found on node '" + node.name() + "'.");
 
 				if(*data != nullptr) {
 					assert(!node.port(toPort).isConnected());
