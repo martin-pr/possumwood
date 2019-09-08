@@ -90,6 +90,8 @@ Toolbar::Toolbar() {
 				toolButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 				QAction::connect(action, &QAction::triggered, [setupPath]() {
+					dependency_graph::State state;
+
 					try {
 						std::ifstream file(setupPath.string());
 						std::string setup = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
@@ -99,7 +101,7 @@ Toolbar::Toolbar() {
 						assert(mw);
 
 						dependency_graph::Selection selection;
-						possumwood::actions::paste(mw->adaptor().currentNetwork(), selection, setup);
+						state = possumwood::actions::paste(mw->adaptor().currentNetwork(), selection, setup, false /* don't halt on error */);
 						mw->adaptor().setSelection(selection);
 					}
 					catch(std::exception& e) {
@@ -107,6 +109,12 @@ Toolbar::Toolbar() {
 					}
 					catch(...) {
 						std::cout << "Error inserting setup." << std::endl;
+					}
+
+					// if any non-critical error happened, let's just print it out for now
+					if(state.errored()) {
+						std::cout << "Error inserting setup." << std::endl;
+						std::cout << state << std::endl;
 					}
 				});
 			}
