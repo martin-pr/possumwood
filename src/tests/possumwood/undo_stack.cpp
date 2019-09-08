@@ -275,8 +275,9 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 		);
 
 		// executing this command throws, and UNROLLS push_back of 30
-		BOOST_REQUIRE_THROW(stack.execute(a), const char*);
-		BOOST_REQUIRE_THROW(stack.execute(a), const char*);
+		BOOST_REQUIRE_THROW(stack.execute(a), std::runtime_error);
+
+		BOOST_REQUIRE_THROW(stack.execute(a), std::runtime_error);
 	}
 
 	BOOST_CHECK_EQUAL(values, half_result);

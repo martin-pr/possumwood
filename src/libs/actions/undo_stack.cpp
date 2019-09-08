@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <sstream>
 
 #include <boost/noncopyable.hpp>
 
@@ -32,36 +33,85 @@ UndoStack::UndoStack()
 {
 }
 
-void UndoStack::execute(const Action& action) {
+dependency_graph::State UndoStack::execute(const Action& input_action, bool haltOnError) {
+	// any action executed in this manner has to have m_undo and m_redo the same size
+	assert(input_action.m_redo.size() == input_action.m_undo.size());
+
+	dependency_graph::State state;
+	// construct an action to be pushed on the stack - when haltOnError is false, this action might not contain all
+	// undo/redo commands the input action does, as some parts might have errored and will now be skipped on next evaluation.
+	Action action;
+
 #ifndef NDEBUG
 	assert(!m_executionInProgress);
 
 	m_executionInProgress = true;
 #endif
 
-	if(!action.m_undo.empty()) {
-		assert(action.m_undo.size() == action.m_redo.size());
+	if(!input_action.m_undo.empty()) {
+		assert(input_action.m_undo.size() == input_action.m_redo.size());
 
 		// first, execute all commands in the undo part of the new action
-		for(std::size_t counter = 0; counter < action.m_redo.size(); ++counter) {
+		for(std::size_t counter = 0; counter < input_action.m_redo.size(); ++counter) {
+			action.m_redo.push_back(input_action.m_redo[counter]);
+			action.m_undo.push_back(input_action.m_undo[counter]);
+
 			try {
 				// just run the command
-				action.m_redo[counter].fn();
+				input_action.m_redo[counter].fn();
 			}
-			catch(...) {
-				// an exception was caught during the last command - undo all previous commands
-				while(counter > 0) {
-					--counter;
+			catch(const std::exception& err) {
+				std::stringstream ss;
+				ss << "Exception while running '" << input_action.m_redo[counter].name <<"': " << err.what();
 
-					action.m_undo[counter].fn();
-				}
+				if(haltOnError) {
+					// an exception was caught during the last command - undo all previous commands
+					std::size_t rollback = counter;
+					while(rollback > 0) {
+						--rollback;
+
+						input_action.m_undo[rollback].fn();
+					}
 
 #ifndef NDEBUG
-				m_executionInProgress = false;
+					m_executionInProgress = false;
 #endif
 
-				// and rethrow the exception
-				throw;
+					// and rethrow the exception
+					throw std::runtime_error(ss.str());
+				}
+
+				else
+					state.addError(ss.str());
+
+				action.m_undo.pop_back();
+				action.m_redo.pop_back();
+			}
+			catch(...) {
+				std::stringstream ss;
+				ss << "Unhandled exception while running '" << input_action.m_redo[counter].name <<"'.";
+
+				if(haltOnError) {
+					// an exception was caught during the last command - undo all previous commands
+					while(counter > 0) {
+						--counter;
+
+						input_action.m_undo[counter].fn();
+					}
+
+#ifndef NDEBUG
+					m_executionInProgress = false;
+#endif
+
+					// and rethrow the exception
+					throw std::runtime_error(ss.str());
+				}
+
+				else
+					state.addError(ss.str());
+
+				action.m_undo.pop_back();
+				action.m_redo.pop_back();
 			}
 		}
 
@@ -73,6 +123,8 @@ void UndoStack::execute(const Action& action) {
 #ifndef NDEBUG
 	m_executionInProgress = false;
 #endif
+
+	return state;
 }
 
 void UndoStack::undo() {

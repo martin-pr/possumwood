@@ -6,6 +6,8 @@
 
 #include <boost/noncopyable.hpp>
 
+#include <dependency_graph/state.h>
+
 namespace possumwood {
 
 /// A simple implementation of undo stack based on Command design pattern.
@@ -40,11 +42,14 @@ class UndoStack : public boost::noncopyable {
 
 		/// Executes an action and puts it to the undo stack to make it undoable.
 		/// Any potential exceptions thrown from an action are handled (assuming
-		/// they are based on std::exception) - an error during a command will
+		/// they are based on std::exception) - with haltOnError=true, any error during a command will
 		/// assume that command has not been finished (and any remaining state
 		/// is rolled back), and all previously finished commands of an action
 		/// needs rolling back. Exception is then forwared to the caller.
-		void execute(const Action& action);
+		/// When haltOnError is set to false, any errorring action is simply skipped,
+		/// with the execution continuing (undo stack will not contain this failing action).
+		/// Useful for actions that are expected to sometimes partially fail, like file loading.
+		dependency_graph::State execute(const Action& action, bool haltOnError = true);
 
 		/// Undoes last succesfully executed action. Cannot throw - action worked
 		/// last time, so it should work this time as well.

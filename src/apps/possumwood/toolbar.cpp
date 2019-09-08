@@ -14,6 +14,7 @@
 #include <actions/actions.h>
 
 #include "main_window.h"
+#include "error_dialog.h"
 
 Toolbar::Toolbar() {
 	const boost::filesystem::path path = possumwood::App::instance().expandPath("$TOOLBARS");
@@ -90,6 +91,8 @@ Toolbar::Toolbar() {
 				toolButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 				QAction::connect(action, &QAction::triggered, [setupPath]() {
+					dependency_graph::State state;
+
 					try {
 						std::ifstream file(setupPath.string());
 						std::string setup = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
@@ -99,14 +102,20 @@ Toolbar::Toolbar() {
 						assert(mw);
 
 						dependency_graph::Selection selection;
-						possumwood::actions::paste(mw->adaptor().currentNetwork(), selection, setup);
+						state = possumwood::actions::paste(mw->adaptor().currentNetwork(), selection, setup, false /* don't halt on error */);
 						mw->adaptor().setSelection(selection);
 					}
 					catch(std::exception& e) {
-						std::cout << "Error inserting setup - " << e.what() << std::endl;
+						state.addError(std::string("Error inserting setup - ") + e.what());
 					}
 					catch(...) {
-						std::cout << "Error inserting setup." << std::endl;
+						state.addError("Error inserting setup - unknown exception.");
+					}
+
+					// if any non-critical error happened, let's just print it out for now
+					if(state.errored()) {
+						ErrorDialog* err = new ErrorDialog(state, possumwood::App::instance().mainWindow());
+						err->show();
 					}
 				});
 			}
