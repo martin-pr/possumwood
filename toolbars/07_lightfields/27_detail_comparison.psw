@@ -221,8 +221,10 @@
             "ports": {
                 "levels": 6,
                 "offset": 2,
-                "size/height": 300,
-                "size/width": 300
+                "size": {
+                    "x": 300,
+                    "y": 300
+                }
             },
             "type": "opencv/lightfields/integrate_bezier"
         },
@@ -238,8 +240,10 @@
             "ports": {
                 "levels": 1,
                 "offset": 8,
-                "size/height": 300,
-                "size/width": 300
+                "size": {
+                    "x": 300,
+                    "y": 300
+                }
             },
             "type": "opencv/lightfields/integrate_bezier"
         },
@@ -372,6 +376,18 @@
                     "out_port": "program"
                 },
                 {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
+                },
+                {
                     "in_node": "opencv_texture_0",
                     "in_port": "in_uniforms",
                     "out_node": "unsigned_0",
@@ -394,18 +410,6 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
-                },
-                {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
-                    "out_node": "split_vec2u_0",
-                    "out_port": "x"
-                },
-                {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
-                    "out_node": "split_vec2u_0",
-                    "out_port": "y"
                 }
             ],
             "name": "display",

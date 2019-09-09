@@ -177,8 +177,10 @@
             "ports": {
                 "levels": 5,
                 "offset": 7,
-                "size/height": 1000,
-                "size/width": 1000
+                "size": {
+                    "x": 300,
+                    "y": 300
+                }
             },
             "type": "opencv/lightfields/integrate_bezier"
         },
@@ -197,7 +199,7 @@
                     "max": 60.0,
                     "min": -40.0,
                     "type": "linear",
-                    "value": 29.0999984741211
+                    "value": -14.3999996185303
                 }
             },
             "type": "maths/interval"
@@ -300,6 +302,18 @@
                     "out_port": "program"
                 },
                 {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
+                },
+                {
                     "in_node": "opencv_texture_0",
                     "in_port": "in_uniforms",
                     "out_node": "unsigned_0",
@@ -322,18 +336,6 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
-                },
-                {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
-                    "out_node": "split_vec2u_0",
-                    "out_port": "x"
-                },
-                {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
-                    "out_node": "split_vec2u_0",
-                    "out_port": "y"
                 }
             ],
             "name": "display",
@@ -556,5 +558,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAICAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAA9QAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKtAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAAykAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
