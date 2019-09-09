@@ -275,8 +275,10 @@
             },
             "name": "integrate_nearest",
             "ports": {
-                "size/height": 300,
-                "size/width": 300
+                "size": {
+                    "x": 300,
+                    "y": 300
+                }
             },
             "type": "opencv/lightfields/integrate_nearest"
         },

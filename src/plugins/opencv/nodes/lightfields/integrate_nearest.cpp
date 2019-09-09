@@ -6,6 +6,7 @@
 
 #include <actions/traits.h>
 
+#include "maths/io/vec2.h"
 #include "frame.h"
 #include "lightfield_samples.h"
 #include "tools.h"
@@ -14,7 +15,7 @@ namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<possumwood::opencv::LightfieldSamples> a_samples;
-dependency_graph::InAttr<unsigned> a_width, a_height;
+dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 void add1channel(float* color, float* n, int colorIndex, const float* value) {
@@ -45,8 +46,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	const cv::Mat& input = *data.get(a_in);
 
-	const unsigned width = data.get(a_width);
-	const unsigned height = data.get(a_height);
+	const unsigned width = data.get(a_size)[0];
+	const unsigned height = data.get(a_size)[1];
 
 	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
 
@@ -93,14 +94,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_samples, "samples", possumwood::opencv::LightfieldSamples(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_width, "size/width", 300u);
-	meta.addAttribute(a_height, "size/height", 300u);
+	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(300u, 300u));
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_samples, a_out);
-	meta.addInfluence(a_width, a_out);
-	meta.addInfluence(a_height, a_out);
+	meta.addInfluence(a_size, a_out);
 
 	meta.setCompute(compute);
 }
