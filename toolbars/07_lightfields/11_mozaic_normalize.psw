@@ -100,8 +100,10 @@
             "name": "integrate_mosaic",
             "ports": {
                 "elements": 8,
-                "size/height": 500,
-                "size/width": 500
+                "size": {
+                    "x": 500,
+                    "y": 500
+                }
             },
             "type": "opencv/lightfields/integrate_mosaic"
         },
@@ -203,6 +205,18 @@
                     "out_port": "program"
                 },
                 {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
+                },
+                {
                     "in_node": "opencv_texture_0",
                     "in_port": "in_uniforms",
                     "out_node": "unsigned_0",
@@ -225,18 +239,6 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
-                },
-                {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
-                    "out_node": "split_vec2u_0",
-                    "out_port": "x"
-                },
-                {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
-                    "out_node": "split_vec2u_0",
-                    "out_port": "y"
                 }
             ],
             "name": "display",
