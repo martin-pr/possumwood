@@ -10,6 +10,7 @@
 #include <actions/traits.h>
 #include <possumwood_sdk/datatypes/enum.h>
 
+#include "maths/io/vec2.h"
 #include "frame.h"
 #include "lightfield_vignetting.h"
 #include "tools.h"
