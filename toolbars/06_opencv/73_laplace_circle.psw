@@ -85,16 +85,10 @@
             "out_port": "out"
         },
         {
-            "in_node": "make_vec2u_0",
-            "in_port": "x",
+            "in_node": "empty_0",
+            "in_port": "size",
             "out_node": "metadata_0",
-            "out_port": "width"
-        },
-        {
-            "in_node": "make_vec2u_0",
-            "in_port": "y",
-            "out_node": "metadata_0",
-            "out_port": "height"
+            "out_port": "size"
         },
         {
             "in_node": "merge_0",
@@ -137,12 +131,6 @@
             "in_port": "in_frame_1",
             "out_node": "split_0",
             "out_port": "out_3"
-        },
-        {
-            "in_node": "empty_0",
-            "in_port": "size",
-            "out_node": "make_vec2u_0",
-            "out_port": "out"
         }
     ],
     "nodes": {
@@ -262,17 +250,6 @@
             "name": "inpaint_laplacian",
             "type": "opencv/inpaint_laplacian"
         },
-        "make_vec2u_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 347.866485595703,
-                    "y": -27.6136093139648
-                }
-            },
-            "name": "make_vec2u",
-            "type": "maths/make_vec2u"
-        },
         "merge_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -362,16 +339,10 @@
                     "out_port": "data"
                 },
                 {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
                     "out_node": "metadata_0",
-                    "out_port": "width"
-                },
-                {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
-                    "out_node": "metadata_0",
-                    "out_port": "height"
+                    "out_port": "size"
                 },
                 {
                     "in_node": "viewport_0",
@@ -408,6 +379,18 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
+                },
+                {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
                 }
             ],
             "name": "network",
@@ -452,8 +435,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -0.954643309116364,
-                            "y": 258.171783447266
+                            "x": 109.905044555664,
+                            "y": -135.996002197266
                         }
                     },
                     "name": "frame",
@@ -495,6 +478,17 @@
                     },
                     "name": "program",
                     "type": "render/program"
+                },
+                "split_vec2u_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 389.818572998047,
+                            "y": 140.904174804688
+                        }
+                    },
+                    "name": "split_vec2u",
+                    "type": "maths/split_vec2u"
                 },
                 "unsigned_0": {
                     "blind_data": {

@@ -25,16 +25,10 @@
             "out_port": "frame"
         },
         {
-            "in_node": "unsigned_1",
-            "in_port": "value",
+            "in_node": "split_vec2u_0",
+            "in_port": "vec",
             "out_node": "metadata_0",
-            "out_port": "width"
-        },
-        {
-            "in_node": "unsigned_0",
-            "in_port": "value",
-            "out_node": "metadata_0",
-            "out_port": "height"
+            "out_port": "size"
         },
         {
             "in_node": "viewport_0",
@@ -71,6 +65,18 @@
             "in_port": "uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "unsigned_1",
+            "in_port": "value",
+            "out_node": "split_vec2u_0",
+            "out_port": "x"
+        },
+        {
+            "in_node": "unsigned_0",
+            "in_port": "value",
+            "out_node": "split_vec2u_0",
+            "out_port": "y"
         }
     ],
     "nodes": {
@@ -114,8 +120,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 592.666381835938,
-                    "y": -80.1492462158203
+                    "x": 496.074584960938,
+                    "y": -75.0654678344727
                 }
             },
             "name": "image",
@@ -128,8 +134,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 709.482482910156,
-                    "y": 109.390808105469
+                    "x": 583.658996582031,
+                    "y": 120.829315185547
                 }
             },
             "name": "opencv_metadata",
@@ -145,6 +151,7 @@
             },
             "name": "opencv_texture",
             "ports": {
+                "mode": "Linear",
                 "name": "image"
             },
             "type": "render/uniforms/opencv_texture"
@@ -159,6 +166,17 @@
             },
             "name": "program",
             "type": "render/program"
+        },
+        "split_vec2u_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 776.208435058594,
+                    "y": 145.858551025391
+                }
+            },
+            "name": "split_vec2u",
+            "type": "maths/split_vec2u"
         },
         "unsigned_0": {
             "blind_data": {
@@ -219,6 +237,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABPwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABtQAAAiwAAACGAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABFQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABiwAAAeMAAACGAQAAAwAAAgUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -3,29 +3,27 @@
 #include <possumwood_sdk/node_implementation.h>
 
 #include "frame.h"
+#include "maths/io/vec2.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_frame;
-dependency_graph::OutAttr<unsigned> a_width, a_height;
+dependency_graph::OutAttr<Imath::Vec2<unsigned>> a_size;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Frame& input = data.get(a_frame);
 
-	data.set(a_width, (unsigned)(*input).cols);
-	data.set(a_height, (unsigned)(*input).rows);
+	data.set(a_size, Imath::Vec2<unsigned>((*input).cols, (*input).rows));
 
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_width, "width", 0u);
-	meta.addAttribute(a_height, "height", 0u);
+	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(0, 0));
 
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
-	meta.addInfluence(a_frame, a_width);
-	meta.addInfluence(a_frame, a_height);
+	meta.addInfluence(a_frame, a_size);
 
 	meta.setCompute(compute);
 }

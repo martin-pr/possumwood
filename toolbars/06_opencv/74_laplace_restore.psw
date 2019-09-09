@@ -73,16 +73,10 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "make_vec2u_0",
-            "in_port": "x",
+            "in_node": "empty_0",
+            "in_port": "size",
             "out_node": "metadata_0",
-            "out_port": "width"
-        },
-        {
-            "in_node": "make_vec2u_0",
-            "in_port": "y",
-            "out_node": "metadata_0",
-            "out_port": "height"
+            "out_port": "size"
         },
         {
             "in_node": "concat_0",
@@ -137,12 +131,6 @@
             "in_port": "in_frame",
             "out_node": "threshold_0",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "empty_0",
-            "in_port": "size",
-            "out_node": "make_vec2u_0",
-            "out_port": "out"
         }
     ],
     "nodes": {
@@ -308,23 +296,12 @@
             "name": "inpaint_laplacian",
             "type": "opencv/inpaint_laplacian"
         },
-        "make_vec2u_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 259.087585449219,
-                    "y": -210.039520263672
-                }
-            },
-            "name": "make_vec2u",
-            "type": "maths/make_vec2u"
-        },
         "metadata_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 141.217239379883,
-                    "y": -238.248550415039
+                    "x": 165.365188598633,
+                    "y": -219.184387207031
                 }
             },
             "name": "metadata",
@@ -375,16 +352,10 @@
                     "out_port": "data"
                 },
                 {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
                     "out_node": "metadata_0",
-                    "out_port": "width"
-                },
-                {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
-                    "out_node": "metadata_0",
-                    "out_port": "height"
+                    "out_port": "size"
                 },
                 {
                     "in_node": "viewport_0",
@@ -421,6 +392,18 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
+                },
+                {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
                 }
             ],
             "name": "network",
@@ -465,8 +448,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -0.954643309116364,
-                            "y": 258.171783447266
+                            "x": 91.7672653198242,
+                            "y": -116.930473327637
                         }
                     },
                     "name": "frame",
@@ -508,6 +491,17 @@
                     },
                     "name": "program",
                     "type": "render/program"
+                },
+                "split_vec2u_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 405.589538574219,
+                            "y": 118.428314208984
+                        }
+                    },
+                    "name": "split_vec2u",
+                    "type": "maths/split_vec2u"
                 },
                 "unsigned_0": {
                     "blind_data": {
