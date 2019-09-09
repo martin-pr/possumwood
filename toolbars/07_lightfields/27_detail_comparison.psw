@@ -258,8 +258,10 @@
             "name": "integrate_gaussian",
             "ports": {
                 "sigma2": 20.0,
-                "size/height": 300,
-                "size/width": 300
+                "size": {
+                    "x": 300,
+                    "y": 300
+                }
             },
             "type": "opencv/lightfields/integrate_gaussian"
         },
