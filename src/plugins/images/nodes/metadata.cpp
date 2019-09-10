@@ -3,13 +3,14 @@
 #include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/pixmap.h"
+#include "maths/io/vec2.h"
 
 namespace {
 
 template<typename PIXMAP>
 struct Params {
 	dependency_graph::InAttr<std::shared_ptr<const PIXMAP>> a_image;
-	dependency_graph::OutAttr<unsigned> a_width, a_height;
+	dependency_graph::OutAttr<Imath::Vec2<unsigned>> a_size;
 };
 
 Params<possumwood::LDRPixmap> s_ldrParams;
@@ -22,26 +23,20 @@ dependency_graph::State compute(dependency_graph::Values& data, Params<PIXMAP>& 
 	dependency_graph::State result;
 	if(input == nullptr) {
 		result.addError("No input pixmap.");
-		data.set(params.a_width, 0u);
-		data.set(params.a_height, 0u);
+		data.set(params.a_size, Imath::Vec2<unsigned>(0u, 0u));
 	}
-	else {
-		data.set(params.a_width, (unsigned)input->width());
-		data.set(params.a_height, (unsigned)input->height());
-	}
+	else
+		data.set(params.a_size, Imath::Vec2<unsigned>(input->width(), input->height()));
 
 	return dependency_graph::State();
 }
 
 template<typename PIXMAP>
 void init(possumwood::Metadata& meta, Params<PIXMAP>& params) {
-	meta.addAttribute(params.a_width, "width", 0u);
-	meta.addAttribute(params.a_height, "height", 0u);
-
+	meta.addAttribute(params.a_size, "size", Imath::Vec2<unsigned>(0,0));
 	meta.addAttribute(params.a_image, "image");
 
-	meta.addInfluence(params.a_image, params.a_width);
-	meta.addInfluence(params.a_image, params.a_height);
+	meta.addInfluence(params.a_image, params.a_size);
 
 	meta.setCompute([&params](dependency_graph::Values& data) {
 		return compute<PIXMAP>(data, params);

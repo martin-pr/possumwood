@@ -7,9 +7,33 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "demosaic_0",
+            "in_port": "in_frame",
+            "out_node": "convert_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "gamma_0",
+            "in_port": "in_frame",
+            "out_node": "convert_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_2",
+            "in_port": "in_frame",
+            "out_node": "demosaic_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "convert_1",
             "in_port": "in_frame",
             "out_node": "divide_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "gamma_0",
             "out_port": "out_frame"
         },
         {
@@ -23,30 +47,6 @@
             "in_port": "in_frame_2",
             "out_node": "lytro_lightfield_1",
             "out_port": "frame"
-        },
-        {
-            "in_node": "convert_2",
-            "in_port": "in_frame",
-            "out_node": "demosaic_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "convert_0",
-            "in_port": "in_frame",
-            "out_node": "gamma_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "demosaic_0",
-            "in_port": "in_frame",
-            "out_node": "convert_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "gamma_0",
-            "in_port": "in_frame",
-            "out_node": "convert_2",
-            "out_port": "out_frame"
         }
     ],
     "nodes": {
@@ -221,16 +221,10 @@
                     "out_port": "out"
                 },
                 {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
                     "out_node": "metadata_0",
-                    "out_port": "width"
-                },
-                {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
-                    "out_node": "metadata_0",
-                    "out_port": "height"
+                    "out_port": "size"
                 },
                 {
                     "in_node": "viewport_0",
@@ -267,6 +261,18 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
+                },
+                {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
                 }
             ],
             "name": "display",
@@ -325,8 +331,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -0.954643309116364,
-                            "y": 258.171783447266
+                            "x": 120.19287109375,
+                            "y": -131.11555480957
                         }
                     },
                     "name": "frame",
@@ -390,6 +396,17 @@
                     },
                     "name": "program",
                     "type": "render/program"
+                },
+                "split_vec2u_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 391.36865234375,
+                            "y": 166.088317871094
+                        }
+                    },
+                    "name": "split_vec2u",
+                    "type": "maths/split_vec2u"
                 },
                 "unsigned_0": {
                     "blind_data": {

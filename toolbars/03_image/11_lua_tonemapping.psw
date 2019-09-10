@@ -1,16 +1,16 @@
 {
     "connections": [
         {
-            "in_node": "network_1",
-            "in_port": "image",
-            "out_node": "network_0",
-            "out_port": "output"
-        },
-        {
             "in_node": "network_0",
             "in_port": "hdr",
             "out_node": "load_hdr_0",
             "out_port": "image"
+        },
+        {
+            "in_node": "network_1",
+            "in_port": "image",
+            "out_node": "network_0",
+            "out_port": "output"
         }
     ],
     "nodes": {
@@ -80,6 +80,12 @@
                     "out_port": "data"
                 },
                 {
+                    "in_node": "image_hdr_0",
+                    "in_port": "value",
+                    "out_node": "input_2",
+                    "out_port": "data"
+                },
+                {
                     "in_node": "float_1",
                     "in_port": "value",
                     "out_node": "interval_0",
@@ -96,12 +102,6 @@
                     "in_port": "state",
                     "out_node": "script_0",
                     "out_port": "state"
-                },
-                {
-                    "in_node": "image_hdr_0",
-                    "in_port": "value",
-                    "out_node": "input_2",
-                    "out_port": "data"
                 }
             ],
             "name": "tonemapping",
@@ -306,16 +306,10 @@
                     "out_port": "data"
                 },
                 {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
                     "out_node": "metadata_0",
-                    "out_port": "width"
-                },
-                {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
-                    "out_node": "metadata_0",
-                    "out_port": "height"
+                    "out_port": "size"
                 },
                 {
                     "in_node": "draw_0",
@@ -352,6 +346,18 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
                 }
             ],
             "name": "image_display",
@@ -407,8 +413,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 166.022171020508,
-                            "y": -317.186340332031
+                            "x": 108.022163391113,
+                            "y": -305.186340332031
                         }
                     },
                     "name": "metadata",
@@ -424,6 +430,17 @@
                     },
                     "name": "program",
                     "type": "render/program"
+                },
+                "split_vec2u_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 237.297622680664,
+                            "y": -316.240325927734
+                        }
+                    },
+                    "name": "split_vec2u",
+                    "type": "maths/split_vec2u"
                 },
                 "texture_0": {
                     "blind_data": {
@@ -501,6 +518,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqs=",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA4QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABVwAAAhcAAACGAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

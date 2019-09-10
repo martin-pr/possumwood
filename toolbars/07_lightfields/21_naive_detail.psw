@@ -105,8 +105,10 @@
             },
             "name": "integrate_nearest",
             "ports": {
-                "size/height": 300,
-                "size/width": 300
+                "size": {
+                    "x": 300,
+                    "y": 300
+                }
             },
             "type": "opencv/lightfields/integrate_nearest"
         },
@@ -190,16 +192,10 @@
                     "out_port": "out"
                 },
                 {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
                     "out_node": "metadata_0",
-                    "out_port": "width"
-                },
-                {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
-                    "out_node": "metadata_0",
-                    "out_port": "height"
+                    "out_port": "size"
                 },
                 {
                     "in_node": "viewport_0",
@@ -212,6 +208,18 @@
                     "in_port": "program",
                     "out_node": "program_0",
                     "out_port": "program"
+                },
+                {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
                 },
                 {
                     "in_node": "opencv_texture_0",
@@ -359,6 +367,17 @@
                     },
                     "name": "program",
                     "type": "render/program"
+                },
+                "split_vec2u_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 375.609710693359,
+                            "y": 139.205078125
+                        }
+                    },
+                    "name": "split_vec2u",
+                    "type": "maths/split_vec2u"
                 },
                 "unsigned_0": {
                     "blind_data": {

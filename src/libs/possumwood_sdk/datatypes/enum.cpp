@@ -31,7 +31,8 @@ int Enum::intValue() const {
 
 void Enum::setValue(const std::string& value) {
 	auto it = std::find_if(m_options.begin(), m_options.end(), [&value](const std::pair<std::string, int>& val) {return val.first == value;});
-	assert(it != m_options.end());
+	if(it == m_options.end())
+		throw std::runtime_error("Enum value " + value + " not found!");
 	m_value = *it;
 }
 

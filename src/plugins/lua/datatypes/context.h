@@ -33,7 +33,7 @@ class Context {
 		boost::iterator_range<const_var_iterator> variables() const;
 
 		typedef boost::transform_iterator<
-			std::function<const std::string&(const std::pair<std::string, std::function<void(State&)>>&)>,
+			std::function<std::string(const std::pair<std::string, std::function<void(State&)>>&)>,
 			std::map<std::string, std::function<void(State&)>>::const_iterator
 		> const_module_iterator;
 		boost::iterator_range<const_module_iterator> modules() const;

@@ -25,6 +25,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "samples_refocus_0",
+            "in_port": "uv_offset",
+            "out_node": "interval_0",
+            "out_port": "out"
+        },
+        {
             "in_node": "divide_0",
             "in_port": "in_frame_2",
             "out_node": "lytro_lightfield_0",
@@ -47,12 +53,6 @@
             "in_port": "samples",
             "out_node": "samples_refocus_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "samples_refocus_0",
-            "in_port": "uv_offset",
-            "out_node": "interval_0",
-            "out_port": "out"
         }
     ],
     "nodes": {
@@ -113,8 +113,10 @@
             "ports": {
                 "levels": 4,
                 "offset": 7,
-                "size/height": 1000,
-                "size/width": 1000
+                "size": {
+                    "x": 300,
+                    "y": 300
+                }
             },
             "type": "opencv/lightfields/integrate_bezier"
         },
@@ -218,16 +220,10 @@
                     "out_port": "out"
                 },
                 {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
                     "out_node": "metadata_0",
-                    "out_port": "width"
-                },
-                {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
-                    "out_node": "metadata_0",
-                    "out_port": "height"
+                    "out_port": "size"
                 },
                 {
                     "in_node": "viewport_0",
@@ -240,6 +236,18 @@
                     "in_port": "program",
                     "out_node": "program_0",
                     "out_port": "program"
+                },
+                {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
                 },
                 {
                     "in_node": "opencv_texture_0",
@@ -388,6 +396,17 @@
                     "name": "program",
                     "type": "render/program"
                 },
+                "split_vec2u_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 411.733673095703,
+                            "y": 162.353134155273
+                        }
+                    },
+                    "name": "split_vec2u",
+                    "type": "maths/split_vec2u"
+                },
                 "unsigned_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
@@ -474,6 +493,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAAAAAAASlAAACQQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAA4cAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

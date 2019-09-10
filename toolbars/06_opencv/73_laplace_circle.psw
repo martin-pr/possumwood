@@ -73,16 +73,40 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "empty_0",
-            "in_port": "width",
-            "out_node": "metadata_0",
-            "out_port": "width"
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "merge_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "merge_0",
+            "out_port": "out"
         },
         {
             "in_node": "empty_0",
-            "in_port": "height",
+            "in_port": "size",
             "out_node": "metadata_0",
-            "out_port": "height"
+            "out_port": "size"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_1",
+            "out_node": "multiply_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_2",
+            "out_node": "multiply_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_3",
+            "out_node": "multiply_2",
+            "out_port": "out_frame"
         },
         {
             "in_node": "equalize_0",
@@ -107,36 +131,6 @@
             "in_port": "in_frame_1",
             "out_node": "split_0",
             "out_port": "out_3"
-        },
-        {
-            "in_node": "merge_0",
-            "in_port": "in_1",
-            "out_node": "multiply_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "merge_0",
-            "in_port": "in_2",
-            "out_node": "multiply_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "merge_0",
-            "in_port": "in_3",
-            "out_node": "multiply_2",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_0",
-            "in_port": "in_frame_1",
-            "out_node": "merge_0",
-            "out_port": "out"
-        },
-        {
-            "in_node": "convert_0",
-            "in_port": "in_frame",
-            "out_node": "merge_0",
-            "out_port": "out"
         }
     ],
     "nodes": {
@@ -235,8 +229,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 247.104721069336,
-                    "y": -168.428558349609
+                    "x": 166.339691162109,
+                    "y": -207.195770263672
                 }
             },
             "name": "image",
@@ -271,8 +265,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 342.827301025391,
-                    "y": 0.616133034229279
+                    "x": 228.140960693359,
+                    "y": -51.073486328125
                 }
             },
             "name": "metadata",
@@ -345,16 +339,10 @@
                     "out_port": "data"
                 },
                 {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
                     "out_node": "metadata_0",
-                    "out_port": "width"
-                },
-                {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
-                    "out_node": "metadata_0",
-                    "out_port": "height"
+                    "out_port": "size"
                 },
                 {
                     "in_node": "viewport_0",
@@ -391,6 +379,18 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
+                },
+                {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
                 }
             ],
             "name": "network",
@@ -435,8 +435,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -0.954643309116364,
-                            "y": 258.171783447266
+                            "x": 109.905044555664,
+                            "y": -135.996002197266
                         }
                     },
                     "name": "frame",
@@ -478,6 +478,17 @@
                     },
                     "name": "program",
                     "type": "render/program"
+                },
+                "split_vec2u_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 389.818572998047,
+                            "y": 140.904174804688
+                        }
+                    },
+                    "name": "split_vec2u",
+                    "type": "maths/split_vec2u"
                 },
                 "unsigned_0": {
                     "blind_data": {
@@ -563,6 +574,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB1wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACTQAAAZQAAACGAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABmQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACDwAAAV8AAACGAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
