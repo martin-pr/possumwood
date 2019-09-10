@@ -58,9 +58,11 @@ class Triplets {
 		friend class Row;
 };
 
-void buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<float>& A, Eigen::VectorXf& b, int channel) {
+float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<float>& A, Eigen::VectorXf& b, int channel) {
 	Triplets triplets(image.rows, image.cols);
 	std::vector<float> values;
+
+	std::size_t validCtr = 0, interpolatedCtr = 0;
 
 	for(int y=0;y<image.rows;++y)
 		for(int x=0;x<image.cols;++x) {
@@ -89,12 +91,16 @@ void buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatri
 				}
 
 				row.addValue(y, x, current);
+
+				++interpolatedCtr;
 			}
 
 			// non-masked
 			else {
 				values.push_back(image.ptr<float>(y, x)[channel]);
 				row.addValue(y, x, 1);
+
+				++validCtr;
 			}
 		}
 
@@ -107,10 +113,13 @@ void buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatri
 	b = Eigen::VectorXf(values.size());
 	for(std::size_t i=0; i<values.size(); ++i)
 		b[i] = values[i];
+
+	return (float)validCtr / ((float)validCtr + (float)interpolatedCtr);
 }
 
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame, a_inMask;
+dependency_graph::InAttr<unsigned> a_mosaic;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -118,6 +127,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	const cv::Mat& image = *data.get(a_inFrame);
 	const cv::Mat& mask = *data.get(a_inMask);
+	const unsigned mosaic = data.get(a_mosaic);
 
 	if(image.depth() != CV_32F)
 		throw std::runtime_error("Laplacian inpainting - input image type has to be CV_32F.");
@@ -128,36 +138,58 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(image.size != mask.size)
 		throw std::runtime_error("Laplacian inpainting - input and mask image size have to match.");
 
-	std::vector<std::vector<float>> x(image.channels(), std::vector<float>(image.rows * image.cols));
+	std::vector<std::vector<float>> x(image.channels(), std::vector<float>(image.rows * image.cols, 0.0f));
 
 	tbb::task_group tasks;
 	std::mutex solve_mutex;
 
-	for(int channel=0; channel<image.channels(); ++channel) {
-		tasks.run([channel, &image, &mask, &x, &state, &solve_mutex]() {
-			Eigen::SparseMatrix<float> A;
-			Eigen::VectorXf b, tmp;
+	for(unsigned a=0;a<mosaic; ++a) {
+		for(unsigned b=0;b<mosaic; ++b) {
+			for(int channel=0; channel<image.channels(); ++channel) {
+				cv::Rect2i roi;
+				roi.y = (a * image.rows) / mosaic;
+				roi.x = (b * image.cols) / mosaic;
+				roi.height = ((a+1) * image.rows) / mosaic - roi.y;
+				roi.width = ((b+1) * image.cols) / mosaic - roi.x;
 
-			buildMatrices(image, mask, A, b, channel);
+				tasks.run([channel, &image, &mask, &x, &state, &solve_mutex, roi]() {
+					cv::Mat inTile(image, roi);
+					cv::Mat inMask(mask, roi);
 
-			const Eigen::SparseLU<Eigen::SparseMatrix<float>> chol(A);
-			tmp = chol.solve(b);
+					Eigen::SparseMatrix<float> A;
+					Eigen::VectorXf b, tmp;
 
-			assert(tmp.size() == image.rows * image.cols);
-			for(int a=0;a<tmp.size();++a)
-				x[channel][a] = tmp[a];
+					const float ratio = buildMatrices(inTile, inMask, A, b, channel);
 
-			std::lock_guard<std::mutex> guard(solve_mutex);
+					if(ratio > 1.0) {
+						const Eigen::SparseLU<Eigen::SparseMatrix<float>> chol(A);
+						tmp = chol.solve(b);
 
-			if(chol.info() == Eigen::NumericalIssue)
-				state.addError("Decomposition failed - Eigen::NumericalIssue");
-			else if(chol.info() == Eigen::NoConvergence)
-				state.addError("Decomposition failed - Eigen::NoConvergence");
-			else if(chol.info() == Eigen::InvalidInput)
-				state.addError("Decomposition failed - Eigen::InvalidInput");
-			else if(chol.info() != Eigen::Success)
-				state.addError("Decomposition failed - unknown error");
-		});
+						assert(tmp.size() == inTile.rows * inTile.cols);
+						for(int i=0;i<tmp.size();++i) {
+							const int row = i / roi.width;
+							const int col = i % roi.width;
+							const int index = (row + roi.y) * image.cols + col + roi.x;
+
+							assert((std::size_t)index < x[channel].size());
+
+							x[channel][index] = tmp[i];
+						}
+
+						std::lock_guard<std::mutex> guard(solve_mutex);
+
+						if(chol.info() == Eigen::NumericalIssue)
+							state.addError("Decomposition failed - Eigen::NumericalIssue");
+						else if(chol.info() == Eigen::NoConvergence)
+							state.addError("Decomposition failed - Eigen::NoConvergence");
+						else if(chol.info() == Eigen::InvalidInput)
+							state.addError("Decomposition failed - Eigen::InvalidInput");
+						else if(chol.info() != Eigen::Success)
+							state.addError("Decomposition failed - unknown error");
+					}
+				});
+			}
+		}
 	}
 
 	tasks.wait();
@@ -176,10 +208,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_inMask, "mask", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_mosaic, "mosaic", 1u);
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
 	meta.addInfluence(a_inMask, a_outFrame);
+	meta.addInfluence(a_mosaic, a_outFrame);
 
 	meta.setCompute(compute);
 }
