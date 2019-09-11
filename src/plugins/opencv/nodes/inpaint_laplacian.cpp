@@ -5,7 +5,9 @@
 #include <mutex>
 
 #include <opencv2/opencv.hpp>
+
 #include <Eigen/Sparse>
+
 #include <tbb/task_group.h>
 
 #include <actions/traits.h>
@@ -14,65 +16,76 @@
 
 namespace {
 
-class Triplets {
+class Triplets;
+
+class Row {
 	public:
-		Triplets(int rows, int cols) : m_rows(rows), m_cols(cols), m_rowCount(0) {
+		Row() = default;
+
+		void addValue(int64_t row, int64_t col, double value) {
+			if(value != 0.0)
+				m_values[(row << 32) + col] += value;
 		}
 
-		class Row  {
-			public:
-				void addValue(int row, int col, float value) {
-					m_parent->m_triplets.push_back(Eigen::Triplet<float>{m_rowid, row*m_parent->m_cols + col, value});
-				}
+	private:
+		Row(const Row&) = delete;
+		Row& operator = (const Row&) = delete;
 
-			private:
-				Row(Triplets* parent, int rowid) : m_parent(parent), m_rowid(rowid) {
-				}
+		std::map<int64_t, double> m_values;
 
-				Triplets* m_parent;
-				int m_rowid;
+	friend class Triplets;
+};
 
-			friend class Triplets;
-		};
+class Triplets {
+	public:
+		Triplets(int rows, int cols) : m_rowCount(0), m_rows(rows), m_cols(cols) {
+		}
 
-		Row addRow() {
+		void addRow(const Row& r) {
+			for(auto& v : r.m_values) {
+				int32_t row = v.first >> 32;
+				int32_t col = v.first & 0xffffffff;
+
+				assert(row < m_rows);
+				assert(col < m_cols);
+
+				m_triplets.push_back(Eigen::Triplet<double>(m_rowCount, row*m_cols + col, v.second));
+			}
+
 			++m_rowCount;
-
-			return Row(this, m_rowCount-1);
 		}
 
 		std::size_t rows() const {
 			return m_rowCount;
 		}
 
-		const std::vector<Eigen::Triplet<float>>& triplets() const {
+		const std::vector<Eigen::Triplet<double>>& triplets() const {
 			return m_triplets;
 		}
 
 	private:
-		int m_rows, m_cols;
-		std::vector<Eigen::Triplet<float>> m_triplets;
+		std::vector<Eigen::Triplet<double>> m_triplets;
 
-		int m_rowCount;
+		int m_rowCount, m_rows, m_cols;
 
 		friend class Row;
 };
 
-float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<float>& A, Eigen::VectorXf& b, int channel) {
+float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<double>& A, Eigen::VectorXd& b, int channel) {
 	Triplets triplets(image.rows, image.cols);
-	std::vector<float> values;
+	std::vector<double> values;
 
 	std::size_t validCtr = 0, interpolatedCtr = 0;
 
 	for(int y=0;y<image.rows;++y)
 		for(int x=0;x<image.cols;++x) {
-			Triplets::Row row = triplets.addRow();
+			Row row;
 
 			// masked and/or edge
 			if(mask.at<unsigned char>(y, x) > 128) {
 				values.push_back(0.0f);
 
-				float current = 0.0f;
+				double current = 0.0f;
 				if(x > 0) {
 					row.addValue(y, x-1, 1.0f);
 					current -= 1.0f;
@@ -96,21 +109,23 @@ float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatr
 			}
 
 			// non-masked
-			else {
+			if(mask.at<unsigned char>(y, x) <= 128) {
 				values.push_back(image.ptr<float>(y, x)[channel]);
 				row.addValue(y, x, 1);
 
 				++validCtr;
 			}
+
+			triplets.addRow(row);
 		}
 
 	// initialise the sparse matrix
-	A = Eigen::SparseMatrix<float>(triplets.rows(), image.rows * image.cols);
+	A = Eigen::SparseMatrix<double>(triplets.rows(), image.rows * image.cols);
 	A.setFromTriplets(triplets.triplets().begin(), triplets.triplets().end());
 
 	// and the "b" vector
 	assert(values.size() == triplets.rows());
-	b = Eigen::VectorXf(values.size());
+	b = Eigen::VectorXd(values.size());
 	for(std::size_t i=0; i<values.size(); ++i)
 		b[i] = values[i];
 
@@ -156,36 +171,55 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					cv::Mat inTile(image, roi);
 					cv::Mat inMask(mask, roi);
 
-					Eigen::SparseMatrix<float> A;
-					Eigen::VectorXf b, tmp;
+					Eigen::SparseMatrix<double> A;
+					Eigen::VectorXd b, tmp;
 
 					const float ratio = buildMatrices(inTile, inMask, A, b, channel);
 
-					if(ratio > 1.0) {
-						const Eigen::SparseLU<Eigen::SparseMatrix<float>> chol(A);
-						tmp = chol.solve(b);
+					if(ratio > 0.003) {
+						const char* stage = "solver construction";
 
-						assert(tmp.size() == inTile.rows * inTile.cols);
-						for(int i=0;i<tmp.size();++i) {
-							const int row = i / roi.width;
-							const int col = i % roi.width;
-							const int index = (row + roi.y) * image.cols + col + roi.x;
+						Eigen::SparseLU<Eigen::SparseMatrix<double>> chol(A);
 
-							assert((std::size_t)index < x[channel].size());
+						if(chol.info() == Eigen::Success) {
+							stage = "analyze pattern";
 
-							x[channel][index] = tmp[i];
+							chol.analyzePattern(A);
+
+							if(chol.info() == Eigen::Success) {
+								stage = "factorize";
+
+								chol.factorize(A);
+
+								if(chol.info() == Eigen::Success) {
+									stage = "solve";
+
+									tmp = chol.solve(b);
+
+									assert(tmp.size() == inTile.rows * inTile.cols);
+									for(int i=0;i<tmp.size();++i) {
+										const int row = i / roi.width;
+										const int col = i % roi.width;
+										const int index = (row + roi.y) * image.cols + col + roi.x;
+
+										assert((std::size_t)index < x[channel].size());
+
+										x[channel][index] = tmp[i];
+									}
+								}
+							}
 						}
 
 						std::lock_guard<std::mutex> guard(solve_mutex);
 
 						if(chol.info() == Eigen::NumericalIssue)
-							state.addError("Decomposition failed - Eigen::NumericalIssue");
+							state.addWarning("Decomposition failed - Eigen::NumericalIssue at stage " + std::string(stage));
 						else if(chol.info() == Eigen::NoConvergence)
-							state.addError("Decomposition failed - Eigen::NoConvergence");
+							state.addWarning("Decomposition failed - Eigen::NoConvergence at stage " + std::string(stage));
 						else if(chol.info() == Eigen::InvalidInput)
-							state.addError("Decomposition failed - Eigen::InvalidInput");
+							state.addWarning("Decomposition failed - Eigen::InvalidInput at stage " + std::string(stage));
 						else if(chol.info() != Eigen::Success)
-							state.addError("Decomposition failed - unknown error");
+							state.addWarning("Decomposition failed - unknown error at stage " + std::string(stage));
 					}
 				});
 			}
