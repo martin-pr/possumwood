@@ -100,12 +100,12 @@ void init(possumwood::Metadata& meta, FN fn, Params& params) {
 }
 
 static Params s_dilateParams;
-possumwood::NodeImplementation s_implDilate("opencv/dilate", [&](possumwood::Metadata& meta) {
+possumwood::NodeImplementation s_implDilate("opencv/dilate", [](possumwood::Metadata& meta) {
 	init(meta, cv::dilate, s_dilateParams);
 });
 
 static Params s_erodeParams;
-possumwood::NodeImplementation s_implErode("opencv/erode", [&](possumwood::Metadata& meta) {
+possumwood::NodeImplementation s_implErode("opencv/erode", [](possumwood::Metadata& meta) {
 	init(meta, cv::erode, s_erodeParams);
 });
 
