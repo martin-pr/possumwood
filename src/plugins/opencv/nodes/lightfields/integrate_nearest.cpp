@@ -105,7 +105,7 @@ void init(possumwood::Metadata& meta) {
 
 	meta.addInfluence(a_in, a_norm);
 	meta.addInfluence(a_samples, a_norm);
-	meta.addInfluence(a_size, a_out);
+	meta.addInfluence(a_size, a_norm);
 
 	meta.setCompute(compute);
 }
