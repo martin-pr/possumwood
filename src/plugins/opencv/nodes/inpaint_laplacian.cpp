@@ -99,13 +99,13 @@ static const cv::Mat kernel = (cv::Mat_<double>(3,3) <<
 // );
 
 float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<double>& A, Eigen::VectorXd& b, const cv::Rect2i& roi) {
-	Triplets triplets(image.rows, image.cols);
+	Triplets triplets(roi.height, roi.width);
 	std::vector<double> values;
 
 	std::size_t validCtr = 0, interpolatedCtr = 0;
 
-	for(int y=0;y<image.rows;++y)
-		for(int x=0;x<image.cols;++x) {
+	for(int y=roi.y; y<roi.y+roi.height; ++y)
+		for(int x=roi.x; x<roi.x+roi.width; ++x) {
 			Row row;
 
 			// masked and/or edge
@@ -119,21 +119,21 @@ float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatr
 						int xpos = x + xi - kernel.cols/2;
 
 						// handling of edges - "clip" (or "mirror", commented out for now)
-						if(ypos < 0)
+						if(ypos < roi.y)
 							// ypos = -ypos;
-							ypos = 0;
-						if(ypos >= image.rows)
+							ypos = roi.y;
+						if(ypos >= roi.y + roi.height)
 							// ypos = (image.rows-1) - (ypos-image.rows);
-							ypos = image.rows-1;
+							ypos = roi.y + roi.height - 1;
 
-						if(xpos < 0)
+						if(xpos < roi.x)
 							// xpos = -xpos;
-							xpos = 0;
-						if(xpos >= image.cols)
+							xpos = roi.x;
+						if(xpos >= roi.x + roi.width)
 							// xpos = (image.cols-1) - (xpos-image.cols);
-							xpos = image.cols-1;
+							xpos = roi.x + roi.width - 1;
 
-						row.addValue(ypos, xpos, kernel.at<double>(yi, xi));
+						row.addValue(ypos - roi.y, xpos - roi.x, kernel.at<double>(yi, xi));
 					}
 
 				++interpolatedCtr;
@@ -142,7 +142,7 @@ float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatr
 			// non-masked
 			if(mask.at<unsigned char>(y, x) <= 128) {
 				values.push_back(image.at<float>(y, x));
-				row.addValue(y, x, 1);
+				row.addValue(y-roi.y, x-roi.x, 1);
 
 				++validCtr;
 			}
@@ -151,7 +151,7 @@ float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatr
 		}
 
 	// initialise the sparse matrix
-	A = Eigen::SparseMatrix<double>(triplets.rows(), image.rows * image.cols);
+	A = Eigen::SparseMatrix<double>(triplets.rows(), roi.height * roi.width);
 	A.setFromTriplets(triplets.triplets().begin(), triplets.triplets().end());
 
 	// and the "b" vector
@@ -183,6 +183,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		throw std::runtime_error("Laplacian inpainting - empty input image and/or mask.");
 	if(input.size != mask.size)
 		throw std::runtime_error("Laplacian inpainting - input and mask image size have to match.");
+	if(input.cols % mosaic != 0 || input.rows % mosaic != 0)
+		throw std::runtime_error("Laplacian inpainting - image size is not divisible by mosaic count - invalid mosaic?.");
 
 	std::vector<std::vector<float>> x(input.channels(), std::vector<float>(input.rows * input.cols, 0.0f));
 
@@ -197,24 +199,27 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	assert((int)inputs.size() == input.channels());
 	assert((int)masks.size() == mask.channels());
 
-	for(unsigned a=0;a<mosaic; ++a) {
-		for(unsigned b=0;b<mosaic; ++b) {
+	const unsigned mosaic_rows = input.rows / mosaic;
+	const unsigned mosaic_cols = input.cols / mosaic;
+
+	for(unsigned yi=0;yi<mosaic; ++yi) {
+		for(unsigned xi=0;xi<mosaic; ++xi) {
 			cv::Rect2i roi;
-			roi.y = (a * input.rows) / mosaic;
-			roi.x = (b * input.cols) / mosaic;
-			roi.height = ((a+1) * input.rows) / mosaic - roi.y;
-			roi.width = ((b+1) * input.cols) / mosaic - roi.x;
+			roi.y = yi * mosaic_rows;
+			roi.x = xi * mosaic_cols;
+			roi.height = mosaic_rows;
+			roi.width = mosaic_cols;
 
 			for(int channel=0; channel<input.channels(); ++channel) {
 
 				tasks.run([channel, &inputs, &masks, &x, &state, &solve_mutex, roi]() {
-					cv::Mat inTile = inputs[channel](roi);
+					cv::Mat inTile = inputs[channel];
 
 					cv::Mat inMask;
 					if(masks.size() == 1)
-						inMask = masks[0](roi);
+						inMask = masks[0];
 					else
-						inMask = masks[channel](roi);
+						inMask = masks[channel];
 
 					Eigen::SparseMatrix<double> A;
 					Eigen::VectorXd b, tmp;
@@ -241,7 +246,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 									tmp = chol.solve(b);
 
-									assert(tmp.size() == inTile.rows * inTile.cols);
+									assert(tmp.size() == roi.height * roi.width);
 									for(int i=0;i<tmp.size();++i) {
 										const int row = i / roi.width;
 										const int col = i % roi.width;
