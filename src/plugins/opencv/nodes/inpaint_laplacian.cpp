@@ -98,7 +98,7 @@ static const cv::Mat kernel = (cv::Mat_<double>(3,3) <<
 // 	 0.0,  0.0,  1.0,  0.0,  0.0
 // );
 
-float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<double>& A, Eigen::VectorXd& b, int channel) {
+float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<double>& A, Eigen::VectorXd& b, const cv::Rect2i& roi) {
 	Triplets triplets(image.rows, image.cols);
 	std::vector<double> values;
 
@@ -141,7 +141,7 @@ float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatr
 
 			// non-masked
 			if(mask.at<unsigned char>(y, x) <= 128) {
-				values.push_back(image.ptr<float>(y, x)[channel]);
+				values.push_back(image.at<float>(y, x));
 				row.addValue(y, x, 1);
 
 				++validCtr;
@@ -171,46 +171,60 @@ dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State state;
 
-	const cv::Mat& image = *data.get(a_inFrame);
+	const cv::Mat& input = *data.get(a_inFrame);
 	const cv::Mat& mask = *data.get(a_inMask);
 	const unsigned mosaic = data.get(a_mosaic);
 
-	if(image.depth() != CV_32F)
+	if(input.depth() != CV_32F)
 		throw std::runtime_error("Laplacian inpainting - input image type has to be CV_32F.");
-	if(mask.type() != CV_8UC1)
-		throw std::runtime_error("Laplacian inpainting - mask image type has to be CV_8UC1.");
-	if(image.empty() || mask.empty())
+	if(mask.type() != CV_8UC1 && mask.type() != CV_8UC3)
+		throw std::runtime_error("Laplacian inpainting - mask image type has to be CV_8UC1 or CV_8UC3.");
+	if(input.empty() || mask.empty())
 		throw std::runtime_error("Laplacian inpainting - empty input image and/or mask.");
-	if(image.size != mask.size)
+	if(input.size != mask.size)
 		throw std::runtime_error("Laplacian inpainting - input and mask image size have to match.");
 
-	std::vector<std::vector<float>> x(image.channels(), std::vector<float>(image.rows * image.cols, 0.0f));
+	std::vector<std::vector<float>> x(input.channels(), std::vector<float>(input.rows * input.cols, 0.0f));
 
 	tbb::task_group tasks;
 	std::mutex solve_mutex;
 
+	// split the inputs and masks per channel
+	std::vector<cv::Mat> inputs, masks;
+	cv::split(input, inputs);
+	cv::split(mask, masks);
+
+	assert((int)inputs.size() == input.channels());
+	assert((int)masks.size() == mask.channels());
+
 	for(unsigned a=0;a<mosaic; ++a) {
 		for(unsigned b=0;b<mosaic; ++b) {
-			for(int channel=0; channel<image.channels(); ++channel) {
-				cv::Rect2i roi;
-				roi.y = (a * image.rows) / mosaic;
-				roi.x = (b * image.cols) / mosaic;
-				roi.height = ((a+1) * image.rows) / mosaic - roi.y;
-				roi.width = ((b+1) * image.cols) / mosaic - roi.x;
+			cv::Rect2i roi;
+			roi.y = (a * input.rows) / mosaic;
+			roi.x = (b * input.cols) / mosaic;
+			roi.height = ((a+1) * input.rows) / mosaic - roi.y;
+			roi.width = ((b+1) * input.cols) / mosaic - roi.x;
 
-				tasks.run([channel, &image, &mask, &x, &state, &solve_mutex, roi]() {
-					cv::Mat inTile(image, roi);
-					cv::Mat inMask(mask, roi);
+			for(int channel=0; channel<input.channels(); ++channel) {
+
+				tasks.run([channel, &inputs, &masks, &x, &state, &solve_mutex, roi]() {
+					cv::Mat inTile = inputs[channel](roi);
+
+					cv::Mat inMask;
+					if(masks.size() == 1)
+						inMask = masks[0](roi);
+					else
+						inMask = masks[channel](roi);
 
 					Eigen::SparseMatrix<double> A;
 					Eigen::VectorXd b, tmp;
 
-					const float ratio = buildMatrices(inTile, inMask, A, b, channel);
+					const float ratio = buildMatrices(inTile, inMask, A, b, roi);
 
 					if(ratio > 0.003) {
 						const char* stage = "solver construction";
 
-						Eigen::SparseLU<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> chol(A);
+						Eigen::SparseLU<Eigen::SparseMatrix<double> /*, Eigen::NaturalOrdering<int>*/ > chol(A);
 
 						if(chol.info() == Eigen::Success) {
 							stage = "analyze pattern";
@@ -231,7 +245,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 									for(int i=0;i<tmp.size();++i) {
 										const int row = i / roi.width;
 										const int col = i % roi.width;
-										const int index = (row + roi.y) * image.cols + col + roi.x;
+										const int index = (row + roi.y) * masks[0].cols + col + roi.x;
 
 										assert((std::size_t)index < x[channel].size());
 
@@ -259,10 +273,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	tasks.wait();
 
-	cv::Mat result = image.clone();
+	cv::Mat result = input.clone();
 	for(int yi=0;yi<result.rows;++yi)
 		for(int xi=0;xi<result.cols;++xi)
-			for(int c=0;c<image.channels();++c)
+			for(int c=0;c<input.channels();++c)
 				result.ptr<float>(yi, xi)[c] = x[c][yi*result.cols + xi];
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
