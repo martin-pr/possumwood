@@ -121,16 +121,16 @@
             "out_port": "frame"
         },
         {
+            "in_node": "integrate_mosaic_0",
+            "in_port": "pattern",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "pattern"
+        },
+        {
             "in_node": "divide_0",
             "in_port": "in_frame_2",
             "out_node": "lytro_lightfield_1",
             "out_port": "frame"
-        },
-        {
-            "in_node": "integrate_mosaic_0",
-            "in_port": "pattern",
-            "out_node": "lytro_lightfield_1",
-            "out_port": "pattern"
         },
         {
             "in_node": "color_3",
@@ -230,8 +230,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 598.802551269531,
-                    "y": 813.664978027344
+                    "x": 584.822143554688,
+                    "y": 822.561584472656
                 }
             },
             "name": "color",
@@ -314,8 +314,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 312.026031494141,
-                    "y": 1375.06506347656
+                    "x": 298.493347167969,
+                    "y": 1338.97790527344
                 }
             },
             "name": "concat",
@@ -344,13 +344,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 488.252593994141,
-                    "y": 248.421310424805
+                    "x": 488.797912597656,
+                    "y": 255.654754638672
                 }
             },
             "name": "convert",
             "ports": {
-                "a": 32.0,
+                "a": 64.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -392,8 +392,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 232.346969604492,
-                    "y": -110.177940368652
+                    "x": 145.389923095703,
+                    "y": -93.3291244506836
                 }
             },
             "name": "divide",
@@ -421,16 +421,16 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 275.983459472656,
-                    "y": 47.7179107666016
+                    "x": 262.083862304688,
+                    "y": 64.5667266845703
                 }
             },
             "name": "integrate_mosaic",
             "ports": {
-                "elements": 5,
+                "elements": 11,
                 "size": {
-                    "x": 200,
-                    "y": 200
+                    "x": 150,
+                    "y": 150
                 }
             },
             "type": "opencv/lightfields/integrate_mosaic"
@@ -439,8 +439,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 168.993041992188,
-                    "y": -329.309875488281
+                    "x": 82.0359954833984,
+                    "y": -312.461059570312
                 }
             },
             "name": "lytro_lightfield",
@@ -453,8 +453,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 378.144165039062,
-                    "y": -325.099761962891
+                    "x": 291.187103271484,
+                    "y": -308.250946044922
                 }
             },
             "name": "lytro_lightfield",
@@ -467,8 +467,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 364.700073242188,
-                    "y": 1558.02526855469
+                    "x": 377.794677734375,
+                    "y": 1545.22033691406
                 }
             },
             "connections": [
@@ -617,7 +617,7 @@
                     },
                     "name": "fragment_shader",
                     "ports": {
-                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform sampler2D image;\n\nvoid main() { \n\tif(uv.y < 0.0 || uv.y > 1.0)\n\t\tcolor = vec4(0,0,0,1);\n\telse\n\t\tcolor = vec4(texture(image, vec2(uv.x, 1.0-uv.y))); \n} \n"
+                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform sampler2D image;\n\nvoid main() { \n\tif(uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)\n\t\tcolor = vec4(0,0,0,1);\n\telse\n\t\tcolor = vec4(texture(image, vec2(uv.x, 1.0-uv.y))); \n} \n"
                     },
                     "type": "render/fragment_shader"
                 },
@@ -695,8 +695,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 394.575225830078,
-                            "y": 156.934188842773
+                            "x": 397.664703369141,
+                            "y": 121.183692932129
                         }
                     },
                     "name": "split_vec2u",
@@ -771,8 +771,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 420.28759765625,
-                    "y": 444.002868652344
+                    "x": 413.431030273438,
+                    "y": 455.342224121094
                 }
             },
             "name": "split",
@@ -795,6 +795,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAAAAAAASlAAACQQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAChAAAAV0AAACGAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAAAAAAAQ6AAACQQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAByAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAATAAAACGAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
