@@ -16,6 +16,7 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
 dependency_graph::InAttr<unsigned> a_mosaic;
 dependency_graph::InAttr<float> a_offset;
+dependency_graph::InAttr<bool> a_circularFilter;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_mask;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -39,29 +40,37 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const int tile_width = input.cols / mosaic;
 	const int tile_height = input.rows / mosaic;
 
+	const bool circular_filter = data.get(a_circularFilter);
+	const int circular_threshold = (mosaic/2) * (mosaic/2);
+
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		for(int x=0;x<input.cols;++x) {
-			float xi = x % tile_width;
-			float yi = y % tile_height;
+			const int xi = x / tile_width - mosaic / 2;
+			const int yi = y / tile_height - mosaic / 2;
 
-			xi += (float)(x/tile_width - mosaic/2) * offset;
-			yi += (float)(y/tile_height - mosaic/2) * offset;
+			if(xi*xi + yi*yi <= circular_threshold || !circular_filter) {
+				float xi = x % tile_width;
+				float yi = y % tile_height;
 
-			xi = xi / (float)(tile_width) * (float)width;
-			yi = yi / (float)(tile_height) * (float)height;
+				xi += (float)(x/tile_width - mosaic/2) * offset;
+				yi += (float)(y/tile_height - mosaic/2) * offset;
 
-			const int target_x = (int)round(xi);
-			const int target_y = (int)round(yi);
+				xi = xi / (float)(tile_width) * (float)width;
+				yi = yi / (float)(tile_height) * (float)height;
 
-			if(target_x >= 0 && target_x < width && target_y >= 0 && target_y < height) {
-				float* color = mat.ptr<float>(target_y, target_x);
-				int16_t* n = norm.ptr<int16_t>(target_y, target_x);
+				const int target_x = (int)round(xi);
+				const int target_y = (int)round(yi);
 
-				const float* value = input.ptr<float>(y, x);
+				if(target_x >= 0 && target_x < width && target_y >= 0 && target_y < height) {
+					float* color = mat.ptr<float>(target_y, target_x);
+					int16_t* n = norm.ptr<int16_t>(target_y, target_x);
 
-				for(int a=0;a<3;++a) {
-					color[a] += value[a];
-					n[a] += 1;
+					const float* value = input.ptr<float>(y, x);
+
+					for(int a=0;a<3;++a) {
+						color[a] += value[a];
+						n[a] += 1;
+					}
 				}
 			}
 		}
@@ -87,16 +96,19 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_offset, "offset", 3.0f);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_mask, "mask", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_circularFilter, "filter/circular", true);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_size, a_out);
 	meta.addInfluence(a_mosaic, a_out);
 	meta.addInfluence(a_offset, a_out);
+	meta.addInfluence(a_circularFilter, a_out);
 
 	meta.addInfluence(a_in, a_mask);
 	meta.addInfluence(a_size, a_mask);
 	meta.addInfluence(a_mosaic, a_mask);
 	meta.addInfluence(a_offset, a_mask);
+	meta.addInfluence(a_circularFilter, a_mask);
 
 	meta.setCompute(compute);
 }
