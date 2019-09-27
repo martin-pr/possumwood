@@ -16,7 +16,7 @@ namespace {
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<possumwood::opencv::LightfieldSamples> a_samples;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
-dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_norm;
+dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_norm, a_correspondence;
 
 void add1channel(float* color, uint16_t* n, int colorIndex, const float* value) {
 	color[colorIndex] += value[0];
@@ -51,7 +51,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
 
-	cv::Mat mat = cv::Mat::zeros(height, width, CV_32FC3);
+	cv::Mat average = cv::Mat::zeros(height, width, CV_32FC3);
 	cv::Mat norm = cv::Mat::zeros(height, width, CV_16UC3);
 
 	tbb::parallel_for(0, input.rows, [&](int y) {
@@ -71,7 +71,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			assert(floor(target_x) < width);
 			assert(floor(target_y) < height);
 
-			float* color = mat.ptr<float>(floor(target_y), floor(target_x));
+			float* color = average.ptr<float>(floor(target_y), floor(target_x));
 			uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
 
 			const float* value = input.ptr<float>(it->source[1], it->source[0]);
@@ -79,15 +79,42 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 	});
 
-	tbb::parallel_for(0, mat.rows, [&](int y) {
-		for(int x=0;x<mat.cols;++x)
+	tbb::parallel_for(0, average.rows, [&](int y) {
+		for(int x=0;x<average.cols;++x)
 			for(int a=0;a<3;++a)
 				if(norm.ptr<float>(y,x)[a] > 0.0f)
-					mat.ptr<float>(y,x)[a] /= (float)norm.ptr<uint16_t>(y,x)[a];
+					average.ptr<float>(y,x)[a] /= (float)norm.ptr<uint16_t>(y,x)[a];
 	});
 
-	data.set(a_out, possumwood::opencv::Frame(mat));
+	data.set(a_out, possumwood::opencv::Frame(average));
 	data.set(a_norm, possumwood::opencv::Frame(norm));
+
+	// computing correspondence
+	cv::Mat corresp = cv::Mat::zeros(height, width, CV_32FC1);
+
+	tbb::parallel_for(0, input.rows, [&](int y) {
+		const auto end = samples.end(y);
+		const auto begin = samples.begin(y);
+		assert(begin <= end);
+
+		for(auto it = begin; it != end; ++it) {
+			const float target_x = it->target[0] * (float)width;
+			const float target_y = it->target[1] * (float)height;
+
+			float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
+			const float* value = input.ptr<float>(it->source[1], it->source[0]);
+			const float* ave = average.ptr<float>(target_y, target_x);
+			const uint16_t* n = norm.ptr<uint16_t>(target_y, target_x);
+
+			if(input.channels() == 3)
+				for(int c=0; c<3; ++c)
+					*target += pow(value[c] - ave[c], 2) / (float)n[c];
+			else
+				*target += pow(*value - ave[it->color], 2) / (float)n[it->color];
+		}
+	});
+
+	data.set(a_correspondence, possumwood::opencv::Frame(corresp));
 
 	return dependency_graph::State();
 }
@@ -98,6 +125,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(300u, 300u));
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_norm, "sample_count", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_correspondence, "correspondence", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_samples, a_out);
@@ -106,6 +134,10 @@ void init(possumwood::Metadata& meta) {
 	meta.addInfluence(a_in, a_norm);
 	meta.addInfluence(a_samples, a_norm);
 	meta.addInfluence(a_size, a_norm);
+
+	meta.addInfluence(a_in, a_correspondence);
+	meta.addInfluence(a_samples, a_correspondence);
+	meta.addInfluence(a_size, a_correspondence);
 
 	meta.setCompute(compute);
 }
