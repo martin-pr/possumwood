@@ -265,7 +265,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/coins.lfr"
+                "filename": "$EXAMPLES/lytro/road.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -583,7 +583,7 @@
             },
             "name": "samples_refocus",
             "ports": {
-                "uv_offset": 35.0,
+                "uv_offset": -15.0,
                 "uv_threshold": 1.0,
                 "xy_scale": 1.0
             },
@@ -612,5 +612,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK3AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAAx8AAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALGAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACGAQAAAwAAAxAAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
