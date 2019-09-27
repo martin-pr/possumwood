@@ -1,9 +1,9 @@
 {
     "connections": [
         {
-            "in_node": "convert_1",
-            "in_port": "in_frame",
-            "out_node": "color_0",
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_0",
             "out_port": "out_frame"
         },
         {
@@ -19,8 +19,8 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "concat_0",
-            "in_port": "in_frame_2",
+            "in_node": "colormap_0",
+            "in_port": "in_frame",
             "out_node": "convert_1",
             "out_port": "out_frame"
         },
@@ -34,6 +34,12 @@
             "in_node": "integrate_nearest_1",
             "in_port": "in_frame",
             "out_node": "divide_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "divide_1",
             "out_port": "out_frame"
         },
         {
@@ -52,6 +58,12 @@
             "in_node": "divide_1",
             "in_port": "in_frame_1",
             "out_node": "integrate_nearest_0",
+            "out_port": "correspondence"
+        },
+        {
+            "in_node": "divide_1",
+            "in_port": "in_frame_2",
+            "out_node": "integrate_nearest_1",
             "out_port": "correspondence"
         },
         {
@@ -85,45 +97,33 @@
             "out_port": "samples"
         },
         {
-            "in_node": "divide_1",
-            "in_port": "in_frame_2",
-            "out_node": "integrate_nearest_1",
-            "out_port": "correspondence"
-        },
-        {
             "in_node": "integrate_nearest_1",
             "in_port": "samples",
             "out_node": "samples_refocus_1",
             "out_port": "samples"
-        },
-        {
-            "in_node": "color_0",
-            "in_port": "in_frame",
-            "out_node": "divide_1",
-            "out_port": "out_frame"
         }
     ],
     "nodes": {
-        "color_0": {
+        "colormap_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 604.171752929688,
-                    "y": 721.121459960938
+                    "x": 611.707580566406,
+                    "y": 953.985778808594
                 }
             },
-            "name": "color",
+            "name": "colormap",
             "ports": {
-                "mode": "GRAY2BGR"
+                "type": "COLORMAP_JET"
             },
-            "type": "opencv/color"
+            "type": "opencv/colormap"
         },
         "concat_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 322.862030029297,
-                    "y": 1286.20861816406
+                    "x": 419.402252197266,
+                    "y": 1140.09362792969
                 }
             },
             "name": "concat",
@@ -136,8 +136,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 153.619857788086,
-                    "y": 762.632690429688
+                    "x": 315.389923095703,
+                    "y": 757.414306640625
                 }
             },
             "name": "convert",
@@ -152,8 +152,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 609.809753417969,
-                    "y": 897.482666015625
+                    "x": 612.809753417969,
+                    "y": 752.482666015625
                 }
             },
             "name": "convert",
@@ -168,8 +168,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 311.442749023438,
-                    "y": -66.9536590576172
+                    "x": 347.920288085938,
+                    "y": -365.406341552734
                 }
             },
             "name": "divide",
@@ -196,8 +196,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 126.270942687988,
-                    "y": 571.0
+                    "x": 288.041015625,
+                    "y": 565.781616210938
                 }
             },
             "name": "gamma",
@@ -245,8 +245,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 457.688140869141,
-                    "y": -197.654876708984
+                    "x": 494.165679931641,
+                    "y": -496.107543945312
                 }
             },
             "name": "lytro_lightfield",
@@ -259,8 +259,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 185.242950439453,
-                    "y": -222.581604003906
+                    "x": 221.720504760742,
+                    "y": -521.034301757812
                 }
             },
             "name": "lytro_lightfield",
@@ -273,8 +273,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 386.180877685547,
-                    "y": 1453.20532226562
+                    "x": 482.721099853516,
+                    "y": 1307.09033203125
                 }
             },
             "connections": [
@@ -577,8 +577,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 561.488037109375,
-                    "y": -42.9586563110352
+                    "x": 544.907348632812,
+                    "y": -52.9070777893066
                 }
             },
             "name": "samples_refocus",
@@ -594,7 +594,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 744.987976074219,
-                    "y": -41.6741905212402
+                    "y": -51.6226119995117
                 }
             },
             "name": "samples_refocus",
