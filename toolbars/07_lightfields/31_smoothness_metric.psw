@@ -7,13 +7,25 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "network_0",
-            "in_port": "frame",
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "colormap_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_1",
+            "in_port": "in_frame_2",
             "out_node": "concat_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "concat_0",
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_1",
             "in_port": "in_frame_1",
             "out_node": "convert_0",
             "out_port": "out_frame"
@@ -25,21 +37,15 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "colormap_1",
+            "in_port": "in_frame",
+            "out_node": "convert_2",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "integrate_nearest_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "integrate_nearest_1",
-            "in_port": "in_frame",
-            "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "convert_1",
-            "in_port": "in_frame",
-            "out_node": "divide_1",
             "out_port": "out_frame"
         },
         {
@@ -55,16 +61,22 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "divide_1",
-            "in_port": "in_frame_1",
+            "in_node": "laplacian_smoothness_0",
+            "in_port": "in_frame",
+            "out_node": "integrate_nearest_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
             "out_node": "integrate_nearest_0",
             "out_port": "correspondence"
         },
         {
-            "in_node": "divide_1",
-            "in_port": "in_frame_2",
-            "out_node": "integrate_nearest_1",
-            "out_port": "correspondence"
+            "in_node": "convert_2",
+            "in_port": "in_frame",
+            "out_node": "laplacian_smoothness_0",
+            "out_port": "out_frame"
         },
         {
             "in_node": "divide_0",
@@ -74,12 +86,6 @@
         },
         {
             "in_node": "samples_refocus_0",
-            "in_port": "pattern",
-            "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
-        },
-        {
-            "in_node": "samples_refocus_1",
             "in_port": "pattern",
             "out_node": "lytro_lightfield_0",
             "out_port": "pattern"
@@ -95,12 +101,6 @@
             "in_port": "samples",
             "out_node": "samples_refocus_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "integrate_nearest_1",
-            "in_port": "samples",
-            "out_node": "samples_refocus_1",
-            "out_port": "samples"
         }
     ],
     "nodes": {
@@ -108,8 +108,22 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 611.707580566406,
-                    "y": 953.985778808594
+                    "x": 581.3984375,
+                    "y": 783.296875
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_JET"
+            },
+            "type": "opencv/colormap"
+        },
+        "colormap_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 387.008392333984,
+                    "y": 776.217163085938
                 }
             },
             "name": "colormap",
@@ -122,8 +136,22 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 419.402252197266,
-                    "y": 1140.09362792969
+                    "x": 454.893768310547,
+                    "y": 982.456848144531
+                }
+            },
+            "name": "concat",
+            "ports": {
+                "mode": "Horizontal"
+            },
+            "type": "opencv/concat"
+        },
+        "concat_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 299.462310791016,
+                    "y": 1204.34045410156
                 }
             },
             "name": "concat",
@@ -136,8 +164,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 315.389923095703,
-                    "y": 757.414306640625
+                    "x": 144.523422241211,
+                    "y": 820.041625976562
                 }
             },
             "name": "convert",
@@ -152,14 +180,30 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 612.809753417969,
-                    "y": 752.482666015625
+                    "x": 591.66650390625,
+                    "y": 555.701782226562
                 }
             },
             "name": "convert",
             "ports": {
-                "a": -128.0,
-                "b": 256.0,
+                "a": 32.0,
+                "b": 0.0,
+                "mode": "CV_8U"
+            },
+            "type": "opencv/convert"
+        },
+        "convert_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 377.867218017578,
+                    "y": 553.693725585938
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 2000.0,
+                "b": 0.0,
                 "mode": "CV_8U"
             },
             "type": "opencv/convert"
@@ -168,22 +212,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 444.088409423828,
-                    "y": 125.382637023926
-                }
-            },
-            "name": "divide",
-            "ports": {
-                "scale": 1.0
-            },
-            "type": "opencv/divide"
-        },
-        "divide_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 557.379516601562,
-                    "y": 564.98876953125
+                    "x": 351.236450195312,
+                    "y": -23.8435878753662
                 }
             },
             "name": "divide",
@@ -196,8 +226,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 288.041015625,
-                    "y": 565.781616210938
+                    "x": 110.542213439941,
+                    "y": 621.776672363281
                 }
             },
             "name": "gamma",
@@ -211,42 +241,39 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 150.691040039062,
-                    "y": 349.048095703125
+                    "x": 367.254302978516,
+                    "y": 166.404388427734
                 }
             },
             "name": "integrate_nearest",
             "ports": {
                 "size": {
-                    "x": 350,
-                    "y": 350
+                    "x": 320,
+                    "y": 320
                 }
             },
             "type": "opencv/lightfields/integrate_nearest"
         },
-        "integrate_nearest_1": {
+        "laplacian_smoothness_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 529.840454101562,
-                    "y": 348.876129150391
+                    "x": 326.260467529297,
+                    "y": 386.979553222656
                 }
             },
-            "name": "integrate_nearest",
+            "name": "laplacian_smoothness",
             "ports": {
-                "size": {
-                    "x": 350,
-                    "y": 350
-                }
+                "kernel": "24_shaped"
             },
-            "type": "opencv/lightfields/integrate_nearest"
+            "type": "opencv/laplacian_smoothness"
         },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 600.2822265625,
-                    "y": -84.9059600830078
+                    "x": 507.430267333984,
+                    "y": -200.970794677734
                 }
             },
             "name": "lytro_lightfield",
@@ -259,8 +286,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 334.469299316406,
-                    "y": -76.6713027954102
+                    "x": 311.256378173828,
+                    "y": -202.684555053711
                 }
             },
             "name": "lytro_lightfield",
@@ -273,8 +300,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 482.721099853516,
-                    "y": 1307.09033203125
+                    "x": 363.902954101562,
+                    "y": 1385.54016113281
                 }
             },
             "connections": [
@@ -577,29 +604,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -25.469030380249,
-                    "y": 106.267723083496
+                    "x": 594.649475097656,
+                    "y": -56.2232208251953
                 }
             },
             "name": "samples_refocus",
             "ports": {
-                "uv_offset": -15.0,
-                "uv_threshold": 1.0,
-                "xy_scale": 1.0
-            },
-            "type": "opencv/lightfields/samples_refocus"
-        },
-        "samples_refocus_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 708.510437011719,
-                    "y": 100.919906616211
-                }
-            },
-            "name": "samples_refocus",
-            "ports": {
-                "uv_offset": 0.0,
+                "uv_offset": 40.0,
                 "uv_threshold": 1.0,
                 "xy_scale": 1.0
             },
@@ -612,5 +623,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALGAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAByAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAATAAAACGAQAAAwAAAjsAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGxAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA4gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABWAAAAhYAAACGAQAAAwAAA1AAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
