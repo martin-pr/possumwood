@@ -207,6 +207,9 @@ dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 		}
 	}
 
+	if(json.find("description") != json.end())
+		m_sceneDescription.deserialize(json["description"].get<std::string>());
+
 	// read the UI configuration
 	if(QCoreApplication::instance() != nullptr) {
 		if(json.find("ui_geometry") != json.end())
@@ -258,6 +261,8 @@ void App::saveFile(possumwood::io::json& json, bool saveSceneConfig) {
 				config[i.name()] = i.as<std::string>();
 			else
 				assert(false);
+
+		json["description"] = m_sceneDescription.serialize();
 	}
 
 	// and save the UI configuration
@@ -338,6 +343,10 @@ boost::signals2::connection App::onTimeChanged(std::function<void(float)> fn) {
 
 Config& App::sceneConfig() {
 	return m_sceneConfig;
+}
+
+Description& App::sceneDescription() {
+	return m_sceneDescription;
 }
 
 boost::filesystem::path App::expandPath(const boost::filesystem::path& path) const {
