@@ -619,10 +619,46 @@ void MainWindow::selectionChanged(const dependency_graph::Selection& selection) 
 		}
 
 		if(editorCounter == 0) {
+			QWidget* descriptionWidget = new QWidget();
+			QVBoxLayout* layout = new QVBoxLayout(descriptionWidget);
+
 			QTextBrowser* tb = new QTextBrowser();
 			tb->setOpenExternalLinks(true);
 			tb->setHtml(possumwood::App::instance().sceneDescription().html().c_str());
-			m_editorDock->setWidget(tb);
+			layout->addWidget(tb, 1);
+
+			QDialogButtonBox* buttons = new QDialogButtonBox();
+			QPushButton* edit = buttons->addButton("Edit scene description...", QDialogButtonBox::ActionRole);
+			layout->addWidget(buttons, 0);
+
+			connect(edit, &QPushButton::pressed, [this, tb]() {
+				QDialog* editorDialog = new QDialog(this);
+				editorDialog->setMinimumSize(QSize(width()/2, height()/2));
+
+				QVBoxLayout* layout = new QVBoxLayout(editorDialog);
+
+				QTextEdit* editor = new QTextEdit();
+				editor->setText(possumwood::App::instance().sceneDescription().markdown().c_str());
+				layout->addWidget(editor, 1);
+
+				QDialogButtonBox* buttons = new QDialogButtonBox();
+				buttons->addButton(QDialogButtonBox::Ok);
+				buttons->addButton(QDialogButtonBox::Cancel);
+				layout->addWidget(buttons, 0);
+
+				connect(buttons, SIGNAL(accepted()), editorDialog, SLOT(accept()));
+				connect(buttons, SIGNAL(rejected()), editorDialog, SLOT(reject()));
+
+				int result = editorDialog->exec();
+				if(result == QDialog::Accepted) {
+					possumwood::App::instance().sceneDescription().setMarkdown(editor->document()->toPlainText().toStdString());
+					tb->setHtml(possumwood::App::instance().sceneDescription().html().c_str());
+				}
+
+				editorDialog->deleteLater();
+			});
+
+			m_editorDock->setWidget(descriptionWidget);
 		}
 		else if(editorCounter > 1) {
 			QLabel* editorWidget = new QLabel("More than one editable node selected");
