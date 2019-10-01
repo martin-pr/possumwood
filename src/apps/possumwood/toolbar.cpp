@@ -16,6 +16,14 @@
 #include "main_window.h"
 #include "error_dialog.h"
 
+namespace {
+
+struct Setup {
+	std::string name, description;
+};
+
+}
+
 Toolbar::Toolbar() {
 	const boost::filesystem::path path = possumwood::App::instance().expandPath("$TOOLBARS");
 
@@ -42,7 +50,7 @@ Toolbar::Toolbar() {
 
 			addTab(tb, toolbarIt.second.c_str());
 
-			std::map<boost::filesystem::path, std::string> setups;
+			std::map<boost::filesystem::path, Setup> setups;
 			for(auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(path / toolbarIt.first), {}))
 				if(entry.path().extension() == ".psw") {
 					static const std::regex regex("^[0-9]+_.*");
@@ -52,7 +60,16 @@ Toolbar::Toolbar() {
 						name = name.substr(name.find('_')+1);
 					std::replace(name.begin(), name.end(), '_', '\n');
 
-					setups[entry.path().filename()] = name;
+					setups[entry.path().filename()].name = name;
+
+					{
+						std::ifstream file(entry.path().string());
+						possumwood::io::json json;
+						file >> json;
+
+						if(!json["description"].is_null())
+							setups[entry.path().filename()].description = possumwood::Description(json["description"].get<std::string>()).html();
+					}
 				}
 
 			unsigned currentIndex = 1;
@@ -77,7 +94,8 @@ Toolbar::Toolbar() {
 					++currentIndex;
 				}
 
-				QAction* action = tb->addAction(i.second.c_str());
+				QAction* action = tb->addAction(i.second.name.c_str());
+				action->setToolTip(i.second.description.c_str());
 				if(boost::filesystem::exists(iconPath))
 					action->setIcon(QIcon(iconPath.c_str()));
 

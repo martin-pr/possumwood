@@ -31,7 +31,7 @@
             "out_port": "shader"
         }
     ],
-    "description": "# A simple OpenGL demo\nThis is a simple OpenGL demo.\n",
+    "description": "### A simple OpenGL demo\n\nA simple demo showing how to load an `.obj` file (positions, normals and topology) and display it using OpenGL. \n\nNamed vertex attributes _p_ and _n_ are loaded from an `.obj` file, and passed through to an OpenGL vertex/fragment shader setup. In later demos, this setup is wrapped-up in a subnetwork.\n",
     "nodes": {
         "draw_0": {
             "blind_data": {
@@ -115,5 +115,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACNQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA8gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABaAAAAgYAAACGAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABOwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABsQAAAb0AAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -26,6 +26,9 @@ bool starts_with(const std::string& str, const std::string& prefix) {
 
 }
 
+Description::Description(const std::string& md) : m_markDown(md) {
+}
+
 void Description::clear() {
 	m_markDown = "(empty description)";
 }

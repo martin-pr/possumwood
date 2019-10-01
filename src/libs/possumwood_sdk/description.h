@@ -7,6 +7,8 @@ namespace possumwood {
 /// A description of a setup, using a subset of markdown
 class Description {
 	public:
+		Description(const std::string& md = "");
+
 		void clear();
 
 		void setMarkdown(const std::string& md);
