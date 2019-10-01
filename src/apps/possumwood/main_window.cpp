@@ -19,6 +19,7 @@
 #include <QInputDialog>
 #include <QDialogButtonBox>
 #include <QScreen>
+#include <QTextBrowser>
 
 #include <dependency_graph/values.inl>
 #include <dependency_graph/metadata_register.h>
@@ -82,63 +83,13 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 	graphDock->toggleViewAction()->setIcon(QIcon(":icons/dock_graph.png"));
 	addDockWidget(Qt::LeftDockWidgetArea, graphDock);
 
-	QDockWidget* editorDock = new QDockWidget("Editor", this);
-	editorDock->setObjectName("editor");
-	QLabel* editorWidget = new QLabel("No editable node selected");
-	editorWidget->setAlignment(Qt::AlignCenter);
-	editorWidget->setMinimumHeight(100);
-	editorDock->setWidget(editorWidget);
-	editorDock->toggleViewAction()->setIcon(QIcon(":icons/dock_editor.png"));
-	addDockWidget(Qt::RightDockWidgetArea, editorDock);
+	m_editorDock = new QDockWidget("Editor", this);
+	m_editorDock->setObjectName("editor");
+	m_editorDock->toggleViewAction()->setIcon(QIcon(":icons/dock_editor.png"));
+	addDockWidget(Qt::RightDockWidgetArea, m_editorDock);
 
-	// connect the selection signal
-	connect(m_adaptor, &Adaptor::selectionChanged,
-			[editorDock, this](const dependency_graph::Selection& selection) {
-
-				// show the selection in the properties dock
-				m_properties->show(selection);
-
-				// instantiate the editor
-				{
-					if(m_editor != nullptr) {
-						m_editor->deleteLater();
-						m_editor = nullptr;
-					}
-
-
-					unsigned editorCounter = 0;
-					for(auto& n : selection.nodes()) {
-						const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
-						if(meta != nullptr && meta->hasEditor())
-							++editorCounter;
-					}
-
-					if(editorCounter == 0) {
-						QLabel* editorWidget = new QLabel("No editable node selected");
-						editorWidget->setAlignment(Qt::AlignCenter);
-						editorWidget->setMinimumHeight(100);
-						editorDock->setWidget(editorWidget);
-					}
-					else if(editorCounter > 1) {
-						QLabel* editorWidget = new QLabel("More than one editable node selected");
-						editorWidget->setAlignment(Qt::AlignCenter);
-						editorWidget->setMinimumHeight(100);
-						editorDock->setWidget(editorWidget);
-					}
-					else {
-						for(auto& n : selection.nodes()) {
-							const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
-							if(meta != nullptr && meta->hasEditor()) {
-								m_editor = meta->createEditor(n).release();
-								editorDock->setWidget(m_editor);
-							}
-						}
-					}
-				}
-
-				// set the status bar
-				updateStatusBar();
-			});
+	// connect the selection signal - changes the editor and updates the status bar
+	connect(m_adaptor, &Adaptor::selectionChanged, this, &MainWindow::selectionChanged);
 
 	// connect status signal
 	m_adaptor->graph().onStateChanged([this](const dependency_graph::NodeBase& node) {
@@ -346,6 +297,8 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 			possumwood::App::instance().newFile();
 
 			m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
+
+			selectionChanged(dependency_graph::Selection());
 		}
 	});
 
@@ -356,20 +309,8 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 			QFileDialog::getOpenFileName(this, tr("Open File"), possumwood::App::instance().filename().string().c_str(),
 										 tr("Possumwood files (*.psw)"));
 
-		if(!filename.isEmpty()) {
-			m_properties->show({});
-			const dependency_graph::State state = possumwood::App::instance().loadFile(boost::filesystem::path(filename.toStdString()));
-
-			m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
-
-			if(state.errored()) {
-				std::stringstream ss;
-				ss << "Error loading " << filename.toStdString() << "...";
-
-				ErrorDialog* err = new ErrorDialog(state, possumwood::App::instance().mainWindow(), ss.str().c_str());
-				err->show();
-			}
-		}
+		if(!filename.isEmpty())
+			loadFile(filename.toStdString());
 	});
 
 	QAction* saveAct = new QAction(QIcon(":icons/filesave.png"), "&Save...", this);
@@ -468,7 +409,7 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 	// toolbar
 	docksToolbar->addAction(graphDock->toggleViewAction());
 	docksToolbar->addAction(propDock->toggleViewAction());
-	docksToolbar->addAction(editorDock->toggleViewAction());
+	docksToolbar->addAction(m_editorDock->toggleViewAction());
 
 	////////////////////
 	// file menu
@@ -511,7 +452,7 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 
 		viewMenu->addAction(propDock->toggleViewAction());
 		viewMenu->addAction(graphDock->toggleViewAction());
-		viewMenu->addAction(editorDock->toggleViewAction());
+		viewMenu->addAction(m_editorDock->toggleViewAction());
 		viewMenu->addSeparator();
 		viewMenu->addAction(docksToolbar->toggleViewAction());
 	}
@@ -554,6 +495,9 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 
 	connect(diaButtons, &QDialogButtonBox::accepted, m_statusDialog, &QDialog::reject);
 	connect(m_statusDetail, &QPushButton::pressed, m_statusDialog, &QDialog::show);
+
+	// update selection and status bar
+	selectionChanged(dependency_graph::Selection());
 }
 
 MainWindow::~MainWindow() {
@@ -653,5 +597,66 @@ void MainWindow::updateStatusBar() {
 		m_statusIcon->setPixmap(QPixmap());
 		m_statusText->setText("");
 		m_statusDetail->setVisible(false);
+	}
+}
+
+void MainWindow::selectionChanged(const dependency_graph::Selection& selection) {
+	// show the selection in the properties dock
+	m_properties->show(selection);
+
+	// instantiate the editor
+	{
+		if(m_editor != nullptr) {
+			m_editor->deleteLater();
+			m_editor = nullptr;
+		}
+
+		unsigned editorCounter = 0;
+		for(auto& n : selection.nodes()) {
+			const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
+			if(meta != nullptr && meta->hasEditor())
+				++editorCounter;
+		}
+
+		if(editorCounter == 0) {
+			QTextBrowser* tb = new QTextBrowser();
+			tb->setOpenExternalLinks(true);
+			tb->setHtml(possumwood::App::instance().sceneDescription().html().c_str());
+			m_editorDock->setWidget(tb);
+		}
+		else if(editorCounter > 1) {
+			QLabel* editorWidget = new QLabel("More than one editable node selected");
+			editorWidget->setAlignment(Qt::AlignCenter);
+			editorWidget->setMinimumHeight(100);
+			m_editorDock->setWidget(editorWidget);
+		}
+		else {
+			for(auto& n : selection.nodes()) {
+				const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
+				if(meta != nullptr && meta->hasEditor()) {
+					m_editor = meta->createEditor(n).release();
+					m_editorDock->setWidget(m_editor);
+				}
+			}
+		}
+	}
+
+	// set the status bar
+	updateStatusBar();
+}
+
+void MainWindow::loadFile(const boost::filesystem::path& filename) {
+	m_properties->show({});
+	const dependency_graph::State state = possumwood::App::instance().loadFile(filename);
+
+	m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
+	selectionChanged(dependency_graph::Selection());
+
+	if(state.errored()) {
+		std::stringstream ss;
+		ss << "Error loading " << filename << "...";
+
+		ErrorDialog* err = new ErrorDialog(state, possumwood::App::instance().mainWindow(), ss.str().c_str());
+		err->show();
 	}
 }

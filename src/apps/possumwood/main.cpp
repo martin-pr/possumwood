@@ -109,16 +109,8 @@ int main(int argc, char* argv[]) {
 		GL_CHECK_ERR;
 
 		// open the scene file, if specified on the command line
-		if(vm.count("scene")) {
-			const dependency_graph::State state = possumwood::App::instance().loadFile(boost::filesystem::path(vm["scene"].as<std::string>()));
-			if(state.errored()) {
-				std::stringstream ss;
-				ss << "Error loading " << vm["scene"].as<std::string>() << "...";
-
-				ErrorDialog* err = new ErrorDialog(state, &win, ss.str().c_str());
-				err->show();
-			}
-		}
+		if(vm.count("scene"))
+			win.loadFile(vm["scene"].as<std::string>());
 
 		GL_CHECK_ERR;
 

@@ -177,12 +177,14 @@ const boost::filesystem::path& App::filename() const {
 void App::newFile() {
 	graph().clear();
 	m_filename = "";
+	m_sceneDescription.clear();
 }
 
 dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 	// read the graph
 	graph().clear();
 	undoStack().clear();
+	m_sceneDescription.clear();
 
 	dependency_graph::Selection selection; // throwaway
 	const dependency_graph::State state = possumwood::actions::fromJson(graph(), selection, json, false);

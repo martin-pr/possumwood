@@ -26,6 +26,10 @@ bool starts_with(const std::string& str, const std::string& prefix) {
 
 }
 
+void Description::clear() {
+	m_markDown = "(empty description)";
+}
+
 void Description::setMarkdown(const std::string& md) {
 	m_markDown = md;
 }
@@ -43,18 +47,16 @@ std::string Description::html() const {
 		std::string line;
 		std::getline(ss, line);
 
-		if(ss.good()) {
-			if(starts_with(line, "# "))
-				result += "<h1>" + line "</h1>\n";
-			else if(starts_with(line, "## "))
-				result += "<h2>" + line "</h2>\n";
-			else if(starts_with(line, "### "))
-				result += "<h3>" + line "</h3>\n";
-			else if(starts_with(line, "#### "))
-				result += "<h4>" + line "</h4>\n";
-			else if(!line.empty())
-				result += "<p>" + line "</p>\n";
-		}
+		if(starts_with(line, "# "))
+			result += "<h1>" + line.substr(2) + "</h1>\n";
+		else if(starts_with(line, "## "))
+			result += "<h2>" + line.substr(3) + "</h2>\n";
+		else if(starts_with(line, "### "))
+			result += "<h3>" + line.substr(4) + "</h3>\n";
+		else if(starts_with(line, "#### "))
+			result += "<h4>" + line.substr(5) + "</h4>\n";
+		else if(!line.empty())
+			result += "<p>" + line + "</p>\n";
 	}
 
 	return result;
