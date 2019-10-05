@@ -100,6 +100,8 @@ std::string Description::html() const {
 						line = line.substr(0, start) + "<a href=\"" + link + "\">" + link_text + "</a>" + line.substr(i);
 						i = 0;
 						state = 0;
+						link = "";
+						link_text = "";
 						break;
 				};
 			}
