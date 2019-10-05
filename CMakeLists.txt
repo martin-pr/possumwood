@@ -14,16 +14,19 @@ endif()
 # this is an anti-pattern, but CMAKE does seem to be picking up CMAKE_CXX_FLAGS_RELEASE and CMAKE_CXX_FLAGS_DEBUG
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
-	set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function")
 elseif(CMAKE_BUILD_TYPE STREQUAL Release)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG")
-	set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-function")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -Wno-unused-function")
 elseif(CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG -g")
-	set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-function")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -Wno-unused-function")
 else()
 	message(ERROR "Unknown build type.")
 endif()
+
+message("*** BUILDING ${CMAKE_BUILD_TYPE} BUILD OF POSSUMWOOD ***")
+message("- C++ flags: ${CMAKE_CXX_FLAGS}")
 
 set(CMAKE_CXX_STANDARD 14)
 
