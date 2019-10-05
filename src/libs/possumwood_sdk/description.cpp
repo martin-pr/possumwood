@@ -65,6 +65,7 @@ std::string Description::html() const {
 			std::string link_text, link;
 			int state = 0;
 			std::size_t start = 0;
+			std::size_t bracket_counter = 0;
 
 			for(std::size_t i=0; i<line.length(); ++i) {
 				switch(state) {
@@ -83,14 +84,21 @@ std::string Description::html() const {
 						break;
 
 					case 2:
-						if(line[i] == '(')
+						if(line[i] == '(') {
 							state = 3;
+							bracket_counter = 1;
+						}
 						else
 							state = 0;
 						break;
 
 					case 3:
-						if(line[i] == ')')
+						if(line[i] == '(')
+							bracket_counter++;
+						else if(line[i] == ')')
+							bracket_counter--;
+
+						if(bracket_counter == 0)
 							state = 4;
 						else
 							link += line[i];
