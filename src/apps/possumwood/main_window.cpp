@@ -681,9 +681,9 @@ void MainWindow::selectionChanged(const dependency_graph::Selection& selection) 
 	updateStatusBar();
 }
 
-void MainWindow::loadFile(const boost::filesystem::path& filename) {
+void MainWindow::loadFile(const boost::filesystem::path& filename, bool updateFilename) {
 	m_properties->show({});
-	const dependency_graph::State state = possumwood::App::instance().loadFile(filename);
+	const dependency_graph::State state = possumwood::App::instance().loadFile(filename, updateFilename);
 
 	m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
 	selectionChanged(dependency_graph::Selection());

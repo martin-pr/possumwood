@@ -225,7 +225,7 @@ dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 	return state;
 }
 
-dependency_graph::State App::loadFile(const boost::filesystem::path& filename) {
+dependency_graph::State App::loadFile(const boost::filesystem::path& filename, bool alterCurrentFilename) {
 	if(!boost::filesystem::exists(filename))
 		throw std::runtime_error("Cannot open " + filename.string() +
 		                         " - file not found.");
@@ -235,7 +235,8 @@ dependency_graph::State App::loadFile(const boost::filesystem::path& filename) {
 	in >> json;
 
 	// update the opened filename
-	m_filename = filename;
+	if(alterCurrentFilename)
+		m_filename = filename;
 
 	const dependency_graph::State state = loadFile(json);
 

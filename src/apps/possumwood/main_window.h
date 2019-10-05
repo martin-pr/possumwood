@@ -26,7 +26,7 @@ class MainWindow : public QMainWindow {
 		/// returns the graph adaptor instance (a QWidget) - used by actions
 		Adaptor& adaptor();
 
-		void loadFile(const boost::filesystem::path& filename);
+		void loadFile(const boost::filesystem::path& filename, bool updateFilename = true);
 
 	private slots:
 		void draw(float dt);

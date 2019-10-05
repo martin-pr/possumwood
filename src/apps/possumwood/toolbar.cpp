@@ -112,16 +112,24 @@ Toolbar::Toolbar() {
 					dependency_graph::State state;
 
 					try {
-						std::ifstream file(setupPath.string());
-						std::string setup = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-
 						QMainWindow* win = possumwood::App::instance().mainWindow();
 						MainWindow* mw = dynamic_cast<MainWindow*>(win);
 						assert(mw);
 
-						dependency_graph::Selection selection;
-						state = possumwood::actions::paste(mw->adaptor().currentNetwork(), selection, setup, false /* don't halt on error */);
-						mw->adaptor().setSelection(selection);
+						// if adding this to an empty scene, just load the setup and reset the filename
+						if(mw->adaptor().currentNetwork().empty())
+							mw->loadFile(setupPath.string(), false);
+
+						// otherwise paste the setup into the existing scene
+						else {
+							std::ifstream file(setupPath.string());
+							std::string setup = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+
+
+							dependency_graph::Selection selection;
+							state = possumwood::actions::paste(mw->adaptor().currentNetwork(), selection, setup, false /* don't halt on error */);
+							mw->adaptor().setSelection(selection);
+						}
 					}
 					catch(std::exception& e) {
 						state.addError(std::string("Error inserting setup - ") + e.what());
