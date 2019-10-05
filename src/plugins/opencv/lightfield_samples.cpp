@@ -1,5 +1,7 @@
 #include "lightfield_samples.h"
 
+#include <tbb/parallel_for.h>
+
 namespace possumwood { namespace opencv {
 
 struct LightfieldSamples::Pimpl {
@@ -10,6 +12,7 @@ struct LightfieldSamples::Pimpl {
 	std::vector<std::size_t> m_rowOffsets;
 	Imath::V2i size;
 };
+
 
 LightfieldSamples::LightfieldSamples() : m_pimpl(new Pimpl()) {
 }
@@ -23,7 +26,8 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 	std::vector<float> uvOffsets(impl->size[0] * impl->size[1], 0.0f);
 
 	// assemble the samples
-	for(std::size_t y=0; y<(std::size_t)impl->size[0]; ++y)
+	tbb::parallel_for(std::size_t(0), (std::size_t)impl->size[0], [&](std::size_t y) {
+	// for(std::size_t y=0; y<(std::size_t)impl->size[0]; ++y)
 		for(std::size_t x=0; x<(std::size_t)impl->size[1]; ++x) {
 			Sample& sample = impl->m_samples[y*impl->size[0] + x];
 
@@ -50,6 +54,7 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 			const double uv_magnitude_2 = coords[2]*coords[2] + coords[3]*coords[3];
 			uvOffsets[y*impl->size[0] + x] = uv_magnitude_2;
 		}
+	});
 
 	// filter out any samples outside the threshold
 	{
