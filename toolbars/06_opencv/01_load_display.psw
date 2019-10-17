@@ -43,6 +43,18 @@
             "out_port": "program"
         },
         {
+            "in_node": "unsigned_1",
+            "in_port": "value",
+            "out_node": "split_vec2u_0",
+            "out_port": "x"
+        },
+        {
+            "in_node": "unsigned_0",
+            "in_port": "value",
+            "out_node": "split_vec2u_0",
+            "out_port": "y"
+        },
+        {
             "in_node": "opencv_texture_0",
             "in_port": "in_uniforms",
             "out_node": "unsigned_0",
@@ -65,20 +77,9 @@
             "in_port": "uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "unsigned_1",
-            "in_port": "value",
-            "out_node": "split_vec2u_0",
-            "out_port": "x"
-        },
-        {
-            "in_node": "unsigned_0",
-            "in_port": "value",
-            "out_node": "split_vec2u_0",
-            "out_port": "y"
         }
     ],
+    "description": "### OpenCV image loading and display\n\nThis simple demo shows how to load an image using OpenCV's [`imread()`](https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html?highlight=imread#imread) method, and pass the resulting image data to OpenGL as a texture and a set of additional metadata represented by GLSL uniforms. \n\nIn following demos, this OpenGL setup is wrapped in a subnetwork.",
     "nodes": {
         "background_0": {
             "blind_data": {
@@ -238,5 +239,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABFQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABiwAAAeMAAACGAQAAAwAAAgUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABFQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABiwAAAeMAAACqAQAAAwAAAgUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

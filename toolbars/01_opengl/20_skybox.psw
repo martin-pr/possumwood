@@ -37,6 +37,7 @@
             "out_port": "shader"
         }
     ],
+    "description": "### Skybox\n\nA classical way of generating sky and background in games is to render a cube or spherical map on the far plane (behind all other objects). This method is called [CubeMap](https://learnopengl.com/Advanced-OpenGL/Cubemaps), [SkyBox](https://en.wikipedia.org/wiki/Skybox_(video_games)) or SkyDome.\n\nThis simple demo shows this technique on a spherical texture from [HDRI Haven](https://hdrihaven.com/).",
     "nodes": {
         "background_0": {
             "blind_data": {
@@ -133,6 +134,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJpAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAagAAAME/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABhgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB9QAAAX0AAACGAQAAAwAAApgAAAMEAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAACcAAAABkAAAaqAAACTwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJpAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABugAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMAAAAbEAAACqAQAAAwAAA20AAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

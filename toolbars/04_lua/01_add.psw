@@ -1,5 +1,6 @@
 {
     "connections": [],
+    "description": "### Lua addition node\n\nThis simple demo shows how to create a subnetwork performing simple addition (and exposing input parameters) with a simple Lua script.\n\nDouble click the node too see its content.",
     "nodes": {
         "network_0": {
             "blind_data": {
@@ -151,6 +152,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAagAAAME/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAAA7QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABXAAAAhYAAACGAQAAAwAAAnAAAAMEAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA6gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABYAAAAg4AAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

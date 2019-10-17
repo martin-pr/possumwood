@@ -37,13 +37,14 @@
             "out_port": "shader"
         }
     ],
+    "description": "### PN Triangles in a geometry shader\n\nCurved PN Triangles is a simple geometry subdivision scheme, replacing all triangles with a bezier patch directly on the GPU. The shape interpolation uses a cubic spline, and normals are interpolated using a quadratic spline to maintain continuity.\n\nThis implementation uses a geometry shader for emitting additional polygons.\n\nVlachos, Alex, et al. [\"Curved PN triangles.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.4338&rep=rep1&type=pdf) Proceedings of the 2001 symposium on Interactive 3D graphics. ACM, 2001.",
     "nodes": {
         "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 563.03125,
-                    "y": 485.171875
+                    "x": 471.709442138672,
+                    "y": 367.758117675781
                 }
             },
             "name": "draw",
@@ -133,6 +134,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABwAAASlAAACXQAAAAACAAAAB4A=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGdAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAI4BAAADAAAAAQAAApwAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABzQAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACQwAAAZ4AAACGAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABwAAASlAAACXQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJdAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAkcAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABkAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACBgAAAWgAAACqAQAAAwAAAgUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

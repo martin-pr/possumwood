@@ -7,6 +7,7 @@
             "out_port": "generic_polymesh"
         }
     ],
+    "description": "### Phong shading\n\n[Phong shading](https://en.wikipedia.org/wiki/Phong_shading) computes lighting of a surface by interpolating per-pixel surface normal. Compared to Gourand shading, this method leads to smoother and more realistic surface looks better describing the shape of the object, and significantly more accurate high-frequency components computation (i.e., specular component in the [Phong lighting model](https://en.wikipedia.org/wiki/Phong_reflection_model)).\n\nThis demo implements [Phong shading](https://en.wikipedia.org/wiki/Phong_shading) with a [Phong reflection model](https://en.wikipedia.org/wiki/Phong_reflection_model) and a single point light source. The setup is wrapped in a subnetwork - just double-click the blue node to \"enter\" it.",
     "nodes": {
         "loader_0": {
             "blind_data": {
@@ -478,6 +479,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAagAAAME/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABmgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACCQAAAWkAAACGAQAAAwAAAnAAAAMEAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAc0AAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABkwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACCQAAAWUAAACqAQAAAwAAAksAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

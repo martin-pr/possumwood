@@ -103,6 +103,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "gamma_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "align_mtb_1",
             "in_port": "original",
             "out_node": "image_0",
@@ -187,12 +193,13 @@
             "out_port": "exif"
         },
         {
-            "in_node": "convert_0",
+            "in_node": "gamma_0",
             "in_port": "in_frame",
             "out_node": "merge_debevec_0",
             "out_port": "frame"
         }
     ],
+    "description": "### Aligned HDR merge using Debevec algorithm with response curve estimation\n\nWhen merging multiple exposures for HDR imaging, it is often beneficial to use raw image data, avoiding any processing and gamma correction a camera might do to produce a perceptually good looking result. In some cases, when using cheaper cameras or a mobile phone, it might not be possible to use raw data, which means that an additional calibration step is required.\n\nThis setup shows how to use EXIF data from a set of JPG images to estimate the camera response curve using Debevec's algorithm, and then use the resulting curve for a more accurate HDR merge using Debevec's HDR merge algorithm. Compared to previous demos using Merten's algorithm, the dynamic range of the resulting image is much wider, with a more accurate representation of luminance information present in the scene.\n\nDebevec, Paul E., and Jitendra Malik. [\"Recovering high dynamic range radiance maps from photographs.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.463.6496&rep=rep1&type=pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.",
     "nodes": {
         "add_exif_0": {
             "blind_data": {
@@ -388,17 +395,32 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1224.068359375,
-                    "y": 1376.64099121094
+                    "x": 1225.39904785156,
+                    "y": 1507.05090332031
                 }
             },
             "name": "convert",
             "ports": {
-                "a": 0.25,
+                "a": 30.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
             "type": "opencv/convert"
+        },
+        "gamma_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1195.39538574219,
+                    "y": 1345.92211914062
+                }
+            },
+            "name": "gamma",
+            "ports": {
+                "gamma": 0.300000011920929,
+                "normalization_coef": 1.0
+            },
+            "type": "opencv/gamma"
         },
         "image_0": {
             "blind_data": {
@@ -485,8 +507,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1229.14074707031,
-                    "y": 1573.42028808594
+                    "x": 1230.47143554688,
+                    "y": 1703.83020019531
                 }
             },
             "connections": [
@@ -533,6 +555,18 @@
                     "out_port": "program"
                 },
                 {
+                    "in_node": "unsigned_1",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "x"
+                },
+                {
+                    "in_node": "unsigned_0",
+                    "in_port": "value",
+                    "out_node": "split_vec2u_0",
+                    "out_port": "y"
+                },
+                {
                     "in_node": "opencv_texture_0",
                     "in_port": "in_uniforms",
                     "out_node": "unsigned_0",
@@ -555,18 +589,6 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
-                },
-                {
-                    "in_node": "unsigned_1",
-                    "in_port": "value",
-                    "out_node": "split_vec2u_0",
-                    "out_port": "x"
-                },
-                {
-                    "in_node": "unsigned_0",
-                    "in_port": "value",
-                    "out_node": "split_vec2u_0",
-                    "out_port": "y"
                 }
             ],
             "name": "network",
@@ -728,6 +750,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA4gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABWAAAAhYAAACGAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABDwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABhQAAAlwAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

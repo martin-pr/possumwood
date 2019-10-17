@@ -85,13 +85,14 @@
             "out_port": "out_uniforms"
         }
     ],
+    "description": "## Gourand shading\n\n[Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shading) is one of the simplest method of polygonal mesh shading. It computes colour by linearly interpolating vertex colours in screen space, making it cheap but less physically accurate than Phong or physics-based shading methods.\n\nThis demo combines [Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shading) with [Phong reflection](https://en.wikipedia.org/wiki/Phong_reflection_model) model, reproducing an old \"fixed-pipeline\" shading model of OpenGL.",
     "nodes": {
         "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 599.75,
-                    "y": 215.25
+                    "x": 444.868072509766,
+                    "y": 1152.80627441406
                 }
             },
             "name": "draw",
@@ -101,8 +102,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 604.4375,
-                    "y": 790.25
+                    "x": 309.300933837891,
+                    "y": 770.353149414062
                 }
             },
             "name": "draw",
@@ -112,8 +113,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 235.34375,
-                    "y": 437.6875
+                    "x": 435.709442138672,
+                    "y": 381.121215820312
                 }
             },
             "name": "time",
@@ -126,8 +127,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 60.0625,
-                    "y": 123.9375
+                    "x": 61.7322463989258,
+                    "y": 1103.24084472656
                 }
             },
             "name": "fragment_shader",
@@ -140,8 +141,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 47.5625,
-                    "y": 692.6875
+                    "x": -85.0831451416016,
+                    "y": 729.1650390625
                 }
             },
             "name": "fragment_shader",
@@ -154,8 +155,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 35.0625,
-                    "y": 313.9375
+                    "x": 57.6058006286621,
+                    "y": 1214.96496582031
                 }
             },
             "name": "loader",
@@ -168,8 +169,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 22.5625,
-                    "y": 884.25
+                    "x": -91.8187866210938,
+                    "y": 842.451721191406
                 }
             },
             "name": "loader",
@@ -182,8 +183,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 233.0625,
-                    "y": 70.9375
+                    "x": 234.732238769531,
+                    "y": 1050.24084472656
                 }
             },
             "name": "program",
@@ -193,8 +194,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 220.5625,
-                    "y": 641.25
+                    "x": 87.916862487793,
+                    "y": 677.7275390625
                 }
             },
             "name": "program",
@@ -204,8 +205,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 71.28125,
-                    "y": 461.125
+                    "x": 315.779296875,
+                    "y": 436.084075927734
                 }
             },
             "name": "time",
@@ -215,8 +216,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 261.0625,
-                    "y": 277.9375
+                    "x": 247.077072143555,
+                    "y": 1210.275390625
                 }
             },
             "name": "vertex_data",
@@ -226,8 +227,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 248.5625,
-                    "y": 848.25
+                    "x": 89.8249206542969,
+                    "y": 829.934448242188
                 }
             },
             "name": "vertex_data",
@@ -237,8 +238,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 75.0625,
-                    "y": 11.9375
+                    "x": 76.7322463989258,
+                    "y": 991.240905761719
                 }
             },
             "name": "vertex_shader",
@@ -251,8 +252,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 62.5625,
-                    "y": 582.25
+                    "x": -70.0831451416016,
+                    "y": 618.7275390625
                 }
             },
             "name": "vertex_shader",
@@ -265,8 +266,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 421.28125,
-                    "y": 475.1875
+                    "x": 436.936431884766,
+                    "y": 569.118530273438
                 }
             },
             "name": "viewport",
@@ -278,6 +279,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqs=",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAiIAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAABrAAAA5wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAdQAAAvkAAACqAQAAAwAAAnYAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

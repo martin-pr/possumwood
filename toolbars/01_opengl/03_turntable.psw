@@ -49,6 +49,7 @@
             "out_port": "out_uniforms"
         }
     ],
+    "description": "### Turntable demo\n\nA simple shader setup passing a time value (i.e., the timeline value) as a uniform into the shader (together with viewport parameters). This value is then converted in the `vertex_shader` to a transformation matrix used to rotate a model.",
     "nodes": {
         "draw_0": {
             "blind_data": {
@@ -65,8 +66,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 91.0,
-                    "y": 455.0
+                    "x": 485.133178710938,
+                    "y": -79.6642837524414
                 }
             },
             "name": "float",
@@ -118,8 +119,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -48.5,
-                    "y": 523.5
+                    "x": 363.401489257812,
+                    "y": -40.2396850585938
                 }
             },
             "name": "time",
@@ -154,8 +155,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 287.0,
-                    "y": 421.0
+                    "x": 484.066589355469,
+                    "y": 88.2482070922852
                 }
             },
             "name": "viewport",
@@ -167,6 +168,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAACcAAAAYAAAAaqAAADnAAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKNAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAawAAAMe/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAAzAAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABOAAAAlEAAACGAQAAAwAAAnAAAAMeAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAACcAAAAYAAAAaqAAADnAAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKNAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAawAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

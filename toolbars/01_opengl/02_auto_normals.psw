@@ -31,6 +31,7 @@
             "out_port": "shader"
         }
     ],
+    "description": "### Automatic normals\n\nWhen an mesh file doesn't include explicit normals, it is relatively easy to use a fragment shader to \"autogenerate\" normals using screen-space derivatives `dFdx()` and `dFdy()`. This demo shows how to do that in Possumwood - just have a look at `fragment_shared` source.",
     "nodes": {
         "draw_0": {
             "blind_data": {
@@ -113,6 +114,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAAYAAAAQ6AAADnAAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADHvwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABrAAADHgAAAGwBAAADAAAAAQAAAagAAAMe/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABrAAAA8AAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABXAAAAi0AAACGAQAAAwAAAnAAAAMeAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAAYAAAAQ6AAADnAAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABfQAAAmQAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
 }

@@ -7,15 +7,39 @@
             "out_port": "vertex_data"
         },
         {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "cgal_1",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
             "in_node": "normals_generator_0",
             "in_port": "input",
             "out_node": "loader_0",
             "out_port": "polyhedron"
         },
         {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "loader_1",
+            "out_port": "polyhedron"
+        },
+        {
             "in_node": "cgal_0",
             "in_port": "mesh",
             "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "normals_generator_1",
             "out_port": "output"
         },
         {
@@ -31,42 +55,19 @@
             "out_port": "program"
         },
         {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "cgal_1",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "loader_1",
-            "out_port": "polyhedron"
-        },
-        {
-            "in_node": "cgal_1",
-            "in_port": "mesh",
-            "out_node": "normals_generator_1",
-            "out_port": "output"
-        },
-        {
             "in_node": "normals_generator_1",
             "in_port": "input",
             "out_node": "transform_0",
             "out_port": "out_mesh"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
         }
     ],
+    "description": "### CGAL normals generation\n\nTo display a polygonal mesh on a GPU, the model needs to contain surface-normal information for shading. While this information can be auto-generated, an explicitly represented normal can improve surface properties like smoothness or shape details.\n\nThis simple demo shows [two methods of computing normals](https://doc.cgal.org/latest/Polygon_mesh_processing/index.html#PMPNormalComp) using the [CGAL library](https://www.cgal.org).",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -116,8 +117,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 317.035675048828,
-                    "y": 786.116577148438
+                    "x": 339.618194580078,
+                    "y": 899.029174804688
                 }
             },
             "name": "fragment_shader",
@@ -188,8 +189,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 544.035766601562,
-                    "y": 718.277465820312
+                    "x": 566.618286132812,
+                    "y": 831.190063476562
                 }
             },
             "name": "program",
@@ -227,8 +228,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 348.346069335938,
-                    "y": 658.265991210938
+                    "x": 370.928588867188,
+                    "y": 771.178588867188
                 }
             },
             "name": "vertex_shader",
@@ -243,6 +244,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABKQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABnwAAAc8AAACGAQAAA/sAAAAGAGwAbwBnAQAAAjoAAAGPAAAAAAAAAAAAAAIJAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABbAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB4gAAAYwAAACqAQAAA/sAAAAGAGwAbwBnAQAAAjoAAAGPAAAAAAAAAAAAAAIJAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

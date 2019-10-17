@@ -55,6 +55,7 @@
             "out_port": "time"
         }
     ],
+    "description": "### Animation loading\n\nThis demo shows how to load animation data from a [`.bvh`](https://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/BVH.html) file (a common file used for this kind of data), and from a combination of [`.asf` and `amc`](https://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/ASF-AMC.html) files (another common file format, used for the [CMU Mocap Library](http://mocap.cs.cmu.edu/)).\n\nThe loaded animation data are then processed (scaled, translated), and displayed in OpenGL using a simple skeleton render node.",
     "nodes": {
         "amc_0": {
             "blind_data": {
@@ -224,6 +225,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACUwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADAPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADAAAAAJgBAAADAAAAAQAAAagAAAMA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABsAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACHwAAAU8AAACGAQAAAwAAAnAAAAMAAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAACwwAAABwAAAdoAAACpAAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB7gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACZAAAAX0AAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

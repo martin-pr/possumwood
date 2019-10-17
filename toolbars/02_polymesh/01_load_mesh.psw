@@ -7,6 +7,7 @@
             "out_port": "generic_polymesh"
         }
     ],
+    "description": "### OBJ file loading\n\nThis simple demo shows how to load an object from `.obj` file, and display it in the viewport.\n\nThe display code is contained in a subnetwork (double click the blue node to \"enter\" it), and is based on a trivial implementation of a vertex and fragment OpenGL shader.",
     "nodes": {
         "loader_0": {
             "blind_data": {
@@ -68,8 +69,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 486.0,
-                            "y": 328.0
+                            "x": 511.844787597656,
+                            "y": 651.059997558594
                         }
                     },
                     "name": "draw",
@@ -93,8 +94,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 60.0,
-                            "y": 211.0
+                            "x": 160.14860534668,
+                            "y": 727.89599609375
                         }
                     },
                     "name": "input",
@@ -115,8 +116,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 195.0,
-                            "y": 230.0
+                            "x": 295.148590087891,
+                            "y": 746.89599609375
                         }
                     },
                     "name": "vertex_data",
@@ -145,6 +146,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAAAABqoAAAOeAAAAAAAAABkAAAQ6AAACJAAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADL/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABaAAADLwAAAGwBAAADAAAAAQAAAagAAAMv/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABaAAABBAAAAGwBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABXwAAAioAAACGAQAAAwAAAnAAAAMvAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACJAAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA8wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABaQAAAgUAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
 }
