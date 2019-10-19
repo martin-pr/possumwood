@@ -148,11 +148,6 @@ A simple way of generating procedural graphics using GLSL employs rendering a si
 
 This demo is a simple example of such approach - based on a ray generated from a near and far plane point corresponding to a screen pixel, it computes the position of ray's intersection with the ground plane (`y==0`), and uses this information to synthesize an "infinite" ground plane covered in checkerboard, with a "spotlight". The fragment shader does all the computation - from ray intersection, through colour and checkerboard generation, to depth-value computation to allow the ground plane to composit correctly with other objects in a scene.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/01_opengl/10_ground_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -170,11 +165,6 @@ One of the common techniques to generate procedural 3D content in a fragment sha
 
 This demo is a port of a [ShaderToy demo](https://www.shadertoy.com/view/Xds3zN) by [Indigo Quilezles](https://www.shadertoy.com/user/iq), showing different SDFs and a few additional effects that can be achieved by raymarching. A comprehensive raymarching tutorial can be found at the [RaymarchingWorkshop](https://github.com/ajweeks/RaymarchingWorkshop).
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/01_opengl/11_shadertoy_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -190,11 +180,6 @@ A classical way of generating sky and background in games is to render a cube or
 
 This simple demo shows this technique on a spherical texture from [HDRI Haven](https://hdrihaven.com/).
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/01_opengl/20_skybox_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -214,11 +199,6 @@ This demo combines a skybox with a "purely reflective" material.
 
 
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/01_opengl/21_envmap_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -234,11 +214,6 @@ This demo combines a skybox with a "purely reflective" material.
 
 This demo combines [Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shading) with [Phong reflection](https://en.wikipedia.org/wiki/Phong_reflection_model) model, reproducing an old "fixed-pipeline" shading model of OpenGL.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/01_opengl/30_gourand_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -254,11 +229,6 @@ This demo combines [Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shadi
 
 This demo implements [Phong shading](https://en.wikipedia.org/wiki/Phong_shading) with a [Phong reflection model](https://en.wikipedia.org/wiki/Phong_reflection_model) and a single point light source. The setup is wrapped in a subnetwork - just double-click the blue node to "enter" it.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/01_opengl/31_phong_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -276,11 +246,6 @@ This  simple approach can yield surprisingly realistic results, and has been use
 
 <sub>Sloan, Peter-Pike J., et al. ["The lit sphere: A model for capturing NPR shading from art."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.445.6888&rep=rep1&type=pdf) Graphics interface. Vol. 2001. 2001.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/01_opengl/32_matcap_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -299,11 +264,6 @@ This simple demo demonstrates a combination of normal mapping implemented in a f
 <sub>Blinn, James F. ["Simulation of wrinkled surfaces."](https://dl.acm.org/citation.cfm?id=507101) ACM SIGGRAPH computer graphics. Vol. 12. No. 3. ACM, 1978.</sub>
 <sub>Mikkelsen, Morten. ["Simulation of wrinkled surfaces revisited."](http://image.diku.dk/projects/media/morten.mikkelsen.08.pdf) (2008).</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/01_opengl/33_cgbookcase_phong_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -321,11 +281,6 @@ This demo shows a simple implementation of this technique.
 
 <sub>Green, Chris. ["Improved alpha-tested magnification for vector textures and special effects."](https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf) ACM SIGGRAPH 2007 courses. ACM, 2007.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/01_opengl/40_sdf_text_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 </table> 
 
@@ -345,11 +300,6 @@ This simple demo shows how to load an object from `.obj` file, and display it in
 
 The display code is contained in a subnetwork (double click the blue node to "enter" it), and is based on a trivial implementation of a vertex and fragment OpenGL shader.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/01_load_mesh_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -365,11 +315,6 @@ To display a polygonal mesh on a GPU, the model needs to contain surface-normal 
 
 This simple demo shows [two methods of computing normals](https://doc.cgal.org/latest/Polygon_mesh_processing/index.html#PMPNormalComp) using the [CGAL library](https://www.cgal.org).
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/09_cgal_normals_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -385,11 +330,6 @@ Mesh simplification (decimation) is a common operation in mesh processing - it a
 
 This demo shows how to use [CGAL's implementation of mesh decimation](https://doc.cgal.org/latest/Surface_mesh_simplification/index.html) in Possumwood, allowing to experiment with its various parameters.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/10_cgal_decimation_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 </table> 
 
@@ -407,11 +347,6 @@ This demo shows how to use [CGAL's implementation of mesh decimation](https://do
 
 A simple demo showing how to load an image from a file, and display it using an OpenGL setup (wrapped in a subnetwork - enter it by double-clicking the blue node).
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/01_load_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -427,11 +362,6 @@ While Possumwood's viewport is primarily intended for viewing 3D content, using 
 
 This demo uses shaders that ignore the perspective projection matrix and draw 2D image in a 2D front-facing view in the viewport.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/02_fullscreen_display_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -447,11 +377,6 @@ Possumwood contains a simple integration of the [Lua scripting language](https:/
 
 This demo shows how to synthesize an image programatically. It "injects" the `images` plugin into the input Lua `context` (i.e., the environment for running a script), and generates an image, which is then extracted from the output `state` using an `image extract` node. The result is then passed on an image-display subnetwork.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/09_lua_grid_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -465,11 +390,6 @@ This demo shows how to synthesize an image programatically. It "injects" the `im
 
 This demo builds on the Lua Grid setup, extending it by additional parameters, and wrapping it in a subnetwork (double click any blue nodes to "enter" them).
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/10_lua_expression_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -485,11 +405,6 @@ Lua expressions in Possumwood can be also used to manipulate [HDR images](https:
 
 This demo shows how to implement simple [Gamma compression](https://en.wikipedia.org/wiki/Gamma_correction) tonemapping operator in Lua, and how to wrap it into a subnetwork with exposed parameters. Possumwood allows arbitrary nesting of nodes in this way, allowing to abstract-away any unnecessary complexity into simple nodes with clean interfaces.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/11_lua_tonemapping_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 </table> 
 
@@ -509,11 +424,6 @@ This simple demo shows how to create a subnetwork performing simple addition (an
 
 Double click the node too see its content.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/01_add_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -529,11 +439,6 @@ This simple demo shows how to create a subnetwork performing simple multiplicati
 
 Double click the node too see its content.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/02_mult_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -547,11 +452,6 @@ Double click the node too see its content.
 
 A simple demo showing how to use a Lua script to create animated data, which are then fed as an input to a vector input of the `cube` node, animating its position.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/04_animated_cube_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 </table> 
 
@@ -571,11 +471,6 @@ This demo shows how to load animation data from a [`.bvh`](https://research.cs.w
 
 The loaded animation data are then processed (scaled, translated), and displayed in OpenGL using a simple skeleton render node.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/01_loading_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -589,11 +484,6 @@ The loaded animation data are then processed (scaled, translated), and displayed
 
 This demo uses GLSL (geometry shader) to generate a shaded polygonal stick figure from a set of line segments.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/02_glsl_skeleton_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -611,11 +501,6 @@ This demo uses a simple hierarchical linear blend to convert motion capture data
 
 <sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/03_periodic_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -631,11 +516,6 @@ A linear blend is the simplest way to transition between two animations. This de
 
 <sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/04_transition_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -657,11 +537,6 @@ This demo shows a random walk through a motion graph. In its current state, it d
 
 <sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/10_random_mgraph_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -681,11 +556,6 @@ This demo shows how this simple technique can be used in Possumwood. The resulti
 
 <sub>Ikemoto, Leslie, Okan Arikan, and David Forsyth. ["Knowing when to put your foot down."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.151.1882&rep=rep1&type=pdf) Proceedings of the 2006 symposium on Interactive 3D graphics and games. ACM, 2006.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/20_feet_detect_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 </table> 
 
@@ -705,11 +575,6 @@ This simple demo shows how to load an image using OpenCV's [`imread()`](https://
 
 In following demos, this OpenGL setup is wrapped in a subnetwork.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/01_load_display_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -723,11 +588,6 @@ In following demos, this OpenGL setup is wrapped in a subnetwork.
 
 Color conversion in OpenCV is implemented in the [`cvtColor()`](https://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html?#cvtcolor) function. This demo shows how to use the corresponding `color` node to first convert to grayscale, and then back to BGR to allow the image to be passed to OpenGL as RGB data.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/02_grayscale_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -743,11 +603,6 @@ This demo follows the OpenCV's [Haar Cascade](https://docs.opencv.org/3.4/db/d28
 
 Lienhart, Rainer, and Jochen Maydt. ["An extended set of haar-like features for rapid object detection."](http://www.staroceans.org/documents/ICIP2002.pdf) Proceedings. international conference on image processing. Vol. 1. IEEE, 2002.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/10_haar_faces_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -761,11 +616,6 @@ Lienhart, Rainer, and Jochen Maydt. ["An extended set of haar-like features for 
 
 This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.opencv.org/3.4/d5/d69/tutorial_py_non_local_means.html) for grayscale images, removing the noise using the [non-local means](https://en.wikipedia.org/wiki/Non-local_means) algorithm.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/20_denoise_grayscale_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -779,11 +629,6 @@ This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.ope
 
 This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.opencv.org/3.4/d5/d69/tutorial_py_non_local_means.html) for color images, removing the noise using the [non-local means](https://en.wikipedia.org/wiki/Non-local_means) algorithm.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/21_denoise_colored_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -797,11 +642,6 @@ This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.ope
 
 This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/3.4/d5/d69/tutorial_py_non_local_means.html) for grayscale images, but at the end of the processing it subtracts the denoised image from the original (leaving only extracted noise), and [equalises](https://en.wikipedia.org/wiki/Histogram_equalization) the result using [`cv::equalizeHist()`](https://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_equalization/histogram_equalization.html) to show the noise structure.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/22_noise_grayscale_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -815,11 +655,6 @@ This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/
 
 This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/3.4/d5/d69/tutorial_py_non_local_means.html) for color images, but at the end of the processing it subtracts the denoised image from the original (leaving only extracted noise), and [equalises](https://en.wikipedia.org/wiki/Histogram_equalization) the result using [`cv::equalizeHist()`](https://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_equalization/histogram_equalization.html) to show the noise structure.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/23_noise_colored_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -833,11 +668,6 @@ This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/
 
 OpenCV's [VideoCapture](https://docs.opencv.org/3.4/d8/dfe/classcv_1_1VideoCapture.html) object can be used to extract frames from a video file. This demo shows how to use a `video_frame` source together with a `frame` input to link the viewport timeline with a displayed video frame.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/30_video_frame_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -855,11 +685,6 @@ This demo shows how to set up this type of optical flow in Possumwood, and how t
 
 <sub>Farneb&#228;ck, Gunnar. ["Two-frame motion estimation based on polynomial expansion."](https://link.springer.com/content/pdf/10.1007/3-540-45103-X_50.pdf) Scandinavian conference on Image analysis. Springer, Berlin, Heidelberg, 2003.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/31_optical_flow_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -873,11 +698,6 @@ This demo shows how to set up this type of optical flow in Possumwood, and how t
 
 Pattern detection is the first step of camera calibration for many computer vision algorithms. This demo shows how a pattern build of circles can be detected using Hough transformation, and assembled into a grid for the use of camera intrinsic and extrinsic calibration.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/40_circles_pattern_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -891,11 +711,6 @@ Pattern detection is the first step of camera calibration for many computer visi
 
 Pattern detection is the first step of camera calibration for many computer vision algorithms. This demo shows how a chessboard pattern can be detected using corners feature detection, and assembled into a grid for the use of camera intrinsic and extrinsic calibration.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/41_chessboard_pattern_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -913,11 +728,6 @@ This demo shows how to perform multi-image intrinsic camera calibration using a 
 
 The left side of the graph detects a pattern in a set of 4 images, accumulating the results in a `points` array; the `calibrate_camera` node computes the intrinsic calibration from a set of input sample points; the `undistort` node then uses the resulting calibration to correct the distortion of an input image.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/42_camera_undistort_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -935,11 +745,6 @@ This setup merges 5 hand-held exposures of a scene to an HDR image using Mertens
 
 <sub>Mertens, Tom, Jan Kautz, and Frank Van Reeth. ["Exposure fusion."](http://cholla.mmto.org/minerals/macro/exposure_fusion_reduced.pdf) 15th Pacific Conference on Computer Graphics and Applications (PG'07). IEEE, 2007.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/50_naive_mertens_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -959,11 +764,6 @@ This demo shows how a simple alignment of hand-held multiple exposures can be ac
 
 <sub>Ward, Greg. ["Fast, robust image registration for compositing high dynamic range photographs from hand-held exposures."](http://pages.cs.wisc.edu/~lizhang/courses/cs766-2008f/projects/hdr/jgtpap2.pdf) Journal of graphics tools 8.2 (2003): 17-30.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/51_aligned_mertens_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -981,11 +781,6 @@ This setup shows how to use EXIF data from a set of JPG images to estimate the c
 
 <sub>Debevec, Paul E., and Jitendra Malik. ["Recovering high dynamic range radiance maps from photographs."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.463.6496&rep=rep1&type=pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/52_aligned_debevec_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1004,11 +799,6 @@ This demo shows how to set up Drago's tonemapping algorithm in Possumwood.
 <sub>Drago, Fr&#233;d&#233;ric, et al. ["Adaptive logarithmic mapping for displaying high contrast scenes."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.8094&rep=rep1&type=pdf) Computer graphics forum. Vol. 22. No. 3. Oxford, UK: Blackwell Publishing, Inc, 2003.<sub>
 
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/60_tonemap_drago_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1026,11 +816,6 @@ This demo shows how to set up Reinhards's tonemapping algorithm in Possumwood.
 
 <sub>Reinhard, Erik, and Kate Devlin. ["Dynamic range reduction inspired by photoreceptor physiology."](http://pages.cs.wisc.edu/~lizhang/courses/cs766-2008f/projects/hdr/Reinhard2005DRR.pdf) IEEE transactions on visualization and computer graphics 11.1 (2005): 13-24.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/61_tonemap_reinhard_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1048,11 +833,6 @@ This demo shows how to set up Mantiuk's tonemapping algorithm in Possumwood.
 
 <sub>Mantiuk, Rafal, Karol Myszkowski, and Hans-Peter Seidel. ["A perceptual framework for contrast processing of high dynamic range images."](http://domino.mpi-inf.mpg.de/intranet/ag4/ag4publ.nsf/3561a79a83e6557ac1256b91004f4bdd/43fc98f7a2fc192ec1257149002e3b9a/$file/mantiuk06contrastproctap.pdf) ACM Transactions on Applied Perception (TAP) 3.3 (2006): 286-308.<sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/62_tonemap_mantiuk_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1070,11 +850,6 @@ Telea's algorithm shown in this demo uses a Fast Marching method to inpaint pixe
 
 <sub>Telea, Alexandru. ["An image inpainting technique based on the fast marching method."](https://www.rug.nl/research/portal/files/14404904/2004JGraphToolsTelea.pdf) Journal of graphics tools 9.1 (2004): 23-34.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/70_inpaint_circle_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1092,11 +867,6 @@ The Navier-Stokes-based algorithm shown in this demo uses a heuristic based on f
 
 <sub>Bertalmio, Marcelo, Andrea L. Bertozzi, and Guillermo Sapiro. ["Navier-stokes, fluid dynamics, and image and video inpainting."](https://conservancy.umn.edu/bitstream/handle/11299/3607/1772.pdf?sequence=1) Proceedings of the 2001 IEEE Computer Society Conference on Computer Vision and Pattern Recognition. CVPR 2001. Vol. 1. IEEE, 2001.<sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/71_inpaint_mask_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1112,11 +882,6 @@ Image inpainting can be also used to attempt to restore an image where a large p
 
 This setup shows how an image can be partially restored using inpainting from a very sparse set of sample points.
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/72_inpaint_restore_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1132,11 +897,6 @@ A slightly different take on image inpainting can use the smoothness prior to tr
 
 <sub>Cohen-Or, Daniel, et al. [A sampler of useful computational tools for applied geometry, computer graphics, and image processing.](https://pdfs.semanticscholar.org/de0c/afb6c0775ed29b79a9d947b5174092581a4e.pdf) AK Peters/CRC Press, 2015.</sub>
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/73_laplace_circle_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1173,11 +933,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Lytro reading
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/01_lytro_reading_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1190,11 +945,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Lytro normalize
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/02_lytro_normalize_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1207,11 +957,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Reading debayer
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/03_reading_debayer_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1224,11 +969,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Lytro pattern
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/04_lytro_pattern_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1241,11 +981,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Mozaic
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/10_mozaic_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1258,11 +993,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Mozaic normalize
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/11_mozaic_normalize_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1275,11 +1005,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Mozaic split
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/12_mozaic_split_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1292,11 +1017,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Mozaic inpainted
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/13_mozaic_inpainted_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1309,11 +1029,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Laplacian inpainted
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/14_laplacian_inpainted_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1326,11 +1041,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Mozaic superres
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/15_mozaic_superres_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1343,11 +1053,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Naive refocus
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/20_naive_refocus_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1360,11 +1065,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Naive detail
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/21_naive_detail_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1377,11 +1077,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Debayer
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/22_debayer_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1394,11 +1089,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Gaussian refocus
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/23_gaussian_refocus_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1411,11 +1101,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Gaussian detail
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/24_gaussian_detail_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1428,11 +1113,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Bezier refocus
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/25_bezier_refocus_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1445,11 +1125,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Bezier debayer
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/26_bezier_debayer_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1462,11 +1137,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Detail comparison
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/27_detail_comparison_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1479,11 +1149,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Relative corresp
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/30_relative_corresp_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
@@ -1496,11 +1161,6 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 #### Absolute metrics
  (no description yet)
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/31_absolute_metrics_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 </table> 
 
@@ -1699,6 +1359,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+
 
 
 
