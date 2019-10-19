@@ -102,6 +102,13 @@ for l in f:
 
 					output = output + "</td> \n"
 
+					screenshot = ("toolbars/" + directory + "/" + file)[0:-4] + '_screenshot.png'
+					output = output + '<td>\n'
+					output = output + '<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> \n'
+					output = output + '<img src="' + screenshot + '" style="width:70px;">\n'
+					output = output + '<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> \n'
+					output = output + '</td>\n'
+
 					output = output + "</tr> \n"
 
 				output = output + "</table> \n\n"
