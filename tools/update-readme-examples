@@ -86,8 +86,12 @@ for l in f:
 
 					desc = read_description(path + "/../toolbars/" + directory + "/" + file)
 
-					icon = (path + "/../toolbars/" + directory + "/" + file)[0:-4] + '.png'
-					output = output + '<td style="width: 70px;"><img src="' + icon + '" style="width: 64px !important;"></td> \n'
+					icon = ("toolbars/" + directory + "/" + file)[0:-4] + '.png'
+					output = output + '<td>\n'
+					output = output + '<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> \n'
+					output = output + '<img src="' + icon + '" style="width:70px;">\n'
+					output = output + '<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> \n'
+					output = output + '</td>\n'
 
 					output = output + "<td> \n\n"
 

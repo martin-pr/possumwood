@@ -16,7 +16,11 @@ Possumwood comes with a number of example setups that can serve as a starting po
 ### Opengl
 <table> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/01_simple.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/01_simple.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### A simple OpenGL demo
@@ -28,7 +32,11 @@ Named vertex attributes _p_ and _n_ are loaded from an `.obj` file, and passed t
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/02_auto_normals.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/02_auto_normals.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Automatic normals
@@ -37,7 +45,11 @@ When an mesh file doesn't include explicit normals, it is relatively easy to use
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/03_turntable.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/03_turntable.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Turntable demo
@@ -46,7 +58,11 @@ A simple shader setup passing a time value (i.e., the timeline value) as a unifo
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/04_wireframe.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/04_wireframe.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Wireframe using a geometry shader
@@ -57,7 +73,11 @@ This setup shows how to emit a line for each polygon edge of the input geometry 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/07_geom_subdiv.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/07_geom_subdiv.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Mesh subdivision in a geometry shader
@@ -68,7 +88,11 @@ This demo implements a simple interpolative sudvision scheme with normal-based d
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/08_pn_triangles.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/08_pn_triangles.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### PN Triangles in a geometry shader
@@ -81,7 +105,11 @@ This implementation uses a geometry shader for emitting additional polygons.
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/10_ground.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/10_ground.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Infinite ground plane
@@ -92,7 +120,11 @@ This demo is a simple example of such approach - based on a ray generated from a
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/11_shadertoy.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/11_shadertoy.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Shadertoy
@@ -105,7 +137,11 @@ This demo is a port of a [ShaderToy demo](https://www.shadertoy.com/view/Xds3zN)
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/20_skybox.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/20_skybox.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Skybox
@@ -116,7 +152,11 @@ This simple demo shows this technique on a spherical texture from [HDRI Haven](h
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/21_envmap.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/21_envmap.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Reflection mapping
@@ -131,7 +171,11 @@ This demo combines a skybox with a "purely reflective" material.
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/30_gourand.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/30_gourand.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Gourand shading
@@ -142,7 +186,11 @@ This demo combines [Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shadi
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/31_phong.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/31_phong.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Phong shading
@@ -153,7 +201,11 @@ This demo implements [Phong shading](https://en.wikipedia.org/wiki/Phong_shading
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/32_matcap.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/32_matcap.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Material capture shader
@@ -166,7 +218,11 @@ This  simple approach can yield surprisingly realistic results, and has been use
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/33_cgbookcase_phong.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/33_cgbookcase_phong.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Normal mapping
@@ -180,7 +236,11 @@ This simple demo demonstrates a combination of normal mapping implemented in a f
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/01_opengl/40_sdf_text.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/01_opengl/40_sdf_text.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### SDF-based text rendering
@@ -197,7 +257,11 @@ This demo shows a simple implementation of this technique.
 ### Polymesh
 <table> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/02_polymesh/01_load_mesh.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/01_load_mesh.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### OBJ file loading
@@ -208,7 +272,11 @@ The display code is contained in a subnetwork (double click the blue node to "en
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/02_polymesh/09_cgal_normals.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/09_cgal_normals.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### CGAL normals generation
@@ -219,7 +287,11 @@ This simple demo shows [two methods of computing normals](https://doc.cgal.org/l
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/02_polymesh/10_cgal_decimation.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/10_cgal_decimation.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### CGAL mesh decimation
@@ -234,7 +306,11 @@ This demo shows how to use [CGAL's implementation of mesh decimation](https://do
 ### Image
 <table> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/03_image/01_load.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/01_load.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Image loading
@@ -243,7 +319,11 @@ A simple demo showing how to load an image from a file, and display it using an 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/03_image/02_fullscreen_display.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/02_fullscreen_display.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Fullscreen image display
@@ -254,7 +334,11 @@ This demo uses shaders that ignore the perspective projection matrix and draw 2D
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/03_image/09_lua_grid.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/09_lua_grid.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Lua-based image synthesis
@@ -265,7 +349,11 @@ This demo shows how to synthesize an image programatically. It "injects" the `im
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/03_image/10_lua_expression.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/10_lua_expression.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Lua expression-based image synthesis
@@ -274,7 +362,11 @@ This demo builds on the Lua Grid setup, extending it by additional parameters, a
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/03_image/11_lua_tonemapping.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/11_lua_tonemapping.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Lua image tonemapping
@@ -289,7 +381,11 @@ This demo shows how to implement simple [Gamma compression](https://en.wikipedia
 ### Lua
 <table> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/04_lua/01_add.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/01_add.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Lua addition node
@@ -300,7 +396,11 @@ Double click the node too see its content.
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/04_lua/02_mult.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/02_mult.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Lua multiplication node
@@ -311,7 +411,11 @@ Double click the node too see its content.
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/04_lua/04_animated_cube.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/04_animated_cube.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Animated cube
@@ -324,7 +428,11 @@ A simple demo showing how to use a Lua script to create animated data, which are
 ### Animation
 <table> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/05_animation/01_loading.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/01_loading.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Animation loading
@@ -335,7 +443,11 @@ The loaded animation data are then processed (scaled, translated), and displayed
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/05_animation/02_glsl_skeleton.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/02_glsl_skeleton.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### GLSL skeleton
@@ -344,7 +456,11 @@ This demo uses GLSL (geometry shader) to generate a shaded polygonal stick figur
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/05_animation/03_periodic.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/03_periodic.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Periodic animation
@@ -357,7 +473,11 @@ This demo uses a simple hierarchical linear blend to convert motion capture data
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/05_animation/04_transition.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/04_transition.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Animation transition
@@ -368,7 +488,11 @@ A linear blend is the simplest way to transition between two animations. This de
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/05_animation/10_random_mgraph.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/10_random_mgraph.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Motion graph random walk
@@ -385,7 +509,11 @@ This demo shows a random walk through a motion graph. In its current state, it d
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/05_animation/20_feet_detect.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/20_feet_detect.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Footstep detection
@@ -404,7 +532,11 @@ This demo shows how this simple technique can be used in Possumwood. The resulti
 ### Opencv
 <table> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/01_load_display.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/01_load_display.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### OpenCV image loading and display
@@ -415,7 +547,11 @@ In following demos, this OpenGL setup is wrapped in a subnetwork.
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/02_grayscale.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/02_grayscale.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Grayscale conversion
@@ -424,7 +560,11 @@ Color conversion in OpenCV is implemented in the [`cvtColor()`](https://docs.ope
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/10_haar_faces.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/10_haar_faces.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Face detection using Haar cascades
@@ -435,7 +575,11 @@ Lienhart, Rainer, and Jochen Maydt. ["An extended set of haar-like features for 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/20_denoise_grayscale.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/20_denoise_grayscale.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Grayscale image denoising
@@ -444,7 +588,11 @@ This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.ope
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/21_denoise_colored.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/21_denoise_colored.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Color image denoising
@@ -453,7 +601,11 @@ This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.ope
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/22_noise_grayscale.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/22_noise_grayscale.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Visualising luminance noise
@@ -462,7 +614,11 @@ This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/23_noise_colored.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/23_noise_colored.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Visualising color noise
@@ -471,7 +627,11 @@ This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/30_video_frame.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/30_video_frame.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Video frames
@@ -480,7 +640,11 @@ OpenCV's [VideoCapture](https://docs.opencv.org/3.4/d8/dfe/classcv_1_1VideoCaptu
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/31_optical_flow.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/31_optical_flow.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Dense optical flow
@@ -493,7 +657,11 @@ This demo shows how to set up this type of optical flow in Possumwood, and how t
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/40_circles_pattern.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/40_circles_pattern.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Calibration pattern detection (circles)
@@ -502,7 +670,11 @@ Pattern detection is the first step of camera calibration for many computer visi
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/41_chessboard_pattern.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/41_chessboard_pattern.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Calibration pattern detection (chessboard)
@@ -511,7 +683,11 @@ Pattern detection is the first step of camera calibration for many computer visi
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/42_camera_undistort.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/42_camera_undistort.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Camera calibration
@@ -524,7 +700,11 @@ The left side of the graph detects a pattern in a set of 4 images, accumulating 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/50_naive_mertens.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/50_naive_mertens.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### HDR merge using Mertens algorithm
@@ -537,7 +717,11 @@ This setup merges 5 hand-held exposures of a scene to an HDR image using Mertens
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/51_aligned_mertens.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/51_aligned_mertens.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Aligned HDR merge using Mertens algorithm
@@ -552,7 +736,11 @@ This demo shows how a simple alignment of hand-held multiple exposures can be ac
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/52_aligned_debevec.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/52_aligned_debevec.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Aligned HDR merge using Debevec algorithm with response curve estimation
@@ -565,7 +753,11 @@ This setup shows how to use EXIF data from a set of JPG images to estimate the c
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/60_tonemap_drago.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/60_tonemap_drago.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Drago tonemapping
@@ -579,7 +771,11 @@ This demo shows how to set up Drago's tonemapping algorithm in Possumwood.
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/61_tonemap_reinhard.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/61_tonemap_reinhard.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Reinhard's tonemapping
@@ -592,7 +788,11 @@ This demo shows how to set up Reinhards's tonemapping algorithm in Possumwood.
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/62_tonemap_mantiuk.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/62_tonemap_mantiuk.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Mantiuk tonemapping
@@ -605,7 +805,11 @@ This demo shows how to set up Mantiuk's tonemapping algorithm in Possumwood.
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/70_inpaint_circle.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/70_inpaint_circle.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Image inpainting using Fast Marching
@@ -618,7 +822,11 @@ Telea's algorithm shown in this demo uses a Fast Marching method to inpaint pixe
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/71_inpaint_mask.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/71_inpaint_mask.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Image inpainting using Fast Marching
@@ -631,7 +839,11 @@ The Navier-Stokes-based algorithm shown in this demo uses a heuristic based on f
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/72_inpaint_restore.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/72_inpaint_restore.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Inpainting for image restoration
@@ -642,7 +854,11 @@ This setup shows how an image can be partially restored using inpainting from a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/73_laplace_circle.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/73_laplace_circle.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Inpainting using the smoothness prior
@@ -653,7 +869,11 @@ A slightly different take on image inpainting can use the smoothness prior to tr
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/06_opencv/74_laplace_restore.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/74_laplace_restore.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Image reconstruction using the smoothness prior
@@ -668,7 +888,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 ### Lightfields
 <table> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/01_lytro_reading.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/01_lytro_reading.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Lytro reading
@@ -676,7 +900,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/02_lytro_normalize.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/02_lytro_normalize.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Lytro normalize
@@ -684,7 +912,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/03_reading_debayer.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/03_reading_debayer.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Reading debayer
@@ -692,7 +924,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/04_lytro_pattern.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/04_lytro_pattern.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Lytro pattern
@@ -700,7 +936,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/10_mozaic.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/10_mozaic.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Mozaic
@@ -708,7 +948,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/11_mozaic_normalize.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/11_mozaic_normalize.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Mozaic normalize
@@ -716,7 +960,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/12_mozaic_split.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/12_mozaic_split.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Mozaic split
@@ -724,7 +972,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/13_mozaic_inpainted.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/13_mozaic_inpainted.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Mozaic inpainted
@@ -732,7 +984,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/14_laplacian_inpainted.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/14_laplacian_inpainted.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Laplacian inpainted
@@ -740,7 +996,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/15_mozaic_superres.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/15_mozaic_superres.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Mozaic superres
@@ -748,7 +1008,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/20_naive_refocus.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/20_naive_refocus.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Naive refocus
@@ -756,7 +1020,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/21_naive_detail.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/21_naive_detail.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Naive detail
@@ -764,7 +1032,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/22_debayer.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/22_debayer.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Debayer
@@ -772,7 +1044,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/23_gaussian_refocus.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/23_gaussian_refocus.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Gaussian refocus
@@ -780,7 +1056,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/24_gaussian_detail.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/24_gaussian_detail.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Gaussian detail
@@ -788,7 +1068,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/25_bezier_refocus.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/25_bezier_refocus.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Bezier refocus
@@ -796,7 +1080,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/26_bezier_debayer.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/26_bezier_debayer.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Bezier debayer
@@ -804,7 +1092,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/27_detail_comparison.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/27_detail_comparison.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Detail comparison
@@ -812,7 +1104,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/30_relative_corresp.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/30_relative_corresp.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Relative corresp
@@ -820,7 +1116,11 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 </tr> 
 <tr> 
-<td style="width: 70px;"><img src="/home/martin/owncloud/Coding/possumwood/tools/../toolbars/07_lightfields/31_absolute_metrics.png" style="width: 64px !important;"></td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/31_absolute_metrics.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 <td> 
 
 #### Absolute metrics
@@ -1024,6 +1324,26 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
