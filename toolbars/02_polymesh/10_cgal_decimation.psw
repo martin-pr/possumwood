@@ -127,7 +127,7 @@
             "out_port": "out_uniforms"
         }
     ],
-    "description": "## CGAL mesh decimation\n\nMesh simplification (decimation) is a common operation in mesh processing - it aims to reduce the mesh complexity without removing its details, reducing the memory footprint without compromising the quality of the resulting model.\n\nThis demo shows how to use [CGAL's implementation of mesh decimation](https://doc.cgal.org/latest/Surface_mesh_simplification/index.html) in Possumwood, allowing to experiment with its various parameters.",
+    "description": "### CGAL mesh decimation\n\nMesh simplification (decimation) is a common operation in mesh processing - it aims to reduce the mesh complexity without removing its details, reducing the memory footprint without compromising the quality of the resulting model.\n\nThis demo shows how to use [CGAL's implementation of mesh decimation](https://doc.cgal.org/latest/Surface_mesh_simplification/index.html) in Possumwood, allowing to experiment with its various parameters.",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -398,6 +398,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKPAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAaoAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABWQAAAHYBAAAD/AAAAc8AAAGfAAAAqgD////6AAAAAAEAAAAC+wAAAAwAZQBkAGkAdABvAHIBAAAAAP////8AAACwAQAAA/sAAAAGAGwAbwBnAQAABh0AAAFjAAAAAAAAAAAAAAJwAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABkAAAQ6AAACWQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKPAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAaoAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABjQAAAHYBAAAD/AAAAgMAAAHeAAAAqgD////6AAAAAAEAAAAC+wAAAAwAZQBkAGkAdABvAHIBAAAAAP////8AAACwAQAAA/sAAAAGAGwAbwBnAQAABh0AAAFjAAAAAAAAAAAAAANFAAADbAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

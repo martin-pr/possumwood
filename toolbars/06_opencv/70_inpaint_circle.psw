@@ -79,7 +79,7 @@
             "out_port": "out_frame"
         }
     ],
-    "description": "### Image inpainting using Fast Marching\n\nImage inpainting is an image reconstruction technique, allowing to fill-in missing parts of an image based on existing pixels.\n\nTelea's algorithm shown in this demo uses a Fast Marching method to inpaint pixels from a boundary based on surrounding pixels and boundary's normal direction.\n\nTelea, Alexandru. [\"An image inpainting technique based on the fast marching method.\"](https://www.rug.nl/research/portal/files/14404904/2004JGraphToolsTelea.pdf) Journal of graphics tools 9.1 (2004): 23-34.",
+    "description": "### Image inpainting using Fast Marching\n\nImage inpainting is an image reconstruction technique, allowing to fill-in missing parts of an image based on existing pixels.\n\nTelea's algorithm shown in this demo uses a Fast Marching method to inpaint pixels from a boundary based on surrounding pixels and boundary's normal direction.\n\n<sub>Telea, Alexandru. [\"An image inpainting technique based on the fast marching method.\"](https://www.rug.nl/research/portal/files/14404904/2004JGraphToolsTelea.pdf) Journal of graphics tools 9.1 (2004): 23-34.</sub>",
     "nodes": {
         "circle_0": {
             "blind_data": {

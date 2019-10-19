@@ -19,7 +19,7 @@
             "out_port": "out_frame"
         }
     ],
-    "description": "### Drago tonemapping\n\nTonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.\n\nThis demo shows how to set up Drago's tonemapping algorithm in Possumwood.\n\nDrago, Frédéric, et al. [\"Adaptive logarithmic mapping for displaying high contrast scenes.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.8094&rep=rep1&type=pdf) Computer graphics forum. Vol. 22. No. 3. Oxford, UK: Blackwell Publishing, Inc, 2003.",
+    "description": "### Drago tonemapping\n\nTonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.\n\nThis demo shows how to set up Drago's tonemapping algorithm in Possumwood.\n\n<sub>Drago, Frédéric, et al. [\"Adaptive logarithmic mapping for displaying high contrast scenes.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.8094&rep=rep1&type=pdf) Computer graphics forum. Vol. 22. No. 3. Oxford, UK: Blackwell Publishing, Inc, 2003.<sub>\n",
     "nodes": {
         "convert_0": {
             "blind_data": {

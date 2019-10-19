@@ -97,7 +97,7 @@
             "out_port": "out_anim"
         }
     ],
-    "description": "### Motion graph random walk\n\nA motion graph is a simple directional graph data structure describing possible transition points between a number of motion clips. Each transition is determined by comparing kinematic and dynamic properties of corresponding frames, which should lead to a transition that does not introduce any salient discontinuities or artifacts.\n\nA random walk through such a graph would generate a variation of the original motion(s) by adding random transitions.\n\nThis demo shows a random walk through a motion graph. In its current state, it does not attempt to synthesize smooth continuous transitions - it just switches between different clips. (todo: introduce smooth transitions)\n\nKovar, Lucas, Michael Gleicher, and Frédéric Pighin. [\"Motion graphs.\"](https://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM Transactions on Graphics (TOG). Vol. 21. No. 3. ACM, 2002.\n\nKovar, Lucas, Michael Gleicher, and Frédéric Pighin. [\"Motion graphs.\"](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.",
+    "description": "### Motion graph random walk\n\nA motion graph is a simple directional graph data structure describing possible transition points between a number of motion clips. Each transition is determined by comparing kinematic and dynamic properties of corresponding frames, which should lead to a transition that does not introduce any salient discontinuities or artifacts.\n\nA random walk through such a graph would generate a variation of the original motion(s) by adding random transitions.\n\nThis demo shows a random walk through a motion graph. In its current state, it does not attempt to synthesize smooth continuous transitions - it just switches between different clips. (todo: introduce smooth transitions)\n\n<sub>Kovar, Lucas, Michael Gleicher, and Frédéric Pighin. [\"Motion graphs.\"](https://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM Transactions on Graphics (TOG). Vol. 21. No. 3. ACM, 2002.</sub>\n\n<sub>Kovar, Lucas, Michael Gleicher, and Frédéric Pighin. [\"Motion graphs.\"](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>",
     "nodes": {
         "bvh_0": {
             "blind_data": {
@@ -1027,6 +1027,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABwAAASlAAACXQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABEgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABiAAAAeYAAACqAQAAAwAAAgUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABwAAASlAAACXQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABOwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABsQAAAjAAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

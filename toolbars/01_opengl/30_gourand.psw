@@ -85,7 +85,7 @@
             "out_port": "out_uniforms"
         }
     ],
-    "description": "## Gourand shading\n\n[Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shading) is one of the simplest method of polygonal mesh shading. It computes colour by linearly interpolating vertex colours in screen space, making it cheap but less physically accurate than Phong or physics-based shading methods.\n\nThis demo combines [Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shading) with [Phong reflection](https://en.wikipedia.org/wiki/Phong_reflection_model) model, reproducing an old \"fixed-pipeline\" shading model of OpenGL.",
+    "description": "### Gourand shading\n\n[Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shading) is one of the simplest method of polygonal mesh shading. It computes colour by linearly interpolating vertex colours in screen space, making it cheap but less physically accurate than Phong or physics-based shading methods.\n\nThis demo combines [Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shading) with [Phong reflection](https://en.wikipedia.org/wiki/Phong_reflection_model) model, reproducing an old \"fixed-pipeline\" shading model of OpenGL.",
     "nodes": {
         "draw_0": {
             "blind_data": {
@@ -279,6 +279,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAiIAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAABrAAAA5wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAdQAAAvkAAACqAQAAAwAAAnYAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABkAAAQ6AAACWQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAiIAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAABrAAAA5wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAdQAAA2wAAACqAQAAAwAAA0sAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

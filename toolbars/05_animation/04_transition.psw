@@ -103,7 +103,7 @@
             "out_port": "out_anim"
         }
     ],
-    "description": "(empty description)",
+    "description": "### Animation transition\n\nA linear blend is the simplest way to transition between two animations. This demo shows how a hand-picked linear blend can be used in Possumwood to transition between two animations. To assist the user with picking the blending point, the editor window displays a visualisation of frame similarity metric, similar to Kovar et al.'s Motion Graphs.\n\n<sub>Kovar, Lucas, Michael Gleicher, and Frédéric Pighin. [\"Motion graphs.\"](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>",
     "nodes": {
         "bvh_0": {
             "blind_data": {
@@ -183,8 +183,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 248.61376953125,
-                    "y": 536.848205566406
+                    "x": 253.832153320312,
+                    "y": 539.457397460938
                 }
             },
             "name": "from_animation",

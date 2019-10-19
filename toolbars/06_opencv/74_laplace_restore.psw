@@ -133,7 +133,7 @@
             "out_port": "out_frame"
         }
     ],
-    "description": "### Image reconstruction using the smoothness prior\n\nThe smoothness prior can be also used to try to reconstruct missing pixels in a sparse set of samples using a single linear global solve step.\n\nCohen-Or, Daniel, et al. [A sampler of useful computational tools for applied geometry, computer graphics, and image processing.](https://pdfs.semanticscholar.org/de0c/afb6c0775ed29b79a9d947b5174092581a4e.pdf) AK Peters/CRC Press, 2015.",
+    "description": "### Image reconstruction using the smoothness prior\n\nThe smoothness prior can be also used to try to reconstruct missing pixels in a sparse set of samples using a single linear global solve step.\n\n<sub>Cohen-Or, Daniel, et al. [A sampler of useful computational tools for applied geometry, computer graphics, and image processing.](https://pdfs.semanticscholar.org/de0c/afb6c0775ed29b79a9d947b5174092581a4e.pdf) AK Peters/CRC Press, 2015.</sub>",
     "nodes": {
         "color_0": {
             "blind_data": {

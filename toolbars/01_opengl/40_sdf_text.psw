@@ -91,7 +91,7 @@
             "out_port": "out_uniforms"
         }
     ],
-    "description": "### SDF-based text rendering\n\nRendering text in OpenGL is usually implemented using a simple texture. However, such text \"pixelates\" when viewed up-close. [A simple method to improve on its appearance](https://github.com/libgdx/libgdx/wiki/Distance-field-fonts) uses a [Signed distance function](https://en.wikipedia.org/wiki/Signed_distance_function) to represent letter boundaries - by exploiting the interpolation abilities of GPU hardware, it is possible to represent a text boundary with significantly more precision by using the directional information represented in SDF texture differential.\n\nThis demo shows a simple implementation of this technique.\n\nGreen, Chris. [\"Improved alpha-tested magnification for vector textures and special effects.\"](https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf) ACM SIGGRAPH 2007 courses. ACM, 2007.",
+    "description": "### SDF-based text rendering\n\nRendering text in OpenGL is usually implemented using a simple texture. However, such text \"pixelates\" when viewed up-close. [A simple method to improve on its appearance](https://github.com/libgdx/libgdx/wiki/Distance-field-fonts) uses a [Signed distance function](https://en.wikipedia.org/wiki/Signed_distance_function) to represent letter boundaries - by exploiting the interpolation abilities of GPU hardware, it is possible to represent a text boundary with significantly more precision by using the directional information represented in SDF texture differential.\n\nThis demo shows a simple implementation of this technique.\n\n<sub>Green, Chris. [\"Improved alpha-tested magnification for vector textures and special effects.\"](https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf) ACM SIGGRAPH 2007 courses. ACM, 2007.</sub>",
     "nodes": {
         "draw_0": {
             "blind_data": {
@@ -327,6 +327,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAcgAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA1QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABSwAAAiMAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABkAAAQ6AAACWQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAcgAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABawAAAnYAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

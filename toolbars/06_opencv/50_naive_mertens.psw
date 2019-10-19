@@ -73,7 +73,7 @@
             "out_port": "frame"
         }
     ],
-    "description": "### HDR merge using Mertens algorithm\n\nMulti-exposure merge is an procedure in high dynamic range imaging.\n\nThis setup merges 5 hand-held exposures of a scene to an HDR image using Mertens algorithm. As the inputs are not perfectly aligned, the output shows \"ghosting\" artifacts, as expected in this type of setup.\n\nMertens, Tom, Jan Kautz, and Frank Van Reeth. [\"Exposure fusion.\"](http://cholla.mmto.org/minerals/macro/exposure_fusion_reduced.pdf) 15th Pacific Conference on Computer Graphics and Applications (PG'07). IEEE, 2007.",
+    "description": "### HDR merge using Mertens algorithm\n\nMulti-exposure merge is an procedure in high dynamic range imaging.\n\nThis setup merges 5 hand-held exposures of a scene to an HDR image using Mertens algorithm. As the inputs are not perfectly aligned, the output shows \"ghosting\" artifacts, as expected in this type of setup.\n\n<sub>Mertens, Tom, Jan Kautz, and Frank Van Reeth. [\"Exposure fusion.\"](http://cholla.mmto.org/minerals/macro/exposure_fusion_reduced.pdf) 15th Pacific Conference on Computer Graphics and Applications (PG'07). IEEE, 2007.</sub>",
     "nodes": {
         "add_frame_0": {
             "blind_data": {

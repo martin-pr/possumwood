@@ -103,7 +103,7 @@
             "out_port": "out_uniforms"
         }
     ],
-    "description": "### Normal mapping\n\n[Normal mapping](https://en.wikipedia.org/wiki/Normal_mapping) is a simple method for adding texture-based geometry details to a coarse model. It uses a texture to represent normal perturbation that would result from a significantly more detail in the surface mesh, without having to represent that detail explicitly in the underlying geometry.  In games, this technique is often used to represent a complex model with all its detail, without having to explicitly store a heavy geometry.\n\nThis simple demo demonstrates a combination of normal mapping implemented in a fragment shader, together with [displacement mapping](https://en.wikipedia.org/wiki/Displacement_mapping) implemented as a geometry shader. The lighting is implemented as a simple single light-source [Phong reflection model](https://en.wikipedia.org/wiki/Phong_reflection_model).\n\nBlinn, James F. [\"Simulation of wrinkled surfaces.\"](https://dl.acm.org/citation.cfm?id=507101) ACM SIGGRAPH computer graphics. Vol. 12. No. 3. ACM, 1978.\n\nMikkelsen, Morten. [\"Simulation of wrinkled surfaces revisited.\"](http://image.diku.dk/projects/media/morten.mikkelsen.08.pdf) (2008).",
+    "description": "### Normal mapping\n\n[Normal mapping](https://en.wikipedia.org/wiki/Normal_mapping) is a simple method for adding texture-based geometry details to a coarse model. It uses a texture to represent normal perturbation that would result from a significantly more detail in the surface mesh, without having to represent that detail explicitly in the underlying geometry.  In games, this technique is often used to represent a complex model with all its detail, without having to explicitly store a heavy geometry.\n\nThis simple demo demonstrates a combination of normal mapping implemented in a fragment shader, together with [displacement mapping](https://en.wikipedia.org/wiki/Displacement_mapping) implemented as a geometry shader. The lighting is implemented as a simple single light-source [Phong reflection model](https://en.wikipedia.org/wiki/Phong_reflection_model).\n\n<sub>Blinn, James F. [\"Simulation of wrinkled surfaces.\"](https://dl.acm.org/citation.cfm?id=507101) ACM SIGGRAPH computer graphics. Vol. 12. No. 3. ACM, 1978.</sub>\n<sub>Mikkelsen, Morten. [\"Simulation of wrinkled surfaces revisited.\"](http://image.diku.dk/projects/media/morten.mikkelsen.08.pdf) (2008).</sub>",
     "nodes": {
         "draw_0": {
             "blind_data": {
@@ -350,6 +350,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAcgAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA1QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABSwAAAiMAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABkAAAQ6AAACWQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAcgAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABawAAAnYAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

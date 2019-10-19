@@ -19,7 +19,7 @@
             "out_port": "out_frame"
         }
     ],
-    "description": "### Drago tonemapping\n\nTonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.\n\nThis demo shows how to set up Reinhards's tonemapping algorithm in Possumwood.\n\nReinhard, Erik, and Kate Devlin. [\"Dynamic range reduction inspired by photoreceptor physiology.\"](http://pages.cs.wisc.edu/~lizhang/courses/cs766-2008f/projects/hdr/Reinhard2005DRR.pdf) IEEE transactions on visualization and computer graphics 11.1 (2005): 13-24.",
+    "description": "### Reinhard's tonemapping\n\nTonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.\n\nThis demo shows how to set up Reinhards's tonemapping algorithm in Possumwood.\n\n<sub>Reinhard, Erik, and Kate Devlin. [\"Dynamic range reduction inspired by photoreceptor physiology.\"](http://pages.cs.wisc.edu/~lizhang/courses/cs766-2008f/projects/hdr/Reinhard2005DRR.pdf) IEEE transactions on visualization and computer graphics 11.1 (2005): 13-24.</sub>",
     "nodes": {
         "convert_0": {
             "blind_data": {

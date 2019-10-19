@@ -91,7 +91,7 @@
             "out_port": "frame"
         }
     ],
-    "description": "### Dense optical flow\n\nOpenCV provides a method to compute dense optical flow in the [`calcOpticalFlowFarneback()`](https://docs.opencv.org/3.4/dc/d6b/group__video__track.html#ga5d10ebbd59fe09c5f650289ec0ece5af) function, allowing to detect moving objects in frames without explicitly detecting feature points first.\n\nThis demo shows how to set up this type of optical flow in Possumwood, and how to display its results as colours on top of a grayscale animated image.\n\nFarnebäck, Gunnar. [\"Two-frame motion estimation based on polynomial expansion.\"](https://link.springer.com/content/pdf/10.1007/3-540-45103-X_50.pdf) Scandinavian conference on Image analysis. Springer, Berlin, Heidelberg, 2003.",
+    "description": "### Dense optical flow\n\nOpenCV provides a method to compute dense optical flow in the [`calcOpticalFlowFarneback()`](https://docs.opencv.org/3.4/dc/d6b/group__video__track.html#ga5d10ebbd59fe09c5f650289ec0ece5af) function, allowing to detect moving objects in frames without explicitly detecting feature points first.\n\nThis demo shows how to set up this type of optical flow in Possumwood, and how to display its results as colours on top of a grayscale animated image.\n\n<sub>Farnebäck, Gunnar. [\"Two-frame motion estimation based on polynomial expansion.\"](https://link.springer.com/content/pdf/10.1007/3-540-45103-X_50.pdf) Scandinavian conference on Image analysis. Springer, Berlin, Heidelberg, 2003.</sub>",
     "nodes": {
         "color_0": {
             "blind_data": {

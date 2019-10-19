@@ -19,7 +19,7 @@
             "out_port": "out_frame"
         }
     ],
-    "description": "### Mantiuk tonemapping\n\nTonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.\n\nThis demo shows how to set up Mantiuk's tonemapping algorithm in Possumwood.\n\nMantiuk, Rafal, Karol Myszkowski, and Hans-Peter Seidel. [\"A perceptual framework for contrast processing of high dynamic range images.\"](http://domino.mpi-inf.mpg.de/intranet/ag4/ag4publ.nsf/3561a79a83e6557ac1256b91004f4bdd/43fc98f7a2fc192ec1257149002e3b9a/$file/mantiuk06contrastproctap.pdf) ACM Transactions on Applied Perception (TAP) 3.3 (2006): 286-308.",
+    "description": "### Mantiuk tonemapping\n\nTonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.\n\nThis demo shows how to set up Mantiuk's tonemapping algorithm in Possumwood.\n\n<sub>Mantiuk, Rafal, Karol Myszkowski, and Hans-Peter Seidel. [\"A perceptual framework for contrast processing of high dynamic range images.\"](http://domino.mpi-inf.mpg.de/intranet/ag4/ag4publ.nsf/3561a79a83e6557ac1256b91004f4bdd/43fc98f7a2fc192ec1257149002e3b9a/$file/mantiuk06contrastproctap.pdf) ACM Transactions on Applied Perception (TAP) 3.3 (2006): 286-308.<sub>",
     "nodes": {
         "convert_0": {
             "blind_data": {

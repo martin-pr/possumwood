@@ -163,7 +163,7 @@
             "out_port": "out_uniforms"
         }
     ],
-    "description": "### Material capture shader\n\n[MatCap or LitSphere](https://www.clicktorelease.com/code/spherical-environment-mapping/) is a simple technique for representing the properties of both the material and the environment light in a single texture. By \"baking in\" the two dimensions of BRDF representing incoming light, MatCap determines the final colour solely by using the difference vector between the view ray and the surface normal.\n\nThis  simple approach can yield surprisingly realistic results, and has been used in [games](https://wiki.unity3d.com/index.php/MatCap), [scultping software](https://pixologic.com/zbrush/downloadcenter/library/) and for capturing and representing artistic styles.\n\nSloan, Peter-Pike J., et al. [\"The lit sphere: A model for capturing NPR shading from art.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.445.6888&rep=rep1&type=pdf) Graphics interface. Vol. 2001. 2001.",
+    "description": "### Material capture shader\n\n[MatCap or LitSphere](https://www.clicktorelease.com/code/spherical-environment-mapping/) is a simple technique for representing the properties of both the material and the environment light in a single texture. By \"baking in\" the two dimensions of BRDF representing incoming light, MatCap determines the final colour solely by using the difference vector between the view ray and the surface normal.\n\nThis  simple approach can yield surprisingly realistic results, and has been used in [games](https://wiki.unity3d.com/index.php/MatCap), [scultping software](https://pixologic.com/zbrush/downloadcenter/library/) and for capturing and representing artistic styles.\n\n<sub>Sloan, Peter-Pike J., et al. [\"The lit sphere: A model for capturing NPR shading from art.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.445.6888&rep=rep1&type=pdf) Graphics interface. Vol. 2001. 2001.</sub>",
     "nodes": {
         "background_0": {
             "blind_data": {
@@ -512,6 +512,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAkEAAAL5/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAATsAAACqAQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAAIUAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAkEAAANs/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACNQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACqwAAATYAAACqAQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAALpAAADbAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

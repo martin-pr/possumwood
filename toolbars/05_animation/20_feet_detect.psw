@@ -61,7 +61,7 @@
             "out_port": "out_anim"
         }
     ],
-    "description": "### Footstep detection\n\nAnimations represented as sequences of poses of hierarchical skeletons do not naturally represent information about character interaction with the environment. This information is necessary for motion editing to maintain desirable properties, such as realistic stationary footsteps. A number of methods has been used to perform this task, but a simple velocity thresholding has proven sufficient for most practical applications.\n\nThis demo shows how this simple technique can be used in Possumwood. The resulting constraint information can be further processed via median filtering, to remove any noise introduced in the detection process.\n\nKovar, Lucas, John Schreiner, and Michael Gleicher. [\"Footskate cleanup for motion capture editing.\"](http://kucg.korea.ac.kr/seminar/2005/src/PA-05-01.pdf) Proceedings of the 2002 ACM SIGGRAPH/Eurographics symposium on Computer animation. ACM, 2002.\n\nIkemoto, Leslie, Okan Arikan, and David Forsyth. [\"Knowing when to put your foot down.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.151.1882&rep=rep1&type=pdf) Proceedings of the 2006 symposium on Interactive 3D graphics and games. ACM, 2006.",
+    "description": "### Footstep detection\n\nAnimations represented as sequences of poses of hierarchical skeletons do not naturally represent information about character interaction with the environment. This information is necessary for motion editing to maintain desirable properties, such as realistic stationary footsteps. A number of methods has been used to perform this task, but a simple velocity thresholding has proven sufficient for most practical applications.\n\nThis demo shows how this simple technique can be used in Possumwood. The resulting constraint information can be further processed via median filtering, to remove any noise introduced in the detection process.\n\n<sub>Kovar, Lucas, John Schreiner, and Michael Gleicher. [\"Footskate cleanup for motion capture editing.\"](http://kucg.korea.ac.kr/seminar/2005/src/PA-05-01.pdf) Proceedings of the 2002 ACM SIGGRAPH/Eurographics symposium on Computer animation. ACM, 2002.</sub>\n\n<sub>Ikemoto, Leslie, Okan Arikan, and David Forsyth. [\"Knowing when to put your foot down.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.151.1882&rep=rep1&type=pdf) Proceedings of the 2006 symposium on Interactive 3D graphics and games. ACM, 2006.</sub>",
     "nodes": {
         "amc_0": {
             "blind_data": {
@@ -95,7 +95,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -207.005676269531,
+                    "x": -208.620971679688,
                     "y": 618.080139160156
                 }
             },
@@ -454,6 +454,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA3gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABVAAAAhoAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABkAAAQ6AAACWQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAApMAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA/wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABdQAAAmwAAACqAQAAAwAAAloAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
