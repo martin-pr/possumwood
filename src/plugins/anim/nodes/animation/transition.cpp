@@ -100,12 +100,13 @@ class Editor : public possumwood::Editor {
 		}
 
 		virtual void valueChanged(const dependency_graph::Attr& attr) override {
+			const anim::Animation& animA = values().get(a_animA);
+			const anim::Animation& animB = values().get(a_animB);
+
 			if(attr == a_animA || attr == a_animB) {
 				QPixmap pixmap;
 				m_fps = 0.0f;
 
-				anim::Animation animA = values().get(a_animA);
-				anim::Animation animB = values().get(a_animB);
 				if(!animA.empty() && !animB.empty()) {
 					::anim::MotionMap mmap(animA, animB, ::anim::metric::LocalAngle());
 
@@ -128,8 +129,8 @@ class Editor : public possumwood::Editor {
 				m_lineTr->setLine(
 					a >= len / 2 ? a - len / 2 : 0,
 					b >= len / 2 ? b - len / 2 : 0,
-					a+len/2 < m_widget->width() ? a + len / 2 : m_widget->width(),
-					b+len/2 < m_widget->height() ? b + len / 2 : m_widget->height());
+					a+len/2 < animA.size() ? a + len / 2 : animA.size(),
+					b+len/2 < animB.size() ? b + len / 2 : animB.size());
 
 				timeChanged(possumwood::App::instance().time());
 			}
