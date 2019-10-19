@@ -10,6 +10,29 @@ Possumwood is built on top of a simple graph-evaluation engine and a Qt-based no
 
 [![Build Status](https://travis-ci.org/martin-pr/possumwood.svg?branch=master)](https://travis-ci.org/martin-pr/possumwood) [![Snap Status](https://build.snapcraft.io/badge/martin-pr/possumwood.svg)](https://build.snapcraft.io/user/martin-pr/possumwood) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/85803e0b79d64c749038696d4e4512ad)](https://www.codacy.com/app/martin.prazak/possumwood?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=martin-pr/possumwood&amp;utm_campaign=Badge_Grade)
 
+## Table of contents
+- [Synopsis](#synopsis)
+- [Example setups](#example-setups)
+  - [Opengl](#opengl)
+  - [Polymesh](#polymesh)
+  - [Image](#image)
+  - [Lua](#lua)
+  - [Animation](#animation)
+  - [Opencv](#opencv)
+  - [Lightfields](#lightfields)
+- [Tutorials](#tutorials)
+  - [Basics](#basics)
+  - [OpenGL / GLSL](#opengl--glsl)
+  - [Image manipulation](#image-manipulation)
+- [Installation](#installation)
+  - [Launchpad PPA for Ubuntu 18.04+](#launchpad-ppa-for-ubuntu-1804)
+  - [Installation using Snap](#installation-using-snap)
+  - [Building from source](#building-from-source)
+- [Code Example](#code-example)
+- [API Reference](#api-reference)
+- [Contributors](#contributors)
+- [License](#license)
+
 ## Example setups
 Possumwood comes with a number of example setups that can serve as a starting point for experimentation.
 
@@ -1272,9 +1295,9 @@ This will install Possumwood to your system, enabling to simply run `possumwood`
 
 Daily build of Possumwood is built against a number of packages that are newer than most distros provide out of the box. These are contained in the [`ppa:martin-prazak/cgi-daily`](https://launchpad.net/~martin-prazak/+archive/ubuntu/cgi-daily) PPA. Some packages might conflict with the system versions (OpenImageIO, OpenCV), requiring the original system packages to be uninstalled first.
 
-### Installation using [Snap](https://snapcraft.io/)
+### Installation using Snap
 
-Currently, Possumwood is released in Snap as a development/testing package only. The latest build and its status can be accessed [here](https://build.snapcraft.io/user/martin-pr/possumwood).
+Currently, Possumwood is released in [Snap](https://snapcraft.io/) as a development/testing package only. The latest build and its status can be accessed [here](https://build.snapcraft.io/user/martin-pr/possumwood).
 
 To install a testing version, please run:
 
@@ -1359,6 +1382,17 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -2,6 +2,7 @@
 
 import os
 import json
+import re
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -47,76 +48,138 @@ def read_description(file):
 		return ''
 
 
-#################################
+# generate content by parsing current README.md
+def generate(file):
+	output = ""
 
-output = ""
+	state = 0
 
-state = 0
+	f = open(file)
+	for l in f:
+		if state == 0:
+			output = output + l
+			if l.rstrip() == "## Example setups":
+				output = output + "Possumwood comes with a number of example setups that can serve as a starting point for experimentation.\n\n"
+				state = 1
 
-f = open(path + "/../README.md")
-for l in f:
-	if state == 0:
-		output = output + l
-		if l.rstrip() == "## Example setups":
-			output = output + "Possumwood comes with a number of example setups that can serve as a starting point for experimentation.\n\n"
-			state = 1
+		elif state == 1:
+			if l.startswith("## "):
 
-	elif state == 1:
-		if l.startswith("## "):
+				# scan the toolbars
+				dirs = []
+				for directory in os.listdir(path + "/../toolbars"):
+					dirs.append(directory)
 
-			# scan the toolbars
-			dirs = []
-			for directory in os.listdir(path + "/../toolbars"):
-				dirs.append(directory)
+				dirs.sort()
+				for directory in dirs:
+					output = output + "### " + file_to_title(directory) + "\n"
 
-			dirs.sort()
-			for directory in dirs:
-				output = output + "### " + file_to_title(directory) + "\n"
+					output = output + "<table> \n"
 
-				output = output + "<table> \n"
+					files = []
+					for filename in os.listdir(path + "/../toolbars/" + directory):
+						if filename.endswith('.psw'):
+							files.append(filename)
 
-				files = []
-				for filename in os.listdir(path + "/../toolbars/" + directory):
-					if filename.endswith('.psw'):
-						files.append(filename)
+					files.sort();
+					for file in files:
+						output = output + "<tr> \n"
 
-				files.sort();
-				for file in files:
-					output = output + "<tr> \n"
+						desc = read_description(path + "/../toolbars/" + directory + "/" + file)
 
-					desc = read_description(path + "/../toolbars/" + directory + "/" + file)
-
-					icon = ("toolbars/" + directory + "/" + file)[0:-4] + '.png'
-					output = output + '<td>\n'
-					output = output + '<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> \n'
-					output = output + '<img src="' + icon + '" style="width:70px;">\n'
-					output = output + '<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> \n'
-					output = output + '</td>\n'
-
-					output = output + "<td> \n\n"
-
-					if not desc:
-						output = output + "#### " + file_to_title(file) + "\n (no description yet)\n"
-					else:
-						output = output + desc
-
-					output = output + "</td> \n"
-
-					screenshot = ("toolbars/" + directory + "/" + file)[0:-4] + '_screenshot.png'
-
-					if(os.path.exists(screenshot)):
+						icon = ("toolbars/" + directory + "/" + file)[0:-4] + '.png'
 						output = output + '<td>\n'
 						output = output + '<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> \n'
-						output = output + '<img src="' + screenshot + '" style="width:70px;">\n'
+						output = output + '<img src="' + icon + '" style="width:70px;">\n'
 						output = output + '<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> \n'
 						output = output + '</td>\n'
 
-					output = output + "</tr> \n"
+						output = output + "<td> \n\n"
 
-				output = output + "</table> \n\n"
+						if not desc:
+							output = output + "#### " + file_to_title(file) + "\n (no description yet)\n"
+						else:
+							output = output + desc
 
-			# insert the next heading
-			output = output + l
-			state = 0;
+						output = output + "</td> \n"
 
-print unicode(output).encode('ascii', 'xmlcharrefreplace')
+						screenshot = ("toolbars/" + directory + "/" + file)[0:-4] + '_screenshot.png'
+
+						if(os.path.exists(screenshot)):
+							output = output + '<td>\n'
+							output = output + '<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> \n'
+							output = output + '<img src="' + screenshot + '" style="width:70px;">\n'
+							output = output + '<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> \n'
+							output = output + '</td>\n'
+
+						output = output + "</tr> \n"
+
+					output = output + "</table> \n\n"
+
+				# insert the next heading
+				output = output + l
+				state = 0;
+
+	return output
+
+
+def text_to_link(text):
+	# process the links
+	text = text.replace("/", "")
+	text = text.replace(".", "")
+	text = text.replace("+", "")
+
+	text = text.replace(" ", "-")
+	text = text.lower()
+
+	return "#" + text
+
+
+def toc(text):
+
+	# create the table of contents
+	content = ""
+
+	for l in text.split('\n'):
+		# skip the TOC header
+		if l == "## Table of contents":
+			pass
+
+		# start from level 2
+		elif l.startswith('## '):
+			content = content + "- [" + l[3:] + "](" + text_to_link(l[3:]) + ")\n"
+
+		# and second level
+		elif l.startswith("### "):
+			content = content + "  - [" + l[4:] + "](" + text_to_link(l[4:]) + ")\n"
+
+	# a silly state machine to replace the table of contents
+	state = 0
+	result = ""
+	for l in text.split('\n'):
+		if state == 1:
+			if l.startswith("## "):
+				state = 0
+
+		if state == 0:
+			result = result + l + "\n"
+
+			if l == "## Table of contents":
+				state = 1
+				result = result + content + "\n"
+
+	return result
+
+
+
+#################################
+
+# process the demos
+output = generate(path + "/../README.md")
+
+# and process the TOC
+output = toc(output)
+
+# and write the output
+with open(path + "/../README.md", "w") as file:
+    file.write(unicode(output).encode('ascii', 'xmlcharrefreplace'))
