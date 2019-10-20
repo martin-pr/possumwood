@@ -594,6 +594,11 @@ This demo shows how to load animation data from a [`.bvh`](https://research.cs.w
 
 The loaded animation data are then processed (scaled, translated), and displayed in OpenGL using a simple skeleton render node.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/01_loading_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -607,6 +612,11 @@ The loaded animation data are then processed (scaled, translated), and displayed
 
 This demo uses GLSL (geometry shader) to generate a shaded polygonal stick figure from a set of line segments.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/02_glsl_skeleton_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -624,6 +634,11 @@ This demo uses a simple hierarchical linear blend to convert motion capture data
 
 <sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/03_periodic_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -639,6 +654,11 @@ A linear blend is the simplest way to transition between two animations. This de
 
 <sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/04_transition_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -660,6 +680,11 @@ This demo shows a random walk through a motion graph. In its current state, it d
 
 <sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/10_random_mgraph_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -679,6 +704,11 @@ This demo shows how this simple technique can be used in Possumwood. The resulti
 
 <sub>Ikemoto, Leslie, Okan Arikan, and David Forsyth. ["Knowing when to put your foot down."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.151.1882&rep=rep1&type=pdf) Proceedings of the 2006 symposium on Interactive 3D graphics and games. ACM, 2006.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/05_animation/20_feet_detect_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 </table> 
 
@@ -1482,6 +1512,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+
 
 
 
