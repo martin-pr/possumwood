@@ -532,6 +532,11 @@ This simple demo shows how to create a subnetwork performing simple addition (an
 
 Double click the node too see its content.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/01_add_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -547,6 +552,11 @@ This simple demo shows how to create a subnetwork performing simple multiplicati
 
 Double click the node too see its content.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/02_mult_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -560,6 +570,11 @@ Double click the node too see its content.
 
 A simple demo showing how to use a Lua script to create animated data, which are then fed as an input to a vector input of the `cube` node, animating its position.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/04_animated_cube_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 </table> 
 
@@ -1467,6 +1482,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+
 
 
 
