@@ -728,6 +728,11 @@ This simple demo shows how to load an image using OpenCV's [`imread()`](https://
 
 In following demos, this OpenGL setup is wrapped in a subnetwork.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/01_load_display_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -741,6 +746,11 @@ In following demos, this OpenGL setup is wrapped in a subnetwork.
 
 Color conversion in OpenCV is implemented in the [`cvtColor()`](https://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html?#cvtcolor) function. This demo shows how to use the corresponding `color` node to first convert to grayscale, and then back to BGR to allow the image to be passed to OpenGL as RGB data.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/02_grayscale_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -756,6 +766,11 @@ This demo follows the OpenCV's [Haar Cascade](https://docs.opencv.org/3.4/db/d28
 
 Lienhart, Rainer, and Jochen Maydt. ["An extended set of haar-like features for rapid object detection."](http://www.staroceans.org/documents/ICIP2002.pdf) Proceedings. international conference on image processing. Vol. 1. IEEE, 2002.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/10_haar_faces_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -769,6 +784,11 @@ Lienhart, Rainer, and Jochen Maydt. ["An extended set of haar-like features for 
 
 This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.opencv.org/3.4/d5/d69/tutorial_py_non_local_means.html) for grayscale images, removing the noise using the [non-local means](https://en.wikipedia.org/wiki/Non-local_means) algorithm.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/20_denoise_grayscale_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -782,6 +802,11 @@ This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.ope
 
 This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.opencv.org/3.4/d5/d69/tutorial_py_non_local_means.html) for color images, removing the noise using the [non-local means](https://en.wikipedia.org/wiki/Non-local_means) algorithm.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/21_denoise_colored_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -795,6 +820,11 @@ This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.ope
 
 This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/3.4/d5/d69/tutorial_py_non_local_means.html) for grayscale images, but at the end of the processing it subtracts the denoised image from the original (leaving only extracted noise), and [equalises](https://en.wikipedia.org/wiki/Histogram_equalization) the result using [`cv::equalizeHist()`](https://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_equalization/histogram_equalization.html) to show the noise structure.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/22_noise_grayscale_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -808,6 +838,11 @@ This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/
 
 This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/3.4/d5/d69/tutorial_py_non_local_means.html) for color images, but at the end of the processing it subtracts the denoised image from the original (leaving only extracted noise), and [equalises](https://en.wikipedia.org/wiki/Histogram_equalization) the result using [`cv::equalizeHist()`](https://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_equalization/histogram_equalization.html) to show the noise structure.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/23_noise_colored_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -821,6 +856,11 @@ This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/
 
 OpenCV's [VideoCapture](https://docs.opencv.org/3.4/d8/dfe/classcv_1_1VideoCapture.html) object can be used to extract frames from a video file. This demo shows how to use a `video_frame` source together with a `frame` input to link the viewport timeline with a displayed video frame.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/30_video_frame_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -838,6 +878,11 @@ This demo shows how to set up this type of optical flow in Possumwood, and how t
 
 <sub>Farneb&#228;ck, Gunnar. ["Two-frame motion estimation based on polynomial expansion."](https://link.springer.com/content/pdf/10.1007/3-540-45103-X_50.pdf) Scandinavian conference on Image analysis. Springer, Berlin, Heidelberg, 2003.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/31_optical_flow_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -851,6 +896,11 @@ This demo shows how to set up this type of optical flow in Possumwood, and how t
 
 Pattern detection is the first step of camera calibration for many computer vision algorithms. This demo shows how a pattern build of circles can be detected using Hough transformation, and assembled into a grid for the use of camera intrinsic and extrinsic calibration.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/40_circles_pattern_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -864,6 +914,11 @@ Pattern detection is the first step of camera calibration for many computer visi
 
 Pattern detection is the first step of camera calibration for many computer vision algorithms. This demo shows how a chessboard pattern can be detected using corners feature detection, and assembled into a grid for the use of camera intrinsic and extrinsic calibration.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/41_chessboard_pattern_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -881,6 +936,11 @@ This demo shows how to perform multi-image intrinsic camera calibration using a 
 
 The left side of the graph detects a pattern in a set of 4 images, accumulating the results in a `points` array; the `calibrate_camera` node computes the intrinsic calibration from a set of input sample points; the `undistort` node then uses the resulting calibration to correct the distortion of an input image.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/42_camera_undistort_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -898,6 +958,11 @@ This setup merges 5 hand-held exposures of a scene to an HDR image using Mertens
 
 <sub>Mertens, Tom, Jan Kautz, and Frank Van Reeth. ["Exposure fusion."](http://cholla.mmto.org/minerals/macro/exposure_fusion_reduced.pdf) 15th Pacific Conference on Computer Graphics and Applications (PG'07). IEEE, 2007.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/50_naive_mertens_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -917,6 +982,11 @@ This demo shows how a simple alignment of hand-held multiple exposures can be ac
 
 <sub>Ward, Greg. ["Fast, robust image registration for compositing high dynamic range photographs from hand-held exposures."](http://pages.cs.wisc.edu/~lizhang/courses/cs766-2008f/projects/hdr/jgtpap2.pdf) Journal of graphics tools 8.2 (2003): 17-30.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/51_aligned_mertens_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -934,6 +1004,11 @@ This setup shows how to use EXIF data from a set of JPG images to estimate the c
 
 <sub>Debevec, Paul E., and Jitendra Malik. ["Recovering high dynamic range radiance maps from photographs."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.463.6496&rep=rep1&type=pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/52_aligned_debevec_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -952,6 +1027,11 @@ This demo shows how to set up Drago's tonemapping algorithm in Possumwood.
 <sub>Drago, Fr&#233;d&#233;ric, et al. ["Adaptive logarithmic mapping for displaying high contrast scenes."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.8094&rep=rep1&type=pdf) Computer graphics forum. Vol. 22. No. 3. Oxford, UK: Blackwell Publishing, Inc, 2003.<sub>
 
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/60_tonemap_drago_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -969,6 +1049,11 @@ This demo shows how to set up Reinhards's tonemapping algorithm in Possumwood.
 
 <sub>Reinhard, Erik, and Kate Devlin. ["Dynamic range reduction inspired by photoreceptor physiology."](http://pages.cs.wisc.edu/~lizhang/courses/cs766-2008f/projects/hdr/Reinhard2005DRR.pdf) IEEE transactions on visualization and computer graphics 11.1 (2005): 13-24.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/61_tonemap_reinhard_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -986,6 +1071,11 @@ This demo shows how to set up Mantiuk's tonemapping algorithm in Possumwood.
 
 <sub>Mantiuk, Rafal, Karol Myszkowski, and Hans-Peter Seidel. ["A perceptual framework for contrast processing of high dynamic range images."](http://domino.mpi-inf.mpg.de/intranet/ag4/ag4publ.nsf/3561a79a83e6557ac1256b91004f4bdd/43fc98f7a2fc192ec1257149002e3b9a/$file/mantiuk06contrastproctap.pdf) ACM Transactions on Applied Perception (TAP) 3.3 (2006): 286-308.<sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/62_tonemap_mantiuk_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1003,6 +1093,11 @@ Telea's algorithm shown in this demo uses a Fast Marching method to inpaint pixe
 
 <sub>Telea, Alexandru. ["An image inpainting technique based on the fast marching method."](https://www.rug.nl/research/portal/files/14404904/2004JGraphToolsTelea.pdf) Journal of graphics tools 9.1 (2004): 23-34.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/70_inpaint_circle_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1020,6 +1115,11 @@ The Navier-Stokes-based algorithm shown in this demo uses a heuristic based on f
 
 <sub>Bertalmio, Marcelo, Andrea L. Bertozzi, and Guillermo Sapiro. ["Navier-stokes, fluid dynamics, and image and video inpainting."](https://conservancy.umn.edu/bitstream/handle/11299/3607/1772.pdf?sequence=1) Proceedings of the 2001 IEEE Computer Society Conference on Computer Vision and Pattern Recognition. CVPR 2001. Vol. 1. IEEE, 2001.<sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/71_inpaint_mask_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1035,6 +1135,11 @@ Image inpainting can be also used to attempt to restore an image where a large p
 
 This setup shows how an image can be partially restored using inpainting from a very sparse set of sample points.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/72_inpaint_restore_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1050,6 +1155,11 @@ A slightly different take on image inpainting can use the smoothness prior to tr
 
 <sub>Cohen-Or, Daniel, et al. [A sampler of useful computational tools for applied geometry, computer graphics, and image processing.](https://pdfs.semanticscholar.org/de0c/afb6c0775ed29b79a9d947b5174092581a4e.pdf) AK Peters/CRC Press, 2015.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/73_laplace_circle_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1512,6 +1622,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+
 
 
 
