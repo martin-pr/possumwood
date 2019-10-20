@@ -368,6 +368,11 @@ This simple demo shows how to load an object from `.obj` file, and display it in
 
 The display code is contained in a subnetwork (double click the blue node to "enter" it), and is based on a trivial implementation of a vertex and fragment OpenGL shader.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/01_load_mesh_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -383,6 +388,11 @@ To display a polygonal mesh on a GPU, the model needs to contain surface-normal 
 
 This simple demo shows [two methods of computing normals](https://doc.cgal.org/latest/Polygon_mesh_processing/index.html#PMPNormalComp) using the [CGAL library](https://www.cgal.org).
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/09_cgal_normals_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -398,6 +408,11 @@ Mesh simplification (decimation) is a common operation in mesh processing - it a
 
 This demo shows how to use [CGAL's implementation of mesh decimation](https://doc.cgal.org/latest/Surface_mesh_simplification/index.html) in Possumwood, allowing to experiment with its various parameters.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/10_cgal_decimation_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 </table> 
 
@@ -415,6 +430,11 @@ This demo shows how to use [CGAL's implementation of mesh decimation](https://do
 
 A simple demo showing how to load an image from a file, and display it using an OpenGL setup (wrapped in a subnetwork - enter it by double-clicking the blue node).
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/01_load_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -430,6 +450,11 @@ While Possumwood's viewport is primarily intended for viewing 3D content, using 
 
 This demo uses shaders that ignore the perspective projection matrix and draw 2D image in a 2D front-facing view in the viewport.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/02_fullscreen_display_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -445,6 +470,11 @@ Possumwood contains a simple integration of the [Lua scripting language](https:/
 
 This demo shows how to synthesize an image programatically. It "injects" the `images` plugin into the input Lua `context` (i.e., the environment for running a script), and generates an image, which is then extracted from the output `state` using an `image extract` node. The result is then passed on an image-display subnetwork.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/09_lua_grid_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -458,6 +488,11 @@ This demo shows how to synthesize an image programatically. It "injects" the `im
 
 This demo builds on the Lua Grid setup, extending it by additional parameters, and wrapping it in a subnetwork (double click any blue nodes to "enter" them).
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/10_lua_expression_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -473,6 +508,11 @@ Lua expressions in Possumwood can be also used to manipulate [HDR images](https:
 
 This demo shows how to implement simple [Gamma compression](https://en.wikipedia.org/wiki/Gamma_correction) tonemapping operator in Lua, and how to wrap it into a subnetwork with exposed parameters. Possumwood allows arbitrary nesting of nodes in this way, allowing to abstract-away any unnecessary complexity into simple nodes with clean interfaces.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/11_lua_tonemapping_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 </table> 
 
@@ -1427,6 +1467,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+
 
 
 
