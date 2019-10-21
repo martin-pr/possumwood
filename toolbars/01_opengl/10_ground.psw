@@ -31,6 +31,7 @@
             "out_port": "out_uniforms"
         }
     ],
+    "description": "### Infinite ground plane\n\nA simple way of generating procedural graphics using GLSL employs rendering a single polygon covering the whole frame, and a per-pixel fragment shader (with additional inputs) to compute the final colour. A number of examples of this approach can be found at [ShaderToy](https://www.shadertoy.com).\n\nThis demo is a simple example of such approach - based on a ray generated from a near and far plane point corresponding to a screen pixel, it computes the position of ray's intersection with the ground plane (`y==0`), and uses this information to synthesize an \"infinite\" ground plane covered in checkerboard, with a \"spotlight\". The fragment shader does all the computation - from ray intersection, through colour and checkerboard generation, to depth-value computation to allow the ground plane to composit correctly with other objects in a scene.",
     "nodes": {
         "background_0": {
             "blind_data": {
@@ -110,6 +111,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIlAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAhQAAAME/AIAAAAC/AAAAG4AAAMEAAAAogEAABv6AAAAAAEAAAAC+wAAAAwAZQBkAGkAdABvAHIBAAAAAP////8AAACjAQAAA/sAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAElwAAAhQAAAGoAQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAAJwAAADBAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAACcAAAABkAAAaqAAACTwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIlAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAhQAAANs/AIAAAAC/AAAAHUAAANsAAAAxgEAABv6AAAAAAEAAAAC+wAAAAwAZQBkAGkAdABvAHIBAAAAAP////8AAACwAQAAA/sAAAAUAHAAcgBvAHAAZQByAHQAaQBlAHMBAAAElwAAAhQAAAGoAQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAANFAAADbAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

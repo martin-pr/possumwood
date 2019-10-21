@@ -31,6 +31,7 @@
             "out_port": "time"
         }
     ],
+    "description": "### Periodic animation\n\nA motion capture data source captures reality, and due to both capturing noise and imperfections, a locomotion or another periodic motion will never be perfectly periodic.\n\nThis demo uses a simple hierarchical linear blend to convert motion capture data to a periodic animation. To allow user to understand the input data well, the user interface uses a simple display of per-frame comparison error metric, similar to Kovar et al.'s [Motion Graphs](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf).\n\n<sub>Kovar, Lucas, Michael Gleicher, and Frédéric Pighin. [\"Motion graphs.\"](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>",
     "nodes": {
         "bvh_0": {
             "blind_data": {
@@ -128,6 +129,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACUwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADAPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADAAAAAJgBAAADAAAAAQAAAagAAAMA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABVwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABxgAAAagAAACCAQAAAwAAAnAAAAMAAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAACcAAAABkAAAaqAAACUwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABiAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB/gAAAeMAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

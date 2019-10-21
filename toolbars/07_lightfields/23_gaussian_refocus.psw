@@ -55,6 +55,7 @@
             "out_port": "samples"
         }
     ],
+    "description": "### Refocusing with radial-basis function regression\n\nTo reduce the gaps in refocused images caused by missing samples, and to exploit the information in samples that would otherwise be averaged-out into a single pixel, it is possible to use a radial-basis function regression superresolution framework.\n\nThis demo shows how a simple gaussian-based accumulation, similar to one used for mult-frame supersampling on modern phones, can be used to improve the resolution and quality of a super-sampled refocused image.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>\n\n<sub>Bartlomiej Wronski, Ignacio Garcia-Dorado, Manfred Ernst, Damien Kelly, Michael Krainin, Chia-Kai Liang, Marc Levoy, and Peyman Milanfar. 2019. [Handheld multi-frame super-resolution.](https://drive.google.com/file/d/1T1u2Mhm8ay6reHHouM1wO0TegvRJbJV_/view?usp=sharing) ACM Trans. Graph. 38, 4, Article 28 (July 2019), 18 pages. </sub>\n\n<sub>Fiss, Juliet, Brian Curless, and Richard Szeliski. \"Refocusing plenoptic images using depth-adaptive splatting.\" 2014 IEEE international conference on computational photography (ICCP). IEEE, 2014.</sub>",
     "nodes": {
         "convert_0": {
             "blind_data": {
@@ -66,7 +67,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 120.0,
+                "a": 100.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -96,7 +97,7 @@
             },
             "name": "gamma",
             "ports": {
-                "gamma": 0.699999988079071,
+                "gamma": 0.800000011920929,
                 "normalization_coef": 1.0
             },
             "type": "opencv/gamma"
@@ -111,7 +112,7 @@
             },
             "name": "integrate_gaussian",
             "ports": {
-                "sigma2": 2.0,
+                "sigma2": 4.0,
                 "size": {
                     "x": 1000,
                     "y": 1000
@@ -134,7 +135,7 @@
                     "max": 60.0,
                     "min": -40.0,
                     "type": "linear",
-                    "value": 18.2000007629395
+                    "value": -23.2000007629395
                 }
             },
             "type": "maths/interval"
@@ -163,7 +164,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/coin.lfr"
+                "filename": "$EXAMPLES/lytro/road.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -493,5 +494,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJjAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB2wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACUQAAAZAAAACGAQAAAwAAA3MAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJEAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABngAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACFAAAAc0AAACqAQAAAwAAA5IAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

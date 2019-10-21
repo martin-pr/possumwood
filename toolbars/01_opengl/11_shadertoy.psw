@@ -25,6 +25,7 @@
             "out_port": "shader"
         }
     ],
+    "description": "### Shadertoy\n\n[ShaderToy](https://www.shadertoy.com) is a community of artists and programmers centered around generating interesting graphics content in GLSL using a single fragment shader.\n\nOne of the common techniques to generate procedural 3D content in a fragment shader is Raymarching - a simple method of tracing rays against shapes represented as Signed Distance Functions, and generating 3D content based on them.\n\nThis demo is a port of a [ShaderToy demo](https://www.shadertoy.com/view/Xds3zN) by [Indigo Quilezles](https://www.shadertoy.com/user/iq), showing different SDFs and a few additional effects that can be achieved by raymarching. A comprehensive raymarching tutorial can be found at the [RaymarchingWorkshop](https://github.com/ajweeks/RaymarchingWorkshop).",
     "nodes": {
         "background_0": {
             "blind_data": {
@@ -93,6 +94,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAACAAAAAAAABqUAAAOZAAAABAAAABkAAAajAAADlwAAAAAAAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHUAAAC7/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC7wAAAJgBAAADAAAAAQAAAkYAAALv/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABAQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABdwAAAe0AAACGAQAAA/sAAAAGAGwAbwBnAAAAArIAAAFXAAAAAAAAAAAAAAKEAAAC7wAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAACAAAAB0AAAafAAADkwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHUAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAkYAAANs/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAAxQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABOwAAAqYAAACqAQAAA/sAAAAGAGwAbwBnAAAAArIAAAFXAAAAAAAAAAAAAANkAAADbAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

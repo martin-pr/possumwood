@@ -1,18 +1,6 @@
 {
     "connections": [
         {
-            "in_node": "cube_0",
-            "in_port": "position",
-            "out_node": "make_vec3_0",
-            "out_port": "out"
-        },
-        {
-            "in_node": "float_0",
-            "in_port": "value",
-            "out_node": "time_0",
-            "out_port": "time"
-        },
-        {
             "in_node": "script_0",
             "in_port": "context",
             "out_node": "float_0",
@@ -37,6 +25,12 @@
             "out_port": "out"
         },
         {
+            "in_node": "cube_0",
+            "in_port": "position",
+            "out_node": "make_vec3_0",
+            "out_port": "out"
+        },
+        {
             "in_node": "float_1",
             "in_port": "state",
             "out_node": "script_0",
@@ -53,8 +47,15 @@
             "in_port": "state",
             "out_node": "script_0",
             "out_port": "state"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "value",
+            "out_node": "time_0",
+            "out_port": "time"
         }
     ],
+    "description": "### Animated cube\n\nA simple demo showing how to use a Lua script to create animated data, which are then fed as an input to a vector input of the `cube` node, animating its position.",
     "nodes": {
         "cube_0": {
             "blind_data": {
@@ -172,6 +173,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAAAGgAAACoAAAdNAAAD7QAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAd8AAAL5/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABcwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB6QAAAYUAAACGAQAAA/sAAAAGAGwAbwBnAQAAAjIAAAGXAAAAAAAAAAAAAAHSAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAGgAAACoAAAdNAAAD7QAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAd8AAAL5/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABjwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACBQAAAWkAAACqAQAAA/sAAAAGAGwAbwBnAQAAAjIAAAGXAAAAAAAAAAAAAAHSAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

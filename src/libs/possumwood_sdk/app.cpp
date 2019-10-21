@@ -177,12 +177,14 @@ const boost::filesystem::path& App::filename() const {
 void App::newFile() {
 	graph().clear();
 	m_filename = "";
+	m_sceneDescription.clear();
 }
 
 dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 	// read the graph
 	graph().clear();
 	undoStack().clear();
+	m_sceneDescription.clear();
 
 	dependency_graph::Selection selection; // throwaway
 	const dependency_graph::State state = possumwood::actions::fromJson(graph(), selection, json, false);
@@ -207,6 +209,9 @@ dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 		}
 	}
 
+	if(json.find("description") != json.end())
+		m_sceneDescription.deserialize(json["description"].get<std::string>());
+
 	// read the UI configuration
 	if(QCoreApplication::instance() != nullptr) {
 		if(json.find("ui_geometry") != json.end())
@@ -220,7 +225,7 @@ dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 	return state;
 }
 
-dependency_graph::State App::loadFile(const boost::filesystem::path& filename) {
+dependency_graph::State App::loadFile(const boost::filesystem::path& filename, bool alterCurrentFilename) {
 	if(!boost::filesystem::exists(filename))
 		throw std::runtime_error("Cannot open " + filename.string() +
 		                         " - file not found.");
@@ -230,7 +235,8 @@ dependency_graph::State App::loadFile(const boost::filesystem::path& filename) {
 	in >> json;
 
 	// update the opened filename
-	m_filename = filename;
+	if(alterCurrentFilename)
+		m_filename = filename;
 
 	const dependency_graph::State state = loadFile(json);
 
@@ -258,6 +264,8 @@ void App::saveFile(possumwood::io::json& json, bool saveSceneConfig) {
 				config[i.name()] = i.as<std::string>();
 			else
 				assert(false);
+
+		json["description"] = m_sceneDescription.serialize();
 	}
 
 	// and save the UI configuration
@@ -338,6 +346,10 @@ boost::signals2::connection App::onTimeChanged(std::function<void(float)> fn) {
 
 Config& App::sceneConfig() {
 	return m_sceneConfig;
+}
+
+Description& App::sceneDescription() {
+	return m_sceneDescription;
 }
 
 boost::filesystem::path App::expandPath(const boost::filesystem::path& path) const {

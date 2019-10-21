@@ -103,6 +103,7 @@
             "out_port": "out_anim"
         }
     ],
+    "description": "### Animation transition\n\nA linear blend is the simplest way to transition between two animations. This demo shows how a hand-picked linear blend can be used in Possumwood to transition between two animations. To assist the user with picking the blending point, the editor window displays a visualisation of frame similarity metric, similar to Kovar et al.'s Motion Graphs.\n\n<sub>Kovar, Lucas, Michael Gleicher, and Frédéric Pighin. [\"Motion graphs.\"](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>",
     "nodes": {
         "bvh_0": {
             "blind_data": {
@@ -182,8 +183,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 248.61376953125,
-                    "y": 536.848205566406
+                    "x": 253.832153320312,
+                    "y": 539.457397460938
                 }
             },
             "name": "from_animation",
@@ -322,8 +323,8 @@
             },
             "name": "transition",
             "ports": {
-                "transition_a": 377,
-                "transition_b": 10,
+                "transition_a": 374,
+                "transition_b": 12,
                 "transition_length": 11
             },
             "type": "anim/animation/transition"
@@ -332,14 +333,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 245.882141113281,
+                    "x": 248.491333007812,
                     "y": 269.914489746094
                 }
             },
             "name": "transition",
             "ports": {
-                "transition_a": 546,
-                "transition_b": 37,
+                "transition_a": 533,
+                "transition_b": 30,
                 "transition_length": 11
             },
             "type": "anim/animation/transition"
@@ -406,6 +407,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACUwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKKAAADAPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADAAAAAJgBAAADAAAAAQAAAagAAAMA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAABuAAABAQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABcAAAAf4AAACGAQAAAwAAAncAAAMAAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAADYQAAAYcAAAgGAAAEDwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKKAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABJQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABmwAAAkYAAACqAQAAAwAAA0wAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

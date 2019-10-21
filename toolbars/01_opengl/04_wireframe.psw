@@ -37,6 +37,7 @@
             "out_port": "shader"
         }
     ],
+    "description": "### Wireframe using a geometry shader\n\nWireframe mode is one of the rendering modes of OpenGL. A similar but more controllable effect can be achieved by processing a model using a geometry shader, which allows to convert primitives to a different number of primitives of the same or different type.\n\nThis setup shows how to emit a line for each polygon edge of the input geometry using a program in `geometry_shader`. It also shows how to adjust the line width to screen resolution, maintaining the width independent to view parameters.",
     "nodes": {
         "draw_0": {
             "blind_data": {
@@ -133,6 +134,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywACAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqs=",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIJAAADBPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAABuAAADBAAAAJgBAAADAAAAAQAAAbAAAAME/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAABrAAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAbgAAAwQAAACGAQAAAwAAAvAAAAMEAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAACcAAAABkAAAaqAAACTwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIJAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAbAAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAABrAAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAdQAAA2wAAACqAQAAAwAAA8UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -49,6 +49,7 @@
             "out_port": "samples"
         }
     ],
+    "description": "### Naive refocusing\n\nThe simplest method of lightfields digital refocusing is to directly use the lightfield's equation to determine the target pixel position for each sample, given its position in the lightfield image and its corresponding `u` and `v` values.\n\nWhile very simple and fast, the number of samples for each pixel can vary depending on the bayern pattern and focal distance, often leading to noisy and/or low-resolution results with artifacts.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
     "nodes": {
         "convert_0": {
             "blind_data": {
@@ -60,7 +61,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 150.0,
+                "a": 100.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -90,7 +91,7 @@
             },
             "name": "gamma",
             "ports": {
-                "gamma": 0.699999988079071,
+                "gamma": 0.800000011920929,
                 "normalization_coef": 1.0
             },
             "type": "opencv/gamma"
@@ -106,8 +107,8 @@
             "name": "integrate_nearest",
             "ports": {
                 "size": {
-                    "x": 300,
-                    "y": 300
+                    "x": 1000,
+                    "y": 1000
                 }
             },
             "type": "opencv/lightfields/integrate_nearest"
@@ -136,7 +137,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/coin.lfr"
+                "filename": "$EXAMPLES/lytro/road.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -448,13 +449,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 196.623977661133,
-                    "y": 144.4150390625
+                    "x": 298.388031005859,
+                    "y": 99.1865692138672
                 }
             },
             "name": "samples_refocus",
             "ports": {
-                "uv_offset": 0.0,
+                "uv_offset": -15.0,
                 "uv_threshold": 1.0,
                 "xy_scale": 1.0
             },
@@ -466,6 +467,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAa0AAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACGAQAAAwAAA4AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAa0AAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABVgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABzAAAAaIAAACqAQAAAwAAAqsAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

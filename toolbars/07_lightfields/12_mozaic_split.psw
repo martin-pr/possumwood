@@ -21,19 +21,19 @@
         {
             "in_node": "concat_3",
             "in_port": "in_frame_1",
-            "out_node": "color_3",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_2",
-            "in_port": "in_frame_2",
-            "out_node": "color_4",
+            "out_node": "colormap_0",
             "out_port": "out_frame"
         },
         {
             "in_node": "concat_3",
             "in_port": "in_frame_2",
-            "out_node": "color_5",
+            "out_node": "colormap_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_2",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_2",
             "out_port": "out_frame"
         },
         {
@@ -133,19 +133,19 @@
             "out_port": "frame"
         },
         {
-            "in_node": "color_3",
+            "in_node": "colormap_0",
             "in_port": "in_frame",
             "out_node": "split_0",
             "out_port": "out_1"
         },
         {
-            "in_node": "color_5",
+            "in_node": "colormap_1",
             "in_port": "in_frame",
             "out_node": "split_0",
             "out_port": "out_2"
         },
         {
-            "in_node": "color_4",
+            "in_node": "colormap_2",
             "in_port": "in_frame",
             "out_node": "split_0",
             "out_port": "out_3"
@@ -169,6 +169,7 @@
             "out_port": "out_3"
         }
     ],
+    "description": "### Sub-apreture mosaic image sample counts\n\nDemultiplexing a Bayern image leads to a significantly larger number of samples for green pixels, compared to red and blue values.\n\nThis demo addempts to visualise this difference explicitly, by showing both each channel of the demultiplexed image, and the number of samples used to reconstruct each of its pixels.",
     "nodes": {
         "color_0": {
             "blind_data": {
@@ -212,47 +213,47 @@
             },
             "type": "opencv/color"
         },
-        "color_3": {
+        "colormap_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 376.38720703125,
-                    "y": 809.852111816406
+                    "x": 380.846740722656,
+                    "y": 805.923706054688
                 }
             },
-            "name": "color",
+            "name": "colormap",
             "ports": {
-                "mode": "GRAY2BGR"
+                "type": "COLORMAP_JET"
             },
-            "type": "opencv/color"
+            "type": "opencv/colormap"
         },
-        "color_4": {
+        "colormap_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 584.822143554688,
-                    "y": 822.561584472656
+                    "x": 483.793334960938,
+                    "y": 817.362243652344
                 }
             },
-            "name": "color",
+            "name": "colormap",
             "ports": {
-                "mode": "GRAY2BGR"
+                "type": "COLORMAP_JET"
             },
-            "type": "opencv/color"
+            "type": "opencv/colormap"
         },
-        "color_5": {
+        "colormap_2": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 484.417510986328,
-                    "y": 813.664916992188
+                    "x": 585.468933105469,
+                    "y": 830.071655273438
                 }
             },
-            "name": "color",
+            "name": "colormap",
             "ports": {
-                "mode": "GRAY2BGR"
+                "type": "COLORMAP_JET"
             },
-            "type": "opencv/color"
+            "type": "opencv/colormap"
         },
         "concat_0": {
             "blind_data": {
@@ -314,8 +315,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 298.493347167969,
-                    "y": 1338.97790527344
+                    "x": 285.447357177734,
+                    "y": 1297.23083496094
                 }
             },
             "name": "concat",
@@ -350,7 +351,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 64.0,
+                "a": 8.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -429,8 +430,8 @@
             "ports": {
                 "elements": 11,
                 "size": {
-                    "x": 150,
-                    "y": 150
+                    "x": 50,
+                    "y": 50
                 }
             },
             "type": "opencv/lightfields/integrate_mosaic"
@@ -439,13 +440,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 82.0359954833984,
-                    "y": -312.461059570312
+                    "x": 181.185440063477,
+                    "y": -236.794372558594
                 }
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/coins.lfr"
+                "filename": "$EXAMPLES/lytro/coin.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -453,8 +454,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 291.187103271484,
-                    "y": -308.250946044922
+                    "x": 390.336547851562,
+                    "y": -232.584259033203
                 }
             },
             "name": "lytro_lightfield",
@@ -467,8 +468,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 377.794677734375,
-                    "y": 1545.22033691406
+                    "x": 346.484313964844,
+                    "y": 1459.11694335938
                 }
             },
             "connections": [
@@ -795,6 +796,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAAAAAAAQ6AAACQQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAByAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAATAAAACGAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKUAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABlwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACDQAAAWEAAACqAQAAAwAAAm0AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

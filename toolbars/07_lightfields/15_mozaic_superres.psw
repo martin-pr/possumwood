@@ -25,6 +25,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "gamma_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "mosaic_superres_0",
             "in_port": "in_frame",
             "out_node": "inpaint_0",
@@ -49,12 +55,6 @@
             "out_port": "sample_count"
         },
         {
-            "in_node": "convert_3",
-            "in_port": "in_frame",
-            "out_node": "integrate_mosaic_0",
-            "out_port": "sample_count"
-        },
-        {
             "in_node": "divide_0",
             "in_port": "in_frame_1",
             "out_node": "lytro_lightfield_0",
@@ -73,7 +73,7 @@
             "out_port": "pattern"
         },
         {
-            "in_node": "convert_1",
+            "in_node": "gamma_0",
             "in_port": "in_frame",
             "out_node": "mosaic_superres_0",
             "out_port": "out_frame"
@@ -97,6 +97,7 @@
             "out_port": "out_frame"
         }
     ],
+    "description": "### Mosaic-based lightfields superresolution\n\nReconstructed mosaic data can be used to reconstruct a high-resolution image using a simple multiplexing algorithm.\n\nThis demo shows the result of this algorithm on an inpainted mosaic from previous demos.",
     "nodes": {
         "convert_0": {
             "blind_data": {
@@ -134,29 +135,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 209.089569091797,
-                    "y": 990.622253417969
+                    "x": 256.114593505859,
+                    "y": 989.351318359375
                 }
             },
             "name": "convert",
             "ports": {
                 "a": 255.0,
-                "b": 0.0,
-                "mode": "CV_8U"
-            },
-            "type": "opencv/convert"
-        },
-        "convert_3": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 372.84423828125,
-                    "y": 793.810913085938
-                }
-            },
-            "name": "convert",
-            "ports": {
-                "a": 128.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -175,6 +160,21 @@
                 "scale": 0.200000002980232
             },
             "type": "opencv/divide"
+        },
+        "gamma_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 93.0032424926758,
+                    "y": 1012.88385009766
+                }
+            },
+            "name": "gamma",
+            "ports": {
+                "gamma": 0.699999988079071,
+                "normalization_coef": 1.0
+            },
+            "type": "opencv/gamma"
         },
         "inpaint_0": {
             "blind_data": {
@@ -220,8 +220,8 @@
             "ports": {
                 "elements": 9,
                 "size": {
-                    "x": 370,
-                    "y": 370
+                    "x": 300,
+                    "y": 300
                 }
             },
             "type": "opencv/lightfields/integrate_mosaic"
@@ -264,7 +264,7 @@
             },
             "name": "mosaic_superres",
             "ports": {
-                "circular_filter": true,
+                "filter/circular": true,
                 "mosaic": 9,
                 "offset": 0.333299994468689,
                 "size": {
@@ -620,6 +620,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAAAAAAASlAAACQQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK3AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAChAAAAV0AAACGAQAAAwAAAx8AAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKjAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAByAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAATAAAACqAQAAAwAAAl4AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
