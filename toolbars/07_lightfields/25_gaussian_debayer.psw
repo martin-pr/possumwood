@@ -67,7 +67,7 @@
             "out_port": "samples"
         }
     ],
-    "description": "(empty description)",
+    "description": "### Refocussing with radial-basis function regression and a de-Bayer filter\nApplying a de-Bayer filter to raw lightfield data reduces some artifacts seen in previous two demos, while introducing a level of additional colour ambiguity (i.e., a less sharp result).",
     "nodes": {
         "convert_0": {
             "blind_data": {
@@ -111,7 +111,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 120.0,
+                "a": 100.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -155,7 +155,7 @@
             },
             "name": "gamma",
             "ports": {
-                "gamma": 0.800000011920929,
+                "gamma": 0.699999988079071,
                 "normalization_coef": 1.0
             },
             "type": "opencv/gamma"
@@ -532,6 +532,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIoAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAC+QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIAAAACgwAAAV4AAACqAQAAAwAAAtkAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIoAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACcQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAC5wAAAPoAAACqAQAAAwAAA64AAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
