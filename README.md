@@ -1193,9 +1193,25 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Lytro reading
- (no description yet)
+#### Lytro RAW lightfields reader
+
+Lytro cameras output a proprietary raw image format, which has never been officially documented. However, it has been reverse-engineered, and the results were [documented in detail](http://optics.miloush.net/lytro/TheFileFormat.aspx) by [Jan Ku&#269;era](http://optics.miloush.net).
+
+This demo implements a reader for Lytro RAW files, extracting both image data and metadata of each image.
+
+<sub>Ku&#269;era, Jan. [Lytro Meltdown - the file format](http://optics.miloush.net/lytro/TheFileFormat.aspx).</sub>
+
+<sub>Ku&#269;era, Jan. ["V&#253;po&#269;etn&#237; fotografie ve sv&#283;teln&#233;m poli a aplikace na panoramatick&#233; sn&#237;mky."](https://dspace.cuni.cz/bitstream/handle/20.500.11956/72092/DPTX_2012_1_11320_0_324872_0_132845.pdf?sequence=1) (2014).</sub>
+
+<sub>Georgiev, Todor, et al. ["Lytro camera technology: theory, algorithms, performance analysis."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.679.5441&rep=rep1&type=pdf) Multimedia Content and Mobile Devices. Vol. 8667. International Society for Optics and Photonics, 2013.</sub>
+
+
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/01_lytro_reading_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1205,21 +1221,41 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Lytro normalize
- (no description yet)
+#### Lytro light field normalisation
+
+Calibration of lightfield cameras is a complex process. One of the main issue facing microlens-based cameras is vignetting, caused both by the main lens, and by each of the microlenses.
+
+A naive approach to address vignetting is by simply dividing the image pixels by the values of a white diffuse image captured with the same settings. While this approach addresses vignetting sufficiently, it doesn't take into account the camera response curve, leading to some artifacts still being present in the final image.
+
+Georgiev, Todor, et al. ["Lytro camera technology: theory, algorithms, performance analysis."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.679.5441&rep=rep1&type=pdf) Multimedia Content and Mobile Devices. Vol. 8667. International Society for Optics and Photonics, 2013.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/02_lytro_normalize_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/03_reading_debayer.png" style="width:70px;">
+<img src="toolbars/07_lightfields/03_reading_debayern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Reading debayer
- (no description yet)
+#### Lytro lightfields debayern
+
+The sensor of Lytro cameras are conventional Bayer-pattern color filters. In standard photography, one of the first steps of image processing involves the interpolation of values of neighbouring pixels to remove the Bayer pattern.
+
+This demo shows how to obtain a debayered normalised lightfield in Possumwood.
+
+<sub>Kucera, J. "Computational photography of light-field camera and application to panoramic photography." Institute of Information Theory and Automation (2014).</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/03_reading_debayern_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1229,9 +1265,19 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Lytro pattern
- (no description yet)
+#### Lytro microlens pattern reconstruction
+
+Reconstruction of the microlens pattern is essential for recovering the lightfield data from a Lytro image.
+
+This demo shows how the information embedded in the metadata of a Lytro raw image can be used to reconstruct the microlens array, and visualise the result.
+
+Georgiev, Todor, et al. ["Lytro camera technology: theory, algorithms, performance analysis."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.679.5441&rep=rep1&type=pdf) Multimedia Content and Mobile Devices. Vol. 8667. International Society for Optics and Photonics, 2013.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/04_lytro_pattern_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1241,9 +1287,19 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Mozaic
- (no description yet)
+#### Sub-aperture images from Lytro lightfields data
+
+Lightfield data contain enough information to allow for reconstruction of multiple narrow-base sub-apreture images, each with slightly different "point of view".
+
+This demo shows how to use demultiplexing to reconstruct multiple views from raw Lytro data.
+
+<sub>Sabater, Neus, et al. ["Accurate disparity estimation for plenoptic images."](https://pdfs.semanticscholar.org/e79c/4371f7636d3c94c839d00653390e791e0e0b.pdf) European Conference on Computer Vision. Springer, Cham, 2014.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/10_mozaic_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1253,9 +1309,19 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Mozaic normalize
- (no description yet)
+#### Normalized sub-aperture images from Lytro lightfields data
+
+Lightfield data contain enough information to allow for reconstruction of multiple narrow-base sub-apreture images, each with slightly different "point of view".
+
+This demo shows how to use demultiplexing to reconstruct multiple views from normalized raw Lytro data. Normalization is performed by simple division of the image data by white diffuse image values.
+
+<sub>Sabater, Neus, et al. ["Accurate disparity estimation for plenoptic images."](https://pdfs.semanticscholar.org/e79c/4371f7636d3c94c839d00653390e791e0e0b.pdf) European Conference on Computer Vision. Springer, Cham, 2014.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/11_mozaic_normalize_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1265,9 +1331,17 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Mozaic split
- (no description yet)
+#### Sub-apreture mosaic image sample counts
+
+Demultiplexing a Bayern image leads to a significantly larger number of samples for green pixels, compared to red and blue values.
+
+This demo addempts to visualise this difference explicitly, by showing both each channel of the demultiplexed image, and the number of samples used to reconstruct each of its pixels.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/12_mozaic_split_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1277,9 +1351,19 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Mozaic inpainted
- (no description yet)
+#### Sub-apreture image inpainting
+
+To reconstruct missing data after obtaining sub-apreture images, this demo uses a simple inpainting technique from OpenCV to reconstruct missing data in each image separately.
+
+<sub>Sabater, Neus, et al. ["Accurate disparity estimation for plenoptic images."](https://pdfs.semanticscholar.org/e79c/4371f7636d3c94c839d00653390e791e0e0b.pdf) European Conference on Computer Vision. Springer, Cham, 2014.</sub>
+
+<sub>Bertalmio, Marcelo, Andrea L. Bertozzi, and Guillermo Sapiro. ["Navier-stokes, fluid dynamics, and image and video inpainting."](https://conservancy.umn.edu/bitstream/handle/11299/3607/1772.pdf?sequence=1) Proceedings of the 2001 IEEE Computer Society Conference on Computer Vision and Pattern Recognition. CVPR 2001. Vol. 1. IEEE, 2001.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/13_mozaic_inpainted_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1289,9 +1373,19 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Laplacian inpainted
- (no description yet)
+#### Sub-apreture image inpainting using smoothness prior
+
+To reconstruct missing data after obtaining sub-apreture images, this demo uses a simple Laplacian-based inpainting technique to reconstruct missing data in each image separately.
+
+<sub>Sabater, Neus, et al. ["Accurate disparity estimation for plenoptic images."](https://pdfs.semanticscholar.org/e79c/4371f7636d3c94c839d00653390e791e0e0b.pdf) European Conference on Computer Vision. Springer, Cham, 2014.</sub>
+
+<sub>Cohen-Or, Daniel, et al. [A sampler of useful computational tools for applied geometry, computer graphics, and image processing.](https://pdfs.semanticscholar.org/de0c/afb6c0775ed29b79a9d947b5174092581a4e.pdf) AK Peters/CRC Press, 2015.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/14_laplacian_inpainted_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1301,9 +1395,17 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Mozaic superres
- (no description yet)
+#### Mosaic-based lightfields superresolution
+
+Reconstructed mosaic data can be used to reconstruct a high-resolution image using a simple multiplexing algorithm.
+
+This demo shows the result of this algorithm on an inpainted mosaic from previous demos.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/15_mozaic_superres_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1313,9 +1415,19 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Naive refocus
- (no description yet)
+#### Naive refocusing
+
+The simplest method of lightfields digital refocusing is to directly use the lightfield's equation to determine the target pixel position for each sample, given its position in the lightfield image and its corresponding `u` and `v` values.
+
+While very simple and fast, the number of samples for each pixel can vary depending on the bayern pattern and focal distance, often leading to noisy and/or low-resolution results with artifacts.
+
+<sub>Ng, Ren, et al. ["Light field photography with a hand-held plenoptic camera."](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/20_naive_refocus_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1325,21 +1437,37 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Naive detail
- (no description yet)
+#### Naive refocusing detail
+
+This demo shows the detail of the sampling and integration pattern of previous demo.
+
+<sub>Ng, Ren, et al. ["Light field photography with a hand-held plenoptic camera."](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/21_naive_detail_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/22_debayer.png" style="width:70px;">
+<img src="toolbars/07_lightfields/22_naive_debayern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Debayer
- (no description yet)
+#### Naive refocusing with a de-bayern filter
+
+Applying a de-Bayer filter to raw lightfield data reduces some artifacts seen in previous two demos.
+
+<sub>Ng, Ren, et al. ["Light field photography with a hand-held plenoptic camera."](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/22_naive_debayern_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1349,9 +1477,23 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Gaussian refocus
- (no description yet)
+#### Refocusing with radial-basis function regression
+
+To reduce the gaps in refocused images caused by missing samples, and to exploit the information in samples that would otherwise be averaged-out into a single pixel, it is possible to use a radial-basis function regression superresolution framework.
+
+This demo shows how a simple gaussian-based accumulation, similar to one used for mult-frame supersampling on modern phones, can be used to improve the resolution and quality of a super-sampled refocused image.
+
+<sub>Ng, Ren, et al. ["Light field photography with a hand-held plenoptic camera."](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>
+
+<sub>Bartlomiej Wronski, Ignacio Garcia-Dorado, Manfred Ernst, Damien Kelly, Michael Krainin, Chia-Kai Liang, Marc Levoy, and Peyman Milanfar. 2019. [Handheld multi-frame super-resolution.](https://drive.google.com/file/d/1T1u2Mhm8ay6reHHouM1wO0TegvRJbJV_/view?usp=sharing) ACM Trans. Graph. 38, 4, Article 28 (July 2019), 18 pages. </sub>
+
+<sub>Fiss, Juliet, Brian Curless, and Richard Szeliski. "Refocusing plenoptic images using depth-adaptive splatting." 2014 IEEE international conference on computational photography (ICCP). IEEE, 2014.</sub>
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/23_gaussian_refocus_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1361,45 +1503,88 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Gaussian detail
- (no description yet)
+#### Refocussing with radial-basis function regression - detail
+
+This demo shows the detail of the sampling and integration pattern of previous demo.
+
+
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/24_gaussian_detail_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/25_bezier_refocus.png" style="width:70px;">
+<img src="toolbars/07_lightfields/25_gaussian_debayer.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Bezier refocus
- (no description yet)
+#### Refocussing with radial-basis function regression and a de-Bayer filter
+Applying a de-Bayer filter to raw lightfield data reduces some artifacts seen in previous two demos, while introducing a level of additional colour ambiguity (i.e., a less sharp result).
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/25_gaussian_debayer_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/26_bezier_debayer.png" style="width:70px;">
+<img src="toolbars/07_lightfields/26_bezier_refocus.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Bezier debayer
- (no description yet)
+#### Refocussing with hierarchical B-spline regression
+
+Briand, Thibaud, and Pascal Monasse. ["Theory and Practice of Image B-Spline Interpolation."](https://www.ipol.im/pub/art/2018/221/article.pdf) Image Processing On Line 8 (2018): 99-141.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/26_bezier_refocus_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/27_detail_comparison.png" style="width:70px;">
+<img src="toolbars/07_lightfields/27_bezier_debayer.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Detail comparison
- (no description yet)
+#### Refocussing with hierarchical B-spline regression and de-bayern filter
+
+Briand, Thibaud, and Pascal Monasse. ["Theory and Practice of Image B-Spline Interpolation."](https://www.ipol.im/pub/art/2018/221/article.pdf) Image Processing On Line 8 (2018): 99-141.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/27_bezier_debayer_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/28_detail_comparison.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Comparison of details of different refocusing method
+
+This demo shows the difference in integration patterns between different methods shown in previous demos.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/28_detail_comparison_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1409,9 +1594,15 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Relative corresp
- (no description yet)
+#### Per-pixel correspondence metric (relative results)
+
+Tao, Michael W., et al. ["Depth from combining defocus and correspondence using light-field cameras."](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/30_relative_corresp_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 <tr> 
 <td>
@@ -1421,9 +1612,15 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td>
 <td> 
 
-#### Absolute metrics
- (no description yet)
+#### Per-pixel correspondence and defocus metrics (absolute values)
+
+Tao, Michael W., et al. ["Depth from combining defocus and correspondence using light-field cameras."](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.
 </td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/31_absolute_metrics_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
 </tr> 
 </table> 
 
@@ -1622,6 +1819,12 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+
+
+
+
+
+
 
 
 
