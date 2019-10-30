@@ -16,6 +16,8 @@ class GenericProperty : public possumwood::properties::property_base {
 		virtual void valueToPort(dependency_graph::Port& port) const override;
 		virtual void valueFromPort(dependency_graph::Port& port) override;
 
+		void setValue(const std::string& value);
+
 	private:
 		QWidget* m_widget;
 

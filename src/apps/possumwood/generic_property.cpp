@@ -81,15 +81,25 @@ void GenericProperty::valueFromPort(dependency_graph::Port& port) {
 	m_type = port.type();
 
 	std::stringstream ss;
-	ss << port.getData();
 
+	try {
+		ss << port.getData();
+	}
+	catch(const std::exception& ex) {
+		ss << ex.what();
+	}
+
+	setValue(ss.str());
+}
+
+void GenericProperty::setValue(const std::string& value) {
 	// show only first row
-	m_value = ss.str();
+	m_value = value;
 	auto pos = m_value.find('\n');
 	if(pos != std::string::npos)
-		m_label->setText(ss.str().substr(0, pos).c_str());
+		m_label->setText(value.substr(0, pos).c_str());
 	else
-		m_label->setText(ss.str().c_str());
+		m_label->setText(value.c_str());
 
-	m_widget->setToolTip(ss.str().c_str());
+	m_widget->setToolTip(value.c_str());
 }
