@@ -4,18 +4,25 @@
 
 namespace possumwood {
 
-Enum::Enum(std::initializer_list<std::string> options) {
+Enum::Enum(std::initializer_list<std::string> options, int defaultValue) {
 	int counter = 0;
 	for(auto& o : options)
 		m_options.push_back(std::make_pair(o, counter++));
 
-	if(!m_options.empty())
+	if(!m_options.empty() && defaultValue < (int)m_options.size())
+		m_value = m_options[defaultValue];
+	else if(!m_options.empty())
 		m_value = m_options[0];
 }
 
-Enum::Enum(std::initializer_list<std::pair<std::string, int>> options) : m_options(options.begin(), options.end()) {
-	if(!m_options.empty())
+Enum::Enum(std::initializer_list<std::pair<std::string, int>> options, int defaultValue) : m_options(options.begin(), options.end()) {
+	if(!m_options.empty()) {
 		m_value = m_options[0];
+
+		for(auto& o : m_options)
+			if(o.second == defaultValue)
+				m_value = o;
+	}
 }
 
 Enum::Enum(const Enum& fn) : m_value(fn.m_value), m_options(fn.m_options) {
