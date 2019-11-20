@@ -15,8 +15,8 @@ namespace possumwood {
 
 class Enum {
   public:
-	Enum(std::initializer_list<std::string> options = std::initializer_list<std::string>());
-	Enum(std::initializer_list<std::pair<std::string, int>> options);
+	Enum(std::initializer_list<std::string> options = std::initializer_list<std::string>(), int defaultValue = 0);
+	Enum(std::initializer_list<std::pair<std::string, int>> options, int defaultValue = 0);
 
 	const std::string& value() const;
 	int intValue() const;

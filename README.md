@@ -1282,6 +1282,50 @@ Georgiev, Todor, et al. ["Lytro camera technology: theory, algorithms, performan
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/07_epi.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Epipolar Images
+
+Epipolar images show slices of the 4D lightfield along different axis. 
+
+The x-y image (center) shows a slice corresponding to a single dept-of-field image. By changing the UV offset or interval, it is possible to create images with different depth of field or focal plane.
+
+The u-x and v-y images (left, right, top and bottom) show slices with "line direction" (based on incoming direction of rays) corresponding to individual depth planes. 
+
+<sub>Ng, Ren, et al. ["Light field photography with a hand-held plenoptic camera."](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/07_epi_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/08_epi_uv.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### UV EPIs
+
+The epipolar images accumulated in UV space show images representing averages of lenslets in different part of the image. This provides a good measure for the quality of Lytro lenslet pattern detection and main lens calibration - if correct, all lenslets should look very similar.
+
+<sub>Ng, Ren, et al. ["Light field photography with a hand-held plenoptic camera."](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields/08_epi_uv_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 <img src="toolbars/07_lightfields/10_mozaic.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
