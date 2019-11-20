@@ -85,7 +85,7 @@
             "out_port": "output"
         }
     ],
-    "description": "### Naive refocusing\n\nThe simplest method of lightfields digital refocusing is to directly use the lightfield's equation to determine the target pixel position for each sample, given its position in the lightfield image and its corresponding `u` and `v` values.\n\nWhile very simple and fast, the number of samples for each pixel can vary depending on the bayern pattern and focal distance, often leading to noisy and/or low-resolution results with artifacts.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
+    "description": "### UV EPIs\n\nThe epipolar images accumulated in UV space show images representing averages of lenslets in different part of the image. This provides a good measure for the quality of Lytro lenslet pattern detection and main lens calibration - if correct, all lenslets should look very similar.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
     "nodes": {
         "concat_3_0": {
             "blind_data": {
@@ -506,6 +506,12 @@
             },
             "connections": [
                 {
+                    "in_node": "output_0",
+                    "in_port": "data",
+                    "out_node": "concat_3_0",
+                    "out_port": "out_frame"
+                },
+                {
                     "in_node": "concat_3_0",
                     "in_port": "in_frame_1",
                     "out_node": "epi_0",
@@ -576,12 +582,6 @@
                     "in_port": "range/y",
                     "out_node": "input_2",
                     "out_port": "data"
-                },
-                {
-                    "in_node": "output_0",
-                    "in_port": "data",
-                    "out_node": "concat_3_0",
-                    "out_port": "out_frame"
                 }
             ],
             "name": "uv_images",
@@ -1542,5 +1542,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJeAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAdsAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAADbAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIAAAABzAAAAaIAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJeAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAdsAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAADbAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIAAAACJgAAAbsAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
