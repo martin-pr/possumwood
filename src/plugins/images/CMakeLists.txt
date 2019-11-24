@@ -17,6 +17,10 @@ find_package(OpenImageIO REQUIRED)
 include_directories(${OPENIMAGEIO_INCLUDE_DIRS}/..) # make sure OpenImageIO/ include prefix is maintained
 set(LIBS ${LIBS} ${OPENIMAGEIO_LIBRARIES})
 
+# Find opencv
+find_package(OpenCV REQUIRED)
+set(LIBS ${LIBS} ${OpenCV_LIBS})
+
 include_directories(./)
 
 #####
@@ -41,4 +45,4 @@ SET_TARGET_PROPERTIES(images PROPERTIES PREFIX "")
 
 install(TARGETS images DESTINATION ${PLUGINS_INSTALL_PATH})
 
-target_link_libraries(images psw_images psw_lua ${OPENEXR_IEX_LIBRARY} ${LIBS})
+target_link_libraries(images psw_images psw_lua psw_opencv lightfields ${OPENEXR_IEX_LIBRARY} ${LIBS})

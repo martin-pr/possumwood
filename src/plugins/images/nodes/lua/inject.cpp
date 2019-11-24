@@ -5,8 +5,11 @@
 
 #include "lua/images.h"
 #include "lua/pixmap_wrapper.h"
+#include "lua/opencv_image.h"
 
 #include "lua/nodes/inject.h"
+
+#include "opencv/frame.h"
 
 namespace {
 
@@ -34,6 +37,12 @@ struct HDRSuffix {
 	};
 };
 
+struct CVSuffix {
+	static const std::string value() {
+		return "_opencv";
+	};
+};
+
 possumwood::NodeImplementation s_impl_ldr("lua/inject/image",
 	[](possumwood::Metadata& meta) {
 		possumwood::lua::Inject<
@@ -53,5 +62,16 @@ possumwood::NodeImplementation s_impl_hdr("lua/inject/image_hdr",
 		>::init(meta);
 	}
 );
+
+possumwood::NodeImplementation s_impl_opencv("lua/inject/opencv_image",
+	[](possumwood::Metadata& meta) {
+		possumwood::lua::Inject<
+			possumwood::opencv::Frame,
+			possumwood::images::OpencvMatWrapper,
+			Module<possumwood::opencv::Frame, CVSuffix, possumwood::images::OpencvMatWrapper>
+		>::init(meta);
+	}
+);
+
 
 }

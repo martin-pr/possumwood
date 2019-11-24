@@ -7,6 +7,7 @@
 
 #include "lua/images.h"
 #include "datatypes/pixmap.h"
+#include "lua/opencv_image.h"
 
 namespace {
 
@@ -17,6 +18,7 @@ struct Params {
 
 Params s_ldrParams;
 Params s_hdrParams;
+Params s_opencvParams;
 
 template<typename PIXMAP, typename WRAPPER>
 dependency_graph::State compute(dependency_graph::Values& data, const std::string& suffix, Params& params) {
@@ -52,6 +54,10 @@ possumwood::NodeImplementation s_impl_ldr("lua/modules/images", [](possumwood::M
 
 possumwood::NodeImplementation s_impl_hdr("lua/modules/images_hdr", [](possumwood::Metadata& meta) {
 	init<possumwood::HDRPixmap, possumwood::images::PixmapWrapper<possumwood::HDRPixmap>>(meta, "_hdr", s_hdrParams);
+});
+
+possumwood::NodeImplementation s_impl_opencv("lua/modules/images_opencv", [](possumwood::Metadata& meta) {
+	init<possumwood::images::OpencvMatWrapper, possumwood::images::OpencvMatWrapper>(meta, "_opencv", s_opencvParams);
 });
 
 }
