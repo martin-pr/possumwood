@@ -35,7 +35,7 @@ struct Inject {
 
 		// inject the data, by instantiating a HOLDER type instance
 		//   assuming assignment operator between HOLDER and T
-		HOLDER holder = data.get(params.a_value);
+		HOLDER holder = HOLDER(data.get(params.a_value));
 		context.addVariable(possumwood::lua::Variable(data.get(params.a_name), holder));
 		data.set(params.a_outContext, context);
 

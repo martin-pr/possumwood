@@ -11,13 +11,17 @@
 namespace {
 
 possumwood::NodeImplementation s_impl_ldr("lua/extract/image",
-	possumwood::lua::Extract<std::shared_ptr<const possumwood::LDRPixmap>,
-	possumwood::images::PixmapWrapper<possumwood::LDRPixmap>>::init
+	possumwood::lua::Extract<
+		std::shared_ptr<const possumwood::LDRPixmap>,
+		possumwood::images::PixmapWrapper<possumwood::LDRPixmap>
+	>::init
 );
 
 possumwood::NodeImplementation s_impl_hdr("lua/extract/image_hdr",
-	possumwood::lua::Extract<std::shared_ptr<const possumwood::HDRPixmap>,
-	possumwood::images::PixmapWrapper<possumwood::HDRPixmap>>::init
+	possumwood::lua::Extract<
+		std::shared_ptr<const possumwood::HDRPixmap>,
+		possumwood::images::PixmapWrapper<possumwood::HDRPixmap>
+	>::init
 );
 
 }

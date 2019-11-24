@@ -10,14 +10,14 @@
 
 namespace {
 
-template<typename PIXMAP, typename SUFFIX>
+template<typename PIXMAP, typename SUFFIX, typename WRAPPER = possumwood::images::PixmapWrapper<PIXMAP>>
 struct Module {
 	static std::string name() {
 		return std::string("images") + SUFFIX::value();
 	}
 
 	static void init(possumwood::lua::State& state) {
-		possumwood::images::init<PIXMAP>(state, SUFFIX::value());
+		possumwood::images::init<PIXMAP, WRAPPER>(state, SUFFIX::value());
 	}
 };
 
