@@ -43,6 +43,12 @@ struct CVSuffix {
 	};
 };
 
+struct CVHDRSuffix {
+	static const std::string value() {
+		return "_opencv_hdr";
+	};
+};
+
 possumwood::NodeImplementation s_impl_ldr("lua/inject/image",
 	[](possumwood::Metadata& meta) {
 		possumwood::lua::Inject<
@@ -67,8 +73,18 @@ possumwood::NodeImplementation s_impl_opencv("lua/inject/opencv_image",
 	[](possumwood::Metadata& meta) {
 		possumwood::lua::Inject<
 			possumwood::opencv::Frame,
-			possumwood::images::OpencvMatWrapper,
-			Module<possumwood::opencv::Frame, CVSuffix, possumwood::images::OpencvMatWrapper>
+			possumwood::images::OpencvMatWrapper<CV_8U>,
+			Module<possumwood::opencv::Frame, CVSuffix, possumwood::images::OpencvMatWrapper<CV_8U>>
+		>::init(meta);
+	}
+);
+
+possumwood::NodeImplementation s_impl_opencv_hdr("lua/inject/opencv_image_hdr",
+	[](possumwood::Metadata& meta) {
+		possumwood::lua::Inject<
+			possumwood::opencv::Frame,
+			possumwood::images::OpencvMatWrapper<CV_32F>,
+			Module<possumwood::opencv::Frame, CVHDRSuffix, possumwood::images::OpencvMatWrapper<CV_32F>>
 		>::init(meta);
 	}
 );

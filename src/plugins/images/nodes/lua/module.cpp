@@ -19,6 +19,7 @@ struct Params {
 Params s_ldrParams;
 Params s_hdrParams;
 Params s_opencvParams;
+Params s_hdrOpencvParams;
 
 template<typename PIXMAP, typename WRAPPER>
 dependency_graph::State compute(dependency_graph::Values& data, const std::string& suffix, Params& params) {
@@ -57,7 +58,11 @@ possumwood::NodeImplementation s_impl_hdr("lua/modules/images_hdr", [](possumwoo
 });
 
 possumwood::NodeImplementation s_impl_opencv("lua/modules/images_opencv", [](possumwood::Metadata& meta) {
-	init<possumwood::images::OpencvMatWrapper, possumwood::images::OpencvMatWrapper>(meta, "_opencv", s_opencvParams);
+	init<possumwood::images::OpencvMatWrapper<CV_8U>, possumwood::images::OpencvMatWrapper<CV_8U>>(meta, "_opencv", s_opencvParams);
+});
+
+possumwood::NodeImplementation s_impl_opencv_hdr("lua/modules/images_opencv_hdr", [](possumwood::Metadata& meta) {
+	init<possumwood::images::OpencvMatWrapper<CV_32F>, possumwood::images::OpencvMatWrapper<CV_32F>>(meta, "_opencv_hdr", s_hdrOpencvParams);
 });
 
 }

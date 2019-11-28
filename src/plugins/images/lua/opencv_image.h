@@ -9,12 +9,13 @@
 
 namespace possumwood { namespace images {
 
+template<int TYPE = CV_8U>
 class OpencvMatWrapper {
 	public:
 		OpencvMatWrapper() : m_constMat(new cv::Mat(1, 1, CV_8UC1)) {
 		}
 
-		OpencvMatWrapper(std::size_t width, std::size_t height, int type = CV_8U, int channels = 3) : m_mat(new cv::Mat(width, height, CV_MAKETYPE(type, channels))) {
+		OpencvMatWrapper(std::size_t width, std::size_t height, int type = TYPE, int channels = 3) : m_mat(new cv::Mat(height, width, CV_MAKETYPE(type, channels))) {
 			m_constMat = m_mat;
 			assert(type == CV_8U || type == CV_32F);
 		}
@@ -77,15 +78,21 @@ class OpencvMatWrapper {
 		}
 
 		luabind::object pixel(std::size_t x, std::size_t y, lua_State* L) {
+			if(x >= width() || y >= height()) {
+				std::stringstream ss;
+				ss << "Coordinates " << x << ", " << y << " out of bounds of " << width() << ", " << height() << ".";
+				throw std::runtime_error(ss.str().c_str());
+			}
+
 			luabind::object result = luabind::newtable(L);
 
-			if(m_constMat->type() == CV_8U) {
+			if(m_constMat->depth() == CV_8U) {
 				const unsigned char* val = m_constMat->ptr<const unsigned char>(y, x);
 
 				for(int i=0; i < m_constMat->channels(); ++i)
 					result[i+1] = val[i];
 			}
-			else if(m_constMat->type() == CV_32F) {
+			else if(m_constMat->depth() == CV_32F) {
 				const float* val = m_constMat->ptr<const float>(y, x);
 
 				for(int i=0; i < m_constMat->channels(); ++i)
@@ -114,7 +121,8 @@ class OpencvMatWrapper {
 		std::shared_ptr<cv::Mat> m_mat;
 };
 
-inline std::string to_string(const OpencvMatWrapper& p) {
+template<int T>
+inline std::string to_string(const OpencvMatWrapper<T>& p) {
 	return "(opencv Mat " + std::to_string(p.width()) + "x" + std::to_string(p.height()) + ")";
 }
 
