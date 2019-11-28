@@ -4,11 +4,9 @@
 
 #include <luabind/operator.hpp>
 
-#include "pixmap_wrapper.h"
-
 namespace possumwood { namespace images {
 
-template<typename PIXMAP, typename WRAPPER = PixmapWrapper<PIXMAP>>
+template<typename PIXMAP, typename WRAPPER>
 void init(lua::State& state, const std::string typesuffix /*none, _hdr and such*/) {
 	using namespace luabind;
 

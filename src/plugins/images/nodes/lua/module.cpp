@@ -6,7 +6,6 @@
 #include <lua/datatypes/context.h>
 
 #include "lua/images.h"
-#include "datatypes/pixmap.h"
 #include "lua/opencv_image.h"
 
 namespace {
@@ -16,8 +15,6 @@ struct Params {
 	dependency_graph::OutAttr<possumwood::lua::Context> a_outContext;
 };
 
-Params s_ldrParams;
-Params s_hdrParams;
 Params s_opencvParams;
 Params s_hdrOpencvParams;
 
@@ -48,14 +45,6 @@ void init(possumwood::Metadata& meta, const std::string& suffix, Params& params)
 		return compute<PIXMAP, WRAPPER>(data, suffix, params);
 	});
 }
-
-possumwood::NodeImplementation s_impl_ldr("lua/modules/images", [](possumwood::Metadata& meta) {
-	init<possumwood::LDRPixmap, possumwood::images::PixmapWrapper<possumwood::LDRPixmap>>(meta, "", s_ldrParams);
-});
-
-possumwood::NodeImplementation s_impl_hdr("lua/modules/images_hdr", [](possumwood::Metadata& meta) {
-	init<possumwood::HDRPixmap, possumwood::images::PixmapWrapper<possumwood::HDRPixmap>>(meta, "_hdr", s_hdrParams);
-});
 
 possumwood::NodeImplementation s_impl_opencv("lua/modules/images_opencv", [](possumwood::Metadata& meta) {
 	init<possumwood::images::OpencvMatWrapper<CV_8U>, possumwood::images::OpencvMatWrapper<CV_8U>>(meta, "_opencv", s_opencvParams);
