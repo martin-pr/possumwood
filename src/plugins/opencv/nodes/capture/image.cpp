@@ -1,6 +1,8 @@
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/datatypes/filename.h>
 
+#include <tbb/parallel_for.h>
+
 #include <boost/filesystem.hpp>
 #include <opencv2/opencv.hpp>
 #include <OpenImageIO/imageio.h>
@@ -13,6 +15,50 @@
 namespace {
 
 using namespace OIIO;
+
+template<typename T>
+struct ImageTraits;
+
+template<>
+struct ImageTraits<unsigned char> {
+	static const TypeDesc::BASETYPE oiio_type = TypeDesc::UINT8;
+	static const int opencv_type = CV_8U;
+};
+
+template<>
+struct ImageTraits<float> {
+	static const TypeDesc::BASETYPE oiio_type = TypeDesc::FLOAT;
+	static const int opencv_type = CV_32F;
+};
+
+template<typename T>
+void copyData(ImageInput& input, cv::Mat& m) {
+	const ImageSpec &spec = input.spec();
+	std::size_t xres = spec.width;
+	std::size_t yres = spec.height;
+	std::size_t channels = spec.nchannels;
+
+	std::vector<T> pixels(xres*yres*channels);
+	input.read_image(ImageTraits<T>::oiio_type, pixels.data());
+	input.close();
+
+	m = cv::Mat(yres, xres, CV_MAKETYPE(ImageTraits<T>::opencv_type, channels));
+
+	tbb::parallel_for(std::size_t(0), yres, [&](std::size_t y) {
+		for(std::size_t x=0; x < xres; ++x) {
+			T* ptr = m.ptr<T>(y, x);
+
+			for(std::size_t c=0; c < channels; ++c) {
+				// reverse channels - oiio RGB to opencv BGR
+				std::size_t index = channels - c - 1;
+
+				*(ptr + index) = *(pixels.data() + (y*xres+x)*channels + c);
+			}
+		}
+	});
+}
+
+/////////////////////////////
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
@@ -28,50 +74,22 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::opencv::Exif exif;
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
-		auto in = ImageInput::open(filename.filename().string());
+		std::unique_ptr<ImageInput> in(ImageInput::open(filename.filename().string()));
 		if (!in)
 			throw std::runtime_error("Error loading " + filename.filename().string());
 
 		// get the image spec
 		const ImageSpec &spec = in->spec();
-		std::size_t xres = spec.width;
-		std::size_t yres = spec.height;
-		std::size_t channels = spec.nchannels;
 		if(spec.nchannels != 3 && spec.nchannels != 1)
 			throw std::runtime_error("Error loading " + filename.filename().string() + " - only images with 1 or 3 channels are supported at the moment, " + std::to_string(spec.nchannels) + " found!");
 
-		// load the raw data
-		std::vector<unsigned char> pixels(xres*yres*channels);
-		in->read_image(TypeDesc::UINT8, pixels.data());
-		in->close();
-
 		// convert the raw data to a cv::Mat type
-		if(spec.nchannels == 3) {
-			result = cv::Mat(yres, xres, CV_8UC3);
-
-			// need to swap red and blue, to get OpenCV's native BGR format
-			for(std::size_t y=0; y < yres; ++y)
-				for(std::size_t x=0; x < xres; ++x) {
-					*(result.ptr<unsigned char>(y, x)+2) = *(pixels.data()+(y*xres+x)*3);
-					*(result.ptr<unsigned char>(y, x)+1) = *(pixels.data()+(y*xres+x)*3+1);
-					*(result.ptr<unsigned char>(y, x)) = *(pixels.data()+(y*xres+x)*3+2);
-				}
-		}
-
-		else if(spec.nchannels == 1) {
-			result = cv::Mat(yres, xres, CV_8UC1);
-
-			// plain copy
-			for(std::size_t y=0; y < yres; ++y)
-				std::copy(pixels.data()+(y*xres), pixels.data()+((y+1)*xres), result.ptr<unsigned char>(y));
-		}
-
-		else {
-			std::stringstream ss;
-			ss << "Unsupported image format - nchannels=" << spec.nchannels;
-
-			throw std::runtime_error(ss.str());
-		}
+		if(spec.format == TypeDesc::UINT8)
+			copyData<unsigned char>(*in, result);
+		else if(spec.format == TypeDesc::FLOAT)
+			copyData<float>(*in, result);
+		else
+			throw std::runtime_error("Error loading " + filename.filename().string() + " - only images with 8 or 32 bits per channel are supported at the moment!");
 
 		// process metadata (EXIF)
 		float exposure = 0.0f;
@@ -110,7 +128,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-		"Image files (*.png *.jpg *.jpe *.jpeg *.png)",
+		"Image files (*.png *.jpg *.jpe *.jpeg *.png *.exr)",
 	}));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_exif, "exif", possumwood::opencv::Exif(), possumwood::AttrFlags::kVertical);
