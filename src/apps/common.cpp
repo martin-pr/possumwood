@@ -15,9 +15,13 @@ PluginsRAII::PluginsRAII() {
 	for(fs::directory_iterator itr(possumwood::App::instance().expandPath("$PLUGINS"));
 	    itr != fs::directory_iterator(); ++itr) {
 		if(fs::is_regular_file(itr->status()) && itr->path().extension() == ".so") {
+			std::cout << "Loading plugin " << itr->path().string() << " ... " << std::flush;
+
 			void* ptr = dlopen(itr->path().string().c_str(), RTLD_NOW);
-			if(ptr)
+			if(ptr) {
 				m_pluginHandles.push_back(std::make_pair(ptr, itr->path().string()));
+				std::cout << "done." << std::endl;
+			}
 			else
 				std::cout << dlerror() << std::endl;
 		}
