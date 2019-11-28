@@ -3,25 +3,25 @@
         {
             "in_node": "network_0",
             "in_port": "image",
-            "out_node": "load_0",
-            "out_port": "image"
+            "out_node": "image_0",
+            "out_port": "frame"
         }
     ],
     "description": "### Fullscreen image display\n\nWhile Possumwood's viewport is primarily intended for viewing 3D content, using a set of shaders it is possible to alter it to display 2D textures as well.\n\nThis demo uses shaders that ignore the perspective projection matrix and draw 2D image in a 2D front-facing view in the viewport.",
     "nodes": {
-        "load_0": {
+        "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 39.4773254394531,
-                    "y": 268.550598144531
+                    "x": 227.413146972656,
+                    "y": 96.8412017822266
                 }
             },
-            "name": "load",
+            "name": "image",
             "ports": {
                 "filename": "$EXAMPLES/matcap_textures/00039.png"
             },
-            "type": "images/load"
+            "type": "opencv/capture/image"
         },
         "network_0": {
             "blind_data": {
@@ -46,21 +46,15 @@
                 },
                 {
                     "in_node": "metadata_0",
-                    "in_port": "image",
+                    "in_port": "frame",
                     "out_node": "input_0",
                     "out_port": "data"
                 },
                 {
-                    "in_node": "texture_0",
-                    "in_port": "value",
+                    "in_node": "opencv_texture_0",
+                    "in_port": "frame",
                     "out_node": "input_0",
                     "out_port": "data"
-                },
-                {
-                    "in_node": "split_vec2u_0",
-                    "in_port": "vec",
-                    "out_node": "metadata_0",
-                    "out_port": "size"
                 },
                 {
                     "in_node": "draw_0",
@@ -81,19 +75,13 @@
                     "out_port": "y"
                 },
                 {
-                    "in_node": "viewport_0",
-                    "in_port": "in_uniforms",
-                    "out_node": "texture_0",
-                    "out_port": "out_uniforms"
-                },
-                {
                     "in_node": "unsigned_1",
                     "in_port": "in_uniforms",
                     "out_node": "unsigned_0",
                     "out_port": "out_uniforms"
                 },
                 {
-                    "in_node": "texture_0",
+                    "in_node": "opencv_texture_0",
                     "in_port": "in_uniforms",
                     "out_node": "unsigned_1",
                     "out_port": "out_uniforms"
@@ -108,6 +96,18 @@
                     "in_node": "draw_0",
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
+                    "out_port": "out_uniforms"
+                },
+                {
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
+                    "out_node": "metadata_0",
+                    "out_port": "size"
+                },
+                {
+                    "in_node": "viewport_0",
+                    "in_port": "in_uniforms",
+                    "out_node": "opencv_texture_0",
                     "out_port": "out_uniforms"
                 }
             ],
@@ -153,8 +153,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 2.9504725933075,
-                            "y": -192.11376953125
+                            "x": 20.7388248443604,
+                            "y": -510.32763671875
                         }
                     },
                     "name": "image",
@@ -164,12 +164,27 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 105.016830444336,
-                            "y": -319.728240966797
+                            "x": 81.6519012451172,
+                            "y": -336.444305419922
                         }
                     },
                     "name": "metadata",
-                    "type": "images/metadata"
+                    "type": "opencv/metadata"
+                },
+                "opencv_texture_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 336.618316650391,
+                            "y": -71.5954818725586
+                        }
+                    },
+                    "name": "opencv_texture",
+                    "ports": {
+                        "mode": "Linear",
+                        "name": "image"
+                    },
+                    "type": "render/uniforms/opencv_texture"
                 },
                 "program_0": {
                     "blind_data": {
@@ -192,20 +207,6 @@
                     },
                     "name": "split_vec2u",
                     "type": "maths/split_vec2u"
-                },
-                "texture_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 394.452728271484,
-                            "y": -76.5001754760742
-                        }
-                    },
-                    "name": "texture",
-                    "ports": {
-                        "name": "image"
-                    },
-                    "type": "render/uniforms/texture"
                 },
                 "unsigned_0": {
                     "blind_data": {
