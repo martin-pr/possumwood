@@ -13,23 +13,11 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 168.211532592773,
-                    "y": 265.736358642578
+                    "x": 206.978744506836,
+                    "y": 197.89372253418
                 }
             },
             "connections": [
-                {
-                    "in_node": "output_0",
-                    "in_port": "data",
-                    "out_node": "image_0",
-                    "out_port": "out"
-                },
-                {
-                    "in_node": "script_0",
-                    "in_port": "context",
-                    "out_node": "images_0",
-                    "out_port": "out_context"
-                },
                 {
                     "in_node": "unsigned_0",
                     "in_port": "value",
@@ -37,44 +25,42 @@
                     "out_port": "data"
                 },
                 {
-                    "in_node": "image_0",
+                    "in_node": "opencv_image_0",
                     "in_port": "state",
                     "out_node": "script_0",
                     "out_port": "state"
                 },
                 {
-                    "in_node": "images_0",
+                    "in_node": "images_opencv_0",
                     "in_port": "in_context",
                     "out_node": "unsigned_0",
                     "out_port": "out_context"
+                },
+                {
+                    "in_node": "script_0",
+                    "in_port": "context",
+                    "out_node": "images_opencv_0",
+                    "out_port": "out_context"
+                },
+                {
+                    "in_node": "output_0",
+                    "in_port": "data",
+                    "out_node": "opencv_image_0",
+                    "out_port": "out"
                 }
             ],
             "name": "flower",
             "nodes": {
-                "image_0": {
+                "images_opencv_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -26.8701801300049,
-                            "y": 387.448913574219
+                            "x": -188.663238525391,
+                            "y": 214.440368652344
                         }
                     },
-                    "name": "image",
-                    "ports": {
-                        "name": "img"
-                    },
-                    "type": "lua/extract/image"
-                },
-                "images_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": -185.164245605469,
-                            "y": 220.342346191406
-                        }
-                    },
-                    "name": "images",
-                    "type": "lua/modules/images"
+                    "name": "images_opencv",
+                    "type": "lua/modules/images_opencv"
                 },
                 "input_0": {
                     "blind_data": {
@@ -87,12 +73,26 @@
                     "name": "petals",
                     "type": "input"
                 },
+                "opencv_image_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": -39.962703704834,
+                            "y": 389.830749511719
+                        }
+                    },
+                    "name": "opencv_image",
+                    "ports": {
+                        "name": "img"
+                    },
+                    "type": "lua/extract/opencv_image"
+                },
                 "output_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 98.9083633422852,
-                            "y": 424.749816894531
+                            "x": 116.701591491699,
+                            "y": 428.562652587891
                         }
                     },
                     "name": "output",
@@ -108,7 +108,7 @@
                     },
                     "name": "script",
                     "ports": {
-                        "source": "-- the resolution of the target image\nsize = 1024\n\n-- generate image\nimg = images.image(size, size)\nfor y = 0,size-1 do\n\tfor x = 0,size-1 do\n\t\t-- -1..1 parameterisation with [0,0] in the centre\n\t\tu = (x / size - 0.5) * 2.0\n\t\tv = (y / size - 0.5) * 2.0\n\n\t\t-- parameter represents an angle\n\t\tparam = math.abs(math.atan2(u, v) / 3.1415);\n\t\t-- distance to the centre\n\t\tdist = 1.0 - math.sqrt(u*u  + v*v)\n\n\t\t-- the \"flower\" function, combining an angular modulo with distance from the centre\n\t\tval = dist + math.abs((1/petals - param % (2/petals)) * petals / 2)\n\n\t\t-- thresholding to get the black and white image\n\t\tif (val < 0.5) then\n\t\t\tval = 25\n\t\telse\n\t\t\tval = 255\n\t\tend\n\n\t\t-- a white flower - all 3 channels have the same value\n\t\timg:setPixel(x, y, {\n\t\t\tval, val, val\n\t\t})\n\tend\nend"
+                        "source": "-- the resolution of the target image\nsize = 1024\n\n-- generate image\nimg = images.image_opencv(size, size)\nfor y = 0,size-1 do\n\tfor x = 0,size-1 do\n\t\t-- -1..1 parameterisation with [0,0] in the centre\n\t\tu = (x / size - 0.5) * 2.0\n\t\tv = (y / size - 0.5) * 2.0\n\n\t\t-- parameter represents an angle\n\t\tparam = math.abs(math.atan2(u, v) / 3.1415);\n\t\t-- distance to the centre\n\t\tdist = 1.0 - math.sqrt(u*u  + v*v)\n\n\t\t-- the \"flower\" function, combining an angular modulo with distance from the centre\n\t\tval = dist + math.abs((1/petals - param % (2/petals)) * petals / 2)\n\n\t\t-- thresholding to get the black and white image\n\t\tif (val < 0.5) then\n\t\t\tval = 25\n\t\telse\n\t\t\tval = 255\n\t\tend\n\n\t\t-- a white flower - all 3 channels have the same value\n\t\timg:setPixel(x, y, {\n\t\t\tval, val, val\n\t\t})\n\tend\nend"
                     },
                     "type": "lua/script"
                 },
@@ -155,21 +155,15 @@
                 },
                 {
                     "in_node": "metadata_0",
-                    "in_port": "image",
+                    "in_port": "frame",
                     "out_node": "input_0",
                     "out_port": "data"
                 },
                 {
-                    "in_node": "texture_0",
-                    "in_port": "value",
+                    "in_node": "opencv_texture_0",
+                    "in_port": "frame",
                     "out_node": "input_0",
                     "out_port": "data"
-                },
-                {
-                    "in_node": "split_vec2u_0",
-                    "in_port": "vec",
-                    "out_node": "metadata_0",
-                    "out_port": "size"
                 },
                 {
                     "in_node": "draw_0",
@@ -190,19 +184,13 @@
                     "out_port": "y"
                 },
                 {
-                    "in_node": "viewport_0",
-                    "in_port": "in_uniforms",
-                    "out_node": "texture_0",
-                    "out_port": "out_uniforms"
-                },
-                {
                     "in_node": "unsigned_1",
                     "in_port": "in_uniforms",
                     "out_node": "unsigned_0",
                     "out_port": "out_uniforms"
                 },
                 {
-                    "in_node": "texture_0",
+                    "in_node": "opencv_texture_0",
                     "in_port": "in_uniforms",
                     "out_node": "unsigned_1",
                     "out_port": "out_uniforms"
@@ -217,6 +205,18 @@
                     "in_node": "draw_0",
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
+                    "out_port": "out_uniforms"
+                },
+                {
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
+                    "out_node": "metadata_0",
+                    "out_port": "size"
+                },
+                {
+                    "in_node": "viewport_0",
+                    "in_port": "in_uniforms",
+                    "out_node": "opencv_texture_0",
                     "out_port": "out_uniforms"
                 }
             ],
@@ -262,8 +262,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 2.9504725933075,
-                            "y": -192.11376953125
+                            "x": -11.0495338439941,
+                            "y": -473.113861083984
                         }
                     },
                     "name": "image",
@@ -273,12 +273,27 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 116.45532989502,
-                            "y": -304.476898193359
+                            "x": 102.961799621582,
+                            "y": -362.557373046875
                         }
                     },
                     "name": "metadata",
-                    "type": "images/metadata"
+                    "type": "opencv/metadata"
+                },
+                "opencv_texture_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 343.734283447266,
+                            "y": -75.819709777832
+                        }
+                    },
+                    "name": "opencv_texture",
+                    "ports": {
+                        "mode": "Linear",
+                        "name": "image"
+                    },
+                    "type": "render/uniforms/opencv_texture"
                 },
                 "program_0": {
                     "blind_data": {
@@ -301,20 +316,6 @@
                     },
                     "name": "split_vec2u",
                     "type": "maths/split_vec2u"
-                },
-                "texture_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 394.452728271484,
-                            "y": -76.5001754760742
-                        }
-                    },
-                    "name": "texture",
-                    "ports": {
-                        "name": "image"
-                    },
-                    "type": "render/uniforms/texture"
                 },
                 "unsigned_0": {
                     "blind_data": {
@@ -379,5 +380,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJTAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAeYAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA3wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABVQAAAhkAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJTAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAeYAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABdAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB6gAAAYQAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
