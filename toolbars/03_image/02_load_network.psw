@@ -3,41 +3,35 @@
         {
             "in_node": "network_0",
             "in_port": "image",
-            "out_node": "load_0",
-            "out_port": "image"
+            "out_node": "image_0",
+            "out_port": "frame"
         }
     ],
-    "description": "### Fullscreen image display\n\nWhile Possumwood's viewport is primarily intended for viewing 3D content, using a set of shaders it is possible to alter it to display 2D textures as well.\n\nThis demo uses shaders that ignore the perspective projection matrix and draw 2D image in a 2D front-facing view in the viewport.",
+    "description": "### Image loading\n\nA simple demo showing how to load an image from a file, and display it using an OpenGL setup (wrapped in a subnetwork - enter it by double-clicking the blue node).",
     "nodes": {
-        "load_0": {
+        "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 39.4773254394531,
-                    "y": 268.550598144531
+                    "x": 278.418487548828,
+                    "y": 95.2809066772461
                 }
             },
-            "name": "load",
+            "name": "image",
             "ports": {
-                "filename": "$EXAMPLES/matcap_textures/00039.png"
+                "filename": "$EXAMPLES/hdrihaven_envmaps/rathaus_1k.png"
             },
-            "type": "images/load"
+            "type": "opencv/capture/image"
         },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 210.91357421875,
-                    "y": 268.973236083984
+                    "x": 247.836898803711,
+                    "y": 278.454071044922
                 }
             },
             "connections": [
-                {
-                    "in_node": "draw_0",
-                    "in_port": "vertex_data",
-                    "out_node": "background_0",
-                    "out_port": "vertex_data"
-                },
                 {
                     "in_node": "program_0",
                     "in_port": "fragment_shader",
@@ -45,22 +39,22 @@
                     "out_port": "shader"
                 },
                 {
+                    "in_node": "vertex_data_0",
+                    "in_port": "generic_mesh",
+                    "out_node": "grid_0",
+                    "out_port": "polymesh"
+                },
+                {
+                    "in_node": "opencv_texture_0",
+                    "in_port": "frame",
+                    "out_node": "input_0",
+                    "out_port": "data"
+                },
+                {
                     "in_node": "metadata_0",
-                    "in_port": "image",
+                    "in_port": "frame",
                     "out_node": "input_0",
                     "out_port": "data"
-                },
-                {
-                    "in_node": "texture_0",
-                    "in_port": "value",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "split_vec2u_0",
-                    "in_port": "vec",
-                    "out_node": "metadata_0",
-                    "out_port": "size"
                 },
                 {
                     "in_node": "draw_0",
@@ -81,22 +75,22 @@
                     "out_port": "y"
                 },
                 {
-                    "in_node": "viewport_0",
-                    "in_port": "in_uniforms",
-                    "out_node": "texture_0",
-                    "out_port": "out_uniforms"
-                },
-                {
                     "in_node": "unsigned_1",
                     "in_port": "in_uniforms",
                     "out_node": "unsigned_0",
                     "out_port": "out_uniforms"
                 },
                 {
-                    "in_node": "texture_0",
+                    "in_node": "opencv_texture_0",
                     "in_port": "in_uniforms",
                     "out_node": "unsigned_1",
                     "out_port": "out_uniforms"
+                },
+                {
+                    "in_node": "draw_0",
+                    "in_port": "vertex_data",
+                    "out_node": "vertex_data_0",
+                    "out_port": "vertex_data"
                 },
                 {
                     "in_node": "program_0",
@@ -109,21 +103,22 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
+                },
+                {
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
+                    "out_node": "metadata_0",
+                    "out_port": "size"
+                },
+                {
+                    "in_node": "viewport_0",
+                    "in_port": "in_uniforms",
+                    "out_node": "opencv_texture_0",
+                    "out_port": "out_uniforms"
                 }
             ],
             "name": "image_display",
             "nodes": {
-                "background_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 179.673385620117,
-                            "y": 345.600128173828
-                        }
-                    },
-                    "name": "background",
-                    "type": "render/vertex_data/background"
-                },
                 "draw_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
@@ -139,22 +134,44 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -30.5687637329102,
-                            "y": 235.743118286133
+                            "x": -72.5665664672852,
+                            "y": 143.671020507812
                         }
                     },
                     "name": "fragment_shader",
                     "ports": {
-                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform sampler2D image;\n\nvoid main() { \n\tif(uv.y < 0.0 || uv.y > 1.0)\n\t\tcolor = vec4(0,0,0,1);\n\telse\n\t\tcolor = vec4(texture(image, vec2(uv.x, 1.0-uv.y))); \n} \n"
+                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform sampler2D image;\n\nvoid main() { \n\tcolor = vec4(texture(image, vec2(uv.x, 1.0-uv.y))); \n} \n"
                     },
                     "type": "render/fragment_shader"
+                },
+                "grid_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 10.684497833252,
+                            "y": 268.905548095703
+                        }
+                    },
+                    "name": "grid",
+                    "ports": {
+                        "origin": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "size/x": 1.0,
+                        "size/y": 1.0,
+                        "subdivision/x": 1,
+                        "subdivision/y": 1
+                    },
+                    "type": "polymesh/grid"
                 },
                 "input_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 2.9504725933075,
-                            "y": -192.11376953125
+                            "x": 14.6695690155029,
+                            "y": -552.476013183594
                         }
                     },
                     "name": "image",
@@ -164,12 +181,27 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 105.016830444336,
-                            "y": -319.728240966797
+                            "x": 113.132934570312,
+                            "y": -395.673675537109
                         }
                     },
                     "name": "metadata",
-                    "type": "images/metadata"
+                    "type": "opencv/metadata"
+                },
+                "opencv_texture_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 341.63720703125,
+                            "y": -77.8383712768555
+                        }
+                    },
+                    "name": "opencv_texture",
+                    "ports": {
+                        "mode": "Linear",
+                        "name": "image"
+                    },
+                    "type": "render/uniforms/opencv_texture"
                 },
                 "program_0": {
                     "blind_data": {
@@ -186,26 +218,12 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 232.771728515625,
-                            "y": -311.959075927734
+                            "x": 239.439483642578,
+                            "y": -365.299377441406
                         }
                     },
                     "name": "split_vec2u",
                     "type": "maths/split_vec2u"
-                },
-                "texture_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 394.452728271484,
-                            "y": -76.5001754760742
-                        }
-                    },
-                    "name": "texture",
-                    "ports": {
-                        "name": "image"
-                    },
-                    "type": "render/uniforms/texture"
                 },
                 "unsigned_0": {
                     "blind_data": {
@@ -217,7 +235,7 @@
                     },
                     "name": "unsigned width",
                     "ports": {
-                        "name": "image_width"
+                        "name": "width"
                     },
                     "type": "render/uniforms/unsigned"
                 },
@@ -231,9 +249,20 @@
                     },
                     "name": "unsigned height",
                     "ports": {
-                        "name": "image_height"
+                        "name": "height"
                     },
                     "type": "render/uniforms/unsigned"
+                },
+                "vertex_data_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 196.808380126953,
+                            "y": 306.509704589844
+                        }
+                    },
+                    "name": "vertex_data",
+                    "type": "polymesh/vertex_data"
                 },
                 "vertex_shader_0": {
                     "blind_data": {
@@ -245,7 +274,7 @@
                     },
                     "name": "vertex_shader",
                     "ports": {
-                        "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n\nuniform uint image_width;\nuniform uint image_height;\nuniform vec2 iResolution;\n\nout vec2 uv;                   // uv texturing parameters\n \nvoid main() {\n\t// compute the aspect ratio from image width and height\n\tfloat aspect = float(image_width) / float(image_height);\n\n\t// compute the screen aspect ratio\n\tfloat screen_aspect = iResolution.x / iResolution.y;\n\n\tgl_Position = vec4(P.x, P.y, 0, 1);\n\n\t// UV parameters are just untransformed world-space position\n\tuv = vec2(P/2.0);\n\tuv.y *= aspect / screen_aspect;\n\tuv += 0.5;\n} \n"
+                        "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n\nuniform uint width;\nuniform uint height;\n\nout vec2 uv;                   // uv texturing parameters\n \nvoid main() {\n\t// compute the aspect ratio from image width and height\n\tfloat aspect = float(width) / float(height);\n\n\t// convert the world-space position to camera space\n\tvec4 pos4 = vec4(P.x * aspect, P.y, P.z, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\t// UV parameters are just untransformed world-space position\n\tuv = vec2(P.x, P.y);\n} \n"
                     },
                     "type": "render/vertex_shader"
                 },
@@ -269,6 +298,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJfAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAdoAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA0QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABRwAAAicAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ0AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAcUAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABFQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABiwAAAeMAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

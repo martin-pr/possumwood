@@ -5,53 +5,36 @@
 #include <lua/datatypes/state.h>
 #include <lua/datatypes/context.h>
 
-#include "lua/images.h"
-#include "datatypes/pixmap.h"
+#include "lua/opencv_image.h"
+#include "lua/module.h"
 
 namespace {
 
-struct Params {
-	dependency_graph::InAttr<possumwood::lua::Context> a_inContext;
-	dependency_graph::OutAttr<possumwood::lua::Context> a_outContext;
-};
+dependency_graph::InAttr<possumwood::lua::Context> a_inContext;
+dependency_graph::OutAttr<possumwood::lua::Context> a_outContext;
 
-Params s_ldrParams;
-Params s_hdrParams;
-
-template<typename PIXMAP>
-dependency_graph::State compute(dependency_graph::Values& data, const std::string& suffix, Params& params) {
-	possumwood::lua::Context context = data.get(params.a_inContext);
+dependency_graph::State compute(dependency_graph::Values& data) {
+	possumwood::lua::Context context = data.get(a_inContext);
 
 	context.addModule(
-		"images" + suffix,
-		[suffix](possumwood::lua::State& state) {
-			possumwood::images::init<PIXMAP>(state, suffix);
-		}
+		"images",
+		possumwood::images::Module::init
 	);
 
-	data.set(params.a_outContext, context);
+	data.set(a_outContext, context);
 
 	return dependency_graph::State();
 }
 
-template<typename PIXMAP>
-void init(possumwood::Metadata& meta, const std::string& suffix, Params& params) {
-	meta.addAttribute(params.a_inContext, "in_context", possumwood::lua::Context(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(params.a_outContext, "out_context", possumwood::lua::Context(), possumwood::AttrFlags::kVertical);
+void init(possumwood::Metadata& meta) {
+	meta.addAttribute(a_inContext, "in_context", possumwood::lua::Context(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outContext, "out_context", possumwood::lua::Context(), possumwood::AttrFlags::kVertical);
 
-	meta.addInfluence(params.a_inContext, params.a_outContext);
+	meta.addInfluence(a_inContext, a_outContext);
 
-	meta.setCompute([suffix, &params](dependency_graph::Values& data) -> dependency_graph::State {
-		return compute<PIXMAP>(data, suffix, params);
-	});
+	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl_ldr("lua/modules/images", [](possumwood::Metadata& meta) {
-	init<possumwood::LDRPixmap>(meta, "", s_ldrParams);
-});
-
-possumwood::NodeImplementation s_impl_hdr("lua/modules/images_hdr", [](possumwood::Metadata& meta) {
-	init<possumwood::HDRPixmap>(meta, "_hdr", s_hdrParams);
-});
+possumwood::NodeImplementation s_impl_opencv("lua/modules/images", init);
 
 }

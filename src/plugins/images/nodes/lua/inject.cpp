@@ -2,56 +2,33 @@
 
 #include <lua/datatypes/context.h>
 #include <lua/datatypes/variable.inl>
+#include <lua/datatypes/state.h>
 
-#include "lua/images.h"
-#include "lua/pixmap_wrapper.h"
+#include "lua/opencv_image.h"
+#include "lua/module.h"
 
 #include "lua/nodes/inject.h"
 
+#include "opencv/frame.h"
+
+#include <luabind/operator.hpp>
+
+namespace possumwood { namespace images {
+
 namespace {
 
-template<typename PIXMAP, typename SUFFIX>
-struct Module {
-	static std::string name() {
-		return std::string("images") + SUFFIX::value();
-	}
+possumwood::lua::Inject<
+	possumwood::opencv::Frame,
+	possumwood::images::OpencvMatWrapper,
+	Module
+> s_injector;
 
-	static void init(possumwood::lua::State& state) {
-		possumwood::images::init<PIXMAP>(state, SUFFIX::value());
-	}
-};
-
-// suffix as a class, so it can be used as a template parameter
-struct LDRSuffix {
-	static const std::string value() {
-		return "";
-	};
-};
-
-struct HDRSuffix {
-	static const std::string value() {
-		return "_hdr";
-	};
-};
-
-possumwood::NodeImplementation s_impl_ldr("lua/inject/image",
+possumwood::NodeImplementation s_impl("lua/inject/image",
 	[](possumwood::Metadata& meta) {
-		possumwood::lua::Inject<
-			std::shared_ptr<const possumwood::LDRPixmap>,
-			possumwood::images::PixmapWrapper<possumwood::LDRPixmap>,
-			Module<possumwood::LDRPixmap, LDRSuffix>
-		>::init(meta);
-	}
-);
-
-possumwood::NodeImplementation s_impl_hdr("lua/inject/image_hdr",
-	[](possumwood::Metadata& meta) {
-		possumwood::lua::Inject<
-			std::shared_ptr<const possumwood::HDRPixmap>,
-			possumwood::images::PixmapWrapper<possumwood::HDRPixmap>,
-			Module<possumwood::HDRPixmap, HDRSuffix>
-		>::init(meta);
+		s_injector.init(meta);
 	}
 );
 
 }
+
+} }

@@ -23,7 +23,7 @@ struct Extract {
 
 		try {
 			// get the result
-			T value = luabind::object_cast<HOLDER>(state->globals()[data.get(params.a_name)]);
+			T value = T(luabind::object_cast<HOLDER>(state->globals()[data.get(params.a_name)]));
 			// and push it to the output
 			data.set(params.a_out, value);
 		}

@@ -19,6 +19,7 @@ Possumwood is built on top of a simple graph-evaluation engine and a Qt-based no
   - [Lua](#lua)
   - [Animation](#animation)
   - [Opencv](#opencv)
+  - [Hdr](#hdr)
   - [Lightfields](#lightfields)
 - [Tutorials](#tutorials)
   - [Basics](#basics)
@@ -421,7 +422,27 @@ This demo shows how to use [CGAL's implementation of mesh decimation](https://do
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/01_load.png" style="width:70px;">
+<img src="toolbars/03_image/01_load_display.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### OpenCV image loading and display
+
+This simple demo shows how to load an image using OpenCV's [`imread()`](https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html?highlight=imread#imread) method, and pass the resulting image data to OpenGL as a texture and a set of additional metadata represented by GLSL uniforms. 
+
+In following demos, this OpenGL setup is wrapped in a subnetwork.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/01_load_display_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/03_image/02_load_network.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -430,16 +451,11 @@ This demo shows how to use [CGAL's implementation of mesh decimation](https://do
 
 A simple demo showing how to load an image from a file, and display it using an OpenGL setup (wrapped in a subnetwork - enter it by double-clicking the blue node).
 </td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/01_load_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/02_fullscreen_display.png" style="width:70px;">
+<img src="toolbars/03_image/03_fullscreen_display.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -452,65 +468,25 @@ This demo uses shaders that ignore the perspective projection matrix and draw 2D
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/02_fullscreen_display_screenshot.png" style="width:70px;">
+<img src="toolbars/03_image/03_fullscreen_display_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/09_lua_grid.png" style="width:70px;">
+<img src="toolbars/03_image/10_grayscale.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Lua-based image synthesis
+#### Grayscale conversion
 
-Possumwood contains a simple integration of the [Lua scripting language](https://www.lua.org/), allowing to manipulate in-scene objects using code contained in nodes.
-
-This demo shows how to synthesize an image programatically. It "injects" the `images` plugin into the input Lua `context` (i.e., the environment for running a script), and generates an image, which is then extracted from the output `state` using an `image extract` node. The result is then passed on an image-display subnetwork.
+Color conversion in OpenCV is implemented in the [`cvtColor()`](https://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html?#cvtcolor) function. This demo shows how to use the corresponding `color` node to first convert to grayscale, and then back to BGR to allow the image to be passed to OpenGL as RGB data.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/09_lua_grid_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/10_lua_expression.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Lua expression-based image synthesis
-
-This demo builds on the Lua Grid setup, extending it by additional parameters, and wrapping it in a subnetwork (double click any blue nodes to "enter" them).
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/10_lua_expression_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/11_lua_tonemapping.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Lua image tonemapping
-
-Lua expressions in Possumwood can be also used to manipulate [HDR images](https://en.wikipedia.org/wiki/High-dynamic-range_imaging).
-
-This demo shows how to implement simple [Gamma compression](https://en.wikipedia.org/wiki/Gamma_correction) tonemapping operator in Lua, and how to wrap it into a subnetwork with exposed parameters. Possumwood allows arbitrary nesting of nodes in this way, allowing to abstract-away any unnecessary complexity into simple nodes with clean interfaces.
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/11_lua_tonemapping_screenshot.png" style="width:70px;">
+<img src="toolbars/03_image/10_grayscale_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -573,6 +549,64 @@ A simple demo showing how to use a Lua script to create animated data, which are
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 <img src="toolbars/04_lua/04_animated_cube_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/09_lua_grid.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Lua-based image synthesis
+
+Possumwood contains a simple integration of the [Lua scripting language](https://www.lua.org/), allowing to manipulate in-scene objects using code contained in nodes.
+
+This demo shows how to synthesize an image programatically. It "injects" the `images` plugin into the input Lua `context` (i.e., the environment for running a script), and generates an image, which is then extracted from the output `state` using an `image extract` node. The result is then passed on an image-display subnetwork.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/09_lua_grid_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/10_lua_expression.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Lua expression-based image synthesis
+
+This demo builds on the Lua Grid setup, extending it by additional parameters, and wrapping it in a subnetwork (double click any blue nodes to "enter" them).
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/10_lua_expression_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/11_lua_tonemapping.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Lua image tonemapping
+
+Lua expressions in Possumwood can be also used to manipulate [HDR images](https://en.wikipedia.org/wiki/High-dynamic-range_imaging).
+
+This demo shows how to implement simple [Gamma compression](https://en.wikipedia.org/wiki/Gamma_correction) tonemapping operator in Lua, and how to wrap it into a subnetwork with exposed parameters. Possumwood allows arbitrary nesting of nodes in this way, allowing to abstract-away any unnecessary complexity into simple nodes with clean interfaces.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/04_lua/11_lua_tonemapping_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -714,44 +748,6 @@ This demo shows how this simple technique can be used in Possumwood. The resulti
 
 ### Opencv
 <table> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/01_load_display.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### OpenCV image loading and display
-
-This simple demo shows how to load an image using OpenCV's [`imread()`](https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html?highlight=imread#imread) method, and pass the resulting image data to OpenGL as a texture and a set of additional metadata represented by GLSL uniforms. 
-
-In following demos, this OpenGL setup is wrapped in a subnetwork.
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/01_load_display_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/02_grayscale.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Grayscale conversion
-
-Color conversion in OpenCV is implemented in the [`cvtColor()`](https://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html?#cvtcolor) function. This demo shows how to use the corresponding `color` node to first convert to grayscale, and then back to BGR to allow the image to be passed to OpenGL as RGB data.
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/02_grayscale_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
@@ -945,141 +941,6 @@ The left side of the graph detects a pattern in a set of 4 images, accumulating 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/50_naive_mertens.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### HDR merge using Mertens algorithm
-
-Multi-exposure merge is an procedure in high dynamic range imaging.
-
-This setup merges 5 hand-held exposures of a scene to an HDR image using Mertens algorithm. As the inputs are not perfectly aligned, the output shows "ghosting" artifacts, as expected in this type of setup.
-
-<sub>Mertens, Tom, Jan Kautz, and Frank Van Reeth. ["Exposure fusion."](http://cholla.mmto.org/minerals/macro/exposure_fusion_reduced.pdf) 15th Pacific Conference on Computer Graphics and Applications (PG'07). IEEE, 2007.</sub>
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/50_naive_mertens_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/51_aligned_mertens.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Aligned HDR merge using Mertens algorithm
-
-For a HDR merge algorithm to correctly process its inputs, the input images need to be precisely aligned. This can be either achived by careful capture, via a calibration and alignment step, or by a simpler image-alignment algorithm.
-
-This demo shows how a simple alignment of hand-held multiple exposures can be achieved using the `MTB` algorithm, without the need of complex calibration. The resulting images are then merged to a HDR image using Mertens algorithm, completely eliminating the ghosting artifacts from the unaligned version of this demo.
-
-<sub>Mertens, Tom, Jan Kautz, and Frank Van Reeth. ["Exposure fusion."](http://cholla.mmto.org/minerals/macro/exposure_fusion_reduced.pdf) 15th Pacific Conference on Computer Graphics and Applications (PG'07). IEEE, 2007.</sub>
-
-<sub>Ward, Greg. ["Fast, robust image registration for compositing high dynamic range photographs from hand-held exposures."](http://pages.cs.wisc.edu/~lizhang/courses/cs766-2008f/projects/hdr/jgtpap2.pdf) Journal of graphics tools 8.2 (2003): 17-30.</sub>
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/51_aligned_mertens_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/52_aligned_debevec.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Aligned HDR merge using Debevec algorithm with response curve estimation
-
-When merging multiple exposures for HDR imaging, it is often beneficial to use raw image data, avoiding any processing and gamma correction a camera might do to produce a perceptually good looking result. In some cases, when using cheaper cameras or a mobile phone, it might not be possible to use raw data, which means that an additional calibration step is required.
-
-This setup shows how to use EXIF data from a set of JPG images to estimate the camera response curve using Debevec's algorithm, and then use the resulting curve for a more accurate HDR merge using Debevec's HDR merge algorithm. Compared to previous demos using Merten's algorithm, the dynamic range of the resulting image is much wider, with a more accurate representation of luminance information present in the scene.
-
-<sub>Debevec, Paul E., and Jitendra Malik. ["Recovering high dynamic range radiance maps from photographs."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.463.6496&rep=rep1&type=pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/52_aligned_debevec_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/60_tonemap_drago.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Drago tonemapping
-
-Tonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.
-
-This demo shows how to set up Drago's tonemapping algorithm in Possumwood.
-
-<sub>Drago, Fr&#233;d&#233;ric, et al. ["Adaptive logarithmic mapping for displaying high contrast scenes."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.8094&rep=rep1&type=pdf) Computer graphics forum. Vol. 22. No. 3. Oxford, UK: Blackwell Publishing, Inc, 2003.<sub>
-
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/60_tonemap_drago_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/61_tonemap_reinhard.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Reinhard's tonemapping
-
-Tonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.
-
-This demo shows how to set up Reinhards's tonemapping algorithm in Possumwood.
-
-<sub>Reinhard, Erik, and Kate Devlin. ["Dynamic range reduction inspired by photoreceptor physiology."](http://pages.cs.wisc.edu/~lizhang/courses/cs766-2008f/projects/hdr/Reinhard2005DRR.pdf) IEEE transactions on visualization and computer graphics 11.1 (2005): 13-24.</sub>
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/61_tonemap_reinhard_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/62_tonemap_mantiuk.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Mantiuk tonemapping
-
-Tonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.
-
-This demo shows how to set up Mantiuk's tonemapping algorithm in Possumwood.
-
-<sub>Mantiuk, Rafal, Karol Myszkowski, and Hans-Peter Seidel. ["A perceptual framework for contrast processing of high dynamic range images."](http://domino.mpi-inf.mpg.de/intranet/ag4/ag4publ.nsf/3561a79a83e6557ac1256b91004f4bdd/43fc98f7a2fc192ec1257149002e3b9a/$file/mantiuk06contrastproctap.pdf) ACM Transactions on Applied Perception (TAP) 3.3 (2006): 286-308.<sub>
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/62_tonemap_mantiuk_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 <img src="toolbars/06_opencv/70_inpaint_circle.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
@@ -1183,12 +1044,151 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </tr> 
 </table> 
 
+### Hdr
+<table> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/50_naive_mertens.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### HDR merge using Mertens algorithm
+
+Multi-exposure merge is an procedure in high dynamic range imaging.
+
+This setup merges 5 hand-held exposures of a scene to an HDR image using Mertens algorithm. As the inputs are not perfectly aligned, the output shows "ghosting" artifacts, as expected in this type of setup.
+
+<sub>Mertens, Tom, Jan Kautz, and Frank Van Reeth. ["Exposure fusion."](http://cholla.mmto.org/minerals/macro/exposure_fusion_reduced.pdf) 15th Pacific Conference on Computer Graphics and Applications (PG'07). IEEE, 2007.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/50_naive_mertens_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/51_aligned_mertens.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Aligned HDR merge using Mertens algorithm
+
+For a HDR merge algorithm to correctly process its inputs, the input images need to be precisely aligned. This can be either achived by careful capture, via a calibration and alignment step, or by a simpler image-alignment algorithm.
+
+This demo shows how a simple alignment of hand-held multiple exposures can be achieved using the `MTB` algorithm, without the need of complex calibration. The resulting images are then merged to a HDR image using Mertens algorithm, completely eliminating the ghosting artifacts from the unaligned version of this demo.
+
+<sub>Mertens, Tom, Jan Kautz, and Frank Van Reeth. ["Exposure fusion."](http://cholla.mmto.org/minerals/macro/exposure_fusion_reduced.pdf) 15th Pacific Conference on Computer Graphics and Applications (PG'07). IEEE, 2007.</sub>
+
+<sub>Ward, Greg. ["Fast, robust image registration for compositing high dynamic range photographs from hand-held exposures."](http://pages.cs.wisc.edu/~lizhang/courses/cs766-2008f/projects/hdr/jgtpap2.pdf) Journal of graphics tools 8.2 (2003): 17-30.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/51_aligned_mertens_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/52_aligned_debevec.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Aligned HDR merge using Debevec algorithm with response curve estimation
+
+When merging multiple exposures for HDR imaging, it is often beneficial to use raw image data, avoiding any processing and gamma correction a camera might do to produce a perceptually good looking result. In some cases, when using cheaper cameras or a mobile phone, it might not be possible to use raw data, which means that an additional calibration step is required.
+
+This setup shows how to use EXIF data from a set of JPG images to estimate the camera response curve using Debevec's algorithm, and then use the resulting curve for a more accurate HDR merge using Debevec's HDR merge algorithm. Compared to previous demos using Merten's algorithm, the dynamic range of the resulting image is much wider, with a more accurate representation of luminance information present in the scene.
+
+<sub>Debevec, Paul E., and Jitendra Malik. ["Recovering high dynamic range radiance maps from photographs."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.463.6496&rep=rep1&type=pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/52_aligned_debevec_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/60_tonemap_drago.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Drago tonemapping
+
+Tonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.
+
+This demo shows how to set up Drago's tonemapping algorithm in Possumwood.
+
+<sub>Drago, Fr&#233;d&#233;ric, et al. ["Adaptive logarithmic mapping for displaying high contrast scenes."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.8094&rep=rep1&type=pdf) Computer graphics forum. Vol. 22. No. 3. Oxford, UK: Blackwell Publishing, Inc, 2003.<sub>
+
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/60_tonemap_drago_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/61_tonemap_reinhard.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Reinhard's tonemapping
+
+Tonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.
+
+This demo shows how to set up Reinhards's tonemapping algorithm in Possumwood.
+
+<sub>Reinhard, Erik, and Kate Devlin. ["Dynamic range reduction inspired by photoreceptor physiology."](http://pages.cs.wisc.edu/~lizhang/courses/cs766-2008f/projects/hdr/Reinhard2005DRR.pdf) IEEE transactions on visualization and computer graphics 11.1 (2005): 13-24.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/61_tonemap_reinhard_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/62_tonemap_mantiuk.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Mantiuk tonemapping
+
+Tonemapping is the process of converting High Dynamic Range content to a standard display. The simplest operators are global (such as [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction), while others act adaptively, mimicking the behaviour of human visual system.
+
+This demo shows how to set up Mantiuk's tonemapping algorithm in Possumwood.
+
+<sub>Mantiuk, Rafal, Karol Myszkowski, and Hans-Peter Seidel. ["A perceptual framework for contrast processing of high dynamic range images."](http://domino.mpi-inf.mpg.de/intranet/ag4/ag4publ.nsf/3561a79a83e6557ac1256b91004f4bdd/43fc98f7a2fc192ec1257149002e3b9a/$file/mantiuk06contrastproctap.pdf) ACM Transactions on Applied Perception (TAP) 3.3 (2006): 286-308.<sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_hdr/62_tonemap_mantiuk_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+</table> 
+
 ### Lightfields
 <table> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/01_lytro_reading.png" style="width:70px;">
+<img src="toolbars/08_lightfields/01_lytro_reading.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1209,14 +1209,14 @@ This demo implements a reader for Lytro RAW files, extracting both image data an
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/01_lytro_reading_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/01_lytro_reading_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/02_lytro_normalize.png" style="width:70px;">
+<img src="toolbars/08_lightfields/02_lytro_normalize.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1231,14 +1231,14 @@ Georgiev, Todor, et al. ["Lytro camera technology: theory, algorithms, performan
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/02_lytro_normalize_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/02_lytro_normalize_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/03_reading_debayern.png" style="width:70px;">
+<img src="toolbars/08_lightfields/03_reading_debayern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1253,14 +1253,14 @@ This demo shows how to obtain a debayered normalised lightfield in Possumwood.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/03_reading_debayern_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/03_reading_debayern_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/04_lytro_pattern.png" style="width:70px;">
+<img src="toolbars/08_lightfields/04_lytro_pattern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1275,14 +1275,14 @@ Georgiev, Todor, et al. ["Lytro camera technology: theory, algorithms, performan
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/04_lytro_pattern_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/04_lytro_pattern_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/07_epi.png" style="width:70px;">
+<img src="toolbars/08_lightfields/07_epi.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1299,14 +1299,14 @@ The u-x and v-y images (left, right, top and bottom) show slices with "line dire
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/07_epi_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/07_epi_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/08_epi_uv.png" style="width:70px;">
+<img src="toolbars/08_lightfields/08_epi_uv.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1319,14 +1319,14 @@ The epipolar images accumulated in UV space show images representing averages of
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/08_epi_uv_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/08_epi_uv_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/10_mozaic.png" style="width:70px;">
+<img src="toolbars/08_lightfields/10_mozaic.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1341,14 +1341,14 @@ This demo shows how to use demultiplexing to reconstruct multiple views from raw
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/10_mozaic_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/10_mozaic_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/11_mozaic_normalize.png" style="width:70px;">
+<img src="toolbars/08_lightfields/11_mozaic_normalize.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1363,14 +1363,14 @@ This demo shows how to use demultiplexing to reconstruct multiple views from nor
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/11_mozaic_normalize_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/11_mozaic_normalize_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/12_mozaic_split.png" style="width:70px;">
+<img src="toolbars/08_lightfields/12_mozaic_split.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1383,14 +1383,14 @@ This demo addempts to visualise this difference explicitly, by showing both each
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/12_mozaic_split_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/12_mozaic_split_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/13_mozaic_inpainted.png" style="width:70px;">
+<img src="toolbars/08_lightfields/13_mozaic_inpainted.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1405,14 +1405,14 @@ To reconstruct missing data after obtaining sub-apreture images, this demo uses 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/13_mozaic_inpainted_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/13_mozaic_inpainted_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/14_laplacian_inpainted.png" style="width:70px;">
+<img src="toolbars/08_lightfields/14_laplacian_inpainted.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1427,14 +1427,14 @@ To reconstruct missing data after obtaining sub-apreture images, this demo uses 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/14_laplacian_inpainted_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/14_laplacian_inpainted_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/15_mozaic_superres.png" style="width:70px;">
+<img src="toolbars/08_lightfields/15_mozaic_superres.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1447,14 +1447,14 @@ This demo shows the result of this algorithm on an inpainted mosaic from previou
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/15_mozaic_superres_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/15_mozaic_superres_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/20_naive_refocus.png" style="width:70px;">
+<img src="toolbars/08_lightfields/20_naive_refocus.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1469,14 +1469,14 @@ While very simple and fast, the number of samples for each pixel can vary depend
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/20_naive_refocus_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/20_naive_refocus_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/21_naive_detail.png" style="width:70px;">
+<img src="toolbars/08_lightfields/21_naive_detail.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1489,14 +1489,14 @@ This demo shows the detail of the sampling and integration pattern of previous d
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/21_naive_detail_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/21_naive_detail_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/22_naive_debayern.png" style="width:70px;">
+<img src="toolbars/08_lightfields/22_naive_debayern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1509,14 +1509,14 @@ Applying a de-Bayer filter to raw lightfield data reduces some artifacts seen in
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/22_naive_debayern_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/22_naive_debayern_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/23_gaussian_refocus.png" style="width:70px;">
+<img src="toolbars/08_lightfields/23_gaussian_refocus.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1535,14 +1535,14 @@ This demo shows how a simple gaussian-based accumulation, similar to one used fo
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/23_gaussian_refocus_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/23_gaussian_refocus_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/24_gaussian_detail.png" style="width:70px;">
+<img src="toolbars/08_lightfields/24_gaussian_detail.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1555,14 +1555,14 @@ This demo shows the detail of the sampling and integration pattern of previous d
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/24_gaussian_detail_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/24_gaussian_detail_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/25_gaussian_debayer.png" style="width:70px;">
+<img src="toolbars/08_lightfields/25_gaussian_debayer.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1572,14 +1572,14 @@ Applying a de-Bayer filter to raw lightfield data reduces some artifacts seen in
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/25_gaussian_debayer_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/25_gaussian_debayer_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/26_bezier_refocus.png" style="width:70px;">
+<img src="toolbars/08_lightfields/26_bezier_refocus.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1590,14 +1590,14 @@ Briand, Thibaud, and Pascal Monasse. ["Theory and Practice of Image B-Spline Int
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/26_bezier_refocus_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/26_bezier_refocus_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/27_bezier_debayer.png" style="width:70px;">
+<img src="toolbars/08_lightfields/27_bezier_debayer.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1608,14 +1608,14 @@ Briand, Thibaud, and Pascal Monasse. ["Theory and Practice of Image B-Spline Int
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/27_bezier_debayer_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/27_bezier_debayer_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/28_detail_comparison.png" style="width:70px;">
+<img src="toolbars/08_lightfields/28_detail_comparison.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1626,14 +1626,14 @@ This demo shows the difference in integration patterns between different methods
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/28_detail_comparison_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/28_detail_comparison_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/30_relative_corresp.png" style="width:70px;">
+<img src="toolbars/08_lightfields/30_relative_corresp.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1644,14 +1644,14 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/30_relative_corresp_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/30_relative_corresp_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/31_absolute_metrics.png" style="width:70px;">
+<img src="toolbars/08_lightfields/31_absolute_metrics.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1662,7 +1662,7 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields/31_absolute_metrics_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/31_absolute_metrics_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 

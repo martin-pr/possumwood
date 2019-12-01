@@ -1,16 +1,16 @@
 {
     "connections": [
         {
-            "in_node": "network_0",
-            "in_port": "image",
-            "out_node": "image_0",
-            "out_port": "out"
-        },
-        {
             "in_node": "script_0",
             "in_port": "context",
             "out_node": "images_0",
             "out_port": "out_context"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "image",
+            "out_node": "image_0",
+            "out_port": "out"
         },
         {
             "in_node": "image_0",
@@ -21,26 +21,12 @@
     ],
     "description": "### Lua-based image synthesis\n\nPossumwood contains a simple integration of the [Lua scripting language](https://www.lua.org/), allowing to manipulate in-scene objects using code contained in nodes.\n\nThis demo shows how to synthesize an image programatically. It \"injects\" the `images` plugin into the input Lua `context` (i.e., the environment for running a script), and generates an image, which is then extracted from the output `state` using an `image extract` node. The result is then passed on an image-display subnetwork.",
     "nodes": {
-        "image_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 228.653030395508,
-                    "y": 315.287963867188
-                }
-            },
-            "name": "image",
-            "ports": {
-                "name": "img"
-            },
-            "type": "lua/extract/image"
-        },
         "images_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 78.5380554199219,
-                    "y": 84.7934875488281
+                    "x": 63.0,
+                    "y": 86.0
                 }
             },
             "name": "images",
@@ -68,14 +54,14 @@
                     "out_port": "polymesh"
                 },
                 {
-                    "in_node": "texture_0",
-                    "in_port": "value",
+                    "in_node": "metadata_0",
+                    "in_port": "frame",
                     "out_node": "input_0",
                     "out_port": "data"
                 },
                 {
-                    "in_node": "metadata_0",
-                    "in_port": "image",
+                    "in_node": "opencv_texture_0",
+                    "in_port": "frame",
                     "out_node": "input_0",
                     "out_port": "data"
                 },
@@ -84,6 +70,12 @@
                     "in_port": "vec",
                     "out_node": "metadata_0",
                     "out_port": "size"
+                },
+                {
+                    "in_node": "draw_0",
+                    "in_port": "uniforms",
+                    "out_node": "opencv_texture_0",
+                    "out_port": "out_uniforms"
                 },
                 {
                     "in_node": "draw_0",
@@ -102,12 +94,6 @@
                     "in_port": "value",
                     "out_node": "split_vec2u_0",
                     "out_port": "y"
-                },
-                {
-                    "in_node": "draw_0",
-                    "in_port": "uniforms",
-                    "out_node": "texture_0",
-                    "out_port": "out_uniforms"
                 },
                 {
                     "in_node": "unsigned_1",
@@ -134,7 +120,7 @@
                     "out_port": "shader"
                 },
                 {
-                    "in_node": "texture_0",
+                    "in_node": "opencv_texture_0",
                     "in_port": "in_uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
@@ -193,8 +179,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -339.137939453125,
-                            "y": 289.9169921875
+                            "x": -273.443298339844,
+                            "y": -96.0388870239258
                         }
                     },
                     "name": "image",
@@ -204,12 +190,27 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": -161.601654052734,
-                            "y": 99.1790924072266
+                            "x": -166.141937255859,
+                            "y": 74.7500610351562
                         }
                     },
                     "name": "metadata",
-                    "type": "images/metadata"
+                    "type": "opencv/metadata"
+                },
+                "opencv_texture_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 157.131744384766,
+                            "y": 484.206817626953
+                        }
+                    },
+                    "name": "opencv_texture",
+                    "ports": {
+                        "mode": "Linear",
+                        "name": "image"
+                    },
+                    "type": "render/uniforms/opencv_texture"
                 },
                 "program_0": {
                     "blind_data": {
@@ -233,26 +234,12 @@
                     "name": "split_vec2u",
                     "type": "maths/split_vec2u"
                 },
-                "texture_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 186.706909179688,
-                            "y": 452.577606201172
-                        }
-                    },
-                    "name": "texture",
-                    "ports": {
-                        "name": "image"
-                    },
-                    "type": "render/uniforms/texture"
-                },
                 "unsigned_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 173.041473388672,
-                            "y": -8.92244243621826
+                            "x": 205.888778686523,
+                            "y": 1.34234154224396
                         }
                     },
                     "name": "unsigned width",
@@ -265,8 +252,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 170.428436279297,
-                            "y": 163.643585205078
+                            "x": 203.275741577148,
+                            "y": 173.90837097168
                         }
                     },
                     "name": "unsigned height",
@@ -304,8 +291,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 185.731201171875,
-                            "y": 329.793731689453
+                            "x": 218.578506469727,
+                            "y": 340.058502197266
                         }
                     },
                     "name": "viewport",
@@ -313,6 +300,20 @@
                 }
             },
             "type": "network"
+        },
+        "image_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 206.0,
+                    "y": 301.0
+                }
+            },
+            "name": "image",
+            "ports": {
+                "name": "img"
+            },
+            "type": "lua/extract/image"
         },
         "script_0": {
             "blind_data": {
@@ -324,7 +325,7 @@
             },
             "name": "script",
             "ports": {
-                "source": "-- parameters\nsubdiv = 10\nsize = 256\n\n-- generate an empty image\nimg = images.image(size, size)\n\n-- return 0 for odd numbers and 255 for even\nfunction grid(x)\n\tif(x%2 > 1) then\n\t\treturn 255\n\telse\n\t\treturn 0\n\tend\nend\n\n-- generate grid\nfor y = 0,size-1 do\n\tfor x = 0,size-1 do\n\t\timg:setPixel(x, y, {\n\t\t\tgrid(x/size*subdiv), grid(y/size*subdiv), 0\n\t\t})\n\tend\nend"
+                "source": "-- parameters\nsubdiv = 10\nsize = 256\n\n-- generate an empty image\nimg = images.image(size, size, images.image.uint8)\n\n-- return 0 for odd numbers and 255 for even\nfunction grid(x)\n\tif(x%2 > 1) then\n\t\treturn 255\n\telse\n\t\treturn 0\n\tend\nend\n\n-- generate grid\nfor y = 0,size-1 do\n\tfor x = 0,size-1 do\n\t\timg:setPixel(x, y, {\n\t\t\t0, grid(y/size*subdiv), grid(x/size*subdiv)\n\t\t})\n\tend\nend"
             },
             "type": "lua/script"
         }

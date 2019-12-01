@@ -187,39 +187,47 @@ dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 	m_sceneDescription.clear();
 
 	dependency_graph::Selection selection; // throwaway
-	const dependency_graph::State state = possumwood::actions::fromJson(graph(), selection, json, false);
 
-	undoStack().clear();
+	dependency_graph::State state;
 
-	// and read the scene config
-	if(json.find("scene_config") != json.end()) {
-		auto& config = json["scene_config"];
+	try {
+		state = possumwood::actions::fromJson(graph(), selection, json, false);
 
-		for(auto it = config.begin(); it != config.end(); ++it) {
-			auto& item = possumwood::App::instance().sceneConfig()[it.key()];
+		undoStack().clear();
 
-			if(item.is<int>())
-				item = it.value().get<int>();
-			else if(item.is<float>())
-				item = it.value().get<float>();
-			else if(item.is<std::string>())
-				item = it.value().get<std::string>();
-			else
-				assert(false);
+		// and read the scene config
+		if(json.find("scene_config") != json.end()) {
+			auto& config = json["scene_config"];
+
+			for(auto it = config.begin(); it != config.end(); ++it) {
+				auto& item = possumwood::App::instance().sceneConfig()[it.key()];
+
+				if(item.is<int>())
+					item = it.value().get<int>();
+				else if(item.is<float>())
+					item = it.value().get<float>();
+				else if(item.is<std::string>())
+					item = it.value().get<std::string>();
+				else
+					assert(false);
+			}
+		}
+
+		if(json.find("description") != json.end())
+			m_sceneDescription.deserialize(json["description"].get<std::string>());
+
+		// read the UI configuration
+		if(QCoreApplication::instance() != nullptr) {
+			if(json.find("ui_geometry") != json.end())
+				mainWindow()->restoreGeometry(
+				    QByteArray::fromBase64(json["ui_geometry"].get<std::string>().c_str()));
+			if(json.find("ui_state") != json.end())
+				mainWindow()->restoreState(
+				    QByteArray::fromBase64(json["ui_state"].get<std::string>().c_str()));
 		}
 	}
-
-	if(json.find("description") != json.end())
-		m_sceneDescription.deserialize(json["description"].get<std::string>());
-
-	// read the UI configuration
-	if(QCoreApplication::instance() != nullptr) {
-		if(json.find("ui_geometry") != json.end())
-			mainWindow()->restoreGeometry(
-			    QByteArray::fromBase64(json["ui_geometry"].get<std::string>().c_str()));
-		if(json.find("ui_state") != json.end())
-			mainWindow()->restoreState(
-			    QByteArray::fromBase64(json["ui_state"].get<std::string>().c_str()));
+	catch(std::exception& exc) {
+		state.addError(exc.what());
 	}
 
 	return state;
