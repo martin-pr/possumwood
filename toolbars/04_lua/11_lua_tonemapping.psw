@@ -45,15 +45,27 @@
                     "out_port": "out_context"
                 },
                 {
-                    "in_node": "opencv_image_0",
+                    "in_node": "image_0",
                     "in_port": "in_context",
                     "out_node": "float_1",
                     "out_port": "out_context"
                 },
                 {
+                    "in_node": "script_0",
+                    "in_port": "context",
+                    "out_node": "image_0",
+                    "out_port": "out_context"
+                },
+                {
+                    "in_node": "output_0",
+                    "in_port": "data",
+                    "out_node": "image_1",
+                    "out_port": "out"
+                },
+                {
                     "in_node": "float_0",
                     "in_port": "in_context",
-                    "out_node": "images_opencv_0",
+                    "out_node": "images_0",
                     "out_port": "out_context"
                 },
                 {
@@ -69,7 +81,7 @@
                     "out_port": "data"
                 },
                 {
-                    "in_node": "opencv_image_0",
+                    "in_node": "image_0",
                     "in_port": "value",
                     "out_node": "input_2",
                     "out_port": "data"
@@ -87,22 +99,10 @@
                     "out_port": "out"
                 },
                 {
-                    "in_node": "script_0",
-                    "in_port": "context",
-                    "out_node": "opencv_image_0",
-                    "out_port": "out_context"
-                },
-                {
-                    "in_node": "opencv_image_1",
+                    "in_node": "image_1",
                     "in_port": "state",
                     "out_node": "script_0",
                     "out_port": "state"
-                },
-                {
-                    "in_node": "output_0",
-                    "in_port": "data",
-                    "out_node": "opencv_image_1",
-                    "out_port": "out"
                 }
             ],
             "name": "tonemapping",
@@ -135,7 +135,35 @@
                     },
                     "type": "lua/inject/float"
                 },
-                "images_opencv_0": {
+                "image_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 133.061538696289,
+                            "y": 135.656265258789
+                        }
+                    },
+                    "name": "image",
+                    "ports": {
+                        "name": "hdr_image"
+                    },
+                    "type": "lua/inject/image"
+                },
+                "image_1": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 320.315551757812,
+                            "y": 333.658630371094
+                        }
+                    },
+                    "name": "image",
+                    "ports": {
+                        "name": "out_image"
+                    },
+                    "type": "lua/extract/image"
+                },
+                "images_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
@@ -143,8 +171,8 @@
                             "y": -370.318084716797
                         }
                     },
-                    "name": "images_opencv",
-                    "type": "lua/modules/images_opencv"
+                    "name": "images",
+                    "type": "lua/modules/images"
                 },
                 "input_0": {
                     "blind_data": {
@@ -200,34 +228,6 @@
                     },
                     "name": "linear_interval",
                     "type": "maths/interval"
-                },
-                "opencv_image_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 133.061538696289,
-                            "y": 135.656265258789
-                        }
-                    },
-                    "name": "opencv_image",
-                    "ports": {
-                        "name": "hdr_image"
-                    },
-                    "type": "lua/inject/opencv_image"
-                },
-                "opencv_image_1": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 320.315551757812,
-                            "y": 333.658630371094
-                        }
-                    },
-                    "name": "opencv_image",
-                    "ports": {
-                        "name": "out_image"
-                    },
-                    "type": "lua/extract/opencv_image"
                 },
                 "output_0": {
                     "blind_data": {
@@ -313,12 +313,6 @@
                     "out_port": "size"
                 },
                 {
-                    "in_node": "viewport_0",
-                    "in_port": "in_uniforms",
-                    "out_node": "opencv_texture_0",
-                    "out_port": "out_uniforms"
-                },
-                {
                     "in_node": "draw_0",
                     "in_port": "program",
                     "out_node": "program_0",
@@ -335,6 +329,12 @@
                     "in_port": "value",
                     "out_node": "split_vec2u_0",
                     "out_port": "y"
+                },
+                {
+                    "in_node": "viewport_0",
+                    "in_port": "in_uniforms",
+                    "out_node": "opencv_texture_0",
+                    "out_port": "out_uniforms"
                 },
                 {
                     "in_node": "unsigned_1",
@@ -429,7 +429,7 @@
                             "y": -75.0693130493164
                         }
                     },
-                    "name": "opencv_texture",
+                    "name": "texture",
                     "ports": {
                         "mode": "Linear",
                         "name": "image"

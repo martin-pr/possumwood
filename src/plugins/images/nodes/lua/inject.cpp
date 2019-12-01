@@ -23,7 +23,7 @@ possumwood::lua::Inject<
 	Module
 > s_injector;
 
-possumwood::NodeImplementation s_impl_opencv("lua/inject/opencv_image",
+possumwood::NodeImplementation s_impl("lua/inject/image",
 	[](possumwood::Metadata& meta) {
 		s_injector.init(meta);
 	}

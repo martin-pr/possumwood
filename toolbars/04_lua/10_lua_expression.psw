@@ -21,7 +21,7 @@
                 {
                     "in_node": "script_0",
                     "in_port": "context",
-                    "out_node": "images_opencv_0",
+                    "out_node": "images_0",
                     "out_port": "out_context"
                 },
                 {
@@ -33,17 +33,17 @@
                 {
                     "in_node": "output_0",
                     "in_port": "data",
-                    "out_node": "opencv_image_0",
+                    "out_node": "image_0",
                     "out_port": "out"
                 },
                 {
-                    "in_node": "opencv_image_0",
+                    "in_node": "image_0",
                     "in_port": "state",
                     "out_node": "script_0",
                     "out_port": "state"
                 },
                 {
-                    "in_node": "images_opencv_0",
+                    "in_node": "images_0",
                     "in_port": "in_context",
                     "out_node": "unsigned_0",
                     "out_port": "out_context"
@@ -51,7 +51,7 @@
             ],
             "name": "flower",
             "nodes": {
-                "images_opencv_0": {
+                "images_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
@@ -59,8 +59,8 @@
                             "y": 214.440368652344
                         }
                     },
-                    "name": "images_opencv",
-                    "type": "lua/modules/images_opencv"
+                    "name": "images",
+                    "type": "lua/modules/images"
                 },
                 "input_0": {
                     "blind_data": {
@@ -73,7 +73,7 @@
                     "name": "petals",
                     "type": "input"
                 },
-                "opencv_image_0": {
+                "image_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
@@ -81,11 +81,11 @@
                             "y": 389.830749511719
                         }
                     },
-                    "name": "opencv_image",
+                    "name": "image",
                     "ports": {
                         "name": "img"
                     },
-                    "type": "lua/extract/opencv_image"
+                    "type": "lua/extract/image"
                 },
                 "output_0": {
                     "blind_data": {

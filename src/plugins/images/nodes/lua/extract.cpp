@@ -11,7 +11,7 @@
 
 namespace {
 
-possumwood::NodeImplementation s_impl_opencv("lua/extract/opencv_image",
+possumwood::NodeImplementation s_impl("lua/extract/image",
 	possumwood::lua::Extract<
 		possumwood::opencv::Frame,
 		possumwood::images::OpencvMatWrapper

@@ -35,6 +35,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl_opencv("lua/modules/images_opencv", init);
+possumwood::NodeImplementation s_impl_opencv("lua/modules/images", init);
 
 }
