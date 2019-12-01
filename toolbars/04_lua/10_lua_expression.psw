@@ -13,16 +13,28 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 206.978744506836,
+                    "x": 205.978744506836,
                     "y": 197.89372253418
                 }
             },
             "connections": [
                 {
+                    "in_node": "script_0",
+                    "in_port": "context",
+                    "out_node": "images_opencv_0",
+                    "out_port": "out_context"
+                },
+                {
                     "in_node": "unsigned_0",
                     "in_port": "value",
                     "out_node": "input_0",
                     "out_port": "data"
+                },
+                {
+                    "in_node": "output_0",
+                    "in_port": "data",
+                    "out_node": "opencv_image_0",
+                    "out_port": "out"
                 },
                 {
                     "in_node": "opencv_image_0",
@@ -35,18 +47,6 @@
                     "in_port": "in_context",
                     "out_node": "unsigned_0",
                     "out_port": "out_context"
-                },
-                {
-                    "in_node": "script_0",
-                    "in_port": "context",
-                    "out_node": "images_opencv_0",
-                    "out_port": "out_context"
-                },
-                {
-                    "in_node": "output_0",
-                    "in_port": "data",
-                    "out_node": "opencv_image_0",
-                    "out_port": "out"
                 }
             ],
             "name": "flower",
@@ -108,7 +108,7 @@
                     },
                     "name": "script",
                     "ports": {
-                        "source": "-- the resolution of the target image\nsize = 1024\n\n-- generate image\nimg = images.image_opencv(size, size)\nfor y = 0,size-1 do\n\tfor x = 0,size-1 do\n\t\t-- -1..1 parameterisation with [0,0] in the centre\n\t\tu = (x / size - 0.5) * 2.0\n\t\tv = (y / size - 0.5) * 2.0\n\n\t\t-- parameter represents an angle\n\t\tparam = math.abs(math.atan2(u, v) / 3.1415);\n\t\t-- distance to the centre\n\t\tdist = 1.0 - math.sqrt(u*u  + v*v)\n\n\t\t-- the \"flower\" function, combining an angular modulo with distance from the centre\n\t\tval = dist + math.abs((1/petals - param % (2/petals)) * petals / 2)\n\n\t\t-- thresholding to get the black and white image\n\t\tif (val < 0.5) then\n\t\t\tval = 25\n\t\telse\n\t\t\tval = 255\n\t\tend\n\n\t\t-- a white flower - all 3 channels have the same value\n\t\timg:setPixel(x, y, {\n\t\t\tval, val, val\n\t\t})\n\tend\nend"
+                        "source": "-- the resolution of the target image\nsize = 1024\n\n-- generate image\nimg = images.image(size, size, images.image.uint8)\nfor y = 0,size-1 do\n\tfor x = 0,size-1 do\n\t\t-- -1..1 parameterisation with [0,0] in the centre\n\t\tu = (x / size - 0.5) * 2.0\n\t\tv = (y / size - 0.5) * 2.0\n\n\t\t-- parameter represents an angle\n\t\tparam = math.abs(math.atan2(u, v) / 3.1415);\n\t\t-- distance to the centre\n\t\tdist = 1.0 - math.sqrt(u*u  + v*v)\n\n\t\t-- the \"flower\" function, combining an angular modulo with distance from the centre\n\t\tval = dist + math.abs((1/petals - param % (2/petals)) * petals / 2)\n\n\t\t-- thresholding to get the black and white image\n\t\tif (val < 0.5) then\n\t\t\tval = 25\n\t\telse\n\t\t\tval = 255\n\t\tend\n\n\t\t-- a white flower - all 3 channels have the same value\n\t\timg:setPixel(x, y, {\n\t\t\tval, val, val\n\t\t})\n\tend\nend"
                     },
                     "type": "lua/script"
                 },
@@ -166,6 +166,18 @@
                     "out_port": "data"
                 },
                 {
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
+                    "out_node": "metadata_0",
+                    "out_port": "size"
+                },
+                {
+                    "in_node": "viewport_0",
+                    "in_port": "in_uniforms",
+                    "out_node": "opencv_texture_0",
+                    "out_port": "out_uniforms"
+                },
+                {
                     "in_node": "draw_0",
                     "in_port": "program",
                     "out_node": "program_0",
@@ -205,18 +217,6 @@
                     "in_node": "draw_0",
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
-                    "out_port": "out_uniforms"
-                },
-                {
-                    "in_node": "split_vec2u_0",
-                    "in_port": "vec",
-                    "out_node": "metadata_0",
-                    "out_port": "size"
-                },
-                {
-                    "in_node": "viewport_0",
-                    "in_port": "in_uniforms",
-                    "out_node": "opencv_texture_0",
                     "out_port": "out_uniforms"
                 }
             ],
@@ -380,5 +380,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACWQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJTAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAeYAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABdAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB6gAAAYQAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJTAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAeYAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABcwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB6QAAAYUAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

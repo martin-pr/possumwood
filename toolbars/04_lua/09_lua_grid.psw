@@ -26,7 +26,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 63.0,
-                    "y": 85.0
+                    "y": 86.0
                 }
             },
             "name": "images_opencv",
@@ -325,7 +325,7 @@
             },
             "name": "script",
             "ports": {
-                "source": "-- parameters\nsubdiv = 10\nsize = 256\n\n-- generate an empty image\nimg = images.image_opencv(size, size)\n\n-- return 0 for odd numbers and 255 for even\nfunction grid(x)\n\tif(x%2 > 1) then\n\t\treturn 255\n\telse\n\t\treturn 0\n\tend\nend\n\n-- generate grid\nfor y = 0,size-1 do\n\tfor x = 0,size-1 do\n\t\timg:setPixel(x, y, {\n\t\t\t0, grid(y/size*subdiv), grid(x/size*subdiv)\n\t\t})\n\tend\nend"
+                "source": "-- parameters\nsubdiv = 10\nsize = 256\n\n-- generate an empty image\nimg = images.image(size, size, images.image.uint8)\n\n-- return 0 for odd numbers and 255 for even\nfunction grid(x)\n\tif(x%2 > 1) then\n\t\treturn 255\n\telse\n\t\treturn 0\n\tend\nend\n\n-- generate grid\nfor y = 0,size-1 do\n\tfor x = 0,size-1 do\n\t\timg:setPixel(x, y, {\n\t\t\t0, grid(y/size*subdiv), grid(x/size*subdiv)\n\t\t})\n\tend\nend"
             },
             "type": "lua/script"
         }

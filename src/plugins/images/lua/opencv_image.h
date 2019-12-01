@@ -9,13 +9,12 @@
 
 namespace possumwood { namespace images {
 
-template<int TYPE = CV_8U>
 class OpencvMatWrapper {
 	public:
 		OpencvMatWrapper() : m_constMat(new cv::Mat(1, 1, CV_8UC1)) {
 		}
 
-		OpencvMatWrapper(std::size_t width, std::size_t height, int type = TYPE, int channels = 3) : m_mat(new cv::Mat(height, width, CV_MAKETYPE(type, channels))) {
+		OpencvMatWrapper(std::size_t width, std::size_t height, int type = CV_8U, int channels = 3) : m_mat(new cv::Mat(height, width, CV_MAKETYPE(type, channels))) {
 			m_constMat = m_mat;
 			assert(type == CV_8U || type == CV_32F);
 		}
@@ -35,10 +34,6 @@ class OpencvMatWrapper {
 			m_constMat = std::shared_ptr<const cv::Mat>(new cv::Mat(m));
 			return *this;
 		}
-
-		// operator const cv::Mat&() const {
-		// 	return *m_constMat;
-		// }
 
 		operator opencv::Frame() const {
 			return opencv::Frame(*m_constMat);
@@ -121,8 +116,7 @@ class OpencvMatWrapper {
 		std::shared_ptr<cv::Mat> m_mat;
 };
 
-template<int T>
-inline std::string to_string(const OpencvMatWrapper<T>& p) {
+inline std::string to_string(const OpencvMatWrapper& p) {
 	return "(opencv Mat " + std::to_string(p.width()) + "x" + std::to_string(p.height()) + ")";
 }
 
