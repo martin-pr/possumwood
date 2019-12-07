@@ -34,7 +34,7 @@ add_library(psw_images SHARED ${sources} ${headers_moc})
 
 install(TARGETS psw_images DESTINATION lib)
 
-target_link_libraries(psw_images ${LIBS} possumwood_sdk)
+target_link_libraries(psw_images psw_lua ${LIBS} possumwood_sdk)
 
 #####
 
@@ -45,4 +45,4 @@ SET_TARGET_PROPERTIES(images PROPERTIES PREFIX "")
 
 install(TARGETS images DESTINATION ${PLUGINS_INSTALL_PATH})
 
-target_link_libraries(images psw_images psw_lua psw_opencv lightfields ${OPENEXR_IEX_LIBRARY} ${LIBS})
+target_link_libraries(images psw_images psw_opencv lightfields ${OPENEXR_IEX_LIBRARY} ${LIBS})
