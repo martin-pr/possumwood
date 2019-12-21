@@ -92,67 +92,57 @@ void Properties::show(const dependency_graph::Selection& selection) {
 ////////
 
 Properties::PropertyHolder::PropertyHolder(dependency_graph::Port& port) {
-	// create the widget
+	// create the widget - either from a factory ...
 	ui = possumwood::properties::factories::singleton().create(port.type());
-	if(ui) {
-		possumwood::properties::property_base* prop = ui.get();
-
-		// change of port value
-		graphValueConnection = port.valueCallback([prop, &port]() {
-			prop->valueFromPort(port);
-		});
-
-		// change of port flags
-		std::function<void()> updateFlags = [prop, &port]() {
-			// build the flags based on port's properties
-			unsigned flags = 0;
-
-			if(port.category() == dependency_graph::Attr::kInput) {
-				flags |= possumwood::properties::property_base::kInput;
-				if(port.node().network().connections().connectedFrom(port))
-					flags |= possumwood::properties::property_base::kDisabled;
-			}
-
-			if(port.category() == dependency_graph::Attr::kOutput)
-				flags |= possumwood::properties::property_base::kOutput;
-
-			// if(port.isDirty())
-			// 	flags |= possumwood::properties::property_base::kDirty;
-
-			// and set the flags on the property (calls UI's update, if implemented)
-			prop->setFlags(flags);
-
-			// immediate refresh when a port is dirty (pulls on the port)
-			if(port.isDirty())
-				prop->valueFromPort(port);
-		};
-
-		flagsConnection = port.flagsCallback(updateFlags);
-
-		uiValueConnection = ui->valueCallback([prop, &port]() {
-			// value changes only for non-disabled input port UIs
-			// (avoid Qt's value changed callbacks when not necessary)
-			if((prop->flags() & possumwood::properties::property_base::kInput) && !(prop->flags() & possumwood::properties::property_base::kDisabled))
-				prop->valueToPort(port);
-		});
-
-		// run the update functions for the first time to set up the UI
-		updateFlags();
-		ui->valueFromPort(port);
-	}
-
-	// generic property
-	else {
+	// ... or as a "generic property"
+	if(!ui)
 		ui = std::unique_ptr<possumwood::properties::property_base>(new GenericProperty());
 
-		ui->valueFromPort(port);
+	// the property functors don't hold the value - let's use a raw pointer for functor binding
+	possumwood::properties::property_base* prop = ui.get();
 
-		possumwood::properties::property_base* prop = ui.get();
-		dependency_graph::Port* portptr = &port;
-		graphValueConnection = port.valueCallback([prop, portptr]() {
-			prop->valueFromPort(*portptr);
-		});
-	}
+	// change of port value
+	graphValueConnection = port.valueCallback([prop, &port]() {
+		prop->valueFromPort(port);
+	});
+
+	// change of port flags
+	std::function<void()> updateFlags = [prop, &port]() {
+		// build the flags based on port's properties
+		unsigned flags = 0;
+
+		if(port.category() == dependency_graph::Attr::kInput) {
+			flags |= possumwood::properties::property_base::kInput;
+			if(port.node().network().connections().connectedFrom(port))
+				flags |= possumwood::properties::property_base::kDisabled;
+		}
+
+		if(port.category() == dependency_graph::Attr::kOutput)
+			flags |= possumwood::properties::property_base::kOutput;
+
+		// if(port.isDirty())
+		// 	flags |= possumwood::properties::property_base::kDirty;
+
+		// and set the flags on the property (calls UI's update, if implemented)
+		prop->setFlags(flags);
+
+		// immediate refresh when a port is dirty (pulls on the port)
+		if(port.isDirty())
+			prop->valueFromPort(port);
+	};
+
+	flagsConnection = port.flagsCallback(updateFlags);
+
+	uiValueConnection = ui->valueCallback([prop, &port]() {
+		// value changes only for non-disabled input port UIs
+		// (avoid Qt's value changed callbacks when not necessary)
+		if((prop->flags() & possumwood::properties::property_base::kInput) && !(prop->flags() & possumwood::properties::property_base::kDisabled))
+			prop->valueToPort(port);
+	});
+
+	// run the update functions for the first time to set up the UI
+	updateFlags();
+	ui->valueFromPort(port);
 }
 
 Properties::PropertyHolder::PropertyHolder(PropertyHolder&& prop) {
