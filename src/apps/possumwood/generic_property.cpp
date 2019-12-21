@@ -9,7 +9,7 @@
 #include <QDialogButtonBox>
 #include <QDesktopWidget>
 
-GenericProperty::GenericProperty() : m_type(typeid(void)) {
+GenericProperty::GenericProperty() {
 	m_widget = new QWidget(NULL);
 
 	QHBoxLayout* layout = new QHBoxLayout(m_widget);
@@ -69,16 +69,11 @@ QWidget* GenericProperty::widget() {
 	return m_widget;
 }
 
-std::type_index GenericProperty::type() const {
-	return m_type;
-}
-
 void GenericProperty::valueToPort(dependency_graph::Port& port) const {
 	// nothing
 }
 
 void GenericProperty::valueFromPort(dependency_graph::Port& port) {
-	m_type = port.type();
 
 	std::stringstream ss;
 

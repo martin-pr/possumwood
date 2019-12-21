@@ -5,16 +5,15 @@
 
 #include <possumwood_sdk/properties/property.h>
 
-class GenericProperty : public possumwood::properties::property_base {
+class GenericProperty final : public possumwood::properties::property_base {
 	public:
 		GenericProperty();
 		virtual ~GenericProperty();
 
 		virtual QWidget* widget() override;
-		virtual std::type_index type() const override;
 
-		virtual void valueToPort(dependency_graph::Port& port) const override;
-		virtual void valueFromPort(dependency_graph::Port& port) override;
+		virtual void valueToPort(dependency_graph::Port& port) const override final;
+		virtual void valueFromPort(dependency_graph::Port& port) override final;
 
 		void setValue(const std::string& value);
 
@@ -25,7 +24,6 @@ class GenericProperty : public possumwood::properties::property_base {
 		QLabel* m_label;
 
 		std::string m_value;
-		std::type_index m_type;
 
 		QMetaObject::Connection m_buttonConnection;
 };
