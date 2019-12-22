@@ -118,8 +118,9 @@ void Port::setData(const BaseData& val) {
 
 	// explicitly setting a value makes it not dirty, but makes everything that
 	//   depends on it dirty
-	m_parent->markAsDirty(m_id);
 	setDirty(false);
+	m_parent->markAsDirty(m_id, true);
+	assert(!isDirty());
 
 	// call the values callback
 	if(valueWasSet)
@@ -269,8 +270,7 @@ void Port::disconnect(Port& p) {
 
 		// explicitly setting a value makes it not dirty, but makes everything that
 		//   depends on it dirty
-		p.m_parent->markAsDirty(p.m_id);
-		setDirty(false);
+		p.m_parent->markAsDirty(p.m_id, true /* dependants only */ );
 	}
 
 	// disconnecting an untyped output port should reset the data, to keep the behaviour consistent

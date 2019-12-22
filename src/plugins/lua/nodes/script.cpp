@@ -259,11 +259,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// evaluate our script
 		int err = luaL_dostring(*state, src.c_str());
-		if(err)
-			throw std::runtime_error(lua_tostring(*state, -1));
 
 		// and return the resulting state
 		data.set(a_state, std::shared_ptr<const possumwood::lua::State>(state));
+
+		if(err)
+			throw std::runtime_error(lua_tostring(*state, -1));
 	}
 	catch(const luabind::error& err) {
 		throw std::runtime_error(lua_tostring(err.state(), -1));

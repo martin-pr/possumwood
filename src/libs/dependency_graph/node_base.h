@@ -100,7 +100,7 @@ class NodeBase {
 		void set(size_t index, const BaseData& value);
 
 		// used by Port instances
-		void markAsDirty(size_t index);
+		void markAsDirty(size_t portIndex, bool dependantsOnly = false);
 
 		// used during destruction
 		void disconnectAll();
