@@ -28,7 +28,6 @@ class property_base : public boost::noncopyable {
 		virtual ~property_base() = 0;
 
 		virtual QWidget* widget() = 0;
-		virtual std::type_index type() const = 0;
 
 		unsigned flags() const;
 		void setFlags(unsigned flags);
@@ -72,12 +71,8 @@ class property : public property_base {
 		virtual void get(T& value) const = 0;
 		virtual void set(const T& value) = 0;
 
-		virtual std::type_index type() const override {
-			return typeid(T);
-		}
-
 	private:
-		virtual void valueToPort(dependency_graph::Port& port) const override {
+		virtual void valueToPort(dependency_graph::Port& port) const override final {
 			// transfer the templated value
 			if((flags() & kInput) && !(flags() & kDisabled) && !m_blockedSignals) {
 				// get the current value
@@ -89,9 +84,9 @@ class property : public property_base {
 			}
 		}
 
-		void valueFromPort(dependency_graph::Port& port) override {
+		void valueFromPort(dependency_graph::Port& port) override final {
 			// transfer the templated value
-			if(!m_blockedSignals && port.type() == type()) {
+			if(!m_blockedSignals && port.type() == typeid(T)) {
 				bool block = widget()->blockSignals(true);
 				m_blockedSignals = true;
 				set(port.get<T>());

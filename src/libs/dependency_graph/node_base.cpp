@@ -80,14 +80,16 @@ UniqueId NodeBase::index() const {
 	return m_index;
 }
 
-void NodeBase::markAsDirty(size_t index) {
-	Port& p = port(index);
+void NodeBase::markAsDirty(size_t portIndex, bool dependantsOnly) {
+	Port& p = port(portIndex);
 
 	// mark the port itself as dirty
 	if(!p.isDirty()) {
-		p.setDirty(true);
+		if(!dependantsOnly) {
+			p.setDirty(true);
 
-		graph().dirtyChanged();
+			graph().dirtyChanged();
+		}
 
 		// recurse + handle each port type slightly differently
 		if(p.category() == Attr::kInput) {
@@ -97,13 +99,13 @@ void NodeBase::markAsDirty(size_t index) {
 		}
 		else {
 			// all inputs connected to this output are marked dirty
-			for(Port& o : network().connections().connectedTo(port(index)))
+			for(Port& o : network().connections().connectedTo(port(portIndex)))
 				o.node().markAsDirty(o.index());
 		}
 
 		// propagate to linked ports
 		if(p.isLinked())
-			p.linkedTo().node().markAsDirty(p.linkedTo().m_id);
+			p.linkedTo().node().markAsDirty(p.linkedTo().m_id, dependantsOnly);
 	}
 }
 
