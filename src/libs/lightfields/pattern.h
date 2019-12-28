@@ -6,26 +6,17 @@ namespace lightfields {
 
 class Pattern {
 	public:
-		Pattern();
-		Pattern(double lensPitch, double pixelPitch, double rotation,
-			Imath::V2d scaleFactor, Imath::V3d sensorOffset, Imath::V2i sensorResolution);
+		Pattern(const Imath::V2i& resolution);
+		virtual ~Pattern() = 0;
 
-		Imath::V4d sample(const Imath::V2i& pixelPos) const;
+		virtual Imath::V4d sample(const Imath::V2i& pixelPos) const = 0;
 		const Imath::V2i& sensorResolution() const;
-
-		bool operator == (const Pattern& f) const;
-		bool operator != (const Pattern& f) const;
 
 	private:
 		Pattern(const Pattern&) = delete;
 		Pattern& operator = (const Pattern&) = delete;
 
-		double m_lensPitch, m_pixelPitch, m_rotation;
-		Imath::V2d m_scaleFactor;
-		Imath::V3d m_sensorOffset;
 		Imath::V2i m_sensorResolution;
 };
-
-std::ostream& operator << (std::ostream& out, const Pattern& f);
 
 }

@@ -15,6 +15,7 @@
 #include "lightfield_pattern.h"
 #include "lightfields/block.h"
 #include "lightfields/raw.h"
+#include "lightfields/pattern_lytro.h"
 
 namespace {
 
@@ -91,7 +92,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		white[3] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
 
 		// assemble the lightfield pattern
-		pattern = std::shared_ptr<lightfields::Pattern>(new lightfields::Pattern(
+		pattern = std::shared_ptr<lightfields::Pattern>(new lightfields::LytroPattern(
 			raw.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
 			raw.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
 			raw.metadata()["devices"]["mla"]["rotation"].asDouble(),
