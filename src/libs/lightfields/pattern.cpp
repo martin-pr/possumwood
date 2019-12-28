@@ -96,7 +96,7 @@ const Imath::V2i& Pattern::sensorResolution() const {
 }
 
 std::ostream& operator << (std::ostream& out, const Pattern& f) {
-	out << "(lightfields pattern)";
+	out << "(lightfields pattern instance)";
 	return out;
 }
 

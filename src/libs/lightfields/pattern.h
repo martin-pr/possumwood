@@ -17,6 +17,9 @@ class Pattern {
 		bool operator != (const Pattern& f) const;
 
 	private:
+		Pattern(const Pattern&) = delete;
+		Pattern& operator = (const Pattern&) = delete;
+
 		double m_lensPitch, m_pixelPitch, m_rotation;
 		Imath::V2d m_scaleFactor;
 		Imath::V3d m_sensorOffset;

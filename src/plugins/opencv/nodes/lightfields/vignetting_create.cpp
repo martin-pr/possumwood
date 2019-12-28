@@ -11,19 +11,22 @@
 
 namespace {
 
-dependency_graph::InAttr<lightfields::Pattern> a_pattern;
+dependency_graph::InAttr<std::shared_ptr<const lightfields::Pattern>> a_pattern;
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<unsigned> a_subdivLevel;
 dependency_graph::OutAttr<possumwood::opencv::LightfieldVignetting> a_vignetting;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const lightfields::Pattern& pattern = data.get(a_pattern);
+	std::shared_ptr<const lightfields::Pattern> pattern = data.get(a_pattern);
+	if(pattern == nullptr)
+		throw std::runtime_error("Non-empty pattern expected");
+
 	const cv::Mat& in = *data.get(a_in);
 
-	if(in.cols != pattern.sensorResolution()[1] || in.rows != pattern.sensorResolution()[0])
+	if(in.cols != pattern->sensorResolution()[1] || in.rows != pattern->sensorResolution()[0])
 		throw std::runtime_error("Frame and pattern resolution don't match!");
 
-	possumwood::opencv::LightfieldVignetting vignetting(data.get(a_subdivLevel), pattern, in);
+	possumwood::opencv::LightfieldVignetting vignetting(data.get(a_subdivLevel), *pattern, in);
 
 	data.set(a_vignetting, vignetting);
 
@@ -32,7 +35,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", std::shared_ptr<const lightfields::Pattern>(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_subdivLevel, "subdiv_level", 32u);
 	meta.addAttribute(a_vignetting, "vignetting", possumwood::opencv::LightfieldVignetting(), possumwood::AttrFlags::kVertical);
 
