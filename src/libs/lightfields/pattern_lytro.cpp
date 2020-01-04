@@ -33,6 +33,7 @@ Imath::V4d LytroPattern::sample(const Imath::V2i& pixelPos) const {
 	Imath::V3d pos(pixelPos[0], pixelPos[1], 1.0);
 
 	pos = pos * transform;
+	pos = pos / pos[2];
 
 
 	Imath::V2f bottom(pos[0] - floor(pos[0] + 0.5), pos[1] - floor(pos[1] + 0.5));

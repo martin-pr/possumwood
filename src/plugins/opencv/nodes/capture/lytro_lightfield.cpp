@@ -16,10 +16,12 @@
 #include "lightfields/block.h"
 #include "lightfields/raw.h"
 #include "lightfields/pattern_lytro.h"
+#include "lightfields/pattern_new.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
+dependency_graph::InAttr<bool> a_newPattern;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
 dependency_graph::OutAttr<std::shared_ptr<const lightfields::Pattern>> a_pattern;
 
@@ -92,21 +94,38 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		white[3] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
 
 		// assemble the lightfield pattern
-		pattern = std::shared_ptr<lightfields::Pattern>(new lightfields::LytroPattern(
-			raw.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
-			raw.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
-			raw.metadata()["devices"]["mla"]["rotation"].asDouble(),
-			Imath::V2f(
-				raw.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
-				raw.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()
-			),
-			Imath::V3f(
-				raw.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
-				raw.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
-				raw.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
-			),
-			Imath::V2i(width, height)
-		));
+		if(data.get(a_newPattern))
+			pattern = std::shared_ptr<lightfields::Pattern>(new lightfields::NewPattern(
+				raw.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
+				raw.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
+				raw.metadata()["devices"]["mla"]["rotation"].asDouble(),
+				Imath::V2f(
+					raw.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
+					raw.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()
+				),
+				Imath::V3f(
+					raw.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
+					raw.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
+					raw.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
+				),
+				Imath::V2i(width, height)
+			));
+		else
+			pattern = std::shared_ptr<lightfields::Pattern>(new lightfields::LytroPattern(
+				raw.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
+				raw.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
+				raw.metadata()["devices"]["mla"]["rotation"].asDouble(),
+				Imath::V2f(
+					raw.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
+					raw.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()
+				),
+				Imath::V3f(
+					raw.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
+					raw.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
+					raw.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
+				),
+				Imath::V2i(width, height)
+			));
 
 		assert(!raw.image().empty());
 		result = decodeData(raw.image().data(), width, height, black, white);
@@ -122,11 +141,13 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
 		"Lytro files (*.lfr *.RAW)",
 	}));
+	meta.addAttribute(a_newPattern, "use_new_pattern", false);
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_pattern, "pattern", std::shared_ptr<const lightfields::Pattern>(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
 	meta.addInfluence(a_filename, a_pattern);
+	meta.addInfluence(a_newPattern, a_pattern);
 
 	meta.setCompute(compute);
 }
