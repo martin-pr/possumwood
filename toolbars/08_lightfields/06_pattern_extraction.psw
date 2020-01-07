@@ -79,14 +79,14 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "dilate_0",
-            "in_port": "in_frame",
+            "in_node": "compare_0",
+            "in_port": "in_frame_1",
             "out_node": "filter2d_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "compare_0",
-            "in_port": "in_frame_1",
+            "in_node": "dilate_0",
+            "in_port": "in_frame",
             "out_node": "filter2d_0",
             "out_port": "out_frame"
         },
@@ -149,7 +149,7 @@
             },
             "name": "colormap",
             "ports": {
-                "type": "COLORMAP_AUTUMN"
+                "type": "COLORMAP_HOT"
             },
             "type": "opencv/colormap"
         },

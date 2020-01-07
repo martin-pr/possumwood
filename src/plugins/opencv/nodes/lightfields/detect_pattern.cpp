@@ -25,18 +25,41 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	cv::Mat mat(input.size(), CV_8UC1, cv::Scalar(0));
 
+	// // create the subdiv object - this object is the thing that performs delaunay triangulation
+	cv::Subdiv2D subdiv(cv::Rect(0, 0, input.cols, input.rows));
+
 	// feed all the local minima into it, except the ones too close to the border
-	for(std::size_t y=border; y<input.rows - border; ++y)
-		for(std::size_t x=border; x<input.cols - border; ++x) {
+	for(std::size_t y=1; y<std::size_t(input.rows) - 1; ++y)
+		for(std::size_t x=1; x<std::size_t(input.cols) - 1; ++x) {
 			const unsigned char current = input.at<unsigned char>(y, x);
 			bool isMaximum = true;
 			for(std::size_t a=0;a<9;++a)
 				if(a != 4 && input.at<unsigned char>(y + a/3 - 1, x + a%3 - 1) >= current)
 					isMaximum = false;
 
-			if(isMaximum)
+			if(isMaximum) {
 				mat.at<unsigned char>(y, x) = 255;
+				subdiv.insert(cv::Point2f(x, y));
+			}
 		}
+
+	// draw all edges from the Delaunay
+	std::vector<cv::Vec4f> edgeList;
+	subdiv.getEdgeList(edgeList);
+
+	for(auto eit = edgeList.begin(); eit != edgeList.end();) {
+		auto& e = *eit;
+
+		if(e[0] > border && e[0] < input.cols - border && e[1] > border && e[1] < input.rows - border &&
+			e[2] > border && e[2] < input.cols - border && e[3] > border && e[3] < input.rows - border) {
+
+			cv::line(mat, cv::Point2f(e[0], e[1]), cv::Point2f(e[2], e[3]), cv::Scalar(128));
+
+			++eit;
+		}
+		else
+			eit = edgeList.erase(eit);
+	}
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
 
