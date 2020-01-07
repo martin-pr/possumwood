@@ -61,6 +61,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "colormap_0",
+            "in_port": "in_frame",
+            "out_node": "detect_pattern_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "compare_0",
             "in_port": "in_frame_2",
             "out_node": "dilate_0",
@@ -101,12 +107,6 @@
             "in_port": "in_frame",
             "out_node": "network_2",
             "out_port": "output"
-        },
-        {
-            "in_node": "colormap_0",
-            "in_port": "in_frame",
-            "out_node": "detect_pattern_0",
-            "out_port": "out_frame"
         }
     ],
     "description": "### Lytro pattern detection\n\nLytro files come with metadata that descibe the parameters of the lenslet pattern used to capture the image. Unfortunately, this lenslet pattern was detected using a simple peak-detection algorithm, with together with the main-lens vignetting causes the lenslet centers to be slightly biased towards the centre of the image.\n\nThis demo attempt to detect the lenslets using a different method - by inverting the image, locally normalising it and convoluting it with an inverted lenslet pattern (a \"hexagonal\" shape representing the darker spaces between lenslets), we can achieve a better match with the original lenslet placement.\n\nThis demo only shows the image-processing part - the pattern fitting is demonstrated in the next demo.",
@@ -149,7 +149,7 @@
             },
             "name": "colormap",
             "ports": {
-                "type": "COLORMAP_BONE"
+                "type": "COLORMAP_AUTUMN"
             },
             "type": "opencv/colormap"
         },
@@ -238,6 +238,9 @@
                 }
             },
             "name": "detect_pattern",
+            "ports": {
+                "border": 20
+            },
             "type": "opencv/lightfields/detect_pattern"
         },
         "dilate_0": {
