@@ -1329,7 +1329,7 @@ This demo only shows the image-processing part - the pattern fitting is demonstr
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/07_epi.png" style="width:70px;">
+<img src="toolbars/08_lightfields/11_epi.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1346,14 +1346,14 @@ The u-x and v-y images (left, right, top and bottom) show slices with "line dire
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/07_epi_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/11_epi_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/08_epi_uv.png" style="width:70px;">
+<img src="toolbars/08_lightfields/12_epi_uv.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1366,14 +1366,14 @@ The epipolar images accumulated in UV space show images representing averages of
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/08_epi_uv_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/12_epi_uv_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/10_mozaic.png" style="width:70px;">
+<img src="toolbars/08_lightfields/20_mozaic.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1388,14 +1388,14 @@ This demo shows how to use demultiplexing to reconstruct multiple views from raw
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/10_mozaic_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/20_mozaic_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/11_mozaic_normalize.png" style="width:70px;">
+<img src="toolbars/08_lightfields/21_mozaic_normalize.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1410,14 +1410,14 @@ This demo shows how to use demultiplexing to reconstruct multiple views from nor
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/11_mozaic_normalize_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/21_mozaic_normalize_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/12_mozaic_split.png" style="width:70px;">
+<img src="toolbars/08_lightfields/22_mozaic_split.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1430,14 +1430,14 @@ This demo addempts to visualise this difference explicitly, by showing both each
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/12_mozaic_split_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/22_mozaic_split_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/13_mozaic_inpainted.png" style="width:70px;">
+<img src="toolbars/08_lightfields/23_mozaic_inpainted.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1452,14 +1452,14 @@ To reconstruct missing data after obtaining sub-apreture images, this demo uses 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/13_mozaic_inpainted_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/23_mozaic_inpainted_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/14_laplacian_inpainted.png" style="width:70px;">
+<img src="toolbars/08_lightfields/24_laplacian_inpainted.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1474,14 +1474,14 @@ To reconstruct missing data after obtaining sub-apreture images, this demo uses 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/14_laplacian_inpainted_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/24_laplacian_inpainted_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/15_mozaic_superres.png" style="width:70px;">
+<img src="toolbars/08_lightfields/25_mozaic_superres.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1494,14 +1494,14 @@ This demo shows the result of this algorithm on an inpainted mosaic from previou
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/15_mozaic_superres_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/25_mozaic_superres_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/20_naive_refocus.png" style="width:70px;">
+<img src="toolbars/08_lightfields/30_naive_refocus.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1516,14 +1516,14 @@ While very simple and fast, the number of samples for each pixel can vary depend
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/20_naive_refocus_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/30_naive_refocus_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/21_naive_detail.png" style="width:70px;">
+<img src="toolbars/08_lightfields/31_naive_detail.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1536,14 +1536,14 @@ This demo shows the detail of the sampling and integration pattern of previous d
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/21_naive_detail_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/31_naive_detail_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/22_naive_debayern.png" style="width:70px;">
+<img src="toolbars/08_lightfields/32_naive_debayern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1556,14 +1556,14 @@ Applying a de-Bayer filter to raw lightfield data reduces some artifacts seen in
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/22_naive_debayern_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/32_naive_debayern_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/23_gaussian_refocus.png" style="width:70px;">
+<img src="toolbars/08_lightfields/33_gaussian_refocus.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1582,14 +1582,14 @@ This demo shows how a simple gaussian-based accumulation, similar to one used fo
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/23_gaussian_refocus_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/33_gaussian_refocus_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/24_gaussian_detail.png" style="width:70px;">
+<img src="toolbars/08_lightfields/34_gaussian_detail.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1602,14 +1602,14 @@ This demo shows the detail of the sampling and integration pattern of previous d
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/24_gaussian_detail_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/34_gaussian_detail_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/25_gaussian_debayer.png" style="width:70px;">
+<img src="toolbars/08_lightfields/35_gaussian_debayer.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1619,14 +1619,14 @@ Applying a de-Bayer filter to raw lightfield data reduces some artifacts seen in
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/25_gaussian_debayer_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/35_gaussian_debayer_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/26_bezier_refocus.png" style="width:70px;">
+<img src="toolbars/08_lightfields/36_bezier_refocus.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1637,14 +1637,14 @@ Briand, Thibaud, and Pascal Monasse. ["Theory and Practice of Image B-Spline Int
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/26_bezier_refocus_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/36_bezier_refocus_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/27_bezier_debayer.png" style="width:70px;">
+<img src="toolbars/08_lightfields/37_bezier_debayer.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1655,14 +1655,14 @@ Briand, Thibaud, and Pascal Monasse. ["Theory and Practice of Image B-Spline Int
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/27_bezier_debayer_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/37_bezier_debayer_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/28_detail_comparison.png" style="width:70px;">
+<img src="toolbars/08_lightfields/38_detail_comparison.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1673,14 +1673,14 @@ This demo shows the difference in integration patterns between different methods
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/28_detail_comparison_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/38_detail_comparison_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/30_relative_corresp.png" style="width:70px;">
+<img src="toolbars/08_lightfields/40_relative_corresp.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1691,14 +1691,14 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/30_relative_corresp_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/40_relative_corresp_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/31_absolute_metrics.png" style="width:70px;">
+<img src="toolbars/08_lightfields/41_absolute_metrics.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1709,7 +1709,7 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields/31_absolute_metrics_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields/41_absolute_metrics_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -1910,4 +1910,5 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
