@@ -149,7 +149,7 @@
             },
             "name": "colormap",
             "ports": {
-                "type": "COLORMAP_HOT"
+                "type": "COLORMAP_JET"
             },
             "type": "opencv/colormap"
         },

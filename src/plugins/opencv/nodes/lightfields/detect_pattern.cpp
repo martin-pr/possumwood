@@ -53,7 +53,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if(e[0] > border && e[0] < input.cols - border && e[1] > border && e[1] < input.rows - border &&
 			e[2] > border && e[2] < input.cols - border && e[3] > border && e[3] < input.rows - border) {
 
-			cv::line(mat, cv::Point2f(e[0], e[1]), cv::Point2f(e[2], e[3]), cv::Scalar(128));
+			float a = atan((e[3] - e[1]) / (e[2] - e[0])) / M_PI * 2.0;
+
+			float color = 155.0;
+			if(a < -0.33)
+				color = 55.0;
+			if(a > 0.33)
+				color = 255;
+
+			cv::line(mat, cv::Point2f(e[0], e[1]), cv::Point2f(e[2], e[3]), cv::Scalar(color));
 
 			++eit;
 		}
