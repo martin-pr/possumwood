@@ -4,9 +4,28 @@
 
 #include <actions/traits.h>
 
+#include <lightfields/lenslet_graph.h>
+
 #include "frame.h"
 
 namespace {
+
+struct Vec2Compare {
+	bool operator() (const cv::Vec2f& v1, const cv::Vec2f& v2) const {
+		if(v1[0] != v2[0])
+			return v1[0] < v2[0];
+		return v1[1] < v2[1];
+	}
+};
+
+struct Vec4Compare {
+	bool operator() (const cv::Vec4f& v1, const cv::Vec4f& v2) const {
+		for(int a=0;a<3;++a)
+			if(v1[a] != v2[a])
+				return v1[a] < v2[a];
+		return v1[3] < v2[3];
+	}
+};
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<unsigned> a_border;
@@ -23,11 +42,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(std::size_t(input.rows) < 2*border+1 || std::size_t(input.cols) < 2*border+1)
 		throw std::runtime_error("Border value too large for the size of the input image");
 
-	cv::Mat mat(input.size(), CV_8UC1, cv::Scalar(0));
-
-	// // create the subdiv object - this object is the thing that performs delaunay triangulation
-	cv::Subdiv2D subdiv(cv::Rect(0, 0, input.cols, input.rows));
-
+	// make a lenslet data structure
+	lightfields::LensletGraph lenslets(cv::Vec2i(input.cols, input.rows), border);
 	// feed all the local minima into it, except the ones too close to the border
 	for(std::size_t y=1; y<std::size_t(input.rows) - 1; ++y)
 		for(std::size_t x=1; x<std::size_t(input.cols) - 1; ++x) {
@@ -37,37 +53,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				if(a != 4 && input.at<unsigned char>(y + a/3 - 1, x + a%3 - 1) >= current)
 					isMaximum = false;
 
-			if(isMaximum) {
-				mat.at<unsigned char>(y, x) = 255;
-				subdiv.insert(cv::Point2f(x, y));
-			}
+			if(isMaximum)
+				lenslets.addLenslet(cv::Vec2i(x, y));
 		}
 
-	// draw all edges from the Delaunay
-	std::vector<cv::Vec4f> edgeList;
-	subdiv.getEdgeList(edgeList);
+	// debug drawing
+	cv::Mat mat(input.size(), CV_8UC1, cv::Scalar(0));
+	lenslets.drawCenters(mat);
 
-	for(auto eit = edgeList.begin(); eit != edgeList.end();) {
-		auto& e = *eit;
-
-		if(e[0] > border && e[0] < input.cols - border && e[1] > border && e[1] < input.rows - border &&
-			e[2] > border && e[2] < input.cols - border && e[3] > border && e[3] < input.rows - border) {
-
-			float a = atan((e[3] - e[1]) / (e[2] - e[0])) / M_PI * 2.0;
-
-			float color = 155.0;
-			if(a < -0.33)
-				color = 55.0;
-			if(a > 0.33)
-				color = 255;
-
-			cv::line(mat, cv::Point2f(e[0], e[1]), cv::Point2f(e[2], e[3]), cv::Scalar(color));
-
-			++eit;
-		}
-		else
-			eit = edgeList.erase(eit);
-	}
+	// delaunay drawing
+	lenslets.fit();
+	lenslets.drawEdges(mat);
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
 

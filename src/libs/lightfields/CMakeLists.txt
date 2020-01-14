@@ -12,6 +12,10 @@ pkg_search_module(JSONCPP REQUIRED jsoncpp)
 include_directories(${JSONCPP_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${JSONCPP_LIBRARIES})
 
+# Find opencv
+find_package(OpenCV REQUIRED)
+set(LIBS ${LIBS} ${OpenCV_LIBS})
+
 # Building the library
 include_directories(./)
 
