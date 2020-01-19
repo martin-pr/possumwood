@@ -63,7 +63,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// delaunay drawing
 	lenslets.fit();
-	lenslets.drawEdges(mat);
+	lenslets.drawFit(mat);
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
 

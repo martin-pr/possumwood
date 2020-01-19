@@ -21,6 +21,7 @@ class LensletGraph {
 
 		void drawCenters(cv::Mat& target) const;
 		void drawEdges(cv::Mat& target) const;
+		void drawFit(cv::Mat& target) const;
 
 	private:
 		struct Pimpl;
