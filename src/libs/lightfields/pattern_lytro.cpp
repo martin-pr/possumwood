@@ -33,6 +33,16 @@ LytroPattern::LytroPattern(double lensPitch, double pixelPitch, double rotation,
 	// we need both forward and backward projection
 	m_tr = rotate * transform * scale * pattern;
 	m_trInv = m_tr.inverse();
+
+	std::cout << "Pattern " << std::endl;
+	std::cout << m_tr << std::endl;
+}
+
+LytroPattern::LytroPattern(double lensPitch, Imath::M33d tr, Imath::V2i sensorResolution) : Pattern(sensorResolution), m_tr(tr), m_lensPitch(lensPitch) {
+	m_trInv = m_tr.inverse();
+
+	std::cout << "Pattern " << std::endl;
+	std::cout << m_tr << std::endl;
 }
 
 Imath::V4d LytroPattern::sample(const Imath::V2i& pixelPos) const {

@@ -1,5 +1,7 @@
 #include "lenslet_graph.h"
 
+#include <Eigen/Dense>
+
 namespace lightfields {
 
 namespace {
@@ -17,7 +19,8 @@ struct Lenslet {
 	}
 
 	void addNeighbour(std::size_t index) {
-		assert(neighbourCount < 6);
+		if(neighbourCount >= 6)
+			throw std::runtime_error("Lenslets should be organized in a hexagonal grid, which does not seem to be the case!");
 
 		neighbours[neighbourCount] = index;
 		++neighbourCount;
@@ -160,7 +163,83 @@ cv::Matx<double, 3, 3> LensletGraph::fit() {
 		}
 	}
 
-	return cv::Matx<double, 3, 3>();
+	// least squares fit
+	// Ref: Fitting a Transformation: Feature-based Alignment, Kristen Grauman, lecture notes for UT Austin
+	// A = [ ...
+	//       xi, yi,  0,  0, 1, 0,
+	//        0,  0, xi, yi, 0, 1,
+	//       ... ]
+	// x = [m1, m2, m3, m4, t1, t2]^T
+	// b = [ ... x'i, y'i, ... ]^T
+
+	// count the useful lenslets
+	std::size_t lensletCount = 0;
+	for(auto& l : m_pimpl->lenslets)
+		if(l.id[0] > INT_MIN)
+			++lensletCount;
+
+	Eigen::MatrixXd A(2*lensletCount, 6);
+	Eigen::VectorXd b(2*lensletCount);
+	lensletCount = 0;
+	for(auto& l : m_pimpl->lenslets)
+		if(l.id[0] > INT_MIN) {
+			std::size_t rowId = lensletCount*2;
+
+			A(rowId, 0) = l.center[0];
+			A(rowId, 1) = l.center[1];
+			A(rowId, 2) = 0;
+			A(rowId, 3) = 0;
+			A(rowId, 4) = 1;
+			A(rowId, 5) = 0;
+
+			b(rowId) = l.id[0];
+
+			++rowId;
+
+			A(rowId, 0) = 0;
+			A(rowId, 1) = 0;
+			A(rowId, 2) = l.center[0];
+			A(rowId, 3) = l.center[1];
+			A(rowId, 4) = 0;
+			A(rowId, 5) = 1;
+
+			b(rowId) = l.id[1];
+
+			++lensletCount;
+		}
+
+	Eigen::VectorXd x = A.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
+	assert(x.size() == 6);
+
+	return cv::Matx<double, 3, 3>(
+		x[0], x[2], 0,
+		x[1], x[3], 0,
+		x[4], x[5], 1
+	);
+}
+
+double LensletGraph::lensPitch() const {
+	std::size_t counter = 0;
+	double average = 0.0;
+
+	for(auto& l : m_pimpl->lenslets)
+		if(l.id[0] > INT_MIN) {
+			for(unsigned char ni = 0; ni < l.neighbourCount; ++ni) {
+				const Lenslet& neighbour = m_pimpl->lenslets[l.neighbours[ni]];
+				if(neighbour.id[0] > INT_MIN) {
+					++counter;
+					average += cv::norm(l.center - neighbour.center);
+				}
+			}
+		}
+
+	assert(counter > 0);
+
+	std::cout << "Lens pitch: " << (average / (double)counter) << std::endl;
+
+	return average / (double)counter;
+
+	// return 9;
 }
 
 void LensletGraph::drawCenters(cv::Mat& target) const {

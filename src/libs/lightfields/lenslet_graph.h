@@ -18,6 +18,7 @@ class LensletGraph {
 		void addLenslet(const cv::Vec2f& center);
 
 		cv::Matx<double, 3, 3> fit();
+		double lensPitch() const;
 
 		void drawCenters(cv::Mat& target) const;
 		void drawEdges(cv::Mat& target) const;

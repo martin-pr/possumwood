@@ -16,6 +16,10 @@ set(LIBS ${LIBS} ${JSONCPP_LIBRARIES})
 find_package(OpenCV REQUIRED)
 set(LIBS ${LIBS} ${OpenCV_LIBS})
 
+# eigen
+find_package(Eigen3 REQUIRED)
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+
 # Building the library
 include_directories(./)
 
