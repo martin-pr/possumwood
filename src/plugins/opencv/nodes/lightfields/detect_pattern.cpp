@@ -5,7 +5,7 @@
 #include <actions/traits.h>
 
 #include <lightfields/lenslet_graph.h>
-#include <lightfields/pattern_lytro.h>
+#include <lightfields/pattern.h>
 
 #include "../../lightfield_pattern.h"
 
@@ -79,7 +79,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	);
 
 	data.set(a_pattern, std::shared_ptr<const lightfields::Pattern>(new
-		lightfields::LytroPattern(lenslets.lensPitch(), fittedMatrix, Imath::V2i(input.cols, input.rows))));
+		lightfields::Pattern(lenslets.lensPitch(), fittedMatrix, Imath::V2i(input.cols, input.rows))));
 
 	return dependency_graph::State();
 }
