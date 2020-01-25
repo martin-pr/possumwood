@@ -22,6 +22,9 @@ class Port : public boost::noncopyable {
 		unsigned index() const;
 		std::type_index type() const;
 
+		// / returns a fully qualified port name (with all nodes and parents)
+		std::string fullName() const;
+
 		/// sets a value on the port.
 		/// Marks all downstream values dirty.
 		template<typename T>

@@ -35,7 +35,7 @@ int dimension(const std::string& d) {
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const lightfields::Pattern& pattern = data.get(a_pattern);
+	const lightfields::Pattern pattern = data.get(a_pattern);
 
 	const cv::Mat in = *data.get(a_in);
 	if(in.type() != CV_32FC1)

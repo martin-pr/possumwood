@@ -129,7 +129,6 @@ Properties::PropertyHolder::PropertyHolder(dependency_graph::Port& port) {
 		// immediate refresh when a port is dirty (pulls on the port)
 		if(port.isDirty())
 			prop->valueFromPort(port);
-		assert(!port.isDirty());
 	};
 
 	flagsConnection = port.flagsCallback(updateFlags);

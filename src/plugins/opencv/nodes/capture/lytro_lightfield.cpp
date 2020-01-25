@@ -15,6 +15,7 @@
 #include "lightfield_pattern.h"
 #include "lightfields/block.h"
 #include "lightfields/raw.h"
+#include "lightfields/pattern.h"
 
 namespace {
 

@@ -38,6 +38,18 @@ const std::string& Port::name() const {
 	return m_parent->metadata()->attr(m_id).name();
 }
 
+std::string Port::fullName() const {
+	std::string result = node().name() + "/" + name();
+
+	const NodeBase* ptr = &node();
+	while(ptr->hasParentNetwork()) {
+		ptr = &(ptr->network());
+		result = ptr->name() + "/" + result;
+	}
+
+	return result;
+}
+
 Attr::Category Port::category() const {
 	return m_parent->metadata()->attr(m_id).category();
 }

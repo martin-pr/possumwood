@@ -36,7 +36,7 @@ void add3channel(float* color, uint16_t* n, int colorIndex, const float* value) 
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const lightfields::Pattern& pattern = data.get(a_pattern);
+	const lightfields::Pattern pattern = data.get(a_pattern);
 
 	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");

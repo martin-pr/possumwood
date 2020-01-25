@@ -17,7 +17,8 @@ dependency_graph::InAttr<unsigned> a_subdivLevel;
 dependency_graph::OutAttr<possumwood::opencv::LightfieldVignetting> a_vignetting;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const lightfields::Pattern& pattern = data.get(a_pattern);
+	const lightfields::Pattern pattern = data.get(a_pattern);
+
 	const cv::Mat& in = *data.get(a_in);
 
 	if(in.cols != pattern.sensorResolution()[1] || in.rows != pattern.sensorResolution()[0])
