@@ -235,11 +235,7 @@ double LensletGraph::lensPitch() const {
 
 	assert(counter > 0);
 
-	std::cout << "Lens pitch: " << (average / (double)counter) << std::endl;
-
 	return average / (double)counter;
-
-	// return 9;
 }
 
 void LensletGraph::drawCenters(cv::Mat& target) const {
