@@ -6,6 +6,9 @@
 
 namespace lightfields {
 
+Pattern::Pattern() : m_sensorResolution(0,0), m_lensPitch(0) {
+}
+
 Pattern::Pattern(double lensPitch, double pixelPitch, double rotation,
 	Imath::V2d scaleFactor, Imath::V3d sensorOffset, Imath::V2i sensorResolution) : m_sensorResolution(sensorResolution), m_lensPitch(lensPitch/pixelPitch)
 {
@@ -35,16 +38,10 @@ Pattern::Pattern(double lensPitch, double pixelPitch, double rotation,
 	// we need both forward and backward projection
 	m_tr = rotate * transform * scale * pattern;
 	m_trInv = m_tr.inverse();
-
-	std::cout << "Pattern " << std::endl;
-	std::cout << m_tr << std::endl;
 }
 
 Pattern::Pattern(double lensPitch, Imath::M33d tr, Imath::V2i sensorResolution) : m_sensorResolution(sensorResolution), m_lensPitch(lensPitch), m_tr(tr) {
 	m_trInv = m_tr.inverse();
-
-	std::cout << "Pattern " << std::endl;
-	std::cout << m_tr << std::endl;
 }
 
 Pattern::~Pattern() {
@@ -102,6 +99,23 @@ Imath::V4d Pattern::sample(const Imath::V2i& pixelPos) const {
 	result[3] = (pixelPos[1] - lens[1]) / m_lensPitch * 2.0;
 
 	return result;
+}
+
+bool Pattern::operator == (const Pattern& p) const {
+	return m_sensorResolution == p.m_sensorResolution && m_lensPitch == p.m_lensPitch && m_tr == p.m_tr;
+}
+
+bool Pattern::operator != (const Pattern& p) const {
+	return m_sensorResolution != p.m_sensorResolution || m_lensPitch != p.m_lensPitch || m_tr != p.m_tr;
+}
+
+std::ostream& operator << (std::ostream& out, const Pattern& p) {
+	out << "Pattern:" << std::endl;
+	out << "  sensor " << p.sensorResolution() << std::endl;
+	out << "  lens pitch " << p.m_lensPitch << std::endl;
+	out << "  transform" << std::endl << p.m_tr << std::endl;
+
+	return out;
 }
 
 }

@@ -15,7 +15,7 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
-dependency_graph::InAttr<std::shared_ptr<const lightfields::Pattern>> a_pattern;
+dependency_graph::InAttr<lightfields::Pattern> a_pattern;
 dependency_graph::InAttr<unsigned> a_xRes, a_yRes;
 dependency_graph::InAttr<possumwood::Enum> a_xMode, a_yMode;
 dependency_graph::InAttr<Imath::V2f> a_xRange, a_yRange, a_uRange, a_vRange;
@@ -35,9 +35,7 @@ int dimension(const std::string& d) {
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const std::shared_ptr<const lightfields::Pattern> pattern = data.get(a_pattern);
-	if(pattern == nullptr)
-		throw std::runtime_error("Non-empty pattern expected");
+	const lightfields::Pattern pattern = data.get(a_pattern);
 
 	const cv::Mat in = *data.get(a_in);
 	if(in.type() != CV_32FC1)
@@ -47,7 +45,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result = cv::Mat::zeros(data.get(a_yRes), data.get(a_xRes), CV_32FC3);
 	cv::Mat norm = cv::Mat::zeros(data.get(a_yRes), data.get(a_xRes), CV_16UC3);
 
-	if(Imath::V2i(in.cols, in.rows) != pattern->sensorResolution())
+	if(Imath::V2i(in.cols, in.rows) != pattern.sensorResolution())
 		throw std::runtime_error("Sensor resolution and input image sizes don't match!");
 
 	const int dimx = dimension(data.get(a_xMode).value());
@@ -59,13 +57,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	ranges.push_back(data.get(a_uRange));
 	ranges.push_back(data.get(a_vRange));
 
-	tbb::parallel_for(0, pattern->sensorResolution().y, [&](int y) {
-		for(int x=0; x<pattern->sensorResolution().x; ++x) {
-			Imath::V4f sample = pattern->sample(Imath::V2f(x, y));
+	tbb::parallel_for(0, pattern.sensorResolution().y, [&](int y) {
+		for(int x=0; x<pattern.sensorResolution().x; ++x) {
+			Imath::V4f sample = pattern.sample(Imath::V2f(x, y));
 
 			// scale x and y to be in range 0..1
-			sample[0] /= pattern->sensorResolution().x;
-			sample[1] /= pattern->sensorResolution().y;
+			sample[0] /= pattern.sensorResolution().x;
+			sample[1] /= pattern.sensorResolution().y;
 
 			// test if the sample is in the expected range
 			bool inRange = true;
@@ -112,7 +110,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_image", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", std::shared_ptr<const lightfields::Pattern>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_xRes, "x/resolution", 300u);
 	meta.addAttribute(a_xMode, "x/mode", possumwood::Enum({"x", "y", "u", "v"}, 0));
 	meta.addAttribute(a_yRes, "y/resolution", 20u);

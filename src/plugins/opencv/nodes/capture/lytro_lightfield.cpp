@@ -21,7 +21,7 @@ namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
-dependency_graph::OutAttr<std::shared_ptr<const lightfields::Pattern>> a_pattern;
+dependency_graph::OutAttr<lightfields::Pattern> a_pattern;
 
 cv::Mat decodeData(const char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
 	cv::Mat result(width, height, CV_32F);
@@ -67,7 +67,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::Filename filename = data.get(a_filename);
 
 	cv::Mat result;
-	std::shared_ptr<lightfields::Pattern> pattern;
+	lightfields::Pattern pattern;
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
 		int width = 0, height = 0;
@@ -92,7 +92,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		white[3] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
 
 		// assemble the lightfield pattern
-		pattern = std::shared_ptr<lightfields::Pattern>(new lightfields::Pattern(
+		pattern = lightfields::Pattern(
 			raw.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
 			raw.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
 			raw.metadata()["devices"]["mla"]["rotation"].asDouble(),
@@ -106,14 +106,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				raw.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
 			),
 			Imath::V2i(width, height)
-		));
+		);
 
 		assert(!raw.image().empty());
 		result = decodeData(raw.image().data(), width, height, black, white);
 	}
 
 	data.set(a_frame, possumwood::opencv::Frame(result));
-	data.set(a_pattern, std::shared_ptr<const lightfields::Pattern>(pattern));
+	data.set(a_pattern, pattern);
 
 	return dependency_graph::State();
 }
@@ -123,7 +123,7 @@ void init(possumwood::Metadata& meta) {
 		"Lytro files (*.lfr *.RAW)",
 	}));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", std::shared_ptr<const lightfields::Pattern>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
 	meta.addInfluence(a_filename, a_pattern);

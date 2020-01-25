@@ -51,7 +51,7 @@ void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 		const QPointF tr = QPointF(event->x(), event->y()) - QPointF(m_mouseX, m_mouseY);
 
 		const QMatrix m = matrix();
-		const float scale = sqrt(m.m11()*m.m11() + m.m12()*m.m12());
+		const float scale = sqrt(m.m11()*m.m22());
 
 		translate(tr.x() / scale, tr.y() / scale);
 

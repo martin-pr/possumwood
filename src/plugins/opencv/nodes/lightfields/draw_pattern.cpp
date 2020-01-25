@@ -11,19 +11,17 @@
 
 namespace {
 
-dependency_graph::InAttr<std::shared_ptr<const lightfields::Pattern>> a_pattern;
+dependency_graph::InAttr<lightfields::Pattern> a_pattern;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const std::shared_ptr<const lightfields::Pattern> pattern = data.get(a_pattern);
-	if(pattern == nullptr)
-		throw std::runtime_error("Non-empty pattern expected");
+	const lightfields::Pattern pattern = data.get(a_pattern);
 
-	cv::Mat mat(pattern->sensorResolution()[0], pattern->sensorResolution()[1], CV_32FC1);
+	cv::Mat mat(pattern.sensorResolution()[0], pattern.sensorResolution()[1], CV_32FC1);
 
 	tbb::parallel_for(0, mat.rows, [&](int y) {
 		for(int x=0;x<mat.cols;++x) {
-			const Imath::V4f value = pattern->sample(Imath::V2i(x, y));
+			const Imath::V4f value = pattern.sample(Imath::V2i(x, y));
 
 			float* color = mat.ptr<float>(y, x);
 			float current = value[2]*value[2] + value[3]*value[3];
@@ -40,7 +38,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_pattern, "pattern", std::shared_ptr<const lightfields::Pattern>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_pattern, a_out);

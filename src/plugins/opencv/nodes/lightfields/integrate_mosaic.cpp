@@ -14,7 +14,7 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
-dependency_graph::InAttr<std::shared_ptr<const lightfields::Pattern>> a_pattern;
+dependency_graph::InAttr<lightfields::Pattern> a_pattern;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
 dependency_graph::InAttr<unsigned> a_elements;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_norm;
@@ -36,9 +36,7 @@ void add3channel(float* color, uint16_t* n, int colorIndex, const float* value) 
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	std::shared_ptr<const lightfields::Pattern> pattern = data.get(a_pattern);
-	if(pattern == nullptr)
-		throw std::runtime_error("Non-empty pattern expected");
+	const lightfields::Pattern pattern = data.get(a_pattern);
 
 	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
@@ -60,12 +58,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		for(int x = 0; x < input.cols; ++x) {
-			const Imath::V4d& sample = pattern->sample(Imath::V2i(x, y));
+			const Imath::V4d& sample = pattern.sample(Imath::V2i(x, y));
 
 			const double uv_magnitude_2 = sample[2]*sample[2] + sample[3]*sample[3];
 			if(uv_magnitude_2 < 1.0) {
-				float target_x = sample[0] / (float)pattern->sensorResolution()[0] * (float)width;
-				float target_y = sample[1] / (float)pattern->sensorResolution()[1] * (float)height;
+				float target_x = sample[0] / (float)pattern.sensorResolution()[0] * (float)width;
+				float target_y = sample[1] / (float)pattern.sensorResolution()[1] * (float)height;
 
 				target_x = std::min(target_x, (float)(width-1));
 				target_y = std::min(target_y, (float)(height-1));
@@ -102,7 +100,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", std::shared_ptr<const lightfields::Pattern>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(300u, 300u));
 	meta.addAttribute(a_elements, "elements", 5u);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
