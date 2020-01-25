@@ -13,10 +13,10 @@
             "out_port": "shader"
         },
         {
-            "in_node": "texture_0",
-            "in_port": "value",
-            "out_node": "load_0",
-            "out_port": "image"
+            "in_node": "opencv_texture_0",
+            "in_port": "frame",
+            "out_node": "image_0",
+            "out_port": "frame"
         },
         {
             "in_node": "draw_0",
@@ -27,7 +27,7 @@
         {
             "in_node": "draw_0",
             "in_port": "uniforms",
-            "out_node": "texture_0",
+            "out_node": "opencv_texture_0",
             "out_port": "out_uniforms"
         },
         {
@@ -75,19 +75,34 @@
             },
             "type": "render/fragment_shader"
         },
-        "load_0": {
+        "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 276.842864990234,
-                    "y": 80.1412811279297
+                    "x": 434.920532226562,
+                    "y": -49.1949882507324
                 }
             },
             "name": "load",
             "ports": {
                 "filename": "$EXAMPLES/hdrihaven_envmaps/misty_pines_4k.png"
             },
-            "type": "images/load"
+            "type": "opencv/capture/image"
+        },
+        "opencv_texture_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 426.52783203125,
+                    "y": 96.0951614379883
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "mode": "Linear",
+                "name": "background"
+            },
+            "type": "render/uniforms/opencv_texture"
         },
         "program_0": {
             "blind_data": {
@@ -99,20 +114,6 @@
             },
             "name": "program",
             "type": "render/program"
-        },
-        "texture_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 426.52783203125,
-                    "y": 96.0951614379883
-                }
-            },
-            "name": "texture",
-            "ports": {
-                "name": "background"
-            },
-            "type": "render/uniforms/texture"
         },
         "vertex_shader_0": {
             "blind_data": {

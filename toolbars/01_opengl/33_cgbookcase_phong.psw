@@ -7,7 +7,7 @@
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "texture_1",
+            "in_node": "opencv_texture_1",
             "in_port": "in_uniforms",
             "out_node": "float_1",
             "out_port": "out_uniforms"
@@ -31,22 +31,22 @@
             "out_port": "shader"
         },
         {
-            "in_node": "texture_0",
-            "in_port": "value",
-            "out_node": "load_0",
-            "out_port": "image"
+            "in_node": "opencv_texture_0",
+            "in_port": "frame",
+            "out_node": "image_0",
+            "out_port": "frame"
         },
         {
-            "in_node": "texture_1",
-            "in_port": "value",
-            "out_node": "load_1",
-            "out_port": "image"
+            "in_node": "opencv_texture_1",
+            "in_port": "frame",
+            "out_node": "image_1",
+            "out_port": "frame"
         },
         {
-            "in_node": "texture_2",
-            "in_port": "value",
-            "out_node": "load_2",
-            "out_port": "image"
+            "in_node": "opencv_texture_2",
+            "in_port": "frame",
+            "out_node": "image_2",
+            "out_port": "frame"
         },
         {
             "in_node": "vertex_data_0",
@@ -63,19 +63,19 @@
         {
             "in_node": "viewport_0",
             "in_port": "in_uniforms",
-            "out_node": "texture_0",
+            "out_node": "opencv_texture_0",
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "texture_0",
+            "in_node": "opencv_texture_0",
             "in_port": "in_uniforms",
-            "out_node": "texture_1",
+            "out_node": "opencv_texture_1",
             "out_port": "out_uniforms"
         },
         {
             "in_node": "float_2",
             "in_port": "in_uniforms",
-            "out_node": "texture_2",
+            "out_node": "opencv_texture_2",
             "out_port": "out_uniforms"
         },
         {
@@ -120,8 +120,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 481.133575439453,
-                    "y": -387.914001464844
+                    "x": 645.512878417969,
+                    "y": -411.396759033203
                 }
             },
             "name": "float",
@@ -135,8 +135,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 494.1025390625,
-                    "y": -203.5732421875
+                    "x": 642.82666015625,
+                    "y": -227.055999755859
                 }
             },
             "name": "float",
@@ -150,8 +150,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 474.515747070312,
-                    "y": -580.166015625
+                    "x": 638.89501953125,
+                    "y": -603.648742675781
                 }
             },
             "name": "time",
@@ -188,47 +188,47 @@
             },
             "type": "render/geometry_shader"
         },
-        "load_0": {
+        "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 380.851226806641,
-                    "y": 174.569808959961
+                    "x": 396.506408691406,
+                    "y": -10.6830558776855
                 }
             },
             "name": "load",
             "ports": {
                 "filename": "$EXAMPLES/cgbookcase_materials/seaside-rocks-01/Seaside_rocks_01_2K_Height.png"
             },
-            "type": "images/load"
+            "type": "opencv/capture/image"
         },
-        "load_1": {
+        "image_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 345.522247314453,
-                    "y": 0.293676495552063
+                    "x": 470.763610839844,
+                    "y": -198.005172729492
                 }
             },
             "name": "load",
             "ports": {
                 "filename": "$EXAMPLES/cgbookcase_materials/seaside-rocks-01/Seaside_rocks_01_2K_Normal.png"
             },
-            "type": "images/load"
+            "type": "opencv/capture/image"
         },
-        "load_2": {
+        "image_2": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 340.373596191406,
-                    "y": -736.715209960938
+                    "x": 624.77587890625,
+                    "y": -971.542785644531
                 }
             },
             "name": "load",
             "ports": {
                 "filename": "$EXAMPLES/cgbookcase_materials/seaside-rocks-01/Seaside_rocks_01_2K_Base_Color.png"
             },
-            "type": "images/load"
+            "type": "opencv/capture/image"
         },
         "loader_0": {
             "blind_data": {
@@ -244,6 +244,51 @@
             },
             "type": "polymesh/loader"
         },
+        "opencv_texture_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 517.775634765625,
+                    "y": 163.529602050781
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "mode": "Linear",
+                "name": "height"
+            },
+            "type": "render/uniforms/opencv_texture"
+        },
+        "opencv_texture_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 576.314697265625,
+                    "y": -30.0648365020752
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "mode": "Linear",
+                "name": "normalmap"
+            },
+            "type": "render/uniforms/opencv_texture"
+        },
+        "opencv_texture_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 620.930236816406,
+                    "y": -801.472290039062
+                }
+            },
+            "name": "texture",
+            "ports": {
+                "mode": "Linear",
+                "name": "colourmap"
+            },
+            "type": "render/uniforms/opencv_texture"
+        },
         "program_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -255,54 +300,12 @@
             "name": "program",
             "type": "render/program"
         },
-        "texture_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 517.775634765625,
-                    "y": 163.529602050781
-                }
-            },
-            "name": "texture",
-            "ports": {
-                "name": "height"
-            },
-            "type": "render/uniforms/texture"
-        },
-        "texture_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 495.429656982422,
-                    "y": -9.19127368927002
-                }
-            },
-            "name": "texture",
-            "ports": {
-                "name": "normalmap"
-            },
-            "type": "render/uniforms/texture"
-        },
-        "texture_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 474.815338134766,
-                    "y": -785.817138671875
-                }
-            },
-            "name": "texture",
-            "ports": {
-                "name": "colourmap"
-            },
-            "type": "render/uniforms/texture"
-        },
         "time_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 361.408966064453,
-                    "y": -539.516723632812
+                    "x": 525.788269042969,
+                    "y": -562.999450683594
                 }
             },
             "name": "time",

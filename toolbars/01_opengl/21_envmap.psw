@@ -3,8 +3,8 @@
         {
             "in_node": "network_0",
             "in_port": "env_image",
-            "out_node": "load_0",
-            "out_port": "image"
+            "out_node": "image_0",
+            "out_port": "frame"
         },
         {
             "in_node": "network_0",
@@ -15,19 +15,19 @@
     ],
     "description": "### Reflection mapping\n\n[Reflection mapping](https://en.wikipedia.org/wiki/Reflection_mapping) is a simple image-based lighting technique for simulating purely reflective materials. It only behaves correcty for convex shapes, but even with this strict limitation, it has [been long established](http://www.pauldebevec.com/ReflectionMapping/) as a simple method for reflective surfaces in computer graphics.\n\nThis demo combines a skybox with a \"purely reflective\" material.\n\n\n\n",
     "nodes": {
-        "load_0": {
+        "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 82.7304611206055,
-                    "y": 427.513854980469
+                    "x": 337.510223388672,
+                    "y": 183.603546142578
                 }
             },
             "name": "load",
             "ports": {
                 "filename": "$EXAMPLES/hdrihaven_envmaps/rathaus_8k.png"
             },
-            "type": "images/load"
+            "type": "opencv/capture/image"
         },
         "loader_0": {
             "blind_data": {
@@ -47,7 +47,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 326.733489990234,
+                    "x": 328.348785400391,
                     "y": 341.380310058594
                 }
             },
@@ -77,8 +77,8 @@
                     "out_port": "data"
                 },
                 {
-                    "in_node": "texture_0",
-                    "in_port": "value",
+                    "in_node": "opencv_texture_0",
+                    "in_port": "frame",
                     "out_node": "input_1",
                     "out_port": "data"
                 },
@@ -97,13 +97,13 @@
                 {
                     "in_node": "draw_0",
                     "in_port": "uniforms",
-                    "out_node": "texture_0",
+                    "out_node": "opencv_texture_0",
                     "out_port": "out_uniforms"
                 },
                 {
                     "in_node": "viewport_0",
                     "in_port": "in_uniforms",
-                    "out_node": "texture_0",
+                    "out_node": "opencv_texture_0",
                     "out_port": "out_uniforms"
                 },
                 {
@@ -209,12 +209,27 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 408.864135742188,
-                            "y": 148.767333984375
+                            "x": 442.785430908203,
+                            "y": 6.62092113494873
                         }
                     },
                     "name": "env_image",
                     "type": "input"
+                },
+                "opencv_texture_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 572.25390625,
+                            "y": 125.846199035645
+                        }
+                    },
+                    "name": "texture",
+                    "ports": {
+                        "mode": "Linear",
+                        "name": "background"
+                    },
+                    "type": "render/uniforms/opencv_texture"
                 },
                 "program_0": {
                     "blind_data": {
@@ -237,20 +252,6 @@
                     },
                     "name": "program",
                     "type": "render/program"
-                },
-                "texture_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 572.25390625,
-                            "y": 125.846199035645
-                        }
-                    },
-                    "name": "texture",
-                    "ports": {
-                        "name": "background"
-                    },
-                    "type": "render/uniforms/texture"
                 },
                 "vertex_data_0": {
                     "blind_data": {
@@ -311,6 +312,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABOwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABsQAAAb0AAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAACcAAAABkAAAaqAAACTwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABawAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB4QAAAgAAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
