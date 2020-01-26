@@ -12,7 +12,7 @@ struct MetadataAccess {
 		meta.doAddAttribute(attr);
 	}
 
-	static void addAttribute(Metadata& meta, const std::string& name, Attr::Category cat, const BaseData& data, unsigned flags) {
+	static void addAttribute(Metadata& meta, const std::string& name, Attr::Category cat, const Data& data, unsigned flags) {
 		meta.doAddAttribute(name, cat, data, flags);
 	}
 };

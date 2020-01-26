@@ -166,8 +166,8 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 
 	// value reset after disconnect
 	//   -> we want the value as it was when undoing a connect action
-	std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> data(
-		new std::unique_ptr<dependency_graph::BaseData>());
+	std::shared_ptr<std::unique_ptr<dependency_graph::Data>> data(
+		new std::unique_ptr<dependency_graph::Data>());
 
 	{
 		std::stringstream ss;
@@ -219,8 +219,8 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 
 	// value reset after disconnect
 	//   -> we want the value as it was when undoing a connect action
-	std::shared_ptr<std::unique_ptr<dependency_graph::BaseData>> data(
-		new std::unique_ptr<dependency_graph::BaseData>());
+	std::shared_ptr<std::unique_ptr<dependency_graph::Data>> data(
+		new std::unique_ptr<dependency_graph::Data>());
 
 	{
 		std::stringstream ss;

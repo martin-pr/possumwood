@@ -2,27 +2,27 @@
 
 namespace dependency_graph {
 
-std::map<std::string, std::function<std::unique_ptr<BaseData>()>>& BaseData::factories() {
-	static std::unique_ptr<std::map<std::string, std::function<std::unique_ptr<BaseData>()>>> s_factories;
+std::map<std::string, std::function<std::unique_ptr<Data>()>>& Data::factories() {
+	static std::unique_ptr<std::map<std::string, std::function<std::unique_ptr<Data>()>>> s_factories;
 	if(s_factories == nullptr)
-		s_factories = std::unique_ptr<std::map<std::string, std::function<std::unique_ptr<BaseData>()>>>(new std::map<std::string, std::function<std::unique_ptr<BaseData>()>>());
+		s_factories = std::unique_ptr<std::map<std::string, std::function<std::unique_ptr<Data>()>>>(new std::map<std::string, std::function<std::unique_ptr<Data>()>>());
 	return *s_factories;
 }
 
-BaseData::BaseData() {
+Data::Data() {
 };
 
-BaseData::~BaseData() {
+Data::~Data() {
 };
 
-BaseData::BaseData(const BaseData& bd) {
+Data::Data(const Data& bd) {
 }
 
-BaseData& BaseData::operator = (const BaseData& bd) {
+Data& Data::operator = (const Data& bd) {
 	return *this;
 }
 
-std::unique_ptr<BaseData> BaseData::create(const std::string& type) {
+std::unique_ptr<Data> Data::create(const std::string& type) {
 	auto it = factories().find(type);
 
 	if(it == factories().end()) {
@@ -35,7 +35,7 @@ std::unique_ptr<BaseData> BaseData::create(const std::string& type) {
 	return it->second();
 }
 
-std::string BaseData::type() const {
+std::string Data::type() const {
 	return dependency_graph::unmangledName(typeinfo().name());
 }
 
@@ -47,11 +47,11 @@ TypedData<void>::TypedData() {
 TypedData<void>::~TypedData() {
 }
 
-void TypedData<void>::assign(const BaseData& src) {
+void TypedData<void>::assign(const Data& src) {
 	assert(src.typeinfo() == typeid(void));
 }
 
-bool TypedData<void>::isEqual(const BaseData& src) const {
+bool TypedData<void>::isEqual(const Data& src) const {
 	return src.typeinfo() == typeid(void);
 }
 
@@ -59,20 +59,20 @@ const std::type_info& TypedData<void>::typeinfo() const {
 	return typeid(void);
 }
 
-std::unique_ptr<BaseData> TypedData<void>::clone() const {
-	return std::unique_ptr<BaseData>(new TypedData<void>());
+std::unique_ptr<Data> TypedData<void>::clone() const {
+	return std::unique_ptr<Data>(new TypedData<void>());
 }
 
 std::string TypedData<void>::toString() const {
 	return "void";
 }
 
-std::ostream& operator << (std::ostream& out, const BaseData& bd) {
+std::ostream& operator << (std::ostream& out, const Data& bd) {
 	out << bd.toString();
 
 	return out;
 }
 
-BaseData::Factory<void> TypedData<void>::m_factory;
+Data::Factory<void> TypedData<void>::m_factory;
 
 }

@@ -18,8 +18,8 @@ namespace possumwood {
 /// plugins.
 class IOBase : public boost::noncopyable {
 	public:
-		typedef std::function<void(possumwood::io::json&, const dependency_graph::BaseData&)> to_fn;
-		typedef std::function<void(const possumwood::io::json&, dependency_graph::BaseData&)> from_fn;
+		typedef std::function<void(possumwood::io::json&, const dependency_graph::Data&)> to_fn;
+		typedef std::function<void(const possumwood::io::json&, dependency_graph::Data&)> from_fn;
 
 		IOBase(const std::type_index& type, to_fn toJson, from_fn fromJson);
 		virtual ~IOBase();
@@ -36,10 +36,10 @@ class IO : public IOBase {
 
 		IO(to_fn toJson, from_fn fromJson) : IOBase(
 			typeid(T),
-			[toJson](possumwood::io::json& json, const dependency_graph::BaseData& data) {
+			[toJson](possumwood::io::json& json, const dependency_graph::Data& data) {
 				toJson(json, data.get<T>());
 			},
-			[fromJson](const possumwood::io::json& json, dependency_graph::BaseData& data) {
+			[fromJson](const possumwood::io::json& json, dependency_graph::Data& data) {
 				T val = data.get<T>();
 				fromJson(json, val);
 				data.set<T>(val);
@@ -49,7 +49,7 @@ class IO : public IOBase {
 
 namespace io {
 
-void fromJson(const json& j, dependency_graph::BaseData& data);
-void toJson(json& j, const dependency_graph::BaseData& data);
+void fromJson(const json& j, dependency_graph::Data& data);
+void toJson(json& j, const dependency_graph::Data& data);
 
 } }

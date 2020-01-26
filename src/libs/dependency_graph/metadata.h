@@ -90,7 +90,7 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		virtual std::unique_ptr<NodeBase> createNode(const std::string& name, Network& parent, const UniqueId& id = UniqueId()) const;
 
 	protected:
-		unsigned doAddAttribute(const std::string& name, Attr::Category cat, const BaseData& data, unsigned flags);
+		unsigned doAddAttribute(const std::string& name, Attr::Category cat, const Data& data, unsigned flags);
 		virtual void doAddAttribute(Attr& attr);
 
 	private:

@@ -2,7 +2,7 @@
 
 namespace dependency_graph { namespace io {
 
-bool isSaveable(const dependency_graph::BaseData& data) {
+bool isSaveable(const dependency_graph::Data& data) {
 	return true;
 }
 

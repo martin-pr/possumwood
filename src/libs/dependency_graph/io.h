@@ -4,8 +4,8 @@
 
 namespace dependency_graph { namespace io {
 
-bool isSaveable(const BaseData& data);
+bool isSaveable(const Data& data);
 
-void setIsSaveableCallback(std::function<bool(const BaseData& data)> fn);
+void setIsSaveableCallback(std::function<bool(const Data& data)> fn);
 
 } }

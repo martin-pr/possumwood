@@ -13,10 +13,10 @@ struct Attr::AttrData {
 	Category category;
 	unsigned flags;
 
-	std::unique_ptr<BaseData> data;
+	std::unique_ptr<Data> data;
 };
 
-Attr::Attr(const std::string& name, Category cat, const BaseData& d, unsigned flags)
+Attr::Attr(const std::string& name, Category cat, const Data& d, unsigned flags)
 	: m_data(new AttrData{name, unsigned(-1), cat, flags, d.clone()}) {
 }
 
@@ -55,7 +55,7 @@ unsigned Attr::flags() const {
 	return m_data->flags;
 }
 
-std::unique_ptr<BaseData> Attr::createData() const {
+std::unique_ptr<Data> Attr::createData() const {
 	return m_data->data->clone();
 }
 

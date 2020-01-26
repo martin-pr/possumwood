@@ -12,20 +12,20 @@ namespace dependency_graph {
 template<typename T>
 class TypedData;
 
-class BaseData {
+class Data {
 	public:
-		virtual ~BaseData();
+		virtual ~Data();
 
-		virtual void assign(const BaseData& src) = 0;
-		virtual bool isEqual(const BaseData& src) const = 0;
+		virtual void assign(const Data& src) = 0;
+		virtual bool isEqual(const Data& src) const = 0;
 
 		std::string type() const;
 		virtual const std::type_info& typeinfo() const = 0;
 
 		/// creates a new Data<T> instance based on type name
-		static std::unique_ptr<BaseData> create(const std::string& type);
-		/// clones an existing BaseData instance
-		virtual std::unique_ptr<BaseData> clone() const = 0;
+		static std::unique_ptr<Data> create(const std::string& type);
+		/// clones an existing Data instance
+		virtual std::unique_ptr<Data> clone() const = 0;
 
 		template<typename T>
 		const T& get() const {
@@ -49,10 +49,10 @@ class BaseData {
 	protected:
 		virtual std::string toString() const = 0;
 
-		BaseData();
+		Data();
 
-		BaseData(const BaseData& bd);
-		BaseData& operator = (const BaseData& bd);
+		Data(const Data& bd);
+		Data& operator = (const Data& bd);
 
 		template<typename T>
 		struct Factory {
@@ -60,23 +60,23 @@ class BaseData {
 		};
 
 	private:
-		static std::map<std::string, std::function<std::unique_ptr<BaseData>()>>& factories();
+		static std::map<std::string, std::function<std::unique_ptr<Data>()>>& factories();
 
-	friend std::ostream& operator << (std::ostream& out, const BaseData& bd);
+	friend std::ostream& operator << (std::ostream& out, const Data& bd);
 };
 
 template<typename T>
-struct TypedData : public BaseData {
+struct TypedData : public Data {
 	public:
 		TypedData(const T& v = T());
 		virtual ~TypedData();
 
-		virtual void assign(const BaseData& src) override;
-		virtual bool isEqual(const BaseData& src) const override;
+		virtual void assign(const Data& src) override;
+		virtual bool isEqual(const Data& src) const override;
 
 		virtual const std::type_info& typeinfo() const override;
 
-		std::unique_ptr<BaseData> clone() const override;
+		std::unique_ptr<Data> clone() const override;
 
 	protected:
 		virtual std::string toString() const override;
@@ -89,21 +89,21 @@ struct TypedData : public BaseData {
 
 		static Factory<T> m_factory;
 
-	friend class BaseData;
+	friend class Data;
 };
 
 template<>
-struct TypedData<void> : public BaseData {
+struct TypedData<void> : public Data {
 	public:
 		TypedData();
 		virtual ~TypedData();
 
-		virtual void assign(const BaseData& src) override;
-		virtual bool isEqual(const BaseData& src) const override;
+		virtual void assign(const Data& src) override;
+		virtual bool isEqual(const Data& src) const override;
 
 		virtual const std::type_info& typeinfo() const override;
 
-		std::unique_ptr<BaseData> clone() const override;
+		std::unique_ptr<Data> clone() const override;
 
 	private:
 		virtual std::string toString() const override;
@@ -111,6 +111,6 @@ struct TypedData<void> : public BaseData {
 		static Factory<void> m_factory;
 };
 
-std::ostream& operator << (std::ostream& out, const BaseData& bd);
+std::ostream& operator << (std::ostream& out, const Data& bd);
 
 }

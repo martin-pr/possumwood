@@ -39,11 +39,11 @@ class Port : public boost::noncopyable {
 		/// gets a value from the port.
 		/// Pulls on the inputs and causes recomputation if the value is
 		/// marked as dirty.
-		const BaseData& getData();
+		const Data& getData();
 
 		/// sets a value on the port.
 		/// Marks all downstream values dirty.
-		void setData(const BaseData& val);
+		void setData(const Data& val);
 
 		/// returns true if given port is dirty and will require recomputation
 		bool isDirty() const;

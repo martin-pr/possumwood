@@ -10,7 +10,7 @@
 namespace dependency_graph {
 
 template<typename T>
-BaseData::Factory<T> TypedData<T>::m_factory;
+Data::Factory<T> TypedData<T>::m_factory;
 
 template<typename T>
 TypedData<T>::TypedData(const T& v) : m_value(v) {
@@ -24,7 +24,7 @@ TypedData<T>::~TypedData() {
 }
 
 template<typename T>
-void TypedData<T>::assign(const BaseData& src) {
+void TypedData<T>::assign(const Data& src) {
 	assert(dynamic_cast<const TypedData<T>*>(&src) != NULL);
 
 	const TypedData<T>& srcData = dynamic_cast<const TypedData<T>&>(src);
@@ -32,7 +32,7 @@ void TypedData<T>::assign(const BaseData& src) {
 }
 
 template<typename T>
-bool TypedData<T>::isEqual(const BaseData& src) const {
+bool TypedData<T>::isEqual(const Data& src) const {
 	assert(dynamic_cast<const TypedData<T>*>(&src) != NULL);
 
 	const TypedData<T>& srcData = dynamic_cast<const TypedData<T>&>(src);
@@ -45,8 +45,8 @@ const std::type_info& TypedData<T>::typeinfo() const {
 }
 
 template<typename T>
-std::unique_ptr<BaseData> TypedData<T>::clone() const {
-	std::unique_ptr<BaseData> result(new TypedData<T>());
+std::unique_ptr<Data> TypedData<T>::clone() const {
+	std::unique_ptr<Data> result(new TypedData<T>());
 	result->assign(*this);
 
 	return result;
@@ -71,9 +71,9 @@ void TypedData<T>::set(const T& val) {
 }
 
 template<typename T>
-BaseData::Factory<T>::Factory() {
-	factories().insert(std::make_pair(unmangledTypeId<T>(), []() -> std::unique_ptr<BaseData> {
-		return std::unique_ptr<BaseData>(new TypedData<T>());
+Data::Factory<T>::Factory() {
+	factories().insert(std::make_pair(unmangledTypeId<T>(), []() -> std::unique_ptr<Data> {
+		return std::unique_ptr<Data>(new TypedData<T>());
 	}));
 }
 

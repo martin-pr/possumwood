@@ -67,7 +67,7 @@ class Nodes : public boost::noncopyable {
 		iterator find(const UniqueId& id, const SearchType& st = kThisNetwork); // will use is<Network>()
 
 		NodeBase& add(const MetadataHandle& type, const std::string& name,
-		              std::unique_ptr<BaseData>&& blindData = std::unique_ptr<BaseData>(),
+		              std::unique_ptr<Data>&& blindData = std::unique_ptr<Data>(),
 		              boost::optional<const dependency_graph::Datablock&> datablock = boost::optional<const dependency_graph::Datablock&>(),
 		              const UniqueId& id = UniqueId());
 

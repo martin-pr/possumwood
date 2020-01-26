@@ -34,7 +34,7 @@ void doSetBlindData(const dependency_graph::UniqueId& node, const possumwood::No
 /////////////////////////////////////////////////////////////////////
 
 void createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id) {
-	std::unique_ptr<dependency_graph::BaseData> nodeData(
+	std::unique_ptr<dependency_graph::Data> nodeData(
 		new dependency_graph::TypedData<possumwood::NodeData> (_data));
 
 	auto action = detail::createNodeAction(current, meta, name, std::move(nodeData), id);
@@ -215,9 +215,9 @@ namespace {
 				const possumwood::io::json& n = ni.value();
 
 				// extract the blind data via factory mechanism
-				std::unique_ptr<dependency_graph::BaseData> blindData;
+				std::unique_ptr<dependency_graph::Data> blindData;
 				if(n.find("blind_data") != n.end() && !n["blind_data"].is_null()) {
-					blindData = dependency_graph::BaseData::create(n["blind_data"]["type"].get<std::string>());
+					blindData = dependency_graph::Data::create(n["blind_data"]["type"].get<std::string>());
 					assert(blindData != nullptr);
 					assert(dependency_graph::io::isSaveable(*blindData));
 					io::fromJson(n["blind_data"]["value"], *blindData);
@@ -340,7 +340,7 @@ void changeMetadata(dependency_graph::NodeBase& node, const dependency_graph::Me
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
 
-void setValue(dependency_graph::Port& port, const dependency_graph::BaseData& value) {
+void setValue(dependency_graph::Port& port, const dependency_graph::Data& value) {
 	possumwood::UndoStack::Action action = detail::setValueAction(port, value);
 
 	AppCore::instance().undoStack().execute(action);

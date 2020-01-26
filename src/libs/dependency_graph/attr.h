@@ -37,10 +37,10 @@ class Attr {
 		bool operator != (const Attr& a) const;
 
 		/// todo: make private - no need for it in public interface
-		std::unique_ptr<BaseData> createData() const;
+		std::unique_ptr<Data> createData() const;
 
 	protected:
-		Attr(const std::string& name, Category cat, const BaseData& data, unsigned flags);
+		Attr(const std::string& name, Category cat, const Data& data, unsigned flags);
 
 		void setOffset(unsigned o);
 

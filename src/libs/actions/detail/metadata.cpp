@@ -109,7 +109,7 @@ void buildNetwork(dependency_graph::Network& network) {
 	std::unique_ptr<dependency_graph::Metadata> meta = dependency_graph::instantiateMetadata("network");
 
 	std::vector<Link> links;
-	std::vector<std::unique_ptr<dependency_graph::BaseData>> values;
+	std::vector<std::unique_ptr<dependency_graph::Data>> values;
 
 	for(auto& n : network.nodes()) {
 		if(n.metadata()->type() == "input" && n.port(0).isConnected()) {

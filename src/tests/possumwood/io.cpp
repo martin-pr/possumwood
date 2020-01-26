@@ -10,13 +10,13 @@ namespace dependency_graph { namespace io {
 
 struct SaveableRegistration {
 	SaveableRegistration() {
-		setIsSaveableCallback([](const BaseData&) {
+		setIsSaveableCallback([](const Data&) {
 			return true;
 		});
 	}
 
 	~SaveableRegistration() {
-		setIsSaveableCallback(std::function<bool(const BaseData& data)>());
+		setIsSaveableCallback(std::function<bool(const Data& data)>());
 	}
 };
 
@@ -26,7 +26,7 @@ static SaveableRegistration s_saveableRegistration;
 
 namespace possumwood { namespace io {
 
-void fromJson(const json& j, dependency_graph::BaseData& data) {
+void fromJson(const json& j, dependency_graph::Data& data) {
 	if(data.type() == "float") {
 		data.set<float>(j.get<float>());
 	}
@@ -40,7 +40,7 @@ void fromJson(const json& j, dependency_graph::BaseData& data) {
 		assert(false);
 }
 
-void toJson(json& j, const dependency_graph::BaseData& data) {
+void toJson(json& j, const dependency_graph::Data& data) {
 	if(data.type() == "float") {
 		j = data.get<float>();
 	}
@@ -48,14 +48,13 @@ void toJson(json& j, const dependency_graph::BaseData& data) {
 		j = data.get<std::string>();
 	}
 	else if(data.type() == dependency_graph::unmangledTypeId<possumwood::NodeData>()) {
-		// const dependency_graph::TypedData<possumwood::NodeData>& typed = dynamic_cast<const dependency_graph::TypedData<possumwood::NodeData>&>(data);
 		j = "test blind data";
 	}
 	else
 		assert(false);
 }
 
-bool isSaveable(const dependency_graph::BaseData& data) {
+bool isSaveable(const dependency_graph::Data& data) {
 	return true;
 }
 

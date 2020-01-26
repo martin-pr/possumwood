@@ -167,11 +167,11 @@ size_t NodeBase::portCount() const {
 	return m_ports.size();
 }
 
-const BaseData& NodeBase::get(size_t index) const {
+const Data& NodeBase::get(size_t index) const {
 	return datablock().data(index);
 }
 
-void NodeBase::set(size_t index, const BaseData& value) {
+void NodeBase::set(size_t index, const Data& value) {
 	assert(port(index).category() == Attr::kOutput || !port(index).isConnected());
 	return datablock().setData(index, value);
 }
@@ -281,7 +281,7 @@ const State& NodeBase::state() const {
 	return m_state;
 }
 
-void NodeBase::setBlindData(std::unique_ptr<BaseData>&& data) {
+void NodeBase::setBlindData(std::unique_ptr<Data>&& data) {
 	m_blindData = std::move(data);
 }
 
@@ -294,7 +294,7 @@ std::string NodeBase::blindDataType() const {
 	return m_blindData->type();
 }
 
-const BaseData& NodeBase::blindData() const {
+const Data& NodeBase::blindData() const {
 	assert(m_blindData != nullptr);
 	return *m_blindData;
 }

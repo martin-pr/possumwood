@@ -62,9 +62,9 @@ class NodeBase {
 		template<typename T>
 		const T& blindData() const;
 
-		const BaseData& blindData() const;
+		const Data& blindData() const;
 
-		void setBlindData(std::unique_ptr<BaseData>&& data);
+		void setBlindData(std::unique_ptr<Data>&& data);
 		bool hasBlindData() const;
 		std::string blindDataType() const;
 
@@ -94,10 +94,10 @@ class NodeBase {
 		NodeBase& operator = (const NodeBase&) = delete;
 
 		// used by Port instances
-		const BaseData& get(size_t index) const;
+		const Data& get(size_t index) const;
 
 		// used by Port instances
-		void set(size_t index, const BaseData& value);
+		void set(size_t index, const Data& value);
 
 		// used by Port instances
 		void markAsDirty(size_t portIndex, bool dependantsOnly = false);
@@ -109,7 +109,7 @@ class NodeBase {
 		Network* m_network;
 		UniqueId m_index;
 
-		std::unique_ptr<BaseData> m_blindData;
+		std::unique_ptr<Data> m_blindData;
 
 		MetadataHandle m_metadata;
 		Datablock m_data;

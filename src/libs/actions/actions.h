@@ -19,7 +19,7 @@ void disconnect(dependency_graph::Port& p1, dependency_graph::Port& p2);
 
 template<typename T>
 void setValue(dependency_graph::Port& p, const T& value);
-void setValue(dependency_graph::Port& p, const dependency_graph::BaseData& value);
+void setValue(dependency_graph::Port& p, const dependency_graph::Data& value);
 
 void changeMetadata(dependency_graph::NodeBase& node, const dependency_graph::MetadataHandle& handle);
 void renameNode(dependency_graph::NodeBase& node, const std::string& name);
@@ -38,7 +38,7 @@ possumwood::io::json toJson(const dependency_graph::Selection& selection = depen
 
 template<typename T>
 void setValue(dependency_graph::Port& p, const T& value) {
-	const std::unique_ptr<const dependency_graph::BaseData> data(new dependency_graph::TypedData<T>(value));
+	const std::unique_ptr<const dependency_graph::Data> data(new dependency_graph::TypedData<T>(value));
 	setValue(p, *data);
 }
 

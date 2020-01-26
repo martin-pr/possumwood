@@ -30,14 +30,14 @@ class Datablock {
 
 		void reset(size_t index);
 
-		const BaseData& data(size_t index) const;
-		void setData(size_t index, const BaseData& data);
+		const Data& data(size_t index) const;
+		void setData(size_t index, const Data& data);
 		bool isNull(std::size_t index) const;
 
 		const MetadataHandle& meta() const;
 
 	private:
-		std::vector<std::unique_ptr<BaseData>> m_data;
+		std::vector<std::unique_ptr<Data>> m_data;
 		MetadataHandle m_meta;
 };
 

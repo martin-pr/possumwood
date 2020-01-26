@@ -30,7 +30,7 @@ Datablock& Datablock::operator = (const Datablock& d) {
 	return *this;
 }
 
-const BaseData& Datablock::data(size_t index) const {
+const Data& Datablock::data(size_t index) const {
 	assert(m_data.size() > index);
 
 	if(m_data[index]->typeinfo() == typeid(void))
@@ -40,7 +40,7 @@ const BaseData& Datablock::data(size_t index) const {
 }
 
 
-void Datablock::setData(size_t index, const BaseData& data) {
+void Datablock::setData(size_t index, const Data& data) {
 	assert(m_data.size() > index);
 
 	if(m_data[index]->typeinfo() == typeid(void))

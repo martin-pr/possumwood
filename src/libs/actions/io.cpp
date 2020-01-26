@@ -38,7 +38,7 @@ IOBase::~IOBase() {
 
 namespace possumwood { namespace io {
 
-void fromJson(const json& j, dependency_graph::BaseData& data) {
+void fromJson(const json& j, dependency_graph::Data& data) {
 	auto it = s_fromFn().find(data.typeinfo());
 
 	#ifndef NDEBUG
@@ -50,7 +50,7 @@ void fromJson(const json& j, dependency_graph::BaseData& data) {
 	it->second(j, data);
 }
 
-void toJson(json& j, const dependency_graph::BaseData& data) {
+void toJson(json& j, const dependency_graph::Data& data) {
 	auto it = s_toFn().find(data.typeinfo());
 	#ifndef NDEBUG
 	if(it == s_toFn().end())
@@ -67,13 +67,13 @@ namespace dependency_graph { namespace io {
 
 struct SaveableRegistration {
 	SaveableRegistration() {
-		setIsSaveableCallback([](const BaseData& data) {
+		setIsSaveableCallback([](const Data& data) {
 			return s_toFn().find(data.typeinfo()) != s_toFn().end();
 		});
 	}
 
 	~SaveableRegistration() {
-		setIsSaveableCallback(std::function<bool(const BaseData& data)>());
+		setIsSaveableCallback(std::function<bool(const Data& data)>());
 	}
 };
 
