@@ -188,4 +188,11 @@ void UndoStack::clear() {
 	m_redoStack.clear();
 }
 
+std::ostream& operator << (std::ostream& out, const UndoStack::Action& action) {
+	for(auto& a : action.m_undo)
+		out << a.name << std::endl;
+
+	return out;
+}
+
 }

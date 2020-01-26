@@ -10,7 +10,7 @@ bool Selection::Connection::operator < (const Connection& c) const {
 		return f1 < f2;
 
 	Port* t1 = &(to.get());
-	Port* t2 = &(to.get());
+	Port* t2 = &(c.to.get());
 
 	return t1 < t2;
 }

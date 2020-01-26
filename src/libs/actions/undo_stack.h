@@ -38,6 +38,7 @@ class UndoStack : public boost::noncopyable {
 
 			/// the actual implementation is handled in UndoStack code.
 			friend class UndoStack;
+			friend std::ostream& operator << (std::ostream& out, const UndoStack::Action& action);
 		};
 
 		/// Executes an action and puts it to the undo stack to make it undoable.
@@ -72,5 +73,7 @@ class UndoStack : public boost::noncopyable {
 		bool m_executionInProgress;
 #endif
 };
+
+std::ostream& operator << (std::ostream& out, const UndoStack::Action& action);
 
 }
