@@ -10,50 +10,50 @@
 namespace dependency_graph {
 
 template<typename T>
-BaseData::Factory<T> Data<T>::m_factory;
+BaseData::Factory<T> TypedData<T>::m_factory;
 
 template<typename T>
-Data<T>::Data(const T& v) : value(v) {
+TypedData<T>::TypedData(const T& v) : value(v) {
 }
 
 template<typename T>
-Data<T>::~Data() {
+TypedData<T>::~TypedData() {
 	// just do something with the factory, to make sure it is instantiated
 	std::stringstream ss;
 	ss << &m_factory;
 }
 
 template<typename T>
-void Data<T>::assign(const BaseData& src) {
-	assert(dynamic_cast<const Data<T>*>(&src) != NULL);
+void TypedData<T>::assign(const BaseData& src) {
+	assert(dynamic_cast<const TypedData<T>*>(&src) != NULL);
 
-	const Data<T>& srcData = dynamic_cast<const Data<T>&>(src);
+	const TypedData<T>& srcData = dynamic_cast<const TypedData<T>&>(src);
 	DataTraits<T>::assignValue(value, srcData.value);
 }
 
 template<typename T>
-bool Data<T>::isEqual(const BaseData& src) const {
-	assert(dynamic_cast<const Data<T>*>(&src) != NULL);
+bool TypedData<T>::isEqual(const BaseData& src) const {
+	assert(dynamic_cast<const TypedData<T>*>(&src) != NULL);
 
-	const Data<T>& srcData = dynamic_cast<const Data<T>&>(src);
+	const TypedData<T>& srcData = dynamic_cast<const TypedData<T>&>(src);
 	return DataTraits<T>::isEqual(value, srcData.value);
 }
 
 template<typename T>
-const std::type_info& Data<T>::typeinfo() const {
+const std::type_info& TypedData<T>::typeinfo() const {
 	return typeid(T);
 }
 
 template<typename T>
-std::unique_ptr<BaseData> Data<T>::clone() const {
-	std::unique_ptr<BaseData> result(new Data<T>());
+std::unique_ptr<BaseData> TypedData<T>::clone() const {
+	std::unique_ptr<BaseData> result(new TypedData<T>());
 	result->assign(*this);
 
 	return result;
 }
 
 template<typename T>
-std::string Data<T>::toString() const {
+std::string TypedData<T>::toString() const {
 	std::stringstream ss;
 	ss << value;
 
@@ -63,7 +63,7 @@ std::string Data<T>::toString() const {
 template<typename T>
 BaseData::Factory<T>::Factory() {
 	factories().insert(std::make_pair(unmangledTypeId<T>(), []() -> std::unique_ptr<BaseData> {
-		return std::unique_ptr<BaseData>(new Data<T>());
+		return std::unique_ptr<BaseData>(new TypedData<T>());
 	}));
 }
 

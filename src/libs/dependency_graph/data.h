@@ -44,10 +44,10 @@ class BaseData {
 };
 
 template<typename T>
-struct Data : public BaseData {
+struct TypedData : public BaseData {
 	public:
-		Data(const T& v = T());
-		virtual ~Data();
+		TypedData(const T& v = T());
+		virtual ~TypedData();
 
 		virtual void assign(const BaseData& src) override;
 		virtual bool isEqual(const BaseData& src) const override;
@@ -66,10 +66,10 @@ struct Data : public BaseData {
 };
 
 template<>
-struct Data<void> : public BaseData {
+struct TypedData<void> : public BaseData {
 	public:
-		Data();
-		virtual ~Data();
+		TypedData();
+		virtual ~TypedData();
 
 		virtual void assign(const BaseData& src) override;
 		virtual bool isEqual(const BaseData& src) const override;

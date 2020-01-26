@@ -41,29 +41,29 @@ std::string BaseData::type() const {
 
 ////
 
-Data<void>::Data() {
+TypedData<void>::TypedData() {
 }
 
-Data<void>::~Data() {
+TypedData<void>::~TypedData() {
 }
 
-void Data<void>::assign(const BaseData& src) {
+void TypedData<void>::assign(const BaseData& src) {
 	assert(src.typeinfo() == typeid(void));
 }
 
-bool Data<void>::isEqual(const BaseData& src) const {
+bool TypedData<void>::isEqual(const BaseData& src) const {
 	return src.typeinfo() == typeid(void);
 }
 
-const std::type_info& Data<void>::typeinfo() const {
+const std::type_info& TypedData<void>::typeinfo() const {
 	return typeid(void);
 }
 
-std::unique_ptr<BaseData> Data<void>::clone() const {
-	return std::unique_ptr<BaseData>(new Data<void>());
+std::unique_ptr<BaseData> TypedData<void>::clone() const {
+	return std::unique_ptr<BaseData>(new TypedData<void>());
 }
 
-std::string Data<void>::toString() const {
+std::string TypedData<void>::toString() const {
 	return "void";
 }
 
@@ -73,6 +73,6 @@ std::ostream& operator << (std::ostream& out, const BaseData& bd) {
 	return out;
 }
 
-BaseData::Factory<void> Data<void>::m_factory;
+BaseData::Factory<void> TypedData<void>::m_factory;
 
 }

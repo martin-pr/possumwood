@@ -28,15 +28,15 @@ namespace possumwood { namespace io {
 
 void fromJson(const json& j, dependency_graph::BaseData& data) {
 	if(data.type() == "float") {
-		dependency_graph::Data<float>& typed = dynamic_cast<dependency_graph::Data<float>&>(data);
+		dependency_graph::TypedData<float>& typed = dynamic_cast<dependency_graph::TypedData<float>&>(data);
 		typed.value = j.get<float>();
 	}
 	else if(data.type() == dependency_graph::unmangledTypeId<std::string>()) {
-		dependency_graph::Data<std::string>& typed = dynamic_cast<dependency_graph::Data<std::string>&>(data);
+		dependency_graph::TypedData<std::string>& typed = dynamic_cast<dependency_graph::TypedData<std::string>&>(data);
 		typed.value = j.get<std::string>();
 	}
 	else if(data.type() == dependency_graph::unmangledTypeId<possumwood::NodeData>()) {
-		dependency_graph::Data<possumwood::NodeData>& typed = dynamic_cast<dependency_graph::Data<possumwood::NodeData>&>(data);
+		dependency_graph::TypedData<possumwood::NodeData>& typed = dynamic_cast<dependency_graph::TypedData<possumwood::NodeData>&>(data);
 		typed.value = possumwood::NodeData();
 	}
 	else
@@ -45,15 +45,15 @@ void fromJson(const json& j, dependency_graph::BaseData& data) {
 
 void toJson(json& j, const dependency_graph::BaseData& data) {
 	if(data.type() == "float") {
-		const dependency_graph::Data<float>& typed = dynamic_cast<const dependency_graph::Data<float>&>(data);
+		const dependency_graph::TypedData<float>& typed = dynamic_cast<const dependency_graph::TypedData<float>&>(data);
 		j = typed.value;
 	}
 	else if(data.type() == dependency_graph::unmangledTypeId<std::string>()) {
-		const dependency_graph::Data<std::string>& typed = dynamic_cast<const dependency_graph::Data<std::string>&>(data);
+		const dependency_graph::TypedData<std::string>& typed = dynamic_cast<const dependency_graph::TypedData<std::string>&>(data);
 		j = typed.value;
 	}
 	else if(data.type() == dependency_graph::unmangledTypeId<possumwood::NodeData>()) {
-		// const dependency_graph::Data<possumwood::NodeData>& typed = dynamic_cast<const dependency_graph::Data<possumwood::NodeData>&>(data);
+		// const dependency_graph::TypedData<possumwood::NodeData>& typed = dynamic_cast<const dependency_graph::TypedData<possumwood::NodeData>&>(data);
 		j = "test blind data";
 	}
 	else

@@ -87,7 +87,7 @@ std::ostream& operator << (std::ostream& out, const Attr& attr) {
 /////////
 
 TypedAttr<void>::TypedAttr(const std::string& name, Category cat, unsigned flags) :
-	Attr(name, cat, Data<void>(), flags) {
+	Attr(name, cat, TypedData<void>(), flags) {
 }
 
 InAttr<void>::InAttr() : TypedAttr<void>("", Attr::kInput, 0) {

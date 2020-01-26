@@ -13,12 +13,12 @@ void NodeBase::setBlindData(const T& value) {
 	// create blind data if they're not present
 	bool newData = false;
 	if(m_blindData.get() == NULL) {
-		m_blindData = std::unique_ptr<BaseData>(new Data<T>());
+		m_blindData = std::unique_ptr<BaseData>(new TypedData<T>());
 		newData = true;
 	}
 
 	// retype
-	Data<T>& val = dynamic_cast<Data<T>&>(*m_blindData);
+	TypedData<T>& val = dynamic_cast<TypedData<T>&>(*m_blindData);
 
 	// set the value
 	if(val.value != value) {
@@ -37,7 +37,7 @@ const T& NodeBase::blindData() const {
 	// retype and return
 	assert(m_blindData != NULL);
 	assert(m_blindData->type() == unmangledTypeId<T>());
-	const Data<T>& val = dynamic_cast<const Data<T>&>(*m_blindData);
+	const TypedData<T>& val = dynamic_cast<const TypedData<T>&>(*m_blindData);
 	return val.value;
 }
 

@@ -9,13 +9,13 @@ namespace dependency_graph {
 
 template<typename T>
 void Port::set(const T& value) {
-	const Data<T> val = dependency_graph::Data<T>(value);
+	const TypedData<T> val = dependency_graph::TypedData<T>(value);
 	setData(val);
 }
 
 template<typename T>
 const T& Port::get() {
-	const Data<T>& d = dynamic_cast<const Data<T>&>(getData());
+	const TypedData<T>& d = dynamic_cast<const TypedData<T>&>(getData());
 	return d.value;
 }
 
