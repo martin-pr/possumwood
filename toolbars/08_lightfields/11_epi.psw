@@ -127,32 +127,8 @@
             "out_port": "frame"
         },
         {
-            "in_node": "epi_0",
-            "in_port": "pattern",
-            "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
-        },
-        {
-            "in_node": "epi_1",
-            "in_port": "pattern",
-            "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
-        },
-        {
-            "in_node": "epi_2",
-            "in_port": "pattern",
-            "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
-        },
-        {
-            "in_node": "epi_3",
-            "in_port": "pattern",
-            "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
-        },
-        {
-            "in_node": "epi_4",
-            "in_port": "pattern",
+            "in_node": "adjust_pattern_0",
+            "in_port": "in_pattern",
             "out_node": "lytro_lightfield_0",
             "out_port": "pattern"
         },
@@ -209,10 +185,54 @@
             "in_port": "y/resolution",
             "out_node": "split_vec2u_0",
             "out_port": "y"
+        },
+        {
+            "in_node": "epi_3",
+            "in_port": "pattern",
+            "out_node": "adjust_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
+            "in_node": "epi_0",
+            "in_port": "pattern",
+            "out_node": "adjust_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
+            "in_node": "epi_1",
+            "in_port": "pattern",
+            "out_node": "adjust_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
+            "in_node": "epi_4",
+            "in_port": "pattern",
+            "out_node": "adjust_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
+            "in_node": "epi_2",
+            "in_port": "pattern",
+            "out_node": "adjust_pattern_0",
+            "out_port": "out_pattern"
         }
     ],
     "description": "### Epipolar Images\n\nEpipolar images show slices of the 4D lightfield along different axis. \n\nThe x-y image (center) shows a slice corresponding to a single dept-of-field image. By changing the UV offset or interval, it is possible to create images with different depth of field or focal plane.\n\nThe u-x and v-y images (left, right, top and bottom) show slices with \"line direction\" (based on incoming direction of rays) corresponding to individual depth planes. \n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
     "nodes": {
+        "adjust_pattern_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 404.171539306641,
+                    "y": -542.593444824219
+                }
+            },
+            "name": "adjust_pattern",
+            "ports": {
+                "scale": 0.998849987983704
+            },
+            "type": "opencv/lightfields/adjust_pattern"
+        },
         "concat_3_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -519,8 +539,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 270.807647705078,
-                    "y": -468.339263916016
+                    "x": 354.301879882812,
+                    "y": -828.408203125
                 }
             },
             "name": "lytro_lightfield",
@@ -1480,6 +1500,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJgAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAdkAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAADbAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIAAAACPwAAAaIAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJgAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAdkAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAC+QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIAAAACPwAAAaIAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -14,6 +14,8 @@ class Pattern {
 		Pattern(double lensPitch, Imath::M33d tr, Imath::V2i sensorResolution);
 		~Pattern();
 
+		void scale(float factor);
+
 		Imath::V4d sample(const Imath::V2i& pixelPos) const;
 		const Imath::V2i& sensorResolution() const;
 

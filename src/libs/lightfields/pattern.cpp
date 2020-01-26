@@ -101,6 +101,31 @@ Imath::V4d Pattern::sample(const Imath::V2i& pixelPos) const {
 	return result;
 }
 
+void Pattern::scale(float factor) {
+	m_tr =
+		Imath::M33d(
+			1, 0, 0,
+			0, 1, 0,
+			-m_sensorResolution[0]/2, -m_sensorResolution[1]/2, 1
+		)
+		*
+		Imath::M33d(
+			factor, 0, 0,
+			0, factor, 0,
+			0, 0, 1
+		)
+		*
+		Imath::M33d(
+			1, 0, 0,
+			0, 1, 0,
+			m_sensorResolution[0]/2, m_sensorResolution[1]/2, 1
+		)
+		*
+		m_tr;
+
+	m_trInv = m_tr.inverse();
+}
+
 bool Pattern::operator == (const Pattern& p) const {
 	return m_sensorResolution == p.m_sensorResolution && m_lensPitch == p.m_lensPitch && m_tr == p.m_tr;
 }
