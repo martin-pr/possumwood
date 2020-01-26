@@ -9,6 +9,9 @@
 
 namespace dependency_graph {
 
+template<typename T>
+class TypedData;
+
 class BaseData {
 	public:
 		virtual ~BaseData();
@@ -23,6 +26,25 @@ class BaseData {
 		static std::unique_ptr<BaseData> create(const std::string& type);
 		/// clones an existing BaseData instance
 		virtual std::unique_ptr<BaseData> clone() const = 0;
+
+		template<typename T>
+		const T& get() const {
+			if(std::string(typeinfo().name()) == typeid(void).name())
+				throw std::runtime_error("Attempting to use a void value!");
+
+			const TypedData<T>* tmp = dynamic_cast<const TypedData<T>*>(this);
+			if(!tmp)
+				throw std::runtime_error(std::string("Invalid type requested - requested ") + typeid(T).name() + ", found " + typeinfo().name());
+
+			return tmp->get();
+		}
+
+		template<typename T>
+		void set(const T& val) {
+			TypedData<T>* tmp = dynamic_cast<TypedData<T>*>(this);
+			assert(tmp);
+			tmp->set(val);
+		}
 
 	protected:
 		virtual std::string toString() const = 0;
@@ -56,16 +78,18 @@ struct TypedData : public BaseData {
 
 		std::unique_ptr<BaseData> clone() const override;
 
-		const T& get() const;
-		void set(const T& val);
-
 	protected:
 		virtual std::string toString() const override;
 
 	private:
+		const T& get() const;
+		void set(const T& val);
+
 		T m_value;
 
 		static Factory<T> m_factory;
+
+	friend class BaseData;
 };
 
 template<>

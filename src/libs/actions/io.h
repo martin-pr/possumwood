@@ -37,16 +37,12 @@ class IO : public IOBase {
 		IO(to_fn toJson, from_fn fromJson) : IOBase(
 			typeid(T),
 			[toJson](possumwood::io::json& json, const dependency_graph::BaseData& data) {
-				const dependency_graph::TypedData<T>& typed = dynamic_cast<const dependency_graph::TypedData<T>&>(data);
-				toJson(json, typed.get());
+				toJson(json, data.get<T>());
 			},
 			[fromJson](const possumwood::io::json& json, dependency_graph::BaseData& data) {
-				dependency_graph::TypedData<T>& typed = dynamic_cast<dependency_graph::TypedData<T>&>(data);
-
-				T val = typed.get();
+				T val = data.get<T>();
 				fromJson(json, val);
-
-				typed.set(val);
+				data.set<T>(val);
 			}
 		) {}
 };

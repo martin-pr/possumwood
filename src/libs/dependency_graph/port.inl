@@ -15,8 +15,7 @@ void Port::set(const T& value) {
 
 template<typename T>
 const T& Port::get() {
-	const TypedData<T>& d = dynamic_cast<const TypedData<T>&>(getData());
-	return d.get();
+	return getData().get<T>();
 }
 
 }
