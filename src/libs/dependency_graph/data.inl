@@ -11,62 +11,28 @@ namespace dependency_graph {
 template<typename T>
 Data::Factory<T> Data::TypedHolder<T>::m_factory;
 
-// template<typename T>
-// TypedData<T>::TypedData(const T& v) {
-// 	m_data = std::shared_ptr<Holder>(new TypedHolder<T>(v));
-// }
+template<typename T>
+Data::Data(const T& value) : m_data(new TypedHolder<T>(value)) {
+}
 
-// template<typename T>
-// TypedData<T>::~TypedData() {
-// }
+template<typename T>
+const T& Data::get() const {
+	if(std::string(typeinfo().name()) == typeid(void).name() || m_data == nullptr)
+		throw std::runtime_error("Attempting to use a void value!");
 
-// template<typename T>
-// void TypedData<T>::assign(const Data& src) {
-// 	assert(dynamic_cast<const TypedData<T>*>(&src) != NULL);
+	const TypedHolder<T>* tmp = dynamic_cast<const TypedHolder<T>*>(m_data.get());
+	if(!tmp)
+		throw std::runtime_error(std::string("Invalid type requested - requested ") + typeid(T).name() + ", found " + typeinfo().name());
 
-// 	m_data = src.m_data;
-// }
+	return tmp->data;
+}
 
-// template<typename T>
-// bool TypedData<T>::isEqual(const Data& src) const {
-// 	assert(dynamic_cast<const TypedData<T>*>(&src) != NULL);
+template<typename T>
+void Data::set(const T& val) {
+	assert(std::string(typeid(T).name()) == std::string(typeinfo().name()));
 
-// 	const Data::TypedHolder<T>& h1 = dynamic_cast<const Data::TypedHolder<T>&>(*m_data);
-// 	const Data::TypedHolder<T>& h2 = dynamic_cast<const Data::TypedHolder<T>&>(*src.m_data);
-
-// 	return DataTraits<T>::isEqual(h1.data, h2.data);
-// }
-
-// template<typename T>
-// const std::type_info& TypedData<T>::typeinfo() const {
-// 	return typeid(T);
-// }
-
-// template<typename T>
-// std::unique_ptr<Data> TypedData<T>::clone() const {
-// 	std::unique_ptr<Data> result(new TypedData<T>());
-// 	result->assign(*this);
-
-// 	return result;
-// }
-
-// template<typename T>
-// std::string TypedData<T>::toString() const {
-// 	return m_data->toString();
-// }
-
-// template<typename T>
-// const T& TypedData<T>::get() const {
-// 	const Data::TypedHolder<T>& h = dynamic_cast<const Data::TypedHolder<T>&>(m_data);
-// 	return h;
-// }
-
-// template<typename T>
-// void TypedData<T>::set(const T& val) {
-// 	assert(std::string(typeinfo().name()) == std::string(typeid(T).name()));
-
-// 	m_data = std::shared_ptr<const Holder>(new TypedHolder<T>(val));
-// }
+	m_data = std::shared_ptr<const Holder>(new TypedHolder<T>(val));
+}
 
 template<typename T>
 Data::Factory<T>::Factory() {
@@ -78,11 +44,35 @@ Data::Factory<T>::Factory() {
 	}));
 }
 
-// template<typename T>
-// Data::TypedHolder<T>::~TypedHolder() {
-// 	// just do something with the factory, to make sure it is instantiated
-// 	std::stringstream ss;
-// 	ss << &m_factory;
-// }
+////////////
+
+template<typename T>
+Data::TypedHolder<T>::TypedHolder(const T& d) : data(d) {
+}
+
+template<typename T>
+Data::TypedHolder<T>::~TypedHolder() {
+	// just do something with the factory, to make sure it is instantiated
+	std::stringstream ss;
+	ss << &m_factory;
+}
+
+template<typename T>
+const std::type_info& Data::TypedHolder<T>::typeinfo() const {
+	return typeid(T);
+}
+
+template<typename T>
+bool Data::TypedHolder<T>::isEqual(const Holder& src) const {
+	const TypedHolder<T>* h2 = dynamic_cast<const TypedHolder<T>*>(&src);
+	return h2 != nullptr && DataTraits<T>::isEqual(data, h2->data);
+}
+
+template<typename T>
+std::string Data::TypedHolder<T>::toString() const {
+	std::stringstream ss;
+	ss << data;
+	return ss.str();
+}
 
 }

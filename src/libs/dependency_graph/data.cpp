@@ -5,6 +5,17 @@ namespace dependency_graph {
 Data::Data() {
 }
 
+void Data::assign(const Data& src) {
+	assert(std::string(src.typeinfo().name()) == std::string(typeinfo().name()));
+	m_data = src.m_data;
+}
+
+bool Data::isEqual(const Data& src) const {
+	assert(m_data != nullptr && src.m_data != nullptr);
+
+	return m_data->isEqual(*src.m_data);
+}
+
 const std::type_info& Data::typeinfo() const {
 	if(m_data == nullptr)
 		return typeid(void);
@@ -39,40 +50,16 @@ std::string Data::type() const {
 	return dependency_graph::unmangledName(typeinfo().name());
 }
 
-////
-
-// TypedData<void>::TypedData() {
-// }
-
-// TypedData<void>::~TypedData() {
-// }
-
-// void TypedData<void>::assign(const Data& src) {
-// 	assert(src.typeinfo() == typeid(void));
-// }
-
-// bool TypedData<void>::isEqual(const Data& src) const {
-// 	return src.typeinfo() == typeid(void);
-// }
-
-// const std::type_info& TypedData<void>::typeinfo() const {
-// 	return typeid(void);
-// }
-
-// std::unique_ptr<Data> TypedData<void>::clone() const {
-// 	return std::unique_ptr<Data>(new TypedData<void>());
-// }
-
-// std::string TypedData<void>::toString() const {
-// 	return "void";
-// }
+std::string Data::toString() const {
+	if(m_data == nullptr)
+		return "(null)";
+	return m_data->toString();
+}
 
 std::ostream& operator << (std::ostream& out, const Data& bd) {
 	out << bd.toString();
 
 	return out;
 }
-
-// Data::Factory<void> TypedData<void>::m_factory;
 
 }
