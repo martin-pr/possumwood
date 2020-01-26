@@ -35,7 +35,7 @@ void doSetBlindData(const dependency_graph::UniqueId& node, const possumwood::No
 
 void createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id) {
 	std::unique_ptr<dependency_graph::Data> nodeData(
-		new dependency_graph::TypedData<possumwood::NodeData> (_data));
+		new dependency_graph::Data(_data));
 
 	auto action = detail::createNodeAction(current, meta, name, std::move(nodeData), id);
 

@@ -9,8 +9,7 @@ namespace dependency_graph {
 
 template<typename T>
 void Port::set(const T& value) {
-	const TypedData<T> val = dependency_graph::TypedData<T>(value);
-	setData(val);
+	setData(dependency_graph::Data(value));
 }
 
 template<typename T>

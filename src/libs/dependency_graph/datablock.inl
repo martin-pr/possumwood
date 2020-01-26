@@ -20,7 +20,7 @@ template<typename T>
 void Datablock::set(size_t index, const T& value) {
 	assert(index < m_data.size());
 
-	setData(index, TypedData<T>(value));
+	setData(index, Data(value));
 }
 
 }

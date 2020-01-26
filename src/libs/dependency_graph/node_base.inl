@@ -13,7 +13,7 @@ void NodeBase::setBlindData(const T& value) {
 	// create blind data if they're not present
 	bool newData = false;
 	if(m_blindData.get() == NULL) {
-		m_blindData = std::unique_ptr<Data>(new TypedData<T>());
+		m_blindData = std::unique_ptr<Data>(new Data(T()));
 		newData = true;
 	}
 

@@ -84,6 +84,11 @@ bool Interval::inProgressUpdates() const {
 	return m_inProgressUpdates;
 }
 
+std::ostream& operator << (std::ostream& out, const Interval& f) {
+	out << "min=" << f.min() << ", max=" << f.max() << ", value=" << f.value();
+	return out;
+}
+
 }
 
 //////////

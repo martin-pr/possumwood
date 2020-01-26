@@ -7,7 +7,7 @@ namespace dependency_graph {
 
 template <typename T>
 TypedAttr<T>::TypedAttr(const std::string& name, Category cat, const T& defaultValue, unsigned flags)
-    : Attr(name, cat, TypedData<T>(defaultValue), flags) {
+    : Attr(name, cat, Data(defaultValue), flags) {
 }
 
 template <typename T>

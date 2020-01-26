@@ -13,27 +13,37 @@
 
 namespace dependency_graph {
 
-template<typename T>
-class TypedData;
-
 class Data {
 	public:
-		virtual ~Data();
+		// creates empty data holder(null data with void type)
+		Data();
 
-		virtual void assign(const Data& src) = 0;
-		virtual bool isEqual(const Data& src) const = 0;
+		template<typename T>
+		Data(const T& value) : m_data(new TypedHolder<T>(value)) {
+		}
+
+		void assign(const Data& src) {
+			assert(std::string(src.typeinfo().name()) == std::string(typeinfo().name()));
+			m_data = src.m_data;
+		}
+
+		bool isEqual(const Data& src) const {
+			assert(m_data != nullptr && src.m_data != nullptr);
+
+			return m_data->isEqual(*src.m_data);
+		}
 
 		std::string type() const;
-		virtual const std::type_info& typeinfo() const = 0;
+		const std::type_info& typeinfo() const;
 
 		/// creates a new Data<T> instance based on type name
 		static std::unique_ptr<Data> create(const std::string& type);
 		/// clones an existing Data instance
-		virtual std::unique_ptr<Data> clone() const = 0;
+		std::unique_ptr<Data> clone() const;
 
 		template<typename T>
 		const T& get() const {
-			if(std::string(typeinfo().name()) == typeid(void).name())
+			if(std::string(typeinfo().name()) == typeid(void).name() || m_data == nullptr)
 				throw std::runtime_error("Attempting to use a void value!");
 
 			const TypedHolder<T>* tmp = dynamic_cast<const TypedHolder<T>*>(m_data.get());
@@ -51,12 +61,11 @@ class Data {
 		}
 
 	protected:
-		virtual std::string toString() const = 0;
-
-		Data();
-
-		Data(const Data& bd);
-		Data& operator = (const Data& bd);
+		std::string toString() const {
+			if(m_data == nullptr)
+				return "(null)";
+			return m_data->toString();
+		}
 
 		template<typename T>
 		struct Factory {
@@ -107,49 +116,46 @@ class Data {
 	private:
 		static std::map<std::string, std::function<std::unique_ptr<Data>()>>& factories();
 
-	template<typename T>
-	friend class TypedData;
-
 	friend std::ostream& operator << (std::ostream& out, const Data& bd);
 };
 
-template<typename T>
-class TypedData : public Data {
-	public:
-		TypedData(const T& v = T());
-		virtual ~TypedData();
+// template<typename T>
+// class TypedData : public Data {
+// 	public:
+// 		TypedData(const T& v = T());
+// 		virtual ~TypedData();
 
-		virtual void assign(const Data& src) override;
-		virtual bool isEqual(const Data& src) const override;
+// 		virtual void assign(const Data& src) override;
+// 		virtual bool isEqual(const Data& src) const override;
 
-		virtual const std::type_info& typeinfo() const override;
+// 		virtual const std::type_info& typeinfo() const override;
 
-		std::unique_ptr<Data> clone() const override;
+// 		std::unique_ptr<Data> clone() const override;
 
-	protected:
-		virtual std::string toString() const override;
+// 	protected:
+// 		virtual std::string toString() const override;
 
-	friend class Data;
-};
+// 	friend class Data;
+// };
 
-template<>
-struct TypedData<void> : public Data {
-	public:
-		TypedData();
-		virtual ~TypedData();
+// template<>
+// struct TypedData<void> : public Data {
+// 	public:
+// 		TypedData();
+// 		virtual ~TypedData();
 
-		virtual void assign(const Data& src) override;
-		virtual bool isEqual(const Data& src) const override;
+// 		virtual void assign(const Data& src) override;
+// 		virtual bool isEqual(const Data& src) const override;
 
-		virtual const std::type_info& typeinfo() const override;
+// 		virtual const std::type_info& typeinfo() const override;
 
-		std::unique_ptr<Data> clone() const override;
+// 		std::unique_ptr<Data> clone() const override;
 
-	private:
-		virtual std::string toString() const override;
+// 	private:
+// 		virtual std::string toString() const override;
 
-		static Factory<void> m_factory;
-};
+// 		static Factory<void> m_factory;
+// };
 
 std::ostream& operator << (std::ostream& out, const Data& bd);
 
