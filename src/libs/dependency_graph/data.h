@@ -56,12 +56,15 @@ struct TypedData : public BaseData {
 
 		std::unique_ptr<BaseData> clone() const override;
 
-		T value;
+		const T& get() const;
+		void set(const T& val);
 
 	protected:
 		virtual std::string toString() const override;
 
 	private:
+		T m_value;
+
 		static Factory<T> m_factory;
 };
 

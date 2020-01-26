@@ -21,8 +21,8 @@ void NodeBase::setBlindData(const T& value) {
 	TypedData<T>& val = dynamic_cast<TypedData<T>&>(*m_blindData);
 
 	// set the value
-	if(val.value != value) {
-		val.value = value;
+	if(val.get() != value) {
+		val.set(value);
 
 		// and call the callback
 		if(!newData)
@@ -38,7 +38,7 @@ const T& NodeBase::blindData() const {
 	assert(m_blindData != NULL);
 	assert(m_blindData->type() == unmangledTypeId<T>());
 	const TypedData<T>& val = dynamic_cast<const TypedData<T>&>(*m_blindData);
-	return val.value;
+	return val.get();
 }
 
 // template<typename T>

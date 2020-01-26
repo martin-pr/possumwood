@@ -13,7 +13,7 @@ template<typename T>
 BaseData::Factory<T> TypedData<T>::m_factory;
 
 template<typename T>
-TypedData<T>::TypedData(const T& v) : value(v) {
+TypedData<T>::TypedData(const T& v) : m_value(v) {
 }
 
 template<typename T>
@@ -28,7 +28,7 @@ void TypedData<T>::assign(const BaseData& src) {
 	assert(dynamic_cast<const TypedData<T>*>(&src) != NULL);
 
 	const TypedData<T>& srcData = dynamic_cast<const TypedData<T>&>(src);
-	DataTraits<T>::assignValue(value, srcData.value);
+	DataTraits<T>::assignValue(m_value, srcData.m_value);
 }
 
 template<typename T>
@@ -36,7 +36,7 @@ bool TypedData<T>::isEqual(const BaseData& src) const {
 	assert(dynamic_cast<const TypedData<T>*>(&src) != NULL);
 
 	const TypedData<T>& srcData = dynamic_cast<const TypedData<T>&>(src);
-	return DataTraits<T>::isEqual(value, srcData.value);
+	return DataTraits<T>::isEqual(m_value, srcData.m_value);
 }
 
 template<typename T>
@@ -55,9 +55,19 @@ std::unique_ptr<BaseData> TypedData<T>::clone() const {
 template<typename T>
 std::string TypedData<T>::toString() const {
 	std::stringstream ss;
-	ss << value;
+	ss << m_value;
 
 	return ss.str();
+}
+
+template<typename T>
+const T& TypedData<T>::get() const {
+	return m_value;
+}
+
+template<typename T>
+void TypedData<T>::set(const T& val) {
+	m_value = val;
 }
 
 template<typename T>

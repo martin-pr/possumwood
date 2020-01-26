@@ -14,7 +14,7 @@ const T& Datablock::get(size_t index) const {
 	assert(index < m_data.size());
 
 	const TypedData<T>& d = dynamic_cast<const TypedData<T>&>(data(index));
-	return d.value;
+	return d.get();
 }
 
 template<typename T>
