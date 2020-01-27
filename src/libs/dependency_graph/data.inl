@@ -9,11 +9,11 @@
 namespace dependency_graph {
 
 template<typename T>
-Factory<T> TypedHolder<T>::m_factory;
+Data::Factory<T> Data::TypedHolder<T>::m_factory;
 
-// template<typename T>
-// Data::Data(const T& value) : m_data(new TypedHolder<T>(value)) {
-// }
+template<typename T>
+Data::Data(const T& value) : m_data(new TypedHolder<T>(value)) {
+}
 
 template<typename T>
 const T& Data::get() const {
@@ -49,7 +49,7 @@ Data makeData<void>() {
 }
 
 template<typename T>
-Factory<T>::Factory() {
+Data::Factory<T>::Factory() {
 	Data::factories().insert(std::make_pair(unmangledTypeId<T>(), []() {
 		return makeData<T>();
 	}));
@@ -58,29 +58,29 @@ Factory<T>::Factory() {
 ////////////
 
 template<typename T>
-TypedHolder<T>::TypedHolder(const T& d) : data(d) {
+Data::TypedHolder<T>::TypedHolder(const T& d) : data(d) {
 }
 
 template<typename T>
-TypedHolder<T>::~TypedHolder() {
+Data::TypedHolder<T>::~TypedHolder() {
 	// just do something with the factory, to make sure it is instantiated
 	std::stringstream ss;
 	ss << &m_factory;
 }
 
 template<typename T>
-const std::type_info& TypedHolder<T>::typeinfo() const {
+const std::type_info& Data::TypedHolder<T>::typeinfo() const {
 	return typeid(T);
 }
 
 template<typename T>
-bool TypedHolder<T>::isEqual(const Holder& src) const {
+bool Data::TypedHolder<T>::isEqual(const Holder& src) const {
 	const TypedHolder<T>* h2 = dynamic_cast<const TypedHolder<T>*>(&src);
 	return h2 != nullptr && DataTraits<T>::isEqual(data, h2->data);
 }
 
 template<typename T>
-std::string TypedHolder<T>::toString() const {
+std::string Data::TypedHolder<T>::toString() const {
 	std::stringstream ss;
 	ss << data;
 	return ss.str();
