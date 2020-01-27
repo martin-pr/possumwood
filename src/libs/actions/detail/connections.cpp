@@ -166,8 +166,8 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 
 	// value reset after disconnect
 	//   -> we want the value as it was when undoing a connect action
-	std::shared_ptr<std::unique_ptr<dependency_graph::Data>> data(
-		new std::unique_ptr<dependency_graph::Data>());
+	std::shared_ptr<dependency_graph::Data> data(
+		new dependency_graph::Data());
 
 	{
 		std::stringstream ss;
@@ -180,17 +180,17 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 				dependency_graph::NodeBase& node = detail::findNode(toNodeId);
 
 				// only on non-void ports, though
-				if(*data == nullptr && node.port(toPort).type() != typeid(void))
-					*data = node.port(toPort).getData().clone();
+				if(data->empty() && node.port(toPort).type() != typeid(void))
+					*data = node.port(toPort).getData();
 			},
 
 			// and on disconnect, put it back
 			[toNodeId, toPort, data]() {
 				dependency_graph::NodeBase& node = detail::findNode(toNodeId);
 
-				if(*data != nullptr) {
+				if(!data->empty()) {
 					assert(!node.port(toPort).isConnected());
-					node.port(toPort).setData(**data);
+					node.port(toPort).setData(*data);
 				}
 			}
 		);
@@ -219,8 +219,7 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 
 	// value reset after disconnect
 	//   -> we want the value as it was when undoing a connect action
-	std::shared_ptr<std::unique_ptr<dependency_graph::Data>> data(
-		new std::unique_ptr<dependency_graph::Data>());
+	std::shared_ptr<dependency_graph::Data> data(new dependency_graph::Data());
 
 	{
 		std::stringstream ss;
@@ -242,8 +241,8 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 					throw std::runtime_error("Port '" + toPortName + "' not found on node '" + node.name() + "'.");
 
 				// only on non-void ports, though
-				if(*data == nullptr && node.port(toPort).type() != typeid(void))
-					*data = node.port(toPort).getData().clone();
+				if(data->empty() && node.port(toPort).type() != typeid(void))
+					*data = node.port(toPort).getData();
 			},
 
 			// and on disconnect, put it back
@@ -259,9 +258,9 @@ possumwood::UndoStack::Action connectAction(const dependency_graph::UniqueId& fr
 				if(toPort < 0)
 					throw std::runtime_error("Port '" + toPortName + "' not found on node '" + node.name() + "'.");
 
-				if(*data != nullptr) {
+				if(!data->empty()) {
 					assert(!node.port(toPort).isConnected());
-					node.port(toPort).setData(**data);
+					node.port(toPort).setData(*data);
 				}
 			}
 		);

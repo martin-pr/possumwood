@@ -13,61 +13,44 @@ Datablock::Datablock(const MetadataHandle& meta) : m_meta(meta) {
 		m_data.push_back(meta.metadata().attr(a).createData());
 }
 
-Datablock::Datablock(const Datablock& d) : m_meta(d.m_meta) {
-	for(auto& a : d.m_data) {
-		m_data.push_back(a->clone());
-	}
-}
-
-Datablock& Datablock::operator = (const Datablock& d) {
-	m_data.clear();
-
-	for(auto& a : d.m_data)
-		m_data.push_back(a->clone());
-
-	m_meta = d.m_meta;
-
-	return *this;
-}
-
 const Data& Datablock::data(size_t index) const {
 	assert(m_data.size() > index);
 
-	if(m_data[index]->typeinfo() == typeid(void))
+	if(m_data[index].typeinfo() == typeid(void))
 		throw std::runtime_error("Cannot get a value from an unconnected untyped port");
 
-	return *m_data[index];
+	return m_data[index];
 }
 
 
 void Datablock::setData(size_t index, const Data& data) {
 	assert(m_data.size() > index);
 
-	if(m_data[index]->typeinfo() == typeid(void))
+	if(m_data[index].typeinfo() == typeid(void))
 		throw std::runtime_error("Cannot set a value to an unconnected untyped port");
 
-	if(data.type() != m_data[index]->type())
+	if(data.type() != m_data[index].type())
 		throw std::runtime_error("Port value type does not match");
 
-	m_data[index]->assign(data);
+	m_data[index] = data;
 }
 
 bool Datablock::isNull(std::size_t index) const {
 	assert(m_data.size() > index);
-	return m_data[index]->typeinfo() == typeid(void);
+	return m_data[index].typeinfo() == typeid(void);
 }
 
 void Datablock::set(size_t index, const Port& port) {
 	assert(m_data.size() > index);
 
 	// void instances handling - make a new instance if needed
-	if(m_data[index]->typeinfo() == typeid(void))
-		m_data[index] = port.node().datablock().m_data[port.index()]->clone();
-	assert(m_data[index]->typeinfo() != typeid(void));
+	if(m_data[index].typeinfo() == typeid(void))
+		m_data[index] = port.node().datablock().m_data[port.index()];
+	assert(m_data[index].typeinfo() != typeid(void));
 
 	// and assign the value
-	assert(m_data[index]->type() == dependency_graph::unmangledTypeId(port.type()));
-	m_data[index]->assign(*port.node().datablock().m_data[port.index()]);
+	assert(m_data[index].type() == dependency_graph::unmangledTypeId(port.type()));
+	m_data[index] = port.node().datablock().m_data[port.index()];
 }
 
 void Datablock::reset(size_t index) {

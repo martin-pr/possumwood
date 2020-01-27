@@ -37,7 +37,7 @@ bool isCompatible(const dependency_graph::Metadata& m1, const dependency_graph::
 
 
 dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& currentNetworkIndex, const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id,
-	std::shared_ptr<const dependency_graph::Data> blindData, boost::optional<const dependency_graph::Datablock> data = boost::optional<const dependency_graph::Datablock>()) {
+	const dependency_graph::Data& blindData, boost::optional<const dependency_graph::Datablock> data = boost::optional<const dependency_graph::Datablock>()) {
 
 #ifndef NDEBUG
 	if(data) {
@@ -61,11 +61,7 @@ dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& curre
 		dataRef = boost::optional<const dependency_graph::Datablock&>(*data);
 	}
 
-	std::unique_ptr<dependency_graph::Data> d;
-	if(blindData)
-		d = blindData->clone();
-
-	dependency_graph::NodeBase& n = network.nodes().add(meta, name, std::move(d), dataRef, id);
+	dependency_graph::NodeBase& n = network.nodes().add(meta, name, blindData, dataRef, id);
 	assert(n.index() == id);
 	return n;
 }
@@ -92,11 +88,8 @@ void doRemoveNode(const dependency_graph::UniqueId& id) {
 }
 
 possumwood::UndoStack::Action createNodeAction(const dependency_graph::UniqueId& currentNetworkId, const dependency_graph::MetadataHandle& meta, const std::string& name,
-	std::unique_ptr<dependency_graph::Data>&& data, const dependency_graph::UniqueId& id,
+	const dependency_graph::Data& blindData, const dependency_graph::UniqueId& id,
 	boost::optional<const dependency_graph::Datablock> datablock) {
-
-	// make a copy of blind data for binding
-	std::shared_ptr<const dependency_graph::Data> blindData(data.release());
 
 	std::stringstream ss;
 	ss << "Creating node " << name << " of type " << meta->type();
@@ -113,10 +106,12 @@ possumwood::UndoStack::Action createNodeAction(const dependency_graph::UniqueId&
 
 
 possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name,
-	std::unique_ptr<dependency_graph::Data>&& data, const dependency_graph::UniqueId& id,
+	const dependency_graph::Data& blindData, const dependency_graph::UniqueId& id,
 	boost::optional<const dependency_graph::Datablock> datablock) {
 
-	return createNodeAction(current.index(), meta, name, std::move(data), id, datablock);
+	assert(!blindData.empty());
+
+	return createNodeAction(current.index(), meta, name, blindData, id, datablock);
 }
 
 possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node) {
@@ -128,7 +123,7 @@ possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node)
 		action.append(removeNetworkAction(node.as<dependency_graph::Network>()));
 
 	// store the original blind data for undo
-	std::shared_ptr<const dependency_graph::Data> blindData(node.blindData().clone());
+	std::shared_ptr<const dependency_graph::Data> blindData(new dependency_graph::Data(node.blindData()));
 
 	std::stringstream ss;
 	ss << "Removing node " << node.name() << " of type " << node.metadata()->type();

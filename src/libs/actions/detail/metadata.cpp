@@ -109,7 +109,7 @@ void buildNetwork(dependency_graph::Network& network) {
 	std::unique_ptr<dependency_graph::Metadata> meta = dependency_graph::instantiateMetadata("network");
 
 	std::vector<Link> links;
-	std::vector<std::unique_ptr<dependency_graph::Data>> values;
+	std::vector<dependency_graph::Data> values;
 
 	for(auto& n : network.nodes()) {
 		if(n.metadata()->type() == "input" && n.port(0).isConnected()) {
@@ -124,10 +124,10 @@ void buildNetwork(dependency_graph::Network& network) {
 			assert(!conns.empty());
 
 			dependency_graph::Attr in = conns.front().get().node().metadata()->attr(conns.front().get().index());
-			dependency_graph::detail::MetadataAccess::addAttribute(*meta, n.name(), in.category(), *in.createData(), in.flags());
+			dependency_graph::detail::MetadataAccess::addAttribute(*meta, n.name(), in.category(), in.createData(), in.flags());
 
 			// also the port value
-			values.push_back(n.port(0).getData().clone());
+			values.push_back(n.port(0).getData());
 		}
 
 		if(n.metadata()->type() == "output" && n.port(0).isConnected()) {
@@ -142,10 +142,10 @@ void buildNetwork(dependency_graph::Network& network) {
 			assert(conn);
 
 			dependency_graph::Attr out = conn->node().metadata()->attr(conn->index());;
-			dependency_graph::detail::MetadataAccess::addAttribute(*meta, n.name(), out.category(), *out.createData(), out.flags());
+			dependency_graph::detail::MetadataAccess::addAttribute(*meta, n.name(), out.category(), out.createData(), out.flags());
 
 			// also port the value
-			values.push_back(conn->node().port(conn->index()).getData().clone());
+			values.push_back(conn->node().port(conn->index()).getData());
 		}
 	}
 
@@ -190,7 +190,7 @@ void buildNetwork(dependency_graph::Network& network) {
 
 		// transfer all the values
 		for(std::size_t pi=0; pi<values.size(); ++pi)
-			action.append(detail::setValueAction(network.index(), pi, *values[pi]->clone()));
+			action.append(detail::setValueAction(network.index(), pi, values[pi]));
 
 		// link all what needs to be linked
 		for(auto& l : links)

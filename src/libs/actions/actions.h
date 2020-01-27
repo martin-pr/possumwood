@@ -38,8 +38,7 @@ possumwood::io::json toJson(const dependency_graph::Selection& selection = depen
 
 template<typename T>
 void setValue(dependency_graph::Port& p, const T& value) {
-	const std::unique_ptr<const dependency_graph::Data> data(new dependency_graph::Data(value));
-	setValue(p, *data);
+	setValue(p, dependency_graph::Data(value));
 }
 
 }}

@@ -64,7 +64,7 @@ class NodeBase {
 
 		const Data& blindData() const;
 
-		void setBlindData(std::unique_ptr<Data>&& data);
+		void setBlindData(const Data& data);
 		bool hasBlindData() const;
 		std::string blindDataType() const;
 
@@ -109,7 +109,7 @@ class NodeBase {
 		Network* m_network;
 		UniqueId m_index;
 
-		std::unique_ptr<Data> m_blindData;
+		Data m_blindData;
 
 		MetadataHandle m_metadata;
 		Datablock m_data;

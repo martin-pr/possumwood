@@ -37,7 +37,7 @@ class Attr {
 		bool operator != (const Attr& a) const;
 
 		/// todo: make private - no need for it in public interface
-		std::unique_ptr<Data> createData() const;
+		Data createData() const;
 
 	protected:
 		Attr(const std::string& name, Category cat, const Data& data, unsigned flags);

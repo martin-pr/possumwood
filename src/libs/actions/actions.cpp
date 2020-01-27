@@ -34,10 +34,7 @@ void doSetBlindData(const dependency_graph::UniqueId& node, const possumwood::No
 /////////////////////////////////////////////////////////////////////
 
 void createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id) {
-	std::unique_ptr<dependency_graph::Data> nodeData(
-		new dependency_graph::Data(_data));
-
-	auto action = detail::createNodeAction(current, meta, name, std::move(nodeData), id);
+	auto action = detail::createNodeAction(current, meta, name, _data, id);
 
 	possumwood::AppCore::instance().undoStack().execute(action);
 }
@@ -215,12 +212,12 @@ namespace {
 				const possumwood::io::json& n = ni.value();
 
 				// extract the blind data via factory mechanism
-				std::unique_ptr<dependency_graph::Data> blindData;
+				dependency_graph::Data blindData;
 				if(n.find("blind_data") != n.end() && !n["blind_data"].is_null()) {
 					blindData = dependency_graph::Data::create(n["blind_data"]["type"].get<std::string>());
-					assert(blindData != nullptr);
-					assert(dependency_graph::io::isSaveable(*blindData));
-					io::fromJson(n["blind_data"]["value"], *blindData);
+					assert(!blindData.empty());
+					assert(dependency_graph::io::isSaveable(blindData));
+					io::fromJson(n["blind_data"]["value"], blindData);
 				}
 
 				// find the metadata instance
@@ -236,7 +233,7 @@ namespace {
 
 				// add the action to create the node itself
 				action.append(detail::createNodeAction(targetIndex, meta, n["name"].get<std::string>(),
-					std::move(blindData), nodeId));
+					blindData, nodeId));
 
 				// recurse to add nested networks
 				//   -> this will also construct the internals of the network, and instantiate

@@ -34,11 +34,11 @@ Nodes::Nodes(Network* parent) : m_parent(parent) {
 
 }
 
-NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, std::unique_ptr<Data>&& blindData, boost::optional<const dependency_graph::Datablock&> datablock, const UniqueId& id) {
+NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, const Data& blindData, boost::optional<const dependency_graph::Datablock&> datablock, const UniqueId& id) {
 	std::unique_ptr<dependency_graph::NodeBase> node = type->createNode(name, *m_parent, id);
 	assert(isCompatible(node->metadata().metadata(), type.metadata()));
 
-	node->m_blindData = std::move(blindData);
+	node->m_blindData = blindData;
 
 	if(datablock) {
 		assert(isCompatible(datablock->meta().metadata(), (node->metadata().metadata())));

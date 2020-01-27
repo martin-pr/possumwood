@@ -125,7 +125,7 @@ void Port::setData(const Data& val) {
 
 	// set the value in the data block
 	const bool valueWasSet = (m_parent->get(m_id).type() != val.type()) ||
-		(not m_parent->get(m_id).isEqual(val));
+		(m_parent->get(m_id) != val);
 	m_parent->set(m_id, val);
 
 	// explicitly setting a value makes it not dirty, but makes everything that

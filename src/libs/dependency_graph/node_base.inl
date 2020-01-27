@@ -12,14 +12,14 @@ template<typename T>
 void NodeBase::setBlindData(const T& value) {
 	// create blind data if they're not present
 	bool newData = false;
-	if(m_blindData.get() == NULL) {
-		m_blindData = std::unique_ptr<Data>(new Data(T()));
+	if(m_blindData.empty()) {
+		m_blindData = Data(T());
 		newData = true;
 	}
 
 	// set the value
-	if(m_blindData->get<T>() != value) {
-		m_blindData->set<T>(value);
+	if(m_blindData.get<T>() != value) {
+		m_blindData.set<T>(value);
 
 		// and call the callback
 		if(!newData)
@@ -32,15 +32,10 @@ void NodeBase::setBlindData(const T& value) {
 template<typename T>
 const T& NodeBase::blindData() const {
 	// retype and return
-	assert(m_blindData != NULL);
-	assert(m_blindData->type() == unmangledTypeId<T>());
-	return m_blindData->get<T>();
+	assert(!m_blindData.empty());
+	assert(m_blindData.type() == unmangledTypeId<T>());
+	return m_blindData.get<T>();
 }
-
-// template<typename T>
-// bool NodeBase::is() const {
-// 	return dynamic_cast<const T*>(this) != nullptr;
-// }
 
 template<typename T>
 const T& NodeBase::as() const {

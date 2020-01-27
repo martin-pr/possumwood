@@ -11,11 +11,11 @@
 namespace possumwood { namespace actions { namespace detail {
 
 possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name,
-	std::unique_ptr<dependency_graph::Data>&& _data, const dependency_graph::UniqueId& id,
+	const dependency_graph::Data& _data, const dependency_graph::UniqueId& id,
 	boost::optional<const dependency_graph::Datablock> data = boost::optional<const dependency_graph::Datablock>());
 
 possumwood::UndoStack::Action createNodeAction(const dependency_graph::UniqueId& currentNetworkId, const dependency_graph::MetadataHandle& meta, const std::string& name,
-	std::unique_ptr<dependency_graph::Data>&& _data, const dependency_graph::UniqueId& id,
+	const dependency_graph::Data& _data, const dependency_graph::UniqueId& id,
 	boost::optional<const dependency_graph::Datablock> data = boost::optional<const dependency_graph::Datablock>());
 
 possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _selection);
