@@ -33,6 +33,29 @@ std::ostream& operator << (std::ostream& out, const TestStruct& t);
 
 //////
 
+/// a simple noncopyable struct "data holder" - noncopyable, movable, and each instance comes with
+///   its "own ID".
+/// This struct also doesn't have a comparison operator - reassignment (and recomputation) is always needed
+struct NoncopyableStruct {
+	NoncopyableStruct();
+
+	NoncopyableStruct(const NoncopyableStruct&) = delete;
+	NoncopyableStruct& operator = (const NoncopyableStruct&) = delete;
+
+	NoncopyableStruct(NoncopyableStruct&&) = default;
+	NoncopyableStruct& operator = (NoncopyableStruct&&) = default;
+
+	unsigned id;
+};
+
+// no implementation of serialization - intentional, to test support for types that can't be serialized
+//inline void to_json(::possumwood::io::json& json, const TestStruct& ts) {}
+//inline void from_json(const ::possumwood::io::json& json, TestStruct& ts) {}
+
+std::ostream& operator << (std::ostream& out, const NoncopyableStruct& t);
+
+//////
+
 /// returns a reference to metadata of a simple addition node
 const dependency_graph::MetadataHandle& additionNode();
 
