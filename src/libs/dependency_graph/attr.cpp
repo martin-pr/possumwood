@@ -13,11 +13,11 @@ struct Attr::AttrData {
 	Category category;
 	unsigned flags;
 
-	std::unique_ptr<BaseData> data;
+	Data data;
 };
 
-Attr::Attr(const std::string& name, Category cat, const BaseData& d, unsigned flags)
-	: m_data(new AttrData{name, unsigned(-1), cat, flags, d.clone()}) {
+Attr::Attr(const std::string& name, Category cat, const Data& d, unsigned flags)
+	: m_data(new AttrData{name, unsigned(-1), cat, flags, d}) {
 }
 
 Attr::~Attr() {
@@ -41,22 +41,22 @@ void Attr::setOffset(unsigned o) {
 		o,
 		m_data->category,
 		m_data->flags,
-		m_data->data->clone()
+		m_data->data
 	});
 
 	m_data = std::shared_ptr<const AttrData>(newData.release());
 }
 
 const std::type_info& Attr::type() const {
-	return m_data->data->typeinfo();
+	return m_data->data.typeinfo();
 }
 
 unsigned Attr::flags() const {
 	return m_data->flags;
 }
 
-std::unique_ptr<BaseData> Attr::createData() const {
-	return m_data->data->clone();
+Data Attr::createData() const {
+	return m_data->data;
 }
 
 bool Attr::isValid() const {
@@ -87,7 +87,7 @@ std::ostream& operator << (std::ostream& out, const Attr& attr) {
 /////////
 
 TypedAttr<void>::TypedAttr(const std::string& name, Category cat, unsigned flags) :
-	Attr(name, cat, Data<void>(), flags) {
+	Attr(name, cat, Data(), flags) {
 }
 
 InAttr<void>::InAttr() : TypedAttr<void>("", Attr::kInput, 0) {

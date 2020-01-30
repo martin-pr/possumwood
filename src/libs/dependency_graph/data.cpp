@@ -2,27 +2,48 @@
 
 namespace dependency_graph {
 
-std::map<std::string, std::function<std::unique_ptr<BaseData>()>>& BaseData::factories() {
-	static std::unique_ptr<std::map<std::string, std::function<std::unique_ptr<BaseData>()>>> s_factories;
-	if(s_factories == nullptr)
-		s_factories = std::unique_ptr<std::map<std::string, std::function<std::unique_ptr<BaseData>()>>>(new std::map<std::string, std::function<std::unique_ptr<BaseData>()>>());
-	return *s_factories;
+Data::Data() {
 }
 
-BaseData::BaseData() {
-};
-
-BaseData::~BaseData() {
-};
-
-BaseData::BaseData(const BaseData& bd) {
+Data::Data(const Data& d) {
+	m_data = d.m_data;
+	assert(std::string(d.typeinfo().name()) == std::string(typeinfo().name()));
 }
 
-BaseData& BaseData::operator = (const BaseData& bd) {
+Data& Data::operator = (const Data& d) {
+	// it should be possible to:
+	// 1. assign values between the same types
+	// 2. assign a value to a null (void) data - connecting void ports
+	// 3. assign a null (void) to a value - disconnecting void ports
+	assert(std::string(d.typeinfo().name()) == std::string(typeinfo().name()) || empty() || d.empty());
+	m_data = d.m_data;
 	return *this;
 }
 
-std::unique_ptr<BaseData> BaseData::create(const std::string& type) {
+bool Data::operator == (const Data& d) const {
+	assert(m_data != nullptr && d.m_data != nullptr);
+	return m_data->isEqual(*d.m_data);
+}
+
+bool Data::operator != (const Data& d) const {
+	assert(m_data != nullptr && d.m_data != nullptr);
+	return !m_data->isEqual(*d.m_data);
+}
+
+const std::type_info& Data::typeinfo() const {
+	if(m_data == nullptr)
+		return typeid(void);
+	return m_data->typeinfo();
+}
+
+std::map<std::string, std::function<Data()>>& Data::factories() {
+	static std::unique_ptr<std::map<std::string, std::function<Data()>>> s_factories;
+	if(s_factories == nullptr)
+		s_factories = std::unique_ptr<std::map<std::string, std::function<Data()>>>(new std::map<std::string, std::function<Data()>>());
+	return *s_factories;
+}
+
+Data Data::create(const std::string& type) {
 	auto it = factories().find(type);
 
 	if(it == factories().end()) {
@@ -35,44 +56,24 @@ std::unique_ptr<BaseData> BaseData::create(const std::string& type) {
 	return it->second();
 }
 
-std::string BaseData::type() const {
+std::string Data::type() const {
 	return dependency_graph::unmangledName(typeinfo().name());
 }
 
-////
-
-Data<void>::Data() {
+std::string Data::toString() const {
+	if(m_data == nullptr)
+		return "(null)";
+	return m_data->toString();
 }
 
-Data<void>::~Data() {
+bool Data::empty() const {
+	return m_data == nullptr;
 }
 
-void Data<void>::assign(const BaseData& src) {
-	assert(src.typeinfo() == typeid(void));
-}
-
-bool Data<void>::isEqual(const BaseData& src) const {
-	return src.typeinfo() == typeid(void);
-}
-
-const std::type_info& Data<void>::typeinfo() const {
-	return typeid(void);
-}
-
-std::unique_ptr<BaseData> Data<void>::clone() const {
-	return std::unique_ptr<BaseData>(new Data<void>());
-}
-
-std::string Data<void>::toString() const {
-	return "void";
-}
-
-std::ostream& operator << (std::ostream& out, const BaseData& bd) {
+std::ostream& operator << (std::ostream& out, const Data& bd) {
 	out << bd.toString();
 
 	return out;
 }
-
-BaseData::Factory<void> Data<void>::m_factory;
 
 }

@@ -47,7 +47,7 @@ class Values : public boost::noncopyable {
 		template<typename T>
 		bool is(const TypedAttr<void>& attr) const;
 
-		const BaseData& data(std::size_t index) const;
+		const Data& data(std::size_t index) const;
 
 	private:
 		NodeBase* m_node;

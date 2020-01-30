@@ -13,15 +13,14 @@ template<typename T>
 const T& Datablock::get(size_t index) const {
 	assert(index < m_data.size());
 
-	const Data<T>& d = dynamic_cast<const Data<T>&>(data(index));
-	return d.value;
+	return data(index).get<T>();
 }
 
 template<typename T>
 void Datablock::set(size_t index, const T& value) {
 	assert(index < m_data.size());
 
-	setData(index, Data<T>(value));
+	setData(index, Data(value));
 }
 
 }

@@ -38,6 +38,8 @@ class Interval {
 		bool m_inProgressUpdates;
 };
 
+std::ostream& operator << (std::ostream& out, const Interval& f);
+
 }
 
 template<>
@@ -48,8 +50,6 @@ struct Traits<maths::Interval> {
 		return std::array<float, 3>{{1, 1, 1}};
 	}
 };
-
-std::ostream& operator << (std::ostream& out, const maths::Interval& f);
 
 }
 

@@ -92,7 +92,7 @@ const NodeBase& Port::node() const {
 	return *m_parent;
 }
 
-const BaseData& Port::getData() {
+const Data& Port::getData() {
 	// do the computation if needed, to get rid of the dirty flag
 	if(m_dirty) {
 		if(category() == Attr::kInput) {
@@ -118,14 +118,14 @@ const BaseData& Port::getData() {
 	return m_parent->get(m_id);
 }
 
-void Port::setData(const BaseData& val) {
+void Port::setData(const Data& val) {
 	// setting a value in the middle of the graph might do
 	//   weird things, so lets assert it
 	assert(category() == Attr::kOutput || !isConnected());
 
 	// set the value in the data block
 	const bool valueWasSet = (m_parent->get(m_id).type() != val.type()) ||
-		(not m_parent->get(m_id).isEqual(val));
+		(m_parent->get(m_id) != val);
 	m_parent->set(m_id, val);
 
 	// explicitly setting a value makes it not dirty, but makes everything that

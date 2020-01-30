@@ -167,11 +167,11 @@ size_t NodeBase::portCount() const {
 	return m_ports.size();
 }
 
-const BaseData& NodeBase::get(size_t index) const {
+const Data& NodeBase::get(size_t index) const {
 	return datablock().data(index);
 }
 
-void NodeBase::set(size_t index, const BaseData& value) {
+void NodeBase::set(size_t index, const Data& value) {
 	assert(port(index).category() == Attr::kOutput || !port(index).isConnected());
 	return datablock().setData(index, value);
 }
@@ -193,7 +193,7 @@ void NodeBase::computeInput(size_t index) {
 	const NodeBase& srcNode = out->node();
 	const Datablock& srcData = srcNode.datablock();
 	datablock().setData(index, srcData.data(out->index()));
-	assert(datablock().data(index).isEqual(srcData.data(out->index())));
+	assert(datablock().data(index) == srcData.data(out->index()));
 
 	// and mark as not dirty
 	port(index).setDirty(false);
@@ -281,22 +281,22 @@ const State& NodeBase::state() const {
 	return m_state;
 }
 
-void NodeBase::setBlindData(std::unique_ptr<BaseData>&& data) {
-	m_blindData = std::move(data);
+void NodeBase::setBlindData(const Data& data) {
+	m_blindData = data;
 }
 
 bool NodeBase::hasBlindData() const {
-	return m_blindData != nullptr;
+	return !m_blindData.empty();
 }
 
 std::string NodeBase::blindDataType() const {
-	assert(m_blindData != nullptr);
-	return m_blindData->type();
+	assert(hasBlindData());
+	return m_blindData.type();
 }
 
-const BaseData& NodeBase::blindData() const {
-	assert(m_blindData != nullptr);
-	return *m_blindData;
+const Data& NodeBase::blindData() const {
+	assert(hasBlindData());
+	return m_blindData;
 }
 
 }
