@@ -34,7 +34,7 @@ void doSetBlindData(const dependency_graph::UniqueId& node, const possumwood::No
 /////////////////////////////////////////////////////////////////////
 
 void createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id) {
-	auto action = detail::createNodeAction(current, meta, name, _data, id);
+	auto action = detail::createNodeAction(current, meta, name, dependency_graph::Data(_data), id);
 
 	possumwood::AppCore::instance().undoStack().execute(action);
 }

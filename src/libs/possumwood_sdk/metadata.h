@@ -28,7 +28,7 @@ class Metadata : public dependency_graph::Metadata {
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, const T& defaultValue = T(), AttrFlags flags = AttrFlags::kHorizontal | AttrFlags::kVisible);
+		void addAttribute(dependency_graph::InAttr<T>& in, const std::string& name, T defaultValue = T(), AttrFlags flags = AttrFlags::kHorizontal | AttrFlags::kVisible);
 
 		/// registers an output attribute.
 		/// Each attribute instance should be held statically in the
@@ -36,7 +36,7 @@ class Metadata : public dependency_graph::Metadata {
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, const T& defaultValue = T(), AttrFlags flags = AttrFlags::kHorizontal | AttrFlags::kVisible);
+		void addAttribute(dependency_graph::OutAttr<T>& out, const std::string& name, T defaultValue = T(), AttrFlags flags = AttrFlags::kHorizontal | AttrFlags::kVisible);
 
 		void addAttribute(dependency_graph::InAttr<void>& in, const std::string& name, AttrFlags flags = AttrFlags::kHorizontal | AttrFlags::kVisible);
 		void addAttribute(dependency_graph::OutAttr<void>& in, const std::string& name, AttrFlags flags = AttrFlags::kHorizontal | AttrFlags::kVisible);

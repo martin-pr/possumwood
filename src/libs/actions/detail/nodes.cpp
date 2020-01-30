@@ -122,9 +122,6 @@ possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node)
 	if(node.is<dependency_graph::Network>())
 		action.append(removeNetworkAction(node.as<dependency_graph::Network>()));
 
-	// store the original blind data for undo
-	std::shared_ptr<const dependency_graph::Data> blindData(new dependency_graph::Data(node.blindData()));
-
 	std::stringstream ss;
 	ss << "Removing node " << node.name() << " of type " << node.metadata()->type();
 
@@ -133,7 +130,7 @@ possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node)
 		ss.str(),
 		std::bind(&doRemoveNode, node.index()),
 		std::bind(&doCreateNode, node.network().index(), node.metadata(), node.name(), node.index(),
-			blindData, cnode.datablock())
+			node.blindData(), cnode.datablock())
 	);
 
 	return action;

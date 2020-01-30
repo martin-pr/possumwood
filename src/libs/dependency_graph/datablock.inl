@@ -17,10 +17,10 @@ const T& Datablock::get(size_t index) const {
 }
 
 template<typename T>
-void Datablock::set(size_t index, const T& value) {
+void Datablock::set(size_t index, T value) {
 	assert(index < m_data.size());
 
-	setData(index, Data(value));
+	setData(index, Data(std::move(value)));
 }
 
 }

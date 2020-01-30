@@ -80,7 +80,7 @@ class property : public property_base {
 				// allow the UI to change it (or a part of it)
 				get(value);
 				// and use action to apply it to a port (making it undoable)
-				possumwood::actions::setValue(port, value);
+				possumwood::actions::setValue(port, std::move(value));
 			}
 		}
 

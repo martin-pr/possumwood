@@ -53,7 +53,7 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(InAttr<T>& in, const std::string& name, const T& defaultValue = T(), unsigned flags = 0);
+		void addAttribute(InAttr<T>& in, const std::string& name, T&& defaultValue = T(), unsigned flags = 0);
 
 		void addAttribute(InAttr<void>& in, const std::string& name, unsigned flags = 0);
 
@@ -63,7 +63,7 @@ class Metadata : public boost::noncopyable, public std::enable_shared_from_this<
 		/// This call does *not* take ownership of the attribute, and assumes
 		/// that it will be available throughout the application run.
 		template<typename T>
-		void addAttribute(OutAttr<T>& out, const std::string& name, const T& defaultValue = T(), unsigned flags = 0);
+		void addAttribute(OutAttr<T>& out, const std::string& name, T&& defaultValue = T(), unsigned flags = 0);
 
 		void addAttribute(OutAttr<void>& in, const std::string& name, unsigned flags = 0);
 

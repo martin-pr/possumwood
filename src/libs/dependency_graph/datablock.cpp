@@ -5,6 +5,7 @@
 #include "port.h"
 #include "node_base.h"
 #include "rtti.h"
+#include "data.inl"
 
 namespace dependency_graph {
 
