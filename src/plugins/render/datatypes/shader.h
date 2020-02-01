@@ -13,9 +13,11 @@ namespace possumwood {
 
 /// Generic shader type - not to be used directly, but only via explicit concrete
 /// specialisations below. This allows to distinguish between shaders by their C++ type.
-class Shader : public boost::noncopyable {
+class Shader {
 	public:
-		Shader(GLenum shaderType);
+		Shader();
+
+		Shader(GLenum shaderType, const std::string& source);
 		virtual ~Shader();
 
 		/// returns the current state of this shader
@@ -24,37 +26,44 @@ class Shader : public boost::noncopyable {
 		GLuint id() const;
 
 		/// compiles this shader, and sets the state according to the success or failure
-		void compile(const std::string& source);
+		void compile();
 
 	private:
-		dependency_graph::State m_state;
+		struct Pimpl;
+		std::shared_ptr<Pimpl> m_pimpl;
 
-		GLuint m_shaderId;
+		const std::string m_source;
+		GLenum m_shaderType;
 };
+
+std::ostream& operator <<(std::ostream& out, const Shader& s);
 
 /// Concrete type for a Fragment shader - to allow explicit type checking
 class FragmentShader : public Shader {
 	public:
-		FragmentShader() : Shader(GL_FRAGMENT_SHADER) {
+		FragmentShader() {}
+		FragmentShader(const std::string& source) : Shader(GL_FRAGMENT_SHADER, source) {
 		}
 };
 
 /// Concrete type for a Vertex shader - to allow explicit type checking
 class VertexShader : public Shader {
 	public:
-		VertexShader() : Shader(GL_VERTEX_SHADER) {
+		VertexShader() {}
+		VertexShader(const std::string& source) : Shader(GL_VERTEX_SHADER, source) {
 		}
 };
 
 /// Concrete type for a Vertex shader - to allow explicit type checking
 class GeometryShader : public Shader {
 	public:
-		GeometryShader() : Shader(GL_GEOMETRY_SHADER) {
+		GeometryShader() {}
+		GeometryShader(const std::string& source) : Shader(GL_GEOMETRY_SHADER, source) {
 		}
 };
 
 template<>
-struct Traits<std::shared_ptr<const FragmentShader>> {
+struct Traits<FragmentShader> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0.6, 0, 0.6}};
 	}
@@ -62,7 +71,7 @@ struct Traits<std::shared_ptr<const FragmentShader>> {
 };
 
 template<>
-struct Traits<std::shared_ptr<const VertexShader>> {
+struct Traits<VertexShader> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0.3, 0, 0.3}};
 	}
@@ -70,7 +79,7 @@ struct Traits<std::shared_ptr<const VertexShader>> {
 };
 
 template<>
-struct Traits<std::shared_ptr<const GeometryShader>> {
+struct Traits<GeometryShader> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0.45, 0, 0.45}};
 	}

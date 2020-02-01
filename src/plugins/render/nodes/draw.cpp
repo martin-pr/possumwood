@@ -25,7 +25,7 @@
 
 namespace {
 
-dependency_graph::InAttr<std::shared_ptr<const possumwood::Program>> a_program;
+dependency_graph::InAttr<possumwood::Program> a_program;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::VertexData>> a_vertexData;
 dependency_graph::InAttr<possumwood::Uniforms> a_uniforms;
 
@@ -37,20 +37,17 @@ const possumwood::Uniforms& defaultUniforms() {
 	return s_uniforms;
 }
 
-std::shared_ptr<const possumwood::Program> defaultProgram() {
-	static std::shared_ptr<const possumwood::Program> s_program;
+const possumwood::Program& defaultProgram() {
+	static possumwood::Program s_program;
 
-	if(s_program == nullptr) {
-		std::unique_ptr<possumwood::Program> program(new possumwood::Program());
+	if(s_program.id() == 0) {
+		std::vector<possumwood::Shader> shaders;
+		shaders.push_back(possumwood::defaultVertexShader());
+		shaders.push_back(possumwood::defaultFragmentShader());
 
-		program->addShader(possumwood::defaultVertexShader());
-		program->addShader(possumwood::defaultFragmentShader());
+		s_program = possumwood::Program(shaders);
 
-		program->link();
-
-		assert(!program->state().errored());
-
-		s_program = std::shared_ptr<const possumwood::Program>(program.release());
+		s_program.link();
 	}
 
 	return s_program;
@@ -107,9 +104,9 @@ std::set<std::string> getInputs(GLuint prog) {
 
 struct Drawable : public possumwood::Drawable {
 	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)), m_vao(0) {
-		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([this](float t) {
-				refresh();
-			});
+		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([](float t) {
+			refresh();
+		});
 	}
 
 	~Drawable() {
@@ -121,15 +118,19 @@ struct Drawable : public possumwood::Drawable {
 
 		dependency_graph::State state;
 
-		std::shared_ptr<const possumwood::Program> program = values().get(a_program);
+		possumwood::Program program = values().get(a_program);
 		std::shared_ptr<const possumwood::VertexData> vertexData = values().get(a_vertexData);
 		possumwood::Uniforms uniforms = values().get(a_uniforms);
 
-		if(!program)
-			program = defaultProgram();
+		program.link();
 
-		if(program->state().errored())
-			state.append(program->state());
+		if(program.id() == 0) {
+			program = defaultProgram();
+			program.link();
+		}
+
+		if(program.state().errored())
+			state.append(program.state());
 
 		else if(!vertexData)
 			state.addError("No vertex data provided - cannot draw.");
@@ -144,17 +145,17 @@ struct Drawable : public possumwood::Drawable {
 			GL_CHECK_ERR;
 
 			// use the program
-			glUseProgram(program->id());
+			glUseProgram(program.id());
 
 			GL_CHECK_ERR;
 
 			// feed in the uniforms
-			dependency_graph::State uniState = uniforms.use(program->id(), viewport());
+			dependency_graph::State uniState = uniforms.use(program.id(), viewport());
 			state.append(uniState);
 
 			// get all the uniforms and test them
 			{
-				const std::set<std::string> usedUniforms = getUniforms(program->id());
+				const std::set<std::string> usedUniforms = getUniforms(program.id());
 				const std::set<std::string> inputUniforms = uniforms.names();
 
 				std::set<std::string> undefinedUniforms;
@@ -170,7 +171,7 @@ struct Drawable : public possumwood::Drawable {
 
 			// get all the inputs and test them
 			{
-				const std::set<std::string> usedInputs = getInputs(program->id());
+				const std::set<std::string> usedInputs = getInputs(program.id());
 				const std::set<std::string> inputInputs = vertexData->names();
 
 				std::set<std::string> undefinedInputs;
@@ -189,7 +190,7 @@ struct Drawable : public possumwood::Drawable {
 			GL_CHECK_ERR;
 
 			// use the vertex data
-			dependency_graph::State vdState = vertexData->use(program->id(), viewport());
+			dependency_graph::State vdState = vertexData->use(program.id(), viewport());
 			state.append(vdState);
 
 			// and execute draw

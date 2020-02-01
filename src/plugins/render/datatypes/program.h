@@ -14,9 +14,10 @@
 namespace possumwood {
 
 /// OpenGL Program abstraction, to allow it to be passed through the node graph as data
-class Program : public boost::noncopyable {
+class Program {
 	public:
 		Program();
+		Program(const std::vector<Shader>& shaders);
 		virtual ~Program();
 
 		/// returns the current state of this program
@@ -24,20 +25,18 @@ class Program : public boost::noncopyable {
 		/// returns the program ID (not be used in GL commands)
 		GLuint id() const;
 
-		void addShader(const Shader& s);
-
 		/// links this program
 		void link();
 
 	private:
-		dependency_graph::State m_state;
-
-		GLuint m_programId;
-		std::vector<GLuint> m_shaderIds;
+		struct Pimpl;
+		std::shared_ptr<Pimpl> m_pimpl;
 };
 
+std::ostream& operator << (std::ostream& out, const Program& p);
+
 template<>
-struct Traits<std::shared_ptr<const Program>> {
+struct Traits<Program> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{1, 0, 1}};
 	}

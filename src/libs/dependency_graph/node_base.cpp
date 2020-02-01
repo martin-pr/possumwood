@@ -193,7 +193,6 @@ void NodeBase::computeInput(size_t index) {
 	const NodeBase& srcNode = out->node();
 	const Datablock& srcData = srcNode.datablock();
 	datablock().setData(index, srcData.data(out->index()));
-	assert(datablock().data(index) == srcData.data(out->index()));
 
 	// and mark as not dirty
 	port(index).setDirty(false);
