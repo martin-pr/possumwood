@@ -62,4 +62,12 @@ std::set<std::string> VertexData::names() const {
 	return result;
 }
 
+std::ostream& operator << (std::ostream& out, const VertexData& vd) {
+	out << "vertex data with " << vd.vboCount() << " VBOs:" << std::endl;
+	for(auto& v : vd.m_vbos)
+		out << "  - " << v.glslType << std::endl;
+
+	return out;
+}
+
 }

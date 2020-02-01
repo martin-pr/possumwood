@@ -26,7 +26,7 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::Program> a_program;
-dependency_graph::InAttr<std::shared_ptr<const possumwood::VertexData>> a_vertexData;
+dependency_graph::InAttr<possumwood::VertexData> a_vertexData;
 dependency_graph::InAttr<possumwood::Uniforms> a_uniforms;
 
 const possumwood::Uniforms& defaultUniforms() {
@@ -119,7 +119,7 @@ struct Drawable : public possumwood::Drawable {
 		dependency_graph::State state;
 
 		possumwood::Program program = values().get(a_program);
-		std::shared_ptr<const possumwood::VertexData> vertexData = values().get(a_vertexData);
+		const possumwood::VertexData& vertexData = values().get(a_vertexData);
 		possumwood::Uniforms uniforms = values().get(a_uniforms);
 
 		program.link();
@@ -131,9 +131,6 @@ struct Drawable : public possumwood::Drawable {
 
 		if(program.state().errored())
 			state.append(program.state());
-
-		else if(!vertexData)
-			state.addError("No vertex data provided - cannot draw.");
 
 		else {
 			GL_CHECK_ERR;
@@ -172,7 +169,7 @@ struct Drawable : public possumwood::Drawable {
 			// get all the inputs and test them
 			{
 				const std::set<std::string> usedInputs = getInputs(program.id());
-				const std::set<std::string> inputInputs = vertexData->names();
+				const std::set<std::string> inputInputs = vertexData.names();
 
 				std::set<std::string> undefinedInputs;
 				for(auto& u : usedInputs)
@@ -190,11 +187,11 @@ struct Drawable : public possumwood::Drawable {
 			GL_CHECK_ERR;
 
 			// use the vertex data
-			dependency_graph::State vdState = vertexData->use(program.id(), viewport());
+			dependency_graph::State vdState = vertexData.use(program.id(), viewport());
 			state.append(vdState);
 
 			// and execute draw
-			glDrawArrays(vertexData->drawElementType(), 0, vertexData->size());
+			glDrawArrays(vertexData.drawElementType(), 0, vertexData.size());
 
 			GL_CHECK_ERR;
 

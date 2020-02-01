@@ -14,9 +14,15 @@
 namespace possumwood {
 
 /// holds data about a set of vertex buffer objects
-class VertexData : public boost::noncopyable {
+class VertexData {
   public:
-	VertexData(GLenum drawElementType);
+	VertexData(GLenum drawElementType = GL_TRIANGLE_STRIP);
+
+	VertexData(const VertexData&) = delete;
+	VertexData& operator = (const VertexData&) = delete;
+
+	VertexData(VertexData&&) = default;
+	VertexData& operator = (VertexData&&) = default;
 
 	/// type of update - static (updated with the DAG), per drawing (updated on each frame
 	/// - usable only for camera-dependent data)
@@ -57,10 +63,14 @@ class VertexData : public boost::noncopyable {
 
 	std::vector<VBOHolder> m_vbos;
 	GLenum m_drawElementType;
+
+	friend std::ostream& operator << (std::ostream& out, const VertexData& vd);
 };
 
+std::ostream& operator << (std::ostream& out, const VertexData& vd);
+
 template <>
-struct Traits<std::shared_ptr<const VertexData>> {
+struct Traits<VertexData> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{1, 0.5, 1}};
 	}
