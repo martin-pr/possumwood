@@ -12,24 +12,24 @@ template <typename T>
 void Uniforms::addUniform(
     const std::string& name, std::size_t size, const UpdateType& updateType,
     std::function<void(T*, std::size_t, const ViewportState&)> updateFunctor) {
-	UniformHolder uniform;
+	std::unique_ptr<UniformHolder> uniform(new UniformHolder());
 
-	uniform.name = name;
-	uniform.glslType = std::string("uniform ") + GLSLTraits<T>::typeString() + " " + name;
+	uniform->name = name;
+	uniform->glslType = std::string("uniform ") + GLSLTraits<T>::typeString() + " " + name;
 	if(size > 0)
-		uniform.glslType += "[" + std::to_string(size) + "];";
+		uniform->glslType += "[" + std::to_string(size) + "];";
 	else
-		uniform.glslType += ";";
+		uniform->glslType += ";";
 
-	uniform.updateType = updateType;
+	uniform->updateType = updateType;
 
 	{
 		std::unique_ptr<Data<T>> data(new Data<T>());
 		data->data.resize(size);
-		uniform.data = std::move(data);
+		uniform->data = std::move(data);
 	}
 
-	uniform.updateFunctor = [updateFunctor, size](DataBase& baseData,
+	uniform->updateFunctor = [updateFunctor, size](DataBase& baseData,
 	                                              const ViewportState& vs) {
 		Data<T>& data = dynamic_cast<Data<T>&>(baseData);
 		assert(data.data.size() == size);
@@ -37,7 +37,7 @@ void Uniforms::addUniform(
 		updateFunctor(&(data.data[0]), size, vs);
 	};
 
-	uniform.useFunctor = [size](GLuint programId, const std::string& name,
+	uniform->useFunctor = [size](GLuint programId, const std::string& name,
 	                            const DataBase& baseData) -> dependency_graph::State {
 		dependency_graph::State state;
 
@@ -54,8 +54,8 @@ void Uniforms::addUniform(
 	};
 
 	// if(updateType != kPerDraw)
-	// 	uniform.updateFunctor(*uniform.data, vs);
+	// 	uniform->updateFunctor(*uniform->data, vs);
 
-	m_uniforms.push_back(std::move(uniform));
+	m_uniforms.push_back(std::shared_ptr<const UniformHolder>(uniform.release()));
 }
 }

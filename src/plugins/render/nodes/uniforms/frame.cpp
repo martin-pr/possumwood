@@ -14,19 +14,13 @@ namespace {
 
 dependency_graph::InAttr<anim::Skeleton> a_frame, a_base;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
-dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_inUniforms;
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::Uniforms>> a_outUniforms;
+dependency_graph::InAttr<possumwood::Uniforms> a_inUniforms;
+dependency_graph::OutAttr<possumwood::Uniforms> a_outUniforms;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State result;
 
-	std::unique_ptr<possumwood::Uniforms> uniforms;
-
-	std::shared_ptr<const possumwood::Uniforms> inUniforms = data.get(a_inUniforms);
-	if(inUniforms != nullptr)
-		uniforms = std::unique_ptr<possumwood::Uniforms>(new possumwood::Uniforms(*inUniforms));
-	else
-		uniforms = std::unique_ptr<possumwood::Uniforms>(new possumwood::Uniforms());
+	possumwood::Uniforms uniforms = data.get(a_inUniforms);
 
 	anim::Skeleton frame = data.get(a_frame);
 	std::vector<Imath::M44f> matrices(frame.size());
@@ -64,7 +58,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	for(unsigned a=0;a<frame.size();++a)
 		matrices[a] = frame[a].tr().toMatrix44();
 
-	uniforms->addUniform<Imath::M44f>(
+	uniforms.addUniform<Imath::M44f>(
 		"frame",
 		frame.size(),
 		possumwood::Uniforms::kPerFrame,
@@ -75,7 +69,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 	);
 
-	data.set(a_outUniforms, std::shared_ptr<const possumwood::Uniforms>(uniforms.release()));
+	data.set(a_outUniforms, uniforms);
 
 	return result;
 }
@@ -85,8 +79,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_base, "base_pose");
 	meta.addAttribute(a_mode, "mode",
 	                  possumwood::Enum({"World-space", "Skinning"}));
-	meta.addAttribute(a_inUniforms, "in_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_outUniforms, "out_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inUniforms, "in_uniforms", possumwood::Uniforms(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outUniforms, "out_uniforms", possumwood::Uniforms(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_frame, a_outUniforms);
 	meta.addInfluence(a_base, a_outUniforms);

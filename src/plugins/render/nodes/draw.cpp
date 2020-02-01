@@ -27,17 +27,12 @@ namespace {
 
 dependency_graph::InAttr<std::shared_ptr<const possumwood::Program>> a_program;
 dependency_graph::InAttr<std::shared_ptr<const possumwood::VertexData>> a_vertexData;
-dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_uniforms;
+dependency_graph::InAttr<possumwood::Uniforms> a_uniforms;
 
-std::shared_ptr<const possumwood::Uniforms> defaultUniforms() {
-	static std::shared_ptr<const possumwood::Uniforms> s_uniforms;
-	if(s_uniforms == nullptr) {
-		std::unique_ptr<possumwood::Uniforms> newUniforms(new possumwood::Uniforms());
-
-		possumwood::addViewportUniforms(*newUniforms);
-
-		s_uniforms = std::shared_ptr<const possumwood::Uniforms>(newUniforms.release());
-	}
+const possumwood::Uniforms& defaultUniforms() {
+	static possumwood::Uniforms s_uniforms;
+	if(s_uniforms.empty())
+		possumwood::addViewportUniforms(s_uniforms);
 
 	return s_uniforms;
 }
@@ -128,7 +123,7 @@ struct Drawable : public possumwood::Drawable {
 
 		std::shared_ptr<const possumwood::Program> program = values().get(a_program);
 		std::shared_ptr<const possumwood::VertexData> vertexData = values().get(a_vertexData);
-		std::shared_ptr<const possumwood::Uniforms> uniforms = values().get(a_uniforms);
+		possumwood::Uniforms uniforms = values().get(a_uniforms);
 
 		if(!program)
 			program = defaultProgram();
@@ -138,9 +133,6 @@ struct Drawable : public possumwood::Drawable {
 
 		else if(!vertexData)
 			state.addError("No vertex data provided - cannot draw.");
-
-		else if(!uniforms)
-			state.addError("No uniform data provided - cannot draw.");
 
 		else {
 			GL_CHECK_ERR;
@@ -157,14 +149,13 @@ struct Drawable : public possumwood::Drawable {
 			GL_CHECK_ERR;
 
 			// feed in the uniforms
-			assert(uniforms);
-			dependency_graph::State uniState = uniforms->use(program->id(), viewport());
+			dependency_graph::State uniState = uniforms.use(program->id(), viewport());
 			state.append(uniState);
 
 			// get all the uniforms and test them
 			{
 				const std::set<std::string> usedUniforms = getUniforms(program->id());
-				const std::set<std::string> inputUniforms = uniforms->names();
+				const std::set<std::string> inputUniforms = uniforms.names();
 
 				std::set<std::string> undefinedUniforms;
 				for(auto& u : usedUniforms)

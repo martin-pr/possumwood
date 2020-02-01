@@ -36,6 +36,7 @@ class Uniforms {
 
 	/// returns the number of uniforms and textures stored in this container
 	std::size_t size() const;
+	bool empty() const;
 
 	/// returns the GLSL declaration of all values in this container
 	std::string glslDeclaration() const;
@@ -75,7 +76,7 @@ class Uniforms {
 			std::function<dependency_graph::State(GLuint, const std::string&, const DataBase&)> useFunctor;
 		};
 
-	std::vector<UniformHolder> m_uniforms;
+	std::vector<std::shared_ptr<const UniformHolder>> m_uniforms;
 
 	struct TextureHolder {
 		std::string name, glslType;
@@ -85,10 +86,14 @@ class Uniforms {
 	std::vector<TextureHolder> m_textures;
 
 	mutable float m_currentTime;
+
+	friend std::ostream& operator << (std::ostream& out, const Uniforms& uniforms);;
 };
 
+std::ostream& operator << (std::ostream& out, const Uniforms& uniforms);
+
 template <>
-struct Traits<std::shared_ptr<const Uniforms>> {
+struct Traits<Uniforms> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{1, 0.8, 1}};
 	}

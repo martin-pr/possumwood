@@ -32,12 +32,12 @@ dependency_graph::State Uniforms::use(GLuint programId, const ViewportState& vs)
 	m_currentTime = possumwood::App::instance().time();
 
 	for(auto& u : m_uniforms) {
-		if(u.updateType == kPerDraw || (timeUpdate && u.updateType == kPerFrame) || !u.initialised) {
-			u.updateFunctor(*u.data, vs);
-			u.initialised = true;
+		if(u->updateType == kPerDraw || (timeUpdate && u->updateType == kPerFrame) || !u->initialised) {
+			u->updateFunctor(*u->data, vs);
+			u->initialised = true;
 		}
 
-		dependency_graph::State tmp = u.useFunctor(programId, u.name, *u.data);
+		dependency_graph::State tmp = u->useFunctor(programId, u->name, *u->data);
 		state.append(tmp);
 	}
 
@@ -56,11 +56,15 @@ std::size_t Uniforms::size() const {
 	return m_uniforms.size() + m_textures.size();
 }
 
+bool Uniforms::empty() const {
+	return m_uniforms.empty() && m_textures.empty();
+}
+
 std::string Uniforms::glslDeclaration() const {
 	std::stringstream result;
 
 	for(auto& u : m_uniforms)
-		result << u.glslType << std::endl;
+		result << u->glslType << std::endl;
 
 	for(auto& t : m_textures)
 		result << t.glslType << std::endl;
@@ -72,12 +76,30 @@ std::set<std::string> Uniforms::names() const {
 	std::set<std::string> result;
 
 	for(auto& u : m_uniforms)
-		result.insert(u.name);
+		result.insert(u->name);
 
 	for(auto& t : m_textures)
 		result.insert(t.name);
 
 	return result;
+}
+
+std::ostream& operator << (std::ostream& out, const Uniforms& uniforms) {
+	if(!uniforms.m_uniforms.empty()) {
+		out << "Uniforms:" << std::endl;
+
+		for(auto& i : uniforms.m_uniforms)
+			out << "  " << i->name << ": " << i->glslType << std::endl;
+	}
+
+	if(!uniforms.m_textures.empty()) {
+		out << "Textures:" << std::endl;
+
+		for(auto& i : uniforms.m_textures)
+			out << "  " << i.name << ": " << i.glslType << std::endl;
+	}
+
+	return out;
 }
 
 }
