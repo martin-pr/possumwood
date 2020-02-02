@@ -55,8 +55,12 @@ class property_base : public boost::noncopyable {
 template<typename T, typename DERIVED>
 class property;
 
-template<typename T, typename DERIVED, typename ENABLE = typename std::enable_if<std::is_copy_constructible<T>::value>::type>
+template<typename T, typename DERIVED, typename ENABLE = void>
 struct property_updater {
+};
+
+template<typename T, typename DERIVED>
+struct property_updater<T, DERIVED, typename std::enable_if<std::is_copy_constructible<T>::value>::type> {
 	static void update(dependency_graph::Port& port, const property<T, DERIVED>& prop) {
 		// get the current value
 		T value = port.get<T>();

@@ -156,7 +156,7 @@ void makeVBO(possumwood::VertexData& vd, const possumwood::polymesh::GenericBase
 
 }
 
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::VertexData>> a_vd;
+dependency_graph::OutAttr<possumwood::VertexData> a_vd;
 dependency_graph::InAttr<polymesh::GenericPolymesh> a_mesh;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -167,7 +167,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		new polymesh::GenericPolymesh(data.get(a_mesh)));
 
 	// we're drawing triangles
-	std::unique_ptr<possumwood::VertexData> vd(new possumwood::VertexData(GL_TRIANGLES));
+	possumwood::VertexData vd(GL_TRIANGLES);
 
 	// first, figure out how many triangles we have
 	//   there has to be a better way to do this, come on
@@ -181,18 +181,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(triangleCount > 0) {
 		// per-vertex buffers
 		for(auto& handle : mesh->vertices().handles())
-			makeVBO<VertexExtractor>(*vd, handle, mesh, triangleCount*3);
+			makeVBO<VertexExtractor>(vd, handle, mesh, triangleCount*3);
 
 		// per-index buffers
 		for(auto& handle : mesh->indices().handles())
-			makeVBO<IndexExtractor>(*vd, handle, mesh, triangleCount*3);
+			makeVBO<IndexExtractor>(vd, handle, mesh, triangleCount*3);
 
 		// per-index buffers
 		for(auto& handle : mesh->polygons().handles())
-			makeVBO<PolyExtractor>(*vd, handle, mesh, triangleCount*3);
+			makeVBO<PolyExtractor>(vd, handle, mesh, triangleCount*3);
 	}
 
-	data.set(a_vd, std::shared_ptr<const possumwood::VertexData>(vd.release()));
+	data.set(a_vd, std::move(vd));
 
 	return result;
 }
