@@ -56,7 +56,7 @@ class Attr {
 template<typename T>
 class TypedAttr : public Attr {
 	protected:
-		TypedAttr(const std::string& name, Category cat, const T& defaultValue, unsigned flags);
+		TypedAttr(const std::string& name, Category cat, T&& defaultValue, unsigned flags);
 };
 
 template<>
@@ -72,7 +72,7 @@ class InAttr final : public TypedAttr<T> {
 		InAttr();
 
 	protected:
-		InAttr(const std::string& name, const T& defaultValue, unsigned flags);
+		InAttr(const std::string& name, T&& defaultValue, unsigned flags);
 
 		friend class Metadata;
 };
@@ -95,7 +95,7 @@ class OutAttr final : public TypedAttr<T> {
 		OutAttr();
 
 	protected:
-		OutAttr(const std::string& name, const T& defaultValue, unsigned flags);
+		OutAttr(const std::string& name, T&& defaultValue, unsigned flags);
 
 		friend class Metadata;
 };

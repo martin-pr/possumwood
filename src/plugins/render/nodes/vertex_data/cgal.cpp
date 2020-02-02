@@ -181,7 +181,7 @@ VBOName CGALType(const std::string& t) {
 using possumwood::Meshes;
 using possumwood::CGALPolyhedron;
 
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::VertexData>> a_vd;
+dependency_graph::OutAttr<possumwood::VertexData> a_vd;
 dependency_graph::InAttr<Meshes> a_mesh;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -190,7 +190,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const Meshes mesh = data.get(a_mesh);
 
 	// we're drawing triangles
-	std::unique_ptr<possumwood::VertexData> vd(new possumwood::VertexData(GL_TRIANGLES));
+	possumwood::VertexData vd(GL_TRIANGLES);
 
 	// first, figure out how many triangles we have
 	//   there has to be a better way to do this, come on
@@ -204,7 +204,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// and build the buffers
 	if(triangleCount > 0) {
 		// transfer the position data
-		addVerticesVBO(*vd, mesh, triangleCount);
+		addVerticesVBO(vd, mesh, triangleCount);
 
 		// count the properties - only properties consistent between all meshes can be
 		// transfered. We don't care about the type of the properties, though - face or
@@ -229,15 +229,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				if(name.recognized && name.arraySize > 0) {
 					// yep, the types are hardcoded for now, sorry :(
 					if(name.type == "vec3" && name.arraySize == 1)
-						addPerPointVBO<std::array<float, 3>>(*vd, name.name, pc.first,
+						addPerPointVBO<std::array<float, 3>>(vd, name.name, pc.first,
 						                                     triangleCount, mesh);
 
 					else if(name.type == "float" && name.arraySize == 1)
-						addPerPointVBO<float>(*vd, name.name, pc.first, triangleCount,
+						addPerPointVBO<float>(vd, name.name, pc.first, triangleCount,
 						                      mesh);
 
 					else if(name.type == "int" && name.arraySize == 1)
-						addPerPointVBO<int>(*vd, name.name, pc.first, triangleCount,
+						addPerPointVBO<int>(vd, name.name, pc.first, triangleCount,
 						                    mesh);
 
 					else if(name.type == "float")
@@ -247,7 +247,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 							};
 
 							addPerPointVBO<std::vector<float>>(
-							    *vd, name.name + "[" + std::to_string(i) + "]", pc.first,
+							    vd, name.name + "[" + std::to_string(i) + "]", pc.first,
 							    triangleCount, mesh, fn);
 						}
 
@@ -258,7 +258,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 							};
 
 							addPerPointVBO<std::vector<int>>(
-							    *vd, name.name + "[" + std::to_string(i) + "]", pc.first,
+							    vd, name.name + "[" + std::to_string(i) + "]", pc.first,
 							    triangleCount, mesh, fn);
 						}
 
@@ -283,7 +283,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			                  boost::algorithm::join(ignoredProperties, ", "));
 	}
 
-	data.set(a_vd, std::shared_ptr<const possumwood::VertexData>(vd.release()));
+	data.set(a_vd, std::move(vd));
 
 	return result;
 }

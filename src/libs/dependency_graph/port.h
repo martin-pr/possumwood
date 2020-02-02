@@ -30,6 +30,11 @@ class Port : public boost::noncopyable {
 		template<typename T>
 		void set(const T& value);
 
+		/// sets a value on the port.
+		/// Marks all downstream values dirty.
+		template<typename T>
+		void set(T&& value);
+
 		/// gets a value from the port.
 		/// Pulls on the inputs and causes recomputation if the value is
 		/// marked as dirty.

@@ -14,7 +14,7 @@ dependency_graph::InAttr<std::string> a_text;
 dependency_graph::InAttr<possumwood::Font> a_font;
 dependency_graph::InAttr<possumwood::Enum> a_horizAlign, a_vertAlign;
 
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::VertexData>> a_vd;
+dependency_graph::OutAttr<possumwood::VertexData> a_vd;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::Font& font = data.get(a_font);
@@ -23,7 +23,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const int vertAlign = data.get(a_vertAlign).intValue();
 
 	// and render the text into a new VertexData instance
-	std::unique_ptr<possumwood::VertexData> vd(new possumwood::VertexData(GL_TRIANGLES));
+	possumwood::VertexData vd(GL_TRIANGLES);
 	if(!data.get(a_text).empty()){
 		// first, figure out the size of the text
 		float totalWidth = 0.0f;
@@ -86,7 +86,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 
 		// and add them to the vertex data
-		vd->addVBO<Imath::V2f>("position", vertices.size(), possumwood::VertexData::kStatic,
+		vd.addVBO<Imath::V2f>("position", vertices.size(), possumwood::VertexData::kStatic,
 		[vertices](possumwood::Buffer<float>& buffer, const possumwood::ViewportState & viewport) {
 			std::size_t ctr = 0;
 			for(auto& v : vertices) {
@@ -96,7 +96,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 		                      );
 
-		vd->addVBO<Imath::V2f>("uv", uvs.size(), possumwood::VertexData::kStatic,
+		vd.addVBO<Imath::V2f>("uv", uvs.size(), possumwood::VertexData::kStatic,
 		[uvs](possumwood::Buffer<float>& buffer, const possumwood::ViewportState & viewport) {
 			std::size_t ctr = 0;
 			for(auto& v : uvs) {
@@ -107,7 +107,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		                      );
 	}
 
-	data.set(a_vd, std::shared_ptr<const possumwood::VertexData>(vd.release()));
+	data.set(a_vd, std::move(vd));
 
 	return dependency_graph::State();
 }

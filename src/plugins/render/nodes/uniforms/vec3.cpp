@@ -18,23 +18,17 @@ namespace {
 
 dependency_graph::InAttr<std::string> a_name;
 dependency_graph::InAttr<Imath::Vec3<float>> a_value;
-dependency_graph::InAttr<std::shared_ptr<const possumwood::Uniforms>> a_inUniforms;
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::Uniforms>> a_outUniforms;
+dependency_graph::InAttr<possumwood::Uniforms> a_inUniforms;
+dependency_graph::OutAttr<possumwood::Uniforms> a_outUniforms;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State result;
 
-	std::unique_ptr<possumwood::Uniforms> uniforms;
-
-	std::shared_ptr<const possumwood::Uniforms> inUniforms = data.get(a_inUniforms);
-	if(inUniforms != nullptr)
-		uniforms = std::unique_ptr<possumwood::Uniforms>(new possumwood::Uniforms(*inUniforms));
-	else
-		uniforms = std::unique_ptr<possumwood::Uniforms>(new possumwood::Uniforms());
+	possumwood::Uniforms uniforms = data.get(a_inUniforms);
 
 	const Imath::Vec3<float> value = data.get(a_value);
 
-	uniforms->addUniform<Imath::Vec3<float>>(
+	uniforms.addUniform<Imath::Vec3<float>>(
 		data.get(a_name),
 		1,
 		possumwood::Uniforms::kPerFrame,
@@ -45,7 +39,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 	);
 
-	data.set(a_outUniforms, std::shared_ptr<const possumwood::Uniforms>(uniforms.release()));
+	data.set(a_outUniforms, uniforms);
 
 	return result;
 }
@@ -53,8 +47,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_name, "name", std::string("uniform_value"));
 	meta.addAttribute(a_value, "value", Imath::Vec3<float>(0.0f, 0.0f, 0.0f));
-	meta.addAttribute(a_inUniforms, "in_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_outUniforms, "out_uniforms", std::shared_ptr<const possumwood::Uniforms>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inUniforms, "in_uniforms", possumwood::Uniforms(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outUniforms, "out_uniforms", possumwood::Uniforms(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_name, a_outUniforms);
 	meta.addInfluence(a_value, a_outUniforms);

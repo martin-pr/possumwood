@@ -6,18 +6,18 @@
 
 #include "datatypes/vertex_data.h"
 
-class VBO : public possumwood::properties::property<std::shared_ptr<const possumwood::VertexData>, VBO> {
+class VBO : public possumwood::properties::property<possumwood::VertexData, VBO> {
 	public:
 		VBO();
 		virtual ~VBO();
 
-		virtual void get(std::shared_ptr<const possumwood::VertexData>& value) const override;
-		virtual void set(const std::shared_ptr<const possumwood::VertexData>& value) override;
+		virtual void get(possumwood::VertexData& value) const override;
+		virtual void set(const possumwood::VertexData& value) override;
 
 		virtual QWidget* widget() override;
 
 	private:
 		QPlainTextEdit* m_widget;
 
-		std::shared_ptr<const possumwood::VertexData> m_value;
+		std::string m_value;
 };

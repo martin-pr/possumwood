@@ -26,42 +26,76 @@ dependency_graph::State checkProgramState(const GLuint& programId) {
 
 }
 
+struct Program::Pimpl : public boost::noncopyable {
+	Pimpl(const std::vector<Shader>& shaders) : m_programId(0), m_shaders(shaders) {
+		m_state.addError("Program has not been linked yet.");
+	}
+
+	~Pimpl() {
+		if(m_programId != 0)
+			glDeleteProgram(m_programId);
+	}
+
+	void link() {
+		assert(m_programId == 0);
+
+		m_programId = glCreateProgram();
+
+		m_state = dependency_graph::State();
+
+		for(auto& s : m_shaders) {
+			s.compile();
+
+			if(!s.state().errored())
+				glAttachShader(m_programId, s.id());
+		}
+
+		glLinkProgram(m_programId);
+		m_state = checkProgramState(m_programId);
+
+		for(auto& s : m_shaders)
+			glDetachShader(m_programId, s.id());
+	}
+
+	dependency_graph::State m_state;
+	GLuint m_programId;
+	std::vector<Shader> m_shaders;
+};
+
 Program::Program() {
+}
+
+Program::Program(const std::vector<Shader>& shaders) : m_pimpl(new Pimpl(shaders)) {
 	assert(glCreateProgram && "GLEW is probably not initialised");
-
-	m_programId = glCreateProgram();
-
-	m_state.addError("Program has not been linked yet.");
 }
 
 Program::~Program() {
-	glDeleteProgram(m_programId);
 }
 
 const dependency_graph::State& Program::state() const {
-	return m_state;
+	if(m_pimpl != nullptr)
+		return m_pimpl->m_state;
+
+	static const dependency_graph::State s_state;
+	return s_state;
 }
 
 GLuint Program::id() const {
-	return m_programId;
-}
-
-void Program::addShader(const Shader& s) {
-	m_shaderIds.push_back(s.id());
+	if(m_pimpl != nullptr)
+		return m_pimpl->m_programId;
+	return 0;
 }
 
 /// links this program
 void Program::link() {
-	m_state = dependency_graph::State();
+	if(m_pimpl != nullptr && m_pimpl->m_programId == 0)
+		m_pimpl->link();
+}
 
-	for(auto& s : m_shaderIds)
-		glAttachShader(m_programId, s);
+std::ostream& operator << (std::ostream& out, const Program& p) {
+	out << "(program " << p.id() << ")";
 
-	glLinkProgram(m_programId);
-	m_state = checkProgramState(m_programId);
-
-	for(auto& s : m_shaderIds)
-		glDetachShader(m_programId, s);
+	return out;
 }
 
 }

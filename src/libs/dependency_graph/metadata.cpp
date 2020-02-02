@@ -1,4 +1,4 @@
-#include "metadata.h"
+#include "metadata.inl"
 
 #include <cassert>
 

@@ -45,6 +45,15 @@ std::ostream& operator << (std::ostream& out, const TestStruct& t) {
 	return out;
 }
 
+NoncopyableStruct::NoncopyableStruct() : id(s_counter++) {
+}
+
+std::ostream& operator << (std::ostream& out, const NoncopyableStruct& t) {
+	out << t.id;
+
+	return out;
+}
+
 /////////////
 
 const MetadataHandle& additionNode() {

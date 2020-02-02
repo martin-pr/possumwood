@@ -27,9 +27,9 @@ const possumwood::VertexShader& defaultVertexShader() {
 	static std::unique_ptr<possumwood::VertexShader> s_shader;
 
 	if(s_shader == nullptr) {
-		s_shader = std::unique_ptr<possumwood::VertexShader>(new VertexShader());
+		s_shader = std::unique_ptr<possumwood::VertexShader>(new VertexShader(defaultVertexShaderSrc()));
 
-		s_shader->compile(defaultVertexShaderSrc());
+		s_shader->compile();
 
 #ifndef NDEBUG
 		if(s_shader->state().errored())
@@ -65,9 +65,9 @@ const possumwood::FragmentShader& defaultFragmentShader() {
 	static std::unique_ptr<possumwood::FragmentShader> s_shader;
 
 	if(s_shader == nullptr) {
-		s_shader = std::unique_ptr<possumwood::FragmentShader>(new FragmentShader());
+		s_shader = std::unique_ptr<possumwood::FragmentShader>(new FragmentShader(defaultFragmentShaderSrc()));
 
-		s_shader->compile(defaultFragmentShaderSrc());
+		s_shader->compile();
 
 #ifndef NDEBUG
 		if(s_shader->state().errored())

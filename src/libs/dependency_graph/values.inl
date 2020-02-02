@@ -37,6 +37,11 @@ void Values::set(const OutAttr<T>& attr, const T& value) {
 }
 
 template<typename T>
+void Values::set(const OutAttr<T>& attr, T&& value) {
+	m_node->port(attr.offset()).set(std::move(value));
+}
+
+template<typename T>
 void Values::set(const OutAttr<void>& attr, const T& value) {
 	m_node->port(attr.offset()).set(value);
 }

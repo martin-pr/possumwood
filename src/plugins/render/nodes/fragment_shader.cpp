@@ -9,13 +9,12 @@
 namespace {
 
 dependency_graph::InAttr<std::string> a_src;
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::FragmentShader>> a_shader;
+dependency_graph::OutAttr<possumwood::FragmentShader> a_shader;
 
 class Editor : public possumwood::SourceEditor {
 	public:
 		Editor() : SourceEditor(a_src) {
 		}
-
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -23,17 +22,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	const std::string& src = data.get(a_src);
 
-	std::unique_ptr<possumwood::FragmentShader> shader(new possumwood::FragmentShader());
+	possumwood::FragmentShader shader(src);
 
-	shader->compile(src);
-	result = shader->state();
+	shader.compile();
 
-	if(!shader->state().errored())
-		data.set(a_shader, std::shared_ptr<const possumwood::FragmentShader>(shader.release()));
+	if(!shader.state().errored())
+		data.set(a_shader, shader);
 	else
-		data.set(a_shader, std::shared_ptr<const possumwood::FragmentShader>());
+		data.set(a_shader, possumwood::FragmentShader());
 
-	return result;
+	return shader.state();
 }
 
 void init(possumwood::Metadata& meta) {

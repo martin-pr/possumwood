@@ -18,15 +18,15 @@ Imath::M44d toDouble(const Imath::M44f& matrix) {
 	return result;
 }
 
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::VertexData>> a_vd;
+dependency_graph::OutAttr<possumwood::VertexData> a_vd;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State result;
 
 	// we're drawing quads
-	std::unique_ptr<possumwood::VertexData> vd(new possumwood::VertexData(GL_TRIANGLE_FAN));
+	possumwood::VertexData vd(GL_TRIANGLE_FAN);
 
-	vd->addVBO<Imath::V3f>("P", 4, possumwood::VertexData::kStatic,
+	vd.addVBO<Imath::V3f>("P", 4, possumwood::VertexData::kStatic,
 	                       [](possumwood::Buffer<float>& buffer,
 	                          const possumwood::ViewportState& viewport) {
 		                       buffer.element(0) = Imath::V3f(-1, -1, 1);
@@ -35,7 +35,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		                       buffer.element(3) = Imath::V3f(-1, 1, 1);
 		                   });
 
-	vd->addVBO<Imath::V3d>(
+	vd.addVBO<Imath::V3d>(
 	    "iNearPositionVert", 4, possumwood::VertexData::kPerDraw,
 	    [](possumwood::Buffer<double>& buffer,
 	       const possumwood::ViewportState& vp) {
@@ -61,7 +61,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		                 viewport, ptr + 9, ptr + 10, ptr + 11);
 		});
 
-	vd->addVBO<Imath::V3d>(
+	vd.addVBO<Imath::V3d>(
 	    "iFarPositionVert", 4, possumwood::VertexData::kPerDraw,
 	    [](possumwood::Buffer<double>& buffer,
 	       const possumwood::ViewportState& vp) {
@@ -87,7 +87,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		                 viewport, ptr + 9, ptr + 10, ptr + 11);
 		});
 
-	data.set(a_vd, std::shared_ptr<const possumwood::VertexData>(vd.release()));
+	data.set(a_vd, std::move(vd));
 
 	return result;
 }

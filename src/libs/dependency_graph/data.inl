@@ -12,7 +12,14 @@ template<typename T>
 Data::Factory<T> Data::TypedHolder<T>::m_factory;
 
 template<typename T>
-Data::Data(const T& value) : m_data(new TypedHolder<T>(value)) {
+Data::Data(T value) : m_data(
+	new Data::TypedHolder<
+		typename std::remove_const<
+			typename std::remove_reference<
+				T
+			>::type
+		>::type
+	>(std::move(value))) {
 }
 
 template<typename T>
@@ -20,9 +27,9 @@ const T& Data::get() const {
 	if(std::string(typeinfo().name()) == typeid(void).name() || m_data == nullptr)
 		throw std::runtime_error("Attempting to use a void value!");
 
-	const TypedHolder<T>* tmp = dynamic_cast<const TypedHolder<T>*>(m_data.get());
+	const TypedHolder<typename std::remove_reference<typename std::remove_const<T>::type>::type>* tmp = dynamic_cast<const TypedHolder<typename std::remove_reference<typename std::remove_const<T>::type>::type>*>(m_data.get());
 	if(!tmp)
-		throw std::runtime_error(std::string("Invalid type requested - requested ") + typeid(T).name() + ", found " + typeinfo().name());
+		throw std::runtime_error(std::string("Invalid type requested - requested ") + typeid(T).name() + ", found " + m_data->typeinfo().name());
 
 	return tmp->data;
 }
@@ -31,14 +38,23 @@ template<typename T>
 void Data::set(const T& val) {
 	assert(std::string(typeid(T).name()) == std::string(typeinfo().name()));
 
-	m_data = std::shared_ptr<const Holder>(new TypedHolder<T>(val));
+	T tmp = val;
+	m_data = std::shared_ptr<const Holder>(new TypedHolder<typename std::remove_reference<typename std::remove_const<T>::type>::type>(std::move(tmp)));
+}
+
+template<typename T>
+void Data::set(T&& val) {
+	assert(std::string(typeid(T).name()) == std::string(typeinfo().name()));
+
+	m_data = std::shared_ptr<const Holder>(new TypedHolder<typename std::remove_reference<typename std::remove_const<T>::type>::type>(std::move(val)));
 }
 
 namespace {
 
 template<typename T>
 Data makeData() {
-	return Data(T());
+	typename std::remove_reference<typename std::remove_const<T>::type>::type tmp;
+	return Data(std::move(tmp));
 }
 
 template<>
@@ -58,7 +74,7 @@ Data::Factory<T>::Factory() {
 ////////////
 
 template<typename T>
-Data::TypedHolder<T>::TypedHolder(const T& d) : data(d) {
+Data::TypedHolder<T>::TypedHolder(T&& d) : data(std::move(d)) {
 }
 
 template<typename T>

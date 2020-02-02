@@ -13,6 +13,11 @@ void Port::set(const T& value) {
 }
 
 template<typename T>
+void Port::set(T&& value) {
+	setData(dependency_graph::Data(std::move(value)));
+}
+
+template<typename T>
 const T& Port::get() {
 	return getData().get<T>();
 }

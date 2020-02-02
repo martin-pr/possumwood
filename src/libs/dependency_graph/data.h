@@ -23,7 +23,7 @@ class Data {
 
 		// creates a data instance of a particular type initialised to a value
 		template<typename T>
-		Data(const T& value);
+		explicit Data(T value);
 
 		Data(const Data& d);
 		Data& operator = (const Data& d);
@@ -39,6 +39,9 @@ class Data {
 
 		template<typename T>
 		void set(const T& val);
+
+		template<typename T>
+		void set(T&& val);
 
 		bool operator == (const Data& d) const;
 		bool operator != (const Data& d) const;
@@ -64,7 +67,7 @@ class Data {
 		template<typename T>
 		class TypedHolder : public Holder {
 			public:
-				TypedHolder(const T& d);
+				TypedHolder(T&& d);
 				virtual ~TypedHolder();
 
 				virtual const std::type_info& typeinfo() const override;

@@ -53,6 +53,32 @@ class property_base : public boost::noncopyable {
 };
 
 template<typename T, typename DERIVED>
+class property;
+
+template<typename T, typename DERIVED, typename ENABLE = void>
+struct property_updater {
+};
+
+template<typename T, typename DERIVED>
+struct property_updater<T, DERIVED, typename std::enable_if<std::is_copy_constructible<T>::value>::type> {
+	static void update(dependency_graph::Port& port, const property<T, DERIVED>& prop) {
+		// get the current value
+		T value = port.get<T>();
+		// allow the UI to change it (or a part of it)
+		prop.get(value);
+		// and use action to apply it to a port (making it undoable)
+		possumwood::actions::setValue(port, std::move(value));
+	}
+};
+
+template<typename T, typename DERIVED>
+struct property_updater<T, DERIVED, typename std::enable_if<not std::is_copy_constructible<T>::value>::type> {
+	static void update(dependency_graph::Port& port, const property<T, DERIVED>& prop) {
+		assert(false && "property::valueToPort() cannot be used on noncopyable types");
+	}
+};
+
+template<typename T, typename DERIVED>
 class property : public property_base {
 	public:
 		typedef T result_type;
@@ -74,14 +100,8 @@ class property : public property_base {
 	private:
 		virtual void valueToPort(dependency_graph::Port& port) const override final {
 			// transfer the templated value
-			if((flags() & kInput) && !(flags() & kDisabled) && !m_blockedSignals) {
-				// get the current value
-				T value = port.get<T>();
-				// allow the UI to change it (or a part of it)
-				get(value);
-				// and use action to apply it to a port (making it undoable)
-				possumwood::actions::setValue(port, value);
-			}
+			if((flags() & kInput) && !(flags() & kDisabled) && !m_blockedSignals)
+				property_updater<T, DERIVED>::update(port, *this);
 		}
 
 		void valueFromPort(dependency_graph::Port& port) override final {

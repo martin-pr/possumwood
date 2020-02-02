@@ -22,9 +22,24 @@ State::State(const Context& con) {
 		v.init(*this);
 }
 
+State::State() : m_state(nullptr) {
+}
+
+State::State(State&& s) : m_state(s.m_state) {
+	s.m_state = nullptr;
+}
+
+State& State::operator = (State&& s) {
+	m_state = s.m_state;
+	s.m_state = nullptr;
+
+	return *this;
+}
+
 State::~State() {
 	// release the Lua state
-	lua_close(m_state);
+	if(m_state != nullptr)
+		lua_close(m_state);
 }
 
 luabind::object State::globals() const {
@@ -39,7 +54,7 @@ State::operator const lua_State*() const {
 	return m_state;
 }
 
-std::ostream& operator << (std::ostream& out, const std::shared_ptr<const State>& st) {
+std::ostream& operator << (std::ostream& out, const State& st) {
 	out << "(state)";
 
 	return out;
