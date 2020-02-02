@@ -12,8 +12,15 @@ class Context;
 
 class State final : public boost::noncopyable {
 	public:
+		State();
 		State(const Context& con);
 		~State();
+
+		State(const State&) = delete;
+		State& operator = (const State&) = delete;
+
+		State(State&&);
+		State& operator = (State&&);
 
 		luabind::object globals() const;
 
@@ -24,12 +31,12 @@ class State final : public boost::noncopyable {
 		lua_State* m_state;
 };
 
-std::ostream& operator << (std::ostream& out, const std::shared_ptr<const State>& st);
+std::ostream& operator << (std::ostream& out, const State& st);
 
 }
 
 template<>
-struct Traits< std::shared_ptr<const lua::State> > {
+struct Traits<lua::State> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0, 0, 1}};
 	}

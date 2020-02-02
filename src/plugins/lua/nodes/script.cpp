@@ -18,7 +18,7 @@ namespace {
 
 dependency_graph::InAttr<std::string> a_src;
 dependency_graph::InAttr<possumwood::lua::Context> a_context;
-dependency_graph::OutAttr<std::shared_ptr<const possumwood::lua::State>> a_state;
+dependency_graph::OutAttr<possumwood::lua::State> a_state;
 
 class Editor : public possumwood::SourceEditor {
 	public:
@@ -231,9 +231,9 @@ class Editor : public possumwood::SourceEditor {
 			});
 
 			// parse the global variables of the state from the output (includes injected vars and modules)
-			std::shared_ptr<const possumwood::lua::State> state = values().get(a_state);
+			const possumwood::lua::State& state = values().get(a_state);
 			if(state)
-				parseGlobals(m_popup, state->globals());
+				parseGlobals(m_popup, state.globals());
 		}
 
 	private:
@@ -248,23 +248,23 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const std::string& src = data.get(a_src);
 
 	// Create a new lua state
-	std::shared_ptr<possumwood::lua::State> state(new possumwood::lua::State(data.get(a_context)));
+	possumwood::lua::State state(data.get(a_context));
 
 	try {
 		// load all standard Lua libraries
-		luaL_openlibs(*state);
+		luaL_openlibs(state);
 
 		// luabind class info function - allows introspection of luabind classes
-		luabind::bind_class_info(*state);
+		luabind::bind_class_info(state);
 
 		// evaluate our script
-		int err = luaL_dostring(*state, src.c_str());
+		int err = luaL_dostring(state, src.c_str());
 
 		// and return the resulting state
-		data.set(a_state, std::shared_ptr<const possumwood::lua::State>(state));
+		data.set(a_state, std::move(state));
 
 		if(err)
-			throw std::runtime_error(lua_tostring(*state, -1));
+			throw std::runtime_error(lua_tostring(state, -1));
 	}
 	catch(const luabind::error& err) {
 		throw std::runtime_error(lua_tostring(err.state(), -1));

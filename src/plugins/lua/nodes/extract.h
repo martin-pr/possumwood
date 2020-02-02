@@ -11,19 +11,19 @@ template<typename T, typename HOLDER = T>
 struct Extract {
 	struct Params {
 		dependency_graph::InAttr<std::string> a_name;
-		dependency_graph::InAttr<std::shared_ptr<const possumwood::lua::State>> a_state;
+		dependency_graph::InAttr<possumwood::lua::State> a_state;
 		dependency_graph::OutAttr<T> a_out;
 	};
 
 	static dependency_graph::State compute(dependency_graph::Values& data, Params& params) {
-		std::shared_ptr<const possumwood::lua::State> state = data.get(params.a_state);
+		const possumwood::lua::State& state = data.get(params.a_state);
 
 		if(!state)
 			throw std::runtime_error("Uninitialised state - cannot extract a value.");
 
 		try {
 			// get the result
-			T value = T(luabind::object_cast<HOLDER>(state->globals()[data.get(params.a_name)]));
+			T value = T(luabind::object_cast<HOLDER>(state.globals()[data.get(params.a_name)]));
 			// and push it to the output
 			data.set(params.a_out, value);
 		}
@@ -38,7 +38,7 @@ struct Extract {
 		static Params s_params;
 
 		meta.addAttribute(s_params.a_name, "name", std::string("variable"));
-		meta.addAttribute(s_params.a_state, "state");
+		meta.addAttribute(s_params.a_state, "state", std::move(possumwood::lua::State()));
 
 		meta.addAttribute(s_params.a_out, "out");
 
