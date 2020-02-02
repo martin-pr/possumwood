@@ -3,6 +3,7 @@
 #include <dependency_graph/graph.h>
 #include <dependency_graph/metadata_register.h>
 #include <dependency_graph/nodes.inl>
+#include <dependency_graph/port.inl>
 
 #include <actions/actions.h>
 #include <actions/app.h>

@@ -6,6 +6,7 @@
 #include <dependency_graph/rtti.h>
 #include <dependency_graph/nodes_iterator.inl>
 #include <dependency_graph/node_base.inl>
+#include <dependency_graph/port.inl>
 
 #include <actions/actions.h>
 
