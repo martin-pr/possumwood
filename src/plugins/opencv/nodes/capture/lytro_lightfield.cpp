@@ -6,6 +6,8 @@
 
 #include <boost/filesystem.hpp>
 
+#include <tbb/parallel_for.h>
+
 #include <actions/traits.h>
 #include <actions/io/json.h>
 
@@ -26,7 +28,7 @@ dependency_graph::OutAttr<lightfields::Pattern> a_pattern;
 cv::Mat decodeData(const char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
 	cv::Mat result(width, height, CV_32F);
 
-	for(std::size_t i=0; i<width*height; ++i) {
+	tbb::parallel_for(std::size_t(0), width*height, [&](std::size_t i) {
 		const unsigned char c1 = data[i/2*3];
 		const unsigned char c2 = data[i/2*3+1];
 		const unsigned char c3 = data[i/2*3+2];
@@ -42,7 +44,7 @@ cv::Mat decodeData(const char* data, std::size_t width, std::size_t height, int 
 		const float fval = ((float)val - (float)black[patternId]) / ((float)(white[patternId]-black[patternId]));
 
 		result.at<float>(i/width, i%width) = fval;
-	}
+	});
 
 	return result;
 }
