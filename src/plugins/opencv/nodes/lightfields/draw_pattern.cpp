@@ -21,10 +21,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	tbb::parallel_for(0, mat.rows, [&](int y) {
 		for(int x=0;x<mat.cols;++x) {
-			const Imath::V4f value = pattern.sample(Imath::V2i(x, y));
+			const lightfields::Pattern::Sample& value = pattern.sample(Imath::V2i(x, y));
 
 			float* color = mat.ptr<float>(y, x);
-			float current = value[2]*value[2] + value[3]*value[3];
+			float current = value.offset[0]*value.offset[0] + value.offset[1]*value.offset[1];
 			if(current <= 1.0f)
 				color[0] = (1.0f-current);
 			else

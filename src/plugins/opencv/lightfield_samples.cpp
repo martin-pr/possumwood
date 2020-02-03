@@ -31,15 +31,15 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 		for(std::size_t x=0; x<(std::size_t)impl->size[1]; ++x) {
 			Sample& sample = impl->m_samples[y*impl->size[0] + x];
 
-			const Imath::V4f coords = pattern.sample(Imath::V2i(x,y));
+			const lightfields::Pattern::Sample coords = pattern.sample(Imath::V2i(x,y));
 
 			// input image pixel position, integer in pixels
 			sample.source = Imath::V2i(x, y);
 
 			// target pixel position, normalized (0..1) - adding the UV offset to handle displacement
 			sample.target = Imath::V2f(
-				(coords[0] + coords[2]*uvOffset) / (float)(impl->size[0]),
-				(coords[1] + coords[3]*uvOffset) / (float)(impl->size[1])
+				(coords.lensCenter[0] + coords.offset[0]*uvOffset) / (float)(impl->size[0]),
+				(coords.lensCenter[1] + coords.offset[1]*uvOffset) / (float)(impl->size[1])
 
 				// (coords[0]) / (float)size[0],
 				// (coords[1]) / (float)size[1]
@@ -51,7 +51,7 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 			// hardcoded bayer pattern, for now
 			sample.color = possumwood::opencv::LightfieldSamples::Color((x%2) + (y%2));
 
-			const double uv_magnitude_2 = coords[2]*coords[2] + coords[3]*coords[3];
+			const double uv_magnitude_2 = coords.offset[0]*coords.offset[0] + coords.offset[1]*coords.offset[1];
 			uvOffsets[y*impl->size[0] + x] = uv_magnitude_2;
 		}
 	});

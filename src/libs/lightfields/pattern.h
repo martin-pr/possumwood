@@ -16,7 +16,12 @@ class Pattern {
 
 		void scale(float factor);
 
-		Imath::V4d sample(const Imath::V2i& pixelPos) const;
+		struct Sample {
+			Imath::V2f lensCenter; ///< center of the nearest lens
+			Imath::V2f offset;     ///< normalized uv offset from the lens center (if inside a lens radius, should be inside a unit 2D circle (-1..1))
+		};
+
+		Sample sample(const Imath::V2i& pixelPos) const;
 		const Imath::V2i& sensorResolution() const;
 
 		bool operator == (const Pattern& p) const;

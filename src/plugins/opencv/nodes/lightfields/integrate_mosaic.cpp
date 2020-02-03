@@ -58,12 +58,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		for(int x = 0; x < input.cols; ++x) {
-			const Imath::V4d& sample = pattern.sample(Imath::V2i(x, y));
+			const lightfields::Pattern::Sample& sample = pattern.sample(Imath::V2i(x, y));
 
-			const double uv_magnitude_2 = sample[2]*sample[2] + sample[3]*sample[3];
+			const double uv_magnitude_2 = sample.offset[0]*sample.offset[0] + sample.offset[1]*sample.offset[1];
 			if(uv_magnitude_2 < 1.0) {
-				float target_x = sample[0] / (float)pattern.sensorResolution()[0] * (float)width;
-				float target_y = sample[1] / (float)pattern.sensorResolution()[1] * (float)height;
+				float target_x = sample.lensCenter[0] / (float)pattern.sensorResolution()[0] * (float)width;
+				float target_y = sample.lensCenter[1] / (float)pattern.sensorResolution()[1] * (float)height;
 
 				target_x = std::min(target_x, (float)(width-1));
 				target_y = std::min(target_y, (float)(height-1));
@@ -71,8 +71,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				target_x = std::max(target_x, 0.0f);
 				target_y = std::max(target_y, 0.0f);
 
-				target_x += floor((sample[2] + 1.0) / 2.0 * (float)elements) * (float)width;
-				target_y += floor((sample[3] + 1.0) / 2.0 * (float)elements) * (float)height;
+				target_x += floor((sample.offset[0] + 1.0) / 2.0 * (float)elements) * (float)width;
+				target_y += floor((sample.offset[1] + 1.0) / 2.0 * (float)elements) * (float)height;
 
 				const int colorId = (x%2) + (y%2); // hardcoded bayer pattern, for now
 

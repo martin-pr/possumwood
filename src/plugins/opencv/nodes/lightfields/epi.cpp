@@ -34,6 +34,12 @@ int dimension(const std::string& d) {
 	throw std::runtime_error("Unknown dimension " + d);
 }
 
+bool normalize(float& value, const Imath::V2f& range) {
+	value = (value - range[0]) / (range[1] - range[0]);
+
+	return value >= 0.0f && value < 1.0f;
+}
+
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const lightfields::Pattern pattern = data.get(a_pattern);
 
@@ -51,43 +57,49 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const int dimx = dimension(data.get(a_xMode).value());
 	const int dimy = dimension(data.get(a_yMode).value());
 
-	std::vector<Imath::V2f> ranges;
-	ranges.push_back(data.get(a_xRange));
-	ranges.push_back(data.get(a_yRange));
-	ranges.push_back(data.get(a_uRange));
-	ranges.push_back(data.get(a_vRange));
+	const Imath::V2f xRange = data.get(a_xRange);
+	const Imath::V2f yRange = data.get(a_yRange);
+	const Imath::V2f uRange = data.get(a_uRange);
+	const Imath::V2f vRange = data.get(a_vRange);
 
 	tbb::parallel_for(0, pattern.sensorResolution().y, [&](int y) {
 		for(int x=0; x<pattern.sensorResolution().x; ++x) {
-			Imath::V4f sample = pattern.sample(Imath::V2f(x, y));
+			lightfields::Pattern::Sample sample = pattern.sample(Imath::V2f(x, y));
 
 			// scale x and y to be in range 0..1
-			sample[0] /= pattern.sensorResolution().x;
-			sample[1] /= pattern.sensorResolution().y;
+			sample.lensCenter[0] /= pattern.sensorResolution().x;
+			sample.lensCenter[1] /= pattern.sensorResolution().y;
 
 			// test if the sample is in the expected range
-			bool inRange = true;
 
 			// handwired lenslet ranges
-			inRange = inRange && ((sample[2]*sample[2] + sample[3]*sample[3]) <= 1.0f);
+			bool inRange = ((sample.offset[0]*sample.offset[0] + sample.offset[1]*sample.offset[1]) <= 1.0f);
 
-			for(int d=0;d<4;++d) {
-				sample[d] = (sample[d] - ranges[d][0]) / (ranges[d][1] - ranges[d][0]);
-				// std::cout <<d << "  " << sample[d] << std::endl;
-				if(sample[d] < 0.0f || sample[d] > 1.0f)
-					inRange = false;
-			}
+			// and individual sample ranges
+			inRange &= normalize(sample.lensCenter[0], xRange);
+			inRange &= normalize(sample.lensCenter[1], yRange);
+			inRange &= normalize(sample.offset[0], uRange);
+			inRange &= normalize(sample.offset[1], vRange);
 
 			if(inRange) {
-				// bayern pattern (hardcoded)
-				const int bayern = x%2 + y%2;
-
 				// actual coordinates of the pixel
-				const int xcoord = std::min((int)floor(sample[dimx] * (float)result.cols), result.cols-1);
-				const int ycoord = std::min((int)floor(sample[dimy] * (float)result.rows), result.rows-1);
+				int xcoord, ycoord;
+
+				if(dimx <= 1)
+					xcoord = std::min((int)floor(sample.lensCenter[dimx] * (float)result.cols), result.cols-1);
+				else
+					xcoord = std::min((int)floor(sample.offset[dimx-2] * (float)result.cols), result.cols-1);
+
+				if(dimy <= 1)
+					ycoord = std::min((int)floor(sample.lensCenter[dimy] * (float)result.rows), result.rows-1);
+				else
+					ycoord = std::min((int)floor(sample.offset[dimy-2] * (float)result.rows), result.rows-1);
 
 				assert(xcoord >= 0 && xcoord < result.cols);
 				assert(ycoord >= 0 && ycoord < result.rows);
+
+				// bayern pattern (hardcoded)
+				const int bayern = x%2 + y%2;
 
 				// and the integration
 				result.ptr<float>(ycoord, xcoord)[bayern] += in.at<float>(y, x);

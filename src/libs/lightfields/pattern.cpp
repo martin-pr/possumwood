@@ -51,8 +51,8 @@ const Imath::V2i& Pattern::sensorResolution() const {
 	return m_sensorResolution;
 }
 
-Imath::V4d Pattern::sample(const Imath::V2i& pixelPos) const {
-	Imath::V4d result;
+Pattern::Sample Pattern::sample(const Imath::V2i& pixelPos) const {
+	Sample result;
 
 	// convert the pixel position to lens space
 	const Imath::V3d pos = Imath::V3d(pixelPos[0], pixelPos[1], 1.0) * m_tr;
@@ -90,13 +90,11 @@ Imath::V4d Pattern::sample(const Imath::V2i& pixelPos) const {
 		pos0 = pos4;
 	}
 
-	// lens center
-	result[0] = lens[0];
-	result[1] = lens[1];
+	result.lensCenter[0] = lens[0];
+	result.lensCenter[1] = lens[1];
 
-	// and pixel offset from lens center
-	result[2] = (pixelPos[0] - lens[0]) / m_lensPitch * 2.0;
-	result[3] = (pixelPos[1] - lens[1]) / m_lensPitch * 2.0;
+	result.offset[0] = (pixelPos[0] - lens[0]) / m_lensPitch * 2.0;
+	result.offset[1] = (pixelPos[1] - lens[1]) / m_lensPitch * 2.0;
 
 	return result;
 }
