@@ -57,11 +57,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	const float sigma2 = data.get(a_sigma2) * (float)width / (float)input.cols;
 
+	const float x_scale = (float)width / (float)samples.sensorSize()[0];
+	const float y_scale = (float)height / (float)samples.sensorSize()[1];
+
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		const auto end = samples.end(y);
 		for(auto it = samples.begin(y); it != end; ++it) {
-			const float target_x = it->target[0] * (float)width;
-			const float target_y = it->target[1] * (float)height;
+			const float target_x = it->target[0] * x_scale;
+			const float target_y = it->target[1] * y_scale;
 
 			int xFrom = std::max((int)floor(target_x - 3.0f*sigma2), 0);
 			int xTo = std::min((int)ceil(target_x + 3.0f*sigma2 + 1.0f), (int)width);

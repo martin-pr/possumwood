@@ -23,7 +23,7 @@ class LightfieldSamples {
 
 		struct Sample {
 			Imath::V2i source; ///< Integer position of the source pixel in source image
-			Imath::V2f target; ///< Target position in the target image (normalized between 0..1!)
+			Imath::V2f target; ///< Target position in the target image
 			Color color; ///< Target colour channel, based on the Bayer pattern
 		};
 
@@ -38,6 +38,8 @@ class LightfieldSamples {
 
 		std::size_t size() const;
 		bool empty() const;
+
+		const Imath::V2i sensorSize() const;
 
 		bool operator == (const LightfieldSamples& f) const;
 		bool operator != (const LightfieldSamples& f) const;

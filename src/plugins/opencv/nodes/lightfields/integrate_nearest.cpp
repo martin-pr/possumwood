@@ -54,14 +54,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat average = cv::Mat::zeros(height, width, CV_32FC3);
 	cv::Mat norm = cv::Mat::zeros(height, width, CV_16UC3);
 
+	const float x_scale = (float)width / (float)samples.sensorSize()[0];
+	const float y_scale = (float)height / (float)samples.sensorSize()[1];
+
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		const auto end = samples.end(y);
 		const auto begin = samples.begin(y);
 		assert(begin <= end);
 
 		for(auto it = begin; it != end; ++it) {
-			const float target_x = it->target[0] * (float)width;
-			const float target_y = it->target[1] * (float)height;
+			const float target_x = it->target[0] * x_scale;
+			const float target_y = it->target[1] * y_scale;
 
 			// sanity checks
 			assert(it->source[0] < input.rows);
@@ -98,8 +101,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		assert(begin <= end);
 
 		for(auto it = begin; it != end; ++it) {
-			const float target_x = it->target[0] * (float)width;
-			const float target_y = it->target[1] * (float)height;
+			const float target_x = it->target[0] * x_scale;
+			const float target_y = it->target[1] * y_scale;
 
 			float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
 			const float* value = input.ptr<float>(it->source[1], it->source[0]);

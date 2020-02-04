@@ -39,35 +39,21 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const unsigned width = data.get(a_size)[0];
 	const unsigned height = data.get(a_size)[1];
 
-	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
-
-	{
-		std::vector<std::pair<Imath::V2d, float>> points;
-		for(auto& s : samples)
-			if(s.color == 0) {
-				Imath::V2d pt = s.target;
-
-				if(pt[0] > 0.48 && pt[0] < 0.52 && pt[1] > 0.48 && pt[1] < 0.52)
-					points.push_back(std::make_pair(pt, input.at<float>(s.source[1], s.source[0])));
-			}
-
-		std::ofstream data("data.txt");
-		for(auto& p : points)
-			data << std::setprecision(15) << p.first[0] << "\t" << std::setprecision(15) << p.first[1] << "\t" << p.second << std::endl;
-	}
+	const float x_scale = 1.0f / (float)samples.sensorSize()[0];
+	const float y_scale = 1.0f / (float)samples.sensorSize()[1];
 
 	std::vector<Sample> cache[3];
 	if((*data.get(a_in)).type() == CV_32FC1)
 		for(auto s : samples)
 			cache[s.color].push_back(Sample{
-				s.target,
+				Imath::V2f(s.target[0] * x_scale, s.target[1] * y_scale),
 				input.at<float>(s.source[1], s.source[0])
 			});
 	else
 		for(auto s : samples)
 			for(int c=0;c<3;++c)
 				cache[c].push_back(Sample{
-					s.target,
+					Imath::V2f(s.target[0] * x_scale, s.target[1] * y_scale),
 					*(input.ptr<float>(s.source[1], s.source[0]) + c)
 				});
 

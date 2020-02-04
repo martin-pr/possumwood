@@ -38,15 +38,15 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 
 			// target pixel position, normalized (0..1) - adding the UV offset to handle displacement
 			sample.target = Imath::V2f(
-				(coords.lensCenter[0] + coords.offset[0]*uvOffset) / (float)(impl->size[0]),
-				(coords.lensCenter[1] + coords.offset[1]*uvOffset) / (float)(impl->size[1])
+				(coords.lensCenter[0] + coords.offset[0]*uvOffset),
+				(coords.lensCenter[1] + coords.offset[1]*uvOffset)
 
 				// (coords[0]) / (float)size[0],
 				// (coords[1]) / (float)size[1]
 			);
 
 			// compute detail scaling (usable to visualise details in the centre of the view, or crop edges of an image)
-			sample.target = (sample.target - Imath::V2f(0.5f, 0.5f)) * xy_scale + Imath::V2f(0.5f, 0.5f);
+			sample.target = (sample.target - Imath::V2f(impl->size[0]/2, impl->size[1]/2)) * xy_scale + Imath::V2f(impl->size[0]/2, impl->size[1]/2);
 
 			// hardcoded bayer pattern, for now
 			sample.color = possumwood::opencv::LightfieldSamples::Color((x%2) + (y%2));
@@ -55,6 +55,9 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 			uvOffsets[y*impl->size[0] + x] = uv_magnitude_2;
 		}
 	});
+
+	const float w = impl->size[0];
+	const float h = impl->size[1];
 
 	// filter out any samples outside the threshold
 	{
@@ -75,7 +78,7 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 			}
 
 			// keep only samples within the requested XY region
-			if(*offs < uvThreshold*uvThreshold && it->target[0] >= 0.0f && it->target[1] >= 0.0f && it->target[0] < 1.0f && it->target[1] < 1.0f) {
+			if(*offs < uvThreshold*uvThreshold && it->target[0] >= 0.0f && it->target[1] >= 0.0f && it->target[0] < w && it->target[1] < h) {
 				*current = *it;
 				++current;
 			}
@@ -118,8 +121,8 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 	for(auto it = begin(); it != end(); ++it) {
 		assert(it->target[0] >= 0);
 		assert(it->target[1] >= 0);
-		assert(it->target[0] < 1.0f);
-		assert(it->target[1] < 1.0f);
+		assert(it->target[0] < w);
+		assert(it->target[1] < h);
 	}
 
 	#endif
@@ -157,6 +160,10 @@ std::size_t LightfieldSamples::size() const {
 
 bool LightfieldSamples::empty() const {
 	return m_pimpl->m_samples.empty();
+}
+
+const Imath::V2i LightfieldSamples::sensorSize() const {
+	return m_pimpl->size;
 }
 
 std::ostream& operator << (std::ostream& out, const LightfieldSamples& f) {
