@@ -18,6 +18,7 @@
 #include "lightfields/block.h"
 #include "lightfields/raw.h"
 #include "lightfields/pattern.h"
+#include "lightfields/metadata.h"
 
 namespace {
 
@@ -80,32 +81,34 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		lightfields::Raw raw;
 		file >> raw;
 
-		width = raw.metadata()["image"]["width"].asInt();
-		height = raw.metadata()["image"]["height"].asInt();
+		const lightfields::Metadata& meta = raw.metadata();
 
-		black[0] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].asInt();
-		black[1] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].asInt();
-		black[2] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].asInt();
-		black[3] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].asInt();
+		width = meta.metadata()["image"]["width"].asInt();
+		height = meta.metadata()["image"]["height"].asInt();
 
-		white[0] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].asInt();
-		white[1] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].asInt();
-		white[2] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].asInt();
-		white[3] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
+		black[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].asInt();
+		black[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].asInt();
+		black[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].asInt();
+		black[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].asInt();
+
+		white[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].asInt();
+		white[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].asInt();
+		white[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].asInt();
+		white[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
 
 		// assemble the lightfield pattern
 		pattern = lightfields::Pattern(
-			raw.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
-			raw.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
-			raw.metadata()["devices"]["mla"]["rotation"].asDouble(),
+			meta.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
+			meta.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
+			meta.metadata()["devices"]["mla"]["rotation"].asDouble(),
 			Imath::V2f(
-				raw.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
-				raw.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()
+				meta.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
+				meta.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()
 			),
 			Imath::V3f(
-				raw.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
-				raw.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
-				raw.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
+				meta.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
+				meta.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
+				meta.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
 			),
 			Imath::V2i(width, height)
 		);

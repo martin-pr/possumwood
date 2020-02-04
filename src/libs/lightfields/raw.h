@@ -8,19 +8,24 @@
 
 namespace lightfields {
 
+class Metadata;
+
 class Raw {
 	public:
 		Raw();
 		~Raw();
 
-		const Json::Value& header() const;
-		const Json::Value& metadata() const;
-		const Json::Value& privateMetadata() const;
+		const Metadata& metadata() const;
 
 		const std::vector<char> image() const;
 
 	private:
 		struct Pimpl;
+
+		// only used for file reading
+		static Json::Value& header(Pimpl& p);
+		static Json::Value& meta(Pimpl& p);
+		static Json::Value& privateMeta(Pimpl& p);
 
 		std::shared_ptr<const Pimpl> m_pimpl;
 
