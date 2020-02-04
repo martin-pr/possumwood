@@ -37,15 +37,21 @@ struct Lenslet {
 /////////////
 
 struct LensletGraph::Pimpl {
-	cv::Vec2i sensorSize;
+	Pimpl() : fitted(false) {
+	}
+
+	Imath::V2i sensorSize;
 	int exclusionBorder;
 
 	std::vector<Lenslet> lenslets;
+
+	cv::Matx<double, 3, 3> fittedMatrix;
+	bool fitted;
 };
 
 /////////////
 
-LensletGraph::LensletGraph(cv::Vec2i sensorSize, int exclusionBorder) : m_pimpl(new Pimpl()) {
+LensletGraph::LensletGraph(Imath::V2i sensorSize, int exclusionBorder) : m_pimpl(new Pimpl()) {
 	m_pimpl->sensorSize = sensorSize;
 	m_pimpl->exclusionBorder = exclusionBorder;
 }
@@ -84,7 +90,9 @@ cv::Vec2i offset(const cv::Vec2f& l1, const cv::Vec2f& l2) {
 
 }
 
-cv::Matx<double, 3, 3> LensletGraph::fit() {
+void LensletGraph::fit() {
+	assert(!m_pimpl->fitted);
+
 	// build the subdiv and index
 	std::map<cv::Vec2f, std::size_t, Vec2Compare> index;
 
@@ -211,7 +219,8 @@ cv::Matx<double, 3, 3> LensletGraph::fit() {
 	Eigen::VectorXd x = A.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
 	assert(x.size() == 6);
 
-	return cv::Matx<double, 3, 3>(
+	m_pimpl->fitted = true;
+	m_pimpl->fittedMatrix = cv::Matx<double, 3, 3>(
 		x[0], x[2], 0,
 		x[1], x[3], 0,
 		x[4], x[5], 1
@@ -236,6 +245,15 @@ double LensletGraph::lensPitch() const {
 	assert(counter > 0);
 
 	return average / (double)counter;
+}
+
+const Imath::V2i& LensletGraph::sensorResolution() const {
+	return m_pimpl->sensorSize;
+}
+
+const cv::Matx<double, 3, 3>& LensletGraph::fittedMatrix() const {
+	assert(m_pimpl->fitted);
+	return m_pimpl->fittedMatrix;
 }
 
 void LensletGraph::drawCenters(cv::Mat& target) const {

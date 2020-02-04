@@ -47,7 +47,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		throw std::runtime_error("Border value too large for the size of the input image");
 
 	// make a lenslet data structure
-	lightfields::LensletGraph lenslets(cv::Vec2i(input.cols, input.rows), border);
+	lightfields::LensletGraph lenslets(Imath::V2i(input.cols, input.rows), border);
 	// feed all the local minima into it, except the ones too close to the border
 	for(std::size_t y=1; y<std::size_t(input.rows) - 1; ++y)
 		for(std::size_t x=1; x<std::size_t(input.cols) - 1; ++x) {
@@ -66,19 +66,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	lenslets.drawCenters(mat);
 
 	// delaunay drawing
-	auto fitted = lenslets.fit();
+	lenslets.fit();
 	lenslets.drawFit(mat);
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
 
 	// pattern
-	Imath::M33d fittedMatrix(
-		fitted(0, 0), fitted(0, 1), fitted(0, 2),
-		fitted(1, 0), fitted(1, 1), fitted(1, 2),
-		fitted(2, 0), fitted(2, 1), fitted(2, 2)
-	);
-
-	data.set(a_pattern, lightfields::Pattern(lenslets.lensPitch(), fittedMatrix, Imath::V2i(input.cols, input.rows)));
+	data.set(a_pattern, lightfields::Pattern::fromFit(lenslets));
 
 	return dependency_graph::State();
 }

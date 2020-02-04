@@ -4,6 +4,9 @@
 
 #include <OpenEXR/ImathMatrix.h>
 
+#include "metadata.h"
+#include "lenslet_graph.h"
+
 namespace lightfields {
 
 Pattern::Pattern() : m_sensorResolution(0,0), m_lensPitch(0) {
@@ -13,9 +16,6 @@ Pattern::Pattern(double lensPitch, double pixelPitch, double rotation,
 	Imath::V2d scaleFactor, Imath::V3d sensorOffset, Imath::V2i sensorResolution) : m_sensorResolution(sensorResolution), m_lensPitch(lensPitch/pixelPitch)
 {
 	// put together lens transformation matrix
-	const double cs = cos(rotation);
-	const double sn = sin(rotation);
-
 	Imath::M33d scale, pattern, rotate, transform;
 	scale.makeIdentity();
 	pattern.makeIdentity();
@@ -23,6 +23,9 @@ Pattern::Pattern(double lensPitch, double pixelPitch, double rotation,
 
 	scale[0][0] = pixelPitch / lensPitch / scaleFactor[0];
 	scale[1][1] = pixelPitch / lensPitch / scaleFactor[1];
+
+	const double cs = cos(rotation);
+	const double sn = sin(rotation);
 
 	rotate[0][0] = cs;
 	rotate[0][1] = -sn;
@@ -139,6 +142,41 @@ std::ostream& operator << (std::ostream& out, const Pattern& p) {
 	out << "  transform" << std::endl << p.m_tr << std::endl;
 
 	return out;
+}
+
+/////
+
+Pattern Pattern::fromMetadata(const Metadata& meta) {
+	return lightfields::Pattern(
+		meta.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
+		meta.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
+		meta.metadata()["devices"]["mla"]["rotation"].asDouble(),
+		Imath::V2f(
+			meta.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
+			meta.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()
+		),
+		Imath::V3f(
+			meta.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
+			meta.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
+			meta.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
+		),
+		Imath::V2i(
+			meta.metadata()["image"]["width"].asInt(),
+			meta.metadata()["image"]["height"].asInt()
+		)
+	);
+}
+
+Pattern Pattern::fromFit(const LensletGraph& lg) {
+	auto fitted = lg.fittedMatrix();
+
+	Imath::M33d fittedMatrix(
+		fitted(0, 0), fitted(0, 1), fitted(0, 2),
+		fitted(1, 0), fitted(1, 1), fitted(1, 2),
+		fitted(2, 0), fitted(2, 1), fitted(2, 2)
+	);
+
+	return lightfields::Pattern(lg.lensPitch(), fittedMatrix, lg.sensorResolution());
 }
 
 }

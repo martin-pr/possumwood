@@ -7,13 +7,16 @@
 
 namespace lightfields {
 
+class Metadata;
+class LensletGraph;
+
 class Pattern {
 	public:
 		Pattern();
-		Pattern(double lensPitch, double pixelPitch, double rotation, Imath::V2d scaleFactor, Imath::V3d sensorOffset, Imath::V2i sensorResolution);
-		Pattern(double lensPitch, Imath::M33d tr, Imath::V2i sensorResolution);
 		~Pattern();
 
+		/// adjusts the scale of the pattern (centered) - allows to compensate for inaccuracies in pattern detection, otherwise clearly visible
+		/// on u-x or v-y EPI image as a black tilted line.
 		void scale(float factor);
 
 		struct Sample {
@@ -27,7 +30,15 @@ class Pattern {
 		bool operator == (const Pattern& p) const;
 		bool operator != (const Pattern& p) const;
 
+		/// creates a new pattern instance from Lytro metadata extracted from a raw file
+		static Pattern fromMetadata(const Metadata& meta);
+		/// creates a new pattern instance from an explicitly fitted pattern
+		static Pattern fromFit(const LensletGraph& lg);
+
 	private:
+		Pattern(double lensPitch, double pixelPitch, double rotation, Imath::V2d scaleFactor, Imath::V3d sensorOffset, Imath::V2i sensorResolution);
+		Pattern(double lensPitch, Imath::M33d tr, Imath::V2i sensorResolution);
+
 		Imath::V2i m_sensorResolution;
 		double m_lensPitch;
 

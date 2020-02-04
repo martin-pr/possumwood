@@ -83,6 +83,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		const lightfields::Metadata& meta = raw.metadata();
 
+		// assemble the lightfield pattern
+		pattern = lightfields::Pattern::fromMetadata(meta);
+
 		width = meta.metadata()["image"]["width"].asInt();
 		height = meta.metadata()["image"]["height"].asInt();
 
@@ -95,23 +98,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		white[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].asInt();
 		white[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].asInt();
 		white[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
-
-		// assemble the lightfield pattern
-		pattern = lightfields::Pattern(
-			meta.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
-			meta.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
-			meta.metadata()["devices"]["mla"]["rotation"].asDouble(),
-			Imath::V2f(
-				meta.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
-				meta.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()
-			),
-			Imath::V3f(
-				meta.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
-				meta.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
-				meta.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
-			),
-			Imath::V2i(width, height)
-		);
 
 		assert(!raw.image().empty());
 		result = decodeData(raw.image().data(), width, height, black, white);
