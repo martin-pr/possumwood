@@ -23,7 +23,8 @@ class LightfieldSamples {
 
 		struct Sample {
 			Imath::V2i source; ///< Integer position of the source pixel in source image
-			Imath::V2f target; ///< Target position in the target image
+			Imath::V2f xy; ///< XY coordinates of the sample
+			Imath::V2f uv; ///< UV coordinates of the sample
 			Color color; ///< Target colour channel, based on the Bayer pattern
 		};
 

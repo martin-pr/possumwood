@@ -46,14 +46,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if((*data.get(a_in)).type() == CV_32FC1)
 		for(auto s : samples)
 			cache[s.color].push_back(Sample{
-				Imath::V2f(s.target[0] * x_scale, s.target[1] * y_scale),
+				Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale),
 				input.at<float>(s.source[1], s.source[0])
 			});
 	else
 		for(auto s : samples)
 			for(int c=0;c<3;++c)
 				cache[c].push_back(Sample{
-					Imath::V2f(s.target[0] * x_scale, s.target[1] * y_scale),
+					Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale),
 					*(input.ptr<float>(s.source[1], s.source[0]) + c)
 				});
 

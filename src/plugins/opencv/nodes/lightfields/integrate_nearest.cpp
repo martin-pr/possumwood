@@ -63,8 +63,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		assert(begin <= end);
 
 		for(auto it = begin; it != end; ++it) {
-			const float target_x = it->target[0] * x_scale;
-			const float target_y = it->target[1] * y_scale;
+			const float target_x = it->xy[0] * x_scale;
+			const float target_y = it->xy[1] * y_scale;
 
 			// sanity checks
 			assert(it->source[0] < input.rows);
@@ -101,8 +101,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		assert(begin <= end);
 
 		for(auto it = begin; it != end; ++it) {
-			const float target_x = it->target[0] * x_scale;
-			const float target_y = it->target[1] * y_scale;
+			const float target_x = it->xy[0] * x_scale;
+			const float target_y = it->xy[1] * y_scale;
 
 			float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
 			const float* value = input.ptr<float>(it->source[1], it->source[0]);

@@ -35,9 +35,11 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 
 			// input image pixel position, integer in pixels
 			sample.source = Imath::V2i(x, y);
+			// and UV coordinates, -1..1
+			sample.uv = coords.offset;
 
 			// target pixel position, normalized (0..1) - adding the UV offset to handle displacement
-			sample.target = Imath::V2f(
+			sample.xy = Imath::V2f(
 				(coords.lensCenter[0] + coords.offset[0]*uvOffset),
 				(coords.lensCenter[1] + coords.offset[1]*uvOffset)
 
@@ -46,7 +48,7 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 			);
 
 			// compute detail scaling (usable to visualise details in the centre of the view, or crop edges of an image)
-			sample.target = (sample.target - Imath::V2f(impl->size[0]/2, impl->size[1]/2)) * xy_scale + Imath::V2f(impl->size[0]/2, impl->size[1]/2);
+			sample.xy = (sample.xy - Imath::V2f(impl->size[0]/2, impl->size[1]/2)) * xy_scale + Imath::V2f(impl->size[0]/2, impl->size[1]/2);
 
 			// hardcoded bayer pattern, for now
 			sample.color = possumwood::opencv::LightfieldSamples::Color((x%2) + (y%2));
@@ -78,7 +80,7 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 			}
 
 			// keep only samples within the requested XY region
-			if(*offs < uvThreshold*uvThreshold && it->target[0] >= 0.0f && it->target[1] >= 0.0f && it->target[0] < w && it->target[1] < h) {
+			if(*offs < uvThreshold*uvThreshold && it->xy[0] >= 0.0f && it->xy[1] >= 0.0f && it->xy[0] < w && it->xy[1] < h) {
 				*current = *it;
 				++current;
 			}
@@ -119,10 +121,10 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 	#ifndef NDEBUG
 
 	for(auto it = begin(); it != end(); ++it) {
-		assert(it->target[0] >= 0);
-		assert(it->target[1] >= 0);
-		assert(it->target[0] < w);
-		assert(it->target[1] < h);
+		assert(it->xy[0] >= 0);
+		assert(it->xy[1] >= 0);
+		assert(it->xy[0] < w);
+		assert(it->xy[1] < h);
 	}
 
 	#endif
