@@ -17,7 +17,13 @@ dependency_graph::OutAttr<possumwood::opencv::LightfieldSamples> a_samples;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const lightfields::Pattern pattern = data.get(a_pattern);
 
-	data.set(a_samples, possumwood::opencv::LightfieldSamples(pattern, data.get(a_uvOffset), data.get(a_uvThreshold), data.get(a_xyScale)));
+	possumwood::opencv::LightfieldSamples samples(pattern);
+	samples.offset(data.get(a_uvOffset));
+	samples.scale(data.get(a_xyScale));
+	samples.threshold(data.get(a_uvThreshold));
+	samples.filterInvalid();
+
+	data.set(a_samples, std::move(samples));
 
 	return dependency_graph::State();
 }

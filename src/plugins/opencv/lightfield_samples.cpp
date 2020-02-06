@@ -4,32 +4,18 @@
 
 namespace possumwood { namespace opencv {
 
-struct LightfieldSamples::Pimpl {
-	Pimpl() : size(0,0) {
-	}
-
-	std::vector<Sample> m_samples;
-	std::vector<std::size_t> m_rowOffsets;
-	Imath::V2i size;
-};
-
-
-LightfieldSamples::LightfieldSamples() : m_pimpl(new Pimpl()) {
+LightfieldSamples::LightfieldSamples() {
 }
 
-LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float uvOffset, float uvThreshold, float xy_scale) {
-	std::unique_ptr<Pimpl> impl(new Pimpl());
+LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern) {
+	m_size = pattern.sensorResolution();
 
-	impl->size = pattern.sensorResolution();
-
-	impl->m_samples.resize(impl->size[0] * impl->size[1]);
-	std::vector<float> uvOffsets(impl->size[0] * impl->size[1], 0.0f);
+	m_samples.resize(m_size[0] * m_size[1]);
 
 	// assemble the samples
-	tbb::parallel_for(std::size_t(0), (std::size_t)impl->size[0], [&](std::size_t y) {
-	// for(std::size_t y=0; y<(std::size_t)impl->size[0]; ++y)
-		for(std::size_t x=0; x<(std::size_t)impl->size[1]; ++x) {
-			Sample& sample = impl->m_samples[y*impl->size[0] + x];
+	tbb::parallel_for(std::size_t(0), (std::size_t)m_size[0], [&](std::size_t y) {
+		for(std::size_t x=0; x<(std::size_t)m_size[1]; ++x) {
+			Sample& sample = m_samples[y*m_size[0] + x];
 
 			const lightfields::Pattern::Sample coords = pattern.sample(Imath::V2i(x,y));
 
@@ -39,114 +25,77 @@ LightfieldSamples::LightfieldSamples(const lightfields::Pattern& pattern, float 
 			sample.uv = coords.offset;
 
 			// target pixel position, normalized (0..1) - adding the UV offset to handle displacement
-			sample.xy = Imath::V2f(
-				(coords.lensCenter[0] + coords.offset[0]*uvOffset),
-				(coords.lensCenter[1] + coords.offset[1]*uvOffset)
-
-				// (coords[0]) / (float)size[0],
-				// (coords[1]) / (float)size[1]
-			);
-
-			// compute detail scaling (usable to visualise details in the centre of the view, or crop edges of an image)
-			sample.xy = (sample.xy - Imath::V2f(impl->size[0]/2, impl->size[1]/2)) * xy_scale + Imath::V2f(impl->size[0]/2, impl->size[1]/2);
+			sample.xy = coords.lensCenter;
 
 			// hardcoded bayer pattern, for now
 			sample.color = possumwood::opencv::LightfieldSamples::Color((x%2) + (y%2));
-
-			const double uv_magnitude_2 = coords.offset[0]*coords.offset[0] + coords.offset[1]*coords.offset[1];
-			uvOffsets[y*impl->size[0] + x] = uv_magnitude_2;
 		}
 	});
 
-	const float w = impl->size[0];
-	const float h = impl->size[1];
-
-	// filter out any samples outside the threshold
-	{
-		impl->m_rowOffsets.resize(impl->size[0], 0);
-
-		auto it = impl->m_samples.begin();
-		auto current = it;
-
-		auto offs = uvOffsets.begin();
-
-		int rowId = 0;
-
-		while(it != impl->m_samples.end()) {
-			// starts of each row
-			while(rowId < it->source[1]) {
-				++rowId;
-				impl->m_rowOffsets[rowId] = current - impl->m_samples.begin();
-			}
-
-			// keep only samples within the requested XY region
-			if(*offs < uvThreshold*uvThreshold && it->xy[0] >= 0.0f && it->xy[1] >= 0.0f && it->xy[0] < w && it->xy[1] < h) {
-				*current = *it;
-				++current;
-			}
-
-			++it;
-			++offs;
-		}
-
-		++rowId;
-		while(rowId < (int)impl->m_rowOffsets.size()) {
-			impl->m_rowOffsets[rowId] = impl->m_samples.size();
-			++rowId;
-		}
-
-		impl->m_samples.resize(current - impl->m_samples.begin());
-
-		#ifndef NDEBUG
-
-		// sanity checks
-		{
-			auto it = impl->m_rowOffsets.begin();
-			assert(*it == 0);
-
-			auto it2 = it++;
-			while(it != impl->m_rowOffsets.end()) {
-				assert(*it >= *it2);
-
-				++it;
-				++it2;
-			}
-		}
-
-		#endif
-	}
-
-	m_pimpl = std::shared_ptr<const Pimpl>(impl.release());
-
-	#ifndef NDEBUG
-
-	for(auto it = begin(); it != end(); ++it) {
-		assert(it->xy[0] >= 0);
-		assert(it->xy[1] >= 0);
-		assert(it->xy[0] < w);
-		assert(it->xy[1] < h);
-	}
-
-	#endif
+	makeRowOffsets();
 }
 
 LightfieldSamples::~LightfieldSamples() {
 }
 
-bool LightfieldSamples::operator == (const LightfieldSamples& f) const {
-	return m_pimpl == f.m_pimpl;
+void LightfieldSamples::makeRowOffsets() {
+	// and collect row start indices
+	m_rowOffsets.resize(m_size[1], m_samples.size());
+	for(auto it = m_samples.begin(); it != m_samples.end(); ++it)
+		if(m_rowOffsets[it->source[1]] > (std::size_t)(it - m_samples.begin()))
+			m_rowOffsets[it->source[1]] = it - m_samples.begin();
 }
-bool LightfieldSamples::operator != (const LightfieldSamples& f) const {
-	return m_pimpl != f.m_pimpl;
+
+void LightfieldSamples::offset(float uvOffset) {
+	for(auto& s : m_samples)
+		s.xy += s.uv * uvOffset;
+}
+
+void LightfieldSamples::threshold(float uvThreshold) {
+	auto tgt = m_samples.begin();
+	auto src = m_samples.begin();
+
+	uvThreshold *= uvThreshold;
+	for(; src != m_samples.end(); ++src) {
+		if(src->uv.length2() < uvThreshold) {
+			*tgt = *src;
+			++tgt;
+		}
+	}
+	m_samples.resize(tgt - m_samples.begin());
+
+	makeRowOffsets();
+}
+
+void LightfieldSamples::filterInvalid() {
+	auto tgt = m_samples.begin();
+	auto src = m_samples.begin();
+
+	const float widthf = m_size[0];
+	const float heightf = m_size[1];
+	for(; src != m_samples.end(); ++src) {
+		if(floor(src->xy[0]) >= 0.0f && floor(src->xy[1]) >= 0.0f && floor(src->xy[0]) < widthf && floor(src->xy[1]) < heightf) {
+			*tgt = *src;
+			++tgt;
+		}
+	}
+	m_samples.resize(tgt - m_samples.begin());
+
+	makeRowOffsets();
+}
+
+void LightfieldSamples::scale(float xy_scale) {
+	for(auto& sample : m_samples)
+		sample.xy = (sample.xy - Imath::V2f(m_size[0]/2, m_size[1]/2)) * xy_scale + Imath::V2f(m_size[0]/2, m_size[1]/2);
 }
 
 LightfieldSamples::const_iterator LightfieldSamples::begin(std::size_t row) const {
-	auto it = m_pimpl->m_samples.end();
+	auto it = m_samples.end();
 
-	if(row < m_pimpl->m_rowOffsets.size())
-		it = m_pimpl->m_samples.begin() + m_pimpl->m_rowOffsets[row];
+	if(row < m_rowOffsets.size())
+		it = m_samples.begin() + m_rowOffsets[row];
 
-	assert(it <= m_pimpl->m_samples.end());
+	assert(it <= m_samples.end());
 
 	return it;
 }
@@ -157,19 +106,19 @@ LightfieldSamples::const_iterator LightfieldSamples::end(std::size_t row) const 
 }
 
 std::size_t LightfieldSamples::size() const {
-	return m_pimpl->m_samples.size();
+	return m_samples.size();
 }
 
 bool LightfieldSamples::empty() const {
-	return m_pimpl->m_samples.empty();
+	return m_samples.empty();
 }
 
 const Imath::V2i LightfieldSamples::sensorSize() const {
-	return m_pimpl->size;
+	return m_size;
 }
 
 std::ostream& operator << (std::ostream& out, const LightfieldSamples& f) {
-	out << "(lightfield samples)";
+	out << "(lightfield samples - " << f.size() << " samples)";
 
 	return out;
 }

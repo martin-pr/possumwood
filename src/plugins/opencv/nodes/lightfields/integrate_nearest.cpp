@@ -69,16 +69,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			// sanity checks
 			assert(it->source[0] < input.rows);
 			assert(it->source[1] < input.cols);
-			assert(floor(target_x) >= 0);
-			assert(floor(target_y) >= 0);
-			assert(floor(target_x) < width);
-			assert(floor(target_y) < height);
 
-			float* color = average.ptr<float>(floor(target_y), floor(target_x));
-			uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
+			if((floor(target_x) >= 0) && (floor(target_y) >= 0) && (floor(target_x) < width) && (floor(target_y) < height)) {
+				float* color = average.ptr<float>(floor(target_y), floor(target_x));
+				uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
 
-			const float* value = input.ptr<float>(it->source[1], it->source[0]);
-			(*applyFn)(color, n, it->color, value);
+				const float* value = input.ptr<float>(it->source[1], it->source[0]);
+				(*applyFn)(color, n, it->color, value);
+			}
 		}
 	});
 
@@ -104,16 +102,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			const float target_x = it->xy[0] * x_scale;
 			const float target_y = it->xy[1] * y_scale;
 
-			float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
-			const float* value = input.ptr<float>(it->source[1], it->source[0]);
-			const float* ave = average.ptr<float>(target_y, target_x);
-			const uint16_t* n = norm.ptr<uint16_t>(target_y, target_x);
+			if((floor(target_x) >= 0) && (floor(target_y) >= 0) && (floor(target_x) < width) && (floor(target_y) < height)) {
+				float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
+				const float* value = input.ptr<float>(it->source[1], it->source[0]);
+				const float* ave = average.ptr<float>(target_y, target_x);
+				const uint16_t* n = norm.ptr<uint16_t>(target_y, target_x);
 
-			if(input.channels() == 3)
-				for(int c=0; c<3; ++c)
-					*target += pow(value[c] - ave[c], 2) / (float)n[c];
-			else
-				*target += pow(*value - ave[it->color], 2) / (float)n[it->color];
+				if(input.channels() == 3)
+					for(int c=0; c<3; ++c)
+						*target += pow(value[c] - ave[c], 2) / (float)n[c];
+				else
+					*target += pow(*value - ave[it->color], 2) / (float)n[it->color];
+			}
 		}
 	});
 

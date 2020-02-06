@@ -29,8 +29,11 @@ class LightfieldSamples {
 		};
 
 		LightfieldSamples();
-		LightfieldSamples(const ::lightfields::Pattern& pattern, float uvOffset, float uvThreshold, float xy_scale);
+		LightfieldSamples(const ::lightfields::Pattern& pattern);
 		~LightfieldSamples();
+
+		LightfieldSamples(LightfieldSamples&&) = default;
+		LightfieldSamples& operator = (LightfieldSamples&&) = default;
 
 		using const_iterator = std::vector<Sample>::const_iterator;
 
@@ -42,12 +45,17 @@ class LightfieldSamples {
 
 		const Imath::V2i sensorSize() const;
 
-		bool operator == (const LightfieldSamples& f) const;
-		bool operator != (const LightfieldSamples& f) const;
+		void offset(float uvOffset);
+		void threshold(float uvThreshold);
+		void scale(float xy_scale);
+		void filterInvalid();
 
 	private:
-		struct Pimpl;
-		std::shared_ptr<const Pimpl> m_pimpl;
+		void makeRowOffsets();
+
+		std::vector<Sample> m_samples;
+		std::vector<std::size_t> m_rowOffsets;
+		Imath::V2i m_size;
 };
 
 std::ostream& operator << (std::ostream& out, const LightfieldSamples& f);
