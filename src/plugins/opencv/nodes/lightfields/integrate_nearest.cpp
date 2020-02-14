@@ -58,8 +58,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const float y_scale = (float)height / (float)samples.sensorSize()[1];
 
 	tbb::parallel_for(0, input.rows, [&](int y) {
-		const auto end = samples.end(y);
 		const auto begin = samples.begin(y);
+		const auto end = samples.end(y);
 		assert(begin <= end);
 
 		for(auto it = begin; it != end; ++it) {
@@ -83,7 +83,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	tbb::parallel_for(0, average.rows, [&](int y) {
 		for(int x=0;x<average.cols;++x)
 			for(int a=0;a<3;++a)
-				if(norm.ptr<float>(y,x)[a] > 0.0f)
+				if(norm.ptr<uint16_t>(y,x)[a] > 0)
 					average.ptr<float>(y,x)[a] /= (float)norm.ptr<uint16_t>(y,x)[a];
 	});
 
