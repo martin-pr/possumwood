@@ -32,6 +32,9 @@ class LightfieldSamples {
 		LightfieldSamples(const ::lightfields::Pattern& pattern);
 		~LightfieldSamples();
 
+		LightfieldSamples(const LightfieldSamples&) = default;
+		LightfieldSamples& operator = (const LightfieldSamples&) = default;
+
 		LightfieldSamples(LightfieldSamples&&) = default;
 		LightfieldSamples& operator = (LightfieldSamples&&) = default;
 

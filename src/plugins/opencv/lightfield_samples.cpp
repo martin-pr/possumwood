@@ -39,11 +39,36 @@ LightfieldSamples::~LightfieldSamples() {
 }
 
 void LightfieldSamples::makeRowOffsets() {
-	// and collect row start indices
-	m_rowOffsets.resize(m_size[1], m_samples.size());
-	for(auto it = m_samples.begin(); it != m_samples.end(); ++it)
-		if(m_rowOffsets[it->source[1]] > (std::size_t)(it - m_samples.begin()))
-			m_rowOffsets[it->source[1]] = it - m_samples.begin();
+	if(m_samples.empty())
+		m_rowOffsets.clear();
+
+	else {
+		// initialise to maximum offset
+		m_rowOffsets = std::move(std::vector<std::size_t>(m_size[1], m_samples.size()));
+		m_rowOffsets[0] = 0;
+
+		// collect row start indices
+		int current = 1;
+		for(auto it = m_samples.begin(); it != m_samples.end(); ++it) {
+			assert(it->source[1] >= 0 && it->source[1] < m_size[1]);
+
+			// propagate current value, to account for "empty" scanlines
+			while(current < it->source[1]) {
+				m_rowOffsets[current] = m_rowOffsets[current-1];
+				++current;
+			}
+			current = std::max(it->source[1], current);
+
+			// and update the current starting index
+			if(m_rowOffsets[it->source[1]] > (std::size_t)(it - m_samples.begin()))
+				m_rowOffsets[it->source[1]] = it - m_samples.begin();
+		}
+
+		for(std::size_t i=1;i<m_rowOffsets.size();++i) {
+			if(not (m_rowOffsets[i-1] <= m_rowOffsets[i]))
+				std::cout << "Row " << i << " " << m_rowOffsets[i-1] << "/" << m_rowOffsets[i] << std::endl;
+		}
+	}
 }
 
 void LightfieldSamples::offset(float uvOffset) {
@@ -87,14 +112,17 @@ void LightfieldSamples::filterInvalid() {
 void LightfieldSamples::scale(float xy_scale) {
 	for(auto& sample : m_samples)
 		sample.xy = (sample.xy - Imath::V2f(m_size[0]/2, m_size[1]/2)) * xy_scale + Imath::V2f(m_size[0]/2, m_size[1]/2);
+
+	makeRowOffsets();
 }
 
 LightfieldSamples::const_iterator LightfieldSamples::begin(std::size_t row) const {
 	auto it = m_samples.end();
 
-	if(row < m_rowOffsets.size())
+	if(row < m_rowOffsets.size()) {
+		assert(m_rowOffsets[row] <= m_samples.size());
 		it = m_samples.begin() + m_rowOffsets[row];
-
+	}
 	assert(it <= m_samples.end());
 
 	return it;
