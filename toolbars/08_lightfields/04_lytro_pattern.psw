@@ -7,6 +7,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "colormap_1",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "merge_0",
             "in_port": "in_2",
             "out_node": "compare_0",
@@ -28,6 +34,12 @@
             "in_node": "colormap_0",
             "in_port": "in_frame",
             "out_node": "convert_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "colormap_1",
+            "in_port": "in_frame",
+            "out_node": "convert_2",
             "out_port": "out_frame"
         },
         {
@@ -85,28 +97,28 @@
             "out_port": "frame"
         },
         {
+            "in_node": "pattern_from_metadata_0",
+            "in_port": "metadata",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "metadata"
+        },
+        {
+            "in_node": "pattern_from_metadata_1",
+            "in_port": "metadata",
+            "out_node": "lytro_lightfield_1",
+            "out_port": "metadata"
+        },
+        {
             "in_node": "draw_pattern_0",
             "in_port": "pattern",
-            "out_node": "lytro_lightfield_0",
+            "out_node": "pattern_from_metadata_0",
             "out_port": "pattern"
         },
         {
             "in_node": "draw_pattern_1",
             "in_port": "pattern",
-            "out_node": "lytro_lightfield_1",
+            "out_node": "pattern_from_metadata_1",
             "out_port": "pattern"
-        },
-        {
-            "in_node": "colormap_1",
-            "in_port": "in_frame",
-            "out_node": "convert_2",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "colormap_1",
-            "out_port": "out_frame"
         }
     ],
     "description": "### Lytro microlens pattern reconstruction\n\nReconstruction of the microlens pattern is essential for recovering the lightfield data from a Lytro image.\n\nThis demo shows how the information embedded in the metadata of a Lytro raw image can be used to reconstruct the microlens array, and visualise the result.\n\nGeorgiev, Todor, et al. [\"Lytro camera technology: theory, algorithms, performance analysis.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.679.5441&rep=rep1&type=pdf) Multimedia Content and Mobile Devices. Vol. 8667. International Society for Optics and Photonics, 2013.",
@@ -283,8 +295,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/IMG_0012.lfr",
-                "use_new_pattern": false
+                "filename": "$EXAMPLES/lytro/IMG_0012.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -292,14 +303,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 366.770874023438,
-                    "y": 118.923698425293
+                    "x": 452.7412109375,
+                    "y": 115.633255004883
                 }
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/IMG_0012.lfr",
-                "use_new_pattern": true
+                "filename": "$EXAMPLES/lytro/IMG_0012.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -716,6 +726,28 @@
                 }
             },
             "type": "network"
+        },
+        "pattern_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 224.029708862305,
+                    "y": 241.682403564453
+                }
+            },
+            "name": "pattern_from_metadata",
+            "type": "opencv/lightfields/pattern_from_metadata"
+        },
+        "pattern_from_metadata_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 467.348663330078,
+                    "y": 231.616119384766
+                }
+            },
+            "name": "pattern_from_metadata",
+            "type": "opencv/lightfields/pattern_from_metadata"
         }
     },
     "scene_config": {
@@ -723,6 +755,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAlMAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABoQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACFwAAAcoAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAlMAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABagAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB4AAAAY4AAACqAQAAAwAAAgUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

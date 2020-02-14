@@ -115,10 +115,10 @@
             "out_port": "frame"
         },
         {
-            "in_node": "draw_pattern_0",
-            "in_port": "pattern",
+            "in_node": "pattern_from_metadata_0",
+            "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
+            "out_port": "metadata"
         },
         {
             "in_node": "network_0",
@@ -137,6 +137,12 @@
             "in_port": "in_frame",
             "out_node": "network_3",
             "out_port": "output"
+        },
+        {
+            "in_node": "draw_pattern_0",
+            "in_port": "pattern",
+            "out_node": "pattern_from_metadata_0",
+            "out_port": "pattern"
         }
     ],
     "description": "### Lytro pattern detection\n\nLytro files come with metadata that descibe the parameters of the lenslet pattern used to capture the image. Unfortunately, this lenslet pattern was detected using a simple peak-detection algorithm, with together with the main-lens vignetting causes the lenslet centers to be slightly biased towards the centre of the image.\n\nThis demo attempt to detect the lenslets using a different method - by inverting the image, locally normalising it and convoluting it with an inverted lenslet pattern (a \"hexagonal\" shape representing the darker spaces between lenslets), we can achieve a better match with the original lenslet placement.\n\nThis demo only shows the image-processing part - the pattern fitting is demonstrated in the next demo.",
@@ -1845,6 +1851,17 @@
                 "size": 13
             },
             "type": "network"
+        },
+        "pattern_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1.91245234012604,
+                    "y": 1020.80438232422
+                }
+            },
+            "name": "pattern_from_metadata",
+            "type": "opencv/lightfields/pattern_from_metadata"
         }
     },
     "scene_config": {
@@ -1852,6 +1869,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALMAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABNwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABrQAAAjQAAACqAQAAAwAAAwoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALMAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABDgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABhAAAAeoAAACqAQAAAwAAAjUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

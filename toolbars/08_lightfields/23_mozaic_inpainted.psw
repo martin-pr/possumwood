@@ -67,16 +67,22 @@
             "out_port": "frame"
         },
         {
-            "in_node": "integrate_mosaic_0",
-            "in_port": "pattern",
+            "in_node": "pattern_from_metadata_0",
+            "in_port": "metadata",
             "out_node": "lytro_lightfield_1",
-            "out_port": "pattern"
+            "out_port": "metadata"
         },
         {
             "in_node": "inpaint_0",
             "in_port": "mask",
             "out_node": "threshold_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "integrate_mosaic_0",
+            "in_port": "pattern",
+            "out_node": "pattern_from_metadata_0",
+            "out_port": "pattern"
         }
     ],
     "description": "### Sub-apreture image inpainting\n\nTo reconstruct missing data after obtaining sub-apreture images, this demo uses a simple inpainting technique from OpenCV to reconstruct missing data in each image separately.\n\n<sub>Sabater, Neus, et al. [\"Accurate disparity estimation for plenoptic images.\"](https://pdfs.semanticscholar.org/e79c/4371f7636d3c94c839d00653390e791e0e0b.pdf) European Conference on Computer Vision. Springer, Cham, 2014.</sub>\n\n<sub>Bertalmio, Marcelo, Andrea L. Bertozzi, and Guillermo Sapiro. [\"Navier-stokes, fluid dynamics, and image and video inpainting.\"](https://conservancy.umn.edu/bitstream/handle/11299/3607/1772.pdf?sequence=1) Proceedings of the 2001 IEEE Computer Society Conference on Computer Vision and Pattern Recognition. CVPR 2001. Vol. 1. IEEE, 2001.</sub>",
@@ -91,7 +97,8 @@
             },
             "name": "concat",
             "ports": {
-                "mode": "Horizontal"
+                "mode": "Horizontal",
+                "separation": 0
             },
             "type": "opencv/concat"
         },
@@ -522,6 +529,17 @@
             },
             "type": "network"
         },
+        "pattern_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 266.43603515625,
+                    "y": -345.722534179688
+                }
+            },
+            "name": "pattern_from_metadata",
+            "type": "opencv/lightfields/pattern_from_metadata"
+        },
         "threshold_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -546,6 +564,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALXAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA4gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABWAAAAhYAAACqAQAAAwAAAioAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

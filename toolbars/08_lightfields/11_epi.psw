@@ -1,6 +1,36 @@
 {
     "connections": [
         {
+            "in_node": "epi_3",
+            "in_port": "pattern",
+            "out_node": "adjust_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
+            "in_node": "epi_0",
+            "in_port": "pattern",
+            "out_node": "adjust_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
+            "in_node": "epi_1",
+            "in_port": "pattern",
+            "out_node": "adjust_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
+            "in_node": "epi_4",
+            "in_port": "pattern",
+            "out_node": "adjust_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
+            "in_node": "epi_2",
+            "in_port": "pattern",
+            "out_node": "adjust_pattern_0",
+            "out_port": "out_pattern"
+        },
+        {
             "in_node": "gamma_0",
             "in_port": "in_frame",
             "out_node": "concat_3_0",
@@ -127,10 +157,10 @@
             "out_port": "frame"
         },
         {
-            "in_node": "adjust_pattern_0",
-            "in_port": "in_pattern",
+            "in_node": "pattern_from_metadata_0",
+            "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
+            "out_port": "metadata"
         },
         {
             "in_node": "divide_0",
@@ -187,34 +217,10 @@
             "out_port": "y"
         },
         {
-            "in_node": "epi_3",
-            "in_port": "pattern",
-            "out_node": "adjust_pattern_0",
-            "out_port": "out_pattern"
-        },
-        {
-            "in_node": "epi_0",
-            "in_port": "pattern",
-            "out_node": "adjust_pattern_0",
-            "out_port": "out_pattern"
-        },
-        {
-            "in_node": "epi_1",
-            "in_port": "pattern",
-            "out_node": "adjust_pattern_0",
-            "out_port": "out_pattern"
-        },
-        {
-            "in_node": "epi_4",
-            "in_port": "pattern",
-            "out_node": "adjust_pattern_0",
-            "out_port": "out_pattern"
-        },
-        {
-            "in_node": "epi_2",
-            "in_port": "pattern",
-            "out_node": "adjust_pattern_0",
-            "out_port": "out_pattern"
+            "in_node": "adjust_pattern_0",
+            "in_port": "in_pattern",
+            "out_node": "pattern_from_metadata_0",
+            "out_port": "pattern"
         }
     ],
     "description": "### Epipolar Images\n\nEpipolar images show slices of the 4D lightfield along different axis. \n\nThe x-y image (center) shows a slice corresponding to a single dept-of-field image. By changing the UV offset or interval, it is possible to create images with different depth of field or focal plane.\n\nThe u-x and v-y images (left, right, top and bottom) show slices with \"line direction\" (based on incoming direction of rays) corresponding to individual depth planes. \n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
@@ -1476,6 +1482,17 @@
                 }
             },
             "type": "network"
+        },
+        "pattern_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 422.460845947266,
+                    "y": -692.672424316406
+                }
+            },
+            "name": "pattern_from_metadata",
+            "type": "opencv/lightfields/pattern_from_metadata"
         },
         "split_vec2u_0": {
             "blind_data": {

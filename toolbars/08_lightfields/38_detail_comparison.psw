@@ -85,10 +85,10 @@
             "out_port": "frame"
         },
         {
-            "in_node": "samples_refocus_0",
-            "in_port": "pattern",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
+            "out_port": "metadata"
         },
         {
             "in_node": "divide_0",
@@ -100,24 +100,30 @@
             "in_node": "integrate_nearest_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
-            "out_port": "samples"
-        },
-        {
-            "in_node": "integrate_bezier_0",
-            "in_port": "samples",
-            "out_node": "samples_refocus_0",
-            "out_port": "samples"
-        },
-        {
-            "in_node": "integrate_bezier_1",
-            "in_port": "samples",
-            "out_node": "samples_refocus_0",
-            "out_port": "samples"
+            "out_port": "out_samples"
         },
         {
             "in_node": "integrate_gaussian_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
+            "out_port": "out_samples"
+        },
+        {
+            "in_node": "integrate_bezier_1",
+            "in_port": "samples",
+            "out_node": "samples_refocus_0",
+            "out_port": "out_samples"
+        },
+        {
+            "in_node": "integrate_bezier_0",
+            "in_port": "samples",
+            "out_node": "samples_refocus_0",
+            "out_port": "out_samples"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
             "out_port": "samples"
         }
     ],
@@ -133,7 +139,8 @@
             },
             "name": "concat",
             "ports": {
-                "mode": "Horizontal"
+                "mode": "Horizontal",
+                "separation": 0
             },
             "type": "opencv/concat"
         },
@@ -147,7 +154,8 @@
             },
             "name": "concat",
             "ports": {
-                "mode": "Horizontal"
+                "mode": "Horizontal",
+                "separation": 0
             },
             "type": "opencv/concat"
         },
@@ -161,7 +169,8 @@
             },
             "name": "concat",
             "ports": {
-                "mode": "Vertical"
+                "mode": "Vertical",
+                "separation": 0
             },
             "type": "opencv/concat"
         },
@@ -615,12 +624,23 @@
             },
             "type": "network"
         },
+        "samples_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 344.560852050781,
+                    "y": -165.382568359375
+                }
+            },
+            "name": "samples_from_metadata",
+            "type": "opencv/lightfields/samples_from_metadata"
+        },
         "samples_refocus_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 377.857055664062,
-                    "y": -141.719757080078
+                    "x": 389.164154052734,
+                    "y": -31.879322052002
                 }
             },
             "name": "samples_refocus",
