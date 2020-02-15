@@ -25,22 +25,10 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "draw_pattern_0",
-            "in_port": "pattern",
+            "in_node": "draw_samples_0",
+            "in_port": "samples",
             "out_node": "detect_pattern_0",
-            "out_port": "pattern"
-        },
-        {
-            "in_node": "convert_0",
-            "in_port": "in_frame",
-            "out_node": "draw_pattern_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "convert_1",
-            "in_port": "in_frame",
-            "out_node": "draw_pattern_1",
-            "out_port": "out_frame"
+            "out_port": "samples"
         },
         {
             "in_node": "network_3",
@@ -49,7 +37,7 @@
             "out_port": "frame"
         },
         {
-            "in_node": "pattern_from_metadata_0",
+            "in_node": "samples_from_metadata_0",
             "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
             "out_port": "metadata"
@@ -91,10 +79,22 @@
             "out_port": "output"
         },
         {
-            "in_node": "draw_pattern_1",
-            "in_port": "pattern",
-            "out_node": "pattern_from_metadata_0",
-            "out_port": "pattern"
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "draw_samples_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "draw_samples_1",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "draw_samples_1",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Lytro pattern fitting\n\nThis demo implements fitting of lenslet data detected using a convolution-based setup described in the previous demo.\n\nDisplay allows to preview both the original pattern, and the new detected pattern - just change the \"blend\" parameter.",
@@ -163,8 +163,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 123.65372467041,
-                    "y": -717.214477539062
+                    "x": 68.7335205078125,
+                    "y": -713.98388671875
                 }
             },
             "name": "detect_pattern",
@@ -173,27 +173,27 @@
             },
             "type": "opencv/lightfields/detect_pattern"
         },
-        "draw_pattern_0": {
+        "draw_samples_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 141.301254272461,
-                    "y": -510.763824462891
+                    "x": 127.129005432129,
+                    "y": -513.058349609375
                 }
             },
-            "name": "draw_pattern",
-            "type": "opencv/lightfields/draw_pattern"
+            "name": "draw_samples",
+            "type": "opencv/lightfields/draw_samples"
         },
-        "draw_pattern_1": {
+        "draw_samples_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 301.855316162109,
-                    "y": -510.364410400391
+                    "x": 306.427307128906,
+                    "y": -516.288940429688
                 }
             },
-            "name": "draw_pattern",
-            "type": "opencv/lightfields/draw_pattern"
+            "name": "draw_samples",
+            "type": "opencv/lightfields/draw_samples"
         },
         "lytro_lightfield_0": {
             "blind_data": {
@@ -2100,16 +2100,16 @@
             },
             "type": "network"
         },
-        "pattern_from_metadata_0": {
+        "samples_from_metadata_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 306.825042724609,
-                    "y": -674.882263183594
+                    "x": 350.040405273438,
+                    "y": -700.433166503906
                 }
             },
-            "name": "pattern_from_metadata",
-            "type": "opencv/lightfields/pattern_from_metadata"
+            "name": "samples_from_metadata",
+            "type": "opencv/lightfields/samples_from_metadata"
         }
     },
     "scene_config": {
@@ -2117,6 +2117,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAA5QAAAI8AAAWKAAADFwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJvAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA1QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABSwAAAiMAAACqAQAAAwAAApIAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAA5QAAAI8AAAWKAAADFwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJvAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABawAAAnYAAACqAQAAAwAAA2cAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
