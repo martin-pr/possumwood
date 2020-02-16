@@ -17,7 +17,7 @@ class Raw {
 
 		const Metadata& metadata() const;
 
-		const std::vector<char> image() const;
+		const unsigned char* image() const;
 
 	private:
 		struct Pimpl;

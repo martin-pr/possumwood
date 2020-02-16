@@ -10,7 +10,7 @@ namespace lightfields {
 struct Block {
 	char id = '\0';
 	std::string name;
-	std::vector<char> data;
+	std::vector<unsigned char> data;
 };
 
 std::istream& operator >> (std::istream& in, Block& block);

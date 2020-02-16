@@ -27,7 +27,7 @@ dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
 dependency_graph::OutAttr<lightfields::Metadata> a_metadata;
 
-cv::Mat decodeData(const char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
+cv::Mat decodeData(const unsigned char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
 	cv::Mat result(width, height, CV_32F);
 
 	tbb::parallel_for(std::size_t(0), width*height, [&](std::size_t i) {
@@ -102,7 +102,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		white[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
 
 		assert(!raw.image().empty());
-		result = decodeData(raw.image().data(), width, height, black, white);
+		result = decodeData(raw.image(), width, height, black, white);
 	}
 
 	data.set(a_frame, possumwood::opencv::Frame(result));

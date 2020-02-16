@@ -60,7 +60,8 @@ Pattern::Sample Pattern::sample(const Imath::V2i& pixelPos) const {
 	Sample result;
 
 	// convert the pixel position to lens space
-	const Imath::V3f pos = Imath::V3f(pixelPos[0], pixelPos[1], 1.0) * m_tr;
+	const Imath::V3f pixpos = Imath::V3f(pixelPos[0], pixelPos[1], 1.0);
+	const Imath::V3f pos = pixpos * m_tr;
 
 	// surrounding lens position by rounding the pos in lens space
 	const Imath::V3f pos1 = Imath::V3f(floor(pos[0]), floor(pos[1]), 1.0);
@@ -75,10 +76,10 @@ Pattern::Sample Pattern::sample(const Imath::V2i& pixelPos) const {
 	const Imath::V3f lens4 = pos4 * m_trInv;
 
 	// find the nearest lens center in pixel space
-	const float dist1 = std::pow(pixelPos[0] - lens1[0], 2) + std::pow(pixelPos[1] - lens1[1], 2);
-	const float dist2 = std::pow(pixelPos[0] - lens2[0], 2) + std::pow(pixelPos[1] - lens2[1], 2);
-	const float dist3 = std::pow(pixelPos[0] - lens3[0], 2) + std::pow(pixelPos[1] - lens3[1], 2);
-	const float dist4 = std::pow(pixelPos[0] - lens4[0], 2) + std::pow(pixelPos[1] - lens4[1], 2);
+	const float dist1 = std::pow(pixpos[0] - lens1[0], 2) + std::pow(pixpos[1] - lens1[1], 2);
+	const float dist2 = std::pow(pixpos[0] - lens2[0], 2) + std::pow(pixpos[1] - lens2[1], 2);
+	const float dist3 = std::pow(pixpos[0] - lens3[0], 2) + std::pow(pixpos[1] - lens3[1], 2);
+	const float dist4 = std::pow(pixpos[0] - lens4[0], 2) + std::pow(pixpos[1] - lens4[1], 2);
 
 	Imath::V3f lens = lens1;
 	Imath::V3f pos0 = pos1;

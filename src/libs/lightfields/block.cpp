@@ -38,7 +38,7 @@ std::istream& operator >> (std::istream& in, Block& block) {
 
 		// and read the data block
 		block.data.resize(length+1);
-		in.read(block.data.data(), length);
+		in.read((char*)block.data.data(), length);
 		block.data[length] = '\0';
 
 		// handle any padding
