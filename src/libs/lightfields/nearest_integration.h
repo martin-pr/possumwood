@@ -15,9 +15,9 @@ struct Result {
 };
 
 /// Integrates an image - produces an image using nearest-neighbour integration
-Result integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& data);
+Result integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& data, float offset = 0.0f);
 
 /// Compute the correspondence (integration variance) metric on a previously-integrated result
-cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data, const Result& integration);
+cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data, const Result& integration, float offset = 0.0f);
 
 } }

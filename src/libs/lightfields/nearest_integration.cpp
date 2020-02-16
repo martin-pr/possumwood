@@ -26,7 +26,7 @@ void add3channel(float* color, uint16_t* n, int colorIndex, const float* value) 
 
 }
 
-Result integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& input) {
+Result integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& input, float offset) {
 	if(input.type() != CV_32FC3 && input.type() != CV_32FC1)
 		throw std::runtime_error("Nearest neighbour integration - only 1 or 3 channel float data allowed on input.");
 
@@ -56,8 +56,8 @@ Result integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned
 		for(auto it = begin; it != end; ++it) {
 			assert(it->source[1] == y);
 
-			const float target_x = it->xy[0] * x_scale;
-			const float target_y = it->xy[1] * y_scale;
+			const float target_x = (it->xy[0] + offset * it->uv[0]) * x_scale;
+			const float target_y = (it->xy[1] + offset * it->uv[1]) * y_scale;
 
 			// sanity checks
 			assert(it->source[0] < input.rows);
@@ -83,7 +83,7 @@ Result integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned
 	return Result { average, norm };
 }
 
-cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input, const Result& integration) {
+cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input, const Result& integration, float offset) {
 	if(input.type() != CV_32FC1 && input.type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input.");
 
@@ -104,8 +104,8 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input
 		assert(begin <= end);
 
 		for(auto it = begin; it != end; ++it) {
-			const float target_x = it->xy[0] * x_scale;
-			const float target_y = it->xy[1] * y_scale;
+			const float target_x = (it->xy[0] + offset * it->uv[0]) * x_scale;
+			const float target_y = (it->xy[1] + offset * it->uv[1]) * y_scale;
 
 			if((target_x >= 0.0f) && (target_y >= 0.0f) && (target_x < widthf) && (target_y < heightf)) {
 				float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
