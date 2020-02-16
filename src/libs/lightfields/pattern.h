@@ -36,13 +36,13 @@ class Pattern {
 		static Pattern fromFit(const LensletGraph& lg);
 
 	private:
-		Pattern(double lensPitch, double pixelPitch, double rotation, Imath::V2d scaleFactor, Imath::V3d sensorOffset, Imath::V2i sensorResolution);
-		Pattern(double lensPitch, Imath::M33d tr, Imath::V2i sensorResolution);
+		Pattern(float lensPitch, float pixelPitch, float rotation, Imath::V2d scaleFactor, Imath::V3d sensorOffset, Imath::V2i sensorResolution);
+		Pattern(float lensPitch, const Imath::M33d& tr, Imath::V2i sensorResolution);
 
 		Imath::V2i m_sensorResolution;
-		double m_lensPitch;
+		float m_lensPitch;
 
-		Imath::M33d m_tr, m_trInv;
+		Imath::M33f m_tr, m_trInv;
 
 	friend std::ostream& operator << (std::ostream& out, const Pattern& p);
 };

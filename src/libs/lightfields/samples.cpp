@@ -67,7 +67,7 @@ void Samples::filterInvalid() {
 	const float widthf = m_size[0];
 	const float heightf = m_size[1];
 	for(; src != m_samples.end(); ++src) {
-		if(floor(src->xy[0]) >= 0.0f && floor(src->xy[1]) >= 0.0f && floor(src->xy[0]) < widthf && floor(src->xy[1]) < heightf) {
+		if(src->xy[0] >= 0.0f && src->xy[1] >= 0.0f && src->xy[0] < widthf && src->xy[1] < heightf) {
 			*tgt = *src;
 			++tgt;
 		}
