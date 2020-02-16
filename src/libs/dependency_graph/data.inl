@@ -53,7 +53,7 @@ namespace {
 
 template<typename T>
 Data makeData() {
-	typename std::remove_reference<typename std::remove_const<T>::type>::type tmp;
+	auto tmp = typename std::remove_reference<typename std::remove_const<T>::type>::type();
 	return Data(std::move(tmp));
 }
 

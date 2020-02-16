@@ -79,12 +79,6 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_4",
-            "in_port": "in_frame",
-            "out_node": "draw_pattern_0",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "colormap_1",
             "in_port": "in_frame",
             "out_node": "equalize_0",
@@ -115,10 +109,10 @@
             "out_port": "frame"
         },
         {
-            "in_node": "draw_pattern_0",
-            "in_port": "pattern",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
+            "out_port": "metadata"
         },
         {
             "in_node": "network_0",
@@ -137,6 +131,18 @@
             "in_port": "in_frame",
             "out_node": "network_3",
             "out_port": "output"
+        },
+        {
+            "in_node": "convert_4",
+            "in_port": "in_frame",
+            "out_node": "draw_samples_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "draw_samples_0",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
         }
     ],
     "description": "### Lytro pattern detection\n\nLytro files come with metadata that descibe the parameters of the lenslet pattern used to capture the image. Unfortunately, this lenslet pattern was detected using a simple peak-detection algorithm, with together with the main-lens vignetting causes the lenslet centers to be slightly biased towards the centre of the image.\n\nThis demo attempt to detect the lenslets using a different method - by inverting the image, locally normalising it and convoluting it with an inverted lenslet pattern (a \"hexagonal\" shape representing the darker spaces between lenslets), we can achieve a better match with the original lenslet placement.\n\nThis demo only shows the image-processing part - the pattern fitting is demonstrated in the next demo.",
@@ -319,16 +325,16 @@
             },
             "type": "opencv/divide"
         },
-        "draw_pattern_0": {
+        "draw_samples_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 37.9498596191406,
-                    "y": 1169.66076660156
+                    "x": 36.5668907165527,
+                    "y": 1189.91979980469
                 }
             },
-            "name": "draw_pattern",
-            "type": "opencv/lightfields/draw_pattern"
+            "name": "draw_samples",
+            "type": "opencv/lightfields/draw_samples"
         },
         "equalize_0": {
             "blind_data": {
@@ -784,7 +790,7 @@
                     "max": 1.0,
                     "min": 0.0,
                     "type": "linear",
-                    "value": 1.0
+                    "value": 0.0
                 },
                 "zoom": {
                     "in_progress_updates": true,
@@ -1845,6 +1851,17 @@
                 "size": 13
             },
             "type": "network"
+        },
+        "samples_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -13.0078096389771,
+                    "y": 1028.14978027344
+                }
+            },
+            "name": "samples_from_metadata",
+            "type": "opencv/lightfields/samples_from_metadata"
         }
     },
     "scene_config": {

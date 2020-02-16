@@ -121,16 +121,16 @@
             "out_port": "frame"
         },
         {
-            "in_node": "integrate_mosaic_0",
-            "in_port": "pattern",
-            "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
-        },
-        {
             "in_node": "divide_0",
             "in_port": "in_frame_2",
             "out_node": "lytro_lightfield_1",
             "out_port": "frame"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
+            "in_port": "metadata",
+            "out_node": "lytro_lightfield_1",
+            "out_port": "metadata"
         },
         {
             "in_node": "colormap_0",
@@ -167,6 +167,12 @@
             "in_port": "in_frame",
             "out_node": "split_1",
             "out_port": "out_3"
+        },
+        {
+            "in_node": "integrate_mosaic_0",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
         }
     ],
     "description": "### Sub-apreture mosaic image sample counts\n\nDemultiplexing a Bayern image leads to a significantly larger number of samples for green pixels, compared to red and blue values.\n\nThis demo addempts to visualise this difference explicitly, by showing both each channel of the demultiplexed image, and the number of samples used to reconstruct each of its pixels.",
@@ -265,7 +271,8 @@
             },
             "name": "concat",
             "ports": {
-                "mode": "Horizontal"
+                "mode": "Horizontal",
+                "separation": 0
             },
             "type": "opencv/concat"
         },
@@ -279,7 +286,8 @@
             },
             "name": "concat",
             "ports": {
-                "mode": "Horizontal"
+                "mode": "Horizontal",
+                "separation": 0
             },
             "type": "opencv/concat"
         },
@@ -293,7 +301,8 @@
             },
             "name": "concat",
             "ports": {
-                "mode": "Horizontal"
+                "mode": "Horizontal",
+                "separation": 0
             },
             "type": "opencv/concat"
         },
@@ -307,7 +316,8 @@
             },
             "name": "concat",
             "ports": {
-                "mode": "Horizontal"
+                "mode": "Horizontal",
+                "separation": 0
             },
             "type": "opencv/concat"
         },
@@ -321,7 +331,8 @@
             },
             "name": "concat",
             "ports": {
-                "mode": "Vertical"
+                "mode": "Vertical",
+                "separation": 0
             },
             "type": "opencv/concat"
         },
@@ -768,6 +779,20 @@
             },
             "type": "network"
         },
+        "samples_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 390.616668701172,
+                    "y": -110.658264160156
+                }
+            },
+            "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
+            "type": "opencv/lightfields/samples_from_metadata"
+        },
         "split_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -796,6 +821,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKUAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABlwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACDQAAAWEAAACqAQAAAwAAAm0AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB1QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACSwAAAZYAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

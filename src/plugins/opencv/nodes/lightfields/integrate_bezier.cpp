@@ -8,17 +8,19 @@
 
 #include <actions/traits.h>
 
+#include <lightfields/samples.h>
+
 #include "maths/io/vec2.h"
 #include "frame.h"
-#include "lightfield_samples.h"
 #include "tools.h"
 #include "bspline_hierarchy.h"
 #include "bspline.inl"
+#include "lightfields.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
-dependency_graph::InAttr<possumwood::opencv::LightfieldSamples> a_samples;
+dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
 dependency_graph::InAttr<unsigned> a_levels, a_offset;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
@@ -29,7 +31,7 @@ struct Sample {
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::LightfieldSamples& samples = data.get(a_samples);
+	const lightfields::Samples& samples = data.get(a_samples);
 
 	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
@@ -39,35 +41,21 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const unsigned width = data.get(a_size)[0];
 	const unsigned height = data.get(a_size)[1];
 
-	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
-
-	{
-		std::vector<std::pair<Imath::V2d, float>> points;
-		for(auto& s : samples)
-			if(s.color == 0) {
-				Imath::V2d pt = s.target;
-
-				if(pt[0] > 0.48 && pt[0] < 0.52 && pt[1] > 0.48 && pt[1] < 0.52)
-					points.push_back(std::make_pair(pt, input.at<float>(s.source[1], s.source[0])));
-			}
-
-		std::ofstream data("data.txt");
-		for(auto& p : points)
-			data << std::setprecision(15) << p.first[0] << "\t" << std::setprecision(15) << p.first[1] << "\t" << p.second << std::endl;
-	}
+	const float x_scale = 1.0f / (float)samples.sensorSize()[0];
+	const float y_scale = 1.0f / (float)samples.sensorSize()[1];
 
 	std::vector<Sample> cache[3];
 	if((*data.get(a_in)).type() == CV_32FC1)
 		for(auto s : samples)
 			cache[s.color].push_back(Sample{
-				s.target,
+				Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale),
 				input.at<float>(s.source[1], s.source[0])
 			});
 	else
 		for(auto s : samples)
 			for(int c=0;c<3;++c)
 				cache[c].push_back(Sample{
-					s.target,
+					Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale),
 					*(input.ptr<float>(s.source[1], s.source[0]) + c)
 				});
 
@@ -116,7 +104,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_samples, "samples", possumwood::opencv::LightfieldSamples(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(300u, 300u));
 	meta.addAttribute(a_levels, "levels", 3u);
 	meta.addAttribute(a_offset, "offset", 6u);

@@ -4,10 +4,11 @@
 
 #include <actions/traits.h>
 
-#include "lightfield_pattern.h"
+#include <lightfields/pattern.h>
+
 #include "lightfield_vignetting.h"
 #include "frame.h"
-#include "tools.h"
+#include "lightfields.h"
 
 namespace {
 

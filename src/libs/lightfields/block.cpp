@@ -6,7 +6,6 @@ std::istream& operator >> (std::istream& in, Block& block) {
 	// read the header
 	block.id = '\0';
 	block.name.clear();
-	block.data.clear();
 
 	unsigned char header[8];
 	in.read((char*)header, 8);
@@ -37,8 +36,8 @@ std::istream& operator >> (std::istream& in, Block& block) {
 		}
 
 		// and read the data block
-		block.data.resize(length+1);
-		in.read(block.data.data(), length);
+		block.data = std::unique_ptr<unsigned char[]>(new unsigned char[length+1]);
+		in.read((char*)block.data.get(), length);
 		block.data[length] = '\0';
 
 		// handle any padding

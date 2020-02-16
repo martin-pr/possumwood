@@ -7,9 +7,11 @@
 #include <lightfields/lenslet_graph.h>
 #include <lightfields/pattern.h>
 
-#include "../../lightfield_pattern.h"
+#include <lightfields/pattern.h>
+#include <lightfields/samples.h>
 
 #include "frame.h"
+#include "lightfields.h"
 
 namespace {
 
@@ -33,7 +35,7 @@ struct Vec4Compare {
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<unsigned> a_border;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
-dependency_graph::OutAttr<lightfields::Pattern> a_pattern;
+dependency_graph::OutAttr<lightfields::Samples> a_samples;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const cv::Mat& input = *data.get(a_in);
@@ -47,7 +49,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		throw std::runtime_error("Border value too large for the size of the input image");
 
 	// make a lenslet data structure
-	lightfields::LensletGraph lenslets(cv::Vec2i(input.cols, input.rows), border);
+	lightfields::LensletGraph lenslets(Imath::V2i(input.cols, input.rows), border);
 	// feed all the local minima into it, except the ones too close to the border
 	for(std::size_t y=1; y<std::size_t(input.rows) - 1; ++y)
 		for(std::size_t x=1; x<std::size_t(input.cols) - 1; ++x) {
@@ -66,19 +68,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	lenslets.drawCenters(mat);
 
 	// delaunay drawing
-	auto fitted = lenslets.fit();
+	lenslets.fit();
 	lenslets.drawFit(mat);
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
 
 	// pattern
-	Imath::M33d fittedMatrix(
-		fitted(0, 0), fitted(0, 1), fitted(0, 2),
-		fitted(1, 0), fitted(1, 1), fitted(1, 2),
-		fitted(2, 0), fitted(2, 1), fitted(2, 2)
-	);
-
-	data.set(a_pattern, lightfields::Pattern(lenslets.lensPitch(), fittedMatrix, Imath::V2i(input.cols, input.rows)));
+	const lightfields::Pattern pattern = lightfields::Pattern::fromFit(lenslets);
+	data.set(a_samples, lightfields::Samples::fromPattern(pattern));
 
 	return dependency_graph::State();
 }
@@ -87,12 +84,12 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_border, "border", 20u);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_border, a_out);
-	meta.addInfluence(a_in, a_pattern);
-	meta.addInfluence(a_border, a_pattern);
+	meta.addInfluence(a_in, a_samples);
+	meta.addInfluence(a_border, a_samples);
 
 	meta.setCompute(compute);
 }

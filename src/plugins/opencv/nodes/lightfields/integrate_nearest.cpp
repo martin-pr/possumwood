@@ -6,15 +6,17 @@
 
 #include <actions/traits.h>
 
+#include <lightfields/samples.h>
+
 #include "maths/io/vec2.h"
 #include "frame.h"
-#include "lightfield_samples.h"
 #include "tools.h"
+#include "lightfields.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
-dependency_graph::InAttr<possumwood::opencv::LightfieldSamples> a_samples;
+dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_norm, a_correspondence;
 
@@ -35,7 +37,7 @@ void add3channel(float* color, uint16_t* n, int colorIndex, const float* value) 
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::LightfieldSamples& samples = data.get(a_samples);
+	const lightfields::Samples& samples = data.get(a_samples);
 
 	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
@@ -54,35 +56,38 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat average = cv::Mat::zeros(height, width, CV_32FC3);
 	cv::Mat norm = cv::Mat::zeros(height, width, CV_16UC3);
 
+	const float x_scale = (float)width / (float)samples.sensorSize()[0];
+	const float y_scale = (float)height / (float)samples.sensorSize()[1];
+
 	tbb::parallel_for(0, input.rows, [&](int y) {
-		const auto end = samples.end(y);
 		const auto begin = samples.begin(y);
+		const auto end = samples.end(y);
 		assert(begin <= end);
 
 		for(auto it = begin; it != end; ++it) {
-			const float target_x = it->target[0] * (float)width;
-			const float target_y = it->target[1] * (float)height;
+			assert(it->source[1] == y);
+
+			const float target_x = it->xy[0] * x_scale;
+			const float target_y = it->xy[1] * y_scale;
 
 			// sanity checks
 			assert(it->source[0] < input.rows);
 			assert(it->source[1] < input.cols);
-			assert(floor(target_x) >= 0);
-			assert(floor(target_y) >= 0);
-			assert(floor(target_x) < width);
-			assert(floor(target_y) < height);
 
-			float* color = average.ptr<float>(floor(target_y), floor(target_x));
-			uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
+			if((floor(target_x) >= 0) && (floor(target_y) >= 0) && (floor(target_x) < width) && (floor(target_y) < height)) {
+				float* color = average.ptr<float>(floor(target_y), floor(target_x));
+				uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
 
-			const float* value = input.ptr<float>(it->source[1], it->source[0]);
-			(*applyFn)(color, n, it->color, value);
+				const float* value = input.ptr<float>(it->source[1], it->source[0]);
+				(*applyFn)(color, n, it->color, value);
+			}
 		}
 	});
 
 	tbb::parallel_for(0, average.rows, [&](int y) {
 		for(int x=0;x<average.cols;++x)
 			for(int a=0;a<3;++a)
-				if(norm.ptr<float>(y,x)[a] > 0.0f)
+				if(norm.ptr<uint16_t>(y,x)[a] > 0)
 					average.ptr<float>(y,x)[a] /= (float)norm.ptr<uint16_t>(y,x)[a];
 	});
 
@@ -98,19 +103,21 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		assert(begin <= end);
 
 		for(auto it = begin; it != end; ++it) {
-			const float target_x = it->target[0] * (float)width;
-			const float target_y = it->target[1] * (float)height;
+			const float target_x = it->xy[0] * x_scale;
+			const float target_y = it->xy[1] * y_scale;
 
-			float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
-			const float* value = input.ptr<float>(it->source[1], it->source[0]);
-			const float* ave = average.ptr<float>(target_y, target_x);
-			const uint16_t* n = norm.ptr<uint16_t>(target_y, target_x);
+			if((floor(target_x) >= 0) && (floor(target_y) >= 0) && (floor(target_x) < width) && (floor(target_y) < height)) {
+				float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
+				const float* value = input.ptr<float>(it->source[1], it->source[0]);
+				const float* ave = average.ptr<float>(target_y, target_x);
+				const uint16_t* n = norm.ptr<uint16_t>(target_y, target_x);
 
-			if(input.channels() == 3)
-				for(int c=0; c<3; ++c)
-					*target += pow(value[c] - ave[c], 2) / (float)n[c];
-			else
-				*target += pow(*value - ave[it->color], 2) / (float)n[it->color];
+				if(input.channels() == 3)
+					for(int c=0; c<3; ++c)
+						*target += pow(value[c] - ave[c], 2) / (float)n[c];
+				else
+					*target += pow(*value - ave[it->color], 2) / (float)n[it->color];
+			}
 		}
 	});
 
@@ -121,7 +128,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_samples, "samples", possumwood::opencv::LightfieldSamples(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(300u, 300u));
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_norm, "sample_count", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);

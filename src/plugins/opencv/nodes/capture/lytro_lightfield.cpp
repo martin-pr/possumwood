@@ -14,18 +14,20 @@
 #include <opencv2/opencv.hpp>
 
 #include "frame.h"
-#include "lightfield_pattern.h"
+#include "lightfields/pattern.h"
 #include "lightfields/block.h"
 #include "lightfields/raw.h"
 #include "lightfields/pattern.h"
+#include "lightfields/metadata.h"
+#include "lightfields.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
-dependency_graph::OutAttr<lightfields::Pattern> a_pattern;
+dependency_graph::OutAttr<lightfields::Metadata> a_metadata;
 
-cv::Mat decodeData(const char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
+cv::Mat decodeData(const unsigned char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
 	cv::Mat result(width, height, CV_32F);
 
 	tbb::parallel_for(std::size_t(0), width*height, [&](std::size_t i) {
@@ -70,6 +72,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	cv::Mat result;
 	lightfields::Pattern pattern;
+	lightfields::Metadata meta;
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
 		int width = 0, height = 0;
@@ -80,42 +83,27 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		lightfields::Raw raw;
 		file >> raw;
 
-		width = raw.metadata()["image"]["width"].asInt();
-		height = raw.metadata()["image"]["height"].asInt();
+		meta = raw.metadata();
 
-		black[0] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].asInt();
-		black[1] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].asInt();
-		black[2] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].asInt();
-		black[3] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].asInt();
+		width = meta.metadata()["image"]["width"].asInt();
+		height = meta.metadata()["image"]["height"].asInt();
 
-		white[0] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].asInt();
-		white[1] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].asInt();
-		white[2] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].asInt();
-		white[3] = raw.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
+		black[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].asInt();
+		black[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].asInt();
+		black[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].asInt();
+		black[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].asInt();
 
-		// assemble the lightfield pattern
-		pattern = lightfields::Pattern(
-			raw.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
-			raw.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
-			raw.metadata()["devices"]["mla"]["rotation"].asDouble(),
-			Imath::V2f(
-				raw.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
-				raw.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()
-			),
-			Imath::V3f(
-				raw.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
-				raw.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
-				raw.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
-			),
-			Imath::V2i(width, height)
-		);
+		white[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].asInt();
+		white[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].asInt();
+		white[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].asInt();
+		white[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
 
-		assert(!raw.image().empty());
-		result = decodeData(raw.image().data(), width, height, black, white);
+		assert(raw.image() != nullptr);
+		result = decodeData(raw.image(), width, height, black, white);
 	}
 
 	data.set(a_frame, possumwood::opencv::Frame(result));
-	data.set(a_pattern, pattern);
+	data.set(a_metadata, meta);
 
 	return dependency_graph::State();
 }
@@ -125,10 +113,10 @@ void init(possumwood::Metadata& meta) {
 		"Lytro files (*.lfr *.RAW)",
 	}));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_metadata, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
-	meta.addInfluence(a_filename, a_pattern);
+	meta.addInfluence(a_filename, a_metadata);
 
 	meta.setCompute(compute);
 }

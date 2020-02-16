@@ -37,10 +37,10 @@
             "out_port": "frame"
         },
         {
-            "in_node": "samples_refocus_0",
-            "in_port": "pattern",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
+            "out_port": "metadata"
         },
         {
             "in_node": "divide_0",
@@ -52,6 +52,12 @@
             "in_node": "integrate_gaussian_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
+            "out_port": "out_samples"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
             "out_port": "samples"
         }
     ],
@@ -135,7 +141,7 @@
                     "max": 60.0,
                     "min": -40.0,
                     "type": "linear",
-                    "value": -23.2000007629395
+                    "value": 9.59999847412109
                 }
             },
             "type": "maths/interval"
@@ -471,6 +477,17 @@
                 }
             },
             "type": "network"
+        },
+        "samples_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 305.3759765625,
+                    "y": 30.768102645874
+                }
+            },
+            "name": "samples_from_metadata",
+            "type": "opencv/lightfields/samples_from_metadata"
         },
         "samples_refocus_0": {
             "blind_data": {

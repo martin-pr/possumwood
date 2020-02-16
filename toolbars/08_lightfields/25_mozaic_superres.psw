@@ -67,10 +67,10 @@
             "out_port": "frame"
         },
         {
-            "in_node": "integrate_mosaic_0",
-            "in_port": "pattern",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "metadata",
             "out_node": "lytro_lightfield_1",
-            "out_port": "pattern"
+            "out_port": "metadata"
         },
         {
             "in_node": "gamma_0",
@@ -95,6 +95,12 @@
             "in_port": "mask",
             "out_node": "threshold_1",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "integrate_mosaic_0",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
         }
     ],
     "description": "### Mosaic-based lightfields superresolution\n\nReconstructed mosaic data can be used to reconstruct a high-resolution image using a simple multiplexing algorithm.\n\nThis demo shows the result of this algorithm on an inpainted mosaic from previous demos.",
@@ -578,6 +584,20 @@
             },
             "type": "network"
         },
+        "samples_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 287.7119140625,
+                    "y": -318.012268066406
+                }
+            },
+            "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 0.998849987983704
+            },
+            "type": "opencv/lightfields/samples_from_metadata"
+        },
         "threshold_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -620,6 +640,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKjAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAByAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACPgAAATAAAACqAQAAAwAAAl4AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKjAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACqAQAAAwAAAzMAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

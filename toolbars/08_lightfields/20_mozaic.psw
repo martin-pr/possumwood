@@ -25,10 +25,16 @@
             "out_port": "frame"
         },
         {
-            "in_node": "integrate_mosaic_0",
-            "in_port": "pattern",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
+            "out_port": "metadata"
+        },
+        {
+            "in_node": "integrate_mosaic_0",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
         }
     ],
     "description": "### Sub-aperture images from Lytro lightfields data\n\nLightfield data contain enough information to allow for reconstruction of multiple narrow-base sub-apreture images, each with slightly different \"point of view\".\n\nThis demo shows how to use demultiplexing to reconstruct multiple views from raw Lytro data.\n\n<sub>Sabater, Neus, et al. [\"Accurate disparity estimation for plenoptic images.\"](https://pdfs.semanticscholar.org/e79c/4371f7636d3c94c839d00653390e791e0e0b.pdf) European Conference on Computer Vision. Springer, Cham, 2014.</sub>",
@@ -86,8 +92,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 131.962051391602,
-                    "y": -106.821403503418
+                    "x": 139.58772277832,
+                    "y": -230.103103637695
                 }
             },
             "name": "lytro_lightfield",
@@ -399,6 +405,20 @@
                 }
             },
             "type": "network"
+        },
+        "samples_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 213.355651855469,
+                    "y": -102.826461791992
+                }
+            },
+            "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
+            "type": "opencv/lightfields/samples_from_metadata"
         }
     },
     "scene_config": {
@@ -406,6 +426,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK7AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABmgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACEAAAAV4AAACqAQAAAwAAAkYAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK7AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB2QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACTwAAAZIAAACqAQAAAwAAAxsAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

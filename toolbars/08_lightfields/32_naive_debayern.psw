@@ -49,10 +49,10 @@
             "out_port": "frame"
         },
         {
-            "in_node": "samples_refocus_0",
-            "in_port": "pattern",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
-            "out_port": "pattern"
+            "out_port": "metadata"
         },
         {
             "in_node": "divide_0",
@@ -64,6 +64,12 @@
             "in_node": "integrate_nearest_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
+            "out_port": "out_samples"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
             "out_port": "samples"
         }
     ],
@@ -73,8 +79,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 197.671142578125,
-                    "y": 932.733276367188
+                    "x": 170.982711791992,
+                    "y": 912.203735351562
                 }
             },
             "name": "convert",
@@ -89,8 +95,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -5.64985847473145,
-                    "y": 19.0745086669922
+                    "x": 195.539901733398,
+                    "y": 35.498161315918
                 }
             },
             "name": "convert",
@@ -105,8 +111,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 156.623153686523,
-                    "y": 389.670959472656
+                    "x": 199.735244750977,
+                    "y": 393.776885986328
                 }
             },
             "name": "convert",
@@ -121,8 +127,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 82.0652694702148,
-                    "y": 238.362380981445
+                    "x": 194.977890014648,
+                    "y": 242.468292236328
                 }
             },
             "name": "demosaic",
@@ -135,8 +141,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -69.1053161621094,
-                    "y": -120.43384552002
+                    "x": 136.190353393555,
+                    "y": -124.539756774902
                 }
             },
             "name": "divide",
@@ -181,8 +187,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 77.1400909423828,
-                    "y": -251.135070800781
+                    "x": 286.541687011719,
+                    "y": -255.240982055664
                 }
             },
             "name": "lytro_lightfield",
@@ -195,8 +201,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -195.305114746094,
-                    "y": -276.061798095703
+                    "x": 30.5201282501221,
+                    "y": -255.5322265625
                 }
             },
             "name": "lytro_lightfield",
@@ -209,8 +215,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 207.88005065918,
-                    "y": 1123.61926269531
+                    "x": 181.191619873047,
+                    "y": 1103.08972167969
                 }
             },
             "connections": [
@@ -509,12 +515,23 @@
             },
             "type": "network"
         },
+        "samples_from_metadata_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 297.548767089844,
+                    "y": 254.378784179688
+                }
+            },
+            "name": "samples_from_metadata",
+            "type": "opencv/lightfields/samples_from_metadata"
+        },
         "samples_refocus_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 298.388031005859,
-                    "y": 99.1865692138672
+                    "x": 325.108154296875,
+                    "y": 392.105804443359
                 }
             },
             "name": "samples_refocus",

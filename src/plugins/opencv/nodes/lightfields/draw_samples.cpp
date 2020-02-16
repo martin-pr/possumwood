@@ -5,26 +5,26 @@
 
 #include <actions/traits.h>
 
+#include <lightfields/samples.h>
+
 #include "frame.h"
-#include "lightfield_pattern.h"
 #include "tools.h"
+#include "lightfields.h"
 
 namespace {
 
-dependency_graph::InAttr<lightfields::Pattern> a_pattern;
+dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const lightfields::Pattern pattern = data.get(a_pattern);
+	const lightfields::Samples samples = data.get(a_samples);
 
-	cv::Mat mat(pattern.sensorResolution()[0], pattern.sensorResolution()[1], CV_32FC1);
+	cv::Mat mat(samples.sensorSize()[0], samples.sensorSize()[1], CV_32FC1);
 
 	tbb::parallel_for(0, mat.rows, [&](int y) {
-		for(int x=0;x<mat.cols;++x) {
-			const Imath::V4f value = pattern.sample(Imath::V2i(x, y));
-
-			float* color = mat.ptr<float>(y, x);
-			float current = value[2]*value[2] + value[3]*value[3];
+		for(auto it = samples.begin(y); it != samples.end(y); ++it) {
+			float* color = mat.ptr<float>(it->source[1], it->source[0]);
+			float current = it->uv[0]*it->uv[0] + it->uv[1]*it->uv[1];
 			if(current <= 1.0f)
 				color[0] = (1.0f-current);
 			else
@@ -38,15 +38,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
-	meta.addInfluence(a_pattern, a_out);
+	meta.addInfluence(a_samples, a_out);
 
 	meta.setCompute(compute);
 }
 
 
-possumwood::NodeImplementation s_impl("opencv/lightfields/draw_pattern", init);
+possumwood::NodeImplementation s_impl("opencv/lightfields/draw_samples", init);
 
 }
