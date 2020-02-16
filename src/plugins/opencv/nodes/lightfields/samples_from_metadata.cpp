@@ -13,6 +13,7 @@
 namespace {
 
 dependency_graph::InAttr<lightfields::Metadata> a_meta;
+dependency_graph::InAttr<float> a_scaleCompensation;
 dependency_graph::OutAttr<lightfields::Samples> a_samples;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -20,19 +21,24 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const lightfields::Metadata& meta = data.get(a_meta);
 
 	// get the data from dicts and make it into a pattern
-	const lightfields::Pattern pattern = lightfields::Pattern::fromMetadata(meta);
+	lightfields::Pattern pattern = lightfields::Pattern::fromMetadata(meta);
+
+	// compensate for metadata scale (user parameter)
+	pattern.scale(data.get(a_scaleCompensation));
 
 	// comvert the pattern to the samples instance
-	data.set(a_samples, std::move(lightfields::Samples::fromPattern(pattern)));
+	data.set(a_samples, lightfields::Samples::fromPattern(pattern));
 
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_meta, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_scaleCompensation, "scale_compensation", 1.0f);
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_meta, a_samples);
+	meta.addInfluence(a_scaleCompensation, a_samples);
 
 	meta.setCompute(compute);
 }

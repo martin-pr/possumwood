@@ -65,6 +65,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		assert(begin <= end);
 
 		for(auto it = begin; it != end; ++it) {
+			assert(it->source[1] == y);
+
 			const float target_x = it->xy[0] * x_scale;
 			const float target_y = it->xy[1] * y_scale;
 
