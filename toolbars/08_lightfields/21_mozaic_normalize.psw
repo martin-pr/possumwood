@@ -37,16 +37,16 @@
             "out_port": "frame"
         },
         {
-            "in_node": "pattern_from_metadata_0",
+            "in_node": "samples_from_metadata_0",
             "in_port": "metadata",
             "out_node": "lytro_lightfield_1",
             "out_port": "metadata"
         },
         {
             "in_node": "integrate_mosaic_0",
-            "in_port": "pattern",
-            "out_node": "pattern_from_metadata_0",
-            "out_port": "pattern"
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
         }
     ],
     "description": "### Normalized sub-aperture images from Lytro lightfields data\n\nLightfield data contain enough information to allow for reconstruction of multiple narrow-base sub-apreture images, each with slightly different \"point of view\".\n\nThis demo shows how to use demultiplexing to reconstruct multiple views from normalized raw Lytro data. Normalization is performed by simple division of the image data by white diffuse image values.\n\n<sub>Sabater, Neus, et al. [\"Accurate disparity estimation for plenoptic images.\"](https://pdfs.semanticscholar.org/e79c/4371f7636d3c94c839d00653390e791e0e0b.pdf) European Conference on Computer Vision. Springer, Cham, 2014.</sub>",
@@ -446,16 +446,19 @@
             },
             "type": "network"
         },
-        "pattern_from_metadata_0": {
+        "samples_from_metadata_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 311.601104736328,
-                    "y": 29.9687900543213
+                    "x": 308.308197021484,
+                    "y": 33.0235786437988
                 }
             },
-            "name": "pattern_from_metadata",
-            "type": "opencv/lightfields/pattern_from_metadata"
+            "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
+            "type": "opencv/lightfields/samples_from_metadata"
         }
     },
     "scene_config": {
@@ -464,5 +467,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB2wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACUQAAAZAAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB3AAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACUgAAAY8AAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
