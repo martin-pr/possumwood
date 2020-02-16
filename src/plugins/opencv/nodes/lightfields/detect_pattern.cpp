@@ -7,10 +7,11 @@
 #include <lightfields/lenslet_graph.h>
 #include <lightfields/pattern.h>
 
-#include "../../lightfield_pattern.h"
-#include "../../lightfield_samples.h"
+#include <lightfields/pattern.h>
+#include <lightfields/samples.h>
 
 #include "frame.h"
+#include "lightfields.h"
 
 namespace {
 
@@ -35,7 +36,7 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<unsigned> a_border;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 dependency_graph::OutAttr<lightfields::Pattern> a_pattern;
-dependency_graph::OutAttr<possumwood::opencv::LightfieldSamples> a_samples;
+dependency_graph::OutAttr<lightfields::Samples> a_samples;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const cv::Mat& input = *data.get(a_in);
@@ -76,7 +77,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// pattern
 	const lightfields::Pattern pattern = lightfields::Pattern::fromFit(lenslets);
 	data.set(a_pattern, pattern);
-	data.set(a_samples, possumwood::opencv::LightfieldSamples(pattern));
+	data.set(a_samples, std::move(lightfields::Samples::fromPattern(pattern)));
 
 	return dependency_graph::State();
 }
@@ -86,7 +87,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_border, "border", 20u);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_samples, "samples", possumwood::opencv::LightfieldSamples(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_border, a_out);

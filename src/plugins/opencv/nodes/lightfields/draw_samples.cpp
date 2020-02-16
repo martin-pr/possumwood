@@ -5,17 +5,19 @@
 
 #include <actions/traits.h>
 
+#include <lightfields/samples.h>
+
 #include "frame.h"
-#include "lightfield_samples.h"
 #include "tools.h"
+#include "lightfields.h"
 
 namespace {
 
-dependency_graph::InAttr<possumwood::opencv::LightfieldSamples> a_samples;
+dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::LightfieldSamples samples = data.get(a_samples);
+	const lightfields::Samples samples = data.get(a_samples);
 
 	cv::Mat mat(samples.sensorSize()[0], samples.sensorSize()[1], CV_32FC1);
 
@@ -36,7 +38,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_samples, "samples", possumwood::opencv::LightfieldSamples(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_samples, a_out);

@@ -5,15 +5,15 @@
 #include <actions/traits.h>
 
 #include <lightfields/metadata.h>
-#include "lightfield_pattern.h"
-#include "lightfield_samples.h"
+#include <lightfields/pattern.h>
+#include <lightfields/samples.h>
 #include "tools.h"
 #include "lightfields.h"
 
 namespace {
 
 dependency_graph::InAttr<lightfields::Metadata> a_meta;
-dependency_graph::OutAttr<possumwood::opencv::LightfieldSamples> a_samples;
+dependency_graph::OutAttr<lightfields::Samples> a_samples;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	// metadata instance - just a bunch of JSON dictionaries extracted from the image
@@ -23,14 +23,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const lightfields::Pattern pattern = lightfields::Pattern::fromMetadata(meta);
 
 	// comvert the pattern to the samples instance
-	data.set(a_samples, std::move(possumwood::opencv::LightfieldSamples(pattern)));
+	data.set(a_samples, std::move(lightfields::Samples::fromPattern(pattern)));
 
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_meta, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_samples, "samples", possumwood::opencv::LightfieldSamples(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_meta, a_samples);
 

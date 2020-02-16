@@ -7,7 +7,7 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "lightfield_pattern.h"
+#include "lightfields.h"
 #include "bspline.h"
 
 namespace possumwood { namespace opencv {

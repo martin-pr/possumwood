@@ -6,15 +6,17 @@
 
 #include <actions/traits.h>
 
+#include <lightfields/samples.h>
+
 #include "maths/io/vec2.h"
 #include "frame.h"
-#include "lightfield_samples.h"
 #include "tools.h"
+#include "lightfields.h"
 
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
-dependency_graph::InAttr<possumwood::opencv::LightfieldSamples> a_samples;
+dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_norm, a_correspondence;
 
@@ -35,7 +37,7 @@ void add3channel(float* color, uint16_t* n, int colorIndex, const float* value) 
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::LightfieldSamples& samples = data.get(a_samples);
+	const lightfields::Samples& samples = data.get(a_samples);
 
 	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
@@ -124,7 +126,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_samples, "samples", possumwood::opencv::LightfieldSamples(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(300u, 300u));
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_norm, "sample_count", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);

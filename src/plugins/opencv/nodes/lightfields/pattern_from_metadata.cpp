@@ -5,8 +5,7 @@
 #include <actions/traits.h>
 
 #include <lightfields/metadata.h>
-#include "lightfield_pattern.h"
-#include "lightfield_samples.h"
+#include <lightfields/pattern.h>
 #include "tools.h"
 #include "lightfields.h"
 

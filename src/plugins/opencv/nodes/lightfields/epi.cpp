@@ -8,9 +8,11 @@
 
 #include <maths/io/vec2.h>
 
+#include <lightfields/pattern.h>
+
 #include "frame.h"
-#include "lightfield_pattern.h"
 #include "tools.h"
+#include "lightfields.h"
 
 namespace {
 

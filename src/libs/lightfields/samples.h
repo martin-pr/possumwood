@@ -3,17 +3,14 @@
 #include <memory>
 #include <iostream>
 #include <vector>
+#include <limits>
 
-#include <opencv2/opencv.hpp>
+#include "pattern.h"
 
-#include <actions/traits.h>
-
-#include "lightfield_pattern.h"
-
-namespace possumwood { namespace opencv {
+namespace lightfields {
 
 /// Creates 2D samples for lightfield refocusing (i.e., sampling a 2D plane in 4D space with constant U and V).
-class LightfieldSamples {
+class Samples {
 	public:
 		enum Color {
 			kRed = 2,
@@ -28,15 +25,14 @@ class LightfieldSamples {
 			Color color; ///< Target colour channel, based on the Bayer pattern
 		};
 
-		LightfieldSamples();
-		LightfieldSamples(const ::lightfields::Pattern& pattern);
-		~LightfieldSamples();
+		Samples();
+		~Samples();
 
-		LightfieldSamples(const LightfieldSamples&) = default;
-		LightfieldSamples& operator = (const LightfieldSamples&) = default;
+		Samples(const Samples&) = default;
+		Samples& operator = (const Samples&) = default;
 
-		LightfieldSamples(LightfieldSamples&&) = default;
-		LightfieldSamples& operator = (LightfieldSamples&&) = default;
+		Samples(Samples&&) = default;
+		Samples& operator = (Samples&&) = default;
 
 		using const_iterator = std::vector<Sample>::const_iterator;
 
@@ -53,6 +49,8 @@ class LightfieldSamples {
 		void scale(float xy_scale);
 		void filterInvalid();
 
+		static Samples fromPattern(const Pattern& p);
+
 	private:
 		void makeRowOffsets();
 
@@ -61,15 +59,7 @@ class LightfieldSamples {
 		Imath::V2i m_size;
 };
 
-std::ostream& operator << (std::ostream& out, const LightfieldSamples& f);
+std::ostream& operator << (std::ostream& out, const Samples& f);
 
 }
 
-template<>
-struct Traits<opencv::LightfieldSamples> {
-	static constexpr std::array<float, 3> colour() {
-		return std::array<float, 3>{{0.5, 0, 0}};
-	}
-};
-
-}

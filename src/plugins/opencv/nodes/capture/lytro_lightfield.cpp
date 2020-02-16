@@ -14,7 +14,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "frame.h"
-#include "lightfield_pattern.h"
+#include "lightfields/pattern.h"
 #include "lightfields/block.h"
 #include "lightfields/raw.h"
 #include "lightfields/pattern.h"
