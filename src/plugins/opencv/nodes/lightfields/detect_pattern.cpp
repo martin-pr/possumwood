@@ -35,7 +35,6 @@ struct Vec4Compare {
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<unsigned> a_border;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
-dependency_graph::OutAttr<lightfields::Pattern> a_pattern;
 dependency_graph::OutAttr<lightfields::Samples> a_samples;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -76,8 +75,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// pattern
 	const lightfields::Pattern pattern = lightfields::Pattern::fromFit(lenslets);
-	data.set(a_pattern, pattern);
-	data.set(a_samples, std::move(lightfields::Samples::fromPattern(pattern)));
+	data.set(a_samples, lightfields::Samples::fromPattern(pattern));
 
 	return dependency_graph::State();
 }
@@ -86,13 +84,10 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_border, "border", 20u);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_border, a_out);
-	meta.addInfluence(a_in, a_pattern);
-	meta.addInfluence(a_border, a_pattern);
 	meta.addInfluence(a_in, a_samples);
 	meta.addInfluence(a_border, a_samples);
 

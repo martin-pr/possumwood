@@ -25,7 +25,6 @@ namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
-dependency_graph::OutAttr<lightfields::Pattern> a_pattern;
 dependency_graph::OutAttr<lightfields::Metadata> a_metadata;
 
 cv::Mat decodeData(const char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
@@ -107,7 +106,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	}
 
 	data.set(a_frame, possumwood::opencv::Frame(result));
-	data.set(a_pattern, pattern);
 	data.set(a_metadata, meta);
 
 	return dependency_graph::State();
@@ -118,11 +116,9 @@ void init(possumwood::Metadata& meta) {
 		"Lytro files (*.lfr *.RAW)",
 	}));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_metadata, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
-	meta.addInfluence(a_filename, a_pattern);
 	meta.addInfluence(a_filename, a_metadata);
 
 	meta.setCompute(compute);
