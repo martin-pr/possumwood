@@ -98,7 +98,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		white[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].asInt();
 		white[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
 
-		assert(!raw.image().empty());
+		assert(raw.image() != nullptr);
 		result = decodeData(raw.image(), width, height, black, white);
 	}
 
