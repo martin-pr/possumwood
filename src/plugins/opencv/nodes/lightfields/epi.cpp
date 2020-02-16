@@ -8,7 +8,7 @@
 
 #include <maths/io/vec2.h>
 
-#include <lightfields/pattern.h>
+#include <lightfields/samples.h>
 
 #include "frame.h"
 #include "tools.h"
@@ -17,7 +17,7 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
-dependency_graph::InAttr<lightfields::Pattern> a_pattern;
+dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<unsigned> a_xRes, a_yRes;
 dependency_graph::InAttr<possumwood::Enum> a_xMode, a_yMode;
 dependency_graph::InAttr<Imath::V2f> a_xRange, a_yRange, a_uRange, a_vRange;
@@ -43,7 +43,7 @@ bool normalize(float& value, const Imath::V2f& range) {
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const lightfields::Pattern pattern = data.get(a_pattern);
+	const lightfields::Samples& samples = data.get(a_samples);
 
 	const cv::Mat in = *data.get(a_in);
 	if(in.type() != CV_32FC1)
@@ -53,7 +53,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result = cv::Mat::zeros(data.get(a_yRes), data.get(a_xRes), CV_32FC3);
 	cv::Mat norm = cv::Mat::zeros(data.get(a_yRes), data.get(a_xRes), CV_16UC3);
 
-	if(Imath::V2i(in.cols, in.rows) != pattern.sensorResolution())
+	if(Imath::V2i(in.cols, in.rows) != samples.sensorSize())
 		throw std::runtime_error("Sensor resolution and input image sizes don't match!");
 
 	const int dimx = dimension(data.get(a_xMode).value());
@@ -64,51 +64,54 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const Imath::V2f uRange = data.get(a_uRange);
 	const Imath::V2f vRange = data.get(a_vRange);
 
-	tbb::parallel_for(0, pattern.sensorResolution().y, [&](int y) {
-		for(int x=0; x<pattern.sensorResolution().x; ++x) {
-			lightfields::Pattern::Sample sample = pattern.sample(Imath::V2f(x, y));
+	for(int y=0;y<samples.sensorSize().y;++y) {
+	// tbb::parallel_for(0, samples.sensorSize().y, [&](int y) {
+		auto begin = samples.begin(y);
+		auto end = samples.end(y);
 
-			// scale x and y to be in range 0..1
-			sample.lensCenter[0] /= pattern.sensorResolution().x;
-			sample.lensCenter[1] /= pattern.sensorResolution().y;
+		for(auto it = begin; it != end; ++it) {
+			lightfields::Samples::Sample sample = *it;
+			assert(sample.source[1] == y);
 
-			// test if the sample is in the expected range
+			sample.xy[0] /= samples.sensorSize()[0];
+			sample.xy[1] /= samples.sensorSize()[1];
 
 			// handwired lenslet ranges
-			bool inRange = ((sample.offset[0]*sample.offset[0] + sample.offset[1]*sample.offset[1]) <= 1.0f);
+			bool inRange = ((sample.uv[0]*sample.uv[0] + sample.uv[1]*sample.uv[1]) <= 1.0f);
 
 			// and individual sample ranges
-			inRange &= normalize(sample.lensCenter[0], xRange);
-			inRange &= normalize(sample.lensCenter[1], yRange);
-			inRange &= normalize(sample.offset[0], uRange);
-			inRange &= normalize(sample.offset[1], vRange);
+			inRange &= normalize(sample.xy[0], xRange);
+			inRange &= normalize(sample.xy[1], yRange);
+			inRange &= normalize(sample.uv[0], uRange);
+			inRange &= normalize(sample.uv[1], vRange);
 
 			if(inRange) {
 				// actual coordinates of the pixel
 				int xcoord, ycoord;
 
 				if(dimx <= 1)
-					xcoord = std::min((int)floor(sample.lensCenter[dimx] * (float)result.cols), result.cols-1);
+					xcoord = std::min((int)floor(sample.xy[dimx] * (float)result.cols), result.cols-1);
 				else
-					xcoord = std::min((int)floor(sample.offset[dimx-2] * (float)result.cols), result.cols-1);
+					xcoord = std::min((int)floor(sample.uv[dimx-2] * (float)result.cols), result.cols-1);
 
 				if(dimy <= 1)
-					ycoord = std::min((int)floor(sample.lensCenter[dimy] * (float)result.rows), result.rows-1);
+					ycoord = std::min((int)floor(sample.xy[dimy] * (float)result.rows), result.rows-1);
 				else
-					ycoord = std::min((int)floor(sample.offset[dimy-2] * (float)result.rows), result.rows-1);
+					ycoord = std::min((int)floor(sample.uv[dimy-2] * (float)result.rows), result.rows-1);
 
 				assert(xcoord >= 0 && xcoord < result.cols);
 				assert(ycoord >= 0 && ycoord < result.rows);
 
 				// bayern pattern (hardcoded)
-				const int bayern = x%2 + y%2;
+				const int bayern = sample.source[0]%2 + y%2;
 
 				// and the integration
-				result.ptr<float>(ycoord, xcoord)[bayern] += in.at<float>(y, x);
+				result.ptr<float>(ycoord, xcoord)[bayern] += in.at<float>(y, sample.source[0]);
 				norm.ptr<uint16_t>(ycoord, xcoord)[bayern] += 1;
 			}
 		}
-	});
+	// });
+	}
 
 	tbb::parallel_for(0, result.rows, [&](int y) {
 		for(int x=0; x<result.cols; ++x)
@@ -124,7 +127,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_image", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_xRes, "x/resolution", 300u);
 	meta.addAttribute(a_xMode, "x/mode", possumwood::Enum({"x", "y", "u", "v"}, 0));
 	meta.addAttribute(a_yRes, "y/resolution", 20u);
@@ -136,7 +139,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_out, "out_image", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
-	meta.addInfluence(a_pattern, a_out);
+	meta.addInfluence(a_samples, a_out);
 	meta.addInfluence(a_xRes, a_out);
 	meta.addInfluence(a_yRes, a_out);
 	meta.addInfluence(a_xMode, a_out);
