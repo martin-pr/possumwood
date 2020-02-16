@@ -32,7 +32,7 @@ void checkThrow(const T& value, const T& expected, const std::string& error) {
 
 struct Raw::Pimpl {
 	Metadata meta;
-	std::vector<unsigned char> data;
+	std::unique_ptr<unsigned char[]> data;
 };
 
 Raw::Raw() : m_pimpl(new Pimpl()) {
@@ -57,7 +57,7 @@ Json::Value& Raw::privateMeta(Pimpl& p) {
 
 
 const unsigned char* Raw::image() const {
-	return m_pimpl->data.data();
+	return m_pimpl->data.get();
 }
 
 std::istream& operator >> (std::istream& in, Raw& data) {
@@ -75,7 +75,7 @@ std::istream& operator >> (std::istream& in, Raw& data) {
 		in >> block;
 
 		if(block.id == 'M') {
-			std::stringstream ss((const char*)block.data.data());
+			std::stringstream ss((const char*)block.data.get());
 			ss >> Raw::header(*impl);
 
 			if(impl->meta.header()["frames"].size() != 1)
@@ -87,7 +87,7 @@ std::istream& operator >> (std::istream& in, Raw& data) {
 		}
 
 		else if(block.name == metadataRef) {
-			std::stringstream ss((const char*)block.data.data());
+			std::stringstream ss((const char*)block.data.get());
 			ss >> Raw::meta(*impl);
 
 			checkThrow(impl->meta.metadata()["image"]["width"].isInt(), true, "width");
@@ -118,13 +118,13 @@ std::istream& operator >> (std::istream& in, Raw& data) {
 		}
 
 		else if(block.name == privateMetadataRef) {
-			std::stringstream ss((const char*)block.data.data());
+			std::stringstream ss((const char*)block.data.get());
 			ss >> Raw::privateMeta(*impl);
 		}
 
 		// just copy the image data
 		else if(block.name == imageRef) {
-			assert(!block.data.empty());
+			assert(block.data != nullptr);
 			impl->data = std::move(block.data);
 		}
 
