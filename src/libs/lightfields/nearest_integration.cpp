@@ -45,6 +45,9 @@ Result integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned
 	const float x_scale = (float)width / (float)samples.sensorSize()[0];
 	const float y_scale = (float)height / (float)samples.sensorSize()[1];
 
+	const float widthf = width;
+	const float heightf = height;
+
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		const auto begin = samples.begin(y);
 		const auto end = samples.end(y);
@@ -60,7 +63,7 @@ Result integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned
 			assert(it->source[0] < input.rows);
 			assert(it->source[1] < input.cols);
 
-			if((floor(target_x) >= 0) && (floor(target_y) >= 0) && (floor(target_x) < width) && (floor(target_y) < height)) {
+			if((target_x >= 0.0f) && (target_y >= 0.0f) && (target_x < widthf) && (target_y < heightf)) {
 				float* color = average.ptr<float>(floor(target_y), floor(target_x));
 				uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
 
@@ -78,6 +81,48 @@ Result integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned
 	});
 
 	return Result { average, norm };
+}
+
+cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input, const Result& integration) {
+	if(input.type() != CV_32FC1 && input.type() != CV_32FC3)
+		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input.");
+
+	const unsigned width = integration.average.cols;
+	const unsigned height = integration.average.rows;
+
+	cv::Mat corresp = cv::Mat::zeros(height, width, CV_32FC1);
+
+	const float x_scale = (float)width / (float)samples.sensorSize()[0];
+	const float y_scale = (float)height / (float)samples.sensorSize()[1];
+
+	const float widthf = width;
+	const float heightf = height;
+
+	tbb::parallel_for(0, input.rows, [&](int y) {
+		const auto end = samples.end(y);
+		const auto begin = samples.begin(y);
+		assert(begin <= end);
+
+		for(auto it = begin; it != end; ++it) {
+			const float target_x = it->xy[0] * x_scale;
+			const float target_y = it->xy[1] * y_scale;
+
+			if((target_x >= 0.0f) && (target_y >= 0.0f) && (target_x < widthf) && (target_y < heightf)) {
+				float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
+				const float* value = input.ptr<float>(it->source[1], it->source[0]);
+				const float* ave = integration.average.ptr<float>(target_y, target_x);
+				const uint16_t* n = integration.samples.ptr<uint16_t>(target_y, target_x);
+
+				if(input.channels() == 3)
+					for(int c=0; c<3; ++c)
+						*target += pow(value[c] - ave[c], 2) / (float)n[c];
+				else
+					*target += pow(*value - ave[it->color], 2) / (float)n[it->color];
+			}
+		}
+	});
+
+	return corresp;
 }
 
 } }

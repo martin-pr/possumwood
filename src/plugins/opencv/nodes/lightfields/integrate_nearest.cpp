@@ -31,41 +31,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	data.set(a_out, possumwood::opencv::Frame(tmp.average));
 	data.set(a_norm, possumwood::opencv::Frame(tmp.samples));
 
-	const cv::Mat& input = *data.get(a_in);
-	const lightfields::Samples& samples = data.get(a_samples);
-
-	const unsigned width = data.get(a_size)[0];
-	const unsigned height = data.get(a_size)[1];
-
-	// computing correspondence
-	cv::Mat corresp = cv::Mat::zeros(height, width, CV_32FC1);
-
-	const float x_scale = (float)width / (float)samples.sensorSize()[0];
-	const float y_scale = (float)height / (float)samples.sensorSize()[1];
-
-	tbb::parallel_for(0, input.rows, [&](int y) {
-		const auto end = samples.end(y);
-		const auto begin = samples.begin(y);
-		assert(begin <= end);
-
-		for(auto it = begin; it != end; ++it) {
-			const float target_x = it->xy[0] * x_scale;
-			const float target_y = it->xy[1] * y_scale;
-
-			if((floor(target_x) >= 0) && (floor(target_y) >= 0) && (floor(target_x) < width) && (floor(target_y) < height)) {
-				float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
-				const float* value = input.ptr<float>(it->source[1], it->source[0]);
-				const float* ave = tmp.average.ptr<float>(target_y, target_x);
-				const uint16_t* n = tmp.samples.ptr<uint16_t>(target_y, target_x);
-
-				if(input.channels() == 3)
-					for(int c=0; c<3; ++c)
-						*target += pow(value[c] - ave[c], 2) / (float)n[c];
-				else
-					*target += pow(*value - ave[it->color], 2) / (float)n[it->color];
-			}
-		}
-	});
+	// correspondence
+	auto corresp = lightfields::nearest::correspondence(data.get(a_samples), *data.get(a_in), tmp);
 
 	data.set(a_correspondence, possumwood::opencv::Frame(corresp));
 
