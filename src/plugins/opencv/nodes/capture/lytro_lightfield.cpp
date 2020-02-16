@@ -85,9 +85,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		meta = raw.metadata();
 
-		// assemble the lightfield pattern
-		pattern = lightfields::Pattern::fromMetadata(meta);
-
 		width = meta.metadata()["image"]["width"].asInt();
 		height = meta.metadata()["image"]["height"].asInt();
 
