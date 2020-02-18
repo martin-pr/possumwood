@@ -40,8 +40,10 @@ void Samples::makeRowOffsets() {
 }
 
 void Samples::offset(float uvOffset) {
-	for(auto& s : m_samples)
+	tbb::parallel_for(std::size_t(0), m_samples.size(), [&](std::size_t i) {
+		auto& s = m_samples[i];
 		s.xy += s.uv * uvOffset;
+	});
 }
 
 void Samples::threshold(float uvThreshold) {
@@ -78,10 +80,12 @@ void Samples::filterInvalid() {
 }
 
 void Samples::scale(float xy_scale) {
-	for(auto& sample : m_samples)
-		sample.xy = (sample.xy - Imath::V2f(m_size[0]/2, m_size[1]/2)) * xy_scale + Imath::V2f(m_size[0]/2, m_size[1]/2);
+	const Imath::V2f center(m_size[0]/2, m_size[1]/2);
 
-	makeRowOffsets();
+	tbb::parallel_for(std::size_t(0), m_samples.size(), [&](std::size_t i) {
+		auto& sample = m_samples[i];
+		sample.xy = (sample.xy - center) * xy_scale + center;
+	});
 }
 
 Samples::const_iterator Samples::begin(std::size_t row) const {
