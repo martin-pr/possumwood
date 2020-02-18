@@ -15,7 +15,7 @@ dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_res;
 dependency_graph::InAttr<float> a_start, a_end;
 dependency_graph::InAttr<unsigned> a_steps;
-dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
+dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_conf;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const lightfields::Samples& samples = data.get(a_samples);
@@ -43,7 +43,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			depth.addLayer(d, s);
 	}
 
-	data.set(a_out, possumwood::opencv::Frame(depth.eval()));
+	auto out = depth.eval();
+	data.set(a_out, possumwood::opencv::Frame(out.depth));
+	data.set(a_conf, possumwood::opencv::Frame(out.confidence));
 
 	return dependency_graph::State();
 }
@@ -56,6 +58,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_end, "samples/end", 40.0f);
 	meta.addAttribute(a_steps, "samples/steps", 9u);
 	meta.addAttribute(a_out, "out_image", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_conf, "confidence", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_samples, a_out);
@@ -63,6 +66,13 @@ void init(possumwood::Metadata& meta) {
 	meta.addInfluence(a_start, a_out);
 	meta.addInfluence(a_end, a_out);
 	meta.addInfluence(a_steps, a_out);
+
+	meta.addInfluence(a_in, a_conf);
+	meta.addInfluence(a_samples, a_conf);
+	meta.addInfluence(a_res, a_conf);
+	meta.addInfluence(a_start, a_conf);
+	meta.addInfluence(a_end, a_conf);
+	meta.addInfluence(a_steps, a_conf);
 
 	meta.setCompute(compute);
 }
