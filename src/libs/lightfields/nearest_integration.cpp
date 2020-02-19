@@ -114,10 +114,14 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input
 				const uint16_t* n = integration.samples.ptr<uint16_t>(target_y, target_x);
 
 				if(input.channels() == 3)
-					for(int c=0; c<3; ++c)
-						*target += pow(value[c] - ave[c], 2) / (float)n[c];
-				else
-					*target += pow(*value - ave[it->color], 2) / (float)n[it->color];
+					for(int c=0; c<3; ++c) {
+						const float tmp = value[c] - ave[c]; // because pow() is expensive?!
+						*target += tmp*tmp / (float)n[c];
+					}
+				else {
+					const float tmp = *value - ave[it->color];
+					*target += tmp*tmp / (float)n[it->color];
+				}
 			}
 		}
 	});
