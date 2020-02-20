@@ -25,12 +25,6 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "samples_refocus_0",
-            "in_port": "uv_offset",
-            "out_node": "interval_0",
-            "out_port": "out"
-        },
-        {
             "in_node": "divide_0",
             "in_port": "in_frame_2",
             "out_node": "lytro_lightfield_0",
@@ -49,16 +43,16 @@
             "out_port": "frame"
         },
         {
-            "in_node": "integrate_gaussian_0",
-            "in_port": "samples",
-            "out_node": "samples_refocus_0",
-            "out_port": "out_samples"
-        },
-        {
             "in_node": "samples_refocus_0",
             "in_port": "in_samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "integrate_gaussian_0",
+            "in_port": "samples",
+            "out_node": "samples_refocus_0",
+            "out_port": "out_samples"
         }
     ],
     "description": "### Refocusing with radial-basis function regression\n\nTo reduce the gaps in refocused images caused by missing samples, and to exploit the information in samples that would otherwise be averaged-out into a single pixel, it is possible to use a radial-basis function regression superresolution framework.\n\nThis demo shows how a simple gaussian-based accumulation, similar to one used for mult-frame supersampling on modern phones, can be used to improve the resolution and quality of a super-sampled refocused image.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>\n\n<sub>Bartlomiej Wronski, Ignacio Garcia-Dorado, Manfred Ernst, Damien Kelly, Michael Krainin, Chia-Kai Liang, Marc Levoy, and Peyman Milanfar. 2019. [Handheld multi-frame super-resolution.](https://drive.google.com/file/d/1T1u2Mhm8ay6reHHouM1wO0TegvRJbJV_/view?usp=sharing) ACM Trans. Graph. 38, 4, Article 28 (July 2019), 18 pages. </sub>\n\n<sub>Fiss, Juliet, Brian Curless, and Richard Szeliski. \"Refocusing plenoptic images using depth-adaptive splatting.\" 2014 IEEE international conference on computational photography (ICCP). IEEE, 2014.</sub>",
@@ -125,26 +119,6 @@
                 }
             },
             "type": "opencv/lightfields/integrate_gaussian"
-        },
-        "interval_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -75.7099914550781,
-                    "y": 228.821472167969
-                }
-            },
-            "name": "refocus",
-            "ports": {
-                "interval": {
-                    "in_progress_updates": false,
-                    "max": 60.0,
-                    "min": -40.0,
-                    "type": "linear",
-                    "value": 9.59999847412109
-                }
-            },
-            "type": "maths/interval"
         },
         "lytro_lightfield_0": {
             "blind_data": {
@@ -487,6 +461,9 @@
                 }
             },
             "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 0.998849987983704
+            },
             "type": "opencv/lightfields/samples_from_metadata"
         },
         "samples_refocus_0": {
@@ -499,6 +476,7 @@
             },
             "name": "samples_refocus",
             "ports": {
+                "uv_offset": -20.0,
                 "uv_threshold": 1.0,
                 "xy_scale": 1.0
             },
@@ -510,6 +488,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJEAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABngAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACFAAAAc0AAACqAQAAAwAAA5IAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJEAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABaAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB3gAAAZAAAACqAQAAAwAAAr0AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
