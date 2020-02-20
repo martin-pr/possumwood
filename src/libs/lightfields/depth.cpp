@@ -77,7 +77,7 @@ void Depth::addLayer(float uv_offset, const cv::Mat& confidence) {
 	if(it == m_layers.end())
 		m_layers[uv_offset] = confidence.clone();
 	else
-		cv::max(m_layers[uv_offset], confidence, m_layers[uv_offset]);
+		cv::min(m_layers[uv_offset], confidence, m_layers[uv_offset]);
 }
 
 Depth::Result Depth::eval() const {
