@@ -1,8 +1,8 @@
 {
     "connections": [
         {
-            "in_node": "network_0",
-            "in_port": "frame",
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
             "out_node": "convert_0",
             "out_port": "out_frame"
         },
@@ -23,6 +23,12 @@
             "in_port": "in_frame",
             "out_node": "integrate_nearest_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "integrate_nearest_0",
+            "out_port": "correspondence"
         },
         {
             "in_node": "divide_0",
@@ -53,10 +59,57 @@
             "in_port": "samples",
             "out_node": "samples_refocus_0",
             "out_port": "out_samples"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "colormap_0",
+            "in_port": "in_frame",
+            "out_node": "convert_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_0",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Naive refocusing\n\nThe simplest method of lightfields digital refocusing is to directly use the lightfield's equation to determine the target pixel position for each sample, given its position in the lightfield image and its corresponding `u` and `v` values.\n\nWhile very simple and fast, the number of samples for each pixel can vary depending on the bayern pattern and focal distance, often leading to noisy and/or low-resolution results with artifacts.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
     "nodes": {
+        "colormap_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 236.550643920898,
+                    "y": 791.6005859375
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_JET"
+            },
+            "type": "opencv/colormap"
+        },
+        "concat_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 81.609001159668,
+                    "y": 983.199890136719
+                }
+            },
+            "name": "concat",
+            "ports": {
+                "mode": "Horizontal",
+                "separation": 0
+            },
+            "type": "opencv/concat"
+        },
         "convert_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -68,6 +121,22 @@
             "name": "convert",
             "ports": {
                 "a": 100.0,
+                "b": 0.0,
+                "mode": "CV_8U"
+            },
+            "type": "opencv/convert"
+        },
+        "convert_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 226.858856201172,
+                    "y": 549.305603027344
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 50.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -107,7 +176,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 2.87815046310425,
-                    "y": 340.836273193359
+                    "y": 343.445465087891
                 }
             },
             "name": "integrate_nearest",
@@ -151,8 +220,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 44.7170181274414,
-                    "y": 953.134460449219
+                    "x": 133.558517456055,
+                    "y": 1197.04479980469
                 }
             },
             "connections": [

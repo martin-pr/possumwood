@@ -15,6 +15,6 @@ namespace gaussian {
 IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& data, float sigma2 = 2.0f, float offset = 0.0f);
 
 /// Compute the correspondence (integration variance) metric on a previously-integrated result
-// cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data, const Result& integration, float offset = 0.0f);
+cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data, const IntegrationResult& integration, float sigma2 = 2.0f, float offset = 0.0f);
 
 } }

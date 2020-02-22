@@ -29,6 +29,9 @@ void add3channel(float* color, float* n, int colorIndex, const float* value, flo
 IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& data, float _sigma2, float offset) {
 	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
 
+	// SOMEHOW, THE RESULT OF DETAIL IS NOT SMOOTH, AND IT DEFINITELY SHOULD BE
+	// CONFIDENCE HAS WEIRD PEAKS, FIX ME!
+
 	if(data.type() != CV_32FC3 && data.type() != CV_32FC1)
 		throw std::runtime_error("Nearest neighbour integration - only 1 or 3 channel float data allowed on input.");
 
@@ -43,6 +46,7 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	cv::Mat norm = cv::Mat::zeros(height, width, CV_32FC3);
 
 	const float sigma2 = _sigma2 * (float)width / (float)data.cols;
+	const float sigma = sqrt(sigma2);
 
 	const float x_scale = (float)width / (float)samples.sensorSize()[0];
 	const float y_scale = (float)height / (float)samples.sensorSize()[1];
@@ -53,14 +57,17 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 			const float target_x = it->xy[0] * x_scale;
 			const float target_y = it->xy[1] * y_scale;
 
-			int xFrom = std::max((int)floor(target_x - 3.0f*sigma2), 0);
-			int xTo = std::min((int)ceil(target_x + 3.0f*sigma2 + 1.0f), (int)width);
-			int yFrom = std::max((int)floor(target_y - 3.0f*sigma2), 0);
-			int yTo = std::min((int)ceil(target_y + 3.0f*sigma2 + 1.0f), (int)height);
+			int xFrom = std::max((int)floor(target_x - 3.0f*sigma), 0);
+			int xTo = std::min((int)ceil(target_x + 3.0f*sigma + 1.0f), (int)width);
+			int yFrom = std::max((int)floor(target_y - 3.0f*sigma), 0);
+			int yTo = std::min((int)ceil(target_y + 3.0f*sigma + 1.0f), (int)height);
 
 			for(int yt=yFrom; yt<yTo; ++yt) {
 				for(int xt=xFrom; xt<xTo; ++xt) {
-					const float dist2 = std::pow((float)xt - target_x, 2) + std::pow((float)yt - target_y, 2);
+					const float xf = (float)xt - target_x; // because pow() is expensive?
+					const float yf = (float)yt - target_y;
+
+					const float dist2 = xf*xf + yf*yf;
 					const float gauss = std::exp(-dist2/(2.0f*sigma2));
 
 					float* color = mat.ptr<float>(yt, xt);
@@ -81,6 +88,88 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	});
 
 	return IntegrationResult { mat, norm };
+}
+
+cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data, const IntegrationResult& integration, float _sigma2, float offset) {
+	if(data.type() != CV_32FC1 && data.type() != CV_32FC3)
+		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input.");
+
+	const unsigned width = integration.average.cols;
+	const unsigned height = integration.average.rows;
+
+	cv::Mat corresp = cv::Mat::zeros(height, width, CV_32FC1);
+	cv::Mat weights = cv::Mat::zeros(height, width, CV_32FC1);
+
+	const float sigma2 = _sigma2 * (float)width / (float)data.cols;
+	const float sigma = sqrt(sigma2);
+
+	const float x_scale = (float)width / (float)samples.sensorSize()[0];
+	const float y_scale = (float)height / (float)samples.sensorSize()[1];
+
+	tbb::parallel_for(0, data.rows, [&](int y) {
+		const auto end = samples.end(y);
+		const auto begin = samples.begin(y);
+		assert(begin <= end);
+
+		for(auto it = begin; it != end; ++it) {
+			const float target_x = (it->xy[0] + offset * it->uv[0]) * x_scale;
+			const float target_y = (it->xy[1] + offset * it->uv[1]) * y_scale;
+
+			int xFrom = std::max((int)floor(target_x - 3.0f*sigma), 0);
+			int xTo = std::min((int)ceil(target_x + 3.0f*sigma + 1.0f), (int)width);
+			int yFrom = std::max((int)floor(target_y - 3.0f*sigma), 0);
+			int yTo = std::min((int)ceil(target_y + 3.0f*sigma + 1.0f), (int)height);
+
+			for(int yt=yFrom; yt<yTo; ++yt) {
+				for(int xt=xFrom; xt<xTo; ++xt) {
+					const float xf = (float)xt - target_x; // because pow() is expensive?
+					const float yf = (float)yt - target_y;
+
+					const float dist2 = xf*xf + yf*yf;
+					const float gauss = std::exp(-dist2/(2.0f*sigma2));
+
+					float* target = corresp.ptr<float>(yt, xt);
+					float* weight = weights.ptr<float>(yt, xt);
+
+					const float* value = data.ptr<float>(it->source[1], it->source[0]);
+					const float* ave = integration.average.ptr<float>(yt, xt);
+					const uint16_t* n = integration.samples.ptr<uint16_t>(yt, xt);
+
+					// this is attempting to compute weighted variance of the samples.
+					// The algorithm to do this is a bit dubious - acc to wikipedia and stack overflow, weighted variance computation
+					// is much more complex than this simple weighting. This might be the reason for the "random peaks" in the confidence
+					// value. Ref: // https://www.itl.nist.gov/div898/software/dataplot/refman2/ch2/weighvar.pdf
+					// TODO: NEEDS RETHIKING
+					if(data.channels() == 3)
+						for(int c=0; c<3; ++c) {
+							const float tmp = value[c] - ave[c]; // because pow() is expensive?!
+							*target += tmp*tmp / (float)n[c] * gauss;
+							*weight += gauss;
+						}
+					else {
+						const float tmp = *value - ave[it->color];
+						*target += tmp*tmp / (float)n[it->color] * gauss;
+						*weight += gauss;
+					}
+
+
+				}
+			}
+		}
+	});
+
+	// normalization of the confidence values by the sum of weights
+	tbb::parallel_for(0u, height, [&](int y) {
+		for(unsigned x=0; x<width; ++x) {
+			float& val = corresp.at<float>(y, x);
+			float& w = weights.at<float>(y, x);
+
+			if(w > 0.0f)
+				val /= w;
+		}
+	});
+
+	return corresp;
 }
 
 } }

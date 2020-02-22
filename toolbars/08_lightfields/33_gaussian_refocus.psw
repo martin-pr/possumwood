@@ -1,9 +1,27 @@
 {
     "connections": [
         {
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "network_0",
             "in_port": "frame",
+            "out_node": "concat_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
             "out_node": "convert_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "colormap_0",
+            "in_port": "in_frame",
+            "out_node": "convert_1",
             "out_port": "out_frame"
         },
         {
@@ -23,6 +41,12 @@
             "in_port": "in_frame",
             "out_node": "integrate_gaussian_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "integrate_gaussian_0",
+            "out_port": "correspondence"
         },
         {
             "in_node": "divide_0",
@@ -57,17 +81,62 @@
     ],
     "description": "### Refocusing with radial-basis function regression\n\nTo reduce the gaps in refocused images caused by missing samples, and to exploit the information in samples that would otherwise be averaged-out into a single pixel, it is possible to use a radial-basis function regression superresolution framework.\n\nThis demo shows how a simple gaussian-based accumulation, similar to one used for mult-frame supersampling on modern phones, can be used to improve the resolution and quality of a super-sampled refocused image.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>\n\n<sub>Bartlomiej Wronski, Ignacio Garcia-Dorado, Manfred Ernst, Damien Kelly, Michael Krainin, Chia-Kai Liang, Marc Levoy, and Peyman Milanfar. 2019. [Handheld multi-frame super-resolution.](https://drive.google.com/file/d/1T1u2Mhm8ay6reHHouM1wO0TegvRJbJV_/view?usp=sharing) ACM Trans. Graph. 38, 4, Article 28 (July 2019), 18 pages. </sub>\n\n<sub>Fiss, Juliet, Brian Curless, and Richard Szeliski. \"Refocusing plenoptic images using depth-adaptive splatting.\" 2014 IEEE international conference on computational photography (ICCP). IEEE, 2014.</sub>",
     "nodes": {
+        "colormap_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 266.171875,
+                    "y": 834.851318359375
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_JET"
+            },
+            "type": "opencv/colormap"
+        },
+        "concat_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 122.410148620605,
+                    "y": 1001.22723388672
+                }
+            },
+            "name": "concat",
+            "ports": {
+                "mode": "Horizontal",
+                "separation": 0
+            },
+            "type": "opencv/concat"
+        },
         "convert_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 161.447448730469,
-                    "y": 772.362487792969
+                    "x": 88.7100296020508,
+                    "y": 798.581604003906
                 }
             },
             "name": "convert",
             "ports": {
                 "a": 100.0,
+                "b": 0.0,
+                "mode": "CV_8U"
+            },
+            "type": "opencv/convert"
+        },
+        "convert_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 257.520660400391,
+                    "y": 629.974792480469
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 3000000.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -91,8 +160,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 145.922546386719,
-                    "y": 572.130126953125
+                    "x": 73.1851272583008,
+                    "y": 598.349243164062
                 }
             },
             "name": "gamma",
@@ -114,8 +183,8 @@
             "ports": {
                 "sigma2": 4.0,
                 "size": {
-                    "x": 1000,
-                    "y": 1000
+                    "x": 200,
+                    "y": 200
                 }
             },
             "type": "opencv/lightfields/integrate_gaussian"
@@ -152,8 +221,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 170.310348510742,
-                    "y": 957.879455566406
+                    "x": 183.183837890625,
+                    "y": 1182.78051757812
                 }
             },
             "connections": [
@@ -488,6 +557,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAAQ6AAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJEAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABaAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB3gAAAZAAAACqAQAAAwAAAr0AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJEAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABnAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACEgAAAc8AAACqAQAAAwAAA5IAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
