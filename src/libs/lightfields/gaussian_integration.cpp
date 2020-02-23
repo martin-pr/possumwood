@@ -26,7 +26,7 @@ void add3channel(float* color, float* n, int colorIndex, const float* value, flo
 
 }
 
-IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& data, float _sigma2, float offset) {
+IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& data, float _sigma, float offset) {
 	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
 
 	// SOMEHOW, THE RESULT OF DETAIL IS NOT SMOOTH, AND IT DEFINITELY SHOULD BE
@@ -45,8 +45,8 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	cv::Mat mat = cv::Mat::zeros(height, width, CV_32FC3);
 	cv::Mat norm = cv::Mat::zeros(height, width, CV_32FC3);
 
-	const float sigma2 = _sigma2 * (float)width / (float)data.cols;
-	const float sigma = sqrt(sigma2);
+	const float sigma = _sigma * (float)width / (float)data.cols;
+	const float sigma2 = sigma*sigma;
 
 	const float x_scale = (float)width / (float)samples.sensorSize()[0];
 	const float y_scale = (float)height / (float)samples.sensorSize()[1];
