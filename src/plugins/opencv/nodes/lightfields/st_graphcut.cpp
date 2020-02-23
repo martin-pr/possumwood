@@ -26,17 +26,24 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	lightfields::Graph graph(Imath::V2i(values.cols, values.rows), data.get(a_constness));
 
 	for(int row = 0; row < values.rows; ++row)
-		for(int col = 0; col < values.cols; ++col)
-			graph.setValue(Imath::V2i(col, row), 255-values.at<unsigned char>(row, col), values.at<unsigned char>(row, col));
+		for(int col = 0; col < values.cols; ++col) {
+			const float val = (float)values.at<unsigned char>(row, col) / 255.0f;
+			graph.setValue(Imath::V2i(col, row), 1.0f-val, val);
+		}
 
-	auto result = graph.solve();
+	graph.solve();
+
+	auto sources = graph.sourceGraph();
+	auto sinks = graph.sinkGraph();
 
 	for(int row = 0; row < values.rows; ++row)
 		for(int col = 0; col < values.cols; ++col)
-			if(result.find(Imath::V2i(col, row)) != result.end())
+			if(sources.find(Imath::V2i(col, row)) != sources.end())
 				values.at<unsigned char>(row, col) = 0;
-			else
+			else if(sinks.find(Imath::V2i(col, row)) != sinks.end())
 				values.at<unsigned char>(row, col) = 255;
+			else
+				values.at<unsigned char>(row, col) = 128;
 
 	data.set(a_out, possumwood::opencv::Frame(values));
 
