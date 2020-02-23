@@ -32,7 +32,10 @@ class Graph {
 			}
 		};
 
-		std::set<Imath::V2i, SetComparator> solve();
+		void solve();
+
+		std::set<Imath::V2i, SetComparator> sourceGraph() const;
+		std::set<Imath::V2i, SetComparator> sinkGraph() const;
 
 	private:
 		struct Path {

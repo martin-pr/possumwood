@@ -205,7 +205,7 @@ void Graph::collect(std::set<Imath::V2i, Graph::SetComparator>& subgraph, const 
 	}
 }
 
-std::set<Imath::V2i, Graph::SetComparator> Graph::solve() {
+void Graph::solve() {
 	//////////
 	// recursive path search
 
@@ -252,14 +252,23 @@ std::set<Imath::V2i, Graph::SetComparator> Graph::solve() {
 
 		assert(flow(path) == 0.0f);
 	}
+}
 
-	//////////
-	// collect the output
-
+std::set<Imath::V2i, Graph::SetComparator> Graph::sourceGraph() const {
 	std::set<Imath::V2i, Graph::SetComparator> result;
 	for(int y=0; y<m_size[1]; ++y)
 		for(int x=0; x<m_size[0]; ++x)
 			if(m_sourceLinks.edge(Imath::V2i(x, y)).forward > 0.0f)
+				collect(result, Imath::V2i(x, y));
+
+	return result;
+}
+
+std::set<Imath::V2i, Graph::SetComparator> Graph::sinkGraph() const {
+	std::set<Imath::V2i, Graph::SetComparator> result;
+	for(int y=0; y<m_size[1]; ++y)
+		for(int x=0; x<m_size[0]; ++x)
+			if(m_sinkLinks.edge(Imath::V2i(x, y)).backward > 0.0f)
 				collect(result, Imath::V2i(x, y));
 
 	return result;
