@@ -50,8 +50,7 @@ class Graph {
 
 		/// Simplified depth-first-search - only forward search from S and backward search from T (will avoid loops implicitly).
 		/// Indices - first index into source links, last index into sink links, mid indices horiz if id < horiz_n_links.size(), vert otherwise
-		bool dfs(Path& path) const;
-		bool dfs_2(Path& path, std::set<Imath::V2i, SetComparator>& visited, const Imath::V2i& index) const;
+		bool bfs(Path& path) const;
 
 		float flow(const Path& path) const;
 
