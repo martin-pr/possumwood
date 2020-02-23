@@ -1,6 +1,8 @@
 #include "graph.h"
 
 #include <cassert>
+#include <map>
+#include <queue>
 
 namespace lightfields {
 
@@ -52,112 +54,85 @@ void Graph::setValue(const Imath::V2i& pos, float source_weight, float sink_weig
 	m_sinkLinks.edge(pos).forward = sink_weight;
 }
 
-bool Graph::dfs(Path& path) const {
+bool Graph::bfs(Path& path) const {
 	path.n_links.clear();
-	std::set<Imath::V2i, SetComparator> visited;
 
+	std::map<Imath::V2i, Imath::V2i, SetComparator> visited;
+	std::queue<Imath::V2i> q;
+
+	// set the "origin" visited nodes
 	for(int siy=0; siy<m_size[1]; ++siy) {
 		for(int six=0; six<m_size[0]; ++six) {
 			if(m_sourceLinks.edge(Imath::V2i(six, siy)).forward > 0.0f) {
-				path.n_links.clear();
-
-				path.source = Imath::V2i(six, siy);
-				path.n_links.push_back(path.source);
-
-				visited.clear();
-				visited.insert(path.source);
-
-				if(dfs_2(path, visited, path.source)) {
-					assert(path.isValid());
-					return true;
-				}
+				visited[Imath::V2i(six, siy)] = Imath::V2i(-1, -1);
+				q.push(Imath::V2i(six, siy));
 			}
 		}
 	}
 
-	return false;
-}
+	// the core of the algorithm
+	while(!q.empty()) {
+		Imath::V2i current = q.front();
+		q.pop();
 
-bool Graph::dfs_2(Path& path, std::set<Imath::V2i, SetComparator>& visited, const Imath::V2i& index) const {
-	// first, try to see if there is a way out at the current pixel
-	if(m_sinkLinks.edge(index).forward > 0.0f) {
-		path.sink = index;
-		assert(path.isValid());
-		return true;
-	}
+		// check if there is an exit point here
+		if(m_sinkLinks.edge(current).forward > 0.0f) {
+			path.n_links.clear();
 
-	// try to move horizontally left
-	if(index[0] > 0) {
-		const Imath::V2i new_index(index[0]-1, index[1]);
-		if(visited.find(new_index) == visited.end()) {
-			visited.insert(new_index);
+			path.sink = current;
 
-			if(m_nLinks.edge(index, new_index) > 0.0f) {
-				path.n_links.push_back(new_index);
+			// this is SLOW, but for now will do
+			while(current[0] >= 0) {
+				path.n_links.insert(path.n_links.begin(), current);
+				current = visited[current];
+			}
 
-				if(dfs_2(path, visited, new_index)) {
-					assert(path.isValid());
-					return true;
-				}
-				else
-					path.n_links.pop_back();
+			path.source = path.n_links.front();
+
+			return true;
+		}
+
+		// try to move horizontally left
+		if(current[0] > 0) {
+			const Imath::V2i new_index(current[0]-1, current[1]);
+			if(visited.find(new_index) == visited.end()) {
+				visited[new_index] = current;
+
+				if(m_nLinks.edge(current, new_index) > 0.0f)
+					q.push(new_index);
 			}
 		}
-	}
 
-	// try to move horizontally right
-	if(index[0] < m_size[0]-1) {
-		const Imath::V2i new_index(index[0]+1, index[1]);
-		if(visited.find(new_index) == visited.end()) {
-			visited.insert(new_index);
+		// try to move horizontally left
+		if(current[0] < m_size[0]-1) {
+			const Imath::V2i new_index(current[0]+1, current[1]);
+			if(visited.find(new_index) == visited.end()) {
+				visited[new_index] = current;
 
-			if(m_nLinks.edge(index, new_index) > 0.0f) {
-				path.n_links.push_back(new_index);
-
-				if(dfs_2(path, visited, new_index)) {
-					assert(path.isValid());
-					return true;
-				}
-				else
-					path.n_links.pop_back();
+				if(m_nLinks.edge(current, new_index) > 0.0f)
+					q.push(new_index);
 			}
 		}
-	}
 
-	// try to move vertically up
-	if(index[1] > 0) {
-		const Imath::V2i new_index(index[0], index[1]-1);
-		if(visited.find(new_index) == visited.end()) {
-			visited.insert(new_index);
+		// try to move vertically up
+		if(current[1] > 0) {
+			const Imath::V2i new_index(current[0], current[1]-1);
+			if(visited.find(new_index) == visited.end()) {
+				visited[new_index] = current;
 
-			if(m_nLinks.edge(index, new_index) > 0.0f) {
-				path.n_links.push_back(new_index);
-
-				if(dfs_2(path, visited, new_index)) {
-					assert(path.isValid());
-					return true;
-				}
-				else
-					path.n_links.pop_back();
+				if(m_nLinks.edge(current, new_index) > 0.0f)
+					q.push(new_index);
 			}
 		}
-	}
 
-	// try to move vertically down
-	if(index[1] < m_size[1]-1) {
-		const Imath::V2i new_index(index[0], index[1]+1);
-		if(visited.find(new_index) == visited.end()) {
-			visited.insert(new_index);
+		// try to move vertically down
+		if(current[1] < m_size[1]-1) {
+			const Imath::V2i new_index(current[0], current[1]+1);
+			if(visited.find(new_index) == visited.end()) {
+				visited[new_index] = current;
 
-			if(m_nLinks.edge(index, new_index) > 0.0f) {
-				path.n_links.push_back(new_index);
-
-				if(dfs_2(path, visited, new_index)) {
-					assert(path.isValid());
-					return true;
-				}
-				else
-					path.n_links.pop_back();
+				if(m_nLinks.edge(current, new_index) > 0.0f)
+					q.push(new_index);
 			}
 		}
 	}
@@ -210,7 +185,7 @@ void Graph::solve() {
 	// recursive path search
 
 	Path path;
-	while(dfs(path)) {
+	while(bfs(path)) {
 		assert(path.isValid());
 
 		// get the maximum flow through the path
@@ -226,9 +201,6 @@ void Graph::solve() {
 			}
 
 			if(!path.n_links.empty()) {
-				// m_nLinks.edge(path.source, path.n_links.front()) -= f;
-				// m_nLinks.edge(path.n_links.front(), path.source) += f;
-
 				auto it1 = path.n_links.begin();
 				auto it2 = it1+1;
 				while(it2 != path.n_links.end()) {
@@ -238,9 +210,6 @@ void Graph::solve() {
 					++it1;
 					++it2;
 				}
-
-				// m_nLinks.edge(path.n_links.front(), path.sink) -= f;
-				// m_nLinks.edge(path.sink, path.n_links.front()) += f;
 			}
 
 			{
