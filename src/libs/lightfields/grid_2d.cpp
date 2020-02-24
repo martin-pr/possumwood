@@ -4,6 +4,38 @@
 
 namespace lightfields {
 
+Grid2D::Edge::Edge(float capacity) : m_capacity(capacity), m_flow(0.0f) {
+}
+
+void Grid2D::Edge::setCapacity(const float& capacity) {
+	assert(m_flow == 0.0f && "set capacity only before the flow computation starts");
+	m_capacity = capacity;
+}
+
+const float& Grid2D::Edge::capacity() const {
+	return m_capacity;
+}
+
+void Grid2D::Edge::addFlow(const float& flow) {
+	assert(flow >= 0.0f);
+	assert(flow + m_flow <= m_capacity && "each edge can only carry its capacity");
+	m_flow += flow;
+
+	assert(m_flow >= 0);
+	assert(m_flow <= m_capacity);
+}
+
+const float& Grid2D::Edge::flow() const {
+	return m_flow;
+}
+
+float Grid2D::Edge::residualCapacity() const {
+	return m_capacity - m_flow;
+}
+
+
+/////////////
+
 Grid2D::Grid2D(const Imath::V2i& size) : m_size(size), m_data(size[0]*size[1]) {
 }
 
@@ -14,9 +46,6 @@ Grid2D::Edge& Grid2D::edge(const Imath::V2i& i) {
 	const std::size_t index = i[0] + i[1] * m_size[0];
 	assert(index < m_data.size());
 
-	assert(m_data[index].forward >= 0.0f);
-	assert(m_data[index].backward >= 0.0f);
-
 	return m_data[index];
 }
 
@@ -26,9 +55,6 @@ const Grid2D::Edge& Grid2D::edge(const Imath::V2i& i) const {
 
 	const std::size_t index = i[0] + i[1] * m_size[0];
 	assert(index < m_data.size());
-
-	assert(m_data[index].forward >= 0.0f);
-	assert(m_data[index].backward >= 0.0f);
 
 	return m_data[index];
 }

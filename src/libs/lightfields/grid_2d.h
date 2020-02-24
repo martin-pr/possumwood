@@ -8,12 +8,21 @@ namespace lightfields {
 
 class Grid2D {
 	public:
-		struct Edge {
-			// represents an edge with two directions of flow
-			Edge(float val = 0.0f) : forward(val), backward(val) {
-			}
+		class Edge {
+			public:
+				// represents an edge with two directions of flow
+				Edge(float capacity = 0.0f);
 
-			float forward, backward;
+				void setCapacity(const float& capacity);
+				const float& capacity() const;
+
+				void addFlow(const float& flow);
+				const float& flow() const;
+
+				float residualCapacity() const;
+
+			private:
+				float m_capacity, m_flow;
 		};
 
 		Grid2D(const Imath::V2i& size);

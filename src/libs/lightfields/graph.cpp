@@ -50,8 +50,8 @@ Graph::Graph(const Imath::V2i& size, float n_link_value) : m_size(size), m_sourc
 }
 
 void Graph::setValue(const Imath::V2i& pos, float source_weight, float sink_weight) {
-	m_sourceLinks.edge(pos).forward = source_weight;
-	m_sinkLinks.edge(pos).forward = sink_weight;
+	m_sourceLinks.edge(pos).setCapacity(source_weight);
+	m_sinkLinks.edge(pos).setCapacity(sink_weight);
 }
 
 bool Graph::bfs(Path& path) const {
@@ -63,7 +63,7 @@ bool Graph::bfs(Path& path) const {
 	// set the "origin" visited nodes
 	for(int siy=0; siy<m_size[1]; ++siy) {
 		for(int six=0; six<m_size[0]; ++six) {
-			if(m_sourceLinks.edge(Imath::V2i(six, siy)).forward > 0.0f) {
+			if(m_sourceLinks.edge(Imath::V2i(six, siy)).residualCapacity() > 0.0f) {
 				visited[Imath::V2i(six, siy)] = Imath::V2i(-1, -1);
 				q.push(Imath::V2i(six, siy));
 			}
@@ -76,7 +76,7 @@ bool Graph::bfs(Path& path) const {
 		q.pop();
 
 		// check if there is an exit point here
-		if(m_sinkLinks.edge(current).forward > 0.0f) {
+		if(m_sinkLinks.edge(current).residualCapacity() > 0.0f) {
 			path.n_links.clear();
 
 			path.sink = current;
@@ -145,7 +145,7 @@ bool Graph::bfs(Path& path) const {
 float Graph::flow(const Path& path) const {
 	assert(path.isValid());
 
-	float result = m_sourceLinks.edge(path.source).forward;
+	float result = m_sourceLinks.edge(path.source).residualCapacity();
 
 	if(!path.n_links.empty()) {
 		auto it1 = path.n_links.begin();
@@ -159,7 +159,7 @@ float Graph::flow(const Path& path) const {
 		}
 	}
 
-	result = std::min(result, m_sinkLinks.edge(path.sink).forward);
+	result = std::min(result, m_sinkLinks.edge(path.sink).residualCapacity());
 
 	return result;
 }
@@ -195,7 +195,7 @@ void Graph::solve() {
 		{
 			std::cout << "before: " << f << "  ->  ";
 			{
-				std::cout << "(" << m_sourceLinks.edge(path.source).forward << ") ";
+				std::cout << "(" << m_sourceLinks.edge(path.source).residualCapacity() << ") ";
 
 				auto it1 = path.n_links.begin();
 				auto it2 = it1+1;
@@ -208,13 +208,12 @@ void Graph::solve() {
 
 				std::cout << (*it1)[0] << "," << (*it1)[1] << " ";
 
-				std::cout << "(" << m_sinkLinks.edge(path.sink).forward << ") " << std::endl;
+				std::cout << "(" << m_sinkLinks.edge(path.sink).residualCapacity() << ") " << std::endl;
 			}
 
 			{
 				auto& e = m_sourceLinks.edge(path.source);
-				e.forward -= f;
-				e.backward += f;
+				e.addFlow(f);
 			}
 
 			if(!path.n_links.empty()) {
@@ -234,14 +233,13 @@ void Graph::solve() {
 
 			{
 				auto& e = m_sinkLinks.edge(path.sink);
-				e.forward -= f;
-				e.backward += f;
+				e.addFlow(f);
 			}
 		}
 
 		std::cout << "after: " << f << "  ->  ";
 		{
-			std::cout << "(" << m_sourceLinks.edge(path.source).forward << ") ";
+			std::cout << "(" << m_sourceLinks.edge(path.source).residualCapacity() << ") ";
 
 			auto it1 = path.n_links.begin();
 			auto it2 = it1+1;
@@ -254,7 +252,7 @@ void Graph::solve() {
 
 			std::cout << (*it1)[0] << "," << (*it1)[1] << " ";
 
-			std::cout << "(" << m_sinkLinks.edge(path.sink).forward << ") " << std::endl;
+			std::cout << "(" << m_sinkLinks.edge(path.sink).residualCapacity() << ") " << std::endl;
 		}
 
 		assert(flow(path) == 0.0f);
@@ -265,7 +263,7 @@ std::set<Imath::V2i, Graph::SetComparator> Graph::sourceGraph() const {
 	std::set<Imath::V2i, Graph::SetComparator> result;
 	for(int y=0; y<m_size[1]; ++y)
 		for(int x=0; x<m_size[0]; ++x)
-			if(m_sourceLinks.edge(Imath::V2i(x, y)).forward > 0.0f)
+			if(m_sourceLinks.edge(Imath::V2i(x, y)).residualCapacity() > 0.0f)
 				collect(result, Imath::V2i(x, y));
 
 	std::cout << "source graph:" << std::endl;
@@ -283,7 +281,7 @@ std::set<Imath::V2i, Graph::SetComparator> Graph::sinkGraph() const {
 	std::set<Imath::V2i, Graph::SetComparator> result;
 	for(int y=0; y<m_size[1]; ++y)
 		for(int x=0; x<m_size[0]; ++x)
-			if(m_sinkLinks.edge(Imath::V2i(x, y)).backward > 0.0f)
+			if(m_sinkLinks.edge(Imath::V2i(x, y)).residualCapacity() > 0.0f)
 				collect(result, Imath::V2i(x, y));
 
 	std::cout << "sink graph:" << std::endl;
