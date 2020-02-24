@@ -42,7 +42,7 @@ void copyData(ImageInput& input, cv::Mat& m) {
 	input.read_image(ImageTraits<T>::oiio_type, pixels.data());
 	input.close();
 
-	m = cv::Mat(yres, xres, CV_MAKETYPE(ImageTraits<T>::opencv_type, channels));
+	m = cv::Mat::zeros(yres, xres, CV_MAKETYPE(ImageTraits<T>::opencv_type, channels));
 
 	tbb::parallel_for(std::size_t(0), yres, [&](std::size_t y) {
 		for(std::size_t x=0; x < xres; ++x) {
@@ -52,7 +52,9 @@ void copyData(ImageInput& input, cv::Mat& m) {
 				// reverse channels - oiio RGB to opencv BGR
 				std::size_t index = channels - c - 1;
 
-				*(ptr + index) = *(pixels.data() + (y*xres+x)*channels + c);
+				unsigned char value = *(pixels.data() + (y*xres+x)*channels + c);
+				assert(value > 0 || value == 0);
+				*(ptr + index) = value;
 			}
 		}
 	});

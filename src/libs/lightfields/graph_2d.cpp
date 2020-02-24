@@ -65,7 +65,7 @@ const float& Graph2D::edge(const Imath::V2i& src, const Imath::V2i& dest) const 
 	assert(false && "bad edge index");
 
 	// avoid GCC warning
-	static float s_return_value_hack;
+	static float s_return_value_hack = 0.0f;
 	return s_return_value_hack;
 }
 

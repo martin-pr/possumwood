@@ -89,6 +89,8 @@ bool Graph::bfs(Path& path) const {
 
 			path.source = path.n_links.front();
 
+			assert(path.isValid());
+
 			return true;
 		}
 
@@ -181,9 +183,6 @@ void Graph::collect(std::set<Imath::V2i, Graph::SetComparator>& subgraph, const 
 }
 
 void Graph::solve() {
-	//////////
-	// recursive path search
-
 	Path path;
 	while(bfs(path)) {
 		assert(path.isValid());
@@ -194,6 +193,24 @@ void Graph::solve() {
 
 		// update the graph
 		{
+			std::cout << "before: " << f << "  ->  ";
+			{
+				std::cout << "(" << m_sourceLinks.edge(path.source).forward << ") ";
+
+				auto it1 = path.n_links.begin();
+				auto it2 = it1+1;
+				while(it2 != path.n_links.end()) {
+					std::cout << (*it1)[0] << "," << (*it1)[1] << " (" << m_nLinks.edge(*it1, *it2) << ") ";
+
+					++it1;
+					++it2;
+				}
+
+				std::cout << (*it1)[0] << "," << (*it1)[1] << " ";
+
+				std::cout << "(" << m_sinkLinks.edge(path.sink).forward << ") " << std::endl;
+			}
+
 			{
 				auto& e = m_sourceLinks.edge(path.source);
 				e.forward -= f;
@@ -207,6 +224,9 @@ void Graph::solve() {
 					m_nLinks.edge(*it1, *it2) -= f;
 					m_nLinks.edge(*it2, *it1) += f;
 
+					assert(m_nLinks.edge(*it1, *it2) >= 0.0f);
+					assert(m_nLinks.edge(*it2, *it1) >= 0.0f);
+
 					++it1;
 					++it2;
 				}
@@ -217,6 +237,24 @@ void Graph::solve() {
 				e.forward -= f;
 				e.backward += f;
 			}
+		}
+
+		std::cout << "after: " << f << "  ->  ";
+		{
+			std::cout << "(" << m_sourceLinks.edge(path.source).forward << ") ";
+
+			auto it1 = path.n_links.begin();
+			auto it2 = it1+1;
+			while(it2 != path.n_links.end()) {
+				std::cout << (*it1)[0] << "," << (*it1)[1] << " (" << m_nLinks.edge(*it1, *it2) << ") ";
+
+				++it1;
+				++it2;
+			}
+
+			std::cout << (*it1)[0] << "," << (*it1)[1] << " ";
+
+			std::cout << "(" << m_sinkLinks.edge(path.sink).forward << ") " << std::endl;
 		}
 
 		assert(flow(path) == 0.0f);
@@ -230,6 +268,14 @@ std::set<Imath::V2i, Graph::SetComparator> Graph::sourceGraph() const {
 			if(m_sourceLinks.edge(Imath::V2i(x, y)).forward > 0.0f)
 				collect(result, Imath::V2i(x, y));
 
+	std::cout << "source graph:" << std::endl;
+	std::cout << "  size: " << result.size() << std::endl;
+	std::cout << "  total: " << (m_size[0]*m_size[1]) << std::endl;
+	std::cout << "  ";
+	for(auto& p : result)
+		std::cout << " " << p[0] << "," << p[1];
+	std::cout << std::endl;
+
 	return result;
 }
 
@@ -239,6 +285,14 @@ std::set<Imath::V2i, Graph::SetComparator> Graph::sinkGraph() const {
 		for(int x=0; x<m_size[0]; ++x)
 			if(m_sinkLinks.edge(Imath::V2i(x, y)).backward > 0.0f)
 				collect(result, Imath::V2i(x, y));
+
+	std::cout << "sink graph:" << std::endl;
+	std::cout << "  size: " << result.size() << std::endl;
+	std::cout << "  total: " << (m_size[0]*m_size[1]) << std::endl;
+	std::cout << "  ";
+	for(auto& p : result)
+		std::cout << " " << p[0] << "," << p[1];
+	std::cout << std::endl;
 
 	return result;
 }
