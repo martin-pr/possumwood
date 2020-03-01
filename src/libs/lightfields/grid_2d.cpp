@@ -1,5 +1,7 @@
 #include "grid_2d.h"
 
+#include "graph_2d.h"
+
 #include <cassert>
 
 namespace lightfields {
@@ -8,7 +10,7 @@ Grid2D::Edge::Edge(float capacity) : m_capacity(capacity), m_flow(0.0f) {
 }
 
 void Grid2D::Edge::setCapacity(const float& capacity) {
-	assert(m_flow == 0.0f && "set capacity only before the flow computation starts");
+	assert(m_flow < Graph2D::flowEPS() && "set capacity only before the flow computation starts");
 	m_capacity = capacity;
 }
 
@@ -17,12 +19,12 @@ const float& Grid2D::Edge::capacity() const {
 }
 
 void Grid2D::Edge::addFlow(const float& flow) {
-	assert(flow >= 0.0f);
-	assert(flow + m_flow <= m_capacity && "each edge can only carry its capacity");
+	assert(flow >= -Graph2D::flowEPS());
+	assert(flow + m_flow <= m_capacity + Graph2D::flowEPS() && "each edge can only carry its capacity");
 	m_flow += flow;
 
-	assert(m_flow >= 0);
-	assert(m_flow <= m_capacity);
+	assert(m_flow >= Graph2D::flowEPS());
+	assert(m_flow <= m_capacity + Graph2D::flowEPS());
 }
 
 const float& Grid2D::Edge::flow() const {
