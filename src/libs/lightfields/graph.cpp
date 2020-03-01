@@ -100,7 +100,7 @@ bool Graph::bfs(Path& path) const {
 			if(visited.find(new_index) == visited.end()) {
 				visited[new_index] = current;
 
-				if(m_nLinks.edge(current, new_index) > 0.0f)
+				if(m_nLinks.edge(current, new_index).residualCapacity() > 0.0f)
 					q.push(new_index);
 			}
 		}
@@ -111,7 +111,7 @@ bool Graph::bfs(Path& path) const {
 			if(visited.find(new_index) == visited.end()) {
 				visited[new_index] = current;
 
-				if(m_nLinks.edge(current, new_index) > 0.0f)
+				if(m_nLinks.edge(current, new_index).residualCapacity() > 0.0f)
 					q.push(new_index);
 			}
 		}
@@ -122,7 +122,7 @@ bool Graph::bfs(Path& path) const {
 			if(visited.find(new_index) == visited.end()) {
 				visited[new_index] = current;
 
-				if(m_nLinks.edge(current, new_index) > 0.0f)
+				if(m_nLinks.edge(current, new_index).residualCapacity() > 0.0f)
 					q.push(new_index);
 			}
 		}
@@ -133,7 +133,7 @@ bool Graph::bfs(Path& path) const {
 			if(visited.find(new_index) == visited.end()) {
 				visited[new_index] = current;
 
-				if(m_nLinks.edge(current, new_index) > 0.0f)
+				if(m_nLinks.edge(current, new_index).residualCapacity() > 0.0f)
 					q.push(new_index);
 			}
 		}
@@ -152,7 +152,7 @@ float Graph::flow(const Path& path) const {
 		auto it2 = it1+1;
 
 		while(it2 != path.n_links.end()) {
-			result = std::min(result, m_nLinks.edge(*it1, *it2));
+			result = std::min(result, m_nLinks.edge(*it1, *it2).residualCapacity());
 
 			++it1;
 			++it2;
@@ -168,17 +168,37 @@ void Graph::collect(std::set<Imath::V2i, Graph::SetComparator>& subgraph, const 
 	if(subgraph.find(i) == subgraph.end()) {
 		subgraph.insert(i);
 
-		if(i[0] > 0 && m_nLinks.edge(i, Imath::V2i(i[0]-1, i[1])) > 0.0f)
-			collect(subgraph, Imath::V2i(i[0]-1, i[1]));
+		if(i[0] > 0) {
+			auto& e = m_nLinks.edge(i, Imath::V2i(i[0]-1, i[1]));
+			if(std::abs(e.flow()) < e.capacity())
+				collect(subgraph, Imath::V2i(i[0]-1, i[1]));
+			else
+				assert(std::abs(e.flow()) == e.capacity());
+		}
 
-		if(i[0] < m_size[0]-1 && m_nLinks.edge(i, Imath::V2i(i[0]+1, i[1])) > 0.0f)
-			collect(subgraph, Imath::V2i(i[0]+1, i[1]));
+		if(i[0] < m_size[0]-1) {
+			auto& e = m_nLinks.edge(i, Imath::V2i(i[0]+1, i[1]));
+			if(std::abs(e.flow()) < e.capacity())
+				collect(subgraph, Imath::V2i(i[0]+1, i[1]));
+			else
+				assert(std::abs(e.flow()) == e.capacity());
+		}
 
-		if(i[1] > 0 && m_nLinks.edge(i, Imath::V2i(i[0], i[1]-1)) > 0.0f)
-			collect(subgraph, Imath::V2i(i[0], i[1]-1));
+		if(i[1] > 0) {
+			auto& e = m_nLinks.edge(i, Imath::V2i(i[0], i[1]-1));
+			if(std::abs(e.flow()) < e.capacity())
+				collect(subgraph, Imath::V2i(i[0], i[1]-1));
+			else
+				assert(std::abs(e.flow()) == e.capacity());
+		}
 
-		if(i[1] < m_size[1]-1 && m_nLinks.edge(i, Imath::V2i(i[0], i[1]+1)) > 0.0f)
-			collect(subgraph, Imath::V2i(i[0], i[1]+1));
+		if(i[1] < m_size[1]-1) {
+			auto& e = m_nLinks.edge(i, Imath::V2i(i[0], i[1]+1));
+			if(std::abs(e.flow()) < e.capacity())
+				collect(subgraph, Imath::V2i(i[0], i[1]+1));
+			else
+				assert(std::abs(e.flow()) == e.capacity());
+		}
 	}
 }
 
@@ -200,7 +220,7 @@ void Graph::solve() {
 				auto it1 = path.n_links.begin();
 				auto it2 = it1+1;
 				while(it2 != path.n_links.end()) {
-					std::cout << (*it1)[0] << "," << (*it1)[1] << " (" << m_nLinks.edge(*it1, *it2) << ") ";
+					std::cout << (*it1)[0] << "," << (*it1)[1] << " (" << m_nLinks.edge(*it1, *it2).residualCapacity() << ") ";
 
 					++it1;
 					++it2;
@@ -220,11 +240,10 @@ void Graph::solve() {
 				auto it1 = path.n_links.begin();
 				auto it2 = it1+1;
 				while(it2 != path.n_links.end()) {
-					m_nLinks.edge(*it1, *it2) -= f;
-					m_nLinks.edge(*it2, *it1) += f;
+					m_nLinks.edge(*it1, *it2).addFlow(f);
 
-					assert(m_nLinks.edge(*it1, *it2) >= 0.0f);
-					assert(m_nLinks.edge(*it2, *it1) >= 0.0f);
+					assert(m_nLinks.edge(*it1, *it2).residualCapacity() >= 0.0f);
+					assert(m_nLinks.edge(*it2, *it1).residualCapacity() >= 0.0f);
 
 					++it1;
 					++it2;
@@ -244,7 +263,7 @@ void Graph::solve() {
 			auto it1 = path.n_links.begin();
 			auto it2 = it1+1;
 			while(it2 != path.n_links.end()) {
-				std::cout << (*it1)[0] << "," << (*it1)[1] << " (" << m_nLinks.edge(*it1, *it2) << ") ";
+				std::cout << (*it1)[0] << "," << (*it1)[1] << " (" << m_nLinks.edge(*it1, *it2).residualCapacity() << ") ";
 
 				++it1;
 				++it2;
@@ -262,9 +281,11 @@ void Graph::solve() {
 std::set<Imath::V2i, Graph::SetComparator> Graph::sourceGraph() const {
 	std::set<Imath::V2i, Graph::SetComparator> result;
 	for(int y=0; y<m_size[1]; ++y)
-		for(int x=0; x<m_size[0]; ++x)
-			if(m_sourceLinks.edge(Imath::V2i(x, y)).residualCapacity() > 0.0f)
+		for(int x=0; x<m_size[0]; ++x) {
+			auto& e = m_sourceLinks.edge(Imath::V2i(x, y));
+			if(std::abs(e.flow()) < e.capacity())
 				collect(result, Imath::V2i(x, y));
+		}
 
 	std::cout << "source graph:" << std::endl;
 	std::cout << "  size: " << result.size() << std::endl;
@@ -277,22 +298,22 @@ std::set<Imath::V2i, Graph::SetComparator> Graph::sourceGraph() const {
 	return result;
 }
 
-std::set<Imath::V2i, Graph::SetComparator> Graph::sinkGraph() const {
-	std::set<Imath::V2i, Graph::SetComparator> result;
-	for(int y=0; y<m_size[1]; ++y)
-		for(int x=0; x<m_size[0]; ++x)
-			if(m_sinkLinks.edge(Imath::V2i(x, y)).residualCapacity() > 0.0f)
-				collect(result, Imath::V2i(x, y));
+// std::set<Imath::V2i, Graph::SetComparator> Graph::sinkGraph() const {
+// 	std::set<Imath::V2i, Graph::SetComparator> result;
+// 	for(int y=0; y<m_size[1]; ++y)
+// 		for(int x=0; x<m_size[0]; ++x)
+// 			if(m_sinkLinks.edge(Imath::V2i(x, y)).residualCapacity() > 0.0f)
+// 				collect(result, Imath::V2i(x, y));
 
-	std::cout << "sink graph:" << std::endl;
-	std::cout << "  size: " << result.size() << std::endl;
-	std::cout << "  total: " << (m_size[0]*m_size[1]) << std::endl;
-	std::cout << "  ";
-	for(auto& p : result)
-		std::cout << " " << p[0] << "," << p[1];
-	std::cout << std::endl;
+// 	std::cout << "sink graph:" << std::endl;
+// 	std::cout << "  size: " << result.size() << std::endl;
+// 	std::cout << "  total: " << (m_size[0]*m_size[1]) << std::endl;
+// 	std::cout << "  ";
+// 	for(auto& p : result)
+// 		std::cout << " " << p[0] << "," << p[1];
+// 	std::cout << std::endl;
 
-	return result;
-}
+// 	return result;
+// }
 
 }

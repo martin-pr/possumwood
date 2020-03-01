@@ -119,7 +119,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 362.303771972656,
-                    "y": 90.5431213378906
+                    "y": 91.5431213378906
                 }
             },
             "name": "crop",
@@ -477,7 +477,7 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 1.10000002384186
+                "constness": 0.00999999977648258
             },
             "type": "opencv/lightfields/st_graphcut"
         }
@@ -488,5 +488,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAP2AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABkAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACBgAAAWgAAACqAQAAAwAAAQsAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAPkAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABkAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACBgAAAWgAAACqAQAAAwAAAR0AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
