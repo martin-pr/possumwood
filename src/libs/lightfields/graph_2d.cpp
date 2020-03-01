@@ -4,7 +4,7 @@
 
 namespace lightfields {
 
-Graph2D::Graph2D(const Imath::V2i& size, float n_link_value) : m_size(size), m_horiz((size[0]-1) * size[1], n_link_value), m_vert(size[0] * (size[1] - 1), n_link_value) {
+Graph2D::Graph2D(const Imath::V2i& size, float n_link_value) : m_size(size), m_horiz((size[0]-1) * size[1], Edge(n_link_value)), m_vert(size[0] * (size[1] - 1), Edge(n_link_value)) {
 }
 
 std::size_t Graph2D::h_index(const Imath::V2i& i) const {
@@ -15,7 +15,7 @@ std::size_t Graph2D::v_index(const Imath::V2i& i) const {
 	return i[0] + i[1] * m_size[0];
 }
 
-float& Graph2D::edge(const Imath::V2i& src, const Imath::V2i& dest) {
+Graph2D::Direction& Graph2D::edge(const Imath::V2i& src, const Imath::V2i& dest) {
 	assert((src[0] - dest[0]) * (src[0] - dest[0]) + (src[1] - dest[1]) * (src[1] - dest[1]) == 1);
 
 	assert(src[0] >= 0 && src[0] < m_size[0]);
@@ -24,25 +24,22 @@ float& Graph2D::edge(const Imath::V2i& src, const Imath::V2i& dest) {
 	assert(src[1] >= 0 && dest[1] < m_size[1]);
 
 	if(src[0] < dest[0])
-		return m_horiz[h_index(src)].forward;
+		return m_horiz[h_index(src)].forward();
 
 	if(src[0] > dest[0])
-		return m_horiz[h_index(dest)].backward;
+		return m_horiz[h_index(dest)].backward();
 
 	if(src[1] < dest[1])
-		return m_vert[v_index(src)].forward;
+		return m_vert[v_index(src)].forward();
 
 	if(src[1] > dest[1])
-		return m_vert[v_index(dest)].backward;
+		return m_vert[v_index(dest)].backward();
 
 	assert(false && "bad edge index");
-
-	// avoid GCC warning
-	static float s_return_value_hack;
-	return s_return_value_hack;
+	throw(std::runtime_error("bad edge index"));
 }
 
-const float& Graph2D::edge(const Imath::V2i& src, const Imath::V2i& dest) const {
+const Graph2D::Direction& Graph2D::edge(const Imath::V2i& src, const Imath::V2i& dest) const {
 	assert((src[0] - dest[0]) * (src[0] - dest[0]) + (src[1] - dest[1]) * (src[1] - dest[1]) == 1);
 
 	assert(src[0] >= 0 && src[0] < m_size[0]);
@@ -51,22 +48,85 @@ const float& Graph2D::edge(const Imath::V2i& src, const Imath::V2i& dest) const 
 	assert(src[1] >= 0 && dest[1] < m_size[1]);
 
 	if(src[0] < dest[0])
-		return m_horiz[h_index(src)].forward;
+		return m_horiz[h_index(src)].forward();
 
 	if(src[0] > dest[0])
-		return m_horiz[h_index(dest)].backward;
+		return m_horiz[h_index(dest)].backward();
 
 	if(src[1] < dest[1])
-		return m_vert[v_index(src)].forward;
+		return m_vert[v_index(src)].forward();
 
 	if(src[1] > dest[1])
-		return m_vert[v_index(dest)].backward;
+		return m_vert[v_index(dest)].backward();
 
 	assert(false && "bad edge index");
 
-	// avoid GCC warning
-	static float s_return_value_hack = 0.0f;
-	return s_return_value_hack;
+	assert(false && "bad edge index");
+	throw(std::runtime_error("bad edge index"));
+}
+
+////////
+
+Graph2D::Edge::Edge(float capacity) : m_forward(this, true), m_backward(this, true), m_capacity(capacity), m_flow(0.0f) {
+}
+
+Graph2D::Edge::Edge(const Edge& e) : m_forward(this, true), m_backward(this, false), m_capacity(e.m_capacity), m_flow(e.m_flow) {
+}
+
+Graph2D::Direction& Graph2D::Edge::forward() {
+	return m_forward;
+}
+
+const Graph2D::Direction& Graph2D::Edge::forward() const {
+	return m_forward;
+}
+
+Graph2D::Direction& Graph2D::Edge::backward() {
+	return m_backward;
+}
+
+const Graph2D::Direction& Graph2D::Edge::backward() const {
+	return m_backward;
+}
+
+////////////////
+
+Graph2D::Direction::Direction(Edge* parent, bool forward) : m_parent(parent), m_forward(forward) {
+}
+
+float Graph2D::Direction::capacity() const {
+	return m_parent->m_capacity;
+}
+
+void Graph2D::Direction::addFlow(const float& f) {
+	assert(f > 0.0f);
+	assert(f <= residualCapacity());
+
+	if(m_forward)
+		m_parent->m_flow += f;
+	else
+		m_parent->m_flow -= f;
+}
+
+float Graph2D::Direction::flow() const {
+	if(m_forward)
+		return m_parent->m_flow;
+	else
+		return -m_parent->m_flow;
+}
+
+float Graph2D::Direction::residualCapacity() const {
+	float result = 0.0f;
+
+	if(m_forward)
+		result = m_parent->m_capacity - m_parent->m_flow;
+	else
+		result = m_parent->m_capacity + m_parent->m_flow;
+
+	assert(result >= 0.0f);
+	assert(result <= 2.0f * m_parent->m_capacity);
+
+	return result;
 }
 
 }
