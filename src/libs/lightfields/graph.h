@@ -5,6 +5,8 @@
 
 #include <ImathVec.h>
 
+#include <opencv2/opencv.hpp>
+
 #include "graph_2d.h"
 #include "grid_2d.h"
 
@@ -34,8 +36,13 @@ class Graph {
 
 		void solve();
 
-		std::set<Imath::V2i, SetComparator> sourceGraph() const;
+		cv::Mat minCut() const;
 		// std::set<Imath::V2i, SetComparator> sinkGraph() const;
+
+		cv::Mat sourceFlow() const;
+		cv::Mat sinkFlow() const;
+		cv::Mat horizontalFlow() const;
+		cv::Mat verticalFlow() const;
 
 	private:
 		struct Path {
@@ -54,7 +61,7 @@ class Graph {
 
 		float flow(const Path& path) const;
 
-		void collect(std::set<Imath::V2i, Graph::SetComparator>& subgraph, const Imath::V2i& i) const;
+		// void collect(std::set<Imath::V2i, Graph::SetComparator>& subgraph, const Imath::V2i& i) const;
 
 		Imath::V2i m_size;
 		Grid2D m_sourceLinks, m_sinkLinks;

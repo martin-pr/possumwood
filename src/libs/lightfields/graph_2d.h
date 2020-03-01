@@ -14,6 +14,8 @@ class Graph2D {
 	public:
 		Graph2D(const Imath::V2i& size, float n_link_value);
 
+		static constexpr float flowEPS() { return 1e-5; };
+
 		class Direction {
 			public:
 				float capacity() const;

@@ -123,8 +123,8 @@ float Graph2D::Direction::residualCapacity() const {
 	else
 		result = m_parent->m_capacity + m_parent->m_flow;
 
-	assert(result >= 0.0f);
-	assert(result <= 2.0f * m_parent->m_capacity);
+	assert(result >= -flowEPS());
+	assert(result <= 2.0f * m_parent->m_capacity + flowEPS());
 
 	return result;
 }
