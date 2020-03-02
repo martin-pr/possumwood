@@ -16,17 +16,15 @@ class Graph {
 	public:
 		struct Edge {
 			// represents an edge with two directions of flow
-			Edge(float val = 0.0f) : forward(val), backward(val) {
+			Edge(int val = 0.0f) : forward(val), backward(val) {
 			}
 
-			float forward, backward;
+			int forward, backward;
 		};
 
-		static constexpr float flowEPS() { return 1e-5; };
+		Graph(const Imath::V2i& size, int n_link_value);
 
-		Graph(const Imath::V2i& size, float n_link_value);
-
-		void setValue(const Imath::V2i& pos, float source_weight, float sink_weight);
+		void setValue(const Imath::V2i& pos, int source_weight, int sink_weight);
 
 		struct SetComparator {
 			bool operator()(const Imath::V2i& v1, const Imath::V2i& v2) const {
@@ -59,7 +57,7 @@ class Graph {
 		/// Indices - first index into source links, last index into sink links, mid indices horiz if id < horiz_n_links.size(), vert otherwise
 		bool bfs_2(Path& path, std::size_t& offset) const;
 
-		float flow(const Path& path) const;
+		int flow(const Path& path) const;
 
 		// void collect(std::set<Imath::V2i, Graph::SetComparator>& subgraph, const Imath::V2i& i) const;
 

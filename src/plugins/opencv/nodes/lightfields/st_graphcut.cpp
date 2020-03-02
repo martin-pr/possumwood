@@ -27,8 +27,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	for(int row = 0; row < values.rows; ++row)
 		for(int col = 0; col < values.cols; ++col) {
-			const float val = (float)values.at<unsigned char>(row, col) / 255.0f;
-			graph.setValue(Imath::V2i(col, row), 1.0f-val, val);
+			const int val = values.at<unsigned char>(row, col);
+			graph.setValue(Imath::V2i(col, row), 255-val, val);
 		}
 
 	graph.solve();

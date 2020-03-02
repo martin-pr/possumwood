@@ -12,16 +12,16 @@ class Graph2D {
 		class Edge;
 
 	public:
-		Graph2D(const Imath::V2i& size, float n_link_value);
+		Graph2D(const Imath::V2i& size, int n_link_value);
 
 		class Direction {
 			public:
-				float capacity() const;
+				int capacity() const;
 
-				void addFlow(const float& f);
-				float flow() const;
+				void addFlow(const int& f);
+				int flow() const;
 
-				float residualCapacity() const;
+				int residualCapacity() const;
 
 			private:
 				Direction(Edge* parent, bool forward);
@@ -45,7 +45,7 @@ class Graph2D {
 		class Edge {
 			public:
 				// represents an edge with two directions of flow
-				Edge(float capacity);
+				Edge(int capacity);
 
 				Edge(const Edge& e);
 				Edge& operator = (const Edge&) = delete;
@@ -61,7 +61,7 @@ class Graph2D {
 
 				Direction m_forward, m_backward;
 
-				float m_capacity, m_flow;
+				int m_capacity, m_flow;
 		};
 
 		Imath::V2i m_size;

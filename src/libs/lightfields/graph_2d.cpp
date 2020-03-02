@@ -6,7 +6,7 @@
 
 namespace lightfields {
 
-Graph2D::Graph2D(const Imath::V2i& size, float n_link_value) : m_size(size), m_horiz((size[0]-1) * size[1], Edge(n_link_value)), m_vert(size[0] * (size[1] - 1), Edge(n_link_value)) {
+Graph2D::Graph2D(const Imath::V2i& size, int n_link_value) : m_size(size), m_horiz((size[0]-1) * size[1], Edge(n_link_value)), m_vert(size[0] * (size[1] - 1), Edge(n_link_value)) {
 }
 
 std::size_t Graph2D::h_index(const Imath::V2i& i) const {
@@ -69,7 +69,7 @@ const Graph2D::Direction& Graph2D::edge(const Imath::V2i& src, const Imath::V2i&
 
 ////////
 
-Graph2D::Edge::Edge(float capacity) : m_forward(this, true), m_backward(this, false), m_capacity(capacity), m_flow(0.0f) {
+Graph2D::Edge::Edge(int capacity) : m_forward(this, true), m_backward(this, false), m_capacity(capacity), m_flow(0) {
 }
 
 Graph2D::Edge::Edge(const Edge& e) : m_forward(this, true), m_backward(this, false), m_capacity(e.m_capacity), m_flow(e.m_flow) {
@@ -96,12 +96,12 @@ const Graph2D::Direction& Graph2D::Edge::backward() const {
 Graph2D::Direction::Direction(Edge* parent, bool forward) : m_parent(parent), m_forward(forward) {
 }
 
-float Graph2D::Direction::capacity() const {
+int Graph2D::Direction::capacity() const {
 	return m_parent->m_capacity;
 }
 
-void Graph2D::Direction::addFlow(const float& f) {
-	assert(f > 0.0f);
+void Graph2D::Direction::addFlow(const int& f) {
+	assert(f > 0);
 	assert(f <= residualCapacity());
 
 	if(m_forward)
@@ -110,23 +110,23 @@ void Graph2D::Direction::addFlow(const float& f) {
 		m_parent->m_flow -= f;
 }
 
-float Graph2D::Direction::flow() const {
+int Graph2D::Direction::flow() const {
 	if(m_forward)
-		return std::max(m_parent->m_flow, 0.0f);
+		return std::max(m_parent->m_flow, 0);
 	else
-		return std::max(-m_parent->m_flow, 0.0f);
+		return std::max(-m_parent->m_flow, 0);
 }
 
-float Graph2D::Direction::residualCapacity() const {
-	float result = 0.0f;
+int Graph2D::Direction::residualCapacity() const {
+	int result = 0;
 
 	if(m_forward)
 		result = m_parent->m_capacity - m_parent->m_flow;
 	else
 		result = m_parent->m_capacity + m_parent->m_flow;
 
-	assert(result >= -Graph::flowEPS());
-	assert(result <= 2.0f * m_parent->m_capacity + Graph::flowEPS());
+	assert(result >= 0);
+	assert(result <= 2 * m_parent->m_capacity);
 
 	return result;
 }
