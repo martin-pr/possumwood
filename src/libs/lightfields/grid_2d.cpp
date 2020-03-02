@@ -1,6 +1,6 @@
 #include "grid_2d.h"
 
-#include "graph_2d.h"
+#include "graph.h"
 
 #include <cassert>
 
@@ -10,7 +10,7 @@ Grid2D::Edge::Edge(float capacity) : m_capacity(capacity), m_flow(0.0f) {
 }
 
 void Grid2D::Edge::setCapacity(const float& capacity) {
-	assert(m_flow < Graph2D::flowEPS() && "set capacity only before the flow computation starts");
+	assert(m_flow < Graph::flowEPS() && "set capacity only before the flow computation starts");
 	m_capacity = capacity;
 }
 
@@ -19,12 +19,12 @@ const float& Grid2D::Edge::capacity() const {
 }
 
 void Grid2D::Edge::addFlow(const float& flow) {
-	assert(flow >= -Graph2D::flowEPS());
-	assert(flow + m_flow <= m_capacity + Graph2D::flowEPS() && "each edge can only carry its capacity");
+	assert(flow >= -Graph::flowEPS());
+	assert(flow + m_flow <= m_capacity + Graph::flowEPS() && "each edge can only carry its capacity");
 	m_flow += flow;
 
-	assert(m_flow >= Graph2D::flowEPS());
-	assert(m_flow <= m_capacity + Graph2D::flowEPS());
+	assert(m_flow >= Graph::flowEPS());
+	assert(m_flow <= m_capacity + Graph::flowEPS());
 }
 
 const float& Grid2D::Edge::flow() const {

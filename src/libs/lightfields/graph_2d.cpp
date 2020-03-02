@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+#include "graph.h"
+
 namespace lightfields {
 
 Graph2D::Graph2D(const Imath::V2i& size, float n_link_value) : m_size(size), m_horiz((size[0]-1) * size[1], Edge(n_link_value)), m_vert(size[0] * (size[1] - 1), Edge(n_link_value)) {
@@ -67,7 +69,7 @@ const Graph2D::Direction& Graph2D::edge(const Imath::V2i& src, const Imath::V2i&
 
 ////////
 
-Graph2D::Edge::Edge(float capacity) : m_forward(this, true), m_backward(this, true), m_capacity(capacity), m_flow(0.0f) {
+Graph2D::Edge::Edge(float capacity) : m_forward(this, true), m_backward(this, false), m_capacity(capacity), m_flow(0.0f) {
 }
 
 Graph2D::Edge::Edge(const Edge& e) : m_forward(this, true), m_backward(this, false), m_capacity(e.m_capacity), m_flow(e.m_flow) {
@@ -110,9 +112,9 @@ void Graph2D::Direction::addFlow(const float& f) {
 
 float Graph2D::Direction::flow() const {
 	if(m_forward)
-		return m_parent->m_flow;
+		return std::max(m_parent->m_flow, 0.0f);
 	else
-		return -m_parent->m_flow;
+		return std::max(-m_parent->m_flow, 0.0f);
 }
 
 float Graph2D::Direction::residualCapacity() const {
@@ -123,8 +125,8 @@ float Graph2D::Direction::residualCapacity() const {
 	else
 		result = m_parent->m_capacity + m_parent->m_flow;
 
-	assert(result >= -flowEPS());
-	assert(result <= 2.0f * m_parent->m_capacity + flowEPS());
+	assert(result >= -Graph::flowEPS());
+	assert(result <= 2.0f * m_parent->m_capacity + Graph::flowEPS());
 
 	return result;
 }
