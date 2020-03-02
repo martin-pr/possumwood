@@ -22,6 +22,8 @@ class Graph {
 			float forward, backward;
 		};
 
+		static constexpr float flowEPS() { return 1e-5; };
+
 		Graph(const Imath::V2i& size, float n_link_value);
 
 		void setValue(const Imath::V2i& pos, float source_weight, float sink_weight);
@@ -50,14 +52,12 @@ class Graph {
 
 			bool isValid() const;
 
-			Imath::V2i source;
 			std::vector<Imath::V2i> n_links;
-			Imath::V2i sink;
 		};
 
 		/// Simplified depth-first-search - only forward search from S and backward search from T (will avoid loops implicitly).
 		/// Indices - first index into source links, last index into sink links, mid indices horiz if id < horiz_n_links.size(), vert otherwise
-		bool bfs(Path& path) const;
+		bool bfs_2(Path& path, std::size_t& offset) const;
 
 		float flow(const Path& path) const;
 

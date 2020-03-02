@@ -630,7 +630,7 @@
             },
             "name": "resize",
             "ports": {
-                "scale": 0.200000002980232
+                "scale": 0.300000011920929
             },
             "type": "opencv/resize"
         },
@@ -644,7 +644,7 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 2.0
+                "constness": 0.699999988079071
             },
             "type": "opencv/lightfields/st_graphcut"
         }
@@ -654,6 +654,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGtAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABkAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACBgAAAWgAAACqAQAAAwAAA1QAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAcwAAABwAAAd7AAAEDwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGtAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABuwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMQAAAT0AAACqAQAAAwAAA1QAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
