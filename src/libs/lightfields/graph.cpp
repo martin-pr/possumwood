@@ -39,10 +39,10 @@ bool Graph::Path::isValid() const {
 
 /////
 
-Graph::Graph(const Imath::V2i& size, float n_link_value) : m_size(size), m_sourceLinks(size), m_sinkLinks(size), m_nLinks(size, n_link_value) {
+Graph::Graph(const Imath::V2i& size, int n_link_value) : m_size(size), m_sourceLinks(size), m_sinkLinks(size), m_nLinks(size, n_link_value) {
 }
 
-void Graph::setValue(const Imath::V2i& pos, float source_weight, float sink_weight) {
+void Graph::setValue(const Imath::V2i& pos, int source_weight, int sink_weight) {
 	assert(source_weight >= 0.0f);
 	assert(sink_weight >= 0.0f);
 
@@ -70,7 +70,7 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 		const std::size_t id = (i + offset) % end;
 		const Imath::V2i src(id % m_size[0], id / m_size[0]);
 
-		if(m_sourceLinks.edge(src).residualCapacity() > flowEPS()) {
+		if(m_sourceLinks.edge(src).residualCapacity() > 0) {
 			visited.clear();
 			visited[src] = Imath::V2i(-1, -1);
 
@@ -83,14 +83,15 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				q.pop();
 
 				// check if there is an exit point here
-				if(m_sinkLinks.edge(current).residualCapacity() > flowEPS()) {
+				if(m_sinkLinks.edge(current).residualCapacity() > 0) {
 					path.n_links.clear();
 
 					// this is SLOW, but for now will do
 					while(current[0] >= 0) {
-						path.n_links.insert(path.n_links.begin(), current);
+						path.n_links.push_back(current);
 						current = visited[current];
 					}
+					std::reverse(path.n_links.begin(), path.n_links.end());
 
 					assert(path.isValid());
 
@@ -103,10 +104,10 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current[0] > 0) {
 					const Imath::V2i new_index(current[0]-1, current[1]);
 					if(visited.find(new_index) == visited.end()) {
-						visited[new_index] = current;
-
-						if(m_nLinks.edge(current, new_index).residualCapacity() > flowEPS())
+						if(m_nLinks.edge(current, new_index).residualCapacity() > 0) {
+							visited[new_index] = current;
 							q.push(new_index);
+						}
 					}
 				}
 
@@ -114,10 +115,10 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current[0] < m_size[0]-1) {
 					const Imath::V2i new_index(current[0]+1, current[1]);
 					if(visited.find(new_index) == visited.end()) {
-						visited[new_index] = current;
-
-						if(m_nLinks.edge(current, new_index).residualCapacity() > flowEPS())
+						if(m_nLinks.edge(current, new_index).residualCapacity() > 0) {
+							visited[new_index] = current;
 							q.push(new_index);
+						}
 					}
 				}
 
@@ -125,10 +126,10 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current[1] > 0) {
 					const Imath::V2i new_index(current[0], current[1]-1);
 					if(visited.find(new_index) == visited.end()) {
-						visited[new_index] = current;
-
-						if(m_nLinks.edge(current, new_index).residualCapacity() > flowEPS())
+						if(m_nLinks.edge(current, new_index).residualCapacity() > 0) {
+							visited[new_index] = current;
 							q.push(new_index);
+						}
 					}
 				}
 
@@ -136,10 +137,10 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current[1] < m_size[1]-1) {
 					const Imath::V2i new_index(current[0], current[1]+1);
 					if(visited.find(new_index) == visited.end()) {
-						visited[new_index] = current;
-
-						if(m_nLinks.edge(current, new_index).residualCapacity() > flowEPS())
+						if(m_nLinks.edge(current, new_index).residualCapacity() > 0) {
+							visited[new_index] = current;
 							q.push(new_index);
+						}
 					}
 				}
 			}
@@ -151,10 +152,10 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 	return false;
 }
 
-float Graph::flow(const Path& path) const {
+int Graph::flow(const Path& path) const {
 	assert(path.isValid());
 
-	float result = m_sourceLinks.edge(path.n_links.front()).residualCapacity();
+	int result = m_sourceLinks.edge(path.n_links.front()).residualCapacity();
 
 	if(!path.n_links.empty()) {
 		auto it1 = path.n_links.begin();
@@ -180,7 +181,7 @@ void Graph::solve() {
 	// 	assert(path.n_links.empty());
 	// 	assert(path.source == path.sink);
 
-	// 	const float f = flow(path);
+	// 	const int f = flow(path);
 	// 	assert(f > 0.0f);
 
 	// 	m_sourceLinks.edge(path.source).addFlow(f);
@@ -195,8 +196,8 @@ void Graph::solve() {
 
 
 		// get the maximum flow through the path
-		const float f = flow(path);
-		assert(f > 0.0f);
+		const int f = flow(path);
+		assert(f > 0);
 
 		// update the graph
 		{
@@ -210,8 +211,8 @@ void Graph::solve() {
 			while(it2 != path.n_links.end()) {
 				m_nLinks.edge(*it1, *it2).addFlow(f);
 
-				assert(m_nLinks.edge(*it1, *it2).residualCapacity() >= -flowEPS());
-				assert(m_nLinks.edge(*it2, *it1).residualCapacity() >= -flowEPS());
+				assert(m_nLinks.edge(*it1, *it2).residualCapacity() >= 0);
+				assert(m_nLinks.edge(*it2, *it1).residualCapacity() >= 0);
 
 				++it1;
 				++it2;
@@ -223,7 +224,7 @@ void Graph::solve() {
 			e.addFlow(f);
 		}
 
-		assert(flow(path) < flowEPS());
+		assert(flow(path) == 0);
 	}
 }
 
@@ -259,27 +260,27 @@ cv::Mat Graph::minCut() const {
 		std::vector<Imath::V2i> stack;
 		for(int y=0; y<m_size[1]; ++y)
 			for(int x=0; x<m_size[0]; ++x)
-				if(m_sourceLinks.edge(Imath::V2i(x, y)).residualCapacity() > flowEPS()) {
+				if(m_sourceLinks.edge(Imath::V2i(x, y)).residualCapacity() > 0) {
 					stack.push_back(Imath::V2i(x, y));
 
 					while(!stack.empty()) {
 						const Imath::V2i current = stack.back();
 						stack.pop_back();
 
-						assert(m_sinkLinks.edge(current).residualCapacity() < flowEPS() && "TODO: FIX THIS TRIGGER!!!");
+						assert(m_sinkLinks.edge(current).residualCapacity() == 0 && "TODO: FIX THIS TRIGGER!!!");
 
 						unsigned char& value = result.at<unsigned char>(current[1], current[0]);
 						if(value < 255) {
 							result.at<unsigned char>(current[1], current[0]) = 255;
 
-							if(current[0] > 0 && m_nLinks.edge(current, Imath::V2i(current[0]-1, current[1])).residualCapacity() > flowEPS())
+							if(current[0] > 0 && m_nLinks.edge(current, Imath::V2i(current[0]-1, current[1])).residualCapacity() > 0)
 								stack.push_back(Imath::V2i(current[0]-1, current[1]));
-							if(current[0] < m_size[0]-1 && m_nLinks.edge(current, Imath::V2i(current[0]+1, current[1])).residualCapacity() > flowEPS())
+							if(current[0] < m_size[0]-1 && m_nLinks.edge(current, Imath::V2i(current[0]+1, current[1])).residualCapacity() > 0)
 								stack.push_back(Imath::V2i(current[0]+1, current[1]));
 
-							if(current[1] > 0 && m_nLinks.edge(current, Imath::V2i(current[0], current[1]-1)).residualCapacity() > flowEPS())
+							if(current[1] > 0 && m_nLinks.edge(current, Imath::V2i(current[0], current[1]-1)).residualCapacity() > 0)
 								stack.push_back(Imath::V2i(current[0], current[1]-1));
-							if(current[1] < m_size[1]-1 && m_nLinks.edge(current, Imath::V2i(current[0], current[1]+1)).residualCapacity() > flowEPS())
+							if(current[1] < m_size[1]-1 && m_nLinks.edge(current, Imath::V2i(current[0], current[1]+1)).residualCapacity() > 0)
 								stack.push_back(Imath::V2i(current[0], current[1]+1));
 						}
 					}
@@ -287,36 +288,36 @@ cv::Mat Graph::minCut() const {
 	}
 
 	// reachable from sink
-	// {
-	// 	std::vector<Imath::V2i> stack;
-	// 	for(int y=0; y<m_size[1]; ++y)
-	// 		for(int x=0; x<m_size[0]; ++x)
-	// 			if(m_sinkLinks.edge(Imath::V2i(x, y)).residualCapacity() > flowEPS()) {
-	// 				stack.push_back(Imath::V2i(x, y));
+	{
+		std::vector<Imath::V2i> stack;
+		for(int y=0; y<m_size[1]; ++y)
+			for(int x=0; x<m_size[0]; ++x)
+				if(m_sinkLinks.edge(Imath::V2i(x, y)).residualCapacity() > 0) {
+					stack.push_back(Imath::V2i(x, y));
 
-	// 				while(!stack.empty()) {
-	// 					const Imath::V2i current = stack.back();
-	// 					stack.pop_back();
+					while(!stack.empty()) {
+						const Imath::V2i current = stack.back();
+						stack.pop_back();
 
-	// 					assert(m_sourceLinks.edge(Imath::V2i(x, y)).residualCapacity() < flowEPS());
+						assert(m_sourceLinks.edge(Imath::V2i(x, y)).residualCapacity() == 0);
 
-	// 					unsigned char& value = result.at<unsigned char>(current[1], current[0]);
-	// 					if(value > 0) {
-	// 						result.at<unsigned char>(current[1], current[0]) = 0;
+						unsigned char& value = result.at<unsigned char>(current[1], current[0]);
+						if(value > 0) {
+							result.at<unsigned char>(current[1], current[0]) = 0;
 
-	// 						if(current[0] > 0 && m_nLinks.edge(Imath::V2i(current[0]-1, current[1]), current).residualCapacity() > flowEPS())
-	// 							stack.push_back(Imath::V2i(current[0]-1, current[1]));
-	// 						if(current[0] < m_size[0]-1 && m_nLinks.edge(Imath::V2i(current[0]+1, current[1]), current).residualCapacity() > flowEPS())
-	// 							stack.push_back(Imath::V2i(current[0]+1, current[1]));
+							if(current[0] > 0 && m_nLinks.edge(Imath::V2i(current[0]-1, current[1]), current).residualCapacity() > 0)
+								stack.push_back(Imath::V2i(current[0]-1, current[1]));
+							if(current[0] < m_size[0]-1 && m_nLinks.edge(Imath::V2i(current[0]+1, current[1]), current).residualCapacity() > 0)
+								stack.push_back(Imath::V2i(current[0]+1, current[1]));
 
-	// 						if(current[1] > 0 && m_nLinks.edge(Imath::V2i(current[0], current[1]-1), current).residualCapacity() > flowEPS())
-	// 							stack.push_back(Imath::V2i(current[0], current[1]-1));
-	// 						if(current[1] < m_size[1]-1 && m_nLinks.edge(Imath::V2i(current[0], current[1]+1), current).residualCapacity() > flowEPS())
-	// 							stack.push_back(Imath::V2i(current[0], current[1]+1));
-	// 					}
-	// 				}
-	// 			}
-	// }
+							if(current[1] > 0 && m_nLinks.edge(Imath::V2i(current[0], current[1]-1), current).residualCapacity() > 0)
+								stack.push_back(Imath::V2i(current[0], current[1]-1));
+							if(current[1] < m_size[1]-1 && m_nLinks.edge(Imath::V2i(current[0], current[1]+1), current).residualCapacity() > 0)
+								stack.push_back(Imath::V2i(current[0], current[1]+1));
+						}
+					}
+				}
+	}
 
 	return result;
 }
@@ -327,8 +328,8 @@ cv::Mat Graph::sourceFlow() const {
 	for(int y=0; y<m_size[1]; ++y)
 		for(int x=0; x<m_size[0]; ++x) {
 			auto& e = m_sourceLinks.edge(Imath::V2i(x, y));
-			if(e.capacity() > 0.0f)
-				result.at<unsigned char>(y,x) = std::abs(e.flow()) / e.capacity() * 255.0f;
+			if(e.capacity() > 0)
+				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
 			else
 				result.at<unsigned char>(y,x) = 255;
 		}
@@ -342,8 +343,8 @@ cv::Mat Graph::sinkFlow() const {
 	for(int y=0; y<m_size[1]; ++y)
 		for(int x=0; x<m_size[0]; ++x) {
 			auto& e = m_sinkLinks.edge(Imath::V2i(x, y));
-			if(e.capacity() > 0.0f)
-				result.at<unsigned char>(y,x) = std::abs(e.flow()) / e.capacity() * 255.0f;
+			if(e.capacity() > 0)
+				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
 			else
 				result.at<unsigned char>(y,x) = 255;
 		}
@@ -357,8 +358,8 @@ cv::Mat Graph::horizontalFlow() const {
 	for(int y=0; y<m_size[1]; ++y)
 		for(int x=0; x<m_size[0]-1; ++x) {
 			auto& e = m_nLinks.edge(Imath::V2i(x, y), Imath::V2i(x+1, y));
-			if(e.capacity() > 0.0f)
-				result.at<unsigned char>(y,x) = std::abs(e.flow()) / e.capacity() * 255.0f;
+			if(e.capacity() > 0)
+				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
 			else
 				result.at<unsigned char>(y,x) = 255;
 		}
@@ -372,8 +373,8 @@ cv::Mat Graph::verticalFlow() const {
 	for(int y=0; y<m_size[1]-1; ++y)
 		for(int x=0; x<m_size[0]; ++x) {
 			auto& e = m_nLinks.edge(Imath::V2i(x, y), Imath::V2i(x, y+1));
-			if(e.capacity() > 0.0f)
-				result.at<unsigned char>(y,x) = std::abs(e.flow()) / e.capacity() * 255.0f;
+			if(e.capacity() > 0)
+				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
 			else
 				result.at<unsigned char>(y,x) = 255;
 		}

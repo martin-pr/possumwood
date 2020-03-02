@@ -11,18 +11,18 @@ class Grid2D {
 		class Edge {
 			public:
 				// represents an edge with two directions of flow
-				Edge(float capacity = 0.0f);
+				Edge(int capacity = 0);
 
-				void setCapacity(const float& capacity);
-				const float& capacity() const;
+				void setCapacity(const int& capacity);
+				const int& capacity() const;
 
-				void addFlow(const float& flow);
-				const float& flow() const;
+				void addFlow(const int& flow);
+				const int& flow() const;
 
-				float residualCapacity() const;
+				int residualCapacity() const;
 
 			private:
-				float m_capacity, m_flow;
+				int m_capacity, m_flow;
 		};
 
 		Grid2D(const Imath::V2i& size);
