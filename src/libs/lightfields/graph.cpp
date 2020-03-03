@@ -4,6 +4,8 @@
 #include <map>
 #include <queue>
 
+#include "bfs_visitors.h"
+
 namespace lightfields {
 
 Graph::Path::Path() {
@@ -77,8 +79,8 @@ Imath::V2i Graph::i2v(std::size_t v) const {
 bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 	path.n_links.clear();
 
-	static thread_local std::map<std::size_t, std::size_t> visited;
-	static thread_local std::deque<std::size_t> q;
+	BFSVisitors visited(m_size[0] * m_size[1]);
+	std::deque<std::size_t> q;
 
 	const std::size_t end = m_size[0] * m_size[1];
 	for(std::size_t i=0; i<end; ++i) {
@@ -87,7 +89,7 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 
 		if(m_sourceLinks.edge(src_v).residualCapacity() > 0) {
 			visited.clear();
-			visited[src_id] = std::numeric_limits<std::size_t>::max();
+			visited.visit(src_id, std::numeric_limits<std::size_t>::max());
 
 			q.clear();
 			q.push_back(src_id);
@@ -106,7 +108,7 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 					while(current_id < std::numeric_limits<std::size_t>::max()) {
 						path.n_links.push_back(current_v);
 
-						current_id = visited[current_id];
+						current_id = visited.parent(current_id);
 						current_v = i2v(current_id);
 					}
 					std::reverse(path.n_links.begin(), path.n_links.end());
@@ -122,9 +124,9 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current_v[0] > 0) {
 					const Imath::V2i new_v(current_v[0]-1, current_v[1]);
 					const std::size_t new_id = v2i(new_v);
-					if(visited.find(new_id) == visited.end()) {
+					if(!visited.visited(new_id)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited[new_id] = current_id;
+							visited.visit(new_id, current_id);
 							q.push_back(new_id);
 						}
 					}
@@ -134,9 +136,9 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current_v[0] < m_size[0]-1) {
 					const Imath::V2i new_v(current_v[0]+1, current_v[1]);
 					const std::size_t new_id = v2i(new_v);
-					if(visited.find(new_id) == visited.end()) {
+					if(!visited.visited(new_id)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited[new_id] = current_id;
+							visited.visit(new_id, current_id);
 							q.push_back(new_id);
 						}
 					}
@@ -146,9 +148,9 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current_v[1] > 0) {
 					const Imath::V2i new_v(current_v[0], current_v[1]-1);
 					const std::size_t new_id = v2i(new_v);
-					if(visited.find(new_id) == visited.end()) {
+					if(!visited.visited(new_id)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited[new_id] = current_id;
+							visited.visit(new_id, current_id);
 							q.push_back(new_id);
 						}
 					}
@@ -158,9 +160,9 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current_v[1] < m_size[1]-1) {
 					const Imath::V2i new_v(current_v[0], current_v[1]+1);
 					const std::size_t new_id = v2i(new_v);
-					if(visited.find(new_id) == visited.end()) {
+					if(!visited.visited(new_id)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited[new_id] = current_id;
+							visited.visit(new_id, current_id);
 							q.push_back(new_id);
 						}
 					}
@@ -168,8 +170,6 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 			}
 		}
 	}
-
-
 
 	return false;
 }
@@ -198,6 +198,8 @@ int Graph::flow(const Path& path) const {
 
 void Graph::solve() {
 	Path path;
+
+	std::size_t counter = 0;
 
 	std::size_t offset = 0;
 	while(bfs_2(path, offset)) {
@@ -228,7 +230,11 @@ void Graph::solve() {
 		m_sinkLinks.edge(path.n_links.back()).addFlow(f);
 
 		assert(flow(path) == 0 && "Augmented path flow at the end of each iteration should be zero");
+
+		++counter;
 	}
+
+	std::cout << "ST-cut solve with " << counter << " steps finished." << std::endl;
 }
 
 cv::Mat Graph::minCut() const {

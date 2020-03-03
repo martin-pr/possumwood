@@ -37,7 +37,6 @@ class Graph {
 		void solve();
 
 		cv::Mat minCut() const;
-		// std::set<Imath::V2i, SetComparator> sinkGraph() const;
 
 		cv::Mat sourceFlow() const;
 		cv::Mat sinkFlow() const;
