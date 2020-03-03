@@ -133,7 +133,7 @@
             "out_port": "out_samples"
         }
     ],
-    "description": "### Raw depth reconstruction\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
+    "description": "### Raw depth reconstruction\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values. The brightness of the colours in the right image corresponds to the confidence of each sample.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
     "nodes": {
         "color_0": {
             "blind_data": {
@@ -269,12 +269,12 @@
             "name": "depth",
             "ports": {
                 "resolution": {
-                    "x": 320,
-                    "y": 320
+                    "x": 120,
+                    "y": 120
                 },
                 "samples/end": 40.0,
                 "samples/start": -40.0,
-                "samples/steps": 20
+                "samples/steps": 5
             },
             "type": "opencv/lightfields/depth"
         },
@@ -318,8 +318,8 @@
             "name": "integrate_nearest",
             "ports": {
                 "size": {
-                    "x": 320,
-                    "y": 320
+                    "x": 120,
+                    "y": 120
                 }
             },
             "type": "opencv/lightfields/integrate_nearest"
@@ -703,6 +703,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHLAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAAa4AAACqAQAAAwAABAsAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAG2AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABggAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB+AAAAXYAAACqAQAAAwAAA0sAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
