@@ -6,59 +6,59 @@
 
 namespace lightfields {
 
-Graph2D::Graph2D(const Imath::V2i& size, int n_link_value) : m_size(size), m_horiz((size[0]-1) * size[1], Edge(n_link_value)), m_vert(size[0] * (size[1] - 1), Edge(n_link_value)) {
+Graph2D::Graph2D(const V2i& size, int n_link_value) : m_size(size), m_horiz((size.x-1) * size.y, Edge(n_link_value)), m_vert(size.x * (size.y - 1), Edge(n_link_value)) {
 }
 
-std::size_t Graph2D::h_index(const Imath::V2i& i) const {
-	return i[0] + i[1] * (m_size[0] - 1);
+std::size_t Graph2D::h_index(const V2i& i) const {
+	return i.x + i.y * (m_size.x - 1);
 }
 
-std::size_t Graph2D::v_index(const Imath::V2i& i) const {
-	return i[0] + i[1] * m_size[0];
+std::size_t Graph2D::v_index(const V2i& i) const {
+	return i.x + i.y * m_size.x;
 }
 
-Graph2D::Direction& Graph2D::edge(const Imath::V2i& src, const Imath::V2i& dest) {
-	assert((src[0] - dest[0]) * (src[0] - dest[0]) + (src[1] - dest[1]) * (src[1] - dest[1]) == 1);
+Graph2D::Direction& Graph2D::edge(const V2i& src, const V2i& dest) {
+	assert((src.x - dest.x) * (src.x - dest.x) + (src.y - dest.y) * (src.y - dest.y) == 1);
 
-	assert(src[0] >= 0 && src[0] < m_size[0]);
-	assert(dest[0] >= 0 && dest[0] < m_size[0]);
-	assert(src[1] >= 0 && src[1] < m_size[1]);
-	assert(src[1] >= 0 && dest[1] < m_size[1]);
+	assert(src.x >= 0 && src.x < m_size.x);
+	assert(dest.x >= 0 && dest.x < m_size.x);
+	assert(src.y >= 0 && src.y < m_size.y);
+	assert(src.y >= 0 && dest.y < m_size.y);
 
-	if(src[0] < dest[0])
+	if(src.x < dest.x)
 		return m_horiz[h_index(src)].forward();
 
-	if(src[0] > dest[0])
+	if(src.x > dest.x)
 		return m_horiz[h_index(dest)].backward();
 
-	if(src[1] < dest[1])
+	if(src.y < dest.y)
 		return m_vert[v_index(src)].forward();
 
-	if(src[1] > dest[1])
+	if(src.y > dest.y)
 		return m_vert[v_index(dest)].backward();
 
 	assert(false && "bad edge index");
 	throw(std::runtime_error("bad edge index"));
 }
 
-const Graph2D::Direction& Graph2D::edge(const Imath::V2i& src, const Imath::V2i& dest) const {
-	assert((src[0] - dest[0]) * (src[0] - dest[0]) + (src[1] - dest[1]) * (src[1] - dest[1]) == 1);
+const Graph2D::Direction& Graph2D::edge(const V2i& src, const V2i& dest) const {
+	assert((src.x - dest.x) * (src.x - dest.x) + (src.y - dest.y) * (src.y - dest.y) == 1);
 
-	assert(src[0] >= 0 && src[0] < m_size[0]);
-	assert(dest[0] >= 0 && dest[0] < m_size[0]);
-	assert(src[1] >= 0 && src[1] < m_size[1]);
-	assert(src[1] >= 0 && dest[1] < m_size[1]);
+	assert(src.x >= 0 && src.x < m_size.x);
+	assert(dest.x >= 0 && dest.x < m_size.x);
+	assert(src.y >= 0 && src.y < m_size.y);
+	assert(src.y >= 0 && dest.y < m_size.y);
 
-	if(src[0] < dest[0])
+	if(src.x < dest.x)
 		return m_horiz[h_index(src)].forward();
 
-	if(src[0] > dest[0])
+	if(src.x > dest.x)
 		return m_horiz[h_index(dest)].backward();
 
-	if(src[1] < dest[1])
+	if(src.y < dest.y)
 		return m_vert[v_index(src)].forward();
 
-	if(src[1] > dest[1])
+	if(src.y > dest.y)
 		return m_vert[v_index(dest)].backward();
 
 	assert(false && "bad edge index");

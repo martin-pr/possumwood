@@ -23,29 +23,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(values.type() != CV_8UC1)
 		throw std::runtime_error("Only 8-bit unsigned char supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
 
-	lightfields::Graph graph(Imath::V2i(values.cols, values.rows), std::max(0.0f, data.get(a_constness)));
+	lightfields::Graph graph(lightfields::V2i(values.cols, values.rows), std::max(0.0f, data.get(a_constness)));
 
 	for(int row = 0; row < values.rows; ++row)
 		for(int col = 0; col < values.cols; ++col) {
 			const int val = values.at<unsigned char>(row, col);
-			graph.setValue(Imath::V2i(col, row), 255-val, val);
+			graph.setValue(lightfields::V2i(col, row), 255-val, val);
 		}
 
 	graph.solve();
-
-	// auto sources = graph.sourceGraph();
-	// // auto sinks = graph.sinkGraph();
-
-	// for(int row = 0; row < values.rows; ++row)
-	// 	for(int col = 0; col < values.cols; ++col)
-	// 		if(sources.find(Imath::V2i(col, row)) != sources.end())
-	// 			values.at<unsigned char>(row, col) = 0;
-	// 		else //if(sinks.find(Imath::V2i(col, row)) != sinks.end())
-	// 			values.at<unsigned char>(row, col) = 255;
-	// 		// else
-	// 		// 	values.at<unsigned char>(row, col) = 128;
-
-	// data.set(a_out, possumwood::opencv::Frame(values));
 
 	data.set(a_out, possumwood::opencv::Frame(graph.minCut()));
 

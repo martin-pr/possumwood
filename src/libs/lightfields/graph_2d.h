@@ -1,8 +1,8 @@
 #pragma once
 
-#include <ImathVec.h>
-
 #include <vector>
+
+#include "vec2.h"
 
 namespace lightfields {
 
@@ -12,7 +12,7 @@ class Graph2D {
 		class Edge;
 
 	public:
-		Graph2D(const Imath::V2i& size, int n_link_value);
+		Graph2D(const V2i& size, int n_link_value);
 
 		class Direction {
 			public:
@@ -35,12 +35,12 @@ class Graph2D {
 				friend class Edge;
 		};
 
-		Direction& edge(const Imath::V2i& src, const Imath::V2i& dest);
-		const Direction& edge(const Imath::V2i& src, const Imath::V2i& dest) const;
+		Direction& edge(const V2i& src, const V2i& dest);
+		const Direction& edge(const V2i& src, const V2i& dest) const;
 
 	private:
-		std::size_t h_index(const Imath::V2i& i) const;
-		std::size_t v_index(const Imath::V2i& i) const;
+		std::size_t h_index(const V2i& i) const;
+		std::size_t v_index(const V2i& i) const;
 
 		class Edge {
 			public:
@@ -64,7 +64,7 @@ class Graph2D {
 				int m_capacity, m_flow;
 		};
 
-		Imath::V2i m_size;
+		V2i m_size;
 		std::vector<Edge> m_horiz, m_vert;
 };
 

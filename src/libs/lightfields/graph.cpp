@@ -13,8 +13,8 @@ Graph::Path::Path() {
 
 namespace {
 
-int sqdist(const Imath::V2i& v1, const Imath::V2i& v2) {
-	return (v2[0]-v1[0]) * (v2[0]-v1[0]) + (v2[1]-v1[1]) * (v2[1]-v1[1]);
+int sqdist(const V2i& v1, const V2i& v2) {
+	return (v2.x-v1.x) * (v2.x-v1.x) + (v2.y-v1.y) * (v2.y-v1.y);
 }
 
 }
@@ -41,10 +41,10 @@ bool Graph::Path::isValid() const {
 
 /////
 
-Graph::Graph(const Imath::V2i& size, int n_link_value) : m_size(size), m_sourceLinks(size), m_sinkLinks(size), m_nLinks(size, n_link_value) {
+Graph::Graph(const V2i& size, int n_link_value) : m_size(size), m_sourceLinks(size), m_sinkLinks(size), m_nLinks(size, n_link_value) {
 }
 
-void Graph::setValue(const Imath::V2i& pos, int source_weight, int sink_weight) {
+void Graph::setValue(const V2i& pos, int source_weight, int sink_weight) {
 	assert(source_weight >= 0);
 	assert(sink_weight >= 0);
 
@@ -67,25 +67,25 @@ void Graph::setValue(const Imath::V2i& pos, int source_weight, int sink_weight) 
 	}
 }
 
-std::size_t Graph::v2i(const Imath::V2i& v) const {
-	return v[0] + v[1]*m_size[0];
+std::size_t Graph::v2i(const V2i& v) const {
+	return v.x + v.y*m_size.x;
 }
 
-Imath::V2i Graph::i2v(std::size_t v) const {
-	v = v % (m_size[0]*m_size[1]);
-	return Imath::V2i(v % m_size[0], v / m_size[0]);
+V2i Graph::i2v(std::size_t v) const {
+	v = v % (m_size.x*m_size.y);
+	return V2i(v % m_size.x, v / m_size.x);
 }
 
 bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 	path.n_links.clear();
 
-	BFSVisitors visited(m_size[0] * m_size[1]);
+	BFSVisitors visited(m_size.x * m_size.y);
 	std::deque<std::size_t> q;
 
-	const std::size_t end = m_size[0] * m_size[1];
+	const std::size_t end = m_size.x * m_size.y;
 	for(std::size_t i=0; i<end; ++i) {
 		const std::size_t src_id = (i + offset) % end;
-		const Imath::V2i src_v = i2v(src_id);
+		const V2i src_v = i2v(src_id);
 
 		if(m_sourceLinks.edge(src_v).residualCapacity() > 0) {
 			visited.clear();
@@ -97,7 +97,7 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 			// the core of the algorithm
 			while(!q.empty()) {
 				std::size_t current_id = q.front();
-				Imath::V2i current_v = i2v(current_id);
+				V2i current_v = i2v(current_id);
 				q.pop_front();
 
 				// check if there is an exit point here
@@ -121,8 +121,8 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				}
 
 				// try to move horizontally left
-				if(current_v[0] > 0) {
-					const Imath::V2i new_v(current_v[0]-1, current_v[1]);
+				if(current_v.x > 0) {
+					const V2i new_v(current_v.x-1, current_v.y);
 					const std::size_t new_id = v2i(new_v);
 					if(!visited.visited(new_id)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
@@ -133,8 +133,8 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				}
 
 				// try to move horizontally right
-				if(current_v[0] < m_size[0]-1) {
-					const Imath::V2i new_v(current_v[0]+1, current_v[1]);
+				if(current_v.x < m_size.x-1) {
+					const V2i new_v(current_v.x+1, current_v.y);
 					const std::size_t new_id = v2i(new_v);
 					if(!visited.visited(new_id)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
@@ -145,8 +145,8 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				}
 
 				// try to move vertically up
-				if(current_v[1] > 0) {
-					const Imath::V2i new_v(current_v[0], current_v[1]-1);
+				if(current_v.y > 0) {
+					const V2i new_v(current_v.x, current_v.y-1);
 					const std::size_t new_id = v2i(new_v);
 					if(!visited.visited(new_id)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
@@ -157,8 +157,8 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				}
 
 				// try to move vertically down
-				if(current_v[1] < m_size[1]-1) {
-					const Imath::V2i new_v(current_v[0], current_v[1]+1);
+				if(current_v.y < m_size.y-1) {
+					const V2i new_v(current_v.x, current_v.y+1);
 					const std::size_t new_id = v2i(new_v);
 					if(!visited.visited(new_id)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
@@ -239,38 +239,38 @@ void Graph::solve() {
 
 cv::Mat Graph::minCut() const {
 	// collects all reachable nodes from source or sink, and marks them appropriately
-	cv::Mat result(m_size[1], m_size[0], CV_8UC1);
-	for(int y=0; y<m_size[1]; ++y)
-		for(int x=0; x<m_size[0]; ++x)
+	cv::Mat result(m_size.y, m_size.x, CV_8UC1);
+	for(int y=0; y<m_size.y; ++y)
+		for(int x=0; x<m_size.x; ++x)
 			result.at<unsigned char>(y, x) = 127;
 
 	// reachable from source as a trivial DFS search
 	{
-		std::vector<Imath::V2i> stack;
-		for(int y=0; y<m_size[1]; ++y)
-			for(int x=0; x<m_size[0]; ++x)
-				if(m_sourceLinks.edge(Imath::V2i(x, y)).residualCapacity() > 0) {
-					stack.push_back(Imath::V2i(x, y));
+		std::vector<V2i> stack;
+		for(int y=0; y<m_size.y; ++y)
+			for(int x=0; x<m_size.x; ++x)
+				if(m_sourceLinks.edge(V2i(x, y)).residualCapacity() > 0) {
+					stack.push_back(V2i(x, y));
 
 					while(!stack.empty()) {
-						const Imath::V2i current = stack.back();
+						const V2i current = stack.back();
 						stack.pop_back();
 
 						assert(m_sinkLinks.edge(current).residualCapacity() == 0 && "TODO: FIX THIS TRIGGER!!!");
 
-						unsigned char& value = result.at<unsigned char>(current[1], current[0]);
+						unsigned char& value = result.at<unsigned char>(current.y, current.x);
 						if(value < 255) {
-							result.at<unsigned char>(current[1], current[0]) = 255;
+							result.at<unsigned char>(current.y, current.x) = 255;
 
-							if(current[0] > 0 && m_nLinks.edge(current, Imath::V2i(current[0]-1, current[1])).residualCapacity() > 0)
-								stack.push_back(Imath::V2i(current[0]-1, current[1]));
-							if(current[0] < m_size[0]-1 && m_nLinks.edge(current, Imath::V2i(current[0]+1, current[1])).residualCapacity() > 0)
-								stack.push_back(Imath::V2i(current[0]+1, current[1]));
+							if(current.x > 0 && m_nLinks.edge(current, V2i(current.x-1, current.y)).residualCapacity() > 0)
+								stack.push_back(V2i(current.x-1, current.y));
+							if(current.x < m_size.x-1 && m_nLinks.edge(current, V2i(current.x+1, current.y)).residualCapacity() > 0)
+								stack.push_back(V2i(current.x+1, current.y));
 
-							if(current[1] > 0 && m_nLinks.edge(current, Imath::V2i(current[0], current[1]-1)).residualCapacity() > 0)
-								stack.push_back(Imath::V2i(current[0], current[1]-1));
-							if(current[1] < m_size[1]-1 && m_nLinks.edge(current, Imath::V2i(current[0], current[1]+1)).residualCapacity() > 0)
-								stack.push_back(Imath::V2i(current[0], current[1]+1));
+							if(current.y > 0 && m_nLinks.edge(current, V2i(current.x, current.y-1)).residualCapacity() > 0)
+								stack.push_back(V2i(current.x, current.y-1));
+							if(current.y < m_size.y-1 && m_nLinks.edge(current, V2i(current.x, current.y+1)).residualCapacity() > 0)
+								stack.push_back(V2i(current.x, current.y+1));
 						}
 					}
 				}
@@ -279,31 +279,31 @@ cv::Mat Graph::minCut() const {
 	// reachable from sink as a trivial DFS search
 	// (this is unnecessary for the actual solution and should eventually be removed)
 	{
-		std::vector<Imath::V2i> stack;
-		for(int y=0; y<m_size[1]; ++y)
-			for(int x=0; x<m_size[0]; ++x)
-				if(m_sinkLinks.edge(Imath::V2i(x, y)).residualCapacity() > 0) {
-					stack.push_back(Imath::V2i(x, y));
+		std::vector<V2i> stack;
+		for(int y=0; y<m_size.y; ++y)
+			for(int x=0; x<m_size.x; ++x)
+				if(m_sinkLinks.edge(V2i(x, y)).residualCapacity() > 0) {
+					stack.push_back(V2i(x, y));
 
 					while(!stack.empty()) {
-						const Imath::V2i current = stack.back();
+						const V2i current = stack.back();
 						stack.pop_back();
 
-						assert(m_sourceLinks.edge(Imath::V2i(x, y)).residualCapacity() == 0);
+						assert(m_sourceLinks.edge(V2i(x, y)).residualCapacity() == 0);
 
-						unsigned char& value = result.at<unsigned char>(current[1], current[0]);
+						unsigned char& value = result.at<unsigned char>(current.y, current.x);
 						if(value > 0) {
-							result.at<unsigned char>(current[1], current[0]) = 0;
+							result.at<unsigned char>(current.y, current.x) = 0;
 
-							if(current[0] > 0 && m_nLinks.edge(Imath::V2i(current[0]-1, current[1]), current).residualCapacity() > 0)
-								stack.push_back(Imath::V2i(current[0]-1, current[1]));
-							if(current[0] < m_size[0]-1 && m_nLinks.edge(Imath::V2i(current[0]+1, current[1]), current).residualCapacity() > 0)
-								stack.push_back(Imath::V2i(current[0]+1, current[1]));
+							if(current.x > 0 && m_nLinks.edge(V2i(current.x-1, current.y), current).residualCapacity() > 0)
+								stack.push_back(V2i(current.x-1, current.y));
+							if(current.x < m_size.x-1 && m_nLinks.edge(V2i(current.x+1, current.y), current).residualCapacity() > 0)
+								stack.push_back(V2i(current.x+1, current.y));
 
-							if(current[1] > 0 && m_nLinks.edge(Imath::V2i(current[0], current[1]-1), current).residualCapacity() > 0)
-								stack.push_back(Imath::V2i(current[0], current[1]-1));
-							if(current[1] < m_size[1]-1 && m_nLinks.edge(Imath::V2i(current[0], current[1]+1), current).residualCapacity() > 0)
-								stack.push_back(Imath::V2i(current[0], current[1]+1));
+							if(current.y > 0 && m_nLinks.edge(V2i(current.x, current.y-1), current).residualCapacity() > 0)
+								stack.push_back(V2i(current.x, current.y-1));
+							if(current.y < m_size.y-1 && m_nLinks.edge(V2i(current.x, current.y+1), current).residualCapacity() > 0)
+								stack.push_back(V2i(current.x, current.y+1));
 						}
 					}
 				}
@@ -313,11 +313,11 @@ cv::Mat Graph::minCut() const {
 }
 
 cv::Mat Graph::sourceFlow() const {
-	cv::Mat result(m_size[1], m_size[0], CV_8UC1);
+	cv::Mat result(m_size.y, m_size.x, CV_8UC1);
 
-	for(int y=0; y<m_size[1]; ++y)
-		for(int x=0; x<m_size[0]; ++x) {
-			auto& e = m_sourceLinks.edge(Imath::V2i(x, y));
+	for(int y=0; y<m_size.y; ++y)
+		for(int x=0; x<m_size.x; ++x) {
+			auto& e = m_sourceLinks.edge(V2i(x, y));
 			if(e.capacity() > 0)
 				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
 			else
@@ -328,11 +328,11 @@ cv::Mat Graph::sourceFlow() const {
 }
 
 cv::Mat Graph::sinkFlow() const {
-	cv::Mat result(m_size[1], m_size[0], CV_8UC1);
+	cv::Mat result(m_size.y, m_size.x, CV_8UC1);
 
-	for(int y=0; y<m_size[1]; ++y)
-		for(int x=0; x<m_size[0]; ++x) {
-			auto& e = m_sinkLinks.edge(Imath::V2i(x, y));
+	for(int y=0; y<m_size.y; ++y)
+		for(int x=0; x<m_size.x; ++x) {
+			auto& e = m_sinkLinks.edge(V2i(x, y));
 			if(e.capacity() > 0)
 				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
 			else
@@ -343,11 +343,11 @@ cv::Mat Graph::sinkFlow() const {
 }
 
 cv::Mat Graph::horizontalFlow() const {
-	cv::Mat result = cv::Mat::zeros(m_size[1], m_size[0], CV_8UC1);
+	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
 
-	for(int y=0; y<m_size[1]; ++y)
-		for(int x=0; x<m_size[0]-1; ++x) {
-			auto& e = m_nLinks.edge(Imath::V2i(x, y), Imath::V2i(x+1, y));
+	for(int y=0; y<m_size.y; ++y)
+		for(int x=0; x<m_size.x-1; ++x) {
+			auto& e = m_nLinks.edge(V2i(x, y), V2i(x+1, y));
 			if(e.capacity() > 0)
 				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
 			else
@@ -358,11 +358,11 @@ cv::Mat Graph::horizontalFlow() const {
 }
 
 cv::Mat Graph::verticalFlow() const {
-	cv::Mat result = cv::Mat::zeros(m_size[1], m_size[0], CV_8UC1);
+	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
 
-	for(int y=0; y<m_size[1]-1; ++y)
-		for(int x=0; x<m_size[0]; ++x) {
-			auto& e = m_nLinks.edge(Imath::V2i(x, y), Imath::V2i(x, y+1));
+	for(int y=0; y<m_size.y-1; ++y)
+		for(int x=0; x<m_size.x; ++x) {
+			auto& e = m_nLinks.edge(V2i(x, y), V2i(x, y+1));
 			if(e.capacity() > 0)
 				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
 			else

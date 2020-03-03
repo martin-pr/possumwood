@@ -3,12 +3,11 @@
 #include <vector>
 #include <set>
 
-#include <ImathVec.h>
-
 #include <opencv2/opencv.hpp>
 
 #include "graph_2d.h"
 #include "grid_2d.h"
+#include "vec2.h"
 
 namespace lightfields {
 
@@ -22,17 +21,9 @@ class Graph {
 			int forward, backward;
 		};
 
-		Graph(const Imath::V2i& size, int n_link_value);
+		Graph(const V2i& size, int n_link_value);
 
-		void setValue(const Imath::V2i& pos, int source_weight, int sink_weight);
-
-		struct SetComparator {
-			bool operator()(const Imath::V2i& v1, const Imath::V2i& v2) const {
-				if(v1[1] != v2[1])
-					return v1[1] < v2[1];
-				return v1[0] < v2[0];
-			}
-		};
+		void setValue(const V2i& pos, int source_weight, int sink_weight);
 
 		void solve();
 
@@ -44,15 +35,15 @@ class Graph {
 		cv::Mat verticalFlow() const;
 
 	private:
-		std::size_t v2i(const Imath::V2i& v) const;
-		Imath::V2i i2v(std::size_t v) const;
+		std::size_t v2i(const V2i& v) const;
+		V2i i2v(std::size_t v) const;
 
 		struct Path {
 			Path();
 
 			bool isValid() const;
 
-			std::vector<Imath::V2i> n_links;
+			std::vector<V2i> n_links;
 		};
 
 		/// Simplified depth-first-search - only forward search from S and backward search from T (will avoid loops implicitly).
@@ -61,9 +52,7 @@ class Graph {
 
 		int flow(const Path& path) const;
 
-		// void collect(std::set<Imath::V2i, Graph::SetComparator>& subgraph, const Imath::V2i& i) const;
-
-		Imath::V2i m_size;
+		V2i m_size;
 		Grid2D m_sourceLinks, m_sinkLinks;
 		Graph2D m_nLinks;
 };

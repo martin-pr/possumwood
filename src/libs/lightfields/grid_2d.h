@@ -1,8 +1,8 @@
 #pragma once
 
-#include <ImathVec.h>
-
 #include <vector>
+
+#include "vec2.h"
 
 namespace lightfields {
 
@@ -25,15 +25,15 @@ class Grid2D {
 				int m_capacity, m_flow;
 		};
 
-		Grid2D(const Imath::V2i& size);
+		Grid2D(const V2i& size);
 
-		Edge& edge(const Imath::V2i& i);
-		const Edge& edge(const Imath::V2i& i) const;
+		Edge& edge(const V2i& i);
+		const Edge& edge(const V2i& i) const;
 
-		const Imath::V2i& size() const;
+		const V2i& size() const;
 
 	private:
-		Imath::V2i m_size;
+		V2i m_size;
 		std::vector<Edge> m_data;
 };
 

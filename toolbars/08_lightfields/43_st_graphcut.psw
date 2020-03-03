@@ -161,7 +161,7 @@
             },
             "name": "colormap",
             "ports": {
-                "type": "COLORMAP_JET"
+                "type": "COLORMAP_BONE"
             },
             "type": "opencv/colormap"
         },
@@ -292,12 +292,12 @@
             "name": "crop",
             "ports": {
                 "crop/from": {
-                    "x": 180,
-                    "y": 40
+                    "x": 150,
+                    "y": 10
                 },
                 "crop/to": {
-                    "x": 170,
-                    "y": 190
+                    "x": 230,
+                    "y": 250
                 }
             },
             "type": "opencv/crop"
@@ -644,7 +644,7 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 150.0
+                "constness": 30.0
             },
             "type": "opencv/lightfields/st_graphcut"
         }
@@ -655,5 +655,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAcwAAABwAAAd7AAAEDwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGtAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB3wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACVQAAARkAAACqAQAAAwAAA1QAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGtAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACAgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACeAAAAPYAAACqAQAAAwAAA1QAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
