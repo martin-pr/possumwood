@@ -45,6 +45,9 @@ class Graph {
 		cv::Mat verticalFlow() const;
 
 	private:
+		std::size_t v2i(const Imath::V2i& v) const;
+		Imath::V2i i2v(std::size_t v) const;
+
 		struct Path {
 			Path();
 

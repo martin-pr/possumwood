@@ -630,7 +630,7 @@
             },
             "name": "resize",
             "ports": {
-                "scale": 0.300000011920929
+                "scale": 0.5
             },
             "type": "opencv/resize"
         },
@@ -644,7 +644,7 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 0.699999988079071
+                "constness": 150.0
             },
             "type": "opencv/lightfields/st_graphcut"
         }
@@ -655,5 +655,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAcwAAABwAAAd7AAAEDwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGtAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABuwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMQAAAT0AAACqAQAAAwAAA1QAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGtAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB3wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACVQAAARkAAACqAQAAAwAAA1QAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

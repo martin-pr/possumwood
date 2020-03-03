@@ -43,103 +43,125 @@ Graph::Graph(const Imath::V2i& size, int n_link_value) : m_size(size), m_sourceL
 }
 
 void Graph::setValue(const Imath::V2i& pos, int source_weight, int sink_weight) {
-	assert(source_weight >= 0.0f);
-	assert(sink_weight >= 0.0f);
+	assert(source_weight >= 0);
+	assert(sink_weight >= 0);
 
-	// if(source_weight > sink_weight) {
-	// 	source_weight -= sink_weight;
-	// 	sink_weight = 0.0f;
-	// }
-	// else {
-	// 	sink_weight -= source_weight;
-	// 	source_weight = 0.0f;
-	// }
+	// "first pass" - direct transfer between a sink an a source of the same pixel, which would otherwise have to be solved
+	// in the BFS, but would always be the "first hit".
+	const int flow = std::min(source_weight, sink_weight);
 
-	m_sourceLinks.edge(pos).setCapacity(source_weight);
-	m_sinkLinks.edge(pos).setCapacity(sink_weight);
+	{
+		auto& e = m_sourceLinks.edge(pos);
+		e.setCapacity(source_weight);
+		if(flow > 0)
+			e.addFlow(flow);
+	}
+
+	{
+		auto& e = m_sinkLinks.edge(pos);
+		e.setCapacity(sink_weight);
+		if(flow > 0)
+			e.addFlow(flow);
+	}
+}
+
+std::size_t Graph::v2i(const Imath::V2i& v) const {
+	return v[0] + v[1]*m_size[0];
+}
+
+Imath::V2i Graph::i2v(std::size_t v) const {
+	v = v % (m_size[0]*m_size[1]);
+	return Imath::V2i(v % m_size[0], v / m_size[0]);
 }
 
 bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 	path.n_links.clear();
 
-	std::map<Imath::V2i, Imath::V2i, SetComparator> visited;
-	std::queue<Imath::V2i> q;
+	static thread_local std::map<std::size_t, std::size_t> visited;
+	static thread_local std::deque<std::size_t> q;
 
 	const std::size_t end = m_size[0] * m_size[1];
 	for(std::size_t i=0; i<end; ++i) {
-		const std::size_t id = (i + offset) % end;
-		const Imath::V2i src(id % m_size[0], id / m_size[0]);
+		const std::size_t src_id = (i + offset) % end;
+		const Imath::V2i src_v = i2v(src_id);
 
-		if(m_sourceLinks.edge(src).residualCapacity() > 0) {
+		if(m_sourceLinks.edge(src_v).residualCapacity() > 0) {
 			visited.clear();
-			visited[src] = Imath::V2i(-1, -1);
+			visited[src_id] = std::numeric_limits<std::size_t>::max();
 
-			assert(q.empty());
-			q.push(src);
+			q.clear();
+			q.push_back(src_id);
 
 			// the core of the algorithm
 			while(!q.empty()) {
-				Imath::V2i current = q.front();
-				q.pop();
+				std::size_t current_id = q.front();
+				Imath::V2i current_v = i2v(current_id);
+				q.pop_front();
 
 				// check if there is an exit point here
-				if(m_sinkLinks.edge(current).residualCapacity() > 0) {
+				if(m_sinkLinks.edge(current_v).residualCapacity() > 0) {
 					path.n_links.clear();
 
 					// this is SLOW, but for now will do
-					while(current[0] >= 0) {
-						path.n_links.push_back(current);
-						current = visited[current];
+					while(current_id < std::numeric_limits<std::size_t>::max()) {
+						path.n_links.push_back(current_v);
+
+						current_id = visited[current_id];
+						current_v = i2v(current_id);
 					}
 					std::reverse(path.n_links.begin(), path.n_links.end());
 
 					assert(path.isValid());
 
-					offset = id+1;
+					offset = src_id+1;
 
 					return true;
 				}
 
 				// try to move horizontally left
-				if(current[0] > 0) {
-					const Imath::V2i new_index(current[0]-1, current[1]);
-					if(visited.find(new_index) == visited.end()) {
-						if(m_nLinks.edge(current, new_index).residualCapacity() > 0) {
-							visited[new_index] = current;
-							q.push(new_index);
+				if(current_v[0] > 0) {
+					const Imath::V2i new_v(current_v[0]-1, current_v[1]);
+					const std::size_t new_id = v2i(new_v);
+					if(visited.find(new_id) == visited.end()) {
+						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
+							visited[new_id] = current_id;
+							q.push_back(new_id);
 						}
 					}
 				}
 
 				// try to move horizontally right
-				if(current[0] < m_size[0]-1) {
-					const Imath::V2i new_index(current[0]+1, current[1]);
-					if(visited.find(new_index) == visited.end()) {
-						if(m_nLinks.edge(current, new_index).residualCapacity() > 0) {
-							visited[new_index] = current;
-							q.push(new_index);
+				if(current_v[0] < m_size[0]-1) {
+					const Imath::V2i new_v(current_v[0]+1, current_v[1]);
+					const std::size_t new_id = v2i(new_v);
+					if(visited.find(new_id) == visited.end()) {
+						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
+							visited[new_id] = current_id;
+							q.push_back(new_id);
 						}
 					}
 				}
 
 				// try to move vertically up
-				if(current[1] > 0) {
-					const Imath::V2i new_index(current[0], current[1]-1);
-					if(visited.find(new_index) == visited.end()) {
-						if(m_nLinks.edge(current, new_index).residualCapacity() > 0) {
-							visited[new_index] = current;
-							q.push(new_index);
+				if(current_v[1] > 0) {
+					const Imath::V2i new_v(current_v[0], current_v[1]-1);
+					const std::size_t new_id = v2i(new_v);
+					if(visited.find(new_id) == visited.end()) {
+						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
+							visited[new_id] = current_id;
+							q.push_back(new_id);
 						}
 					}
 				}
 
 				// try to move vertically down
-				if(current[1] < m_size[1]-1) {
-					const Imath::V2i new_index(current[0], current[1]+1);
-					if(visited.find(new_index) == visited.end()) {
-						if(m_nLinks.edge(current, new_index).residualCapacity() > 0) {
-							visited[new_index] = current;
-							q.push(new_index);
+				if(current_v[1] < m_size[1]-1) {
+					const Imath::V2i new_v(current_v[0], current_v[1]+1);
+					const std::size_t new_id = v2i(new_v);
+					if(visited.find(new_id) == visited.end()) {
+						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
+							visited[new_id] = current_id;
+							q.push_back(new_id);
 						}
 					}
 				}
@@ -177,19 +199,6 @@ int Graph::flow(const Path& path) const {
 void Graph::solve() {
 	Path path;
 
-	// while(bfs_1(path)) {
-	// 	assert(path.n_links.empty());
-	// 	assert(path.source == path.sink);
-
-	// 	const int f = flow(path);
-	// 	assert(f > 0.0f);
-
-	// 	m_sourceLinks.edge(path.source).addFlow(f);
-	// 	m_sinkLinks.edge(path.sink).addFlow(f);
-
-	// 	assert(flow(path) < flowEPS());
-	// }
-
 	std::size_t offset = 0;
 	while(bfs_2(path, offset)) {
 		assert(path.isValid());
@@ -197,13 +206,10 @@ void Graph::solve() {
 
 		// get the maximum flow through the path
 		const int f = flow(path);
-		assert(f > 0);
+		assert(f > 0 && "Augmented path flow at the beginning of each iteration should be positive");
 
 		// update the graph
-		{
-			auto& e = m_sourceLinks.edge(path.n_links.front());
-			e.addFlow(f);
-		}
+		m_sourceLinks.edge(path.n_links.front()).addFlow(f);
 
 		if(!path.n_links.empty()) {
 			auto it1 = path.n_links.begin();
@@ -219,34 +225,11 @@ void Graph::solve() {
 			}
 		}
 
-		{
-			auto& e = m_sinkLinks.edge(path.n_links.back());
-			e.addFlow(f);
-		}
+		m_sinkLinks.edge(path.n_links.back()).addFlow(f);
 
-		assert(flow(path) == 0);
+		assert(flow(path) == 0 && "Augmented path flow at the end of each iteration should be zero");
 	}
 }
-
-// std::set<Imath::V2i, Graph::SetComparator> Graph::sourceGraph() const {
-// 	std::set<Imath::V2i, Graph::SetComparator> result;
-// 	for(int y=0; y<m_size[1]; ++y)
-// 		for(int x=0; x<m_size[0]; ++x) {
-// 			auto& e = m_sourceLinks.edge(Imath::V2i(x, y));
-// 			if(std::abs(e.flow()) < e.capacity())
-// 				collect(result, Imath::V2i(x, y));
-// 		}
-
-// 	// std::cout << "source graph:" << std::endl;
-// 	// std::cout << "  size: " << result.size() << std::endl;
-// 	// std::cout << "  total: " << (m_size[0]*m_size[1]) << std::endl;
-// 	// std::cout << "  ";
-// 	// for(auto& p : result)
-// 	// 	std::cout << " " << p[0] << "," << p[1];
-// 	// std::cout << std::endl;
-
-// 	return result;
-// }
 
 cv::Mat Graph::minCut() const {
 	// collects all reachable nodes from source or sink, and marks them appropriately
@@ -255,7 +238,7 @@ cv::Mat Graph::minCut() const {
 		for(int x=0; x<m_size[0]; ++x)
 			result.at<unsigned char>(y, x) = 127;
 
-	// reachable from source
+	// reachable from source as a trivial DFS search
 	{
 		std::vector<Imath::V2i> stack;
 		for(int y=0; y<m_size[1]; ++y)
@@ -287,7 +270,8 @@ cv::Mat Graph::minCut() const {
 				}
 	}
 
-	// reachable from sink
+	// reachable from sink as a trivial DFS search
+	// (this is unnecessary for the actual solution and should eventually be removed)
 	{
 		std::vector<Imath::V2i> stack;
 		for(int y=0; y<m_size[1]; ++y)
@@ -381,25 +365,5 @@ cv::Mat Graph::verticalFlow() const {
 
 	return result;
 }
-
-
-
-// std::set<Imath::V2i, Graph::SetComparator> Graph::sinkGraph() const {
-// 	std::set<Imath::V2i, Graph::SetComparator> result;
-// 	for(int y=0; y<m_size[1]; ++y)
-// 		for(int x=0; x<m_size[0]; ++x)
-// 			if(m_sinkLinks.edge(Imath::V2i(x, y)).residualCapacity() > flowEPS())
-// 				collect(result, Imath::V2i(x, y));
-
-// 	std::cout << "sink graph:" << std::endl;
-// 	std::cout << "  size: " << result.size() << std::endl;
-// 	std::cout << "  total: " << (m_size[0]*m_size[1]) << std::endl;
-// 	std::cout << "  ";
-// 	for(auto& p : result)
-// 		std::cout << " " << p[0] << "," << p[1];
-// 	std::cout << std::endl;
-
-// 	return result;
-// }
 
 }
