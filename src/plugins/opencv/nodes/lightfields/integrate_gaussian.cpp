@@ -7,6 +7,7 @@
 #include <actions/traits.h>
 
 #include <lightfields/samples.h>
+#include <lightfields/gaussian_integration.h>
 
 #include "maths/io/vec2.h"
 #include "frame.h"
@@ -18,84 +19,21 @@ namespace {
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
-dependency_graph::InAttr<float> a_sigma2;
-dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
-
-void add1channel(float* color, float* n, int colorIndex, const float* value, float gauss) {
-	color[colorIndex] += value[0] * gauss;
-	n[colorIndex] += gauss;
-}
-
-void add3channel(float* color, float* n, int colorIndex, const float* value, float gauss) {
-	color[0] += value[0] * gauss;
-	n[0] += gauss;
-
-	color[1] += value[1] * gauss;
-	n[1] += gauss;
-
-	color[2] += value[2] * gauss;
-	n[2] += gauss;
-}
+dependency_graph::InAttr<float> a_sigma; // LETS MAKE THIS SIGMA, NOT SIGMA^2
+dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_correspondence;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const lightfields::Samples& samples = data.get(a_samples);
-
 	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
 
-	auto applyFn = &add1channel;
-	if((*data.get(a_in)).type() == CV_32FC3)
-		applyFn = &add3channel;
+	// integration
+	auto tmp = lightfields::gaussian::integrate(data.get(a_samples), data.get(a_size), *data.get(a_in), data.get(a_sigma));
+	data.set(a_out, possumwood::opencv::Frame(tmp.average));
 
-	const cv::Mat& input = *data.get(a_in);
+	// correspondence
+	auto corresp = lightfields::gaussian::correspondence(data.get(a_samples), *data.get(a_in), tmp, data.get(a_sigma));
 
-	const unsigned width = data.get(a_size)[0];
-	const unsigned height = data.get(a_size)[1];
-
-	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
-
-	cv::Mat mat = cv::Mat::zeros(height, width, CV_32FC3);
-	cv::Mat norm = cv::Mat::zeros(height, width, CV_32FC3);
-
-	const float sigma2 = data.get(a_sigma2) * (float)width / (float)input.cols;
-
-	const float x_scale = (float)width / (float)samples.sensorSize()[0];
-	const float y_scale = (float)height / (float)samples.sensorSize()[1];
-
-	tbb::parallel_for(0, input.rows, [&](int y) {
-		const auto end = samples.end(y);
-		for(auto it = samples.begin(y); it != end; ++it) {
-			const float target_x = it->xy[0] * x_scale;
-			const float target_y = it->xy[1] * y_scale;
-
-			int xFrom = std::max((int)floor(target_x - 3.0f*sigma2), 0);
-			int xTo = std::min((int)ceil(target_x + 3.0f*sigma2 + 1.0f), (int)width);
-			int yFrom = std::max((int)floor(target_y - 3.0f*sigma2), 0);
-			int yTo = std::min((int)ceil(target_y + 3.0f*sigma2 + 1.0f), (int)height);
-
-			for(int yt=yFrom; yt<yTo; ++yt) {
-				for(int xt=xFrom; xt<xTo; ++xt) {
-					const float dist2 = std::pow((float)xt - target_x, 2) + std::pow((float)yt - target_y, 2);
-					const float gauss = std::exp(-dist2/(2.0f*sigma2));
-
-					float* color = mat.ptr<float>(yt, xt);
-					float* n = norm.ptr<float>(yt, xt);
-
-					const float* value = input.ptr<float>(it->source[1], it->source[0]);
-					(*applyFn)(color, n, it->color, value, gauss);
-				}
-			}
-		}
-	});
-
-	tbb::parallel_for(0, mat.rows, [&](int y) {
-		for(int x=0;x<mat.cols;++x)
-			for(int a=0;a<3;++a)
-				if(norm.ptr<float>(y,x)[a] > 0.0f)
-					mat.ptr<float>(y,x)[a] /= norm.ptr<float>(y,x)[a];
-	});
-
-	data.set(a_out, possumwood::opencv::Frame(mat));
+	data.set(a_correspondence, possumwood::opencv::Frame(corresp));
 
 	return dependency_graph::State();
 }
@@ -104,13 +42,19 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(300u, 300u));
-	meta.addAttribute(a_sigma2, "sigma2", 2.0f);
+	meta.addAttribute(a_sigma, "sigma", 4.0f);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_correspondence, "correspondence", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_samples, a_out);
 	meta.addInfluence(a_size, a_out);
-	meta.addInfluence(a_sigma2, a_out);
+	meta.addInfluence(a_sigma, a_out);
+
+	meta.addInfluence(a_in, a_correspondence);
+	meta.addInfluence(a_samples, a_correspondence);
+	meta.addInfluence(a_size, a_correspondence);
+	meta.addInfluence(a_sigma, a_correspondence);
 
 	meta.setCompute(compute);
 }
