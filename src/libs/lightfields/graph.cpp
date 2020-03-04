@@ -76,6 +76,15 @@ V2i Graph::i2v(std::size_t v) const {
 	return V2i(v % m_size.x, v / m_size.x);
 }
 
+void Graph::step(BFSVisitors& visited, std::deque<V2i>& q, const V2i& current_v, const V2i& new_v) const {
+	if(!visited.visited(new_v)) {
+		if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
+			visited.visit(new_v, current_v);
+			q.push_back(new_v);
+		}
+	}
+}
+
 int Graph::bfs_2(Path& path, std::size_t& offset) const {
 	path.n_links.clear();
 
@@ -128,48 +137,20 @@ int Graph::bfs_2(Path& path, std::size_t& offset) const {
 				}
 
 				// try to move horizontally left
-				if(current_v.x > 0) {
-					const V2i new_v(current_v.x-1, current_v.y);
-					if(!visited.visited(new_v)) {
-						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_v, current_v);
-							q.push_back(new_v);
-						}
-					}
-				}
+				if(current_v.x > 0)
+					step(visited, q, current_v, V2i(current_v.x-1, current_v.y));
 
 				// try to move horizontally right
-				if(current_v.x < m_size.x-1) {
-					const V2i new_v(current_v.x+1, current_v.y);
-					if(!visited.visited(new_v)) {
-						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_v, current_v);
-							q.push_back(new_v);
-						}
-					}
-				}
+				if(current_v.x < m_size.x-1)
+					step(visited, q, current_v, V2i(current_v.x+1, current_v.y));
 
 				// try to move vertically up
-				if(current_v.y > 0) {
-					const V2i new_v(current_v.x, current_v.y-1);
-					if(!visited.visited(new_v)) {
-						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_v, current_v);
-							q.push_back(new_v);
-						}
-					}
-				}
+				if(current_v.y > 0)
+					step(visited, q, current_v, V2i(current_v.x, current_v.y-1));
 
 				// try to move vertically down
-				if(current_v.y < m_size.y-1) {
-					const V2i new_v(current_v.x, current_v.y+1);
-					if(!visited.visited(new_v)) {
-						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_v, current_v);
-							q.push_back(new_v);
-						}
-					}
-				}
+				if(current_v.y < m_size.y-1)
+					step(visited, q, current_v, V2i(current_v.x, current_v.y+1));
 			}
 		}
 	}

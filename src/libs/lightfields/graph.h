@@ -10,6 +10,8 @@
 
 namespace lightfields {
 
+class BFSVisitors;
+
 class Graph {
 	public:
 		struct Edge {
@@ -36,6 +38,8 @@ class Graph {
 	private:
 		std::size_t v2i(const V2i& v) const;
 		V2i i2v(std::size_t v) const;
+
+		void step(BFSVisitors& visitors, std::deque<V2i>& q, const V2i& current_v, const V2i& new_v) const;
 
 		struct Path {
 			Path();
