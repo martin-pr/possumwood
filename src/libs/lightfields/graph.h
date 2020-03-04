@@ -5,9 +5,8 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "graph_2d.h"
-#include "grid_2d.h"
-#include "vec2.h"
+#include "n_links.h"
+#include "t_links.h"
 
 namespace lightfields {
 
@@ -53,8 +52,8 @@ class Graph {
 		int flow(const Path& path) const;
 
 		V2i m_size;
-		Grid2D m_sourceLinks, m_sinkLinks;
-		Graph2D m_nLinks;
+		TLinks m_sourceLinks, m_sinkLinks;
+		NLinks m_nLinks;
 };
 
 }

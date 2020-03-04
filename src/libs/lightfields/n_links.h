@@ -7,12 +7,12 @@
 namespace lightfields {
 
 /// A simple representation of an implicit 2D graph with 4-neighbourhood
-class Graph2D {
+class NLinks {
 	private:
 		class Edge;
 
 	public:
-		Graph2D(const V2i& size, int n_link_value);
+		NLinks(const V2i& size, int n_link_value);
 
 		class Direction {
 			public:
