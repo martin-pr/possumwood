@@ -47,7 +47,7 @@ class Graph {
 
 		/// Simplified depth-first-search - only forward search from S and backward search from T (will avoid loops implicitly).
 		/// Indices - first index into source links, last index into sink links, mid indices horiz if id < horiz_n_links.size(), vert otherwise
-		bool bfs_2(Path& path, std::size_t& offset) const;
+		int bfs_2(Path& path, std::size_t& offset) const;
 
 		int flow(const Path& path) const;
 

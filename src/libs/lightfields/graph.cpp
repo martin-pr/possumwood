@@ -76,7 +76,7 @@ V2i Graph::i2v(std::size_t v) const {
 	return V2i(v % m_size.x, v / m_size.x);
 }
 
-bool Graph::bfs_2(Path& path, std::size_t& offset) const {
+int Graph::bfs_2(Path& path, std::size_t& offset) const {
 	path.n_links.clear();
 
 	BFSVisitors visited(m_size);
@@ -109,15 +109,21 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 						while(current_v != V2i(-1, -1)) {
 							path.n_links.push_back(current_v);
 
-							current_v = visited.parent(current_v);
+							const V2i& parent_v = visited.parent(current_v);
+							if(parent_v != V2i(-1, -1))
+								flow = std::min(flow, m_nLinks.edge(parent_v, current_v).residualCapacity());
+
+							current_v = parent_v;
 						}
 						std::reverse(path.n_links.begin(), path.n_links.end());
+
+						flow = std::min(flow, m_sourceLinks.edge(path.n_links.front()).residualCapacity());
 
 						assert(path.isValid());
 
 						offset = src_id+1;
 
-						return true;
+						return flow;
 					}
 				}
 
@@ -168,7 +174,7 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 		}
 	}
 
-	return false;
+	return 0;
 }
 
 int Graph::flow(const Path& path) const {
@@ -199,22 +205,22 @@ void Graph::solve() {
 	std::size_t counter = 0;
 
 	std::size_t offset = 0;
-	while(bfs_2(path, offset)) {
+
+	int flow;
+	while((flow = bfs_2(path, offset))) {
 		assert(path.isValid());
+		assert(this->flow(path) == flow);
 
-
-		// get the maximum flow through the path
-		const int f = flow(path);
-		assert(f > 0 && "Augmented path flow at the beginning of each iteration should be positive");
+		assert(flow > 0 && "Augmented path flow at the beginning of each iteration should be positive");
 
 		// update the graph
-		m_sourceLinks.edge(path.n_links.front()).addFlow(f);
+		m_sourceLinks.edge(path.n_links.front()).addFlow(flow);
 
 		if(!path.n_links.empty()) {
 			auto it1 = path.n_links.begin();
 			auto it2 = it1+1;
 			while(it2 != path.n_links.end()) {
-				m_nLinks.edge(*it1, *it2).addFlow(f);
+				m_nLinks.edge(*it1, *it2).addFlow(flow);
 
 				assert(m_nLinks.edge(*it1, *it2).residualCapacity() >= 0);
 				assert(m_nLinks.edge(*it2, *it1).residualCapacity() >= 0);
@@ -224,9 +230,9 @@ void Graph::solve() {
 			}
 		}
 
-		m_sinkLinks.edge(path.n_links.back()).addFlow(f);
+		m_sinkLinks.edge(path.n_links.back()).addFlow(flow);
 
-		assert(flow(path) == 0 && "Augmented path flow at the end of each iteration should be zero");
+		assert(this->flow(path) == 0 && "Augmented path flow at the end of each iteration should be zero");
 
 		++counter;
 	}
