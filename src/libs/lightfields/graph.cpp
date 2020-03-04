@@ -79,7 +79,7 @@ V2i Graph::i2v(std::size_t v) const {
 bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 	path.n_links.clear();
 
-	BFSVisitors visited(m_size.x * m_size.y);
+	BFSVisitors visited(m_size);
 	std::deque<std::size_t> q;
 
 	const std::size_t end = m_size.x * m_size.y;
@@ -89,7 +89,7 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 
 		if(m_sourceLinks.edge(src_v).residualCapacity() > 0) {
 			visited.clear();
-			visited.visit(src_id, std::numeric_limits<std::size_t>::max());
+			visited.visit(src_v, V2i(-1, -1));
 
 			q.clear();
 			q.push_back(src_id);
@@ -101,32 +101,34 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				q.pop_front();
 
 				// check if there is an exit point here
-				if(m_sinkLinks.edge(current_v).residualCapacity() > 0) {
-					path.n_links.clear();
+				{
+					int flow = m_sinkLinks.edge(current_v).residualCapacity();
+					if(flow > 0) {
+						path.n_links.clear();
 
-					// this is SLOW, but for now will do
-					while(current_id < std::numeric_limits<std::size_t>::max()) {
-						path.n_links.push_back(current_v);
+						// this is SLOW, but for now will do
+						while(current_v != V2i(-1, -1)) {
+							path.n_links.push_back(current_v);
 
-						current_id = visited.parent(current_id);
-						current_v = i2v(current_id);
+							current_v = visited.parent(current_v);
+						}
+						std::reverse(path.n_links.begin(), path.n_links.end());
+
+						assert(path.isValid());
+
+						offset = src_id+1;
+
+						return true;
 					}
-					std::reverse(path.n_links.begin(), path.n_links.end());
-
-					assert(path.isValid());
-
-					offset = src_id+1;
-
-					return true;
 				}
 
 				// try to move horizontally left
 				if(current_v.x > 0) {
 					const V2i new_v(current_v.x-1, current_v.y);
 					const std::size_t new_id = v2i(new_v);
-					if(!visited.visited(new_id)) {
+					if(!visited.visited(new_v)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_id, current_id);
+							visited.visit(new_v, current_v);
 							q.push_back(new_id);
 						}
 					}
@@ -136,9 +138,9 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current_v.x < m_size.x-1) {
 					const V2i new_v(current_v.x+1, current_v.y);
 					const std::size_t new_id = v2i(new_v);
-					if(!visited.visited(new_id)) {
+					if(!visited.visited(new_v)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_id, current_id);
+							visited.visit(new_v, current_v);
 							q.push_back(new_id);
 						}
 					}
@@ -148,9 +150,9 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current_v.y > 0) {
 					const V2i new_v(current_v.x, current_v.y-1);
 					const std::size_t new_id = v2i(new_v);
-					if(!visited.visited(new_id)) {
+					if(!visited.visited(new_v)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_id, current_id);
+							visited.visit(new_v, current_v);
 							q.push_back(new_id);
 						}
 					}
@@ -160,9 +162,9 @@ bool Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current_v.y < m_size.y-1) {
 					const V2i new_v(current_v.x, current_v.y+1);
 					const std::size_t new_id = v2i(new_v);
-					if(!visited.visited(new_id)) {
+					if(!visited.visited(new_v)) {
 						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_id, current_id);
+							visited.visit(new_v, current_v);
 							q.push_back(new_id);
 						}
 					}

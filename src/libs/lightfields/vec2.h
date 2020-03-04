@@ -10,6 +10,14 @@ struct Vec2 {
 	Vec2(const T& _x, const T& _y) : x(_x), y(_y) {
 	}
 
+	bool operator == (const Vec2& v) const {
+		return x == v.x && y == v.y;
+	}
+
+	bool operator != (const Vec2& v) const {
+		return x != v.x || y != v.y;
+	}
+
 	T x, y;
 };
 
