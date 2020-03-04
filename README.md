@@ -1753,6 +1753,26 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/08_lightfields/43_st_graphcut.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### ST Graph Cut
+
+A simple ST Graph Cut demo, implementing a 2-label version of the Graph Cut classification algorithm. Specifically, it implements a single-threaded version of the [Edmonds-Karp](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm) algorithm.
+
+(to be improved in later pull requests)
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/08_lightfields/43_st_graphcut_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
 </table> 
 
 ## Tutorials

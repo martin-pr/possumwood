@@ -121,7 +121,7 @@
             "out_port": "sink_frame"
         }
     ],
-    "description": "### s-t Graph Cut",
+    "description": "### ST Graph Cut\n\nA simple ST Graph Cut demo, implementing a 2-label version of the Graph Cut classification algorithm. Specifically, it implements a single-threaded version of the [Edmonds-Karp](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm) algorithm.\n\n(to be improved in later pull requests)",
     "nodes": {
         "color_0": {
             "blind_data": {
@@ -655,5 +655,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAcwAAABwAAAd7AAAEDwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGtAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACIAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAClgAAANgAAACqAQAAAwAAA1QAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGtAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAfMAAACqAQAAAwAAA1QAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
