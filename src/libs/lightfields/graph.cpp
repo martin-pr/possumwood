@@ -106,9 +106,9 @@ V2i Graph::i2v(std::size_t v) const {
 }
 
 void Graph::step(BFSVisitors& visited, std::deque<V2i>& q, const V2i& current_v, const V2i& new_v) const {
-	if(!visited.visited(new_v)) {
+	if(!visited.visited(Index{new_v, 0})) {
 		if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-			visited.visit(new_v, current_v);
+			visited.visit(Index{new_v, 0}, Index{current_v, 0});
 			q.push_back(new_v);
 		}
 	}
@@ -117,7 +117,7 @@ void Graph::step(BFSVisitors& visited, std::deque<V2i>& q, const V2i& current_v,
 int Graph::bfs_2(Path& path, std::size_t& offset) const {
 	path.clear();
 
-	BFSVisitors visited(m_size);
+	BFSVisitors visited(m_size, 1);
 	std::deque<V2i> q;
 
 	const std::size_t end = m_size.x * m_size.y;
@@ -127,7 +127,7 @@ int Graph::bfs_2(Path& path, std::size_t& offset) const {
 
 		if(m_sourceLinks.edge(src_v).residualCapacity() > 0) {
 			visited.clear();
-			visited.visit(src_v, V2i(-1, -1));
+			visited.visit(Index{src_v, 0}, Index{V2i(-1, -1), 0});
 
 			q.clear();
 			q.push_back(src_v);
@@ -147,11 +147,11 @@ int Graph::bfs_2(Path& path, std::size_t& offset) const {
 						while(current_v != V2i(-1, -1)) {
 							path.add(current_v);
 
-							const V2i& parent_v = visited.parent(current_v);
-							if(parent_v != V2i(-1, -1))
-								flow = std::min(flow, m_nLinks.edge(parent_v, current_v).residualCapacity());
+							const Index& parent_v = visited.parent(Index{current_v, 0});
+							if(parent_v.index != V2i(-1, -1))
+								flow = std::min(flow, m_nLinks.edge(parent_v.index, current_v).residualCapacity());
 
-							current_v = parent_v;
+							current_v = parent_v.index;
 						}
 
 						flow = std::min(flow, m_sourceLinks.edge(path.front()).residualCapacity());
