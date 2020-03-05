@@ -41,12 +41,26 @@ class Graph {
 
 		void step(BFSVisitors& visitors, std::deque<V2i>& q, const V2i& current_v, const V2i& new_v) const;
 
-		struct Path {
-			Path();
+		class Path {
+			public:
+				Path();
 
-			bool isValid() const;
+				bool isValid() const;
+				bool empty() const;
 
-			std::vector<V2i> n_links;
+				/// designed to be filled from the back - this adds a link to the "front" of the path
+				void add(const V2i& link);
+				void clear();
+
+				typedef std::vector<V2i>::const_reverse_iterator const_iterator;
+				const_iterator begin() const;
+				const_iterator end() const;
+
+				const V2i& front() const;
+				const V2i& back() const;
+
+			private:
+				std::vector<V2i> n_links;
 		};
 
 		/// Simplified depth-first-search - only forward search from S and backward search from T (will avoid loops implicitly).

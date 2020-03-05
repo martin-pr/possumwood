@@ -38,6 +38,35 @@ bool Graph::Path::isValid() const {
 	}
 }
 
+bool Graph::Path::empty() const {
+	return n_links.empty();
+}
+
+void Graph::Path::add(const V2i& link) {
+	n_links.push_back(link);
+}
+
+void Graph::Path::clear() {
+	n_links.clear();
+}
+
+Graph::Path::const_iterator Graph::Path::begin() const {
+	return n_links.rbegin();
+}
+
+Graph::Path::const_iterator Graph::Path::end() const {
+	return n_links.rend();
+}
+
+const V2i& Graph::Path::front() const {
+	assert(!n_links.empty());
+	return n_links.back();
+}
+
+const V2i& Graph::Path::back() const {
+	assert(!n_links.empty());
+	return n_links.front();
+}
 
 /////
 
@@ -86,7 +115,7 @@ void Graph::step(BFSVisitors& visited, std::deque<V2i>& q, const V2i& current_v,
 }
 
 int Graph::bfs_2(Path& path, std::size_t& offset) const {
-	path.n_links.clear();
+	path.clear();
 
 	BFSVisitors visited(m_size);
 	std::deque<V2i> q;
@@ -112,11 +141,11 @@ int Graph::bfs_2(Path& path, std::size_t& offset) const {
 				{
 					int flow = m_sinkLinks.edge(current_v).residualCapacity();
 					if(flow > 0) {
-						path.n_links.clear();
+						path.clear();
 
 						// this is SLOW, but for now will do
 						while(current_v != V2i(-1, -1)) {
-							path.n_links.push_back(current_v);
+							path.add(current_v);
 
 							const V2i& parent_v = visited.parent(current_v);
 							if(parent_v != V2i(-1, -1))
@@ -124,9 +153,8 @@ int Graph::bfs_2(Path& path, std::size_t& offset) const {
 
 							current_v = parent_v;
 						}
-						std::reverse(path.n_links.begin(), path.n_links.end());
 
-						flow = std::min(flow, m_sourceLinks.edge(path.n_links.front()).residualCapacity());
+						flow = std::min(flow, m_sourceLinks.edge(path.front()).residualCapacity());
 
 						assert(path.isValid());
 
@@ -161,13 +189,13 @@ int Graph::bfs_2(Path& path, std::size_t& offset) const {
 int Graph::flow(const Path& path) const {
 	assert(path.isValid());
 
-	int result = m_sourceLinks.edge(path.n_links.front()).residualCapacity();
+	int result = m_sourceLinks.edge(path.front()).residualCapacity();
 
-	if(!path.n_links.empty()) {
-		auto it1 = path.n_links.begin();
+	if(!path.empty()) {
+		auto it1 = path.begin();
 		auto it2 = it1+1;
 
-		while(it2 != path.n_links.end()) {
+		while(it2 != path.end()) {
 			result = std::min(result, m_nLinks.edge(*it1, *it2).residualCapacity());
 
 			++it1;
@@ -175,7 +203,7 @@ int Graph::flow(const Path& path) const {
 		}
 	}
 
-	result = std::min(result, m_sinkLinks.edge(path.n_links.back()).residualCapacity());
+	result = std::min(result, m_sinkLinks.edge(path.back()).residualCapacity());
 
 	return result;
 }
@@ -195,12 +223,12 @@ void Graph::solve() {
 		assert(flow > 0 && "Augmented path flow at the beginning of each iteration should be positive");
 
 		// update the graph
-		m_sourceLinks.edge(path.n_links.front()).addFlow(flow);
+		m_sourceLinks.edge(path.front()).addFlow(flow);
 
-		if(!path.n_links.empty()) {
-			auto it1 = path.n_links.begin();
+		if(!path.empty()) {
+			auto it1 = path.begin();
 			auto it2 = it1+1;
-			while(it2 != path.n_links.end()) {
+			while(it2 != path.end()) {
 				m_nLinks.edge(*it1, *it2).addFlow(flow);
 
 				assert(m_nLinks.edge(*it1, *it2).residualCapacity() >= 0);
@@ -211,7 +239,7 @@ void Graph::solve() {
 			}
 		}
 
-		m_sinkLinks.edge(path.n_links.back()).addFlow(flow);
+		m_sinkLinks.edge(path.back()).addFlow(flow);
 
 		assert(this->flow(path) == 0 && "Augmented path flow at the end of each iteration should be zero");
 
