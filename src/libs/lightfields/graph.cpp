@@ -150,10 +150,11 @@ int Graph::bfs_2(Path& path, std::size_t& offset) const {
 									flow = std::min(flow, m_nLinks[current_v.n_layer].edge(parent_v.pos, current_v.pos).residualCapacity());
 								}
 								else {
-									assert(parent_v.n_layer+1 == current_v.n_layer);
+									assert(parent_v.n_layer+1 == current_v.n_layer || parent_v.n_layer == current_v.n_layer+1);
 									assert(V2i::sqdist(current_v.pos, parent_v.pos) == 0);
 
-									flow = std::min(flow, m_tLinks[current_v.n_layer].edge(current_v.pos).residualCapacity());
+									if(parent_v.n_layer < current_v.n_layer)
+										flow = std::min(flow, m_tLinks[current_v.n_layer].edge(current_v.pos).residualCapacity());
 								}
 							}
 
@@ -186,7 +187,7 @@ int Graph::bfs_2(Path& path, std::size_t& offset) const {
 				if(current_v.pos.y < m_size.y-1)
 					step(visited, q, current_v, Index{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer});
 
-				// and try to move down a layer
+				// try to move down a layer
 				if((current_v.n_layer < m_nLinks.size() - 1)) {
 					const Index new_v{current_v.pos, current_v.n_layer+1};
 					if(!visited.visited(new_v) && (m_tLinks[new_v.n_layer].edge(current_v.pos).residualCapacity() > 0)) {
@@ -195,7 +196,14 @@ int Graph::bfs_2(Path& path, std::size_t& offset) const {
 					}
 				}
 
-				// TODO: try to move UP a layer?
+				// try to move up a layer (unconditional)
+				if((current_v.n_layer > 0)) {
+					const Index new_v{current_v.pos, current_v.n_layer-1};
+					if(!visited.visited(new_v)) {
+						visited.visit(new_v, current_v);
+						q.push_back(new_v);
+					}
+				}
 			}
 		}
 	}
@@ -228,12 +236,19 @@ int Graph::flow(const Path& path) const {
 			current.pos = it->pos;
 		}
 
-		// different layer - need to use a T link
-		else {
+		// different layer - need to use a T link (if the move is to higher layer)
+		else if(current.n_layer < it->n_layer) {
 			current.n_layer++;
 			assert(current.n_layer == it->n_layer);
 
 			result = std::min(result, m_tLinks[current.n_layer].edge(current.pos).residualCapacity());
+		}
+
+		// different layer - "infinite capacity" back links have no impact on the flow
+		else {
+			assert(current.n_layer > 0);
+			current.n_layer--;
+			assert(current.n_layer == it->n_layer);
 		}
 	}
 
@@ -277,8 +292,10 @@ void Graph::solve() {
 			// between-layer move - use T links
 			else {
 				assert(it1->pos == it2->pos);
+				assert(it1->n_layer+1 == it2->n_layer || it1->n_layer == it2->n_layer+1);
 
-				m_tLinks[it2->n_layer].edge(it1->pos).addFlow(flow);
+				if(it1->n_layer < it2->n_layer)
+					m_tLinks[it2->n_layer].edge(it1->pos).addFlow(flow);
 
 				assert(m_tLinks[it2->n_layer].edge(it1->pos).residualCapacity() >= 0);
 			}
@@ -301,7 +318,7 @@ void Graph::solve() {
 
 cv::Mat Graph::minCut() const {
 	// collects all reachable nodes from source or sink, and marks them appropriately
-	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
+	cv::Mat result = cv::Mat(m_size.y, m_size.x, CV_8UC1, 255);
 
 	for(int y=0; y<m_size.y; ++y)
 		for(int x=0; x<m_size.x; ++x) {
@@ -327,8 +344,8 @@ cv::Mat Graph::minCut() const {
 	// 				assert(m_tLinks.back().edge(current.pos).residualCapacity() == 0 && "None of the paths should have a direct link from source to the sink without turning on an N link.");
 
 	// 				unsigned char& value = result.at<unsigned char>(current.pos.y, current.pos.x);
-	// 				const int target = current.n_layer * (255 / m_nLinks.size());
-	// 				std::cout << target << " ";
+	// 				const int target = (current.n_layer) * (255 / m_nLinks.size());
+	// 				// std::cout << target << " ";
 
 	// 				if(!visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y]) {
 	// 					visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y] = true;
@@ -336,7 +353,7 @@ cv::Mat Graph::minCut() const {
 	// 				// if(target != value) {
 	// 					// std::cout << "#";
 
-	// 					if(target > value)
+	// 					if(target > value || value == 255)
 	// 						value = target;
 
 	// 					if(current.n_layer < m_nLinks.size()) {
@@ -352,17 +369,19 @@ cv::Mat Graph::minCut() const {
 	// 						if(current.pos.y < m_size.y-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y+1)).residualCapacity() > 0)
 	// 							stack.push_back(Index{V2i(current.pos.x, current.pos.y+1), current.n_layer});
 
-	// 						// layer move
-	// 						assert(current.n_layer + 1 < m_tLinks.size());
+	// 						// layer move down
+	// 						assert(current.n_layer < m_nLinks.size());
 	// 						if(m_tLinks[current.n_layer+1].edge(current.pos).residualCapacity() > 0)
 	// 							stack.push_back(Index{current.pos, current.n_layer+1});
 
-	// 						// TODO: allow moving UP the layers
+	// 						// // layer move up (unconditional)
+	// 						// if(current.n_layer > 0)
+	// 						// 	stack.push_back(Index{current.pos, current.n_layer-1});
 	// 					}
 	// 				}
 	// 			}
 
-	// 			std::cout << std::endl;
+	// 			// std::cout << std::endl;
 	// 		}
 
 	return result;
