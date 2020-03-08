@@ -35,21 +35,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if((*f).type() != CV_8UC1)
 			throw std::runtime_error("Only CV_8UC1 images accepted on input.");
 
+	lightfields::Graph graph(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size()-1);
 
-	// temporary
-	if(sequence.size() != 2)
-		throw std::runtime_error("Only 2 images supported on input for the moment.");
+	std::vector<int> values(sequence.size(), 0);
 
-	const cv::Mat& m1 = (**sequence.begin());
-	const cv::Mat& m2 = (**(sequence.begin() + 1));
+	for(int row = 0; row < height; ++row)
+		for(int col = 0; col < width; ++col) {
+			std::size_t ctr = 0;
+			for(auto& m : sequence) {
+				values[ctr] = (*m).at<unsigned char>(row, col);
+				++ctr;
+			}
 
-	lightfields::Graph graph(lightfields::V2i(m1.cols, m1.rows), std::max(0.0f, data.get(a_constness)));
-
-	for(int row = 0; row < m1.rows; ++row)
-		for(int col = 0; col < m1.cols; ++col) {
-			const int v1 = m1.at<unsigned char>(row, col);
-			const int v2 = m2.at<unsigned char>(row, col);
-			graph.setValue(lightfields::V2i(col, row), v1, v2);
+			graph.setValue(lightfields::V2i(col, row), values);
 		}
 
 	graph.solve();
@@ -57,10 +55,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	data.set(a_out, possumwood::opencv::Frame(graph.minCut()));
 
 	possumwood::opencv::Sequence debug;
-	debug.add(graph.sourceFlow());
-	debug.add(graph.horizontalFlow());
-	debug.add(graph.verticalFlow());
-	debug.add(graph.sinkFlow());
+	for(auto& m : graph.debug())
+		debug.add(m);
 
 	data.set(a_debug, debug);
 

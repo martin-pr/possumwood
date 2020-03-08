@@ -17,7 +17,7 @@ class Sequence final {
 		bool empty() const;
 		std::size_t size() const;
 
-		typedef boost::indirect_iterator<std::vector<std::shared_ptr<const Frame>>::const_iterator> const_iterator;
+		typedef std::vector<Frame>::const_iterator const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
 
@@ -25,7 +25,7 @@ class Sequence final {
 		bool operator != (const Sequence& f) const;
 
 	private:
-		std::vector<std::shared_ptr<const Frame>> m_Sequence;
+		std::vector<Frame> m_sequence;
 };
 
 std::ostream& operator << (std::ostream& out, const Sequence& f);

@@ -6,7 +6,7 @@
 
 namespace lightfields {
 
-TLinks::Edge::Edge(int capacity) : m_capacity(capacity), m_flow(0.0f) {
+TLinks::Edge::Edge(int capacity) : m_capacity(capacity), m_flow(0) {
 }
 
 void TLinks::Edge::setCapacity(const int& capacity) {
@@ -25,6 +25,7 @@ void TLinks::Edge::addFlow(const int& flow) {
 
 	assert(m_flow >= 0);
 	assert(m_flow <= m_capacity);
+	assert(residualCapacity() >= 0);
 }
 
 const int& TLinks::Edge::flow() const {
