@@ -7,7 +7,7 @@
 
 #include "n_links.h"
 #include "t_links.h"
-#include "index.h"
+#include "graph_path.h"
 
 namespace lightfields {
 
@@ -39,31 +39,9 @@ class Graph {
 
 		void step(BFSVisitors& visitors, std::deque<Index>& q, const Index& current_v, const Index& new_v) const;
 
-		class Path {
-			public:
-				Path();
+		int bfs_2(GraphPath& path, std::size_t& offset) const;
 
-				bool isValid() const;
-				bool empty() const;
-
-				/// designed to be filled from the back - this adds a link to the "front" of the path
-				void add(const Index& link);
-				void clear();
-
-				typedef std::vector<Index>::const_reverse_iterator const_iterator;
-				const_iterator begin() const;
-				const_iterator end() const;
-
-				const Index& front() const;
-				const Index& back() const;
-
-			private:
-				std::vector<Index> n_links;
-		};
-
-		int bfs_2(Path& path, std::size_t& offset) const;
-
-		int flow(const Path& path) const;
+		int flow(const GraphPath& path) const;
 
 		cv::Mat t_flow(const TLinks& t) const;
 		cv::Mat n_flow_horiz(const NLinks& t) const;

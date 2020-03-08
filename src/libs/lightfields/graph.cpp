@@ -8,61 +8,6 @@
 
 namespace lightfields {
 
-Graph::Path::Path() {
-}
-
-bool Graph::Path::isValid() const {
-	if(n_links.empty())
-		return false;
-
-	else {
-		bool result = true;
-
-		auto it1 = n_links.begin();
-		auto it2 = it1+1;
-		while(it2 != n_links.end()) {
-			result &= (Index::sqdist(*it1, *it2) == 1);
-
-			++it1;
-			++it2;
-		}
-		return result;
-	}
-}
-
-bool Graph::Path::empty() const {
-	return n_links.empty();
-}
-
-void Graph::Path::add(const Index& link) {
-	assert(n_links.empty() || (Index::sqdist(link, n_links.back()) == 1));
-	n_links.push_back(link);
-}
-
-void Graph::Path::clear() {
-	n_links.clear();
-}
-
-Graph::Path::const_iterator Graph::Path::begin() const {
-	return n_links.rbegin();
-}
-
-Graph::Path::const_iterator Graph::Path::end() const {
-	return n_links.rend();
-}
-
-const Index& Graph::Path::front() const {
-	assert(!n_links.empty());
-	return n_links.back();
-}
-
-const Index& Graph::Path::back() const {
-	assert(!n_links.empty());
-	return n_links.front();
-}
-
-/////
-
 Graph::Graph(const V2i& size, int n_link_value, std::size_t layer_count) : m_size(size) {
 	m_tLinks = std::vector<TLinks>(layer_count+1, TLinks(size));
 	m_nLinks = std::vector<NLinks>(layer_count, NLinks(size, n_link_value));
@@ -106,7 +51,7 @@ void Graph::step(BFSVisitors& visited, std::deque<Index>& q, const Index& curren
 	}
 }
 
-int Graph::bfs_2(Path& path, std::size_t& offset) const {
+int Graph::bfs_2(GraphPath& path, std::size_t& offset) const {
 	path.clear();
 
 	BFSVisitors visited(m_size, m_nLinks.size());
@@ -211,7 +156,7 @@ int Graph::bfs_2(Path& path, std::size_t& offset) const {
 	return 0;
 }
 
-int Graph::flow(const Path& path) const {
+int Graph::flow(const GraphPath& path) const {
 	assert(path.isValid() && !path.empty());
 
 	assert(path.front().n_layer == 0);
@@ -260,7 +205,7 @@ int Graph::flow(const Path& path) const {
 }
 
 void Graph::solve() {
-	Path path;
+	GraphPath path;
 
 	std::size_t counter = 0;
 
