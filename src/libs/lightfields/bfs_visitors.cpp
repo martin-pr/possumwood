@@ -6,6 +6,8 @@
 
 namespace lightfields {
 
+#ifndef BFS_VISITORS_TRIVIAL
+
 std::size_t BFSVisitors::vec2index(const Index& v) const {
 	if(v.pos.x == -1 && v.pos.y == -1)
 		return std::numeric_limits<std::size_t>::max();
@@ -83,8 +85,30 @@ void BFSVisitors::clear() {
 	assert((m_stage & ~m_mask) == 0);
 }
 
-// GraphPath BFSVisitors::path(const Index& target) const {
+///////////////
 
-// }
+#else
+
+BFSVisitors::BFSVisitors(const V2i& size, std::size_t layer_count) {
+}
+
+bool BFSVisitors::visited(const Index& index) const {
+	return m_visited.find(index) != m_visited.end();
+}
+
+Index BFSVisitors::parent(const Index& index) const {
+	assert(visited(index));
+	return m_visited.find(index)->second;
+}
+
+void BFSVisitors::visit(const Index& index, const Index& parent) {
+	m_visited[index] = parent;
+}
+
+void BFSVisitors::clear() {
+	m_visited.clear();
+}
+
+#endif
 
 }
