@@ -37,8 +37,8 @@ class Graph {
 		std::size_t v2i(const V2i& v) const;
 		V2i i2v(std::size_t v) const;
 
-		int bfs_2(GraphPath& path, std::size_t& offset) const;
-		void doFlow(const GraphPath& path, int flow);
+		GraphPath bfs(std::size_t& offset) const;
+		void doFlow(const GraphPath& path);
 
 		int flow(const GraphPath& path) const;
 

@@ -20,6 +20,8 @@ class BFSVisitors {
 
 		void clear();
 
+		GraphPath path(const Index& end) const;
+
 	private:
 		#ifndef BFS_VISITORS_TRIVIAL
 		std::size_t vec2index(const Index& v) const;

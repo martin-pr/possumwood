@@ -85,6 +85,33 @@ void BFSVisitors::clear() {
 	assert((m_stage & ~m_mask) == 0);
 }
 
+GraphPath BFSVisitors::path(const Index& end) const {
+	GraphPath path;
+
+	Index current_v = end;
+
+	while(current_v.pos != V2i(-1, -1)) {
+		path.add(current_v);
+
+		const Index parent_v = parent(current_v);
+
+#ifndef NDEBUG
+		if(parent_v.pos != V2i(-1, -1)) {
+			if(parent_v.n_layer == current_v.n_layer)
+				assert(V2i::sqdist(current_v.pos, parent_v.pos) == 1);
+			else {
+				assert(parent_v.n_layer+1 == current_v.n_layer || parent_v.n_layer == current_v.n_layer+1);
+				assert(V2i::sqdist(current_v.pos, parent_v.pos) == 0);
+			}
+		}
+#endif
+
+		current_v = parent_v;
+	}
+
+	return path;
+}
+
 ///////////////
 
 #else
