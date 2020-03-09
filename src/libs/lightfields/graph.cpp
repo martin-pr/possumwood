@@ -57,85 +57,89 @@ struct QueueItem {
 
 }
 
-GraphPath Graph::bfs(std::size_t& offset) const {
+bool Graph::iterate() {
+	bool foundPath = false;
+
 	BFSVisitors visited(m_size, m_nLinks.size());
 	std::deque<QueueItem> q;
 
-	const std::size_t end = m_size.x * m_size.y;
-	for(std::size_t i=0; i<end; ++i) {
-		const std::size_t src_id = (i + offset) % end;
-		const Index src_v = Index{i2v(src_id), 0};
-
+	{
 		// initialize - source index has parent -1,-1
-		visited.clear();
+		const std::size_t end = m_size.x * m_size.y;
+		for(std::size_t src_id=0; src_id<end; ++src_id) {
+			const Index src_v = Index{i2v(src_id), 0};
 
-		q.clear();
-		q.push_back(QueueItem{src_v, Index{V2i(-1, -1), 0}});
+			q.push_back(QueueItem{src_v, Index{V2i(-1, -1), 0}});
+		}
+	}
 
-		// the core of the algorithm
-		while(!q.empty()) {
-			QueueItem item = q.front();
-			q.pop_front();
+	// the core of the algorithm
+	while(!q.empty()) {
+		QueueItem item = q.front();
+		q.pop_front();
 
-			if(!visited.visited(item.current)) {
-				visited.visit(item.current, item.parent);
+		if(!visited.visited(item.current)) {
+			visited.visit(item.current, item.parent);
 
-				Index current_v = item.current;
+			Index current_v = item.current;
 
-				// try to move horizontally left
-				if(current_v.pos.x > 0) {
-					const Index new_v{V2i(current_v.pos.x-1, current_v.pos.y), current_v.n_layer};
-					if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
-						q.push_back(QueueItem{new_v, current_v});
-				}
-
-				// try to move horizontally right
-				if(current_v.pos.x < m_size.x-1){
-					const Index new_v{V2i(current_v.pos.x+1, current_v.pos.y), current_v.n_layer};
-					if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
-						q.push_back(QueueItem{new_v, current_v});
-				}
-
-				// try to move vertically up
-				if(current_v.pos.y > 0) {
-					const Index new_v{V2i(current_v.pos.x, current_v.pos.y-1), current_v.n_layer};
-					if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
-						q.push_back(QueueItem{new_v, current_v});
-				}
-
-				// try to move vertically down
-				if(current_v.pos.y < m_size.y-1) {
-					const Index new_v{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer};
-					if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
-						q.push_back(QueueItem{new_v, current_v});
-				}
-
-				// try to move up a layer (unconditional)
-				if((current_v.n_layer > 0)) {
-					const Index new_v{current_v.pos, current_v.n_layer-1};
+			// try to move horizontally left
+			if(current_v.pos.x > 0) {
+				const Index new_v{V2i(current_v.pos.x-1, current_v.pos.y), current_v.n_layer};
+				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
 					q.push_back(QueueItem{new_v, current_v});
-				}
+			}
 
-				// try to move down a layer
-				if((current_v.n_layer < m_nLinks.size()-1)) {
-					const Index new_v{current_v.pos, current_v.n_layer+1};
-					if(m_tLinks[current_v.n_layer].edge(current_v.pos).residualCapacity() > 0)
-						q.push_back(QueueItem{new_v, current_v});
-				}
+			// try to move horizontally right
+			if(current_v.pos.x < m_size.x-1){
+				const Index new_v{V2i(current_v.pos.x+1, current_v.pos.y), current_v.n_layer};
+				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
+					q.push_back(QueueItem{new_v, current_v});
+			}
 
-				// the potential exit point
-				if(current_v.n_layer == m_nLinks.size()-1) {
-					if(m_tLinks.back().edge(current_v.pos).residualCapacity() > 0) {
-						offset = src_id+1;
+			// try to move vertically up
+			if(current_v.pos.y > 0) {
+				const Index new_v{V2i(current_v.pos.x, current_v.pos.y-1), current_v.n_layer};
+				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
+					q.push_back(QueueItem{new_v, current_v});
+			}
 
-						return visited.path(current_v);
-					}
+			// try to move vertically down
+			if(current_v.pos.y < m_size.y-1) {
+				const Index new_v{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer};
+				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
+					q.push_back(QueueItem{new_v, current_v});
+			}
+
+			// try to move up a layer (unconditional)
+			if((current_v.n_layer > 0)) {
+				const Index new_v{current_v.pos, current_v.n_layer-1};
+				q.push_back(QueueItem{new_v, current_v});
+			}
+
+			// try to move down a layer
+			if((current_v.n_layer < m_nLinks.size()-1)) {
+				const Index new_v{current_v.pos, current_v.n_layer+1};
+				if(m_tLinks[current_v.n_layer].edge(current_v.pos).residualCapacity() > 0)
+					q.push_back(QueueItem{new_v, current_v});
+			}
+
+			// the potential exit point
+			if(current_v.n_layer == m_nLinks.size()-1) {
+				if(m_tLinks.back().edge(current_v.pos).residualCapacity() > 0) {
+					foundPath = true;
+
+					const GraphPath path = visited.path(current_v);
+
+					const int f = flow(path);
+					if(f > 0)
+						doFlow(path, f);
 				}
 			}
 		}
 	}
 
-	return GraphPath();
+	return foundPath;
 }
 
 int Graph::flow(const GraphPath& path) const {
@@ -190,11 +194,11 @@ int Graph::flow(const GraphPath& path) const {
 	return result;
 }
 
-void Graph::doFlow(const GraphPath& path) {
+void Graph::doFlow(const GraphPath& path, int flow) {
 	assert(!path.empty());
 	assert(path.isValid());
 
-	const int flow = this->flow(path);
+	assert(flow == this->flow(path));
 
 	assert(flow > 0 && "Augmented path flow at the beginning of each iteration should be positive");
 
@@ -236,18 +240,11 @@ void Graph::doFlow(const GraphPath& path) {
 
 void Graph::solve() {
 	std::size_t counter = 0;
-	std::size_t offset = 0;
 
-	GraphPath path = bfs(offset);
-	while(path.isValid()) {
-		doFlow(path);
-
-		path = bfs(offset);
-
+	while(iterate())
 		++counter;
-	}
 
-	std::cout << "ST-cut solve with " << counter << " steps finished." << std::endl;
+	std::cout << "ST-cut solve with " << counter << " iterations finished." << std::endl;
 }
 
 cv::Mat Graph::minCut() const {
