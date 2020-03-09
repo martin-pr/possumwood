@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "index.h"
+#include "graph_path.h"
 
 namespace lightfields {
 
@@ -16,6 +16,9 @@ class BFSVisitors {
 		void visit(const Index& index, const Index& parent);
 
 		void clear();
+
+		/// builds a path by back-following the visitors
+		// GraphPath path(const Index& target) const;
 
 	private:
 		std::size_t vec2index(const Index& v) const;

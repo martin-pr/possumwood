@@ -83,4 +83,8 @@ void BFSVisitors::clear() {
 	assert((m_stage & ~m_mask) == 0);
 }
 
+// GraphPath BFSVisitors::path(const Index& target) const {
+
+// }
+
 }

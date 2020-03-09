@@ -35,7 +35,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if((*f).type() != CV_8UC1)
 			throw std::runtime_error("Only CV_8UC1 images accepted on input.");
 
-	lightfields::Graph graph(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size()-1);
+	lightfields::Graph graph(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size());
 
 	std::vector<int> values(sequence.size(), 0);
 
@@ -43,7 +43,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(int col = 0; col < width; ++col) {
 			std::size_t ctr = 0;
 			for(auto& m : sequence) {
-				values[ctr] = (*m).at<unsigned char>(row, col);
+				values[ctr] = 255 - (*m).at<unsigned char>(row, col);
 				++ctr;
 			}
 

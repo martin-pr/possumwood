@@ -9,7 +9,7 @@
 namespace lightfields {
 
 Graph::Graph(const V2i& size, int n_link_value, std::size_t layer_count) : m_size(size) {
-	m_tLinks = std::vector<TLinks>(layer_count+1, TLinks(size));
+	m_tLinks = std::vector<TLinks>(layer_count, TLinks(size));
 	m_nLinks = std::vector<NLinks>(layer_count, NLinks(size, n_link_value));
 }
 
@@ -62,92 +62,88 @@ int Graph::bfs_2(GraphPath& path, std::size_t& offset) const {
 		const std::size_t src_id = (i + offset) % end;
 		const Index src_v = Index{i2v(src_id), 0};
 
-		assert(m_tLinks.front().edge(src_v.pos).capacity() >= 0);
-		assert(m_tLinks.front().edge(src_v.pos).flow() >= 0);
-		assert(m_tLinks.front().edge(src_v.pos).residualCapacity() >= 0);
+		// initialize - source index has parent -1,-1
+		visited.clear();
+		visited.visit(src_v, Index{V2i(-1, -1), 0});
 
-		if(m_tLinks.front().edge(src_v.pos).residualCapacity() > 0) {
-			visited.clear();
-			visited.visit(src_v, Index{V2i(-1, -1), 0});
+		q.clear();
+		q.push_back(src_v);
 
-			q.clear();
-			q.push_back(src_v);
+		// the core of the algorithm
+		while(!q.empty()) {
+			Index current_v = q.front();
+			q.pop_front();
 
-			// the core of the algorithm
-			while(!q.empty()) {
-				Index current_v = q.front();
-				q.pop_front();
+			// try to move horizontally left
+			if(current_v.pos.x > 0)
+				step(visited, q, current_v, Index{V2i(current_v.pos.x-1, current_v.pos.y), current_v.n_layer});
 
-				// check if there is an exit point here
-				if(current_v.n_layer == m_nLinks.size() - 1) {
-					int flow = m_tLinks.back().edge(current_v.pos).residualCapacity();
-					if(flow > 0) {
-						path.clear();
+			// try to move horizontally right
+			if(current_v.pos.x < m_size.x-1)
+				step(visited, q, current_v, Index{V2i(current_v.pos.x+1, current_v.pos.y), current_v.n_layer});
 
-						// follow the "parents"
-						while(current_v.pos != V2i(-1, -1)) {
-							path.add(current_v);
+			// try to move vertically up
+			if(current_v.pos.y > 0)
+				step(visited, q, current_v, Index{V2i(current_v.pos.x, current_v.pos.y-1), current_v.n_layer});
 
-							const Index parent_v = visited.parent(current_v);
-							if(parent_v.pos != V2i(-1, -1)) {
-								if(parent_v.n_layer == current_v.n_layer) {
-									assert(V2i::sqdist(current_v.pos, parent_v.pos) == 1);
-									flow = std::min(flow, m_nLinks[current_v.n_layer].edge(parent_v.pos, current_v.pos).residualCapacity());
-								}
-								else {
-									assert(parent_v.n_layer+1 == current_v.n_layer || parent_v.n_layer == current_v.n_layer+1);
-									assert(V2i::sqdist(current_v.pos, parent_v.pos) == 0);
+			// try to move vertically down
+			if(current_v.pos.y < m_size.y-1)
+				step(visited, q, current_v, Index{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer});
 
-									if(parent_v.n_layer < current_v.n_layer)
-										flow = std::min(flow, m_tLinks[current_v.n_layer].edge(current_v.pos).residualCapacity());
-								}
+			// try to move up a layer (unconditional)
+			if((current_v.n_layer > 0)) {
+				const Index new_v{current_v.pos, current_v.n_layer-1};
+				if(!visited.visited(new_v)) {
+					visited.visit(new_v, current_v);
+					q.push_back(new_v);
+				}
+			}
+
+			// try to move down a layer
+			if((current_v.n_layer < m_nLinks.size()-1)) {
+				const Index new_v{current_v.pos, current_v.n_layer+1};
+				if((new_v.n_layer == m_nLinks.size() || (!visited.visited(new_v))) && (m_tLinks[current_v.n_layer].edge(current_v.pos).residualCapacity() > 0)) {
+					if(current_v.n_layer < m_nLinks.size())
+						visited.visit(new_v, current_v);
+					q.push_back(new_v);
+				}
+			}
+
+			// the potential exit point
+			else {
+				assert(current_v.n_layer == m_nLinks.size()-1);
+
+				int flow = m_tLinks.back().edge(current_v.pos).residualCapacity();
+				if(flow > 0) {
+					path.clear();
+
+					// follow the "parents"
+					while(current_v.pos != V2i(-1, -1)) {
+						path.add(current_v);
+
+						const Index parent_v = visited.parent(current_v);
+						if(parent_v.pos != V2i(-1, -1)) {
+							if(parent_v.n_layer == current_v.n_layer) {
+								assert(V2i::sqdist(current_v.pos, parent_v.pos) == 1);
+								flow = std::min(flow, m_nLinks[current_v.n_layer].edge(parent_v.pos, current_v.pos).residualCapacity());
 							}
+							else {
+								assert(parent_v.n_layer+1 == current_v.n_layer || parent_v.n_layer == current_v.n_layer+1);
+								assert(V2i::sqdist(current_v.pos, parent_v.pos) == 0);
 
-							current_v = parent_v;
+								if(parent_v.n_layer < current_v.n_layer)
+									flow = std::min(flow, m_tLinks[parent_v.n_layer].edge(parent_v.pos).residualCapacity());
+							}
 						}
 
-						flow = std::min(flow, m_tLinks.front().edge(path.front().pos).residualCapacity());
-
-						assert(path.isValid());
-
-						offset = src_id+1;
-
-						return flow;
+						current_v = parent_v;
 					}
-				}
 
-				// try to move horizontally left
-				if(current_v.pos.x > 0)
-					step(visited, q, current_v, Index{V2i(current_v.pos.x-1, current_v.pos.y), current_v.n_layer});
+					assert(path.isValid());
 
-				// try to move horizontally right
-				if(current_v.pos.x < m_size.x-1)
-					step(visited, q, current_v, Index{V2i(current_v.pos.x+1, current_v.pos.y), current_v.n_layer});
+					offset = src_id+1;
 
-				// try to move vertically up
-				if(current_v.pos.y > 0)
-					step(visited, q, current_v, Index{V2i(current_v.pos.x, current_v.pos.y-1), current_v.n_layer});
-
-				// try to move vertically down
-				if(current_v.pos.y < m_size.y-1)
-					step(visited, q, current_v, Index{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer});
-
-				// try to move down a layer
-				if((current_v.n_layer < m_nLinks.size() - 1)) {
-					const Index new_v{current_v.pos, current_v.n_layer+1};
-					if(!visited.visited(new_v) && (m_tLinks[new_v.n_layer].edge(current_v.pos).residualCapacity() > 0)) {
-						visited.visit(new_v, current_v);
-						q.push_back(new_v);
-					}
-				}
-
-				// try to move up a layer (unconditional)
-				if((current_v.n_layer > 0)) {
-					const Index new_v{current_v.pos, current_v.n_layer-1};
-					if(!visited.visited(new_v)) {
-						visited.visit(new_v, current_v);
-						q.push_back(new_v);
-					}
+					return flow;
 				}
 			}
 		}
@@ -162,12 +158,11 @@ int Graph::flow(const GraphPath& path) const {
 	assert(path.front().n_layer == 0);
 	assert(path.back().n_layer == m_nLinks.size()-1);
 
+	// initial flow value
+	int result = std::numeric_limits<int>::max();
+
+	// iterate over all layers
 	auto it = path.begin();
-
-	// first T-link layer
-	int result = m_tLinks.front().edge(it->pos).residualCapacity();
-
-	// middle layers
 	Index current = *it;
 	++it;
 
@@ -183,16 +178,21 @@ int Graph::flow(const GraphPath& path) const {
 
 		// different layer - need to use a T link (if the move is to higher layer)
 		else if(current.n_layer < it->n_layer) {
-			current.n_layer++;
-			assert(current.n_layer == it->n_layer);
+			assert(current.n_layer+1 == it->n_layer);
+			assert(current.pos == it->pos);
 
 			result = std::min(result, m_tLinks[current.n_layer].edge(current.pos).residualCapacity());
+
+			current.n_layer = it->n_layer;
 		}
 
 		// different layer - "infinite capacity" back links have no impact on the flow
 		else {
 			assert(current.n_layer > 0);
+			assert(current.n_layer - it->n_layer == 1);
+
 			current.n_layer--;
+
 			assert(current.n_layer == it->n_layer);
 		}
 	}
@@ -215,13 +215,14 @@ void Graph::solve() {
 	while((flow = bfs_2(path, offset))) {
 		assert(!path.empty());
 		assert(path.isValid());
+
 		assert(this->flow(path) == flow);
 
 		assert(flow > 0 && "Augmented path flow at the beginning of each iteration should be positive");
 
 		// update the graph starting from first T link layer
 		assert(path.front().n_layer == 0);
-		m_tLinks.front().edge(path.front().pos).addFlow(flow);
+		// m_tLinks.front().edge(path.front().pos).addFlow(flow);
 
 		auto it1 = path.begin();
 		auto it2 = it1+1;
@@ -240,7 +241,7 @@ void Graph::solve() {
 				assert(it1->n_layer+1 == it2->n_layer || it1->n_layer == it2->n_layer+1);
 
 				if(it1->n_layer < it2->n_layer)
-					m_tLinks[it2->n_layer].edge(it1->pos).addFlow(flow);
+					m_tLinks[it1->n_layer].edge(it1->pos).addFlow(flow);
 
 				assert(m_tLinks[it2->n_layer].edge(it1->pos).residualCapacity() >= 0);
 			}
@@ -250,7 +251,7 @@ void Graph::solve() {
 		}
 
 		// last T link layer
-		assert(it1->n_layer == m_tLinks.size()-2);
+		assert(it1->n_layer == m_tLinks.size()-1);
 		m_tLinks.back().edge(it1->pos).addFlow(flow);
 
 		assert(this->flow(path) == 0 && "Augmented path flow at the end of each iteration should be zero");
@@ -263,87 +264,83 @@ void Graph::solve() {
 
 cv::Mat Graph::minCut() const {
 	// collects all reachable nodes from source or sink, and marks them appropriately
-	cv::Mat result = cv::Mat(m_size.y, m_size.x, CV_8UC1, 255);
+	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
 
-	for(int y=0; y<m_size.y; ++y)
-		for(int x=0; x<m_size.x; ++x) {
-			for(std::size_t a=0; a<m_tLinks.size(); ++a)
-				if(m_tLinks[a].edge(V2i(x, y)).residualCapacity() > 0)
-					result.at<unsigned char>(y, x) = a * (255 / (m_tLinks.size()-1));
-		}
-
-	// // reachable from source as a trivial DFS search
-	// std::vector<Index> stack;
 	// for(int y=0; y<m_size.y; ++y)
-	// 	for(int x=0; x<m_size.x; ++x)
-	// 		if(m_tLinks.front().edge(V2i(x, y)).residualCapacity() > 0) {
-	// 			// std::cout << x << "," << y << "  ";
-	// 			stack.push_back(Index{V2i(x, y), 0});
+	// 	for(int x=0; x<m_size.x; ++x) {
+	// 		// int a=0;
+	// 		for(std::size_t a=0; a<m_tLinks.size(); ++a)
+	// 			if(m_tLinks[a].edge(V2i(x, y)).residualCapacity() == 0)
+	// 				result.at<unsigned char>(y, x) = a * (255 / (m_tLinks.size() - 1));
+	// 	}
 
-	// 			std::vector<bool> visited(m_size.x * m_size.y * m_nLinks.size());
+	// reachable from source as a trivial DFS search
+	{
+		std::vector<Index> stack;
+		for(int y=0; y<m_size.y; ++y)
+			for(int x=0; x<m_size.x; ++x) {
+				// if(m_tLinks.front().edge(V2i(x, y)).residualCapacity() > 0) {
+					// std::cout << x << "," << y << "  ";
+					stack.push_back(Index{V2i(x, y), 0});
+					std::vector<bool> visited(m_size.x * m_size.y * m_nLinks.size());
 
-	// 			while(!stack.empty()) {
-	// 				const Index current = stack.back();
-	// 				stack.pop_back();
+					while(!stack.empty()) {
+						const Index current = stack.back();
+						stack.pop_back();
 
-	// 				assert(m_tLinks.back().edge(current.pos).residualCapacity() == 0 && "None of the paths should have a direct link from source to the sink without turning on an N link.");
+						// assert(m_tLinks.back().edge(current.pos).residualCapacity() == 0 && "None of the paths should have a direct link from source to the sink without turning on an N link.");
 
-	// 				unsigned char& value = result.at<unsigned char>(current.pos.y, current.pos.x);
-	// 				const int target = (current.n_layer) * (255 / m_nLinks.size());
-	// 				// std::cout << target << " ";
+						unsigned char& value = result.at<unsigned char>(current.pos.y, current.pos.x);
+						const int target = (current.n_layer) * (255 / m_nLinks.size());
+						// std::cout << target << " ";
 
-	// 				if(!visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y]) {
-	// 					visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y] = true;
+						if(!visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y]) {
+							visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y] = true;
 
-	// 				// if(target != value) {
-	// 					// std::cout << "#";
+						// if(target != value) {
+							// std::cout << "#";
 
-	// 					if(target > value || value == 255)
-	// 						value = target;
+							if(target > value)
+								value = target;
 
-	// 					if(current.n_layer < m_nLinks.size()) {
-	// 						// horizontal move
-	// 						if(current.pos.x > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x-1, current.pos.y)).residualCapacity() > 0)
-	// 							stack.push_back(Index{V2i(current.pos.x-1, current.pos.y), current.n_layer});
-	// 						if(current.pos.x < m_size.x-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x+1, current.pos.y)).residualCapacity() > 0)
-	// 							stack.push_back(Index{V2i(current.pos.x+1, current.pos.y), current.n_layer});
+							if(current.n_layer < m_nLinks.size()) {
+								// horizontal move
+								if(current.pos.x > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x-1, current.pos.y)).residualCapacity() > 0)
+									stack.push_back(Index{V2i(current.pos.x-1, current.pos.y), current.n_layer});
+								if(current.pos.x < m_size.x-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x+1, current.pos.y)).residualCapacity() > 0)
+									stack.push_back(Index{V2i(current.pos.x+1, current.pos.y), current.n_layer});
 
-	// 						// vertical move
-	// 						if(current.pos.y > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y-1)).residualCapacity() > 0)
-	// 							stack.push_back(Index{V2i(current.pos.x, current.pos.y-1), current.n_layer});
-	// 						if(current.pos.y < m_size.y-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y+1)).residualCapacity() > 0)
-	// 							stack.push_back(Index{V2i(current.pos.x, current.pos.y+1), current.n_layer});
+								// vertical move
+								if(current.pos.y > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y-1)).residualCapacity() > 0)
+									stack.push_back(Index{V2i(current.pos.x, current.pos.y-1), current.n_layer});
+								if(current.pos.y < m_size.y-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y+1)).residualCapacity() > 0)
+									stack.push_back(Index{V2i(current.pos.x, current.pos.y+1), current.n_layer});
 
-	// 						// layer move down
-	// 						assert(current.n_layer < m_nLinks.size());
-	// 						if(m_tLinks[current.n_layer+1].edge(current.pos).residualCapacity() > 0)
-	// 							stack.push_back(Index{current.pos, current.n_layer+1});
+								// layer move down
+								assert(current.n_layer < m_nLinks.size());
+								if(m_tLinks[current.n_layer].edge(current.pos).residualCapacity() > 0)
+									stack.push_back(Index{current.pos, current.n_layer+1});
 
-	// 						// // layer move up (unconditional)
-	// 						// if(current.n_layer > 0)
-	// 						// 	stack.push_back(Index{current.pos, current.n_layer-1});
-	// 					}
-	// 				}
-	// 			}
-
-	// 			// std::cout << std::endl;
-	// 		}
+								// layer move up (unconditional)
+								if(current.n_layer > 0)
+									stack.push_back(Index{current.pos, current.n_layer-1});
+							}
+						}
+					}
+			}
+	}
 
 	return result;
 }
 
 std::vector<cv::Mat> Graph::debug() const {
-	assert(m_nLinks.size() + 1 == m_tLinks.size());
-
 	std::vector<cv::Mat> result;
 	for(std::size_t a=0;a<m_nLinks.size(); ++a) {
-		result.push_back(t_flow(m_tLinks[a]));
-
 		result.push_back(n_flow_horiz(m_nLinks[a]));
 		result.push_back(n_flow_vert(m_nLinks[a]));
-	}
 
-	result.push_back(t_flow(m_tLinks.back()));
+		result.push_back(t_flow(m_tLinks[a]));
+	}
 
 	return result;
 }
