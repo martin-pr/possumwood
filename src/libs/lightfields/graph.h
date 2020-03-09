@@ -37,15 +37,13 @@ class Graph {
 		std::size_t v2i(const V2i& v) const;
 		V2i i2v(std::size_t v) const;
 
-		void step(BFSVisitors& visitors, std::deque<Index>& q, const Index& current_v, const Index& new_v) const;
-
 		int bfs_2(GraphPath& path, std::size_t& offset) const;
+		void doFlow(const GraphPath& path, int flow);
 
 		int flow(const GraphPath& path) const;
 
 		cv::Mat t_flow(const TLinks& t) const;
-		cv::Mat n_flow_horiz(const NLinks& t) const;
-		cv::Mat n_flow_vert(const NLinks& t) const;
+		cv::Mat n_flow(const NLinks& t) const;
 
 		V2i m_size;
 		std::vector<TLinks> m_tLinks;
