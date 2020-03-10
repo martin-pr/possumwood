@@ -18,8 +18,6 @@ class BFSVisitors {
 
 		void visit(const Index& index, const Index& parent);
 
-		void clear();
-
 		GraphPath path(const Index& end) const;
 
 	private:
@@ -30,7 +28,6 @@ class BFSVisitors {
 		V2i m_size;
 		std::size_t m_layerCount, m_layerSize;
 
-		std::size_t m_stage, m_mask, m_shift;
 		std::vector<std::size_t> m_values;
 
 		#else
