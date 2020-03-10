@@ -7,7 +7,7 @@
 
 #include "n_links.h"
 #include "t_links.h"
-#include "graph_path.h"
+#include "index.h"
 
 namespace lightfields {
 

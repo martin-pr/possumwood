@@ -3,7 +3,7 @@
 #include <vector>
 #include <map>
 
-#include "graph_path.h"
+#include "index.h"
 
 // #define BFS_VISITORS_TRIVIAL
 
@@ -17,8 +17,6 @@ class BFSVisitors {
 		Index parent(const Index& index) const;
 
 		void visit(const Index& index, const Index& parent);
-
-		GraphPath path(const Index& end) const;
 
 	private:
 		#ifndef BFS_VISITORS_TRIVIAL
