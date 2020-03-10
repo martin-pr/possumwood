@@ -8,63 +8,36 @@
 
 namespace lightfields {
 
-Graph::Path::Path() {
+Graph::Graph(const V2i& size, int n_link_value, std::size_t layer_count) : m_size(size) {
+	m_tLinks = std::vector<TLinks>(layer_count, TLinks(size));
+	m_nLinks = std::vector<NLinks>(layer_count, NLinks(size, n_link_value));
 }
 
-namespace {
+void Graph::setValue(const V2i& pos, const std::vector<int>& values) {
+	assert(values.size() == m_tLinks.size());
 
-int sqdist(const V2i& v1, const V2i& v2) {
-	return (v2.x-v1.x) * (v2.x-v1.x) + (v2.y-v1.y) * (v2.y-v1.y);
-}
+	auto tit = m_tLinks.begin();
+	auto vit = values.begin();
 
-}
+	int minFlow = values.front();
 
-bool Graph::Path::isValid() const {
-	if(n_links.empty())
-		return false;
+	while(tit != m_tLinks.end()) {
+		tit->edge(pos).setCapacity(*vit);
 
-	else {
-		bool result = true;
+		assert(*vit >= 0);
+		assert(tit->edge(pos).residualCapacity() == *vit);
 
-		auto it1 = n_links.begin();
-		auto it2 = it1+1;
-		while(it2 != n_links.end()) {
-			result &= (sqdist(*it1, *it2) == 1);
+		minFlow = std::min(minFlow, *vit);
 
-			++it1;
-			++it2;
-		}
-		return result;
-	}
-}
-
-
-/////
-
-Graph::Graph(const V2i& size, int n_link_value) : m_size(size), m_sourceLinks(size), m_sinkLinks(size), m_nLinks(size, n_link_value) {
-}
-
-void Graph::setValue(const V2i& pos, int source_weight, int sink_weight) {
-	assert(source_weight >= 0);
-	assert(sink_weight >= 0);
-
-	// "first pass" - direct transfer between a sink an a source of the same pixel, which would otherwise have to be solved
-	// in the BFS, but would always be the "first hit".
-	const int flow = std::min(source_weight, sink_weight);
-
-	{
-		auto& e = m_sourceLinks.edge(pos);
-		e.setCapacity(source_weight);
-		if(flow > 0)
-			e.addFlow(flow);
+		++tit;
+		++vit;
 	}
 
-	{
-		auto& e = m_sinkLinks.edge(pos);
-		e.setCapacity(sink_weight);
-		if(flow > 0)
-			e.addFlow(flow);
-	}
+	// speedup of the iterations - addresses the "trivial cases" removing the direct column
+	// flow from source to sink
+	if(minFlow > 0)
+		for(tit = m_tLinks.begin(); tit != m_tLinks.end(); ++tit)
+			tit->edge(pos).addFlow(minFlow);
 }
 
 std::size_t Graph::v2i(const V2i& v) const {
@@ -76,248 +49,283 @@ V2i Graph::i2v(std::size_t v) const {
 	return V2i(v % m_size.x, v / m_size.x);
 }
 
-bool Graph::bfs_2(Path& path, std::size_t& offset) const {
-	path.n_links.clear();
+namespace {
 
-	BFSVisitors visited(m_size.x * m_size.y);
-	std::deque<std::size_t> q;
+struct QueueItem {
+	Index current, parent;
+};
 
-	const std::size_t end = m_size.x * m_size.y;
-	for(std::size_t i=0; i<end; ++i) {
-		const std::size_t src_id = (i + offset) % end;
-		const V2i src_v = i2v(src_id);
+}
 
-		if(m_sourceLinks.edge(src_v).residualCapacity() > 0) {
-			visited.clear();
-			visited.visit(src_id, std::numeric_limits<std::size_t>::max());
+bool Graph::iterate() {
+	bool foundPath = false;
 
-			q.clear();
-			q.push_back(src_id);
+	BFSVisitors visited(m_size, m_nLinks.size());
+	std::deque<QueueItem> q;
 
-			// the core of the algorithm
-			while(!q.empty()) {
-				std::size_t current_id = q.front();
-				V2i current_v = i2v(current_id);
-				q.pop_front();
+	{
+		// initialize - source index has parent -1,-1
+		const std::size_t end = m_size.x * m_size.y;
+		for(std::size_t src_id=0; src_id<end; ++src_id) {
+			const Index src_v = Index{i2v(src_id), 0};
 
-				// check if there is an exit point here
-				if(m_sinkLinks.edge(current_v).residualCapacity() > 0) {
-					path.n_links.clear();
+			q.push_back(QueueItem{src_v, Index{V2i(-1, -1), 0}});
+		}
+	}
 
-					// this is SLOW, but for now will do
-					while(current_id < std::numeric_limits<std::size_t>::max()) {
-						path.n_links.push_back(current_v);
+	// the core of the algorithm
+	while(!q.empty()) {
+		QueueItem item = q.front();
+		q.pop_front();
 
-						current_id = visited.parent(current_id);
-						current_v = i2v(current_id);
-					}
-					std::reverse(path.n_links.begin(), path.n_links.end());
+		if(!visited.visited(item.current)) {
+			visited.visit(item.current, item.parent);
 
-					assert(path.isValid());
+			Index current_v = item.current;
 
-					offset = src_id+1;
+			// try to move horizontally left
+			if(current_v.pos.x > 0) {
+				const Index new_v{V2i(current_v.pos.x-1, current_v.pos.y), current_v.n_layer};
+				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
+					q.push_back(QueueItem{new_v, current_v});
+			}
 
-					return true;
-				}
+			// try to move horizontally right
+			if(current_v.pos.x < m_size.x-1){
+				const Index new_v{V2i(current_v.pos.x+1, current_v.pos.y), current_v.n_layer};
+				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
+					q.push_back(QueueItem{new_v, current_v});
+			}
 
-				// try to move horizontally left
-				if(current_v.x > 0) {
-					const V2i new_v(current_v.x-1, current_v.y);
-					const std::size_t new_id = v2i(new_v);
-					if(!visited.visited(new_id)) {
-						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_id, current_id);
-							q.push_back(new_id);
-						}
-					}
-				}
+			// try to move vertically up
+			if(current_v.pos.y > 0) {
+				const Index new_v{V2i(current_v.pos.x, current_v.pos.y-1), current_v.n_layer};
+				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
+					q.push_back(QueueItem{new_v, current_v});
+			}
 
-				// try to move horizontally right
-				if(current_v.x < m_size.x-1) {
-					const V2i new_v(current_v.x+1, current_v.y);
-					const std::size_t new_id = v2i(new_v);
-					if(!visited.visited(new_id)) {
-						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_id, current_id);
-							q.push_back(new_id);
-						}
-					}
-				}
+			// try to move vertically down
+			if(current_v.pos.y < m_size.y-1) {
+				const Index new_v{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer};
+				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
+					q.push_back(QueueItem{new_v, current_v});
+			}
 
-				// try to move vertically up
-				if(current_v.y > 0) {
-					const V2i new_v(current_v.x, current_v.y-1);
-					const std::size_t new_id = v2i(new_v);
-					if(!visited.visited(new_id)) {
-						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_id, current_id);
-							q.push_back(new_id);
-						}
-					}
-				}
+			// try to move up a layer (unconditional)
+			if((current_v.n_layer > 0)) {
+				const Index new_v{current_v.pos, current_v.n_layer-1};
+				q.push_back(QueueItem{new_v, current_v});
+			}
 
-				// try to move vertically down
-				if(current_v.y < m_size.y-1) {
-					const V2i new_v(current_v.x, current_v.y+1);
-					const std::size_t new_id = v2i(new_v);
-					if(!visited.visited(new_id)) {
-						if(m_nLinks.edge(current_v, new_v).residualCapacity() > 0) {
-							visited.visit(new_id, current_id);
-							q.push_back(new_id);
-						}
-					}
+			// try to move down a layer
+			if((current_v.n_layer < m_nLinks.size()-1)) {
+				const Index new_v{current_v.pos, current_v.n_layer+1};
+				if(m_tLinks[current_v.n_layer].edge(current_v.pos).residualCapacity() > 0)
+					q.push_back(QueueItem{new_v, current_v});
+			}
+
+			// the potential exit point
+			if(current_v.n_layer == m_nLinks.size()-1) {
+				if(m_tLinks.back().edge(current_v.pos).residualCapacity() > 0) {
+					foundPath = true;
+
+					const GraphPath path = visited.path(current_v);
+
+					const int f = flow(path);
+					if(f > 0)
+						doFlow(path, f);
 				}
 			}
 		}
 	}
 
-	return false;
+	return foundPath;
 }
 
-int Graph::flow(const Path& path) const {
-	assert(path.isValid());
+int Graph::flow(const GraphPath& path) const {
+	assert(path.isValid() && !path.empty());
 
-	int result = m_sourceLinks.edge(path.n_links.front()).residualCapacity();
+	assert(path.front().n_layer == 0);
+	assert(path.back().n_layer == m_nLinks.size()-1);
 
-	if(!path.n_links.empty()) {
-		auto it1 = path.n_links.begin();
-		auto it2 = it1+1;
+	// initial flow value
+	int result = std::numeric_limits<int>::max();
 
-		while(it2 != path.n_links.end()) {
-			result = std::min(result, m_nLinks.edge(*it1, *it2).residualCapacity());
+	// iterate over all layers
+	auto it = path.begin();
+	Index current = *it;
+	++it;
 
-			++it1;
-			++it2;
+	for(; it != path.end(); ++it) {
+		// same layer - need to use N link
+		if(current.n_layer == it->n_layer) {
+			assert(V2i::sqdist(current.pos, it->pos) == 1);
+
+			result = std::min(result, m_nLinks[current.n_layer].edge(current.pos, it->pos).residualCapacity());
+
+			current.pos = it->pos;
+		}
+
+		// different layer - need to use a T link (if the move is to higher layer)
+		else if(current.n_layer < it->n_layer) {
+			assert(current.n_layer+1 == it->n_layer);
+			assert(current.pos == it->pos);
+
+			result = std::min(result, m_tLinks[current.n_layer].edge(current.pos).residualCapacity());
+
+			current.n_layer = it->n_layer;
+		}
+
+		// different layer - "infinite capacity" back links have no impact on the flow
+		else {
+			assert(current.n_layer > 0);
+			assert(current.n_layer - it->n_layer == 1);
+
+			current.n_layer--;
+
+			assert(current.n_layer == it->n_layer);
 		}
 	}
 
-	result = std::min(result, m_sinkLinks.edge(path.n_links.back()).residualCapacity());
+	// last T-link layer
+	assert(current.n_layer == m_nLinks.size()-1 && "the path should lead to the last layer");
+	result = std::min(result, m_tLinks.back().edge(current.pos).residualCapacity());
 
 	return result;
 }
 
-void Graph::solve() {
-	Path path;
+void Graph::doFlow(const GraphPath& path, int flow) {
+	assert(!path.empty());
+	assert(path.isValid());
 
-	std::size_t counter = 0;
+	assert(flow == this->flow(path));
 
-	std::size_t offset = 0;
-	while(bfs_2(path, offset)) {
-		assert(path.isValid());
+	assert(flow > 0 && "Augmented path flow at the beginning of each iteration should be positive");
 
+	// update the graph starting from first T link layer
+	assert(path.front().n_layer == 0);
 
-		// get the maximum flow through the path
-		const int f = flow(path);
-		assert(f > 0 && "Augmented path flow at the beginning of each iteration should be positive");
+	auto it1 = path.begin();
+	auto it2 = it1+1;
+	while(it2 != path.end()) {
+		// in-layer layer move - use N links
+		if(it1->n_layer == it2->n_layer) {
+			m_nLinks[it1->n_layer].edge(it1->pos, it2->pos).addFlow(flow);
 
-		// update the graph
-		m_sourceLinks.edge(path.n_links.front()).addFlow(f);
-
-		if(!path.n_links.empty()) {
-			auto it1 = path.n_links.begin();
-			auto it2 = it1+1;
-			while(it2 != path.n_links.end()) {
-				m_nLinks.edge(*it1, *it2).addFlow(f);
-
-				assert(m_nLinks.edge(*it1, *it2).residualCapacity() >= 0);
-				assert(m_nLinks.edge(*it2, *it1).residualCapacity() >= 0);
-
-				++it1;
-				++it2;
-			}
+			assert(m_nLinks[it1->n_layer].edge(it1->pos, it2->pos).residualCapacity() >= 0);
+			assert(m_nLinks[it1->n_layer].edge(it2->pos, it1->pos).residualCapacity() >= 0);
 		}
 
-		m_sinkLinks.edge(path.n_links.back()).addFlow(f);
+		// between-layer move - use T links
+		else {
+			assert(it1->pos == it2->pos);
+			assert(it1->n_layer+1 == it2->n_layer || it1->n_layer == it2->n_layer+1);
 
-		assert(flow(path) == 0 && "Augmented path flow at the end of each iteration should be zero");
+			if(it1->n_layer < it2->n_layer)
+				m_tLinks[it1->n_layer].edge(it1->pos).addFlow(flow);
 
-		++counter;
+			assert(m_tLinks[it2->n_layer].edge(it1->pos).residualCapacity() >= 0);
+		}
+
+		++it1;
+		++it2;
 	}
 
-	std::cout << "ST-cut solve with " << counter << " steps finished." << std::endl;
+	// last T link layer
+	assert(it1->n_layer == m_tLinks.size()-1);
+	m_tLinks.back().edge(it1->pos).addFlow(flow);
+
+	assert(this->flow(path) == 0 && "Augmented path flow at the end of each iteration should be zero");
+}
+
+void Graph::solve() {
+	std::size_t counter = 0;
+
+	while(iterate())
+		++counter;
+
+	std::cout << "ST-cut solve with " << counter << " iterations finished." << std::endl;
 }
 
 cv::Mat Graph::minCut() const {
 	// collects all reachable nodes from source or sink, and marks them appropriately
-	cv::Mat result(m_size.y, m_size.x, CV_8UC1);
-	for(int y=0; y<m_size.y; ++y)
-		for(int x=0; x<m_size.x; ++x)
-			result.at<unsigned char>(y, x) = 127;
+	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
+
+	// for(int y=0; y<m_size.y; ++y)
+	// 	for(int x=0; x<m_size.x; ++x) {
+	// 		// int a=0;
+	// 		for(std::size_t a=0; a<m_tLinks.size(); ++a)
+	// 			if(m_tLinks[a].edge(V2i(x, y)).residualCapacity() == 0)
+	// 				result.at<unsigned char>(y, x) = a * (255 / (m_tLinks.size() - 1));
+	// 	}
 
 	// reachable from source as a trivial DFS search
 	{
-		std::vector<V2i> stack;
+		std::vector<Index> stack;
 		for(int y=0; y<m_size.y; ++y)
-			for(int x=0; x<m_size.x; ++x)
-				if(m_sourceLinks.edge(V2i(x, y)).residualCapacity() > 0) {
-					stack.push_back(V2i(x, y));
+			for(int x=0; x<m_size.x; ++x) {
+				stack.push_back(Index{V2i(x, y), 0});
+				std::vector<bool> visited(m_size.x * m_size.y * (m_nLinks.size()+1));
 
-					while(!stack.empty()) {
-						const V2i current = stack.back();
-						stack.pop_back();
+				while(!stack.empty()) {
+					const Index current = stack.back();
+					stack.pop_back();
 
-						assert(m_sinkLinks.edge(current).residualCapacity() == 0 && "TODO: FIX THIS TRIGGER!!!");
+					unsigned char& value = result.at<unsigned char>(current.pos.y, current.pos.x);
+					const int target = (current.n_layer) * (255 / (m_nLinks.size() - 1));
 
-						unsigned char& value = result.at<unsigned char>(current.y, current.x);
-						if(value < 255) {
-							result.at<unsigned char>(current.y, current.x) = 255;
+					if(!visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y]) {
+						visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y] = true;
 
-							if(current.x > 0 && m_nLinks.edge(current, V2i(current.x-1, current.y)).residualCapacity() > 0)
-								stack.push_back(V2i(current.x-1, current.y));
-							if(current.x < m_size.x-1 && m_nLinks.edge(current, V2i(current.x+1, current.y)).residualCapacity() > 0)
-								stack.push_back(V2i(current.x+1, current.y));
+						if(target > value)
+							value = target;
 
-							if(current.y > 0 && m_nLinks.edge(current, V2i(current.x, current.y-1)).residualCapacity() > 0)
-								stack.push_back(V2i(current.x, current.y-1));
-							if(current.y < m_size.y-1 && m_nLinks.edge(current, V2i(current.x, current.y+1)).residualCapacity() > 0)
-								stack.push_back(V2i(current.x, current.y+1));
+						if(current.n_layer < m_nLinks.size()) {
+							// horizontal move
+							if(current.pos.x > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x-1, current.pos.y)).residualCapacity() > 0)
+								stack.push_back(Index{V2i(current.pos.x-1, current.pos.y), current.n_layer});
+							if(current.pos.x < m_size.x-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x+1, current.pos.y)).residualCapacity() > 0)
+								stack.push_back(Index{V2i(current.pos.x+1, current.pos.y), current.n_layer});
+
+							// vertical move
+							if(current.pos.y > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y-1)).residualCapacity() > 0)
+								stack.push_back(Index{V2i(current.pos.x, current.pos.y-1), current.n_layer});
+							if(current.pos.y < m_size.y-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y+1)).residualCapacity() > 0)
+								stack.push_back(Index{V2i(current.pos.x, current.pos.y+1), current.n_layer});
+
+							// layer move down
+							assert(current.n_layer < m_nLinks.size());
+							if(m_tLinks[current.n_layer].edge(current.pos).residualCapacity() > 0)
+								stack.push_back(Index{current.pos, current.n_layer+1});
+
+							// layer move up (unconditional)
+							if(current.n_layer > 0)
+								stack.push_back(Index{current.pos, current.n_layer-1});
 						}
 					}
 				}
-	}
-
-	// reachable from sink as a trivial DFS search
-	// (this is unnecessary for the actual solution and should eventually be removed)
-	{
-		std::vector<V2i> stack;
-		for(int y=0; y<m_size.y; ++y)
-			for(int x=0; x<m_size.x; ++x)
-				if(m_sinkLinks.edge(V2i(x, y)).residualCapacity() > 0) {
-					stack.push_back(V2i(x, y));
-
-					while(!stack.empty()) {
-						const V2i current = stack.back();
-						stack.pop_back();
-
-						assert(m_sourceLinks.edge(V2i(x, y)).residualCapacity() == 0);
-
-						unsigned char& value = result.at<unsigned char>(current.y, current.x);
-						if(value > 0) {
-							result.at<unsigned char>(current.y, current.x) = 0;
-
-							if(current.x > 0 && m_nLinks.edge(V2i(current.x-1, current.y), current).residualCapacity() > 0)
-								stack.push_back(V2i(current.x-1, current.y));
-							if(current.x < m_size.x-1 && m_nLinks.edge(V2i(current.x+1, current.y), current).residualCapacity() > 0)
-								stack.push_back(V2i(current.x+1, current.y));
-
-							if(current.y > 0 && m_nLinks.edge(V2i(current.x, current.y-1), current).residualCapacity() > 0)
-								stack.push_back(V2i(current.x, current.y-1));
-							if(current.y < m_size.y-1 && m_nLinks.edge(V2i(current.x, current.y+1), current).residualCapacity() > 0)
-								stack.push_back(V2i(current.x, current.y+1));
-						}
-					}
-				}
+			}
 	}
 
 	return result;
 }
 
-cv::Mat Graph::sourceFlow() const {
+std::vector<cv::Mat> Graph::debug() const {
+	std::vector<cv::Mat> result;
+	for(std::size_t a=0;a<m_nLinks.size(); ++a) {
+		result.push_back(n_flow(m_nLinks[a]));
+		result.push_back(t_flow(m_tLinks[a]));
+	}
+
+	return result;
+}
+
+cv::Mat Graph::t_flow(const TLinks& t) const {
 	cv::Mat result(m_size.y, m_size.x, CV_8UC1);
 
 	for(int y=0; y<m_size.y; ++y)
 		for(int x=0; x<m_size.x; ++x) {
-			auto& e = m_sourceLinks.edge(V2i(x, y));
+			auto& e = t.edge(V2i(x, y));
 			if(e.capacity() > 0)
 				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
 			else
@@ -327,44 +335,47 @@ cv::Mat Graph::sourceFlow() const {
 	return result;
 }
 
-cv::Mat Graph::sinkFlow() const {
+cv::Mat Graph::n_flow(const NLinks& n) const {
 	cv::Mat result(m_size.y, m_size.x, CV_8UC1);
 
 	for(int y=0; y<m_size.y; ++y)
 		for(int x=0; x<m_size.x; ++x) {
-			auto& e = m_sinkLinks.edge(V2i(x, y));
-			if(e.capacity() > 0)
-				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
-			else
-				result.at<unsigned char>(y,x) = 255;
-		}
+			float residual = 0.0f;
+			float max = 0.0f;
+			if(x > 0) {
+				auto& e = n.edge(V2i(x-1, y), V2i(x, y));
+				if(e.capacity() > 0) {
+					residual += (float)e.residualCapacity();
+					max += (float)e.capacity();
+				}
+			}
 
-	return result;
-}
+			if(x < m_size.x-1) {
+				auto& e = n.edge(V2i(x+1, y), V2i(x, y));
+				if(e.capacity() > 0) {
+					residual += (float)e.residualCapacity();
+					max += (float)e.capacity();
+				}
+			}
 
-cv::Mat Graph::horizontalFlow() const {
-	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
+			if(y > 0) {
+				auto& e = n.edge(V2i(x, y-1), V2i(x, y));
+				if(e.capacity() > 0) {
+					residual += (float)e.residualCapacity();
+					max += (float)e.capacity();
+				}
+			}
 
-	for(int y=0; y<m_size.y; ++y)
-		for(int x=0; x<m_size.x-1; ++x) {
-			auto& e = m_nLinks.edge(V2i(x, y), V2i(x+1, y));
-			if(e.capacity() > 0)
-				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
-			else
-				result.at<unsigned char>(y,x) = 255;
-		}
+			if(y < m_size.y-1) {
+				auto& e = n.edge(V2i(x, y+1), V2i(x, y));
+				if(e.capacity() > 0) {
+					residual += (float)e.residualCapacity();
+					max += (float)e.capacity();
+				}
+			}
 
-	return result;
-}
-
-cv::Mat Graph::verticalFlow() const {
-	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
-
-	for(int y=0; y<m_size.y-1; ++y)
-		for(int x=0; x<m_size.x; ++x) {
-			auto& e = m_nLinks.edge(V2i(x, y), V2i(x, y+1));
-			if(e.capacity() > 0)
-				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
+			if(max > 0.0f)
+				result.at<unsigned char>(y,x) = 255.0f - residual / max * 255.0f;
 			else
 				result.at<unsigned char>(y,x) = 255;
 		}

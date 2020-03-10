@@ -6,7 +6,7 @@
 
 namespace lightfields {
 
-class Grid2D {
+class TLinks {
 	public:
 		class Edge {
 			public:
@@ -25,7 +25,7 @@ class Grid2D {
 				int m_capacity, m_flow;
 		};
 
-		Grid2D(const V2i& size);
+		TLinks(const V2i& size);
 
 		Edge& edge(const V2i& i);
 		const Edge& edge(const V2i& i) const;

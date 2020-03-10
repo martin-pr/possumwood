@@ -8,64 +8,72 @@
 
 #include <lightfields/graph.h>
 
-#include "frame.h"
+#include "sequence.h"
 #include "tools.h"
 
 namespace {
 
-dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
+dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
 dependency_graph::InAttr<float> a_constness;
-dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_source, a_horiz, a_vert, a_sink;
+dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
+dependency_graph::OutAttr<possumwood::opencv::Sequence> a_debug;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	cv::Mat values = (*data.get(a_in)).clone();
+	const possumwood::opencv::Sequence& sequence = data.get(a_in);
 
-	if(values.type() != CV_8UC1)
-		throw std::runtime_error("Only 8-bit unsigned char supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
+	if(sequence.size() < 2)
+		throw std::runtime_error("At least two images required in the input sequence.");
 
-	lightfields::Graph graph(lightfields::V2i(values.cols, values.rows), std::max(0.0f, data.get(a_constness)));
+	const int width = (**sequence.begin()).cols;
+	const int height = (**sequence.begin()).rows;
 
-	for(int row = 0; row < values.rows; ++row)
-		for(int col = 0; col < values.cols; ++col) {
-			const int val = values.at<unsigned char>(row, col);
-			graph.setValue(lightfields::V2i(col, row), 255-val, val);
+	for(auto& f : sequence)
+		if((*f).rows != height || (*f).cols != width)
+			throw std::runtime_error("Consistent width and height is required in the input sequence.");
+
+	for(auto& f : sequence)
+		if((*f).type() != CV_8UC1)
+			throw std::runtime_error("Only CV_8UC1 images accepted on input.");
+
+	lightfields::Graph graph(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size());
+
+	std::vector<int> values(sequence.size(), 0);
+
+	for(int row = 0; row < height; ++row)
+		for(int col = 0; col < width; ++col) {
+			std::size_t ctr = 0;
+			for(auto& m : sequence) {
+				values[ctr] = 255 - (*m).at<unsigned char>(row, col);
+				++ctr;
+			}
+
+			graph.setValue(lightfields::V2i(col, row), values);
 		}
 
 	graph.solve();
 
 	data.set(a_out, possumwood::opencv::Frame(graph.minCut()));
 
-	data.set(a_source, possumwood::opencv::Frame(graph.sourceFlow()));
-	data.set(a_horiz, possumwood::opencv::Frame(graph.horizontalFlow()));
-	data.set(a_vert, possumwood::opencv::Frame(graph.verticalFlow()));
-	data.set(a_sink, possumwood::opencv::Frame(graph.sinkFlow()));
+	possumwood::opencv::Sequence debug;
+	for(auto& m : graph.debug())
+		debug.add(m);
+
+	data.set(a_debug, debug);
 
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_in, "in_sequence", possumwood::opencv::Sequence());
 	meta.addAttribute(a_constness, "constness", 128.0f);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_source, "source_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_horiz, "horiz_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_vert, "vert_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_sink, "sink_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_debug, "debug", possumwood::opencv::Sequence());
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_constness, a_out);
 
-	meta.addInfluence(a_in, a_source);
-	meta.addInfluence(a_constness, a_source);
-
-	meta.addInfluence(a_in, a_horiz);
-	meta.addInfluence(a_constness, a_horiz);
-
-	meta.addInfluence(a_in, a_vert);
-	meta.addInfluence(a_constness, a_vert);
-
-	meta.addInfluence(a_in, a_sink);
-	meta.addInfluence(a_constness, a_sink);
+	meta.addInfluence(a_in, a_debug);
+	meta.addInfluence(a_constness, a_debug);
 
 	meta.setCompute(compute);
 }

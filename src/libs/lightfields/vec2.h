@@ -10,6 +10,18 @@ struct Vec2 {
 	Vec2(const T& _x, const T& _y) : x(_x), y(_y) {
 	}
 
+	bool operator == (const Vec2& v) const {
+		return x == v.x && y == v.y;
+	}
+
+	bool operator != (const Vec2& v) const {
+		return x != v.x || y != v.y;
+	}
+
+	static int sqdist(const Vec2& v1, const Vec2& v2) {
+		return (v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y);
+	}
+
 	T x, y;
 };
 

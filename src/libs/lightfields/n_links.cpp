@@ -1,4 +1,4 @@
-#include "graph_2d.h"
+#include "n_links.h"
 
 #include <cassert>
 
@@ -6,18 +6,18 @@
 
 namespace lightfields {
 
-Graph2D::Graph2D(const V2i& size, int n_link_value) : m_size(size), m_horiz((size.x-1) * size.y, Edge(n_link_value)), m_vert(size.x * (size.y - 1), Edge(n_link_value)) {
+NLinks::NLinks(const V2i& size, int n_link_value) : m_size(size), m_horiz((size.x-1) * size.y, Edge(n_link_value)), m_vert(size.x * (size.y - 1), Edge(n_link_value)) {
 }
 
-std::size_t Graph2D::h_index(const V2i& i) const {
+std::size_t NLinks::h_index(const V2i& i) const {
 	return i.x + i.y * (m_size.x - 1);
 }
 
-std::size_t Graph2D::v_index(const V2i& i) const {
+std::size_t NLinks::v_index(const V2i& i) const {
 	return i.x + i.y * m_size.x;
 }
 
-Graph2D::Direction& Graph2D::edge(const V2i& src, const V2i& dest) {
+NLinks::Direction& NLinks::edge(const V2i& src, const V2i& dest) {
 	assert((src.x - dest.x) * (src.x - dest.x) + (src.y - dest.y) * (src.y - dest.y) == 1);
 
 	assert(src.x >= 0 && src.x < m_size.x);
@@ -41,7 +41,7 @@ Graph2D::Direction& Graph2D::edge(const V2i& src, const V2i& dest) {
 	throw(std::runtime_error("bad edge index"));
 }
 
-const Graph2D::Direction& Graph2D::edge(const V2i& src, const V2i& dest) const {
+const NLinks::Direction& NLinks::edge(const V2i& src, const V2i& dest) const {
 	assert((src.x - dest.x) * (src.x - dest.x) + (src.y - dest.y) * (src.y - dest.y) == 1);
 
 	assert(src.x >= 0 && src.x < m_size.x);
@@ -69,38 +69,38 @@ const Graph2D::Direction& Graph2D::edge(const V2i& src, const V2i& dest) const {
 
 ////////
 
-Graph2D::Edge::Edge(int capacity) : m_forward(this, true), m_backward(this, false), m_capacity(capacity), m_flow(0) {
+NLinks::Edge::Edge(int capacity) : m_forward(this, true), m_backward(this, false), m_capacity(capacity), m_flow(0) {
 }
 
-Graph2D::Edge::Edge(const Edge& e) : m_forward(this, true), m_backward(this, false), m_capacity(e.m_capacity), m_flow(e.m_flow) {
+NLinks::Edge::Edge(const Edge& e) : m_forward(this, true), m_backward(this, false), m_capacity(e.m_capacity), m_flow(e.m_flow) {
 }
 
-Graph2D::Direction& Graph2D::Edge::forward() {
+NLinks::Direction& NLinks::Edge::forward() {
 	return m_forward;
 }
 
-const Graph2D::Direction& Graph2D::Edge::forward() const {
+const NLinks::Direction& NLinks::Edge::forward() const {
 	return m_forward;
 }
 
-Graph2D::Direction& Graph2D::Edge::backward() {
+NLinks::Direction& NLinks::Edge::backward() {
 	return m_backward;
 }
 
-const Graph2D::Direction& Graph2D::Edge::backward() const {
+const NLinks::Direction& NLinks::Edge::backward() const {
 	return m_backward;
 }
 
 ////////////////
 
-Graph2D::Direction::Direction(Edge* parent, bool forward) : m_parent(parent), m_forward(forward) {
+NLinks::Direction::Direction(Edge* parent, bool forward) : m_parent(parent), m_forward(forward) {
 }
 
-int Graph2D::Direction::capacity() const {
+int NLinks::Direction::capacity() const {
 	return m_parent->m_capacity;
 }
 
-void Graph2D::Direction::addFlow(const int& f) {
+void NLinks::Direction::addFlow(const int& f) {
 	assert(f > 0);
 	assert(f <= residualCapacity());
 
@@ -110,14 +110,14 @@ void Graph2D::Direction::addFlow(const int& f) {
 		m_parent->m_flow -= f;
 }
 
-int Graph2D::Direction::flow() const {
+int NLinks::Direction::flow() const {
 	if(m_forward)
 		return std::max(m_parent->m_flow, 0);
 	else
 		return std::max(-m_parent->m_flow, 0);
 }
 
-int Graph2D::Direction::residualCapacity() const {
+int NLinks::Direction::residualCapacity() const {
 	int result = 0;
 
 	if(m_forward)

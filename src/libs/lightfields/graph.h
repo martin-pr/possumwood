@@ -5,11 +5,13 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "graph_2d.h"
-#include "grid_2d.h"
-#include "vec2.h"
+#include "n_links.h"
+#include "t_links.h"
+#include "graph_path.h"
 
 namespace lightfields {
+
+class BFSVisitors;
 
 class Graph {
 	public:
@@ -21,40 +23,31 @@ class Graph {
 			int forward, backward;
 		};
 
-		Graph(const V2i& size, int n_link_value);
+		Graph(const V2i& size, int n_link_value, std::size_t layer_count);
 
-		void setValue(const V2i& pos, int source_weight, int sink_weight);
+		void setValue(const V2i& pos, const std::vector<int>& values);
 
 		void solve();
 
 		cv::Mat minCut() const;
 
-		cv::Mat sourceFlow() const;
-		cv::Mat sinkFlow() const;
-		cv::Mat horizontalFlow() const;
-		cv::Mat verticalFlow() const;
+		std::vector<cv::Mat> debug() const;
 
 	private:
 		std::size_t v2i(const V2i& v) const;
 		V2i i2v(std::size_t v) const;
 
-		struct Path {
-			Path();
+		bool iterate();
+		void doFlow(const GraphPath& path, int value);
 
-			bool isValid() const;
+		int flow(const GraphPath& path) const;
 
-			std::vector<V2i> n_links;
-		};
-
-		/// Simplified depth-first-search - only forward search from S and backward search from T (will avoid loops implicitly).
-		/// Indices - first index into source links, last index into sink links, mid indices horiz if id < horiz_n_links.size(), vert otherwise
-		bool bfs_2(Path& path, std::size_t& offset) const;
-
-		int flow(const Path& path) const;
+		cv::Mat t_flow(const TLinks& t) const;
+		cv::Mat n_flow(const NLinks& t) const;
 
 		V2i m_size;
-		Grid2D m_sourceLinks, m_sinkLinks;
-		Graph2D m_nLinks;
+		std::vector<TLinks> m_tLinks;
+		std::vector<NLinks> m_nLinks;
 };
 
 }

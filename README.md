@@ -1773,6 +1773,28 @@ A simple ST Graph Cut demo, implementing a 2-label version of the Graph Cut clas
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/08_lightfields/44_multilevel_graphcut.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Multi-level ST Graph Cut
+
+A simple ST Graph Cut demo, implementing a 2-label version of the Graph Cut classification algorithm, following the graph structure and optimisatino approach described by Ishikawa (2000).
+
+(to be improved in later pull requests)
+
+Ishikawa, Hiroshi, and Davi Geiger. [Global optimization using embedded graphs](https://pdfs.semanticscholar.org/307e/f91c4842256d63c8e9e7406018988ed669d6.pdf). Diss. New York University, Graduate School of Arts and Science, 2000.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/08_lightfields/44_multilevel_graphcut_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
 </table> 
 
 ## Tutorials
