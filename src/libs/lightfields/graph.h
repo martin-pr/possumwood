@@ -40,7 +40,7 @@ class Graph {
 		bool iterate();
 		void doFlow(const GraphPath& path, int value);
 
-		int flow(const GraphPath& path) const;
+		int flow(const BFSVisitors& visitors, const Index& end) const;
 
 		cv::Mat t_flow(const TLinks& t) const;
 		cv::Mat n_flow(const NLinks& t) const;

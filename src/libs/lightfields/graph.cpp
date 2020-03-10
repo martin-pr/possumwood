@@ -131,7 +131,7 @@ bool Graph::iterate() {
 
 					const GraphPath path = visited.path(current_v);
 
-					const int f = flow(path);
+					const int f = flow(visited, current_v);
 					if(f > 0)
 						doFlow(path, f);
 				}
@@ -142,54 +142,36 @@ bool Graph::iterate() {
 	return foundPath;
 }
 
-int Graph::flow(const GraphPath& path) const {
-	assert(path.isValid() && !path.empty());
+int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
+	assert(end.pos.x != -1 && end.pos.y != -1);
+	assert(end.n_layer == m_nLinks.size()-1);
 
-	assert(path.front().n_layer == 0);
-	assert(path.back().n_layer == m_nLinks.size()-1);
+	// initial flow value based on the last T link (towards the sink)
+	int result = m_tLinks.back().edge(end.pos).residualCapacity();
 
-	// initial flow value
-	int result = std::numeric_limits<int>::max();
 
-	// iterate over all layers
-	auto it = path.begin();
-	Index current = *it;
-	++it;
+	Index current = end;
+	Index parent = visitors.parent(current);
 
-	for(; it != path.end(); ++it) {
+	while(parent.pos.x != -1 && parent.pos.y != -1) {
+		assert(Index::sqdist(current, parent) == 1);
+
 		// same layer - need to use N link
-		if(current.n_layer == it->n_layer) {
-			assert(V2i::sqdist(current.pos, it->pos) == 1);
+		if(current.n_layer == parent.n_layer)
+			result = std::min(result, m_nLinks[current.n_layer].edge(parent.pos, current.pos).residualCapacity());
 
-			result = std::min(result, m_nLinks[current.n_layer].edge(current.pos, it->pos).residualCapacity());
+		// different layer down - need to use a T link (if the move is to higher layer)
+		else if(current.n_layer > parent.n_layer)
+			result = std::min(result, m_tLinks[parent.n_layer].edge(parent.pos).residualCapacity());
 
-			current.pos = it->pos;
-		}
+		// different layer up - "infinite capacity" back links have no impact on the flow
 
-		// different layer - need to use a T link (if the move is to higher layer)
-		else if(current.n_layer < it->n_layer) {
-			assert(current.n_layer+1 == it->n_layer);
-			assert(current.pos == it->pos);
-
-			result = std::min(result, m_tLinks[current.n_layer].edge(current.pos).residualCapacity());
-
-			current.n_layer = it->n_layer;
-		}
-
-		// different layer - "infinite capacity" back links have no impact on the flow
-		else {
-			assert(current.n_layer > 0);
-			assert(current.n_layer - it->n_layer == 1);
-
-			current.n_layer--;
-
-			assert(current.n_layer == it->n_layer);
-		}
+		// and move on
+		current = parent;
+		parent = visitors.parent(current);
 	}
 
-	// last T-link layer
-	assert(current.n_layer == m_nLinks.size()-1 && "the path should lead to the last layer");
-	result = std::min(result, m_tLinks.back().edge(current.pos).residualCapacity());
+	assert(current.n_layer == 0);
 
 	return result;
 }
@@ -197,8 +179,6 @@ int Graph::flow(const GraphPath& path) const {
 void Graph::doFlow(const GraphPath& path, int flow) {
 	assert(!path.empty());
 	assert(path.isValid());
-
-	assert(flow == this->flow(path));
 
 	assert(flow > 0 && "Augmented path flow at the beginning of each iteration should be positive");
 
@@ -234,8 +214,6 @@ void Graph::doFlow(const GraphPath& path, int flow) {
 	// last T link layer
 	assert(it1->n_layer == m_tLinks.size()-1);
 	m_tLinks.back().edge(it1->pos).addFlow(flow);
-
-	assert(this->flow(path) == 0 && "Augmented path flow at the end of each iteration should be zero");
 }
 
 void Graph::solve() {
