@@ -12,11 +12,12 @@ std::size_t BFSVisitors::vec2index(const Index& v) const {
 	if(v.pos.x == -1 && v.pos.y == -1)
 		return std::numeric_limits<std::size_t>::max()-1;
 
-	assert(v.pos.x >= 0 && v.pos.x < m_size.x);
-	assert(v.pos.y >= 0 && v.pos.y < m_size.y);
+	assert(v.pos.x >= 0 && v.pos.x < (int)m_size.x);
+	assert(v.pos.y >= 0 && v.pos.y < (int)m_size.y);
 	assert(v.n_layer < m_layerCount);
 
-	const std::size_t index = v.pos.x + v.pos.y * m_size.x + v.n_layer * m_layerSize;
+	const std::size_t index = std::size_t(v.pos.x) +
+		std::size_t(v.pos.y) * m_size.x + v.n_layer * m_layerSize;
 	assert(index < m_values.size());
 
 	return index;
@@ -34,7 +35,7 @@ Index BFSVisitors::index2vec(std::size_t i) const {
 	return Index{V2i(i % m_size.x, i / m_size.x), layer};
 }
 
-BFSVisitors::BFSVisitors(const V2i& size, std::size_t layerCount) : m_size(size),
+BFSVisitors::BFSVisitors(const V2i& size, std::size_t layerCount) : m_size(size.x, size.y),
 	m_layerCount(layerCount), m_layerSize(size.x * size.y),
 	m_values(m_size.x*m_size.y*layerCount, std::numeric_limits<std::size_t>::max())
 {

@@ -25,7 +25,7 @@ class BFSVisitors {
 		std::size_t vec2index(const Index& v) const;
 		Index index2vec(std::size_t i) const;
 
-		V2i m_size;
+		Vec2<std::size_t> m_size;
 		std::size_t m_layerCount, m_layerSize;
 
 		std::vector<std::size_t> m_values;
