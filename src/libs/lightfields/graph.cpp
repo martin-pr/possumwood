@@ -261,11 +261,12 @@ cv::Mat Graph::minCut() const {
 
 	// reachable from source as a trivial DFS search
 	{
+		std::vector<bool> visited(m_size.x * m_size.y * (m_nLinks.size()+1));
+
 		std::vector<Index> stack;
 		for(int y=0; y<m_size.y; ++y)
 			for(int x=0; x<m_size.x; ++x) {
 				stack.push_back(Index{V2i(x, y), 0});
-				std::vector<bool> visited(m_size.x * m_size.y * (m_nLinks.size()+1));
 
 				while(!stack.empty()) {
 					const Index current = stack.back();
