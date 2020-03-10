@@ -129,11 +129,9 @@ bool Graph::iterate() {
 				if(m_tLinks.back().edge(current_v.pos).residualCapacity() > 0) {
 					foundPath = true;
 
-					const GraphPath path = visited.path(current_v);
-
 					const int f = flow(visited, current_v);
 					if(f > 0)
-						doFlow(path, f);
+						doFlow(visited, current_v, f);
 				}
 			}
 		}
@@ -176,44 +174,36 @@ int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
 	return result;
 }
 
-void Graph::doFlow(const GraphPath& path, int flow) {
-	assert(!path.empty());
-	assert(path.isValid());
+void Graph::doFlow(const BFSVisitors& visitors, const Index& end, int flow) {
+	assert(end.pos.x != -1 && end.pos.y != -1);
+	assert(end.n_layer == m_nLinks.size()-1);
 
-	assert(flow > 0 && "Augmented path flow at the beginning of each iteration should be positive");
+	// initial flow value based on the last T link (towards the sink)
+	m_tLinks.back().edge(end.pos).addFlow(flow);
 
-	// update the graph starting from first T link layer
-	assert(path.front().n_layer == 0);
 
-	auto it1 = path.begin();
-	auto it2 = it1+1;
-	while(it2 != path.end()) {
-		// in-layer layer move - use N links
-		if(it1->n_layer == it2->n_layer) {
-			m_nLinks[it1->n_layer].edge(it1->pos, it2->pos).addFlow(flow);
+	Index current = end;
+	Index parent = visitors.parent(current);
 
-			assert(m_nLinks[it1->n_layer].edge(it1->pos, it2->pos).residualCapacity() >= 0);
-			assert(m_nLinks[it1->n_layer].edge(it2->pos, it1->pos).residualCapacity() >= 0);
-		}
+	while(parent.pos.x != -1 && parent.pos.y != -1) {
+		assert(Index::sqdist(current, parent) == 1);
 
-		// between-layer move - use T links
-		else {
-			assert(it1->pos == it2->pos);
-			assert(it1->n_layer+1 == it2->n_layer || it1->n_layer == it2->n_layer+1);
+		// same layer - need to use N link
+		if(current.n_layer == parent.n_layer)
+			m_nLinks[current.n_layer].edge(parent.pos, current.pos).addFlow(flow);
 
-			if(it1->n_layer < it2->n_layer)
-				m_tLinks[it1->n_layer].edge(it1->pos).addFlow(flow);
+		// different layer down - need to use a T link (if the move is to higher layer)
+		else if(current.n_layer > parent.n_layer)
+			m_tLinks[parent.n_layer].edge(parent.pos).addFlow(flow);
 
-			assert(m_tLinks[it2->n_layer].edge(it1->pos).residualCapacity() >= 0);
-		}
+		// different layer up - "infinite capacity" back links have no impact on the flow
 
-		++it1;
-		++it2;
+		// and move on
+		current = parent;
+		parent = visitors.parent(current);
 	}
 
-	// last T link layer
-	assert(it1->n_layer == m_tLinks.size()-1);
-	m_tLinks.back().edge(it1->pos).addFlow(flow);
+	assert(current.n_layer == 0);
 }
 
 void Graph::solve() {

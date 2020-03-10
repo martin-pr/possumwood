@@ -38,9 +38,9 @@ class Graph {
 		V2i i2v(std::size_t v) const;
 
 		bool iterate();
-		void doFlow(const GraphPath& path, int value);
 
 		int flow(const BFSVisitors& visitors, const Index& end) const;
+		void doFlow(const BFSVisitors& visitors, const Index& end, int value);
 
 		cv::Mat t_flow(const TLinks& t) const;
 		cv::Mat n_flow(const NLinks& t) const;
