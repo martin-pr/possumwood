@@ -69,6 +69,7 @@ bool Graph::iterate() {
 		for(std::size_t src_id=0; src_id<end; ++src_id) {
 			const Index src_v = Index{i2v(src_id), 0};
 
+			visited.visit(src_v, Index{V2i(-1, -1), 0});
 			q.push_back(QueueItem{src_v, Index{V2i(-1, -1), 0}});
 		}
 	}
@@ -78,61 +79,70 @@ bool Graph::iterate() {
 		QueueItem item = q.front();
 		q.pop_front();
 
-		if(!visited.visited(item.current)) {
-			visited.visit(item.current, item.parent);
+		Index current_v = item.current;
 
-			Index current_v = item.current;
+		// a potential exit point
+		if(current_v.n_layer == m_nLinks.size()-1) {
+			if(m_tLinks.back().edge(current_v.pos).residualCapacity() > 0) {
+				foundPath = true;
 
-			// try to move horizontally left
-			if(current_v.pos.x > 0) {
-				const Index new_v{V2i(current_v.pos.x-1, current_v.pos.y), current_v.n_layer};
-				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
-					q.push_back(QueueItem{new_v, current_v});
+				const int f = flow(visited, current_v);
+				if(f > 0)
+					doFlow(visited, current_v, f);
 			}
+		}
 
-			// try to move horizontally right
-			if(current_v.pos.x < m_size.x-1){
-				const Index new_v{V2i(current_v.pos.x+1, current_v.pos.y), current_v.n_layer};
-				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
-					q.push_back(QueueItem{new_v, current_v});
-			}
-
-			// try to move vertically up
-			if(current_v.pos.y > 0) {
-				const Index new_v{V2i(current_v.pos.x, current_v.pos.y-1), current_v.n_layer};
-				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
-					q.push_back(QueueItem{new_v, current_v});
-			}
-
-			// try to move vertically down
-			if(current_v.pos.y < m_size.y-1) {
-				const Index new_v{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer};
-				if(m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0)
-					q.push_back(QueueItem{new_v, current_v});
-			}
-
-			// try to move up a layer (unconditional)
-			if((current_v.n_layer > 0)) {
-				const Index new_v{current_v.pos, current_v.n_layer-1};
+		// try to move horizontally left
+		if(current_v.pos.x > 0) {
+			const Index new_v{V2i(current_v.pos.x-1, current_v.pos.y), current_v.n_layer};
+			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
+				visited.visit(new_v, current_v);
 				q.push_back(QueueItem{new_v, current_v});
 			}
+		}
 
-			// try to move down a layer
-			if((current_v.n_layer < m_nLinks.size()-1)) {
-				const Index new_v{current_v.pos, current_v.n_layer+1};
-				if(m_tLinks[current_v.n_layer].edge(current_v.pos).residualCapacity() > 0)
-					q.push_back(QueueItem{new_v, current_v});
+		// try to move horizontally right
+		if(current_v.pos.x < m_size.x-1){
+			const Index new_v{V2i(current_v.pos.x+1, current_v.pos.y), current_v.n_layer};
+			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
+				visited.visit(new_v, current_v);
+				q.push_back(QueueItem{new_v, current_v});
 			}
+		}
 
-			// the potential exit point
-			if(current_v.n_layer == m_nLinks.size()-1) {
-				if(m_tLinks.back().edge(current_v.pos).residualCapacity() > 0) {
-					foundPath = true;
+		// try to move vertically up
+		if(current_v.pos.y > 0) {
+			const Index new_v{V2i(current_v.pos.x, current_v.pos.y-1), current_v.n_layer};
+			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
+				visited.visit(new_v, current_v);
+				q.push_back(QueueItem{new_v, current_v});
+			}
+		}
 
-					const int f = flow(visited, current_v);
-					if(f > 0)
-						doFlow(visited, current_v, f);
-				}
+		// try to move vertically down
+		if(current_v.pos.y < m_size.y-1) {
+			const Index new_v{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer};
+			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
+				visited.visit(new_v, current_v);
+				q.push_back(QueueItem{new_v, current_v});
+			}
+		}
+
+		// try to move up a layer (unconditional)
+		if((current_v.n_layer > 0)) {
+			const Index new_v{current_v.pos, current_v.n_layer-1};
+			if(!visited.visited(new_v)) {
+				visited.visit(new_v, current_v);
+				q.push_back(QueueItem{new_v, current_v});
+			}
+		}
+
+		// try to move down a layer
+		if((current_v.n_layer < m_nLinks.size()-1)) {
+			const Index new_v{current_v.pos, current_v.n_layer+1};
+			if(!visited.visited(new_v) && m_tLinks[current_v.n_layer].edge(current_v.pos).residualCapacity() > 0) {
+				visited.visit(new_v, current_v);
+				q.push_back(QueueItem{new_v, current_v});
 			}
 		}
 	}
@@ -151,7 +161,7 @@ int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
 	Index current = end;
 	Index parent = visitors.parent(current);
 
-	while(parent.pos.x != -1 && parent.pos.y != -1) {
+	while(result > 0 && parent.pos.x != -1 && parent.pos.y != -1) {
 		assert(Index::sqdist(current, parent) == 1);
 
 		// same layer - need to use N link
@@ -169,7 +179,7 @@ int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
 		parent = visitors.parent(current);
 	}
 
-	assert(current.n_layer == 0);
+	assert(current.n_layer == 0 || result == 0);
 
 	return result;
 }
