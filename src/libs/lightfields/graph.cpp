@@ -3,8 +3,9 @@
 #include <cassert>
 #include <map>
 #include <queue>
+#include <functional>
 
-#include <tbb/parallel_for.h>
+#include <tbb/task_group.h>
 
 #include "bfs_visitors.h"
 
@@ -213,25 +214,44 @@ void Graph::doFlow(const BFSVisitors& visitors, const Index& end, int flow) {
 void Graph::solve() {
 	std::size_t counter = 0;
 
-	// split to tiles and process automagically
-	bool go_on = true;
-	while(go_on) {
-		go_on = false;
+	tbb::task_group tasks;
 
-		tbb::parallel_for(
-			tbb::blocked_range2d<int>(0, m_size.y, 0, m_size.x),
-			[&](const tbb::blocked_range2d<int>& range) {
-				if(iterate(range))
-					go_on = true;
+	// 23/2=11/2=5/2=2/2=1 - on each step produces a different division line,
+	// but ends with the "largest possible" subdivision of 2x2 before descending into
+	// single-threaded finishing
+	int div = 23;
+
+	// an interative function that can spawn itself if the iteration didn't finish
+	std::function<void(const tbb::blocked_range2d<int>& range)> fn;
+	fn = [&](const tbb::blocked_range2d<int>& range) {
+		if(iterate(range)) {
+			tasks.run([range, &fn]() {
+				fn(range);
+			});
+		}
+
+		++counter;
+	};
+
+	// iterate on each subdiv level
+	while(div > 0) {
+		for(int y=0;y<div;++y)
+			for(int x=0;x<div;++x) {
+				const tbb::blocked_range2d<int> range(
+					(m_size.y * y) / div, (m_size.y * (y+1)) / div,
+					(m_size.x * x) / div, (m_size.x * (x+1)) / div
+				);
+
+				tasks.run([range, &fn]() {
+					fn(range);
+				});
 			}
-		);
 
-		++counter;
+		// execute tasks and wait for each level to finish
+		tasks.wait();
+
+		div /= 2;
 	}
-
-	// connect the tiles
-	while(iterate(tbb::blocked_range2d<int>(0, m_size.y, 0, m_size.x)))
-		++counter;
 
 	std::cout << "ST-cut solve with " << counter << " iterations finished." << std::endl;
 }
@@ -240,62 +260,52 @@ cv::Mat Graph::minCut() const {
 	// collects all reachable nodes from source or sink, and marks them appropriately
 	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
 
-	// for(int y=0; y<m_size.y; ++y)
-	// 	for(int x=0; x<m_size.x; ++x) {
-	// 		// int a=0;
-	// 		for(std::size_t a=0; a<m_tLinks.size(); ++a)
-	// 			if(m_tLinks[a].edge(V2i(x, y)).residualCapacity() == 0)
-	// 				result.at<unsigned char>(y, x) = a * (255 / (m_tLinks.size() - 1));
-	// 	}
-
 	// reachable from source as a trivial DFS search
-	{
-		std::vector<bool> visited(m_size.x * m_size.y * (m_nLinks.size()+1));
+	std::vector<bool> visited(m_size.x * m_size.y * (m_nLinks.size()+1));
 
-		std::vector<Index> stack;
-		for(int y=0; y<m_size.y; ++y)
-			for(int x=0; x<m_size.x; ++x) {
-				stack.push_back(Index{V2i(x, y), 0});
+	std::vector<Index> stack;
+	for(int y=0; y<m_size.y; ++y)
+		for(int x=0; x<m_size.x; ++x) {
+			stack.push_back(Index{V2i(x, y), 0});
 
-				while(!stack.empty()) {
-					const Index current = stack.back();
-					stack.pop_back();
+			while(!stack.empty()) {
+				const Index current = stack.back();
+				stack.pop_back();
 
-					unsigned char& value = result.at<unsigned char>(current.pos.y, current.pos.x);
-					const int target = (current.n_layer) * (255 / (m_nLinks.size() - 1));
+				unsigned char& value = result.at<unsigned char>(current.pos.y, current.pos.x);
+				const int target = (current.n_layer) * (255 / (m_nLinks.size() - 1));
 
-					if(!visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y]) {
-						visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y] = true;
+				if(!visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y]) {
+					visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y] = true;
 
-						if(target > value)
-							value = target;
+					if(target > value)
+						value = target;
 
-						if(current.n_layer < m_nLinks.size()) {
-							// horizontal move
-							if(current.pos.x > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x-1, current.pos.y)).residualCapacity() > 0)
-								stack.push_back(Index{V2i(current.pos.x-1, current.pos.y), current.n_layer});
-							if(current.pos.x < m_size.x-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x+1, current.pos.y)).residualCapacity() > 0)
-								stack.push_back(Index{V2i(current.pos.x+1, current.pos.y), current.n_layer});
+					if(current.n_layer < m_nLinks.size()) {
+						// horizontal move
+						if(current.pos.x > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x-1, current.pos.y)).residualCapacity() > 0)
+							stack.push_back(Index{V2i(current.pos.x-1, current.pos.y), current.n_layer});
+						if(current.pos.x < m_size.x-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x+1, current.pos.y)).residualCapacity() > 0)
+							stack.push_back(Index{V2i(current.pos.x+1, current.pos.y), current.n_layer});
 
-							// vertical move
-							if(current.pos.y > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y-1)).residualCapacity() > 0)
-								stack.push_back(Index{V2i(current.pos.x, current.pos.y-1), current.n_layer});
-							if(current.pos.y < m_size.y-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y+1)).residualCapacity() > 0)
-								stack.push_back(Index{V2i(current.pos.x, current.pos.y+1), current.n_layer});
+						// vertical move
+						if(current.pos.y > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y-1)).residualCapacity() > 0)
+							stack.push_back(Index{V2i(current.pos.x, current.pos.y-1), current.n_layer});
+						if(current.pos.y < m_size.y-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y+1)).residualCapacity() > 0)
+							stack.push_back(Index{V2i(current.pos.x, current.pos.y+1), current.n_layer});
 
-							// layer move down
-							assert(current.n_layer < m_nLinks.size());
-							if(m_tLinks[current.n_layer].edge(current.pos).residualCapacity() > 0)
-								stack.push_back(Index{current.pos, current.n_layer+1});
+						// layer move down
+						assert(current.n_layer < m_nLinks.size());
+						if(m_tLinks[current.n_layer].edge(current.pos).residualCapacity() > 0)
+							stack.push_back(Index{current.pos, current.n_layer+1});
 
-							// layer move up (unconditional)
-							if(current.n_layer > 0)
-								stack.push_back(Index{current.pos, current.n_layer-1});
-						}
+						// layer move up (unconditional)
+						if(current.n_layer > 0)
+							stack.push_back(Index{current.pos, current.n_layer-1});
 					}
 				}
 			}
-	}
+		}
 
 	return result;
 }

@@ -17,14 +17,6 @@ class BFSVisitors;
 
 class Graph {
 	public:
-		struct Edge {
-			// represents an edge with two directions of flow
-			Edge(int val = 0.0f) : forward(val), backward(val) {
-			}
-
-			int forward, backward;
-		};
-
 		Graph(const V2i& size, int n_link_value, std::size_t layer_count);
 
 		void setValue(const V2i& pos, const std::vector<int>& values);
