@@ -31,7 +31,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "colormap_3",
+            "in_node": "colormap_6",
             "in_port": "in_frame",
             "out_node": "color_0",
             "out_port": "out_frame"
@@ -49,56 +49,56 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "concat_3_2",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_3_1",
+            "in_port": "in_frame_3",
+            "out_node": "colormap_3",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_3_1",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_4",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "concat_3_1",
             "in_port": "in_frame_1",
-            "out_node": "colormap_2",
+            "out_node": "colormap_5",
             "out_port": "out_frame"
         },
         {
             "in_node": "resize_1",
             "in_port": "in_frame",
-            "out_node": "colormap_3",
+            "out_node": "colormap_6",
             "out_port": "out_frame"
         },
         {
             "in_node": "concat_3_0",
             "in_port": "in_frame_1",
-            "out_node": "colormap_4",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_3_0",
-            "in_port": "in_frame_3",
-            "out_node": "colormap_5",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_3_0",
-            "in_port": "in_frame_2",
-            "out_node": "colormap_6",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_3_2",
-            "in_port": "in_frame_3",
             "out_node": "colormap_7",
             "out_port": "out_frame"
         },
         {
-            "in_node": "concat_3_2",
-            "in_port": "in_frame_2",
+            "in_node": "concat_3_0",
+            "in_port": "in_frame_3",
             "out_node": "colormap_8",
             "out_port": "out_frame"
         },
         {
-            "in_node": "concat_3_1",
-            "in_port": "in_frame_3",
+            "in_node": "concat_3_0",
+            "in_port": "in_frame_2",
             "out_node": "colormap_9",
             "out_port": "out_frame"
         },
         {
-            "in_node": "concat_3_1",
-            "in_port": "in_frame_2",
+            "in_node": "concat_3_2",
+            "in_port": "in_frame_3",
             "out_node": "colormap_10",
             "out_port": "out_frame"
         },
@@ -145,7 +145,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "colormap_5",
+            "in_node": "colormap_8",
             "in_port": "in_frame",
             "out_node": "convert_0",
             "out_port": "out_frame"
@@ -163,7 +163,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "colormap_4",
+            "in_node": "colormap_7",
             "in_port": "in_frame",
             "out_node": "convert_1",
             "out_port": "out_frame"
@@ -187,19 +187,19 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "colormap_2",
+            "in_node": "colormap_5",
             "in_port": "in_frame",
             "out_node": "get_frame_0",
             "out_port": "frame"
         },
         {
-            "in_node": "colormap_10",
+            "in_node": "colormap_4",
             "in_port": "in_frame",
             "out_node": "get_frame_1",
             "out_port": "frame"
         },
         {
-            "in_node": "colormap_9",
+            "in_node": "colormap_3",
             "in_port": "in_frame",
             "out_node": "get_frame_2",
             "out_port": "frame"
@@ -211,13 +211,13 @@
             "out_port": "frame"
         },
         {
-            "in_node": "colormap_8",
+            "in_node": "colormap_2",
             "in_port": "in_frame",
             "out_node": "get_frame_4",
             "out_port": "frame"
         },
         {
-            "in_node": "colormap_7",
+            "in_node": "colormap_10",
             "in_port": "in_frame",
             "out_node": "get_frame_5",
             "out_port": "frame"
@@ -229,7 +229,7 @@
             "out_port": "frame"
         },
         {
-            "in_node": "colormap_6",
+            "in_node": "colormap_9",
             "in_port": "in_frame",
             "out_node": "min_0",
             "out_port": "out_frame"
@@ -382,90 +382,6 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 958.2275390625,
-                    "y": 1301.29248046875
-                }
-            },
-            "name": "colormap",
-            "ports": {
-                "type": "COLORMAP_JET"
-            },
-            "type": "opencv/colormap"
-        },
-        "colormap_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 853.53369140625,
-                    "y": 1301.48840332031
-                }
-            },
-            "name": "colormap",
-            "ports": {
-                "type": "COLORMAP_JET"
-            },
-            "type": "opencv/colormap"
-        },
-        "colormap_3": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -385.531494140625,
-                    "y": 478.071868896484
-                }
-            },
-            "name": "colormap",
-            "ports": {
-                "type": "COLORMAP_JET"
-            },
-            "type": "opencv/colormap"
-        },
-        "colormap_4": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -239.747161865234,
-                    "y": 481.868011474609
-                }
-            },
-            "name": "colormap",
-            "ports": {
-                "type": "COLORMAP_JET"
-            },
-            "type": "opencv/colormap"
-        },
-        "colormap_5": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -8.97878837585449,
-                    "y": 478.859283447266
-                }
-            },
-            "name": "colormap",
-            "ports": {
-                "type": "COLORMAP_JET"
-            },
-            "type": "opencv/colormap"
-        },
-        "colormap_6": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -117.818237304688,
-                    "y": 480.992340087891
-                }
-            },
-            "name": "colormap",
-            "ports": {
-                "type": "COLORMAP_JET"
-            },
-            "type": "opencv/colormap"
-        },
-        "colormap_7": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
                     "x": 1436.8427734375,
                     "y": 1293.02722167969
                 }
@@ -476,7 +392,7 @@
             },
             "type": "opencv/colormap"
         },
-        "colormap_8": {
+        "colormap_2": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -490,12 +406,96 @@
             },
             "type": "opencv/colormap"
         },
-        "colormap_9": {
+        "colormap_3": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 1058.28918457031,
                     "y": 1300.96508789062
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_JET"
+            },
+            "type": "opencv/colormap"
+        },
+        "colormap_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 958.2275390625,
+                    "y": 1301.29248046875
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_JET"
+            },
+            "type": "opencv/colormap"
+        },
+        "colormap_5": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 853.53369140625,
+                    "y": 1301.48840332031
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_JET"
+            },
+            "type": "opencv/colormap"
+        },
+        "colormap_6": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -385.531494140625,
+                    "y": 478.071868896484
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_JET"
+            },
+            "type": "opencv/colormap"
+        },
+        "colormap_7": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -239.747161865234,
+                    "y": 481.868011474609
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_JET"
+            },
+            "type": "opencv/colormap"
+        },
+        "colormap_8": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -8.97878837585449,
+                    "y": 478.859283447266
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_JET"
+            },
+            "type": "opencv/colormap"
+        },
+        "colormap_9": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -117.818237304688,
+                    "y": 480.992340087891
                 }
             },
             "name": "colormap",
@@ -1082,7 +1082,7 @@
             "name": "resize",
             "ports": {
                 "mode": "INTER_NEAREST",
-                "scale": 0.5
+                "scale": 1.0
             },
             "type": "opencv/resize"
         },
@@ -1137,5 +1137,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAcwAAABwAAAd7AAAEDwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKiAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAChQAAAVwAAACqAQAAAwAAAzQAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKiAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACNAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACqgAAATcAAACqAQAAAwAAAzQAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

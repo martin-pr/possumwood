@@ -3,7 +3,9 @@
 #include <vector>
 #include <map>
 
-#include "graph_path.h"
+#include <tbb/blocked_range2d.h>
+
+#include "index.h"
 
 // #define BFS_VISITORS_TRIVIAL
 
@@ -11,24 +13,22 @@ namespace lightfields {
 
 class BFSVisitors {
 	public:
-		BFSVisitors(const V2i& size, std::size_t layer_count);
+		BFSVisitors(const tbb::blocked_range2d<int>& range, unsigned layer_count);
 
 		bool visited(const Index& index) const;
 		Index parent(const Index& index) const;
 
 		void visit(const Index& index, const Index& parent);
 
-		GraphPath path(const Index& end) const;
-
 	private:
 		#ifndef BFS_VISITORS_TRIVIAL
-		std::size_t vec2index(const Index& v) const;
-		Index index2vec(std::size_t i) const;
+		unsigned vec2index(const Index& v) const;
+		Index index2vec(unsigned i) const;
 
-		V2i m_size;
-		std::size_t m_layerCount, m_layerSize;
+		tbb::blocked_range2d<int> m_range;
+		unsigned m_layerCount, m_layerSize;
 
-		std::vector<std::size_t> m_values;
+		std::vector<unsigned> m_values;
 
 		#else
 		std::map<Index, Index> m_visited;

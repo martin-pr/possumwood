@@ -8,7 +8,7 @@ namespace lightfields {
 
 struct Index {
 	V2i pos;
-	std::size_t n_layer;
+	unsigned n_layer;
 
 	bool operator == (const Index& i) const {
 		return pos == i.pos && n_layer == i.n_layer;
