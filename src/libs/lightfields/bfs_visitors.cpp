@@ -8,48 +8,48 @@ namespace lightfields {
 
 #ifndef BFS_VISITORS_TRIVIAL
 
-std::size_t BFSVisitors::vec2index(const Index& v) const {
+unsigned BFSVisitors::vec2index(const Index& v) const {
 	if(v.pos.x == -1 && v.pos.y == -1)
-		return std::numeric_limits<std::size_t>::max()-1;
+		return std::numeric_limits<unsigned>::max()-1;
 
 	assert(v.pos.x >= 0 && v.pos.x < (int)m_size.x);
 	assert(v.pos.y >= 0 && v.pos.y < (int)m_size.y);
 	assert(v.n_layer < m_layerCount);
 
-	const std::size_t index = std::size_t(v.pos.x) +
-		std::size_t(v.pos.y) * m_size.x + v.n_layer * m_layerSize;
+	const unsigned index = unsigned(v.pos.x) +
+		unsigned(v.pos.y) * m_size.x + v.n_layer * m_layerSize;
 	assert(index < m_values.size());
 
 	return index;
 }
 
-Index BFSVisitors::index2vec(std::size_t i) const {
-	if(i == std::numeric_limits<std::size_t>::max()-1)
+Index BFSVisitors::index2vec(unsigned i) const {
+	if(i == std::numeric_limits<unsigned>::max()-1)
 		return Index{V2i(-1, -1), 0};
 
 	assert(i < m_values.size());
 
-	const std::size_t layer = i / m_layerSize;
-	i = i % m_layerSize;
+	const unsigned layer = (unsigned)i / m_layerSize;
+	const int ii = i % m_layerSize;
 
-	return Index{V2i(i % m_size.x, i / m_size.x), layer};
+	return Index{V2i(ii % m_size.x, ii / m_size.x), layer};
 }
 
-BFSVisitors::BFSVisitors(const V2i& size, std::size_t layerCount) : m_size(size.x, size.y),
+BFSVisitors::BFSVisitors(const V2i& size, unsigned layerCount) : m_size(size.x, size.y),
 	m_layerCount(layerCount), m_layerSize(size.x * size.y),
-	m_values(m_size.x*m_size.y*layerCount, std::numeric_limits<std::size_t>::max())
+	m_values(m_size.x*m_size.y*layerCount, std::numeric_limits<unsigned>::max())
 {
 }
 
 bool BFSVisitors::visited(const Index& v) const {
-	const std::size_t index = vec2index(v);
+	const unsigned index = vec2index(v);
 
 	assert(index < m_values.size());
-	return m_values[index] != std::numeric_limits<std::size_t>::max();
+	return m_values[index] != std::numeric_limits<unsigned>::max();
 }
 
 Index BFSVisitors::parent(const Index& v) const {
-	const std::size_t index = vec2index(v);
+	const unsigned index = vec2index(v);
 
 	assert(visited(v));
 
@@ -59,8 +59,8 @@ Index BFSVisitors::parent(const Index& v) const {
 void BFSVisitors::visit(const Index& index, const Index& parent) {
 	assert(!visited(index));
 
-	const std::size_t parent_id = vec2index(parent);
-	assert(parent_id == std::numeric_limits<std::size_t>::max()-1 || parent_id < m_values.size());
+	const unsigned parent_id = vec2index(parent);
+	assert(parent_id == std::numeric_limits<unsigned>::max()-1 || parent_id < m_values.size());
 
 	m_values[vec2index(index)] = parent_id;
 
@@ -72,7 +72,7 @@ void BFSVisitors::visit(const Index& index, const Index& parent) {
 
 #else
 
-BFSVisitors::BFSVisitors(const V2i& size, std::size_t layer_count) {
+BFSVisitors::BFSVisitors(const V2i& size, unsigned layer_count) {
 }
 
 bool BFSVisitors::visited(const Index& index) const {

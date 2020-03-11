@@ -11,7 +11,7 @@ namespace lightfields {
 
 class BFSVisitors {
 	public:
-		BFSVisitors(const V2i& size, std::size_t layer_count);
+		BFSVisitors(const V2i& size, unsigned layer_count);
 
 		bool visited(const Index& index) const;
 		Index parent(const Index& index) const;
@@ -20,13 +20,13 @@ class BFSVisitors {
 
 	private:
 		#ifndef BFS_VISITORS_TRIVIAL
-		std::size_t vec2index(const Index& v) const;
-		Index index2vec(std::size_t i) const;
+		unsigned vec2index(const Index& v) const;
+		Index index2vec(unsigned i) const;
 
-		Vec2<std::size_t> m_size;
-		std::size_t m_layerCount, m_layerSize;
+		Vec2<unsigned> m_size;
+		unsigned m_layerCount, m_layerSize;
 
-		std::vector<std::size_t> m_values;
+		std::vector<unsigned> m_values;
 
 		#else
 		std::map<Index, Index> m_visited;
