@@ -5,6 +5,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <tbb/blocked_range2d.h>
+
 #include "n_links.h"
 #include "t_links.h"
 #include "index.h"
@@ -35,9 +37,8 @@ class Graph {
 
 	private:
 		std::size_t v2i(const V2i& v) const;
-		V2i i2v(std::size_t v) const;
 
-		bool iterate();
+		bool iterate(const tbb::blocked_range2d<int>& range);
 
 		int flow(const BFSVisitors& visitors, const Index& end) const;
 		void doFlow(const BFSVisitors& visitors, const Index& end, int value);

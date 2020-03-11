@@ -12,12 +12,13 @@ unsigned BFSVisitors::vec2index(const Index& v) const {
 	if(v.pos.x == -1 && v.pos.y == -1)
 		return std::numeric_limits<unsigned>::max()-1;
 
-	assert(v.pos.x >= 0 && v.pos.x < (int)m_size.x);
-	assert(v.pos.y >= 0 && v.pos.y < (int)m_size.y);
+	assert(v.pos.x >= m_range.cols().begin() && v.pos.x < m_range.cols().end());
+	assert(v.pos.y >= m_range.rows().begin() && v.pos.y < m_range.rows().end());
 	assert(v.n_layer < m_layerCount);
 
-	const unsigned index = unsigned(v.pos.x) +
-		unsigned(v.pos.y) * m_size.x + v.n_layer * m_layerSize;
+	const unsigned index = unsigned(v.pos.x - m_range.cols().begin()) +
+		unsigned(v.pos.y - m_range.rows().begin()) * m_range.cols().size() +
+		v.n_layer * m_layerSize;
 	assert(index < m_values.size());
 
 	return index;
@@ -32,12 +33,15 @@ Index BFSVisitors::index2vec(unsigned i) const {
 	const unsigned layer = (unsigned)i / m_layerSize;
 	const int ii = i % m_layerSize;
 
-	return Index{V2i(ii % m_size.x, ii / m_size.x), layer};
+	return Index{V2i(
+		ii % m_range.cols().size() + m_range.cols().begin(),
+		ii / m_range.cols().size() + m_range.rows().begin()
+	), layer};
 }
 
-BFSVisitors::BFSVisitors(const V2i& size, unsigned layerCount) : m_size(size.x, size.y),
-	m_layerCount(layerCount), m_layerSize(size.x * size.y),
-	m_values(m_size.x*m_size.y*layerCount, std::numeric_limits<unsigned>::max())
+BFSVisitors::BFSVisitors(const tbb::blocked_range2d<int>& range, unsigned layerCount) : m_range(range),
+	m_layerCount(layerCount), m_layerSize(m_range.rows().size() * m_range.cols().size()),
+	m_values(m_range.rows().size()*m_range.cols().size()*layerCount, std::numeric_limits<unsigned>::max())
 {
 }
 

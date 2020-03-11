@@ -3,6 +3,8 @@
 #include <vector>
 #include <map>
 
+#include <tbb/blocked_range2d.h>
+
 #include "index.h"
 
 // #define BFS_VISITORS_TRIVIAL
@@ -11,7 +13,7 @@ namespace lightfields {
 
 class BFSVisitors {
 	public:
-		BFSVisitors(const V2i& size, unsigned layer_count);
+		BFSVisitors(const tbb::blocked_range2d<int>& range, unsigned layer_count);
 
 		bool visited(const Index& index) const;
 		Index parent(const Index& index) const;
@@ -23,7 +25,7 @@ class BFSVisitors {
 		unsigned vec2index(const Index& v) const;
 		Index index2vec(unsigned i) const;
 
-		Vec2<unsigned> m_size;
+		tbb::blocked_range2d<int> m_range;
 		unsigned m_layerCount, m_layerSize;
 
 		std::vector<unsigned> m_values;

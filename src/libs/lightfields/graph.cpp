@@ -4,6 +4,8 @@
 #include <map>
 #include <queue>
 
+#include <tbb/parallel_for.h>
+
 #include "bfs_visitors.h"
 
 namespace lightfields {
@@ -44,11 +46,6 @@ std::size_t Graph::v2i(const V2i& v) const {
 	return v.x + v.y*m_size.x;
 }
 
-V2i Graph::i2v(std::size_t v) const {
-	v = v % (m_size.x*m_size.y);
-	return V2i(v % m_size.x, v / m_size.x);
-}
-
 namespace {
 
 struct QueueItem {
@@ -57,22 +54,20 @@ struct QueueItem {
 
 }
 
-bool Graph::iterate() {
+bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
 	bool foundPath = false;
 
-	BFSVisitors visited(m_size, m_nLinks.size());
+	BFSVisitors visited(range, m_nLinks.size());
 	std::deque<QueueItem> q;
 
-	{
-		// initialize - source index has parent -1,-1
-		const std::size_t end = m_size.x * m_size.y;
-		for(std::size_t src_id=0; src_id<end; ++src_id) {
-			const Index src_v = Index{i2v(src_id), 0};
+	// initialize - source index has parent -1,-1
+	for(int y=range.rows().begin(); y != range.rows().end(); ++y)
+		for(int x=range.cols().begin(); x != range.cols().end(); ++x) {
+			const Index src_v{V2i(x, y), 0};
 
 			visited.visit(src_v, Index{V2i(-1, -1), 0});
 			q.push_back(QueueItem{src_v, Index{V2i(-1, -1), 0}});
 		}
-	}
 
 	// the core of the algorithm
 	while(!q.empty()) {
@@ -93,7 +88,7 @@ bool Graph::iterate() {
 		}
 
 		// try to move horizontally left
-		if(current_v.pos.x > 0) {
+		if(current_v.pos.x > range.cols().begin()) {
 			const Index new_v{V2i(current_v.pos.x-1, current_v.pos.y), current_v.n_layer};
 			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
@@ -102,7 +97,7 @@ bool Graph::iterate() {
 		}
 
 		// try to move horizontally right
-		if(current_v.pos.x < m_size.x-1){
+		if(current_v.pos.x < range.cols().end()-1){
 			const Index new_v{V2i(current_v.pos.x+1, current_v.pos.y), current_v.n_layer};
 			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
@@ -111,7 +106,7 @@ bool Graph::iterate() {
 		}
 
 		// try to move vertically up
-		if(current_v.pos.y > 0) {
+		if(current_v.pos.y > range.rows().begin()) {
 			const Index new_v{V2i(current_v.pos.x, current_v.pos.y-1), current_v.n_layer};
 			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
@@ -120,7 +115,7 @@ bool Graph::iterate() {
 		}
 
 		// try to move vertically down
-		if(current_v.pos.y < m_size.y-1) {
+		if(current_v.pos.y < range.rows().end()-1) {
 			const Index new_v{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer};
 			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
@@ -156,7 +151,6 @@ int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
 
 	// initial flow value based on the last T link (towards the sink)
 	int result = m_tLinks.back().edge(end.pos).residualCapacity();
-
 
 	Index current = end;
 	Index parent = visitors.parent(current);
@@ -219,7 +213,24 @@ void Graph::doFlow(const BFSVisitors& visitors, const Index& end, int flow) {
 void Graph::solve() {
 	std::size_t counter = 0;
 
-	while(iterate())
+	// split to tiles and process automagically
+	bool go_on = true;
+	while(go_on) {
+		go_on = false;
+
+		tbb::parallel_for(
+			tbb::blocked_range2d<int>(0, m_size.y, 0, m_size.x),
+			[&](const tbb::blocked_range2d<int>& range) {
+				if(iterate(range))
+					go_on = true;
+			}
+		);
+
+		++counter;
+	}
+
+	// connect the tiles
+	while(iterate(tbb::blocked_range2d<int>(0, m_size.y, 0, m_size.x)))
 		++counter;
 
 	std::cout << "ST-cut solve with " << counter << " iterations finished." << std::endl;
