@@ -12,14 +12,32 @@ namespace possumwood { namespace opencv {
 
 class Sequence final {
 	public:
+		Sequence(std::size_t size = 0);
+
 		void add(const cv::Mat& frame);
+
+		bool isValid() const;
 
 		bool empty() const;
 		std::size_t size() const;
 
+		int type() const;
+		int rows() const;
+		int cols() const;
+
+		Frame& operator[](std::size_t index);
+		const Frame& operator[](std::size_t index) const;
+
+		typedef std::vector<Frame>::iterator iterator;
+		iterator begin();
+		iterator end();
+
 		typedef std::vector<Frame>::const_iterator const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
+
+		const Frame& front() const;
+		const Frame& back() const;
 
 		bool operator == (const Sequence& f) const;
 		bool operator != (const Sequence& f) const;

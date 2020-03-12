@@ -14,6 +14,10 @@ class Frame {
 		Frame(const cv::Mat& data = cv::Mat(), bool copy = true);
 
 		const cv::Mat& operator*() const;
+		const cv::Mat* operator->() const;
+
+		cv::Mat& operator*();
+		cv::Mat* operator->();
 
 		cv::Size size() const;
 		bool empty() const;
@@ -22,7 +26,7 @@ class Frame {
 		bool operator != (const Frame& f) const;
 
 	private:
-		std::shared_ptr<const cv::Mat> m_frame;
+		std::shared_ptr<cv::Mat> m_frame;
 };
 
 std::ostream& operator << (std::ostream& out, const Frame& f);

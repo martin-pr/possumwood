@@ -6,13 +6,25 @@ namespace possumwood { namespace opencv {
 
 Frame::Frame(const cv::Mat& data, bool copy) {
 	if(!copy)
-		m_frame = std::shared_ptr<const cv::Mat>(new cv::Mat(data));
+		m_frame = std::shared_ptr<cv::Mat>(new cv::Mat(data));
 	else
-		m_frame = std::shared_ptr<const cv::Mat>(new cv::Mat(data.clone()));
+		m_frame = std::shared_ptr<cv::Mat>(new cv::Mat(data.clone()));
 }
 
 const cv::Mat& Frame::operator*() const {
 	return *m_frame;
+}
+
+const cv::Mat* Frame::operator->() const {
+	return m_frame.get();
+}
+
+cv::Mat& Frame::operator*() {
+	return *m_frame;
+}
+
+cv::Mat* Frame::operator->() {
+	return m_frame.get();
 }
 
 cv::Size Frame::size() const {
@@ -30,7 +42,6 @@ bool Frame::operator == (const Frame& f) const {
 bool Frame::operator != (const Frame& f) const {
 	return m_frame != f.m_frame;
 }
-
 
 std::ostream& operator << (std::ostream& out, const Frame& f) {
 	out << "(1 " << opencv::type2str((*f).type()) << " frame, " << (*f).cols << "x" << (*f).rows << ")";
