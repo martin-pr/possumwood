@@ -26,7 +26,7 @@ class Frame {
 		bool operator != (const Frame& f) const;
 
 	private:
-		std::shared_ptr<cv::Mat> m_frame;
+		cv::Mat m_frame;
 };
 
 std::ostream& operator << (std::ostream& out, const Frame& f);
