@@ -1,12 +1,14 @@
 #include <possumwood_sdk/node_implementation.h>
 
+#include <tbb/parallel_for.h>
+
 #include <lightfields/depth.h>
 #include <lightfields/nearest_integration.h>
 
 #include <maths/io/vec2.h>
 
 #include "lightfields.h"
-#include "frame.h"
+#include "sequence.h"
 
 namespace {
 
@@ -15,7 +17,7 @@ dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_res;
 dependency_graph::InAttr<float> a_start, a_end;
 dependency_graph::InAttr<unsigned> a_steps;
-dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_conf;
+dependency_graph::OutAttr<possumwood::opencv::Sequence> a_out, a_corresp;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const lightfields::Samples& samples = data.get(a_samples);
@@ -27,25 +29,21 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(data.get(a_steps) < 1)
 		throw std::runtime_error("2 or more quantisation steps are required for the depth algorithm");
 
-	lightfields::Depth depth;
+	possumwood::opencv::Sequence out(data.get(a_steps));
+	possumwood::opencv::Sequence corresp(data.get(a_steps));
 
-	for(unsigned a=0;a<data.get(a_steps);++a) {
+	tbb::parallel_for(0u, data.get(a_steps), [&](unsigned a) {
 		const float w = (float)a / (float)(data.get(a_steps)-1);
 		const float d = data.get(a_start) + (data.get(a_end) - data.get(a_start)) * w;
 
 		auto tmp = lightfields::nearest::integrate(samples, data.get(a_res), in, d);
-		auto correspondence = lightfields::nearest::correspondence(samples, in, tmp, d);
+		corresp[a] = lightfields::nearest::correspondence(samples, in, tmp, d);
 
-		std::vector<cv::Mat> split(3);
-		cv::split(correspondence, split);
+		out[a] = tmp.average;
+	});
 
-		for(auto& s : split)
-			depth.addLayer(d, s);
-	}
-
-	auto out = depth.eval();
-	data.set(a_out, possumwood::opencv::Frame(out.depth));
-	data.set(a_conf, possumwood::opencv::Frame(out.confidence));
+	data.set(a_out, out);
+	data.set(a_corresp, corresp);
 
 	return dependency_graph::State();
 }
@@ -57,8 +55,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_start, "samples/start", -40.0f);
 	meta.addAttribute(a_end, "samples/end", 40.0f);
 	meta.addAttribute(a_steps, "samples/steps", 9u);
-	meta.addAttribute(a_out, "out_image", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_conf, "confidence", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_out, "out_seq");
+	meta.addAttribute(a_corresp, "corresp_seq");
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_samples, a_out);
@@ -67,12 +65,12 @@ void init(possumwood::Metadata& meta) {
 	meta.addInfluence(a_end, a_out);
 	meta.addInfluence(a_steps, a_out);
 
-	meta.addInfluence(a_in, a_conf);
-	meta.addInfluence(a_samples, a_conf);
-	meta.addInfluence(a_res, a_conf);
-	meta.addInfluence(a_start, a_conf);
-	meta.addInfluence(a_end, a_conf);
-	meta.addInfluence(a_steps, a_conf);
+	meta.addInfluence(a_in, a_corresp);
+	meta.addInfluence(a_samples, a_corresp);
+	meta.addInfluence(a_res, a_corresp);
+	meta.addInfluence(a_start, a_corresp);
+	meta.addInfluence(a_end, a_corresp);
+	meta.addInfluence(a_steps, a_corresp);
 
 	meta.setCompute(compute);
 }
