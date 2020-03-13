@@ -7,6 +7,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "colormap_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "concat_3_0",
             "in_port": "in_frame_3",
             "out_node": "colormap_1",
@@ -25,6 +31,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "convert_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "colormap_0",
             "in_port": "in_frame",
             "out_node": "convert_1",
@@ -34,12 +46,6 @@
             "in_node": "pixel_normalize_0",
             "in_port": "in",
             "out_node": "convert_2",
-            "out_port": "out_sequence"
-        },
-        {
-            "in_node": "st_graphcut_0",
-            "in_port": "in_sequence",
-            "out_node": "convert_3",
             "out_port": "out_sequence"
         },
         {
@@ -151,6 +157,21 @@
             },
             "type": "opencv/colormap"
         },
+        "concat_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1518.95324707031,
+                    "y": 1372.31042480469
+                }
+            },
+            "name": "concat",
+            "ports": {
+                "mode": "Horizontal",
+                "separation": 0
+            },
+            "type": "opencv/concat"
+        },
         "concat_3_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -202,13 +223,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 677.765686035156,
-                    "y": 398.566192626953
+                    "x": 679.380981445312,
+                    "y": 400.181488037109
                 }
             },
             "name": "convert",
             "ports": {
-                "a": -1.0,
+                "a": 1.0,
                 "b": 0.0,
                 "mode": "CV_32F"
             },
@@ -218,14 +239,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1045.55163574219,
-                    "y": 517.670043945312
+                    "x": 1049.65759277344,
+                    "y": 519.723022460938
                 }
             },
             "name": "convert",
             "ports": {
-                "a": 255.0,
-                "b": 0.0,
+                "a": -255.0,
+                "b": 255.0,
                 "mode": "CV_8U"
             },
             "type": "opencv/sequence/convert"
@@ -246,7 +267,7 @@
                 },
                 "samples/end": 50.0,
                 "samples/start": -40.0,
-                "samples/steps": 5
+                "samples/steps": 11
             },
             "type": "opencv/lightfields/depth"
         },
@@ -331,7 +352,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/tea.lfr"
+                "filename": "$EXAMPLES/lytro/road.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -339,8 +360,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1491.98461914062,
-                    "y": 1371.7197265625
+                    "x": 1558.30749511719,
+                    "y": 1580.63671875
                 }
             },
             "connections": [
@@ -648,6 +669,9 @@
                 }
             },
             "name": "pixel_normalize",
+            "ports": {
+                "mode": "Maximum"
+            },
             "type": "opencv/sequence/pixel_normalize"
         },
         "samples_from_metadata_0": {
@@ -674,7 +698,7 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 128.0
+                "constness": 64.0
             },
             "type": "opencv/lightfields/st_graphcut"
         }

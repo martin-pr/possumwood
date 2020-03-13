@@ -37,7 +37,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "resize_2",
+            "in_node": "resize_1",
             "in_port": "in_frame",
             "out_node": "colormap_0",
             "out_port": "out_frame"
@@ -67,7 +67,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "resize_1",
+            "in_node": "resize_0",
             "in_port": "in_frame",
             "out_node": "colormap_5",
             "out_port": "out_frame"
@@ -151,27 +151,21 @@
             "out_port": "frame"
         },
         {
-            "in_node": "resize_0",
-            "in_port": "in_frame",
+            "in_node": "crop_0",
+            "in_port": "in",
             "out_node": "image_0",
             "out_port": "frame"
         },
         {
-            "in_node": "color_0",
-            "in_port": "in_frame",
+            "in_node": "concat_3_0",
+            "in_port": "in_frame_1",
             "out_node": "resize_0",
             "out_port": "out_frame"
         },
         {
             "in_node": "concat_3_0",
-            "in_port": "in_frame_1",
-            "out_node": "resize_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_3_0",
             "in_port": "in_frame_3",
-            "out_node": "resize_2",
+            "out_node": "resize_1",
             "out_port": "out_frame"
         },
         {
@@ -203,6 +197,12 @@
             "in_port": "sequence",
             "out_node": "st_graphcut_0",
             "out_port": "debug"
+        },
+        {
+            "in_node": "color_0",
+            "in_port": "in_frame",
+            "out_node": "crop_0",
+            "out_port": "out"
         }
     ],
     "description": "### ST Graph Cut\n\nA simple ST Graph Cut demo, implementing a 2-label version of the Graph Cut classification algorithm. Specifically, it implements a single-threaded version of the [Edmonds-Karp](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm) algorithm.\n\n(to be improved in later pull requests)",
@@ -446,6 +446,27 @@
             },
             "type": "opencv/convert"
         },
+        "crop_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 514.565734863281,
+                    "y": 225.51921081543
+                }
+            },
+            "name": "crop",
+            "ports": {
+                "crop/from": {
+                    "x": 150,
+                    "y": 10
+                },
+                "crop/to": {
+                    "x": 240,
+                    "y": 240
+                }
+            },
+            "type": "opencv/crop"
+        },
         "get_frame_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -506,13 +527,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 535.3173828125,
+                    "x": 521.336975097656,
                     "y": 101.997695922852
                 }
             },
             "name": "image",
             "ports": {
-                "filename": "$EXAMPLES/gradient_noise.png"
+                "filename": "$EXAMPLES/unsplash_images/flower.jpeg"
             },
             "type": "opencv/capture/image"
         },
@@ -824,21 +845,6 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 520.84130859375,
-                    "y": 233.042602539062
-                }
-            },
-            "name": "resize",
-            "ports": {
-                "mode": "INTER_NEAREST",
-                "scale": 0.5
-            },
-            "type": "opencv/resize"
-        },
-        "resize_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
                     "x": 458.897064208984,
                     "y": 1521.81848144531
                 }
@@ -850,7 +856,7 @@
             },
             "type": "opencv/resize"
         },
-        "resize_2": {
+        "resize_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -886,5 +892,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAcwAAABwAAAd7AAAEDwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJWAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB+AAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACbgAAAXMAAACqAQAAAwAAA4AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJWAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACawAAAXYAAACqAQAAAwAAA4AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
