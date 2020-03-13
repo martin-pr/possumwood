@@ -11,6 +11,10 @@ Frame::Frame(const cv::Mat& data, bool copy) {
 		m_frame = cv::Mat(data.clone());
 }
 
+Frame Frame::clone() const {
+	return Frame(m_frame, true);
+}
+
 const cv::Mat& Frame::operator*() const {
 	return m_frame;
 }

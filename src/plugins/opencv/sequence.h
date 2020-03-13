@@ -14,6 +14,8 @@ class Sequence final {
 	public:
 		Sequence(std::size_t size = 0);
 
+		Sequence clone() const;
+
 		void add(const cv::Mat& frame);
 
 		bool isValid() const;

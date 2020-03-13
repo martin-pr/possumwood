@@ -5,6 +5,15 @@ namespace possumwood { namespace opencv {
 Sequence::Sequence(std::size_t size) : m_sequence(size) {
 }
 
+Sequence Sequence::clone() const {
+	Sequence result;
+
+	for(auto& f : m_sequence)
+		result.add(f->clone());
+
+	return result;
+}
+
 void Sequence::add(const cv::Mat& frame) {
 	m_sequence.push_back(Frame((frame)));
 }

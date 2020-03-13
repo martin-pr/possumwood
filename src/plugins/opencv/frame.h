@@ -13,6 +13,8 @@ class Frame {
 	public:
 		Frame(const cv::Mat& data = cv::Mat(), bool copy = true);
 
+		Frame clone() const;
+
 		const cv::Mat& operator*() const;
 		const cv::Mat* operator->() const;
 
