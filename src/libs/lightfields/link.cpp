@@ -11,6 +11,13 @@ Link::Link(int capacity) : m_forward(this, true), m_backward(this, false), m_cap
 Link::Link(const Link& e) : m_forward(this, true), m_backward(this, false), m_capacity(e.m_capacity), m_flow(e.m_flow) {
 }
 
+Link& Link::operator=(const Link& e) {
+	m_capacity = e.m_capacity;
+	m_flow = e.m_flow;
+
+	return *this;
+}
+
 Link::Direction& Link::forward() {
 	return m_forward;
 }
@@ -25,6 +32,12 @@ Link::Direction& Link::backward() {
 
 const Link::Direction& Link::backward() const {
 	return m_backward;
+}
+
+void Link::setCapacity(int c) {
+	assert(m_flow == 0);
+	assert(c >= 0);
+	m_capacity = c;
 }
 
 ////////////////

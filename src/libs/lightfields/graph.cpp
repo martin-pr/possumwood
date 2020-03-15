@@ -28,7 +28,7 @@ void Graph::setValue(const V2i& pos, const std::vector<int>& values) {
 		tit->edge(pos).setCapacity(*vit);
 
 		assert(*vit >= 0);
-		assert(tit->edge(pos).residualCapacity() == *vit);
+		assert(tit->edge(pos).forward().residualCapacity() == *vit);
 
 		minFlow = std::min(minFlow, *vit);
 
@@ -40,7 +40,7 @@ void Graph::setValue(const V2i& pos, const std::vector<int>& values) {
 	// flow from source to sink
 	if(minFlow > 0)
 		for(tit = m_tLinks.begin(); tit != m_tLinks.end(); ++tit)
-			tit->edge(pos).addFlow(minFlow);
+			tit->edge(pos).forward().addFlow(minFlow);
 }
 
 std::size_t Graph::v2i(const V2i& v) const {
@@ -79,7 +79,7 @@ bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
 
 		// a potential exit point
 		if(current_v.n_layer == m_nLinks.size()-1) {
-			if(m_tLinks.back().edge(current_v.pos).residualCapacity() > 0) {
+			if(m_tLinks.back().edge(current_v.pos).forward().residualCapacity() > 0) {
 				foundPath = true;
 
 				const int f = flow(visited, current_v);
@@ -136,7 +136,7 @@ bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
 		// try to move down a layer
 		if((current_v.n_layer < m_nLinks.size()-1)) {
 			const Index new_v{current_v.pos, current_v.n_layer+1};
-			if(!visited.visited(new_v) && m_tLinks[current_v.n_layer].edge(current_v.pos).residualCapacity() > 0) {
+			if(!visited.visited(new_v) && m_tLinks[current_v.n_layer].edge(current_v.pos).forward().residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
 				q.push_back(QueueItem{new_v, current_v});
 			}
@@ -151,7 +151,7 @@ int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
 	assert(end.n_layer == m_nLinks.size()-1);
 
 	// initial flow value based on the last T link (towards the sink)
-	int result = m_tLinks.back().edge(end.pos).residualCapacity();
+	int result = m_tLinks.back().edge(end.pos).forward().residualCapacity();
 
 	Index current = end;
 	Index parent = visitors.parent(current);
@@ -165,7 +165,7 @@ int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
 
 		// different layer down - need to use a T link (if the move is to higher layer)
 		else if(current.n_layer > parent.n_layer)
-			result = std::min(result, m_tLinks[parent.n_layer].edge(parent.pos).residualCapacity());
+			result = std::min(result, m_tLinks[parent.n_layer].edge(parent.pos).forward().residualCapacity());
 
 		// different layer up - "infinite capacity" back links have no impact on the flow
 
@@ -184,7 +184,7 @@ void Graph::doFlow(const BFSVisitors& visitors, const Index& end, int flow) {
 	assert(end.n_layer == m_nLinks.size()-1);
 
 	// initial flow value based on the last T link (towards the sink)
-	m_tLinks.back().edge(end.pos).addFlow(flow);
+	m_tLinks.back().edge(end.pos).forward().addFlow(flow);
 
 
 	Index current = end;
@@ -199,7 +199,7 @@ void Graph::doFlow(const BFSVisitors& visitors, const Index& end, int flow) {
 
 		// different layer down - need to use a T link (if the move is to higher layer)
 		else if(current.n_layer > parent.n_layer)
-			m_tLinks[parent.n_layer].edge(parent.pos).addFlow(flow);
+			m_tLinks[parent.n_layer].edge(parent.pos).forward().addFlow(flow);
 
 		// different layer up - "infinite capacity" back links have no impact on the flow
 
@@ -312,9 +312,9 @@ bool Graph::pushVert(const Index& current, const Index& next, const std::vector<
 	if(next_v >= excess.size() || label[current_v] == label[next_v] + 1) {
 		auto& edge = m_tLinks[current.n_layer].edge(current.pos);
 
-		const int flow = std::min(edge.residualCapacity(), excess[current_v]);
+		const int flow = std::min(edge.forward().residualCapacity(), excess[current_v]);
 		if(flow > 0) {
-			edge.addFlow(flow);
+			edge.forward().addFlow(flow);
 			excess[current_v] -= flow;
 			if(next_v < excess.size())
 				excess[next_v] += flow;
@@ -370,7 +370,7 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels, const std::v
 
 	{
 		auto& e = m_tLinks[current.n_layer].edge(current.pos);
-		if(e.residualCapacity() > 0 && label > 0)
+		if(e.forward().residualCapacity() > 0 && label > 0)
 			label = 0;
 	}
 
@@ -504,7 +504,7 @@ cv::Mat Graph::minCut() const {
 
 						// layer move down
 						assert(current.n_layer < m_nLinks.size());
-						if(m_tLinks[current.n_layer].edge(current.pos).residualCapacity() > 0)
+						if(m_tLinks[current.n_layer].edge(current.pos).forward().residualCapacity() > 0)
 							stack.push_back(Index{current.pos, current.n_layer+1});
 
 						// layer move up (unconditional)
@@ -534,8 +534,8 @@ cv::Mat Graph::t_flow(const TLinks& t) const {
 	for(int y=0; y<m_size.y; ++y)
 		for(int x=0; x<m_size.x; ++x) {
 			auto& e = t.edge(V2i(x, y));
-			if(e.capacity() > 0)
-				result.at<unsigned char>(y,x) = std::abs(e.flow()) * 255 / e.capacity();
+			if(e.forward().capacity() > 0)
+				result.at<unsigned char>(y,x) = std::abs(e.forward().flow()) * 255 / e.forward().capacity();
 			else
 				result.at<unsigned char>(y,x) = 255;
 		}

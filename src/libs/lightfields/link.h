@@ -29,7 +29,9 @@ class Link {
 		Link(int capacity);
 
 		Link(const Link& e);
-		Link& operator = (const Link&) = delete;
+		Link& operator = (const Link&);
+
+		void setCapacity(int c);
 
 		Direction& forward();
 		const Direction& forward() const;
