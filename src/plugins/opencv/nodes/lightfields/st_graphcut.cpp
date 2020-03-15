@@ -8,6 +8,8 @@
 
 #include <lightfields/graph.h>
 
+#include "possumwood_sdk/datatypes/enum.h"
+
 #include "sequence.h"
 #include "tools.h"
 
@@ -15,8 +17,14 @@ namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
 dependency_graph::InAttr<float> a_constness;
+dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_debug;
+
+enum Mode {
+	kEdmondsKarp,
+	kPushRelabel
+};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& sequence = data.get(a_in);
@@ -50,7 +58,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			graph.setValue(lightfields::V2i(col, row), values);
 		}
 
-	graph.solve();
+	if(data.get(a_mode).value() == "Edmonds-Karp")
+		graph.edmondsKarpSolve();
+	else
+		graph.pushRelabelSolve();
 
 	data.set(a_out, possumwood::opencv::Frame(graph.minCut()));
 
@@ -66,13 +77,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_sequence", possumwood::opencv::Sequence());
 	meta.addAttribute(a_constness, "constness", 128.0f);
+	meta.addAttribute(a_mode, "mode", possumwood::Enum({"Edmonds-Karp", "Push-Relabel"}));
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_debug, "debug", possumwood::opencv::Sequence());
 
 	meta.addInfluence(a_in, a_out);
+	meta.addInfluence(a_mode, a_out);
 	meta.addInfluence(a_constness, a_out);
 
 	meta.addInfluence(a_in, a_debug);
+	meta.addInfluence(a_mode, a_debug);
 	meta.addInfluence(a_constness, a_debug);
 
 	meta.setCompute(compute);
