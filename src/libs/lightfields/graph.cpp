@@ -124,10 +124,10 @@ bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
 			}
 		}
 
-		// try to move up a layer (unconditional)
+		// try to move up a layer
 		if((current_v.n_layer > 0)) {
 			const Index new_v{current_v.pos, current_v.n_layer-1};
-			if(!visited.visited(new_v)) {
+			if(!visited.visited(new_v) && m_tLinks[new_v.n_layer].edge(new_v.pos).backward().residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
 				q.push_back(QueueItem{new_v, current_v});
 			}
@@ -167,7 +167,9 @@ int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
 		else if(current.n_layer > parent.n_layer)
 			result = std::min(result, m_tLinks[parent.n_layer].edge(parent.pos).forward().residualCapacity());
 
-		// different layer up - "infinite capacity" back links have no impact on the flow
+		// different layer up
+		else if(current.n_layer < parent.n_layer)
+			result = std::min(result, m_tLinks[current.n_layer].edge(current.pos).backward().residualCapacity());
 
 		// and move on
 		current = parent;
@@ -201,7 +203,9 @@ void Graph::doFlow(const BFSVisitors& visitors, const Index& end, int flow) {
 		else if(current.n_layer > parent.n_layer)
 			m_tLinks[parent.n_layer].edge(parent.pos).forward().addFlow(flow);
 
-		// different layer up - "infinite capacity" back links have no impact on the flow
+		// different layer up
+		else if(current.n_layer < parent.n_layer)
+			m_tLinks[current.n_layer].edge(current.pos).backward().addFlow(flow);
 
 		// and move on
 		current = parent;
@@ -508,7 +512,7 @@ cv::Mat Graph::minCut() const {
 							stack.push_back(Index{current.pos, current.n_layer+1});
 
 						// layer move up (unconditional)
-						if(current.n_layer > 0)
+						if(current.n_layer > 0 && m_tLinks[current.n_layer].edge(current.pos).backward().residualCapacity() > 0)
 							stack.push_back(Index{current.pos, current.n_layer-1});
 					}
 				}

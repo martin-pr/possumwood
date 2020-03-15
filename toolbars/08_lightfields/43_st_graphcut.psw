@@ -881,7 +881,8 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 50.0
+                "constness": 128.0,
+                "mode": "Edmonds-Karp"
             },
             "type": "opencv/lightfields/st_graphcut"
         }
