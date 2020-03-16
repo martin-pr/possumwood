@@ -38,7 +38,8 @@ class Graph {
 		void doFlow(const BFSVisitors& visitors, const Index& end, int value);
 
 		bool pushHoriz(const Index& current, const Index& next, const std::vector<int>& label, std::vector<int>& excess);
-		bool pushVert(const Index& current, const Index& next, const std::vector<int>& label, std::vector<int>& excess);
+		bool pushVertDown(const Index& current, const std::vector<int>& label, std::vector<int>& excess);
+		bool pushVertUp(const Index& current, const std::vector<int>& label, std::vector<int>& excess);
 		bool relabel(const Index& current, std::vector<int>& label, const std::vector<int>& excess) const;
 
 		cv::Mat t_flow(const TLinks& t) const;

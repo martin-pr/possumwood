@@ -25,11 +25,17 @@ void Graph::setValue(const V2i& pos, const std::vector<int>& values) {
 	int minFlow = values.front();
 
 	while(tit != m_tLinks.end()) {
-		tit->edge(pos).setCapacity(*vit, std::numeric_limits<int>::max()/2);
+		// tit->edge(pos).setCapacity(*vit, std::numeric_limits<int>::max()/2);
+
+		// assert(*vit >= 0);
+		// assert(tit->edge(pos).forward().residualCapacity() == *vit);
+		// assert(tit->edge(pos).backward().residualCapacity() == std::numeric_limits<int>::max()/2);
+
+		tit->edge(pos).setCapacity(*vit, *vit);
 
 		assert(*vit >= 0);
 		assert(tit->edge(pos).forward().residualCapacity() == *vit);
-		assert(tit->edge(pos).backward().residualCapacity() == std::numeric_limits<int>::max()/2);
+		assert(tit->edge(pos).backward().residualCapacity() == *vit);
 
 		minFlow = std::min(minFlow, *vit);
 
@@ -37,11 +43,11 @@ void Graph::setValue(const V2i& pos, const std::vector<int>& values) {
 		++vit;
 	}
 
-	// speedup of the iterations - addresses the "trivial cases" removing the direct column
-	// flow from source to sink
-	if(minFlow > 0)
-		for(tit = m_tLinks.begin(); tit != m_tLinks.end(); ++tit)
-			tit->edge(pos).forward().addFlow(minFlow);
+	// // speedup of the iterations - addresses the "trivial cases" removing the direct column
+	// // flow from source to sink
+	// if(minFlow > 0)
+	// 	for(tit = m_tLinks.begin(); tit != m_tLinks.end(); ++tit)
+	// 		tit->edge(pos).forward().addFlow(minFlow);
 }
 
 std::size_t Graph::v2i(const V2i& v) const {
@@ -303,18 +309,15 @@ bool Graph::pushHoriz(const Index& current, const Index& next, const std::vector
 	return false;
 }
 
-bool Graph::pushVert(const Index& current, const Index& next, const std::vector<int>& label, std::vector<int>& excess) {
-	assert(V2i::sqdist(current.pos, next.pos) == 0);
-	assert(current.n_layer+1 == next.n_layer);
+bool Graph::pushVertDown(const Index& current, const std::vector<int>& label, std::vector<int>& excess) {
 	assert(current.n_layer < m_tLinks.size());
 
 	const std::size_t current_v = index2val(current);
-	const std::size_t next_v = index2val(next);
+	const std::size_t next_v = index2val(Index{current.pos, current.n_layer+1});
 
 	assert(current_v < label.size());
-	// assert(next_v < label.size());
 
-	if(next_v >= excess.size() || label[current_v] == label[next_v] + 1) {
+	if(current.n_layer >= m_nLinks.size()-1 || label[current_v] == label[next_v] + 1) {
 		auto& edge = m_tLinks[current.n_layer].edge(current.pos);
 
 		const int flow = std::min(edge.forward().residualCapacity(), excess[current_v]);
@@ -325,6 +328,43 @@ bool Graph::pushVert(const Index& current, const Index& next, const std::vector<
 				excess[next_v] += flow;
 
 			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Graph::pushVertUp(const Index& current, const std::vector<int>& label, std::vector<int>& excess) {
+	assert(current.n_layer < m_tLinks.size());
+
+	const std::size_t current_v = index2val(current);
+
+	// flowing "back to the source" - no explicit edge, just flow everything back
+	if(current.n_layer == 0 && label[current_v] == m_size.x * m_size.y + 1) {
+		excess[current_v] = 0;
+		return true;
+	}
+
+	// flow between layers with explicit edges
+	if(current.n_layer > 0) {
+		const Index next{current.pos, current.n_layer-1};
+		const std::size_t next_v = index2val(next);
+
+		assert(current_v < label.size());
+		// assert(next_v < label.size());
+
+		if(label[current_v] == label[next_v] + 1) {
+			auto& edge = m_tLinks[next.n_layer].edge(next.pos);
+
+			const int flow = std::min(edge.backward().residualCapacity(), excess[current_v]);
+			if(flow > 0) {
+				edge.backward().addFlow(flow);
+				excess[current_v] -= flow;
+				if(next_v < excess.size())
+					excess[next_v] += flow;
+
+				return true;
+			}
 		}
 	}
 
@@ -342,8 +382,8 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels, const std::v
 		const std::size_t target_v = index2val(Index{target, current.n_layer});
 
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
-		if(e.residualCapacity() > 0 && label > labels[target_v])
-			label = labels[target_v];
+		if(e.residualCapacity() > 0)
+			label = std::min(label, labels[target_v]);
 	}
 
 	if(current.pos.x < m_size.x - 1) {
@@ -351,8 +391,8 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels, const std::v
 		const std::size_t target_v = index2val(Index{target, current.n_layer});
 
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
-		if(e.residualCapacity() > 0 && label > labels[target_v])
-			label = labels[target_v];
+		if(e.residualCapacity() > 0)
+			label = std::min(label, labels[target_v]);
 	}
 
 	if(current.pos.y > 0) {
@@ -360,8 +400,8 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels, const std::v
 		const std::size_t target_v = index2val(Index{target, current.n_layer});
 
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
-		if(e.residualCapacity() > 0 && label > labels[target_v])
-			label = labels[target_v];
+		if(e.residualCapacity() > 0)
+			label = std::min(label, labels[target_v]);
 	}
 
 	if(current.pos.y < m_size.y - 1) {
@@ -369,17 +409,26 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels, const std::v
 		const std::size_t target_v = index2val(Index{target, current.n_layer});
 
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
-		if(e.residualCapacity() > 0 && label > labels[target_v])
-			label = labels[target_v];
+		if(e.residualCapacity() > 0)
+			label = std::min(label, labels[target_v]);
 	}
 
 	{
 		auto& e = m_tLinks[current.n_layer].edge(current.pos);
-		if(e.forward().residualCapacity() > 0 && label > 0)
+		if(e.forward().residualCapacity() > 0)
 			label = 0;
 	}
 
-	// todo: move up
+	if(current.n_layer == 0)
+		label = std::min(label, m_size.x * m_size.y);
+	else {
+		auto& e = m_tLinks[current.n_layer-1].edge(current.pos);
+		if(e.backward().residualCapacity() > 0) {
+			const std::size_t target_v = index2val(Index{current.pos, current.n_layer-1});
+
+			label = std::min(label, labels[target_v]);
+		}
+	}
 
 	if(label < std::numeric_limits<int>::max() && label+1 > labels[current_v]) {
 		labels[current_v] = label+1;
@@ -395,74 +444,113 @@ void Graph::pushRelabelSolve() {
 	std::vector<int> label(m_size.x * m_size.y * m_nLinks.size());
 	std::vector<int> excess(m_size.x * m_size.y * m_nLinks.size());
 
+	// first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
+	for(int a=0; a<m_size.x * m_size.y; ++a)
+		excess[a] = std::numeric_limits<int>::max() / 4;
+
 	std::size_t activeCount = 1;
 
 	while(activeCount > 0) {
 		activeCount = 0;
 
-		// first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
-		for(int a=0; a<m_size.x * m_size.y; ++a)
-			excess[a] = std::numeric_limits<int>::max() / 4;
+		// // first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
+		// for(int a=0; a<m_size.x * m_size.y; ++a)
+		// 	if(label[a] < m_size.x * m_size.y && excess[a] > 0)
+		// 		excess[a] = std::numeric_limits<int>::max() / 4;
 
 		// then push from all active cells
-		for(std::size_t current_v=0;current_v<excess.size();++current_v) {
+		for(std::size_t current_v=0; current_v<excess.size(); ++current_v) {
+			const Index current_i = val2index(current_v);
+
+			if(excess[current_v] > 0)
+				std::cout << "cell " << current_i << std::endl;
+
 			// active cell
 			bool pushed = true;
 			while(excess[current_v] > 0 && pushed) {
-				const Index current_i = val2index(current_v);
-
 				// try to push all directions
 				pushed = false;
+				assert(excess[current_v] > 0);
 
 				if(!pushed && current_i.pos.x > 0) {
 					const Index next_i {V2i(current_i.pos.x-1, current_i.pos.y), current_i.n_layer};
 					if(pushHoriz(current_i, next_i, label, excess)) {
 						pushed = true;
+						std::cout << "  - push horiz x-1";
 						++activeCount;
 					}
+					else
+						assert(excess[current_v] > 0);
 				}
 
 				if(!pushed && current_i.pos.x < m_size.x-1) {
 					const Index next_i {V2i(current_i.pos.x+1, current_i.pos.y), current_i.n_layer};
 					if(pushHoriz(current_i, next_i, label, excess)) {
 						pushed = true;
+						std::cout << "  - push horiz x+1";
 						++activeCount;
 					}
+					else
+						assert(excess[current_v] > 0);
 				}
 
 				if(!pushed && current_i.pos.y > 0) {
 					const Index next_i {V2i(current_i.pos.x, current_i.pos.y-1), current_i.n_layer};
 					if(pushHoriz(current_i, next_i, label, excess)) {
 						pushed = true;
+						std::cout << "  - push horiz y-1";
 						++activeCount;
 					}
+					else
+						assert(excess[current_v] > 0);
 				}
 
 				if(!pushed && current_i.pos.y < m_size.y-1) {
 					const Index next_i {V2i(current_i.pos.x, current_i.pos.y+1), current_i.n_layer};
 					if(pushHoriz(current_i, next_i, label, excess)) {
 						pushed = true;
+						std::cout << "  - push horiz y+1";
 						++activeCount;
 					}
+					else
+						assert(excess[current_v] > 0);
 				}
 
 				if(!pushed) {
-					const Index next_i {V2i(current_i.pos.x, current_i.pos.y), current_i.n_layer+1};
-					if(pushVert(current_i, next_i, label, excess)) {
+					if(pushVertDown(current_i, label, excess)) {
 						pushed = true;
+						std::cout << "  - push vert down";
+						++activeCount;
+					}
+					else
+						assert(excess[current_v] > 0);
+				}
+
+				if(!pushed) {
+					if(pushVertUp(current_i, label, excess)) {
+						pushed = true;
+						std::cout << "  - push vert up";
+						++activeCount;
+					}
+					else
+						assert(excess[current_v] > 0);
+				}
+
+				if(!pushed) {
+					if(relabel(current_i, label, excess)) {
+						pushed = true;
+						std::cout << "  - relabel";
 						++activeCount;
 					}
 				}
 
-				// TODO: move up (unconditional)
-
-				if(!pushed)
-					if(relabel(current_i, label, excess)) {
-						pushed = true;
-						++activeCount;
-					}
+				std::cout << "  ->  label = " << label[current_v] << ", excess = " << excess[current_v] << std::endl;
 			}
 		}
+
+		// first row should immediately become inactive
+		// for(std::size_t current_v = 0; current_v < std::size_t(m_size.x*m_size.y); ++current_v)
+		// 	assert(excess[current_v] == 0);
 
 		std::cout << "active count = " << activeCount << std::endl;
 	}
