@@ -27,11 +27,13 @@ class Link {
 
 		// represents an Link with two directions of flow
 		Link(int capacity);
+		Link(int forwardCapacity, int backwardCapacity);
 
 		Link(const Link& e);
 		Link& operator = (const Link&);
 
 		void setCapacity(int c);
+		void setCapacity(int forward, int backward);
 
 		Direction& forward();
 		const Direction& forward() const;
@@ -44,7 +46,7 @@ class Link {
 
 		Direction m_forward, m_backward;
 
-		int m_capacity, m_flow;
+		int m_forwardCapacity, m_backwardCapacity, m_flow;
 };
 
 

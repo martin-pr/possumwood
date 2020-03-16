@@ -5,14 +5,20 @@
 
 namespace lightfields {
 
-Link::Link(int capacity) : m_forward(this, true), m_backward(this, false), m_capacity(capacity), m_flow(0) {
+Link::Link(int capacity) : m_forward(this, true), m_backward(this, false), m_forwardCapacity(capacity), m_backwardCapacity(capacity), m_flow(0) {
 }
 
-Link::Link(const Link& e) : m_forward(this, true), m_backward(this, false), m_capacity(e.m_capacity), m_flow(e.m_flow) {
+Link::Link(int forwardCapacity, int backwardCapacity) : m_forward(this, true), m_backward(this, false), m_forwardCapacity(forwardCapacity), m_backwardCapacity(backwardCapacity), m_flow(0) {
+
+}
+
+
+Link::Link(const Link& e) : m_forward(this, true), m_backward(this, false), m_forwardCapacity(e.m_forwardCapacity), m_backwardCapacity(e.m_backwardCapacity), m_flow(e.m_flow) {
 }
 
 Link& Link::operator=(const Link& e) {
-	m_capacity = e.m_capacity;
+	m_forwardCapacity = e.m_forwardCapacity;
+	m_backwardCapacity = e.m_backwardCapacity;
 	m_flow = e.m_flow;
 
 	return *this;
@@ -37,7 +43,16 @@ const Link::Direction& Link::backward() const {
 void Link::setCapacity(int c) {
 	assert(m_flow == 0);
 	assert(c >= 0);
-	m_capacity = c;
+	m_forwardCapacity = c;
+	m_backwardCapacity = c;
+}
+
+void Link::setCapacity(int forward, int backward) {
+	assert(m_flow == 0);
+	assert(forward >= 0);
+	assert(backward >= 0);
+	m_forwardCapacity = forward;
+	m_backwardCapacity = backward;
 }
 
 ////////////////
@@ -46,7 +61,9 @@ Link::Direction::Direction(Link* parent, bool forward) : m_parent(parent), m_for
 }
 
 int Link::Direction::capacity() const {
-	return m_parent->m_capacity;
+	if(m_forward)
+		return m_parent->m_forwardCapacity;
+	return m_parent->m_backwardCapacity;
 }
 
 void Link::Direction::addFlow(const int& f) {
@@ -70,12 +87,12 @@ int Link::Direction::residualCapacity() const {
 	int result = 0;
 
 	if(m_forward)
-		result = m_parent->m_capacity - m_parent->m_flow;
+		result = (m_parent->m_forwardCapacity + m_parent->m_backwardCapacity) - (m_parent->m_flow + m_parent->m_backwardCapacity);
 	else
-		result = m_parent->m_capacity + m_parent->m_flow;
+		result = (m_parent->m_forwardCapacity + m_parent->m_backwardCapacity) - (-m_parent->m_flow + m_parent->m_forwardCapacity);
 
 	assert(result >= 0);
-	assert(result <= 2 * m_parent->m_capacity);
+	assert(result <= m_parent->m_forwardCapacity + m_parent->m_backwardCapacity);
 
 	return result;
 }

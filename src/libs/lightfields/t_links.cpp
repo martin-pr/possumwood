@@ -6,7 +6,7 @@
 
 namespace lightfields {
 
-TLinks::TLinks(const V2i& size) : m_size(size), m_data(size.x*size.y, Link(0)) {
+TLinks::TLinks(const V2i& size) : m_size(size), m_data(size.x*size.y, Link(0, std::numeric_limits<int>::max()/2)) {
 }
 
 Link& TLinks::edge(const V2i& i) {

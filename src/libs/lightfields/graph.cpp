@@ -25,10 +25,11 @@ void Graph::setValue(const V2i& pos, const std::vector<int>& values) {
 	int minFlow = values.front();
 
 	while(tit != m_tLinks.end()) {
-		tit->edge(pos).setCapacity(*vit);
+		tit->edge(pos).setCapacity(*vit, std::numeric_limits<int>::max()/2);
 
 		assert(*vit >= 0);
 		assert(tit->edge(pos).forward().residualCapacity() == *vit);
+		assert(tit->edge(pos).backward().residualCapacity() == std::numeric_limits<int>::max()/2);
 
 		minFlow = std::min(minFlow, *vit);
 
