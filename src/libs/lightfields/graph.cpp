@@ -4,6 +4,8 @@
 #include <map>
 #include <queue>
 #include <functional>
+#include <thread>
+#include <chrono>
 
 #include <tbb/task_group.h>
 
@@ -563,7 +565,40 @@ void Graph::pushRelabelSolve() {
 		// for(std::size_t current_v = 0; current_v < std::size_t(m_size.x*m_size.y); ++current_v)
 		// 	assert(excess[current_v] == 0);
 
+		// find the gap optimisation
+		// based on Cherkassky, Boris V. "A fast algorithm for computing maximum flow in a network." Collected Papers 3 (1994): 90-96.
+
+		{
+			std::map<int, std::size_t> label_counts;
+			for(auto& l : label)
+				if(l < m_size.x * m_size.y)
+					label_counts[l]++;
+
+			if(label_counts.size() > 2) {
+				std::cout << "label counts:" << std::endl;
+
+				auto it = label_counts.begin();
+				auto it2 = it;
+				++it2;
+
+				while(it2 != label_counts.end()) {
+					if(it2->first != it->first+1) {
+						std::cout << "  - " << it->first << " - " << it2->first << std::endl;
+
+						for(auto& e : label)
+							if(e == it2->first)
+								e = m_size.x * m_size.y;
+
+					}
+					++it;
+					++it2;
+				}
+			}
+		}
+
 		std::cout << "active count = " << activeCount << std::endl;
+
+		// std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 
 }
