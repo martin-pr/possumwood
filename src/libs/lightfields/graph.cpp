@@ -10,6 +10,7 @@
 #include <tbb/task_group.h>
 
 #include "bfs_visitors.h"
+#include "labels.h"
 
 namespace lightfields {
 
@@ -271,7 +272,7 @@ std::size_t Graph::index2val(const Index& i) const {
 	return result;
 }
 
-bool Graph::pushHoriz(const Index& current, const Index& next, const std::vector<int>& label, int& excess, ActiveQueue& queue) {
+bool Graph::pushHoriz(const Index& current, const Index& next, const Labels& label, int& excess, ActiveQueue& queue) {
 	assert(V2i::sqdist(current.pos, next.pos) == 1);
 	assert(current.n_layer == next.n_layer);
 	assert(current.n_layer < m_nLinks.size());
@@ -295,7 +296,7 @@ bool Graph::pushHoriz(const Index& current, const Index& next, const std::vector
 	return false;
 }
 
-bool Graph::pushVertDown(const Index& current, const std::vector<int>& label, int& excess, ActiveQueue& queue) {
+bool Graph::pushVertDown(const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
 	assert(current.n_layer < m_tLinks.size());
 
 	const std::size_t current_v = index2val(current);
@@ -303,7 +304,7 @@ bool Graph::pushVertDown(const Index& current, const std::vector<int>& label, in
 
 	assert(current_v < label.size());
 
-	if((label[current_v] == 1 && current.n_layer+1 == m_nLinks.size()) || label[current_v] == label[next_v] + 1) {
+	if((label[current_v] == 1 && current.n_layer+1 == m_nLinks.size()) || (next_v < label.size() && label[current_v] == label[next_v] + 1)) {
 		auto& edge = m_tLinks[current.n_layer].edge(current.pos);
 
 		const int flow = std::min(edge.forward().residualCapacity(), excess);
@@ -320,13 +321,13 @@ bool Graph::pushVertDown(const Index& current, const std::vector<int>& label, in
 	return false;
 }
 
-bool Graph::pushVertUp(const Index& current, const std::vector<int>& label, int& excess, ActiveQueue& queue) {
+bool Graph::pushVertUp(const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
 	assert(current.n_layer < m_tLinks.size());
 
 	const std::size_t current_v = index2val(current);
 
 	// flowing "back to the source" - no explicit edge, just flow everything back
-	if(current.n_layer == 0 && label[current_v] == m_size.x * m_size.y + 1) {
+	if(current.n_layer == 0 && label[current_v] == unsigned(m_size.x * m_size.y + 1)) {
 		excess = 0;
 		return true;
 	}
@@ -357,10 +358,10 @@ bool Graph::pushVertUp(const Index& current, const std::vector<int>& label, int&
 	return false;
 }
 
-bool Graph::relabel(const Index& current, std::vector<int>& labels) const {
+bool Graph::relabel(const Index& current, Labels& labels) const {
 	const std::size_t current_v = index2val(current);
 
-	int label = std::numeric_limits<int>::max();
+	unsigned label = std::numeric_limits<unsigned>::max();
 
 	if(current.pos.x > 0) {
 		const V2i target(current.pos.x-1, current.pos.y);
@@ -418,7 +419,7 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels) const {
 	}
 
 	if(current.n_layer == 0) {
-		label = std::min(label, m_size.x * m_size.y);
+		label = std::min(label, unsigned(m_size.x * m_size.y));
 	}
 	else {
 		auto& e = m_tLinks[current.n_layer-1].edge(current.pos);
@@ -429,7 +430,7 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels) const {
 		}
 	}
 
-	if(label < std::numeric_limits<int>::max() && label+1 > labels[current_v] ) {
+	if(label < std::numeric_limits<unsigned>::max() && label+1 > labels[current_v] ) {
 		labels[current_v] = label+1;
 		return true;
 	}
@@ -440,7 +441,7 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels) const {
 void Graph::pushRelabelSolve() {
 	assert(m_nLinks.size() > 1);
 
-	std::vector<int> label(m_size.x * m_size.y * m_nLinks.size());
+	Labels label(m_size.x * m_size.y * m_nLinks.size());
 	ActiveQueue queue(m_size.x * m_size.y * m_nLinks.size());
 
 	// first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
@@ -511,7 +512,7 @@ void Graph::pushRelabelSolve() {
 
 			std::map<int, std::size_t> label_counts;
 			for(auto& l : label)
-				if(l < m_size.x * m_size.y)
+				if(l < unsigned(m_size.x * m_size.y))
 					label_counts[l]++;
 
 			int gap_count = 0;
@@ -524,8 +525,8 @@ void Graph::pushRelabelSolve() {
 					if(it2->first != it->first+1) {
 						// relabel the gap
 						for(auto& e : label)
-							if(e == it2->first)
-								e = m_size.x * m_size.y;
+							if(e == unsigned(it2->first))
+								e = unsigned(m_size.x * m_size.y);
 
 						gap_count++;
 

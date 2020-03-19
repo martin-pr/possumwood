@@ -15,6 +15,7 @@
 namespace lightfields {
 
 class BFSVisitors;
+class Labels;
 
 class Graph {
 	public:
@@ -38,10 +39,10 @@ class Graph {
 		int flow(const BFSVisitors& visitors, const Index& end) const;
 		void doFlow(const BFSVisitors& visitors, const Index& end, int value);
 
-		bool pushHoriz(const Index& current, const Index& next, const std::vector<int>& label, int& excess, ActiveQueue& queue);
-		bool pushVertDown(const Index& current, const std::vector<int>& label, int& excess, ActiveQueue& queue);
-		bool pushVertUp(const Index& current, const std::vector<int>& label, int& excess, ActiveQueue& queue);
-		bool relabel(const Index& current, std::vector<int>& label) const;
+		bool pushHoriz(const Index& current, const Index& next, const Labels& label, int& excess, ActiveQueue& queue);
+		bool pushVertDown(const Index& current, const Labels& label, int& excess, ActiveQueue& queue);
+		bool pushVertUp(const Index& current, const Labels& label, int& excess, ActiveQueue& queue);
+		bool relabel(const Index& current, Labels& label) const;
 
 		cv::Mat t_flow(const TLinks& t) const;
 		cv::Mat n_flow(const NLinks& t) const;
