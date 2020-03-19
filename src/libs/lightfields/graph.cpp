@@ -369,7 +369,7 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
 		if(e.residualCapacity() > 0) {
 			const std::size_t target_v = index2val(Index{target, current.n_layer});
-			label = std::min(label, labels[target_v]);
+			label = std::min(label, unsigned(labels[target_v]));
 		}
 	}
 
@@ -379,7 +379,7 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
 		if(e.residualCapacity() > 0) {
 			const std::size_t target_v = index2val(Index{target, current.n_layer});
-			label = std::min(label, labels[target_v]);
+			label = std::min(label, unsigned(labels[target_v]));
 		}
 	}
 
@@ -389,7 +389,7 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
 		if(e.residualCapacity() > 0) {
 			const std::size_t target_v = index2val(Index{target, current.n_layer});
-			label = std::min(label, labels[target_v]);
+			label = std::min(label, unsigned(labels[target_v]));
 		}
 	}
 
@@ -399,7 +399,7 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
 		if(e.residualCapacity() > 0) {
 			const std::size_t target_v = index2val(Index{target, current.n_layer});
-			label = std::min(label, labels[target_v]);
+			label = std::min(label, unsigned(labels[target_v]));
 		}
 	}
 
@@ -412,7 +412,7 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 		if(e.forward().residualCapacity() > 0) {
 			const std::size_t target_v = index2val(Index{target, current.n_layer+1});
 			if(target_v < labels.size())
-				label = std::min(label, labels[target_v]);
+				label = std::min(label, unsigned(labels[target_v]));
 			else
 				label = 0;
 		}
@@ -426,7 +426,7 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 		if(e.backward().residualCapacity() > 0) {
 			const std::size_t target_v = index2val(Index{current.pos, current.n_layer-1});
 
-			label = std::min(label, labels[target_v]);
+			label = std::min(label, unsigned(labels[target_v]));
 		}
 	}
 

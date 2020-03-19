@@ -8,11 +8,25 @@ namespace lightfields {
 // based on Cherkassky, Boris V. "A fast algorithm for computing maximum flow in a network." Collected Papers 3 (1994): 90-96.
 class Labels {
 	public:
-		Labels(std::size_t size, unsigned max_label);
+		Labels(std::size_t size, unsigned label_limit);
 
 		std::size_t size() const;
 
-		unsigned& operator[](std::size_t index);
+		class Proxy {
+			public:
+				operator unsigned () const;
+				Proxy& operator = (unsigned val);
+
+			private:
+				Proxy(Labels* parent, std::size_t index);
+
+				Labels* m_parent;
+				std::size_t m_index;
+
+			friend class Labels;
+		};
+
+		Proxy operator[](std::size_t index);
 		const unsigned& operator[](std::size_t index) const;
 
 		/// find the gap optimisation
@@ -21,8 +35,10 @@ class Labels {
 
 	protected:
 	private:
-		std::vector<unsigned> m_labels;
-		unsigned m_maxLabel;
+		std::vector<unsigned> m_labels, m_counters;
+		unsigned m_limit, m_maxLabel;
+
+	friend class Proxy;
 };
 
 }
