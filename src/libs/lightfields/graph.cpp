@@ -287,7 +287,7 @@ std::size_t Graph::index2val(const Index& i) const {
 	return result;
 }
 
-bool Graph::pushHoriz(const Index& current, const Index& next, const std::vector<int>& label, std::vector<int>& excess) {
+bool Graph::pushHoriz(const Index& current, const Index& next, const std::vector<int>& label, int& excess, ActiveQueue& queue) {
 	assert(V2i::sqdist(current.pos, next.pos) == 1);
 	assert(current.n_layer == next.n_layer);
 	assert(current.n_layer < m_nLinks.size());
@@ -298,11 +298,11 @@ bool Graph::pushHoriz(const Index& current, const Index& next, const std::vector
 	if(label[current_v] == label[next_v] + 1) {
 		auto& edge = m_nLinks[current.n_layer].edge(current.pos, next.pos);
 
-		const int flow = std::min(edge.residualCapacity(), excess[current_v]);
+		const int flow = std::min(edge.residualCapacity(), excess);
 		if(flow > 0) {
 			edge.addFlow(flow);
-			excess[current_v] -= flow;
-			excess[next_v] += flow;
+			excess -= flow;
+			queue.push(ActiveQueue::Item{next_v, flow});
 
 			return true;
 		}
@@ -311,7 +311,7 @@ bool Graph::pushHoriz(const Index& current, const Index& next, const std::vector
 	return false;
 }
 
-bool Graph::pushVertDown(const Index& current, const std::vector<int>& label, std::vector<int>& excess) {
+bool Graph::pushVertDown(const Index& current, const std::vector<int>& label, int& excess, ActiveQueue& queue) {
 	assert(current.n_layer < m_tLinks.size());
 
 	const std::size_t current_v = index2val(current);
@@ -322,12 +322,12 @@ bool Graph::pushVertDown(const Index& current, const std::vector<int>& label, st
 	if((label[current_v] == 1 && current.n_layer+1 == m_nLinks.size()) || label[current_v] == label[next_v] + 1) {
 		auto& edge = m_tLinks[current.n_layer].edge(current.pos);
 
-		const int flow = std::min(edge.forward().residualCapacity(), excess[current_v]);
+		const int flow = std::min(edge.forward().residualCapacity(), excess);
 		if(flow > 0) {
 			edge.forward().addFlow(flow);
-			excess[current_v] -= flow;
-			if(next_v < excess.size())
-				excess[next_v] += flow;
+			excess -= flow;
+			if(next_v < label.size())
+				queue.push(ActiveQueue::Item{next_v, flow});
 
 			return true;
 		}
@@ -336,14 +336,14 @@ bool Graph::pushVertDown(const Index& current, const std::vector<int>& label, st
 	return false;
 }
 
-bool Graph::pushVertUp(const Index& current, const std::vector<int>& label, std::vector<int>& excess) {
+bool Graph::pushVertUp(const Index& current, const std::vector<int>& label, int& excess, ActiveQueue& queue) {
 	assert(current.n_layer < m_tLinks.size());
 
 	const std::size_t current_v = index2val(current);
 
 	// flowing "back to the source" - no explicit edge, just flow everything back
 	if(current.n_layer == 0 && label[current_v] == m_size.x * m_size.y + 1) {
-		excess[current_v] = 0;
+		excess = 0;
 		return true;
 	}
 
@@ -358,13 +358,12 @@ bool Graph::pushVertUp(const Index& current, const std::vector<int>& label, std:
 		if(label[current_v] == label[next_v] + 1) {
 			auto& edge = m_tLinks[next.n_layer].edge(next.pos);
 
-			const int flow = std::min(edge.backward().residualCapacity(), excess[current_v]);
+			const int flow = std::min(edge.backward().residualCapacity(), excess);
 			if(flow > 0) {
 				edge.backward().addFlow(flow);
-				excess[current_v] -= flow;
-
-				assert(next_v < excess.size());
-				excess[next_v] += flow;
+				excess -= flow;
+				assert(next_v < label.size());
+				queue.push(ActiveQueue::Item{next_v, flow});
 
 				return true;
 			}
@@ -374,9 +373,8 @@ bool Graph::pushVertUp(const Index& current, const std::vector<int>& label, std:
 	return false;
 }
 
-bool Graph::relabel(const Index& current, std::vector<int>& labels, const std::vector<int>& excess) const {
+bool Graph::relabel(const Index& current, std::vector<int>& labels) const {
 	const std::size_t current_v = index2val(current);
-	assert(excess[current_v] > 0);
 
 	int label = std::numeric_limits<int>::max();
 
@@ -459,116 +457,97 @@ void Graph::pushRelabelSolve() {
 	assert(m_nLinks.size() > 1);
 
 	std::vector<int> label(m_size.x * m_size.y * m_nLinks.size());
-	std::vector<int> excess(m_size.x * m_size.y * m_nLinks.size());
+	ActiveQueue queue(m_size.x * m_size.y * m_nLinks.size());
 
 	// first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
 	for(int a=0; a<m_size.x * m_size.y; ++a)
-		excess[a] = std::numeric_limits<int>::max() / 4;
+		queue.push(ActiveQueue::Item{std::size_t(a), std::numeric_limits<int>::max() / 4});
 
-	std::size_t activeCount = 1;
+	int counter = 0;
 
-	while(activeCount > 0) {
-		activeCount = 0;
+	while(!queue.empty()) {
+		++counter;
 
 		// // first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
 		// for(int a=0; a<m_size.x * m_size.y; ++a)
 		// 	if(label[a] < m_size.x * m_size.y && excess[a] > 0)
 		// 		excess[a] = std::numeric_limits<int>::max() / 4;
 
-		// then push from all active cells
-		for(std::size_t current_v=0; current_v<excess.size(); ++current_v) {
-			const Index current_i = val2index(current_v);
-			assert(index2val(current_i) == current_v);
+		// get an active cell
+		ActiveQueue::Item current = queue.pop();
+		const Index current_i = val2index(current.index);
 
-			// if(excess[current_v] > 0)
-			// 	std::cout << "cell " << current_i << "/" << m_tLinks.size() << std::endl;
+		// active cell
+		bool pushed = true;
+		while(current.excess > 0 && pushed) {
+			// try to push all directions
+			pushed = false;
 
-			// active cell
-			bool pushed = true;
-			while(excess[current_v] > 0 && pushed) {
-				++activeCount;
-
-				// try to push all directions
-				pushed = false;
-				assert(excess[current_v] > 0);
-
-				if(excess[current_v] > 0 && current_i.pos.x > 0) {
-					const Index next_i {V2i(current_i.pos.x-1, current_i.pos.y), current_i.n_layer};
-					if(pushHoriz(current_i, next_i, label, excess)) {
-						pushed = true;
-						// std::cout << "  - push horiz x-1";
-					}
-					else
-						assert(excess[current_v] > 0);
+			if(!pushed && current_i.pos.x > 0) {
+				const Index next_i {V2i(current_i.pos.x-1, current_i.pos.y), current_i.n_layer};
+				if(pushHoriz(current_i, next_i, label, current.excess, queue)) {
+					pushed = true;
+					// std::cout << "  - push horiz x-1";
 				}
-
-				if(excess[current_v] > 0 && current_i.pos.x < m_size.x-1) {
-					const Index next_i {V2i(current_i.pos.x+1, current_i.pos.y), current_i.n_layer};
-					if(pushHoriz(current_i, next_i, label, excess)) {
-						pushed = true;
-						// std::cout << "  - push horiz x+1";
-					}
-					else
-						assert(excess[current_v] > 0);
-				}
-
-				if(excess[current_v] > 0 && current_i.pos.y > 0) {
-					const Index next_i {V2i(current_i.pos.x, current_i.pos.y-1), current_i.n_layer};
-					if(pushHoriz(current_i, next_i, label, excess)) {
-						pushed = true;
-						// std::cout << "  - push horiz y-1";
-					}
-					else
-						assert(excess[current_v] > 0);
-				}
-
-				if(excess[current_v] > 0 && current_i.pos.y < m_size.y-1) {
-					const Index next_i {V2i(current_i.pos.x, current_i.pos.y+1), current_i.n_layer};
-					if(pushHoriz(current_i, next_i, label, excess)) {
-						pushed = true;
-						// std::cout << "  - push horiz y+1";
-					}
-					else
-						assert(excess[current_v] > 0);
-				}
-
-				if(excess[current_v] > 0) {
-					if(pushVertDown(current_i, label, excess)) {
-						pushed = true;
-						// std::cout << "  - push vert down";
-					}
-					else
-						assert(excess[current_v] > 0);
-				}
-
-				if(excess[current_v] > 0) {
-					if(pushVertUp(current_i, label, excess)) {
-						pushed = true;
-						// std::cout << "  - push vert up";
-					}
-					else
-						assert(excess[current_v] > 0);
-				}
-
-				if(excess[current_v] > 0 && !pushed) {
-					if(relabel(current_i, label, excess)) {
-						pushed = true;
-						// std::cout << "  - relabel";
-					}
-				}
-
-				// std::cout << "  ->  label = " << label[current_v] << ", excess = " << excess[current_v] << std::endl;
 			}
+
+			if(!pushed && current_i.pos.x < m_size.x-1) {
+				const Index next_i {V2i(current_i.pos.x+1, current_i.pos.y), current_i.n_layer};
+				if(pushHoriz(current_i, next_i, label, current.excess, queue)) {
+					pushed = true;
+					// std::cout << "  - push horiz x+1";
+				}
+			}
+
+			if(!pushed && current_i.pos.y > 0) {
+				const Index next_i {V2i(current_i.pos.x, current_i.pos.y-1), current_i.n_layer};
+				if(pushHoriz(current_i, next_i, label, current.excess, queue)) {
+					pushed = true;
+					// std::cout << "  - push horiz y-1";
+				}
+			}
+
+			if(!pushed && current_i.pos.y < m_size.y-1) {
+				const Index next_i {V2i(current_i.pos.x, current_i.pos.y+1), current_i.n_layer};
+				if(pushHoriz(current_i, next_i, label, current.excess, queue)) {
+					pushed = true;
+					// std::cout << "  - push horiz y+1";
+				}
+			}
+
+			if(!pushed) {
+				if(pushVertDown(current_i, label, current.excess, queue)) {
+					pushed = true;
+					// std::cout << "  - push vert down";
+				}
+			}
+
+			if(!pushed) {
+				if(pushVertUp(current_i, label, current.excess, queue)) {
+					pushed = true;
+					// std::cout << "  - push vert up";
+				}
+			}
+
+			if(!pushed) {
+				if(relabel(current_i, label)) {
+					pushed = true;
+					// std::cout << "  - relabel";
+				}
+			}
+
+			// std::cout << "  ->  label = " << label[current_v] << ", excess = " << excess[current_v] << std::endl;
 		}
 
-		// first row should immediately become inactive
-		// for(std::size_t current_v = 0; current_v < std::size_t(m_size.x*m_size.y); ++current_v)
-		// 	assert(excess[current_v] == 0);
+		if(current.excess > 0)
+			queue.push(current);
 
 		// find the gap optimisation
 		// based on Cherkassky, Boris V. "A fast algorithm for computing maximum flow in a network." Collected Papers 3 (1994): 90-96.
 
-		{
+		if(counter % (m_size.x * m_size.y) == 0) {
+			counter = 0;
+
 			std::map<int, std::size_t> label_counts;
 			for(auto& l : label)
 				if(l < m_size.x * m_size.y)
@@ -594,11 +573,11 @@ void Graph::pushRelabelSolve() {
 					++it2;
 				}
 			}
+
+			std::cout << "active count = " << queue.size() << std::endl;
+
+			// std::this_thread::sleep_for(std::chrono::seconds(1));
 		}
-
-		std::cout << "active count = " << activeCount << std::endl;
-
-		// std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 
 }

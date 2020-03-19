@@ -10,6 +10,7 @@
 #include "n_links.h"
 #include "t_links.h"
 #include "index.h"
+#include "active_queue.h"
 
 namespace lightfields {
 
@@ -37,10 +38,10 @@ class Graph {
 		int flow(const BFSVisitors& visitors, const Index& end) const;
 		void doFlow(const BFSVisitors& visitors, const Index& end, int value);
 
-		bool pushHoriz(const Index& current, const Index& next, const std::vector<int>& label, std::vector<int>& excess);
-		bool pushVertDown(const Index& current, const std::vector<int>& label, std::vector<int>& excess);
-		bool pushVertUp(const Index& current, const std::vector<int>& label, std::vector<int>& excess);
-		bool relabel(const Index& current, std::vector<int>& label, const std::vector<int>& excess) const;
+		bool pushHoriz(const Index& current, const Index& next, const std::vector<int>& label, int& excess, ActiveQueue& queue);
+		bool pushVertDown(const Index& current, const std::vector<int>& label, int& excess, ActiveQueue& queue);
+		bool pushVertUp(const Index& current, const std::vector<int>& label, int& excess, ActiveQueue& queue);
+		bool relabel(const Index& current, std::vector<int>& label) const;
 
 		cv::Mat t_flow(const TLinks& t) const;
 		cv::Mat n_flow(const NLinks& t) const;
