@@ -25,17 +25,17 @@ void Graph::setValue(const V2i& pos, const std::vector<int>& values) {
 	int minFlow = values.front();
 
 	while(tit != m_tLinks.end()) {
-		// tit->edge(pos).setCapacity(*vit, std::numeric_limits<int>::max()/2);
-
-		// assert(*vit >= 0);
-		// assert(tit->edge(pos).forward().residualCapacity() == *vit);
-		// assert(tit->edge(pos).backward().residualCapacity() == std::numeric_limits<int>::max()/2);
-
-		tit->edge(pos).setCapacity(*vit, *vit);
+		tit->edge(pos).setCapacity(*vit, std::numeric_limits<int>::max()/2);
 
 		assert(*vit >= 0);
 		assert(tit->edge(pos).forward().residualCapacity() == *vit);
-		assert(tit->edge(pos).backward().residualCapacity() == *vit);
+		assert(tit->edge(pos).backward().residualCapacity() == std::numeric_limits<int>::max()/2);
+
+		// tit->edge(pos).setCapacity(*vit, *vit);
+
+		// assert(*vit >= 0);
+		// assert(tit->edge(pos).forward().residualCapacity() == *vit);
+		// assert(tit->edge(pos).backward().residualCapacity() == *vit);
 
 		minFlow = std::min(minFlow, *vit);
 
@@ -317,7 +317,7 @@ bool Graph::pushVertDown(const Index& current, const std::vector<int>& label, st
 
 	assert(current_v < label.size());
 
-	if(current.n_layer >= m_nLinks.size()-1 || label[current_v] == label[next_v] + 1) {
+	if((label[current_v] == 1 && current.n_layer+1 == m_nLinks.size()) || label[current_v] == label[next_v] + 1) {
 		auto& edge = m_tLinks[current.n_layer].edge(current.pos);
 
 		const int flow = std::min(edge.forward().residualCapacity(), excess[current_v]);
@@ -360,8 +360,9 @@ bool Graph::pushVertUp(const Index& current, const std::vector<int>& label, std:
 			if(flow > 0) {
 				edge.backward().addFlow(flow);
 				excess[current_v] -= flow;
-				if(next_v < excess.size())
-					excess[next_v] += flow;
+
+				assert(next_v < excess.size());
+				excess[next_v] += flow;
 
 				return true;
 			}
@@ -379,48 +380,62 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels, const std::v
 
 	if(current.pos.x > 0) {
 		const V2i target(current.pos.x-1, current.pos.y);
-		const std::size_t target_v = index2val(Index{target, current.n_layer});
 
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
-		if(e.residualCapacity() > 0)
+		if(e.residualCapacity() > 0) {
+			const std::size_t target_v = index2val(Index{target, current.n_layer});
 			label = std::min(label, labels[target_v]);
+		}
 	}
 
 	if(current.pos.x < m_size.x - 1) {
 		const V2i target(current.pos.x+1, current.pos.y);
-		const std::size_t target_v = index2val(Index{target, current.n_layer});
 
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
-		if(e.residualCapacity() > 0)
+		if(e.residualCapacity() > 0) {
+			const std::size_t target_v = index2val(Index{target, current.n_layer});
 			label = std::min(label, labels[target_v]);
+		}
 	}
 
 	if(current.pos.y > 0) {
 		const V2i target(current.pos.x, current.pos.y-1);
-		const std::size_t target_v = index2val(Index{target, current.n_layer});
 
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
-		if(e.residualCapacity() > 0)
+		if(e.residualCapacity() > 0) {
+			const std::size_t target_v = index2val(Index{target, current.n_layer});
 			label = std::min(label, labels[target_v]);
+		}
 	}
 
 	if(current.pos.y < m_size.y - 1) {
 		const V2i target(current.pos.x, current.pos.y+1);
-		const std::size_t target_v = index2val(Index{target, current.n_layer});
 
 		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
-		if(e.residualCapacity() > 0)
+		if(e.residualCapacity() > 0) {
+			const std::size_t target_v = index2val(Index{target, current.n_layer});
 			label = std::min(label, labels[target_v]);
+		}
 	}
 
 	{
+		assert(current.n_layer < m_nLinks.size());
+
+		const V2i target(current.pos.x, current.pos.y);
+
 		auto& e = m_tLinks[current.n_layer].edge(current.pos);
-		if(e.forward().residualCapacity() > 0)
-			label = 0;
+		if(e.forward().residualCapacity() > 0) {
+			const std::size_t target_v = index2val(Index{target, current.n_layer+1});
+			if(target_v < labels.size())
+				label = std::min(label, labels[target_v]);
+			else
+				label = 0;
+		}
 	}
 
-	if(current.n_layer == 0)
+	if(current.n_layer == 0) {
 		label = std::min(label, m_size.x * m_size.y);
+	}
 	else {
 		auto& e = m_tLinks[current.n_layer-1].edge(current.pos);
 		if(e.backward().residualCapacity() > 0) {
@@ -430,7 +445,7 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels, const std::v
 		}
 	}
 
-	if(label < std::numeric_limits<int>::max() && label+1 > labels[current_v]) {
+	if(label < std::numeric_limits<int>::max() && label+1 != labels[current_v] ) {
 		labels[current_v] = label+1;
 		return true;
 	}
@@ -461,90 +476,86 @@ void Graph::pushRelabelSolve() {
 		// then push from all active cells
 		for(std::size_t current_v=0; current_v<excess.size(); ++current_v) {
 			const Index current_i = val2index(current_v);
+			assert(index2val(current_i) == current_v);
 
-			if(excess[current_v] > 0)
-				std::cout << "cell " << current_i << std::endl;
+			// if(excess[current_v] > 0)
+			// 	std::cout << "cell " << current_i << "/" << m_tLinks.size() << std::endl;
 
 			// active cell
 			bool pushed = true;
 			while(excess[current_v] > 0 && pushed) {
+				++activeCount;
+
 				// try to push all directions
 				pushed = false;
 				assert(excess[current_v] > 0);
 
-				if(!pushed && current_i.pos.x > 0) {
+				if(excess[current_v] > 0 && current_i.pos.x > 0) {
 					const Index next_i {V2i(current_i.pos.x-1, current_i.pos.y), current_i.n_layer};
 					if(pushHoriz(current_i, next_i, label, excess)) {
 						pushed = true;
-						std::cout << "  - push horiz x-1";
-						++activeCount;
+						// std::cout << "  - push horiz x-1";
 					}
 					else
 						assert(excess[current_v] > 0);
 				}
 
-				if(!pushed && current_i.pos.x < m_size.x-1) {
+				if(excess[current_v] > 0 && current_i.pos.x < m_size.x-1) {
 					const Index next_i {V2i(current_i.pos.x+1, current_i.pos.y), current_i.n_layer};
 					if(pushHoriz(current_i, next_i, label, excess)) {
 						pushed = true;
-						std::cout << "  - push horiz x+1";
-						++activeCount;
+						// std::cout << "  - push horiz x+1";
 					}
 					else
 						assert(excess[current_v] > 0);
 				}
 
-				if(!pushed && current_i.pos.y > 0) {
+				if(excess[current_v] > 0 && current_i.pos.y > 0) {
 					const Index next_i {V2i(current_i.pos.x, current_i.pos.y-1), current_i.n_layer};
 					if(pushHoriz(current_i, next_i, label, excess)) {
 						pushed = true;
-						std::cout << "  - push horiz y-1";
-						++activeCount;
+						// std::cout << "  - push horiz y-1";
 					}
 					else
 						assert(excess[current_v] > 0);
 				}
 
-				if(!pushed && current_i.pos.y < m_size.y-1) {
+				if(excess[current_v] > 0 && current_i.pos.y < m_size.y-1) {
 					const Index next_i {V2i(current_i.pos.x, current_i.pos.y+1), current_i.n_layer};
 					if(pushHoriz(current_i, next_i, label, excess)) {
 						pushed = true;
-						std::cout << "  - push horiz y+1";
-						++activeCount;
+						// std::cout << "  - push horiz y+1";
 					}
 					else
 						assert(excess[current_v] > 0);
 				}
 
-				if(!pushed) {
+				if(excess[current_v] > 0) {
 					if(pushVertDown(current_i, label, excess)) {
 						pushed = true;
-						std::cout << "  - push vert down";
-						++activeCount;
+						// std::cout << "  - push vert down";
 					}
 					else
 						assert(excess[current_v] > 0);
 				}
 
-				if(!pushed) {
+				if(excess[current_v] > 0) {
 					if(pushVertUp(current_i, label, excess)) {
 						pushed = true;
-						std::cout << "  - push vert up";
-						++activeCount;
+						// std::cout << "  - push vert up";
 					}
 					else
 						assert(excess[current_v] > 0);
 				}
 
-				if(!pushed) {
+				if(excess[current_v] > 0 && !pushed) {
 					if(relabel(current_i, label, excess)) {
 						pushed = true;
-						std::cout << "  - relabel";
-						++activeCount;
+						// std::cout << "  - relabel";
 					}
 				}
 
-				std::cout << "  ->  label = " << label[current_v] << ", excess = " << excess[current_v] << std::endl;
+				// std::cout << "  ->  label = " << label[current_v] << ", excess = " << excess[current_v] << std::endl;
 			}
 		}
 
