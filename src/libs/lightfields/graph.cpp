@@ -466,6 +466,9 @@ void Graph::pushRelabelSolve() {
 			// try to push all directions
 			relabelled = false;
 
+			if(current.excess > 0)
+				pushVertDown(current_i, label, current.excess, queue);
+
 			if(current.excess > 0 && current_i.pos.x > 0) {
 				const Index next_i {V2i(current_i.pos.x-1, current_i.pos.y), current_i.n_layer};
 				pushHoriz(current_i, next_i, label, current.excess, queue);
@@ -485,9 +488,6 @@ void Graph::pushRelabelSolve() {
 				const Index next_i {V2i(current_i.pos.x, current_i.pos.y+1), current_i.n_layer};
 				pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
-
-			if(current.excess > 0)
-				pushVertDown(current_i, label, current.excess, queue);
 
 			if(current.excess > 0)
 				pushVertUp(current_i, label, current.excess, queue);
