@@ -24,8 +24,6 @@ void Graph::setValue(const V2i& pos, const std::vector<int>& values) {
 	auto tit = m_tLinks.begin();
 	auto vit = values.begin();
 
-	int minFlow = values.front();
-
 	while(tit != m_tLinks.end()) {
 		tit->edge(pos).setCapacity(*vit, std::numeric_limits<int>::max()/2);
 
@@ -33,23 +31,9 @@ void Graph::setValue(const V2i& pos, const std::vector<int>& values) {
 		assert(tit->edge(pos).forward().residualCapacity() == *vit);
 		assert(tit->edge(pos).backward().residualCapacity() == std::numeric_limits<int>::max()/2);
 
-		// tit->edge(pos).setCapacity(*vit, *vit);
-
-		// assert(*vit >= 0);
-		// assert(tit->edge(pos).forward().residualCapacity() == *vit);
-		// assert(tit->edge(pos).backward().residualCapacity() == *vit);
-
-		minFlow = std::min(minFlow, *vit);
-
 		++tit;
 		++vit;
 	}
-
-	// // speedup of the iterations - addresses the "trivial cases" removing the direct column
-	// // flow from source to sink
-	// if(minFlow > 0)
-	// 	for(tit = m_tLinks.begin(); tit != m_tLinks.end(); ++tit)
-	// 		tit->edge(pos).forward().addFlow(minFlow);
 }
 
 std::size_t Graph::v2i(const V2i& v) const {
@@ -445,7 +429,7 @@ bool Graph::relabel(const Index& current, std::vector<int>& labels) const {
 		}
 	}
 
-	if(label < std::numeric_limits<int>::max() && label+1 != labels[current_v] ) {
+	if(label < std::numeric_limits<int>::max() && label+1 > labels[current_v] ) {
 		labels[current_v] = label+1;
 		return true;
 	}
@@ -464,122 +448,99 @@ void Graph::pushRelabelSolve() {
 		queue.push(ActiveQueue::Item{std::size_t(a), std::numeric_limits<int>::max() / 4});
 
 	int counter = 0;
+	std::size_t iterations = 0;
+
+	int gap_threshold = label.size();
 
 	while(!queue.empty()) {
 		++counter;
-
-		// // first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
-		// for(int a=0; a<m_size.x * m_size.y; ++a)
-		// 	if(label[a] < m_size.x * m_size.y && excess[a] > 0)
-		// 		excess[a] = std::numeric_limits<int>::max() / 4;
+		++iterations;
 
 		// get an active cell
 		ActiveQueue::Item current = queue.pop();
 		const Index current_i = val2index(current.index);
 
-		// active cell
-		bool pushed = true;
-		while(current.excess > 0 && pushed) {
+		// active cell - repeat pushing for as long as possible
+		bool relabelled = true;
+		while(current.excess > 0 && relabelled) {
 			// try to push all directions
-			pushed = false;
+			relabelled = false;
 
-			if(!pushed && current_i.pos.x > 0) {
+			if(current.excess > 0 && current_i.pos.x > 0) {
 				const Index next_i {V2i(current_i.pos.x-1, current_i.pos.y), current_i.n_layer};
-				if(pushHoriz(current_i, next_i, label, current.excess, queue)) {
-					pushed = true;
-					// std::cout << "  - push horiz x-1";
-				}
+				pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(!pushed && current_i.pos.x < m_size.x-1) {
+			if(current.excess > 0 && current_i.pos.x < m_size.x-1) {
 				const Index next_i {V2i(current_i.pos.x+1, current_i.pos.y), current_i.n_layer};
-				if(pushHoriz(current_i, next_i, label, current.excess, queue)) {
-					pushed = true;
-					// std::cout << "  - push horiz x+1";
-				}
+				pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(!pushed && current_i.pos.y > 0) {
+			if(current.excess > 0 && current_i.pos.y > 0) {
 				const Index next_i {V2i(current_i.pos.x, current_i.pos.y-1), current_i.n_layer};
-				if(pushHoriz(current_i, next_i, label, current.excess, queue)) {
-					pushed = true;
-					// std::cout << "  - push horiz y-1";
-				}
+				pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(!pushed && current_i.pos.y < m_size.y-1) {
+			if(current.excess > 0 && current_i.pos.y < m_size.y-1) {
 				const Index next_i {V2i(current_i.pos.x, current_i.pos.y+1), current_i.n_layer};
-				if(pushHoriz(current_i, next_i, label, current.excess, queue)) {
-					pushed = true;
-					// std::cout << "  - push horiz y+1";
-				}
+				pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(!pushed) {
-				if(pushVertDown(current_i, label, current.excess, queue)) {
-					pushed = true;
-					// std::cout << "  - push vert down";
-				}
-			}
+			if(current.excess > 0)
+				pushVertDown(current_i, label, current.excess, queue);
 
-			if(!pushed) {
-				if(pushVertUp(current_i, label, current.excess, queue)) {
-					pushed = true;
-					// std::cout << "  - push vert up";
-				}
-			}
+			if(current.excess > 0)
+				pushVertUp(current_i, label, current.excess, queue);
 
-			if(!pushed) {
-				if(relabel(current_i, label)) {
-					pushed = true;
-					// std::cout << "  - relabel";
-				}
+			// if there is any excess left, relabel
+			if(current.excess > 0) {
+				if(relabel(current_i, label))
+					relabelled = true;
 			}
-
-			// std::cout << "  ->  label = " << label[current_v] << ", excess = " << excess[current_v] << std::endl;
 		}
 
+		// push back to the end of the queue - not fully processed yet, couldn't push or relabel (only allowed up) and excess is not fully processed
 		if(current.excess > 0)
 			queue.push(current);
 
 		// find the gap optimisation
 		// based on Cherkassky, Boris V. "A fast algorithm for computing maximum flow in a network." Collected Papers 3 (1994): 90-96.
-
-		if(counter % (m_size.x * m_size.y) == 0) {
+		if(counter == gap_threshold) {
 			counter = 0;
+			gap_threshold = queue.size();
 
 			std::map<int, std::size_t> label_counts;
 			for(auto& l : label)
 				if(l < m_size.x * m_size.y)
 					label_counts[l]++;
 
+			int gap_count = 0;
 			if(label_counts.size() > 2) {
-				std::cout << "label counts:" << std::endl;
-
 				auto it = label_counts.begin();
 				auto it2 = it;
 				++it2;
 
 				while(it2 != label_counts.end()) {
 					if(it2->first != it->first+1) {
-						std::cout << "  - " << it->first << " - " << it2->first << std::endl;
-
+						// relabel the gap
 						for(auto& e : label)
 							if(e == it2->first)
 								e = m_size.x * m_size.y;
+
+						gap_count++;
 
 					}
 					++it;
 					++it2;
 				}
 			}
-
-			std::cout << "active count = " << queue.size() << std::endl;
-
-			// std::this_thread::sleep_for(std::chrono::seconds(1));
 		}
+
+		if(iterations % (m_size.x * m_size.y) == 0)
+			std::cout << "active count = " << queue.size() << std::endl;
 	}
 
+	assert(queue.checkEmpty());
 }
 
 cv::Mat Graph::minCut() const {

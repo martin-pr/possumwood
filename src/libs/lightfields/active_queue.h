@@ -19,6 +19,8 @@ class ActiveQueue {
 		bool empty() const;
 		std::size_t size() const;
 
+		bool checkEmpty() const;
+
 		void push(const Item& i);
 		Item pop();
 		bool isActive(std::size_t index) const;

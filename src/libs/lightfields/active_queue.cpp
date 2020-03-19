@@ -11,6 +11,21 @@ bool ActiveQueue::empty() const {
 	return m_queue.empty();
 }
 
+bool ActiveQueue::checkEmpty() const {
+	if(!m_queue.empty())
+		return false;
+
+	for(std::size_t a=0;a<m_active.size();++a)
+		if(m_active[a])
+			return false;
+
+	for(auto& e : m_excess)
+		if(e != 0)
+			return false;
+
+	return true;
+}
+
 std::size_t ActiveQueue::size() const {
 	return m_queue.size();
 }
