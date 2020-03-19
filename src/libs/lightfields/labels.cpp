@@ -1,10 +1,11 @@
 #include "labels.h"
 
 #include <cassert>
+#include <map>
 
 namespace lightfields {
 
-Labels::Labels(std::size_t size) : m_labels(size) {
+Labels::Labels(std::size_t size, unsigned max_label) : m_labels(size), m_maxLabel(max_label) {
 }
 
 std::size_t Labels::size() const {
@@ -21,20 +22,32 @@ const unsigned& Labels::operator[](std::size_t index) const {
 	return m_labels[index];
 }
 
-Labels::const_iterator Labels::begin() const {
-	return m_labels.begin();
-}
+void Labels::relabelGap() {
+	std::map<unsigned, std::size_t> label_counts;
+	for(auto& l : m_labels)
+		if(l < m_maxLabel)
+			label_counts[l]++;
 
-Labels::const_iterator Labels::end() const {
-	return m_labels.end();
-}
+	int gap_count = 0;
+	if(label_counts.size() > 2) {
+		auto it = label_counts.begin();
+		auto it2 = it;
+		++it2;
 
-Labels::iterator Labels::begin() {
-	return m_labels.begin();
-}
+		while(it2 != label_counts.end()) {
+			if(it2->first != it->first+1) {
+				// relabel the gap
+				for(auto& e : m_labels)
+					if(e == it2->first)
+						e = m_maxLabel;
 
-Labels::iterator Labels::end() {
-	return m_labels.end();
+				gap_count++;
+
+			}
+			++it;
+			++it2;
+		}
+	}
 }
 
 }

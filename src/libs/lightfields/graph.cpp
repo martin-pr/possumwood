@@ -441,7 +441,7 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 void Graph::pushRelabelSolve() {
 	assert(m_nLinks.size() > 1);
 
-	Labels label(m_size.x * m_size.y * m_nLinks.size());
+	Labels label(m_size.x * m_size.y * m_nLinks.size(), m_size.x * m_size.y);
 	ActiveQueue queue(m_size.x * m_size.y * m_nLinks.size());
 
 	// first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
@@ -510,31 +510,7 @@ void Graph::pushRelabelSolve() {
 			counter = 0;
 			gap_threshold = queue.size();
 
-			std::map<int, std::size_t> label_counts;
-			for(auto& l : label)
-				if(l < unsigned(m_size.x * m_size.y))
-					label_counts[l]++;
-
-			int gap_count = 0;
-			if(label_counts.size() > 2) {
-				auto it = label_counts.begin();
-				auto it2 = it;
-				++it2;
-
-				while(it2 != label_counts.end()) {
-					if(it2->first != it->first+1) {
-						// relabel the gap
-						for(auto& e : label)
-							if(e == unsigned(it2->first))
-								e = unsigned(m_size.x * m_size.y);
-
-						gap_count++;
-
-					}
-					++it;
-					++it2;
-				}
-			}
+			label.relabelGap();
 		}
 
 		if(iterations % (m_size.x * m_size.y) == 0)
