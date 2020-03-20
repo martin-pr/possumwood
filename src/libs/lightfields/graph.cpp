@@ -591,7 +591,7 @@ void Graph::pushRelabelSolve() {
 
 	while(!queue.empty()) {
 		++gap_counter;
-		++relabel_counter;
+		// ++relabel_counter;
 		++iterations;
 
 		// get an active cell
@@ -599,43 +599,43 @@ void Graph::pushRelabelSolve() {
 		const Index current_i = val2index(current.index);
 
 		// active cell - repeat pushing for as long as possible
-		bool relabelled = true;
-		while(current.excess > 0 && relabelled) {
+		bool pushed = true;
+		// while(current.excess > 0 && pushed) {
 			// try to push all directions
-			relabelled = false;
+			pushed = false;
 
 			if(current.excess > 0)
-				pushVertDown(current_i, label, current.excess, queue);
+				pushed = pushVertDown(current_i, label, current.excess, queue);
 
-			if(current.excess > 0 && current_i.pos.x > 0) {
+			if(!pushed && current.excess > 0 && current_i.pos.x > 0) {
 				const Index next_i {V2i(current_i.pos.x-1, current_i.pos.y), current_i.n_layer};
-				pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushed = pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(current.excess > 0 && current_i.pos.x < m_size.x-1) {
+			if(!pushed && current.excess > 0 && current_i.pos.x < m_size.x-1) {
 				const Index next_i {V2i(current_i.pos.x+1, current_i.pos.y), current_i.n_layer};
-				pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushed = pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(current.excess > 0 && current_i.pos.y > 0) {
+			if(!pushed && current.excess > 0 && current_i.pos.y > 0) {
 				const Index next_i {V2i(current_i.pos.x, current_i.pos.y-1), current_i.n_layer};
-				pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushed = pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(current.excess > 0 && current_i.pos.y < m_size.y-1) {
+			if(!pushed && current.excess > 0 && current_i.pos.y < m_size.y-1) {
 				const Index next_i {V2i(current_i.pos.x, current_i.pos.y+1), current_i.n_layer};
-				pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushed = pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(current.excess > 0)
-				pushVertUp(current_i, label, current.excess, queue);
+			if(!pushed && current.excess > 0)
+				pushed = pushVertUp(current_i, label, current.excess, queue);
 
 			// if there is any excess left, relabel
-			if(current.excess > 0) {
-				if(relabel(current_i, label))
-					relabelled = true;
+			if(!pushed && current.excess > 0) {
+				pushed = relabel(current_i, label);
+				++relabel_counter;
 			}
-		}
+		// }
 
 		// push back to the end of the queue - not fully processed yet, couldn't push or relabel (only allowed up) and excess is not fully processed
 		if(current.excess > 0)
