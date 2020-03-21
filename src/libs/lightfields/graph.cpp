@@ -287,7 +287,7 @@ bool Graph::pushHoriz(const Index& current, const Index& next, const Labels& lab
 		if(flow > 0) {
 			edge.addFlow(flow);
 			excess -= flow;
-			queue.push(ActiveQueue::Item{next_v, flow});
+			queue.push(ActiveQueue::Item(next_v, flow, label[next_v]));
 
 			return true;
 		}
@@ -312,7 +312,7 @@ bool Graph::pushVertDown(const Index& current, const Labels& label, int& excess,
 			edge.forward().addFlow(flow);
 			excess -= flow;
 			if(next_v < label.size())
-				queue.push(ActiveQueue::Item{next_v, flow});
+				queue.push(ActiveQueue::Item(next_v, flow, label[next_v]));
 
 			return true;
 		}
@@ -348,7 +348,7 @@ bool Graph::pushVertUp(const Index& current, const Labels& label, int& excess, A
 				edge.backward().addFlow(flow);
 				excess -= flow;
 				assert(next_v < label.size());
-				queue.push(ActiveQueue::Item{next_v, flow});
+				queue.push(ActiveQueue::Item{next_v, flow, label[next_v]});
 
 				return true;
 			}
@@ -449,7 +449,7 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 	return false;
 }
 
-std::size_t Graph::relabelAll(Labels& labels) {
+std::size_t Graph::relabelAll(Labels& labels, ActiveQueue& active) {
 	assert(!m_tLinks.empty());
 
 	// back-tracing BFS
@@ -568,6 +568,8 @@ std::size_t Graph::relabelAll(Labels& labels) {
 	// }
 	// std::cout << std::endl;
 
+	active.relabel(labels);
+
 	return counter;
 }
 
@@ -577,21 +579,26 @@ void Graph::pushRelabelSolve() {
 	Labels label(m_size.x * m_size.y * m_nLinks.size(), m_size.x * m_size.y);
 	ActiveQueue queue(m_size.x * m_size.y * m_nLinks.size());
 
-	// set the labels to the minimal distance to sink
-	relabelAll(label);
-
 	// first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
 	for(int a=0; a<m_size.x * m_size.y; ++a)
-		queue.push(ActiveQueue::Item{std::size_t(a), std::numeric_limits<int>::max() / 4});
+		queue.push(ActiveQueue::Item(
+			std::size_t(a),
+			std::numeric_limits<int>::max() / 4,  // an arbitrary "large" number
+			label[a]
+		));
 
-	int gap_counter = 0, relabel_counter = 0;
+	// set the labels to the minimal distance to sink
+	relabelAll(label, queue);
+
+	int gap_counter = 0;
+	std::size_t relabel_counter = 0;
 	std::size_t iterations = 0;
 
 	int gap_threshold = label.size();
 
-	while(!queue.empty()) {
+	while(!queue.empty() || iterations == 0) {
 		++gap_counter;
-		// ++relabel_counter;
+		++relabel_counter;
 		++iterations;
 
 		// get an active cell
@@ -599,43 +606,43 @@ void Graph::pushRelabelSolve() {
 		const Index current_i = val2index(current.index);
 
 		// active cell - repeat pushing for as long as possible
-		bool pushed = true;
-		// while(current.excess > 0 && pushed) {
+		while(current.excess > 0) {
+
 			// try to push all directions
-			pushed = false;
 
 			if(current.excess > 0)
-				pushed = pushVertDown(current_i, label, current.excess, queue);
+				pushVertDown(current_i, label, current.excess, queue);
 
-			if(!pushed && current.excess > 0 && current_i.pos.x > 0) {
+			if(current.excess > 0 && current_i.pos.x > 0) {
 				const Index next_i {V2i(current_i.pos.x-1, current_i.pos.y), current_i.n_layer};
-				pushed = pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(!pushed && current.excess > 0 && current_i.pos.x < m_size.x-1) {
+			if(current.excess > 0 && current_i.pos.x < m_size.x-1) {
 				const Index next_i {V2i(current_i.pos.x+1, current_i.pos.y), current_i.n_layer};
-				pushed = pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(!pushed && current.excess > 0 && current_i.pos.y > 0) {
+			if(current.excess > 0 && current_i.pos.y > 0) {
 				const Index next_i {V2i(current_i.pos.x, current_i.pos.y-1), current_i.n_layer};
-				pushed = pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(!pushed && current.excess > 0 && current_i.pos.y < m_size.y-1) {
+			if(current.excess > 0 && current_i.pos.y < m_size.y-1) {
 				const Index next_i {V2i(current_i.pos.x, current_i.pos.y+1), current_i.n_layer};
-				pushed = pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushHoriz(current_i, next_i, label, current.excess, queue);
 			}
 
-			if(!pushed && current.excess > 0)
-				pushed = pushVertUp(current_i, label, current.excess, queue);
+			if(current.excess > 0)
+				pushVertUp(current_i, label, current.excess, queue);
 
 			// if there is any excess left, relabel
-			if(!pushed && current.excess > 0) {
-				pushed = relabel(current_i, label);
-				++relabel_counter;
-			}
-		// }
+			if(current.excess > 0)
+				relabel(current_i, label);
+		}
+
+		// no matter what happens, at the end of the iterations above, the first layer should have 0 excess
+		assert(current_i.n_layer > 0 || current.excess == 0);
 
 		// push back to the end of the queue - not fully processed yet, couldn't push or relabel (only allowed up) and excess is not fully processed
 		if(current.excess > 0)
@@ -650,10 +657,12 @@ void Graph::pushRelabelSolve() {
 			label.relabelGap();
 		}
 
-		if(relabel_counter == m_size.x * m_size.y) {
+		// global relabelling optimisation
+		// based on Cherkassky, Boris V. and Goldberg, Andrew V. "On implementing push-relabel method for the maximum flow problem.", Section 3
+		if(relabel_counter == m_size.x * m_size.y * m_nLinks.size()) {
 			relabel_counter = 0;
 
-			auto ctr = relabelAll(label);
+			auto ctr = relabelAll(label, queue);
 			std::cout << "relabelled " << ctr << std::endl;
 		}
 

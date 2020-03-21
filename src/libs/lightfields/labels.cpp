@@ -62,20 +62,22 @@ void Labels::relabelGap() {
 	std::vector<Labels::Gap> gs = gaps();
 
 	if(!gs.empty()) {
+		std::cout << "relabelling gaps ";
 		for(auto& g : gs)
 			std::cout << g.min << "/" << g.max << "  ";
 		std::cout << std::endl;
 	}
 
-	// if(!gs.empty()) {
-	// 	for(auto& r : gs)
-	// 		m_counters[r.max+1] = 0;
 
-	// 	for(auto& l : m_labels)
-	// 		for(auto& r : gs)
-	// 			if(l == r.max+1)
-	// 				l = m_labels.size() + 1;
-	// }
+	if(!gs.empty()) {
+		for(auto& r : gs)
+			m_counters[r.max+1] = 0;
+
+		for(auto& l : m_labels)
+			for(auto& r : gs)
+				if(l == r.max+1)
+					l = m_labels.size() + 1;
+	}
 }
 
 ////////////
