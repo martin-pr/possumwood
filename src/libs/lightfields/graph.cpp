@@ -410,9 +410,13 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 
 		auto& e = m_tLinks[current.n_layer].edge(current.pos);
 		if(e.forward().residualCapacity() > 0) {
-			const std::size_t target_v = index2val(Index{target, current.n_layer+1});
-			if(target_v < labels.size())
+			const Index target_i{target, current.n_layer+1};
+			if(target_i.n_layer < m_nLinks.size()) {
+				const std::size_t target_v = index2val(target_i);
+
+				assert(target_v < labels.size());
 				label = std::min(label, unsigned(labels[target_v]));
+			}
 			else
 				label = 0;
 		}
@@ -430,12 +434,141 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 		}
 	}
 
-	if(label < std::numeric_limits<unsigned>::max() && label+1 > labels[current_v] ) {
-		labels[current_v] = label+1;
-		return true;
+	if(label < std::numeric_limits<unsigned>::max()) {
+		assert(label+1 != labels[current_v]);
+			// std::cout << "  relabel " << current_v << " from " << labels[current_v] << " to " << (label+1) << std::endl;
+
+			labels[current_v] = label+1;
+
+			return true;
+		// }
+		// else
+		// 	std::cout << "  CANNOT relabel " << current_v << " from " << labels[current_v] << " to " << (label+1) << std::endl;
 	}
 
 	return false;
+}
+
+std::size_t Graph::relabelAll(Labels& labels) {
+	assert(!m_tLinks.empty());
+
+	// back-tracing BFS
+	labels.clear(m_size.x * m_size.y * m_nLinks.size() + 1);
+
+	std::size_t counter = 0;
+
+	// first queue the bottom layer nodes, where the "forward" residual capacity is non-zero
+	std::queue<Index> queue;
+	for(int y=0; y<m_size.y; ++y)
+		for(int x=0; x<m_size.x; ++x)
+			if(m_tLinks.back().edge(V2i(x, y)).forward().residualCapacity() > 0) {
+				const Index current {V2i(x, y), unsigned(m_nLinks.size()-1)};
+
+				queue.push(current);
+				labels[index2val(current)] = 1;
+
+				++counter;
+			}
+
+	// recurse
+	while(!queue.empty()) {
+		const Index current = queue.front();
+		queue.pop();
+
+		const unsigned current_val = labels[index2val(current)];
+
+		if(current.pos.x > 0) {
+			const Index source {V2i(current.pos.x-1, current.pos.y), current.n_layer};
+
+			if(m_nLinks[current.n_layer].edge(source.pos, current.pos).residualCapacity() > 0) {
+				if(labels[index2val(source)] > current_val + 1) {
+					labels[index2val(source)] = current_val + 1;
+					queue.push(source);
+
+					++counter;
+				}
+			}
+		}
+
+		if(current.pos.x < m_size.x-1) {
+			const Index source {V2i(current.pos.x+1, current.pos.y), current.n_layer};
+
+			if(m_nLinks[current.n_layer].edge(source.pos, current.pos).residualCapacity() > 0) {
+				if(labels[index2val(source)] > current_val + 1) {
+					labels[index2val(source)] = current_val + 1;
+					queue.push(source);
+
+					++counter;
+				}
+			}
+		}
+
+		if(current.pos.y > 0) {
+			const Index source {V2i(current.pos.x, current.pos.y-1), current.n_layer};
+
+			if(m_nLinks[current.n_layer].edge(source.pos, current.pos).residualCapacity() > 0) {
+				if(labels[index2val(source)] > current_val + 1) {
+					labels[index2val(source)] = current_val + 1;
+					queue.push(source);
+
+					++counter;
+				}
+			}
+		}
+
+		if(current.pos.y < m_size.y-1) {
+			const Index source {V2i(current.pos.x, current.pos.y+1), current.n_layer};
+
+			if(m_nLinks[current.n_layer].edge(source.pos, current.pos).residualCapacity() > 0) {
+				if(labels[index2val(source)] > current_val + 1) {
+					labels[index2val(source)] = current_val + 1;
+					queue.push(source);
+
+					++counter;
+				}
+			}
+		}
+
+		if(current.n_layer > 0) {
+			const Index source {V2i(current.pos.x, current.pos.y), current.n_layer-1};
+
+			if(m_tLinks[source.n_layer].edge(current.pos).forward().residualCapacity() > 0) {
+				if(labels[index2val(source)] > current_val + 1) {
+					labels[index2val(source)] = current_val + 1;
+					queue.push(source);
+
+					++counter;
+				}
+			}
+		}
+
+		if(current.n_layer < m_nLinks.size()-1) {
+			const Index source {V2i(current.pos.x, current.pos.y), current.n_layer+1};
+
+			if(m_tLinks[current.n_layer].edge(current.pos).backward().residualCapacity() > 0) {
+				if(labels[index2val(source)] > current_val + 1) {
+					labels[index2val(source)] = current_val + 1;
+					queue.push(source);
+
+					++counter;
+				}
+			}
+		}
+	}
+
+	// for(std::size_t a=0; a<labels.size(); ) {
+	// 	std::cout << labels[a] << " ";
+
+	// 	++a;
+
+	// 	if(a % m_size.x == 0)
+	// 		std::cout << std::endl;
+	// 	if(a % (m_size.x * m_size.y) == 0)
+	// 		std::cout << std::endl;
+	// }
+	// std::cout << std::endl;
+
+	return counter;
 }
 
 void Graph::pushRelabelSolve() {
@@ -444,17 +577,21 @@ void Graph::pushRelabelSolve() {
 	Labels label(m_size.x * m_size.y * m_nLinks.size(), m_size.x * m_size.y);
 	ActiveQueue queue(m_size.x * m_size.y * m_nLinks.size());
 
+	// set the labels to the minimal distance to sink
+	relabelAll(label);
+
 	// first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
 	for(int a=0; a<m_size.x * m_size.y; ++a)
 		queue.push(ActiveQueue::Item{std::size_t(a), std::numeric_limits<int>::max() / 4});
 
-	int counter = 0;
+	int gap_counter = 0, relabel_counter = 0;
 	std::size_t iterations = 0;
 
 	int gap_threshold = label.size();
 
 	while(!queue.empty()) {
-		++counter;
+		++gap_counter;
+		++relabel_counter;
 		++iterations;
 
 		// get an active cell
@@ -506,11 +643,18 @@ void Graph::pushRelabelSolve() {
 
 		// find the gap optimisation
 		// based on Cherkassky, Boris V. "A fast algorithm for computing maximum flow in a network." Collected Papers 3 (1994): 90-96.
-		if(counter == gap_threshold) {
-			counter = 0;
+		if(gap_counter == gap_threshold) {
+			gap_counter = 0;
 			gap_threshold = queue.size();
 
 			label.relabelGap();
+		}
+
+		if(relabel_counter == m_size.x * m_size.y) {
+			relabel_counter = 0;
+
+			auto ctr = relabelAll(label);
+			std::cout << "relabelled " << ctr << std::endl;
 		}
 
 		if(iterations % (m_size.x * m_size.y) == 0)

@@ -44,6 +44,8 @@ class Graph {
 		bool pushVertUp(const Index& current, const Labels& label, int& excess, ActiveQueue& queue);
 		bool relabel(const Index& current, Labels& label) const;
 
+		std::size_t relabelAll(Labels& labels);
+
 		cv::Mat t_flow(const TLinks& t) const;
 		cv::Mat n_flow(const NLinks& t) const;
 

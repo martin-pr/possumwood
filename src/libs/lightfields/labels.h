@@ -10,6 +10,8 @@ class Labels {
 	public:
 		Labels(std::size_t size, unsigned label_limit);
 
+		void clear(unsigned default_val);
+
 		std::size_t size() const;
 
 		class Proxy {
@@ -28,6 +30,12 @@ class Labels {
 
 		Proxy operator[](std::size_t index);
 		const unsigned& operator[](std::size_t index) const;
+
+		struct Gap {
+			unsigned min, max;
+		};
+
+		std::vector<Gap> gaps() const;
 
 		/// find the gap optimisation
 		/// based on Cherkassky, Boris V. "A fast algorithm for computing maximum flow in a network." Collected Papers 3 (1994): 90-96.
