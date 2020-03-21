@@ -33,9 +33,13 @@ class Labels {
 
 		struct Gap {
 			unsigned min, max;
+
+			bool isValid() const {
+				return min != 0 && max != 0;
+			}
 		};
 
-		std::vector<Gap> gaps() const;
+		Gap gaps() const;
 
 		/// find the gap optimisation
 		/// based on Cherkassky, Boris V. "A fast algorithm for computing maximum flow in a network." Collected Papers 3 (1994): 90-96.
