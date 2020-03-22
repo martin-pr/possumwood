@@ -7,9 +7,8 @@
 
 #include <tbb/blocked_range2d.h>
 
-#include "n_links.h"
-#include "t_links.h"
-#include "index.h"
+#include "grid.h"
+
 #include "active_queue.h"
 
 namespace lightfields {
@@ -19,39 +18,24 @@ class Labels;
 
 class Graph {
 	public:
-		Graph(const V2i& size, int n_link_value, std::size_t layer_count);
-
-		void setValue(const V2i& pos, const std::vector<int>& values);
-
-		void edmondsKarpSolve();
-		void pushRelabelSolve();
-
-		cv::Mat minCut() const;
-		std::vector<cv::Mat> debug() const;
+		void edmondsKarpSolve(Grid& grid);
+		void pushRelabelSolve(Grid& grid);
 
 	private:
-		std::size_t v2i(const V2i& v) const;
-		Index val2index(std::size_t value) const;
-		std::size_t index2val(const Index& i) const;
+		Index val2index(std::size_t value, const V2i& size) const;
+		std::size_t index2val(const Index& i, const V2i& size) const;
 
-		bool iterate(const tbb::blocked_range2d<int>& range);
+		bool iterate(Grid& grid, const tbb::blocked_range2d<int>& range);
 
-		int flow(const BFSVisitors& visitors, const Index& end) const;
-		void doFlow(const BFSVisitors& visitors, const Index& end, int value);
+		int flow(Grid& grid, const BFSVisitors& visitors, const Index& end) const;
+		void doFlow(Grid& grid, const BFSVisitors& visitors, const Index& end, int value);
 
-		bool pushHoriz(const Index& current, const Index& next, const Labels& label, int& excess, ActiveQueue& queue);
-		bool pushVertDown(const Index& current, const Labels& label, int& excess, ActiveQueue& queue);
-		bool pushVertUp(const Index& current, const Labels& label, int& excess, ActiveQueue& queue);
-		bool relabel(const Index& current, Labels& label) const;
+		bool pushHoriz(Grid& grid, const Index& current, const Index& next, const Labels& label, int& excess, ActiveQueue& queue);
+		bool pushVertDown(Grid& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue);
+		bool pushVertUp(Grid& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue);
+		bool relabel(const Grid& grid, const Index& current, Labels& label) const;
 
-		std::size_t relabelAll(Labels& labels, ActiveQueue& queue);
-
-		cv::Mat t_flow(const TLinks& t) const;
-		cv::Mat n_flow(const NLinks& t) const;
-
-		V2i m_size;
-		std::vector<TLinks> m_tLinks;
-		std::vector<NLinks> m_nLinks;
+		std::size_t relabelAll(const Grid& grid, Labels& labels, ActiveQueue& queue);
 };
 
 }

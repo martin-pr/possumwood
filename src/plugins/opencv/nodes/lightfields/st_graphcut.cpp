@@ -43,7 +43,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if((*f).type() != CV_8UC1)
 			throw std::runtime_error("Only CV_8UC1 images accepted on input.");
 
-	lightfields::Graph graph(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size());
+	lightfields::Grid grid(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size());
 
 	std::vector<int> values(sequence.size(), 0);
 
@@ -55,18 +55,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				++ctr;
 			}
 
-			graph.setValue(lightfields::V2i(col, row), values);
+			grid.setValue(lightfields::V2i(col, row), values);
 		}
 
+	lightfields::Graph graph;
 	if(data.get(a_mode).value() == "Edmonds-Karp")
-		graph.edmondsKarpSolve();
+		graph.edmondsKarpSolve(grid);
 	else
-		graph.pushRelabelSolve();
+		graph.pushRelabelSolve(grid);
 
-	data.set(a_out, possumwood::opencv::Frame(graph.minCut()));
+	data.set(a_out, possumwood::opencv::Frame(grid.minCut()));
 
 	possumwood::opencv::Sequence debug;
-	for(auto& m : graph.debug())
+	for(auto& m : grid.debug())
 		debug.add(m);
 
 	data.set(a_debug, debug);

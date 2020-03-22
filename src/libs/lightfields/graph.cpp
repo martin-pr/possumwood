@@ -14,33 +14,6 @@
 
 namespace lightfields {
 
-Graph::Graph(const V2i& size, int n_link_value, std::size_t layer_count) : m_size(size) {
-	m_tLinks = std::vector<TLinks>(layer_count, TLinks(size));
-	m_nLinks = std::vector<NLinks>(layer_count, NLinks(size, n_link_value));
-}
-
-void Graph::setValue(const V2i& pos, const std::vector<int>& values) {
-	assert(values.size() == m_tLinks.size());
-
-	auto tit = m_tLinks.begin();
-	auto vit = values.begin();
-
-	while(tit != m_tLinks.end()) {
-		tit->edge(pos).setCapacity(*vit, std::numeric_limits<int>::max()/2);
-
-		assert(*vit >= 0);
-		assert(tit->edge(pos).forward().residualCapacity() == *vit);
-		assert(tit->edge(pos).backward().residualCapacity() == std::numeric_limits<int>::max()/2);
-
-		++tit;
-		++vit;
-	}
-}
-
-std::size_t Graph::v2i(const V2i& v) const {
-	return v.x + v.y*m_size.x;
-}
-
 namespace {
 
 struct QueueItem {
@@ -49,10 +22,10 @@ struct QueueItem {
 
 }
 
-bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
+bool Graph::iterate(Grid& grid, const tbb::blocked_range2d<int>& range) {
 	bool foundPath = false;
 
-	BFSVisitors visited(range, m_nLinks.size());
+	BFSVisitors visited(range, grid.layerCount());
 	std::deque<QueueItem> q;
 
 	// initialize - source index has parent -1,-1
@@ -72,20 +45,20 @@ bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
 		Index current_v = item.current;
 
 		// a potential exit point
-		if(current_v.n_layer == m_nLinks.size()-1) {
-			if(m_tLinks.back().edge(current_v.pos).forward().residualCapacity() > 0) {
+		if(current_v.n_layer == grid.layerCount()-1) {
+			if(grid.edge(current_v, Index{current_v.pos, current_v.n_layer+1}).residualCapacity() > 0) {
 				foundPath = true;
 
-				const int f = flow(visited, current_v);
+				const int f = flow(grid, visited, current_v);
 				if(f > 0)
-					doFlow(visited, current_v, f);
+					doFlow(grid, visited, current_v, f);
 			}
 		}
 
 		// try to move horizontally left
 		if(current_v.pos.x > range.cols().begin()) {
 			const Index new_v{V2i(current_v.pos.x-1, current_v.pos.y), current_v.n_layer};
-			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
+			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
 				q.push_back(QueueItem{new_v, current_v});
 			}
@@ -94,7 +67,7 @@ bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
 		// try to move horizontally right
 		if(current_v.pos.x < range.cols().end()-1){
 			const Index new_v{V2i(current_v.pos.x+1, current_v.pos.y), current_v.n_layer};
-			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
+			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
 				q.push_back(QueueItem{new_v, current_v});
 			}
@@ -103,7 +76,7 @@ bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
 		// try to move vertically up
 		if(current_v.pos.y > range.rows().begin()) {
 			const Index new_v{V2i(current_v.pos.x, current_v.pos.y-1), current_v.n_layer};
-			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
+			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
 				q.push_back(QueueItem{new_v, current_v});
 			}
@@ -112,7 +85,7 @@ bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
 		// try to move vertically down
 		if(current_v.pos.y < range.rows().end()-1) {
 			const Index new_v{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer};
-			if(!visited.visited(new_v) && m_nLinks[current_v.n_layer].edge(current_v.pos, new_v.pos).residualCapacity() > 0) {
+			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
 				q.push_back(QueueItem{new_v, current_v});
 			}
@@ -121,16 +94,16 @@ bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
 		// try to move up a layer
 		if((current_v.n_layer > 0)) {
 			const Index new_v{current_v.pos, current_v.n_layer-1};
-			if(!visited.visited(new_v) && m_tLinks[new_v.n_layer].edge(new_v.pos).backward().residualCapacity() > 0) {
+			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
 				q.push_back(QueueItem{new_v, current_v});
 			}
 		}
 
 		// try to move down a layer
-		if((current_v.n_layer < m_nLinks.size()-1)) {
+		if((current_v.n_layer < grid.layerCount()-1)) {
 			const Index new_v{current_v.pos, current_v.n_layer+1};
-			if(!visited.visited(new_v) && m_tLinks[current_v.n_layer].edge(current_v.pos).forward().residualCapacity() > 0) {
+			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
 				visited.visit(new_v, current_v);
 				q.push_back(QueueItem{new_v, current_v});
 			}
@@ -140,12 +113,12 @@ bool Graph::iterate(const tbb::blocked_range2d<int>& range) {
 	return foundPath;
 }
 
-int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
+int Graph::flow(Grid& grid, const BFSVisitors& visitors, const Index& end) const {
 	assert(end.pos.x != -1 && end.pos.y != -1);
-	assert(end.n_layer == m_nLinks.size()-1);
+	assert(end.n_layer == grid.layerCount()-1);
 
 	// initial flow value based on the last T link (towards the sink)
-	int result = m_tLinks.back().edge(end.pos).forward().residualCapacity();
+	int result = grid.edge(end, Index{end.pos, end.n_layer+1}).residualCapacity();
 
 	Index current = end;
 	Index parent = visitors.parent(current);
@@ -153,17 +126,8 @@ int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
 	while(result > 0 && parent.pos.x != -1 && parent.pos.y != -1) {
 		assert(Index::sqdist(current, parent) == 1);
 
-		// same layer - need to use N link
-		if(current.n_layer == parent.n_layer)
-			result = std::min(result, m_nLinks[current.n_layer].edge(parent.pos, current.pos).residualCapacity());
-
-		// different layer down - need to use a T link (if the move is to higher layer)
-		else if(current.n_layer > parent.n_layer)
-			result = std::min(result, m_tLinks[parent.n_layer].edge(parent.pos).forward().residualCapacity());
-
-		// different layer up
-		else if(current.n_layer < parent.n_layer)
-			result = std::min(result, m_tLinks[current.n_layer].edge(current.pos).backward().residualCapacity());
+		// try to find the minimum capacity
+		result = std::min(result, grid.edge(parent, current).residualCapacity());
 
 		// and move on
 		current = parent;
@@ -175,13 +139,12 @@ int Graph::flow(const BFSVisitors& visitors, const Index& end) const {
 	return result;
 }
 
-void Graph::doFlow(const BFSVisitors& visitors, const Index& end, int flow) {
+void Graph::doFlow(Grid& grid, const BFSVisitors& visitors, const Index& end, int flow) {
 	assert(end.pos.x != -1 && end.pos.y != -1);
-	assert(end.n_layer == m_nLinks.size()-1);
+	assert(end.n_layer == grid.layerCount()-1);
 
 	// initial flow value based on the last T link (towards the sink)
-	m_tLinks.back().edge(end.pos).forward().addFlow(flow);
-
+	grid.edge(end, Index{end.pos, end.n_layer+1}).addFlow(flow);
 
 	Index current = end;
 	Index parent = visitors.parent(current);
@@ -189,17 +152,8 @@ void Graph::doFlow(const BFSVisitors& visitors, const Index& end, int flow) {
 	while(parent.pos.x != -1 && parent.pos.y != -1) {
 		assert(Index::sqdist(current, parent) == 1);
 
-		// same layer - need to use N link
-		if(current.n_layer == parent.n_layer)
-			m_nLinks[current.n_layer].edge(parent.pos, current.pos).addFlow(flow);
-
-		// different layer down - need to use a T link (if the move is to higher layer)
-		else if(current.n_layer > parent.n_layer)
-			m_tLinks[parent.n_layer].edge(parent.pos).forward().addFlow(flow);
-
-		// different layer up
-		else if(current.n_layer < parent.n_layer)
-			m_tLinks[current.n_layer].edge(current.pos).backward().addFlow(flow);
+		// propagate
+		grid.edge(parent, current).addFlow(flow);
 
 		// and move on
 		current = parent;
@@ -209,7 +163,7 @@ void Graph::doFlow(const BFSVisitors& visitors, const Index& end, int flow) {
 	assert(current.n_layer == 0);
 }
 
-void Graph::edmondsKarpSolve() {
+void Graph::edmondsKarpSolve(Grid& grid) {
 	std::size_t counter = 0;
 
 	tbb::task_group tasks;
@@ -222,7 +176,7 @@ void Graph::edmondsKarpSolve() {
 	// an interative function that can spawn itself if the iteration didn't finish
 	std::function<void(const tbb::blocked_range2d<int>& range)> fn;
 	fn = [&](const tbb::blocked_range2d<int>& range) {
-		if(iterate(range)) {
+		if(iterate(grid, range)) {
 			tasks.run([range, &fn]() {
 				fn(range);
 			});
@@ -236,8 +190,8 @@ void Graph::edmondsKarpSolve() {
 		for(int y=0;y<div;++y)
 			for(int x=0;x<div;++x) {
 				const tbb::blocked_range2d<int> range(
-					(m_size.y * y) / div, (m_size.y * (y+1)) / div,
-					(m_size.x * x) / div, (m_size.x * (x+1)) / div
+					(grid.size().y * y) / div, (grid.size().y * (y+1)) / div,
+					(grid.size().x * x) / div, (grid.size().x * (x+1)) / div
 				);
 
 				tasks.run([range, &fn]() {
@@ -254,34 +208,34 @@ void Graph::edmondsKarpSolve() {
 	std::cout << "ST-cut solve with " << counter << " iterations finished." << std::endl;
 }
 
-Index Graph::val2index(std::size_t value) const {
+Index Graph::val2index(std::size_t value, const V2i& size) const {
 	Index result;
 
-	result.n_layer = value / std::size_t(m_size.x * m_size.y);
-	value %= (m_size.x * m_size.y);
+	result.n_layer = value / std::size_t(size.x * size.y);
+	value %= (size.x * size.y);
 
-	result.pos = V2i(value % m_size.x, value / m_size.x);
-
-	return result;
-}
-
-std::size_t Graph::index2val(const Index& i) const {
-	std::size_t result = i.pos.x + i.pos.y * m_size.x;
-	result += std::size_t(i.n_layer) * std::size_t(m_size.x * m_size.y);
+	result.pos = V2i(value % size.x, value / size.x);
 
 	return result;
 }
 
-bool Graph::pushHoriz(const Index& current, const Index& next, const Labels& label, int& excess, ActiveQueue& queue) {
+std::size_t Graph::index2val(const Index& i, const V2i& size) const {
+	std::size_t result = i.pos.x + i.pos.y * size.x;
+	result += std::size_t(i.n_layer) * std::size_t(size.x * size.y);
+
+	return result;
+}
+
+bool Graph::pushHoriz(Grid& grid, const Index& current, const Index& next, const Labels& label, int& excess, ActiveQueue& queue) {
 	assert(V2i::sqdist(current.pos, next.pos) == 1);
 	assert(current.n_layer == next.n_layer);
-	assert(current.n_layer < m_nLinks.size());
+	assert(current.n_layer < grid.layerCount());
 
-	const std::size_t current_v = index2val(current);
-	const std::size_t next_v = index2val(next);
+	const std::size_t current_v = index2val(current, grid.size());
+	const std::size_t next_v = index2val(next, grid.size());
 
 	if(label[current_v] == label[next_v] + 1) {
-		auto& edge = m_nLinks[current.n_layer].edge(current.pos, next.pos);
+		auto& edge = grid.edge(current, next);
 
 		const int flow = std::min(edge.residualCapacity(), excess);
 		if(flow > 0) {
@@ -296,20 +250,21 @@ bool Graph::pushHoriz(const Index& current, const Index& next, const Labels& lab
 	return false;
 }
 
-bool Graph::pushVertDown(const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
-	assert(current.n_layer < m_tLinks.size());
+bool Graph::pushVertDown(Grid& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
+	assert(current.n_layer < grid.layerCount());
 
-	const std::size_t current_v = index2val(current);
-	const std::size_t next_v = index2val(Index{current.pos, current.n_layer+1});
+	const Index next {current.pos, current.n_layer+1};
+	const std::size_t current_v = index2val(current, grid.size());
+	const std::size_t next_v = index2val(next, grid.size());
 
 	assert(current_v < label.size());
 
-	if((label[current_v] == 1 && current.n_layer+1 == m_nLinks.size()) || (next_v < label.size() && label[current_v] == label[next_v] + 1)) {
-		auto& edge = m_tLinks[current.n_layer].edge(current.pos);
+	if((label[current_v] == 1 && current.n_layer+1 == grid.layerCount()) || (next_v < label.size() && label[current_v] == label[next_v] + 1)) {
+		auto& edge = grid.edge(current, next);
 
-		const int flow = std::min(edge.forward().residualCapacity(), excess);
+		const int flow = std::min(edge.residualCapacity(), excess);
 		if(flow > 0) {
-			edge.forward().addFlow(flow);
+			edge.addFlow(flow);
 			excess -= flow;
 			if(next_v < label.size())
 				queue.push(ActiveQueue::Item(next_v, flow, label[next_v]));
@@ -321,13 +276,13 @@ bool Graph::pushVertDown(const Index& current, const Labels& label, int& excess,
 	return false;
 }
 
-bool Graph::pushVertUp(const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
-	assert(current.n_layer < m_tLinks.size());
+bool Graph::pushVertUp(Grid& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
+	assert(current.n_layer < grid.layerCount());
 
-	const std::size_t current_v = index2val(current);
+	const std::size_t current_v = index2val(current, grid.size());
 
 	// flowing "back to the source" - no explicit edge, just flow everything back
-	if(current.n_layer == 0 && label[current_v] == unsigned(m_size.x * m_size.y + 1)) {
+	if(current.n_layer == 0 && label[current_v] == unsigned(grid.size().x * grid.size().y + 1)) {
 		excess = 0;
 		return true;
 	}
@@ -335,17 +290,17 @@ bool Graph::pushVertUp(const Index& current, const Labels& label, int& excess, A
 	// flow between layers with explicit edges
 	if(current.n_layer > 0) {
 		const Index next{current.pos, current.n_layer-1};
-		const std::size_t next_v = index2val(next);
+		const std::size_t next_v = index2val(next, grid.size());
 
 		assert(current_v < label.size());
 		// assert(next_v < label.size());
 
 		if(label[current_v] == label[next_v] + 1) {
-			auto& edge = m_tLinks[next.n_layer].edge(next.pos);
+			auto& edge = grid.edge(current, next);
 
-			const int flow = std::min(edge.backward().residualCapacity(), excess);
+			const int flow = std::min(edge.residualCapacity(), excess);
 			if(flow > 0) {
-				edge.backward().addFlow(flow);
+				edge.addFlow(flow);
 				excess -= flow;
 				assert(next_v < label.size());
 				queue.push(ActiveQueue::Item{next_v, flow, label[next_v]});
@@ -358,61 +313,61 @@ bool Graph::pushVertUp(const Index& current, const Labels& label, int& excess, A
 	return false;
 }
 
-bool Graph::relabel(const Index& current, Labels& labels) const {
-	const std::size_t current_v = index2val(current);
+bool Graph::relabel(const Grid& grid, const Index& current, Labels& labels) const {
+	const std::size_t current_v = index2val(current, grid.size());
 
 	unsigned label = std::numeric_limits<unsigned>::max();
 
 	if(current.pos.x > 0) {
-		const V2i target(current.pos.x-1, current.pos.y);
+		const Index target {V2i(current.pos.x-1, current.pos.y), current.n_layer};
 
-		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
+		auto& e = grid.edge(current, target);
 		if(e.residualCapacity() > 0) {
-			const std::size_t target_v = index2val(Index{target, current.n_layer});
+			const std::size_t target_v = index2val(target, grid.size());
 			label = std::min(label, unsigned(labels[target_v]));
 		}
 	}
 
-	if(current.pos.x < m_size.x - 1) {
-		const V2i target(current.pos.x+1, current.pos.y);
+	if(current.pos.x < grid.size().x - 1) {
+		const Index target {V2i(current.pos.x+1, current.pos.y), current.n_layer};
 
-		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
+		auto& e = grid.edge(current, target);
 		if(e.residualCapacity() > 0) {
-			const std::size_t target_v = index2val(Index{target, current.n_layer});
+			const std::size_t target_v = index2val(target, grid.size());
 			label = std::min(label, unsigned(labels[target_v]));
 		}
 	}
 
 	if(current.pos.y > 0) {
-		const V2i target(current.pos.x, current.pos.y-1);
+		const Index target {V2i(current.pos.x, current.pos.y-1), current.n_layer};
 
-		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
+		auto& e = grid.edge(current, target);
 		if(e.residualCapacity() > 0) {
-			const std::size_t target_v = index2val(Index{target, current.n_layer});
+			const std::size_t target_v = index2val(target, grid.size());
 			label = std::min(label, unsigned(labels[target_v]));
 		}
 	}
 
-	if(current.pos.y < m_size.y - 1) {
-		const V2i target(current.pos.x, current.pos.y+1);
+	if(current.pos.y < grid.size().y - 1) {
+		const Index target {V2i(current.pos.x, current.pos.y+1), current.n_layer};
 
-		auto& e = m_nLinks[current.n_layer].edge(current.pos, target);
+		auto& e = grid.edge(current, target);
 		if(e.residualCapacity() > 0) {
-			const std::size_t target_v = index2val(Index{target, current.n_layer});
+			const std::size_t target_v = index2val(target, grid.size());
 			label = std::min(label, unsigned(labels[target_v]));
 		}
 	}
 
 	{
-		assert(current.n_layer < m_nLinks.size());
+		assert(current.n_layer < grid.layerCount());
 
-		const V2i target(current.pos.x, current.pos.y);
+		const Index target {V2i(current.pos.x, current.pos.y), current.n_layer+1};
 
-		auto& e = m_tLinks[current.n_layer].edge(current.pos);
-		if(e.forward().residualCapacity() > 0) {
-			const Index target_i{target, current.n_layer+1};
-			if(target_i.n_layer < m_nLinks.size()) {
-				const std::size_t target_v = index2val(target_i);
+		auto& e = grid.edge(current, target);
+		if(e.residualCapacity() > 0) {
+
+			if(target.n_layer < grid.layerCount()) {
+				const std::size_t target_v = index2val(target, grid.size());
 
 				assert(target_v < labels.size());
 				label = std::min(label, unsigned(labels[target_v]));
@@ -423,12 +378,14 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 	}
 
 	if(current.n_layer == 0) {
-		label = std::min(label, unsigned(m_size.x * m_size.y));
+		label = std::min(label, unsigned(grid.size().x * grid.size().y));
 	}
 	else {
-		auto& e = m_tLinks[current.n_layer-1].edge(current.pos);
-		if(e.backward().residualCapacity() > 0) {
-			const std::size_t target_v = index2val(Index{current.pos, current.n_layer-1});
+		const Index target {current.pos, current.n_layer-1};
+
+		auto& e = grid.edge(current, target);
+		if(e.residualCapacity() > 0) {
+			const std::size_t target_v = index2val(target, grid.size());
 
 			label = std::min(label, unsigned(labels[target_v]));
 		}
@@ -449,40 +406,40 @@ bool Graph::relabel(const Index& current, Labels& labels) const {
 	return false;
 }
 
-std::size_t Graph::relabelAll(Labels& labels, ActiveQueue& active) {
-	assert(!m_tLinks.empty());
-
+std::size_t Graph::relabelAll(const Grid& grid, Labels& labels, ActiveQueue& active) {
 	// back-tracing BFS
-	labels.clear(m_size.x * m_size.y * m_nLinks.size() + 1);
+	labels.clear(grid.size().x * grid.size().y * grid.layerCount() + 1);
 
 	std::size_t counter = 0;
 
 	// first queue the bottom layer nodes, where the "forward" residual capacity is non-zero
 	std::queue<Index> queue;
-	for(int y=0; y<m_size.y; ++y)
-		for(int x=0; x<m_size.x; ++x)
-			if(m_tLinks.back().edge(V2i(x, y)).forward().residualCapacity() > 0) {
-				const Index current {V2i(x, y), unsigned(m_nLinks.size()-1)};
+	for(int y=0; y<grid.size().y; ++y)
+		for(int x=0; x<grid.size().x; ++x) {
+			const Index current {V2i(x, y), unsigned(grid.layerCount()-1)};
+			const Index target {V2i(x, y), unsigned(grid.layerCount())};
 
+			if(grid.edge(current, target).residualCapacity() > 0) {
 				queue.push(current);
-				labels[index2val(current)] = 1;
+				labels[index2val(current, grid.size())] = 1;
 
 				++counter;
 			}
+		}
 
 	// recurse
 	while(!queue.empty()) {
 		const Index current = queue.front();
 		queue.pop();
 
-		const unsigned current_val = labels[index2val(current)];
+		const unsigned current_val = labels[index2val(current, grid.size())];
 
 		if(current.pos.x > 0) {
 			const Index source {V2i(current.pos.x-1, current.pos.y), current.n_layer};
 
-			if(m_nLinks[current.n_layer].edge(source.pos, current.pos).residualCapacity() > 0) {
-				if(labels[index2val(source)] > current_val + 1) {
-					labels[index2val(source)] = current_val + 1;
+			if(grid.edge(source, current).residualCapacity() > 0) {
+				if(labels[index2val(source, grid.size())] > current_val + 1) {
+					labels[index2val(source, grid.size())] = current_val + 1;
 					queue.push(source);
 
 					++counter;
@@ -490,12 +447,12 @@ std::size_t Graph::relabelAll(Labels& labels, ActiveQueue& active) {
 			}
 		}
 
-		if(current.pos.x < m_size.x-1) {
+		if(current.pos.x < grid.size().x-1) {
 			const Index source {V2i(current.pos.x+1, current.pos.y), current.n_layer};
 
-			if(m_nLinks[current.n_layer].edge(source.pos, current.pos).residualCapacity() > 0) {
-				if(labels[index2val(source)] > current_val + 1) {
-					labels[index2val(source)] = current_val + 1;
+			if(grid.edge(source, current).residualCapacity() > 0) {
+				if(labels[index2val(source, grid.size())] > current_val + 1) {
+					labels[index2val(source, grid.size())] = current_val + 1;
 					queue.push(source);
 
 					++counter;
@@ -506,9 +463,9 @@ std::size_t Graph::relabelAll(Labels& labels, ActiveQueue& active) {
 		if(current.pos.y > 0) {
 			const Index source {V2i(current.pos.x, current.pos.y-1), current.n_layer};
 
-			if(m_nLinks[current.n_layer].edge(source.pos, current.pos).residualCapacity() > 0) {
-				if(labels[index2val(source)] > current_val + 1) {
-					labels[index2val(source)] = current_val + 1;
+			if(grid.edge(source, current).residualCapacity() > 0) {
+				if(labels[index2val(source, grid.size())] > current_val + 1) {
+					labels[index2val(source, grid.size())] = current_val + 1;
 					queue.push(source);
 
 					++counter;
@@ -516,12 +473,12 @@ std::size_t Graph::relabelAll(Labels& labels, ActiveQueue& active) {
 			}
 		}
 
-		if(current.pos.y < m_size.y-1) {
+		if(current.pos.y < grid.size().y-1) {
 			const Index source {V2i(current.pos.x, current.pos.y+1), current.n_layer};
 
-			if(m_nLinks[current.n_layer].edge(source.pos, current.pos).residualCapacity() > 0) {
-				if(labels[index2val(source)] > current_val + 1) {
-					labels[index2val(source)] = current_val + 1;
+			if(grid.edge(source, current).residualCapacity() > 0) {
+				if(labels[index2val(source, grid.size())] > current_val + 1) {
+					labels[index2val(source, grid.size())] = current_val + 1;
 					queue.push(source);
 
 					++counter;
@@ -532,9 +489,9 @@ std::size_t Graph::relabelAll(Labels& labels, ActiveQueue& active) {
 		if(current.n_layer > 0) {
 			const Index source {V2i(current.pos.x, current.pos.y), current.n_layer-1};
 
-			if(m_tLinks[source.n_layer].edge(current.pos).forward().residualCapacity() > 0) {
-				if(labels[index2val(source)] > current_val + 1) {
-					labels[index2val(source)] = current_val + 1;
+			if(grid.edge(source, current).residualCapacity() > 0) {
+				if(labels[index2val(source, grid.size())] > current_val + 1) {
+					labels[index2val(source, grid.size())] = current_val + 1;
 					queue.push(source);
 
 					++counter;
@@ -542,12 +499,12 @@ std::size_t Graph::relabelAll(Labels& labels, ActiveQueue& active) {
 			}
 		}
 
-		if(current.n_layer < m_nLinks.size()-1) {
+		if(current.n_layer < grid.layerCount()-1) {
 			const Index source {V2i(current.pos.x, current.pos.y), current.n_layer+1};
 
-			if(m_tLinks[current.n_layer].edge(current.pos).backward().residualCapacity() > 0) {
-				if(labels[index2val(source)] > current_val + 1) {
-					labels[index2val(source)] = current_val + 1;
+			if(grid.edge(source, current).residualCapacity() > 0) {
+				if(labels[index2val(source, grid.size())] > current_val + 1) {
+					labels[index2val(source, grid.size())] = current_val + 1;
 					queue.push(source);
 
 					++counter;
@@ -573,14 +530,14 @@ std::size_t Graph::relabelAll(Labels& labels, ActiveQueue& active) {
 	return counter;
 }
 
-void Graph::pushRelabelSolve() {
-	assert(m_nLinks.size() > 1);
+void Graph::pushRelabelSolve(Grid& grid) {
+	assert(grid.layerCount() > 1);
 
-	Labels label(m_size.x * m_size.y * m_nLinks.size(), m_size.x * m_size.y);
-	ActiveQueue queue(m_size.x * m_size.y * m_nLinks.size());
+	Labels label(grid.size().x * grid.size().y * grid.layerCount(), grid.size().x * grid.size().y * grid.layerCount());
+	ActiveQueue queue(grid.size().x * grid.size().y * grid.layerCount());
 
 	// first of all, push from source - infinite capacity means maximum excess for each cell bordering with source
-	for(int a=0; a<m_size.x * m_size.y; ++a)
+	for(int a=0; a<grid.size().x * grid.size().y; ++a)
 		queue.push(ActiveQueue::Item(
 			std::size_t(a),
 			std::numeric_limits<int>::max() / 4,  // an arbitrary "large" number
@@ -588,7 +545,7 @@ void Graph::pushRelabelSolve() {
 		));
 
 	// set the labels to the minimal distance to sink
-	relabelAll(label, queue);
+	relabelAll(grid, label, queue);
 
 	int gap_counter = 0;
 	std::size_t relabel_counter = 0;
@@ -603,42 +560,41 @@ void Graph::pushRelabelSolve() {
 
 		// get an active cell
 		ActiveQueue::Item current = queue.pop();
-		const Index current_i = val2index(current.index);
+		const Index current_i = val2index(current.index, grid.size());
 
 		// active cell - repeat pushing for as long as possible
 		while(current.excess > 0) {
 
 			// try to push all directions
 
-			if(current.excess > 0)
-				pushVertDown(current_i, label, current.excess, queue);
+			pushVertDown(grid, current_i, label, current.excess, queue);
 
 			if(current.excess > 0 && current_i.pos.x > 0) {
 				const Index next_i {V2i(current_i.pos.x-1, current_i.pos.y), current_i.n_layer};
-				pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushHoriz(grid, current_i, next_i, label, current.excess, queue);
 			}
 
-			if(current.excess > 0 && current_i.pos.x < m_size.x-1) {
+			if(current.excess > 0 && current_i.pos.x < grid.size().x-1) {
 				const Index next_i {V2i(current_i.pos.x+1, current_i.pos.y), current_i.n_layer};
-				pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushHoriz(grid, current_i, next_i, label, current.excess, queue);
 			}
 
 			if(current.excess > 0 && current_i.pos.y > 0) {
 				const Index next_i {V2i(current_i.pos.x, current_i.pos.y-1), current_i.n_layer};
-				pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushHoriz(grid, current_i, next_i, label, current.excess, queue);
 			}
 
-			if(current.excess > 0 && current_i.pos.y < m_size.y-1) {
+			if(current.excess > 0 && current_i.pos.y < grid.size().y-1) {
 				const Index next_i {V2i(current_i.pos.x, current_i.pos.y+1), current_i.n_layer};
-				pushHoriz(current_i, next_i, label, current.excess, queue);
+				pushHoriz(grid, current_i, next_i, label, current.excess, queue);
 			}
 
 			if(current.excess > 0)
-				pushVertUp(current_i, label, current.excess, queue);
+				pushVertUp(grid, current_i, label, current.excess, queue);
 
 			// if there is any excess left, relabel
 			if(current.excess > 0)
-				relabel(current_i, label);
+				relabel(grid, current_i, label);
 		}
 
 		// no matter what happens, at the end of the iterations above, the first layer should have 0 excess
@@ -659,145 +615,18 @@ void Graph::pushRelabelSolve() {
 
 		// global relabelling optimisation
 		// based on Cherkassky, Boris V. and Goldberg, Andrew V. "On implementing push-relabel method for the maximum flow problem.", Section 3
-		if(relabel_counter == m_size.x * m_size.y * m_nLinks.size()) {
+		if(relabel_counter == grid.size().x * grid.size().y * grid.layerCount()) {
 			relabel_counter = 0;
 
-			auto ctr = relabelAll(label, queue);
+			auto ctr = relabelAll(grid, label, queue);
 			std::cout << "relabelled " << ctr << std::endl;
 		}
 
-		if(iterations % (m_size.x * m_size.y) == 0)
+		if(iterations % (grid.size().x * grid.size().y) == 0)
 			std::cout << "active count = " << queue.size() << std::endl;
 	}
 
 	assert(queue.checkEmpty());
-}
-
-cv::Mat Graph::minCut() const {
-	// collects all reachable nodes from source or sink, and marks them appropriately
-	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
-
-	// reachable from source as a trivial DFS search
-	std::vector<bool> visited(m_size.x * m_size.y * (m_nLinks.size()+1));
-
-	std::vector<Index> stack;
-	for(int y=0; y<m_size.y; ++y)
-		for(int x=0; x<m_size.x; ++x) {
-			stack.push_back(Index{V2i(x, y), 0});
-
-			while(!stack.empty()) {
-				const Index current = stack.back();
-				stack.pop_back();
-
-				unsigned char& value = result.at<unsigned char>(current.pos.y, current.pos.x);
-				const int target = (current.n_layer) * (255 / (m_nLinks.size() - 1));
-
-				if(!visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y]) {
-					visited[v2i(current.pos) + current.n_layer * m_size.x * m_size.y] = true;
-
-					if(target > value)
-						value = target;
-
-					if(current.n_layer < m_nLinks.size()) {
-						// horizontal move
-						if(current.pos.x > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x-1, current.pos.y)).residualCapacity() > 0)
-							stack.push_back(Index{V2i(current.pos.x-1, current.pos.y), current.n_layer});
-						if(current.pos.x < m_size.x-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x+1, current.pos.y)).residualCapacity() > 0)
-							stack.push_back(Index{V2i(current.pos.x+1, current.pos.y), current.n_layer});
-
-						// vertical move
-						if(current.pos.y > 0 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y-1)).residualCapacity() > 0)
-							stack.push_back(Index{V2i(current.pos.x, current.pos.y-1), current.n_layer});
-						if(current.pos.y < m_size.y-1 && m_nLinks[current.n_layer].edge(current.pos, V2i(current.pos.x, current.pos.y+1)).residualCapacity() > 0)
-							stack.push_back(Index{V2i(current.pos.x, current.pos.y+1), current.n_layer});
-
-						// layer move down
-						assert(current.n_layer < m_nLinks.size());
-						if(m_tLinks[current.n_layer].edge(current.pos).forward().residualCapacity() > 0)
-							stack.push_back(Index{current.pos, current.n_layer+1});
-
-						// layer move up (unconditional)
-						if(current.n_layer > 0 && m_tLinks[current.n_layer].edge(current.pos).backward().residualCapacity() > 0)
-							stack.push_back(Index{current.pos, current.n_layer-1});
-					}
-				}
-			}
-		}
-
-	return result;
-}
-
-std::vector<cv::Mat> Graph::debug() const {
-	std::vector<cv::Mat> result;
-	for(std::size_t a=0;a<m_nLinks.size(); ++a) {
-		result.push_back(n_flow(m_nLinks[a]));
-		result.push_back(t_flow(m_tLinks[a]));
-	}
-
-	return result;
-}
-
-cv::Mat Graph::t_flow(const TLinks& t) const {
-	cv::Mat result(m_size.y, m_size.x, CV_8UC1);
-
-	for(int y=0; y<m_size.y; ++y)
-		for(int x=0; x<m_size.x; ++x) {
-			auto& e = t.edge(V2i(x, y));
-			if(e.forward().capacity() > 0)
-				result.at<unsigned char>(y,x) = std::abs(e.forward().flow()) * 255 / e.forward().capacity();
-			else
-				result.at<unsigned char>(y,x) = 255;
-		}
-
-	return result;
-}
-
-cv::Mat Graph::n_flow(const NLinks& n) const {
-	cv::Mat result(m_size.y, m_size.x, CV_8UC1);
-
-	for(int y=0; y<m_size.y; ++y)
-		for(int x=0; x<m_size.x; ++x) {
-			float residual = 0.0f;
-			float max = 0.0f;
-			if(x > 0) {
-				auto& e = n.edge(V2i(x-1, y), V2i(x, y));
-				if(e.capacity() > 0) {
-					residual += (float)e.residualCapacity();
-					max += (float)e.capacity();
-				}
-			}
-
-			if(x < m_size.x-1) {
-				auto& e = n.edge(V2i(x+1, y), V2i(x, y));
-				if(e.capacity() > 0) {
-					residual += (float)e.residualCapacity();
-					max += (float)e.capacity();
-				}
-			}
-
-			if(y > 0) {
-				auto& e = n.edge(V2i(x, y-1), V2i(x, y));
-				if(e.capacity() > 0) {
-					residual += (float)e.residualCapacity();
-					max += (float)e.capacity();
-				}
-			}
-
-			if(y < m_size.y-1) {
-				auto& e = n.edge(V2i(x, y+1), V2i(x, y));
-				if(e.capacity() > 0) {
-					residual += (float)e.residualCapacity();
-					max += (float)e.capacity();
-				}
-			}
-
-			if(max > 0.0f)
-				result.at<unsigned char>(y,x) = 255.0f - residual / max * 255.0f;
-			else
-				result.at<unsigned char>(y,x) = 255;
-		}
-
-	return result;
 }
 
 }

@@ -75,7 +75,7 @@ bool ActiveQueue::isActive(std::size_t index) const {
 
 bool ActiveQueue::Item::operator < (const Item& i) const {
 	// if(label != i.label)
-		return label < i.label;
+		return label > i.label;
 
 	// if(excess != i.excess)
 	// 	return excess > i.excess;
