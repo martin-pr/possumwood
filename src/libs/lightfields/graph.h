@@ -22,9 +22,6 @@ class Graph {
 		void pushRelabelSolve(Grid& grid);
 
 	private:
-		Index val2index(std::size_t value, const V2i& size) const;
-		std::size_t index2val(const Index& i, const V2i& size) const;
-
 		bool iterate(Grid& grid, const tbb::blocked_range2d<int>& range);
 
 		int flow(Grid& grid, const BFSVisitors& visitors, const Index& end) const;
