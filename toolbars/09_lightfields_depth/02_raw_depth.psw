@@ -283,7 +283,7 @@
             },
             "name": "colormap",
             "ports": {
-                "type": "COLORMAP_OCEAN"
+                "type": "COLORMAP_BONE"
             },
             "type": "opencv/colormap"
         },
@@ -297,7 +297,7 @@
             },
             "name": "colormap",
             "ports": {
-                "type": "COLORMAP_OCEAN"
+                "type": "COLORMAP_BONE"
             },
             "type": "opencv/colormap"
         },
@@ -311,7 +311,7 @@
             },
             "name": "colormap",
             "ports": {
-                "type": "COLORMAP_OCEAN"
+                "type": "COLORMAP_BONE"
             },
             "type": "opencv/colormap"
         },
@@ -325,7 +325,7 @@
             },
             "name": "colormap",
             "ports": {
-                "type": "COLORMAP_OCEAN"
+                "type": "COLORMAP_BONE"
             },
             "type": "opencv/colormap"
         },
@@ -339,7 +339,7 @@
             },
             "name": "colormap",
             "ports": {
-                "type": "COLORMAP_OCEAN"
+                "type": "COLORMAP_BONE"
             },
             "type": "opencv/colormap"
         },
@@ -1075,7 +1075,7 @@
             },
             "name": "pixel_normalize",
             "ports": {
-                "mode": "Sum"
+                "mode": "Maximum"
             },
             "type": "opencv/sequence/pixel_normalize"
         },
@@ -1100,5 +1100,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHgAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAAa4AAACqAQAAAwAAA/YAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMsAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAAa4AAACqAQAAAwAAAqoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
