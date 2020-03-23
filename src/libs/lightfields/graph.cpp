@@ -369,6 +369,23 @@ bool Graph::relabel(const Grid& grid, const Index& current, Labels& labels) cons
 	return false;
 }
 
+namespace {
+
+bool relabelBFS(const Index& source, const Index& current, const unsigned current_val, Labels& labels, std::queue<Index>& queue, const Grid& grid) {
+	if(grid.edge(source, current).residualCapacity() > 0) {
+		if(labels[index2val(source, grid.size())] > current_val + 1) {
+			labels[index2val(source, grid.size())] = current_val + 1;
+			queue.push(source);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+}
+
 std::size_t Graph::relabelAll(const Grid& grid, Labels& labels, ActiveQueue& active) {
 	// back-tracing BFS
 	labels.clear(grid.size().x * grid.size().y * grid.layerCount() + 1);
@@ -390,103 +407,31 @@ std::size_t Graph::relabelAll(const Grid& grid, Labels& labels, ActiveQueue& act
 			}
 		}
 
-	// recurse
+	// back BFS parsing
 	while(!queue.empty()) {
 		const Index current = queue.front();
 		queue.pop();
 
 		const unsigned current_val = labels[index2val(current, grid.size())];
 
-		if(current.pos.x > 0) {
-			const Index source {V2i(current.pos.x-1, current.pos.y), current.n_layer};
+		if(current.pos.x > 0)
+			counter += relabelBFS(Index {V2i(current.pos.x-1, current.pos.y), current.n_layer}, current, current_val, labels, queue, grid);
 
-			if(grid.edge(source, current).residualCapacity() > 0) {
-				if(labels[index2val(source, grid.size())] > current_val + 1) {
-					labels[index2val(source, grid.size())] = current_val + 1;
-					queue.push(source);
+		if(current.pos.x < grid.size().x-1)
+			counter += relabelBFS(Index {V2i(current.pos.x+1, current.pos.y), current.n_layer}, current, current_val, labels, queue, grid);
 
-					++counter;
-				}
-			}
-		}
+		if(current.pos.y > 0)
+			counter += relabelBFS(Index {V2i(current.pos.x, current.pos.y-1), current.n_layer}, current, current_val, labels, queue, grid);
 
-		if(current.pos.x < grid.size().x-1) {
-			const Index source {V2i(current.pos.x+1, current.pos.y), current.n_layer};
+		if(current.pos.y < grid.size().y-1)
+			counter += relabelBFS(Index {V2i(current.pos.x, current.pos.y+1), current.n_layer}, current, current_val, labels, queue, grid);
 
-			if(grid.edge(source, current).residualCapacity() > 0) {
-				if(labels[index2val(source, grid.size())] > current_val + 1) {
-					labels[index2val(source, grid.size())] = current_val + 1;
-					queue.push(source);
+		if(current.n_layer > 0)
+			counter += relabelBFS(Index {V2i(current.pos.x, current.pos.y), current.n_layer-1}, current, current_val, labels, queue, grid);
 
-					++counter;
-				}
-			}
-		}
-
-		if(current.pos.y > 0) {
-			const Index source {V2i(current.pos.x, current.pos.y-1), current.n_layer};
-
-			if(grid.edge(source, current).residualCapacity() > 0) {
-				if(labels[index2val(source, grid.size())] > current_val + 1) {
-					labels[index2val(source, grid.size())] = current_val + 1;
-					queue.push(source);
-
-					++counter;
-				}
-			}
-		}
-
-		if(current.pos.y < grid.size().y-1) {
-			const Index source {V2i(current.pos.x, current.pos.y+1), current.n_layer};
-
-			if(grid.edge(source, current).residualCapacity() > 0) {
-				if(labels[index2val(source, grid.size())] > current_val + 1) {
-					labels[index2val(source, grid.size())] = current_val + 1;
-					queue.push(source);
-
-					++counter;
-				}
-			}
-		}
-
-		if(current.n_layer > 0) {
-			const Index source {V2i(current.pos.x, current.pos.y), current.n_layer-1};
-
-			if(grid.edge(source, current).residualCapacity() > 0) {
-				if(labels[index2val(source, grid.size())] > current_val + 1) {
-					labels[index2val(source, grid.size())] = current_val + 1;
-					queue.push(source);
-
-					++counter;
-				}
-			}
-		}
-
-		if(current.n_layer < grid.layerCount()-1) {
-			const Index source {V2i(current.pos.x, current.pos.y), current.n_layer+1};
-
-			if(grid.edge(source, current).residualCapacity() > 0) {
-				if(labels[index2val(source, grid.size())] > current_val + 1) {
-					labels[index2val(source, grid.size())] = current_val + 1;
-					queue.push(source);
-
-					++counter;
-				}
-			}
-		}
+		if(current.n_layer < grid.layerCount()-1)
+			counter += relabelBFS(Index {V2i(current.pos.x, current.pos.y), current.n_layer+1}, current, current_val, labels, queue, grid);
 	}
-
-	// for(std::size_t a=0; a<labels.size(); ) {
-	// 	std::cout << labels[a] << " ";
-
-	// 	++a;
-
-	// 	if(a % m_size.x == 0)
-	// 		std::cout << std::endl;
-	// 	if(a % (m_size.x * m_size.y) == 0)
-	// 		std::cout << std::endl;
-	// }
-	// std::cout << std::endl;
 
 	active.relabel(labels);
 
