@@ -58,7 +58,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in");
-	meta.addAttribute(a_out, "out");
+	meta.addAttribute(a_out, "out", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 
