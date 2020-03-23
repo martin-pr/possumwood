@@ -1,4 +1,4 @@
-#include "graph.h"
+#include "push_relabel.h"
 
 #include <cassert>
 #include <map>
@@ -9,16 +9,14 @@
 
 #include <tbb/task_group.h>
 
-#include "bfs_visitors.h"
 #include "labels.h"
+#include "active_queue.h"
+#include "index.h"
+#include "grid.h"
 
 namespace lightfields {
 
 namespace {
-
-struct QueueItem {
-	Index current, parent;
-};
 
 Index val2index(std::size_t value, const V2i& size) {
 	Index result;
@@ -38,195 +36,7 @@ std::size_t index2val(const Index& i, const V2i& size) {
 	return result;
 }
 
-}
-
-bool Graph::iterate(Grid& grid, const tbb::blocked_range2d<int>& range) {
-	bool foundPath = false;
-
-	BFSVisitors visited(range, grid.layerCount());
-	std::deque<QueueItem> q;
-
-	// initialize - source index has parent -1,-1
-	for(int y=range.rows().begin(); y != range.rows().end(); ++y)
-		for(int x=range.cols().begin(); x != range.cols().end(); ++x) {
-			const Index src_v{V2i(x, y), 0};
-
-			visited.visit(src_v, Index{V2i(-1, -1), 0});
-			q.push_back(QueueItem{src_v, Index{V2i(-1, -1), 0}});
-		}
-
-	// the core of the algorithm
-	while(!q.empty()) {
-		QueueItem item = q.front();
-		q.pop_front();
-
-		Index current_v = item.current;
-
-		// a potential exit point
-		if(current_v.n_layer == grid.layerCount()-1) {
-			if(grid.edge(current_v, Index{current_v.pos, current_v.n_layer+1}).residualCapacity() > 0) {
-				foundPath = true;
-
-				const int f = flow(grid, visited, current_v);
-				if(f > 0)
-					doFlow(grid, visited, current_v, f);
-			}
-		}
-
-		// try to move horizontally left
-		if(current_v.pos.x > range.cols().begin()) {
-			const Index new_v{V2i(current_v.pos.x-1, current_v.pos.y), current_v.n_layer};
-			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
-				visited.visit(new_v, current_v);
-				q.push_back(QueueItem{new_v, current_v});
-			}
-		}
-
-		// try to move horizontally right
-		if(current_v.pos.x < range.cols().end()-1){
-			const Index new_v{V2i(current_v.pos.x+1, current_v.pos.y), current_v.n_layer};
-			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
-				visited.visit(new_v, current_v);
-				q.push_back(QueueItem{new_v, current_v});
-			}
-		}
-
-		// try to move vertically up
-		if(current_v.pos.y > range.rows().begin()) {
-			const Index new_v{V2i(current_v.pos.x, current_v.pos.y-1), current_v.n_layer};
-			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
-				visited.visit(new_v, current_v);
-				q.push_back(QueueItem{new_v, current_v});
-			}
-		}
-
-		// try to move vertically down
-		if(current_v.pos.y < range.rows().end()-1) {
-			const Index new_v{V2i(current_v.pos.x, current_v.pos.y+1), current_v.n_layer};
-			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
-				visited.visit(new_v, current_v);
-				q.push_back(QueueItem{new_v, current_v});
-			}
-		}
-
-		// try to move up a layer
-		if((current_v.n_layer > 0)) {
-			const Index new_v{current_v.pos, current_v.n_layer-1};
-			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
-				visited.visit(new_v, current_v);
-				q.push_back(QueueItem{new_v, current_v});
-			}
-		}
-
-		// try to move down a layer
-		if((current_v.n_layer < grid.layerCount()-1)) {
-			const Index new_v{current_v.pos, current_v.n_layer+1};
-			if(!visited.visited(new_v) && grid.edge(current_v, new_v).residualCapacity() > 0) {
-				visited.visit(new_v, current_v);
-				q.push_back(QueueItem{new_v, current_v});
-			}
-		}
-	}
-
-	return foundPath;
-}
-
-int Graph::flow(Grid& grid, const BFSVisitors& visitors, const Index& end) const {
-	assert(end.pos.x != -1 && end.pos.y != -1);
-	assert(end.n_layer == grid.layerCount()-1);
-
-	// initial flow value based on the last T link (towards the sink)
-	int result = grid.edge(end, Index{end.pos, end.n_layer+1}).residualCapacity();
-
-	Index current = end;
-	Index parent = visitors.parent(current);
-
-	while(result > 0 && parent.pos.x != -1 && parent.pos.y != -1) {
-		assert(Index::sqdist(current, parent) == 1);
-
-		// try to find the minimum capacity
-		result = std::min(result, grid.edge(parent, current).residualCapacity());
-
-		// and move on
-		current = parent;
-		parent = visitors.parent(current);
-	}
-
-	assert(current.n_layer == 0 || result == 0);
-
-	return result;
-}
-
-void Graph::doFlow(Grid& grid, const BFSVisitors& visitors, const Index& end, int flow) {
-	assert(end.pos.x != -1 && end.pos.y != -1);
-	assert(end.n_layer == grid.layerCount()-1);
-
-	// initial flow value based on the last T link (towards the sink)
-	grid.edge(end, Index{end.pos, end.n_layer+1}).addFlow(flow);
-
-	Index current = end;
-	Index parent = visitors.parent(current);
-
-	while(parent.pos.x != -1 && parent.pos.y != -1) {
-		assert(Index::sqdist(current, parent) == 1);
-
-		// propagate
-		grid.edge(parent, current).addFlow(flow);
-
-		// and move on
-		current = parent;
-		parent = visitors.parent(current);
-	}
-
-	assert(current.n_layer == 0);
-}
-
-void Graph::edmondsKarpSolve(Grid& grid) {
-	std::size_t counter = 0;
-
-	tbb::task_group tasks;
-
-	// 23/2=11/2=5/2=2/2=1 - on each step produces a different division line,
-	// but ends with the "largest possible" subdivision of 2x2 before descending into
-	// single-threaded finishing
-	int div = 23;
-
-	// an interative function that can spawn itself if the iteration didn't finish
-	std::function<void(const tbb::blocked_range2d<int>& range)> fn;
-	fn = [&](const tbb::blocked_range2d<int>& range) {
-		if(iterate(grid, range)) {
-			tasks.run([range, &fn]() {
-				fn(range);
-			});
-		}
-
-		++counter;
-	};
-
-	// iterate on each subdiv level
-	while(div > 0) {
-		for(int y=0;y<div;++y)
-			for(int x=0;x<div;++x) {
-				const tbb::blocked_range2d<int> range(
-					(grid.size().y * y) / div, (grid.size().y * (y+1)) / div,
-					(grid.size().x * x) / div, (grid.size().x * (x+1)) / div
-				);
-
-				tasks.run([range, &fn]() {
-					fn(range);
-				});
-			}
-
-		// execute tasks and wait for each level to finish
-		tasks.wait();
-
-		div /= 2;
-	}
-
-	std::cout << "ST-cut solve with " << counter << " iterations finished." << std::endl;
-}
-
-bool Graph::pushHoriz(Grid& grid, const Index& current, const Index& next, const Labels& label, int& excess, ActiveQueue& queue) {
+bool pushHoriz(Grid& grid, const Index& current, const Index& next, const Labels& label, int& excess, ActiveQueue& queue) {
 	assert(V2i::sqdist(current.pos, next.pos) == 1);
 	assert(current.n_layer == next.n_layer);
 	assert(current.n_layer < grid.layerCount());
@@ -250,7 +60,7 @@ bool Graph::pushHoriz(Grid& grid, const Index& current, const Index& next, const
 	return false;
 }
 
-bool Graph::pushVertDown(Grid& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
+bool pushVertDown(Grid& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
 	assert(current.n_layer < grid.layerCount());
 
 	const Index next {current.pos, current.n_layer+1};
@@ -276,7 +86,7 @@ bool Graph::pushVertDown(Grid& grid, const Index& current, const Labels& label, 
 	return false;
 }
 
-bool Graph::pushVertUp(Grid& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
+bool pushVertUp(Grid& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
 	assert(current.n_layer < grid.layerCount());
 
 	const std::size_t current_v = index2val(current, grid.size());
@@ -313,8 +123,6 @@ bool Graph::pushVertUp(Grid& grid, const Index& current, const Labels& label, in
 	return false;
 }
 
-namespace {
-
 void updateLabel(unsigned& label, const Index& current, const Index& target, const Grid& grid, const Labels& labels) {
 	auto& e = grid.edge(current, target);
 	if(e.residualCapacity() > 0) {
@@ -323,9 +131,7 @@ void updateLabel(unsigned& label, const Index& current, const Index& target, con
 	}
 }
 
-}
-
-bool Graph::relabel(const Grid& grid, const Index& current, Labels& labels) const {
+bool relabel(const Grid& grid, const Index& current, Labels& labels) {
 	assert(current.n_layer < grid.layerCount());
 
 	const std::size_t current_v = index2val(current, grid.size());
@@ -369,8 +175,6 @@ bool Graph::relabel(const Grid& grid, const Index& current, Labels& labels) cons
 	return false;
 }
 
-namespace {
-
 bool relabelBFS(const Index& source, const Index& current, const unsigned current_val, Labels& labels, std::queue<Index>& queue, const Grid& grid) {
 	if(grid.edge(source, current).residualCapacity() > 0) {
 		if(labels[index2val(source, grid.size())] > current_val + 1) {
@@ -384,9 +188,7 @@ bool relabelBFS(const Index& source, const Index& current, const unsigned curren
 	return false;
 }
 
-}
-
-std::size_t Graph::relabelAll(const Grid& grid, Labels& labels, ActiveQueue& active) {
+std::size_t relabelAll(const Grid& grid, Labels& labels, ActiveQueue& active) {
 	// back-tracing BFS
 	labels.clear(grid.size().x * grid.size().y * grid.layerCount() + 1);
 
@@ -438,7 +240,9 @@ std::size_t Graph::relabelAll(const Grid& grid, Labels& labels, ActiveQueue& act
 	return counter;
 }
 
-void Graph::pushRelabelSolve(Grid& grid) {
+}
+
+void PushRelabel::solve(Grid& grid) {
 	assert(grid.layerCount() > 1);
 
 	Labels label(grid.size().x * grid.size().y * grid.layerCount(), grid.size().x * grid.size().y * grid.layerCount());

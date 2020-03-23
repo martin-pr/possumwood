@@ -1,8 +1,7 @@
 #include "n_links.h"
 
 #include <cassert>
-
-#include "graph.h"
+#include <stdexcept>
 
 namespace lightfields {
 

@@ -6,7 +6,9 @@
 
 #include <actions/traits.h>
 
-#include <lightfields/graph.h>
+#include <lightfields/push_relabel.h>
+#include <lightfields/edmonds_karp.h>
+#include <lightfields/grid.h>
 
 #include "possumwood_sdk/datatypes/enum.h"
 
@@ -58,11 +60,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			grid.setValue(lightfields::V2i(col, row), values);
 		}
 
-	lightfields::Graph graph;
 	if(data.get(a_mode).value() == "Edmonds-Karp")
-		graph.edmondsKarpSolve(grid);
+		lightfields::EdmondsKarp::solve(grid);
 	else
-		graph.pushRelabelSolve(grid);
+		lightfields::PushRelabel::solve(grid);
 
 	data.set(a_out, possumwood::opencv::Frame(grid.minCut()));
 
