@@ -91,9 +91,74 @@ class Curve {
 			return get(d_2());
 		}
 
+		// returns the second local minimum element index
+		std::size_t d_2m() const {
+			assert(!empty());
+
+			float min = std::numeric_limits<float>::max();
+			std::size_t min_index = 0;
+
+			float min_2 = min;
+			std::size_t min_2_index = 0;
+
+			for(std::size_t i=0; i<size(); ++i)
+				if(isPeak(i)) {
+					const float current = get(i);
+
+					if(min > current) {
+						min_2_index = min_index;
+						min_2 = min;
+
+						min_index = i;
+						min = current;
+					}
+					else if(min_2 > current) {
+						min_2_index = i;
+						min_2 = current;
+					}
+				}
+
+			if(min_2 < std::numeric_limits<float>::max())
+				return min_2_index;
+			return min_index;
+		}
+
+		// returns the second minimum element value
+		float c_2m() const {
+			return get(d_2m());
+		}
+
+		std::pair<float, float> minmax() const {
+			float min = get(0);
+			float max = get(0);
+
+			for(std::size_t i=1; i<size(); ++i) {
+				min = std::min(min, get(i));
+				max = std::max(max, get(i));
+			}
+
+			return std::make_pair(min, max);
+		}
+
+		float sum() const {
+			float result = 0.0f;
+			for(std::size_t i=1; i<size(); ++i)
+				result += get(i);
+			return result;
+		}
+
 	private:
 		float get(std::size_t index) const {
 			return (*m_seq)[index]->at<float>(m_pos[1], m_pos[0]);
+		}
+
+		bool isPeak(std::size_t index) const {
+			bool result = true;
+			if(index > 0)
+				result &= get(index-1) > get(index);
+			if(index+1 < size())
+				result &= get(index+1) > get(index);
+			return result;
 		}
 
 		const possumwood::opencv::Sequence* m_seq;
@@ -102,6 +167,10 @@ class Curve {
 
 float MSM(const Curve& curve) {
 	return -curve.c_1();
+}
+
+float MSMN(const Curve& curve) {
+	return -curve.c_1() / curve.sum();
 }
 
 float CUR(const Curve& curve) {
@@ -116,10 +185,20 @@ float CUR(const Curve& curve) {
 		return -2.0f * curve[d_1] + curve[d_1-1] + curve[d_1+1];
 }
 
+float PKR(const Curve& curve) {
+	if(curve.c_1() > 0.0f)
+		return curve.c_2m() / curve.c_1();
+	return 0.0f;
+}
+
 float PKRN(const Curve& curve) {
 	if(curve.c_1() > 0.0f)
 		return curve.c_2() / curve.c_1();
 	return 0.0f;
+}
+
+float MMN(const Curve& curve) {
+	return curve.c_2() - curve.c_1();
 }
 
 struct Measure {
@@ -130,14 +209,20 @@ struct Measure {
 
 enum Mode {
 	kMSM,
+	kMSMN,
 	kCUR,
-	kPKRN
+	kPKR,
+	kPKRN,
+	kMMN
 };
 
 static const std::vector<Measure> s_measures {{
 	Measure {kMSM, "Matching Score Measure", &MSM},
+	Measure {kMSMN, "Matching Score Measure (normalized)", &MSMN},
 	Measure {kCUR, "Curvature", &CUR},
+	Measure {kPKR, "Peak Ratio", &PKR},
 	Measure {kPKRN, "Peak Ratio (naive)", &PKRN},
+	Measure {kMMN, "Maximum Margin", &MMN},
 }};
 
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
