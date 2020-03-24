@@ -55,6 +55,42 @@ class Curve {
 			return get(d_1());
 		}
 
+		// returns the second minimum element index
+		std::size_t d_2() const {
+			assert(!empty());
+
+			float min = std::numeric_limits<float>::max();
+			std::size_t min_index = 0;
+
+			float min_2 = min;
+			std::size_t min_2_index = 0;
+
+			for(std::size_t i=0; i<size(); ++i) {
+				const float current = get(i);
+
+				if(min > current) {
+					min_2_index = min_index;
+					min_2 = min;
+
+					min_index = i;
+					min = current;
+				}
+				else if(min_2 > current) {
+					min_2_index = i;
+					min_2 = current;
+				}
+			}
+
+			if(min_2 < std::numeric_limits<float>::max())
+				return min_2_index;
+			return min_index;
+		}
+
+		// returns the second minimum element value
+		float c_2() const {
+			return get(d_2());
+		}
+
 	private:
 		float get(std::size_t index) const {
 			return (*m_seq)[index]->at<float>(m_pos[1], m_pos[0]);
@@ -80,6 +116,12 @@ float CUR(const Curve& curve) {
 		return -2.0f * curve[d_1] + curve[d_1-1] + curve[d_1+1];
 }
 
+float PKRN(const Curve& curve) {
+	if(curve.c_1() > 0.0f)
+		return curve.c_2() / curve.c_1();
+	return 0.0f;
+}
+
 struct Measure {
 	int id;
 	std::string name;
@@ -88,12 +130,14 @@ struct Measure {
 
 enum Mode {
 	kMSM,
-	kCUR
+	kCUR,
+	kPKRN
 };
 
 static const std::vector<Measure> s_measures {{
 	Measure {kMSM, "Matching Score Measure", &MSM},
-	Measure {kCUR, "Curvature", &CUR}
+	Measure {kCUR, "Curvature", &CUR},
+	Measure {kPKRN, "Peak Ratio (naive)", &PKRN},
 }};
 
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
