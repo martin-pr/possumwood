@@ -223,6 +223,29 @@ float AML(const Curve& curve, float sigma) {
 	return 1.0f / sum;
 }
 
+float NEM(const Curve& curve, float sigma) {
+	static std::mutex s_mutex;
+	std::lock_guard<std::mutex> lock(s_mutex);
+
+	float p_denom = 0.0f;
+	for(std::size_t a=0; a<curve.size(); ++a)
+		p_denom += std::exp(-curve[a]);
+	assert(p_denom > 0.0f);
+
+	float result = 0;
+	for(std::size_t a=0; a<curve.size(); ++a) {
+		assert(curve[a] >= 0.0f);
+		assert(std::exp(-curve[a]) >= 0.0f);
+
+		const float p = std::exp(-curve[a]) / p_denom;
+		assert(p >= 0.0f);
+		if(p > 0.0f)
+			result += p * std::log(p);
+	}
+
+	return result;
+}
+
 struct Measure {
 	int id;
 	std::string name;
@@ -238,6 +261,7 @@ enum Mode {
 	kPRB,
 	kMLM,
 	kAML,
+	kNEM,
 };
 
 static const std::vector<Measure> s_measures {{
@@ -249,6 +273,7 @@ static const std::vector<Measure> s_measures {{
 	Measure {kPRB, "Probabilistic Measure", &PRB},
 	Measure {kMLM, "Maximum Likelihood Measure", &MLM},
 	Measure {kAML, "Attainable Maximum Likelihood", &AML},
+	Measure {kNEM, "Negative Entropy Measure", &NEM},
 }};
 
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;

@@ -190,7 +190,7 @@
             },
             "name": "confidence",
             "ports": {
-                "mode": "Maximum Likelihood Measure",
+                "mode": "Probabilistic Measure",
                 "sigma": 0.5
             },
             "type": "opencv/sequence/confidence"
