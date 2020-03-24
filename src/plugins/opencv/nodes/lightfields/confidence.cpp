@@ -22,24 +22,62 @@ class Curve {
 			assert(pos[1] < s[0]->rows);
 		}
 
+		bool empty() const {
+			return m_seq->empty();
+		}
+
 		std::size_t size() const {
 			return m_seq->size();
 		}
 
 		float operator[](std::size_t index) const {
-			return (*m_seq)[index]->at<float>(m_pos[1], m_pos[0]);
+			return get(index);
+		}
+
+		// returns the minimum element index
+		std::size_t d_1() const {
+			assert(!empty());
+
+			float min = get(0);
+			std::size_t min_index = 0;
+
+			for(std::size_t i=1; i<size(); ++i)
+				if(min > get(i)) {
+					min_index = i;
+					min = get(i);
+				}
+
+			return min_index;
+		}
+
+		// returns the minimum element value
+		float c_1() const {
+			return get(d_1());
 		}
 
 	private:
+		float get(std::size_t index) const {
+			return (*m_seq)[index]->at<float>(m_pos[1], m_pos[0]);
+		}
+
 		const possumwood::opencv::Sequence* m_seq;
 		cv::Vec2i m_pos;
 };
 
 float MSM(const Curve& curve) {
-	float min = curve[0];
-	for(std::size_t i=1; i<curve.size(); ++i)
-		min = std::min(min, curve[i]);
-	return -min;
+	return -curve.c_1();
+}
+
+float CUR(const Curve& curve) {
+	assert(curve.size() >= 2);
+	const std::size_t d_1 = curve.d_1();
+
+	if(d_1 == 0)
+		return -2.0f * curve[d_1] + 2.0f*curve[d_1+1];
+	else if(d_1+1 == curve.size())
+		return -2.0f * curve[d_1] + 2.0f*curve[d_1-1];
+	else
+		return -2.0f * curve[d_1] + curve[d_1-1] + curve[d_1+1];
 }
 
 struct Measure {
@@ -50,10 +88,12 @@ struct Measure {
 
 enum Mode {
 	kMSM,
+	kCUR
 };
 
 static const std::vector<Measure> s_measures {{
-	Measure {kMSM, "Matching Score Measure", &MSM}
+	Measure {kMSM, "Matching Score Measure", &MSM},
+	Measure {kCUR, "Curvature", &CUR}
 }};
 
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;

@@ -1,6 +1,12 @@
 {
     "connections": [
         {
+            "in_node": "multiply_0",
+            "in_port": "in_frame_2",
+            "out_node": "color_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "concat_3_0",
             "in_port": "in_frame_2",
             "out_node": "colormap_0",
@@ -31,7 +37,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "pixel_normalize_0",
+            "in_node": "max_index_0",
             "in_port": "in",
             "out_node": "convert_0",
             "out_port": "out_sequence"
@@ -43,14 +49,20 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_0",
-            "in_port": "in_sequence",
-            "out_node": "depth_0",
-            "out_port": "corresp_seq"
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "convert_2",
+            "out_port": "out_frame"
         },
         {
-            "in_node": "confidence_0",
-            "in_port": "in_sequence",
+            "in_node": "color_0",
+            "in_port": "in_frame",
+            "out_node": "convert_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "pixel_normalize_0",
+            "in_port": "in",
             "out_node": "depth_0",
             "out_port": "corresp_seq"
         },
@@ -91,20 +103,20 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_1",
+            "in_node": "convert_2",
             "in_port": "in_frame",
             "out_node": "normalize_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "color_0",
-            "in_port": "in_frame",
-            "out_node": "normalize_0",
-            "out_port": "out_frame"
+            "in_node": "convert_0",
+            "in_port": "in_sequence",
+            "out_node": "pixel_normalize_0",
+            "out_port": "out"
         },
         {
-            "in_node": "max_index_0",
-            "in_port": "in",
+            "in_node": "confidence_0",
+            "in_port": "in_sequence",
             "out_node": "pixel_normalize_0",
             "out_port": "out"
         },
@@ -113,12 +125,6 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "multiply_0",
-            "in_port": "in_frame_2",
-            "out_node": "color_0",
-            "out_port": "out_frame"
         }
     ],
     "description": "### Raw depth reconstruction\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
@@ -184,8 +190,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1359.78283691406,
-                    "y": 175.643920898438
+                    "x": 1367.50268554688,
+                    "y": 21.246452331543
                 }
             },
             "name": "confidence",
@@ -198,8 +204,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 690.351501464844,
-                    "y": 453.366516113281
+                    "x": 883.760803222656,
+                    "y": 485.847473144531
                 }
             },
             "name": "convert",
@@ -226,6 +232,22 @@
             },
             "type": "opencv/convert"
         },
+        "convert_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1375.20764160156,
+                    "y": 317.062316894531
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 1.0,
+                "b": 0.0,
+                "mode": "CV_32F"
+            },
+            "type": "opencv/convert"
+        },
         "depth_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -237,8 +259,8 @@
             "name": "depth",
             "ports": {
                 "resolution": {
-                    "x": 300,
-                    "y": 300
+                    "x": 320,
+                    "y": 320
                 },
                 "samples/end": 40.0,
                 "samples/start": -40.0,
@@ -622,8 +644,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1366.24926757812,
-                    "y": 321.12353515625
+                    "x": 1373.96911621094,
+                    "y": 166.72607421875
                 }
             },
             "name": "normalize",
@@ -636,13 +658,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 869.071838378906,
-                    "y": 556.209045410156
+                    "x": 687.473815917969,
+                    "y": 430.714477539062
                 }
             },
             "name": "pixel_normalize",
             "ports": {
-                "mode": "Minimum-maximum"
+                "mode": "Sum"
             },
             "type": "opencv/sequence/pixel_normalize"
         },
@@ -667,5 +689,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMgAAAa8AAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAACtAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAAa4AAACqAQAAAwAABSkAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
