@@ -274,6 +274,14 @@ float NOI(const Curve& curve, float sigma) {
 	return -count;
 }
 
+float WMN(const Curve& curve, float) {
+	return (curve.c_2m() - curve.c_1()) / curve.sum();
+}
+
+float WMNN(const Curve& curve, float) {
+	return (curve.c_2() - curve.c_1()) / curve.sum();
+}
+
 struct Measure {
 	int id;
 	std::string name;
@@ -291,6 +299,8 @@ enum Mode {
 	kAML,
 	kNEM,
 	kNOI,
+	kWMN,
+	kWMNN
 };
 
 static const std::vector<Measure> s_measures {{
@@ -304,6 +314,8 @@ static const std::vector<Measure> s_measures {{
 	Measure {kAML, "Attainable Maximum Likelihood", &AML},
 	Measure {kNEM, "Negative Entropy Measure", &NEM},
 	Measure {kNOI, "Number of Inflections (filtered)", &NOI},
+	Measure {kWMN, "Winner Margin", &WMN},
+	Measure {kWMNN, "Winner Margin (naive)", &WMNN},
 }};
 
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
