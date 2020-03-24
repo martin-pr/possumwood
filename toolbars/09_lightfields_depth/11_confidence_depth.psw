@@ -185,12 +185,13 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 1198.91735839844,
-                    "y": -29.3291358947754
+                    "y": -30.9444351196289
                 }
             },
             "name": "confidence",
             "ports": {
-                "mode": "Matching Score Measure (normalized)"
+                "mode": "Maximum Likelihood Measure",
+                "sigma": 0.5
             },
             "type": "opencv/sequence/confidence"
         },
@@ -230,8 +231,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1203.62231445312,
-                    "y": 261.486724853516
+                    "x": 1206.85290527344,
+                    "y": 263.102020263672
                 }
             },
             "name": "convert",
@@ -669,5 +670,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALmAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMgAAAa8AAACqAQAAAwAAAvAAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALmAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAAa4AAACqAQAAAwAAAvAAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -165,15 +165,13 @@ class Curve {
 		cv::Vec2i m_pos;
 };
 
-float MSM(const Curve& curve) {
+/////////////////////
+
+float MSM(const Curve& curve, float) {
 	return -curve.c_1();
 }
 
-float MSMN(const Curve& curve) {
-	return -curve.c_1() / curve.sum();
-}
-
-float CUR(const Curve& curve) {
+float CUR(const Curve& curve, float) {
 	assert(curve.size() >= 2);
 	const std::size_t d_1 = curve.d_1();
 
@@ -185,48 +183,77 @@ float CUR(const Curve& curve) {
 		return -2.0f * curve[d_1] + curve[d_1-1] + curve[d_1+1];
 }
 
-float PKR(const Curve& curve) {
+float PKR(const Curve& curve, float) {
 	if(curve.c_1() > 0.0f)
 		return curve.c_2m() / curve.c_1();
 	return 0.0f;
 }
 
-float PKRN(const Curve& curve) {
+float PKRN(const Curve& curve, float) {
 	if(curve.c_1() > 0.0f)
 		return curve.c_2() / curve.c_1();
 	return 0.0f;
 }
 
-float MMN(const Curve& curve) {
+float MMN(const Curve& curve, float) {
 	return curve.c_2() - curve.c_1();
+}
+
+float PRB(const Curve& curve, float) {
+	return -curve.c_1() / curve.sum();
+}
+
+float MLM(const Curve& curve, float sigma) {
+	const float val = std::exp(-curve.c_1() / (2*sigma*sigma));
+
+	float sum = 0.0f;
+	for(std::size_t a=0; a<curve.size(); ++a)
+		sum += std::exp(-curve[a] / (2*sigma*sigma));
+
+	return val / sum;
+}
+
+float AML(const Curve& curve, float sigma) {
+	const float c1 = curve.c_1();
+
+	float sum = 0.0f;
+	for(std::size_t a=0; a<curve.size(); ++a)
+		sum += std::exp(-std::pow(curve[a] - c1, 2) / (2*sigma*sigma));
+
+	return 1.0f / sum;
 }
 
 struct Measure {
 	int id;
 	std::string name;
-	float (*fn)(const Curve&);
+	float (*fn)(const Curve&, float);
 };
 
 enum Mode {
 	kMSM,
-	kMSMN,
 	kCUR,
 	kPKR,
 	kPKRN,
-	kMMN
+	kMMN,
+	kPRB,
+	kMLM,
+	kAML,
 };
 
 static const std::vector<Measure> s_measures {{
 	Measure {kMSM, "Matching Score Measure", &MSM},
-	Measure {kMSMN, "Matching Score Measure (normalized)", &MSMN},
 	Measure {kCUR, "Curvature", &CUR},
 	Measure {kPKR, "Peak Ratio", &PKR},
 	Measure {kPKRN, "Peak Ratio (naive)", &PKRN},
 	Measure {kMMN, "Maximum Margin", &MMN},
+	Measure {kPRB, "Probabilistic Measure", &PRB},
+	Measure {kMLM, "Maximum Likelihood Measure", &MLM},
+	Measure {kAML, "Attainable Maximum Likelihood", &AML},
 }};
 
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
+dependency_graph::InAttr<float> a_sigma;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -246,7 +273,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if((*f).type() != CV_32FC1)
 			throw std::runtime_error("Only CV_32FC1 images accepted on input.");
 
-	float (*fn)(const Curve&) = nullptr;
+	float (*fn)(const Curve&, float) = nullptr;
 	for(auto& m : s_measures)
 		if(data.get(a_mode).value() == m.name)
 			fn = m.fn;
@@ -254,9 +281,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	cv::Mat result = cv::Mat::zeros(height, width, CV_32FC1);
 	tbb::parallel_for(tbb::blocked_range2d<int>(0, height, 0, width), [&](const tbb::blocked_range2d<int>& range) {
+		const float sigma = data.get(a_sigma);
 		for(int row = range.rows().begin(); row != range.rows().end(); ++row)
 			for(int col = range.cols().begin(); col != range.cols().end(); ++col)
-				result.at<float>(row, col) = fn(Curve(sequence, cv::Vec2i(col, row)));
+				result.at<float>(row, col) = fn(Curve(sequence, cv::Vec2i(col, row)), sigma);
 	});
 
 	data.set(a_out, possumwood::opencv::Frame(result));
@@ -271,10 +299,12 @@ void init(possumwood::Metadata& meta) {
 	for(auto& m : s_measures)
 		options.push_back(std::make_pair(m.name, m.id));
 	meta.addAttribute(a_mode, "mode", possumwood::Enum(options.begin(), options.end()));
+	meta.addAttribute(a_sigma, "sigma", 1.0f);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_mode, a_out);
+	meta.addInfluence(a_sigma, a_out);
 
 	meta.setCompute(compute);
 }
