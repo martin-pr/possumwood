@@ -9,32 +9,57 @@
 
 namespace {
 
-static const std::vector<std::pair<std::string, int>> s_modes {{
-	std::pair<std::string, int>("Min-max", cv::NORM_MINMAX),
-	std::pair<std::string, int>("Infinity norm", cv::NORM_INF),
-	std::pair<std::string, int>("L1 norm", cv::NORM_L1),
-	std::pair<std::string, int>("L2 norm", cv::NORM_L2),
-	std::pair<std::string, int>("L2 square norm", cv::NORM_L2SQR),
-	std::pair<std::string, int>("Hamming", cv::NORM_HAMMING),
-	std::pair<std::string, int>("Hamming squared", cv::NORM_HAMMING2),
-}};
-
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	cv::Mat result;
-	cv::normalize(*data.get(a_in), result, 1, 0, data.get(a_mode).intValue());
+	cv::Mat m = *data.get(a_in).clone();
 
-	data.set(a_out, possumwood::opencv::Frame(result));
+	if(m.rows > 0 && m.cols > 0) {
+		if(data.get(a_mode).value() == "Min-max") {
+			float min = m.at<float>(0,0);
+			float max = m.at<float>(0,0);
+
+			for(int y=0;y<m.rows;++y)
+				for(int x=0;x<m.cols;++x) {
+					const float current = m.at<float>(y, x);
+					min = std::min(min, current);
+					max = std::max(max, current);
+				}
+
+			for(int y=0;y<m.rows;++y)
+				for(int x=0;x<m.cols;++x) {
+					float& current = m.at<float>(y, x);
+					current = (current - min) / (max - min);
+				}
+		}
+
+		else if(data.get(a_mode).value() == "Max") {
+			float max = m.at<float>(0,0);
+
+			for(int y=0;y<m.rows;++y)
+				for(int x=0;x<m.cols;++x) {
+					const float current = m.at<float>(y, x);
+					max = std::max(max, current);
+				}
+
+			for(int y=0;y<m.rows;++y)
+				for(int x=0;x<m.cols;++x) {
+					float& current = m.at<float>(y, x);
+					current = current / max;
+				}
+		}
+	}
+
+	data.set(a_out, possumwood::opencv::Frame(m));
 
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_mode, "mode", possumwood::Enum(s_modes.begin(), s_modes.end()));
+	meta.addAttribute(a_mode, "mode", possumwood::Enum({"Min-max", "Max"}));
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
