@@ -15,7 +15,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(!in.isValid())
 		throw std::runtime_error("Input sequence does not have consistent size or type.");
 
-	std::cout << "Making a new mat: " << in.rows() << " / " << in.cols() << std::endl;
 	cv::Mat out = cv::Mat::zeros(in.rows(), in.cols(), CV_8UC1);
 
 	if(in.size() > 1) {

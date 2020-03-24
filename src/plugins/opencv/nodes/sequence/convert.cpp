@@ -29,7 +29,7 @@ int modeToEnum(const std::string& mode) {
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::Sequence& in = data.get(a_inSeq);
+	const possumwood::opencv::Sequence& in = data.get(a_inSeq).clone();
 
 	possumwood::opencv::Sequence out(in.size());
 
