@@ -190,8 +190,8 @@
             },
             "name": "confidence",
             "ports": {
-                "mode": "Probabilistic Measure",
-                "sigma": 0.5
+                "mode": "Number of Inflections (filtered)",
+                "sigma": 0.25
             },
             "type": "opencv/sequence/confidence"
         },

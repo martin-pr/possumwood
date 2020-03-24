@@ -224,9 +224,6 @@ float AML(const Curve& curve, float sigma) {
 }
 
 float NEM(const Curve& curve, float sigma) {
-	static std::mutex s_mutex;
-	std::lock_guard<std::mutex> lock(s_mutex);
-
 	float p_denom = 0.0f;
 	for(std::size_t a=0; a<curve.size(); ++a)
 		p_denom += std::exp(-curve[a]);
@@ -246,6 +243,37 @@ float NEM(const Curve& curve, float sigma) {
 	return result;
 }
 
+float NOI(const Curve& curve, float sigma) {
+	// low pass filter
+	std::vector<float> vals(curve.size());
+	std::vector<float> norms(curve.size());
+
+	const int delta = std::ceil(sigma * 3.0f);
+
+	for(int i=0; i<int(curve.size()); ++i)
+		for(int o = std::max(i-delta, 0); i <= std::min(i+delta, int(curve.size()-1)); ++i) {
+			const float w = std::exp(-0.5f * std::pow(float(i-o) / sigma, 2));
+
+			norms[i] += w;
+			vals[i] += curve[i]*w;
+		}
+
+	for(int i=0; i<int(curve.size()); ++i)
+		vals[i] /= norms[i];
+
+	// inflection points counting
+	int count = 0;
+	if(vals[0] < vals[1])
+		++count;
+	if(vals[vals.size()-1] < vals[vals.size()-2])
+		++count;
+	for(std::size_t a=1; a<vals.size()-1; ++a)
+		if(vals[a-1] > vals[a] && vals[a] < vals[a+1])
+			++count;
+
+	return -count;
+}
+
 struct Measure {
 	int id;
 	std::string name;
@@ -262,6 +290,7 @@ enum Mode {
 	kMLM,
 	kAML,
 	kNEM,
+	kNOI,
 };
 
 static const std::vector<Measure> s_measures {{
@@ -274,6 +303,7 @@ static const std::vector<Measure> s_measures {{
 	Measure {kMLM, "Maximum Likelihood Measure", &MLM},
 	Measure {kAML, "Attainable Maximum Likelihood", &AML},
 	Measure {kNEM, "Negative Entropy Measure", &NEM},
+	Measure {kNOI, "Number of Inflections (filtered)", &NOI},
 }};
 
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
