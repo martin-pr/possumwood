@@ -190,7 +190,7 @@
             },
             "name": "confidence",
             "ports": {
-                "mode": "Number of Inflections (filtered)",
+                "mode": "Probabilistic Measure",
                 "sigma": 0.25
             },
             "type": "opencv/sequence/confidence"
@@ -254,8 +254,8 @@
             "name": "depth",
             "ports": {
                 "resolution": {
-                    "x": 320,
-                    "y": 320
+                    "x": 300,
+                    "y": 300
                 },
                 "samples/end": 40.0,
                 "samples/start": -40.0,
@@ -670,5 +670,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALmAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAAa4AAACqAQAAAwAAAvAAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGwAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAAa4AAACqAQAAAwAABCYAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
