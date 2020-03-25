@@ -1,9 +1,12 @@
 #include <possumwood_sdk/node_implementation.h>
 
+#include <possumwood_sdk/datatypes/enum.h>
+
 #include <tbb/parallel_for.h>
 
 #include <lightfields/depth.h>
 #include <lightfields/nearest_integration.h>
+#include <lightfields/gaussian_integration.h>
 
 #include <maths/io/vec2.h>
 
@@ -17,6 +20,8 @@ dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_res;
 dependency_graph::InAttr<float> a_start, a_end;
 dependency_graph::InAttr<unsigned> a_steps;
+dependency_graph::InAttr<possumwood::Enum> a_method;
+dependency_graph::InAttr<float> a_sigma;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_out, a_corresp;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -36,10 +41,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		const float w = (float)a / (float)(data.get(a_steps)-1);
 		const float d = data.get(a_start) + (data.get(a_end) - data.get(a_start)) * w;
 
-		auto tmp = lightfields::nearest::integrate(samples, data.get(a_res), in, d);
-		corresp[a] = lightfields::nearest::correspondence(samples, in, tmp, d);
+		if(data.get(a_method).intValue() == 0) {
+			auto tmp = lightfields::nearest::integrate(samples, data.get(a_res), in, d);
+			corresp[a] = lightfields::nearest::correspondence(samples, in, tmp, d);
 
-		out[a] = tmp.average;
+			out[a] = tmp.average;
+		}
+		else {
+			auto tmp = lightfields::gaussian::integrate(samples, data.get(a_res), in, data.get(a_sigma), d);
+			corresp[a] = lightfields::gaussian::correspondence(samples, in, tmp, data.get(a_sigma), d);
+
+			out[a] = tmp.average;
+		}
 	});
 
 	data.set(a_out, out);
@@ -55,6 +68,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_start, "samples/start", -40.0f);
 	meta.addAttribute(a_end, "samples/end", 40.0f);
 	meta.addAttribute(a_steps, "samples/steps", 9u);
+	meta.addAttribute(a_method, "integration/method", possumwood::Enum({"Nearest neighbour", "Gaussian splatting"}));
+	meta.addAttribute(a_sigma, "integration/sigma", 4.0f);
 	meta.addAttribute(a_out, "out_seq");
 	meta.addAttribute(a_corresp, "corresp_seq");
 
@@ -64,6 +79,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addInfluence(a_start, a_out);
 	meta.addInfluence(a_end, a_out);
 	meta.addInfluence(a_steps, a_out);
+	meta.addInfluence(a_method, a_out);
+	meta.addInfluence(a_sigma, a_out);
 
 	meta.addInfluence(a_in, a_corresp);
 	meta.addInfluence(a_samples, a_corresp);
@@ -71,6 +88,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addInfluence(a_start, a_corresp);
 	meta.addInfluence(a_end, a_corresp);
 	meta.addInfluence(a_steps, a_corresp);
+	meta.addInfluence(a_method, a_out);
+	meta.addInfluence(a_sigma, a_out);
 
 	meta.setCompute(compute);
 }

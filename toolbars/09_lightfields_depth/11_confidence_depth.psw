@@ -253,6 +253,8 @@
             },
             "name": "depth",
             "ports": {
+                "integration/method": "Gaussian splatting",
+                "integration/sigma": 4.0,
                 "resolution": {
                     "x": 300,
                     "y": 300
