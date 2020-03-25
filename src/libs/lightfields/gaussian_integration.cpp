@@ -54,8 +54,8 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	tbb::parallel_for(0, data.rows, [&](int y) {
 		const auto end = samples.end(y);
 		for(auto it = samples.begin(y); it != end; ++it) {
-			const float target_x = it->xy[0] * x_scale;
-			const float target_y = it->xy[1] * y_scale;
+			const float target_x = (it->xy[0] + offset * it->uv[0]) * x_scale;
+			const float target_y = (it->xy[1] + offset * it->uv[1]) * y_scale;
 
 			int xFrom = std::max((int)floor(target_x - 3.0f*sigma), 0);
 			int xTo = std::min((int)ceil(target_x + 3.0f*sigma + 1.0f), (int)width);

@@ -190,8 +190,8 @@
             },
             "name": "confidence",
             "ports": {
-                "mode": "Probabilistic Measure",
-                "sigma": 0.25
+                "mode": "Peak Ratio",
+                "sigma": 1.0
             },
             "type": "opencv/sequence/confidence"
         },
@@ -237,7 +237,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 1.0,
+                "a": 500.0,
                 "b": 0.0,
                 "mode": "CV_32F"
             },
