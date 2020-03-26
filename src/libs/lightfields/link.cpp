@@ -97,4 +97,11 @@ int Link::Direction::residualCapacity() const {
 	return result;
 }
 
+void Link::Direction::setCapacity(int forward, int backward) {
+	if(m_forward)
+		m_parent->setCapacity(forward, backward);
+	else
+		m_parent->setCapacity(backward, forward);
+}
+
 }

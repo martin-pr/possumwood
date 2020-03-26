@@ -13,6 +13,8 @@ class Link {
 
 				int residualCapacity() const;
 
+				void setCapacity(int forward, int backward);
+
 			private:
 				Direction(Link* parent, bool forward);
 

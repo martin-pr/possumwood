@@ -43,6 +43,18 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "add_frame_3",
+            "in_port": "frame",
+            "out_node": "color_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "add_frame_2",
+            "in_port": "frame",
+            "out_node": "color_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "concat_0",
             "in_port": "in_frame_1",
             "out_node": "colormap_0",
@@ -143,6 +155,18 @@
             "in_port": "in_frame",
             "out_node": "st_graphcut_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "add_frame_3",
+            "in_port": "in_sequence",
+            "out_node": "add_frame_2",
+            "out_port": "out_sequence"
+        },
+        {
+            "in_node": "st_graphcut_0",
+            "in_port": "in_contrast",
+            "out_node": "add_frame_3",
+            "out_port": "out_sequence"
         }
     ],
     "description": "### ST Graph Cut Image\n\nThe simplest use-case for a graph-cut algorithm, splitting the image into two distinct parts based on the brightness of its pixels. The graph-cut algorithm guarantees that the continuity of the regions is maintained even in the presence of a significant amount of noise.",
@@ -164,6 +188,28 @@
                 "value": {
                     "x": 771.450317382812,
                     "y": 1143.32177734375
+                }
+            },
+            "name": "add_frame",
+            "type": "opencv/sequence/add_frame"
+        },
+        "add_frame_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 599.227722167969,
+                    "y": 1272.30432128906
+                }
+            },
+            "name": "add_frame",
+            "type": "opencv/sequence/add_frame"
+        },
+        "add_frame_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 765.291442871094,
+                    "y": 1299.3466796875
                 }
             },
             "name": "add_frame",
@@ -376,6 +422,10 @@
                 }
             },
             "name": "multiply",
+            "ports": {
+                "output_type": "Automatic",
+                "scale": 1.0
+            },
             "type": "opencv/multiply"
         },
         "multiply_1": {
@@ -387,6 +437,10 @@
                 }
             },
             "name": "multiply",
+            "ports": {
+                "output_type": "Automatic",
+                "scale": 1.0
+            },
             "type": "opencv/multiply"
         },
         "network_0": {
@@ -703,7 +757,8 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 128.0
+                "constness": 1024.0,
+                "mode": "Edmonds-Karp"
             },
             "type": "opencv/lightfields/st_graphcut"
         }
@@ -713,6 +768,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAcwAAABwAAAd7AAAEDwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK0AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABsAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACJgAAAUgAAACqAQAAAwAAAk0AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAcwAAABwAAAd7AAAEDwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK0AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACIAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAClgAAAUsAAACqAQAAAwAAAyIAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

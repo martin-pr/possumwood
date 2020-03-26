@@ -17,6 +17,8 @@ class Grid {
 
 		// sets the value of all T links in a "stack"
 		void setValue(const V2i& pos, const std::vector<int>& values);
+		// sets the values of all N links in a "layer"
+		void setLayer(const cv::Mat& vals, const std::size_t& index);
 
 		std::size_t layerCount() const;
 		V2i size() const;
@@ -34,6 +36,7 @@ class Grid {
 		cv::Mat n_flow(const NLinks& t) const;
 
 		V2i m_size;
+		int m_nLinkValue;
 		std::vector<TLinks> m_tLinks;
 		std::vector<NLinks> m_nLinks;
 };

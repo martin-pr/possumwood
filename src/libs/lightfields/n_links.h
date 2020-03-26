@@ -18,6 +18,8 @@ class NLinks {
 		Link::Direction& edge(const V2i& src, const V2i& dest);
 		const Link::Direction& edge(const V2i& src, const V2i& dest) const;
 
+		V2i size() const;
+
 	private:
 		std::size_t h_index(const V2i& i) const;
 		std::size_t v_index(const V2i& i) const;

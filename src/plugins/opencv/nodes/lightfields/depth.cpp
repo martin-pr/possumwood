@@ -69,7 +69,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_end, "samples/end", 40.0f);
 	meta.addAttribute(a_steps, "samples/steps", 9u);
 	meta.addAttribute(a_method, "integration/method", possumwood::Enum({"Nearest neighbour", "Gaussian splatting"}));
-	meta.addAttribute(a_sigma, "integration/sigma", 4.0f);
+	meta.addAttribute(a_sigma, "integration/sigma", 3.0f);
 	meta.addAttribute(a_out, "out_seq");
 	meta.addAttribute(a_corresp, "corresp_seq");
 

@@ -2,7 +2,7 @@
 
 namespace lightfields {
 
-Grid::Grid(const V2i& size, int n_link_value, std::size_t layer_count) : m_size(size) {
+Grid::Grid(const V2i& size, int n_link_value, std::size_t layer_count) : m_size(size), m_nLinkValue(n_link_value) {
 	m_tLinks = std::vector<TLinks>(layer_count, TLinks(size));
 	m_nLinks = std::vector<NLinks>(layer_count, NLinks(size, n_link_value));
 }
@@ -28,6 +28,41 @@ void Grid::setValue(const V2i& pos, const std::vector<int>& values) {
 		++tit;
 		++vit;
 	}
+}
+
+namespace {
+	int differential(const unsigned char* c1, const unsigned char* c2, int channels) {
+		int result = 0;
+
+		for(int c=0;c<channels;++c)
+			result += std::abs(int(*(c1+c) - int(*(c2+c))));
+
+		result /= channels;
+
+		return result;
+	}
+
+}
+
+void Grid::setLayer(const cv::Mat& vals, const std::size_t& index) {
+	assert(index < m_nLinks.size());
+	assert(vals.rows == m_nLinks[index].size().y);
+	assert(vals.cols == m_nLinks[index].size().x);
+	assert(vals.type() == CV_8UC1 || vals.type() == CV_8UC3);
+
+	auto& n_links = m_nLinks[index];
+
+	for(int y=0;y<vals.rows;++y)
+		for(int x=0;x<vals.cols-1;++x) {
+			const int cap = differential(vals.ptr<unsigned char>(y, x), vals.ptr<unsigned char>(y, x+1), vals.channels()) * m_nLinkValue / 256;
+			n_links.edge(V2i(x, y), V2i(x+1, y)).setCapacity(cap, cap);
+		}
+
+	for(int y=0;y<vals.rows-1;++y)
+		for(int x=0;x<vals.cols;++x) {
+			const int cap = differential(vals.ptr<unsigned char>(y, x), vals.ptr<unsigned char>(y+1, x), vals.channels()) * m_nLinkValue / 256;
+			n_links.edge(V2i(x, y), V2i(x, y+1)).setCapacity(cap, cap);
+		}
 }
 
 std::size_t Grid::layerCount() const {

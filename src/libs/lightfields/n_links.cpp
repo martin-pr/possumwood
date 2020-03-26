@@ -66,4 +66,8 @@ const Link::Direction& NLinks::edge(const V2i& src, const V2i& dest) const {
 	throw(std::runtime_error("bad edge index"));
 }
 
+V2i NLinks::size() const {
+	return m_size;
+}
+
 }

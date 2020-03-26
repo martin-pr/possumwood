@@ -127,6 +127,24 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "color_0",
+            "in_port": "in_frame",
+            "out_node": "crop_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "add_frame_2",
+            "in_port": "frame",
+            "out_node": "crop_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "add_frame_3",
+            "in_port": "frame",
+            "out_node": "crop_0",
+            "out_port": "out"
+        },
+        {
             "in_node": "colormap_4",
             "in_port": "in_frame",
             "out_node": "get_frame_0",
@@ -199,10 +217,16 @@
             "out_port": "debug"
         },
         {
-            "in_node": "color_0",
-            "in_port": "in_frame",
-            "out_node": "crop_0",
-            "out_port": "out"
+            "in_node": "add_frame_3",
+            "in_port": "in_sequence",
+            "out_node": "add_frame_2",
+            "out_port": "out_sequence"
+        },
+        {
+            "in_node": "st_graphcut_0",
+            "in_port": "in_contrast",
+            "out_node": "add_frame_3",
+            "out_port": "out_sequence"
         }
     ],
     "description": "### ST Graph Cut\n\nA simple ST Graph Cut demo, implementing a 2-label version of the Graph Cut classification algorithm. Specifically, it implements a single-threaded version of the [Edmonds-Karp](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm) algorithm.\n\n(to be improved in later pull requests)",
@@ -224,6 +248,28 @@
                 "value": {
                     "x": 363.564788818359,
                     "y": 821.655944824219
+                }
+            },
+            "name": "add_frame",
+            "type": "opencv/sequence/add_frame"
+        },
+        "add_frame_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 198.696411132812,
+                    "y": 1014.49285888672
+                }
+            },
+            "name": "add_frame",
+            "type": "opencv/sequence/add_frame"
+        },
+        "add_frame_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 360.466491699219,
+                    "y": 1011.88372802734
                 }
             },
             "name": "add_frame",
@@ -881,7 +927,7 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 128.0,
+                "constness": 512.0,
                 "mode": "Edmonds-Karp"
             },
             "type": "opencv/lightfields/st_graphcut"
@@ -893,5 +939,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAcwAAABwAAAd7AAAEDwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJWAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACawAAAXYAAACqAQAAAwAAA4AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJWAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB8gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACaAAAAXkAAACqAQAAAwAAA4AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
