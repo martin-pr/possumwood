@@ -20,6 +20,7 @@ namespace {
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in, a_contrast;
 dependency_graph::InAttr<float> a_constness;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
+dependency_graph::InAttr<float> a_inPower, a_contPower;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_debug;
 
@@ -62,14 +63,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					++ctr;
 				}
 
-				grid.setValue(lightfields::V2i(col, row), values);
+				grid.setValue(lightfields::V2i(col, row), values, data.get(a_inPower));
 			}
 	}
 
 	// setting horizontal data
 	if(!contrast.empty()) {
 		for(std::size_t a=0; a<contrast.size(); ++a)
-			grid.setLayer(*contrast[a], a);
+			grid.setLayer(*contrast[a], a, data.get(a_contPower));
 	}
 
 	if(data.get(a_mode).value() == "Edmonds-Karp")
@@ -89,22 +90,28 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_in, "in_sequence", possumwood::opencv::Sequence());
-	meta.addAttribute(a_contrast, "in_contrast", possumwood::opencv::Sequence());
-	meta.addAttribute(a_constness, "constness", 128.0f);
+	meta.addAttribute(a_in, "confidence/in", possumwood::opencv::Sequence());
+	meta.addAttribute(a_inPower, "confidence/power", 1.0f);
+	meta.addAttribute(a_contrast, "contrast/in", possumwood::opencv::Sequence());
+	meta.addAttribute(a_constness, "contrast/constness", 128.0f);
+	meta.addAttribute(a_contPower, "contrast/power", 1.0f);
 	meta.addAttribute(a_mode, "mode", possumwood::Enum({"Edmonds-Karp", "Push-Relabel"}));
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_debug, "debug", possumwood::opencv::Sequence());
 
 	meta.addInfluence(a_in, a_out);
+	meta.addInfluence(a_inPower, a_out);
 	meta.addInfluence(a_contrast, a_out);
 	meta.addInfluence(a_mode, a_out);
 	meta.addInfluence(a_constness, a_out);
+	meta.addInfluence(a_contPower, a_out);
 
 	meta.addInfluence(a_in, a_debug);
-	meta.addInfluence(a_contrast, a_out);
+	meta.addInfluence(a_inPower, a_debug);
+	meta.addInfluence(a_contrast, a_debug);
 	meta.addInfluence(a_mode, a_debug);
 	meta.addInfluence(a_constness, a_debug);
+	meta.addInfluence(a_contPower, a_debug);
 
 	meta.setCompute(compute);
 }

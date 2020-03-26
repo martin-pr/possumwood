@@ -16,9 +16,9 @@ class Grid {
 		Grid(const V2i& size, int n_link_value, std::size_t layer_count);
 
 		// sets the value of all T links in a "stack"
-		void setValue(const V2i& pos, const std::vector<int>& values);
+		void setValue(const V2i& pos, const std::vector<int>& values, float power = 1.0f);
 		// sets the values of all N links in a "layer"
-		void setLayer(const cv::Mat& vals, const std::size_t& index);
+		void setLayer(const cv::Mat& vals, const std::size_t& index, float power = 1.0f);
 
 		std::size_t layerCount() const;
 		V2i size() const;

@@ -11,7 +11,17 @@ std::size_t Grid::v2i(const V2i& v) const {
 	return v.x + v.y*m_size.x;
 }
 
-void Grid::setValue(const V2i& pos, const std::vector<int>& values) {
+namespace {
+	int powi(int in, float p) {
+		if(p == 1.0f)
+			return in;
+
+		assert(in >= 0 && in < 256);
+		return 255 * std::pow((float)in / 255.0f, p);
+	}
+}
+
+void Grid::setValue(const V2i& pos, const std::vector<int>& values, float power) {
 	assert(values.size() == m_tLinks.size());
 
 	auto tit = m_tLinks.begin();
@@ -19,10 +29,10 @@ void Grid::setValue(const V2i& pos, const std::vector<int>& values) {
 
 	while(tit != m_tLinks.end()) {
 		// TODO: generalize
-		tit->edge(pos).setCapacity(*vit, std::numeric_limits<int>::max()/2);
+		tit->edge(pos).setCapacity(powi(*vit, power), std::numeric_limits<int>::max()/2);
 
-		assert(*vit >= 0);
-		assert(tit->edge(pos).forward().residualCapacity() == *vit);
+		assert(*vit >= 0 && *vit <= 255);
+		assert(tit->edge(pos).forward().residualCapacity() == powi(*vit, power));
 		assert(tit->edge(pos).backward().residualCapacity() == std::numeric_limits<int>::max()/2);
 
 		++tit;
@@ -41,10 +51,9 @@ namespace {
 
 		return result;
 	}
-
 }
 
-void Grid::setLayer(const cv::Mat& vals, const std::size_t& index) {
+void Grid::setLayer(const cv::Mat& vals, const std::size_t& index, float power) {
 	assert(index < m_nLinks.size());
 	assert(vals.rows == m_nLinks[index].size().y);
 	assert(vals.cols == m_nLinks[index].size().x);
@@ -54,13 +63,13 @@ void Grid::setLayer(const cv::Mat& vals, const std::size_t& index) {
 
 	for(int y=0;y<vals.rows;++y)
 		for(int x=0;x<vals.cols-1;++x) {
-			const int cap = differential(vals.ptr<unsigned char>(y, x), vals.ptr<unsigned char>(y, x+1), vals.channels()) * m_nLinkValue / 256;
+			const int cap = powi(differential(vals.ptr<unsigned char>(y, x), vals.ptr<unsigned char>(y, x+1), vals.channels()), power) * m_nLinkValue / 256;
 			n_links.edge(V2i(x, y), V2i(x+1, y)).setCapacity(cap, cap);
 		}
 
 	for(int y=0;y<vals.rows-1;++y)
 		for(int x=0;x<vals.cols;++x) {
-			const int cap = differential(vals.ptr<unsigned char>(y, x), vals.ptr<unsigned char>(y+1, x), vals.channels()) * m_nLinkValue / 256;
+			const int cap = powi(differential(vals.ptr<unsigned char>(y, x), vals.ptr<unsigned char>(y+1, x), vals.channels()), power) * m_nLinkValue / 256;
 			n_links.edge(V2i(x, y), V2i(x, y+1)).setCapacity(cap, cap);
 		}
 }
