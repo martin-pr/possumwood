@@ -121,7 +121,7 @@
             "out_port": "samples"
         }
     ],
-    "description": "### Raw depth reconstruction\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
+    "description": "### Depth reconstruction with confidence measure\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values.\n\nIn the rightmost image, the correspondence value's brightness is altered using a confidence metric value, based on the shape of the correspondence curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
     "nodes": {
         "color_0": {
             "blind_data": {
@@ -190,7 +190,7 @@
             },
             "name": "confidence",
             "ports": {
-                "mode": "Peak Ratio",
+                "mode": "Attainable Maximum Likelihood",
                 "sigma": 1.0
             },
             "type": "opencv/sequence/confidence"
@@ -237,11 +237,11 @@
             },
             "name": "depth",
             "ports": {
-                "integration/method": "Gaussian splatting",
+                "integration/method": "Nearest neighbour",
                 "integration/sigma": 3.0,
                 "resolution": {
-                    "x": 300,
-                    "y": 300
+                    "x": 200,
+                    "y": 200
                 },
                 "samples/end": 40.0,
                 "samples/start": -40.0,
@@ -642,7 +642,7 @@
             },
             "name": "pow",
             "ports": {
-                "power": 5.0
+                "power": 3.0
             },
             "type": "opencv/pow"
         },
@@ -667,5 +667,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAH2AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAAa4AAACqAQAAAwAAA+AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKKAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAf0AAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB+QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACbwAAAXIAAACqAQAAAwAAAvcAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

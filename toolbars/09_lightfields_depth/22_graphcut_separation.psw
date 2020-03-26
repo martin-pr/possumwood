@@ -8,8 +8,20 @@
         },
         {
             "in_node": "st_graphcut_0",
-            "in_port": "in_sequence",
+            "in_port": "confidence/in",
             "out_node": "add_frame_1",
+            "out_port": "out_sequence"
+        },
+        {
+            "in_node": "add_frame_3",
+            "in_port": "in_sequence",
+            "out_node": "add_frame_2",
+            "out_port": "out_sequence"
+        },
+        {
+            "in_node": "st_graphcut_0",
+            "in_port": "contrast/in",
+            "out_node": "add_frame_3",
             "out_port": "out_sequence"
         },
         {
@@ -155,18 +167,6 @@
             "in_port": "in_frame",
             "out_node": "st_graphcut_0",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "add_frame_3",
-            "in_port": "in_sequence",
-            "out_node": "add_frame_2",
-            "out_port": "out_sequence"
-        },
-        {
-            "in_node": "st_graphcut_0",
-            "in_port": "in_contrast",
-            "out_node": "add_frame_3",
-            "out_port": "out_sequence"
         }
     ],
     "description": "### ST Graph Cut Image\n\nThe simplest use-case for a graph-cut algorithm, splitting the image into two distinct parts based on the brightness of its pixels. The graph-cut algorithm guarantees that the continuity of the regions is maintained even in the presence of a significant amount of noise.",
@@ -757,7 +757,9 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 1024.0,
+                "confidence/power": 1.0,
+                "contrast/constness": 192.0,
+                "contrast/power": 0.25,
                 "mode": "Edmonds-Karp"
             },
             "type": "opencv/lightfields/st_graphcut"
@@ -769,5 +771,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAcwAAABwAAAd7AAAEDwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK0AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACIAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAClgAAAUsAAACqAQAAAwAAAyIAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK0AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACHQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACkwAAAU4AAACqAQAAAwAAAyIAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

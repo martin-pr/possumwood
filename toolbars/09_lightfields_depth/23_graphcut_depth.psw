@@ -44,7 +44,7 @@
         },
         {
             "in_node": "st_graphcut_0",
-            "in_port": "in_sequence",
+            "in_port": "confidence/in",
             "out_node": "convert_3",
             "out_port": "out_sequence"
         },
@@ -56,7 +56,7 @@
         },
         {
             "in_node": "st_graphcut_0",
-            "in_port": "in_contrast",
+            "in_port": "contrast/in",
             "out_node": "depth_0",
             "out_port": "out_seq"
         },
@@ -139,12 +139,6 @@
             "out_port": "out"
         },
         {
-            "in_node": "multiply_0",
-            "in_port": "frame",
-            "out_node": "pow_0",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "depth_0",
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
@@ -155,9 +149,15 @@
             "in_port": "in_frame",
             "out_node": "st_graphcut_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "multiply_0",
+            "in_port": "frame",
+            "out_node": "pow_0",
+            "out_port": "out_frame"
         }
     ],
-    "description": "### Graph-cut depth reconstruction\n\n(work in progress)",
+    "description": "### Graph-cut depth reconstruction\n\nDepth reconstruction resolved using a graph cut on a multi-level grid graph, with vertical axis defined via each level's correspondence values (modified via confidence values), and horizontal axis by a contrast measure.",
     "nodes": {
         "colormap_0": {
             "blind_data": {
@@ -169,7 +169,7 @@
             },
             "name": "colormap",
             "ports": {
-                "type": "COLORMAP_JET"
+                "type": "COLORMAP_BONE"
             },
             "type": "opencv/colormap"
         },
@@ -177,8 +177,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1514.76599121094,
-                    "y": 1038.55187988281
+                    "x": 1535.63952636719,
+                    "y": 1129.87365722656
                 }
             },
             "name": "colormap",
@@ -206,13 +206,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1215.34545898438,
-                    "y": 161.064178466797
+                    "x": 1204.65966796875,
+                    "y": 78.8019485473633
                 }
             },
             "name": "confidence",
             "ports": {
-                "mode": "Peak Ratio",
+                "mode": "Probabilistic Measure",
                 "sigma": 1.0
             },
             "type": "opencv/sequence/confidence"
@@ -291,13 +291,13 @@
             },
             "name": "depth",
             "ports": {
-                "integration/method": "Nearest neighbour",
-                "integration/sigma": 3.0,
+                "integration/method": "Gaussian splatting",
+                "integration/sigma": 4.0,
                 "resolution": {
-                    "x": 300,
-                    "y": 300
+                    "x": 200,
+                    "y": 200
                 },
-                "samples/end": 50.0,
+                "samples/end": 40.0,
                 "samples/start": -40.0,
                 "samples/steps": 11
             },
@@ -321,8 +321,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1209.61877441406,
-                    "y": 335.387451171875
+                    "x": 1201.54223632812,
+                    "y": 289.653991699219
                 }
             },
             "name": "equalize_float",
@@ -353,7 +353,7 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 0
+                "index": 10
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -732,8 +732,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1223.3779296875,
-                    "y": 477.565002441406
+                    "x": 1219.5244140625,
+                    "y": 446.726684570312
                 }
             },
             "name": "pow",
@@ -766,7 +766,9 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 128.0,
+                "confidence/power": 1.0,
+                "contrast/constness": 512.0,
+                "contrast/power": 2.0,
                 "mode": "Edmonds-Karp"
             },
             "type": "opencv/lightfields/st_graphcut"

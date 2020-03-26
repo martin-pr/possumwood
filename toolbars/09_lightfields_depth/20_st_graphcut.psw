@@ -8,8 +8,20 @@
         },
         {
             "in_node": "st_graphcut_0",
-            "in_port": "in_sequence",
+            "in_port": "confidence/in",
             "out_node": "add_frame_1",
+            "out_port": "out_sequence"
+        },
+        {
+            "in_node": "add_frame_3",
+            "in_port": "in_sequence",
+            "out_node": "add_frame_2",
+            "out_port": "out_sequence"
+        },
+        {
+            "in_node": "st_graphcut_0",
+            "in_port": "contrast/in",
+            "out_node": "add_frame_3",
             "out_port": "out_sequence"
         },
         {
@@ -215,18 +227,6 @@
             "in_port": "sequence",
             "out_node": "st_graphcut_0",
             "out_port": "debug"
-        },
-        {
-            "in_node": "add_frame_3",
-            "in_port": "in_sequence",
-            "out_node": "add_frame_2",
-            "out_port": "out_sequence"
-        },
-        {
-            "in_node": "st_graphcut_0",
-            "in_port": "in_contrast",
-            "out_node": "add_frame_3",
-            "out_port": "out_sequence"
         }
     ],
     "description": "### ST Graph Cut\n\nA simple ST Graph Cut demo, implementing a 2-label version of the Graph Cut classification algorithm. Specifically, it implements a single-threaded version of the [Edmonds-Karp](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm) algorithm.\n\n(to be improved in later pull requests)",
@@ -927,7 +927,9 @@
             },
             "name": "st_graphcut",
             "ports": {
-                "constness": 512.0,
+                "confidence/power": 1.0,
+                "contrast/constness": 1024.0,
+                "contrast/power": 0.5,
                 "mode": "Edmonds-Karp"
             },
             "type": "opencv/lightfields/st_graphcut"
@@ -939,5 +941,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAcwAAABwAAAd7AAAEDwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJWAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB8gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACaAAAAXkAAACqAQAAAwAAA4AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJWAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB7wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACZQAAAXwAAACqAQAAAwAAA4AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

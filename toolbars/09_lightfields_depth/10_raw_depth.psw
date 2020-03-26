@@ -1,6 +1,24 @@
 {
     "connections": [
         {
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "colormap_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "pixel_normalize_0",
+            "in_port": "in",
+            "out_node": "convert_0",
+            "out_port": "out_sequence"
+        },
+        {
+            "in_node": "get_frame_0",
+            "in_port": "sequence",
+            "out_node": "depth_0",
+            "out_port": "out_seq"
+        },
+        {
             "in_node": "convert_0",
             "in_port": "in_sequence",
             "out_node": "depth_0",
@@ -31,6 +49,12 @@
             "out_port": "frame"
         },
         {
+            "in_node": "colormap_0",
+            "in_port": "in_frame",
+            "out_node": "max_index_0",
+            "out_port": "out"
+        },
+        {
             "in_node": "max_index_0",
             "in_port": "in",
             "out_node": "pixel_normalize_0",
@@ -43,25 +67,25 @@
             "out_port": "samples"
         },
         {
-            "in_node": "colormap_0",
+            "in_node": "convert_1",
             "in_port": "in_frame",
-            "out_node": "max_index_0",
-            "out_port": "out"
+            "out_node": "get_frame_0",
+            "out_port": "frame"
         },
         {
             "in_node": "network_0",
             "in_port": "frame",
-            "out_node": "colormap_0",
+            "out_node": "concat_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "pixel_normalize_0",
-            "in_port": "in",
-            "out_node": "convert_0",
-            "out_port": "out_sequence"
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "convert_1",
+            "out_port": "out_frame"
         }
     ],
-    "description": "### Raw depth reconstruction\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
+    "description": "### Raw depth reconstruction\n\nThis demo shows raw depth reconstruction using the correspondence metric of depth values - i.e., for each pixel, the algorithm picks the depth value where the variance of integrated samples was lowest.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
     "nodes": {
         "colormap_0": {
             "blind_data": {
@@ -76,6 +100,21 @@
                 "type": "COLORMAP_JET"
             },
             "type": "opencv/colormap"
+        },
+        "concat_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1105.43237304688,
+                    "y": 880.534790039062
+                }
+            },
+            "name": "concat",
+            "ports": {
+                "mode": "Horizontal",
+                "separation": 0
+            },
+            "type": "opencv/concat"
         },
         "convert_0": {
             "blind_data": {
@@ -93,6 +132,22 @@
             },
             "type": "opencv/sequence/convert"
         },
+        "convert_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1234.76904296875,
+                    "y": 675.238586425781
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 100.0,
+                "b": 0.0,
+                "mode": "CV_8U"
+            },
+            "type": "opencv/convert"
+        },
         "depth_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -103,13 +158,15 @@
             },
             "name": "depth",
             "ports": {
+                "integration/method": "Gaussian splatting",
+                "integration/sigma": 3.0,
                 "resolution": {
-                    "x": 350,
-                    "y": 350
+                    "x": 300,
+                    "y": 300
                 },
                 "samples/end": 40.0,
                 "samples/start": -40.0,
-                "samples/steps": 21
+                "samples/steps": 11
             },
             "type": "opencv/lightfields/depth"
         },
@@ -126,6 +183,20 @@
                 "scale": 1.0
             },
             "type": "opencv/divide"
+        },
+        "get_frame_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1234.76904296875,
+                    "y": 377.55908203125
+                }
+            },
+            "name": "get_frame",
+            "ports": {
+                "index": 10
+            },
+            "type": "opencv/sequence/get_frame"
         },
         "lytro_lightfield_0": {
             "blind_data": {
@@ -151,7 +222,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/road.lfr"
+                "filename": "$EXAMPLES/lytro/tea.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -170,8 +241,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1116.41162109375,
-                    "y": 876.672485351562
+                    "x": 1169.78869628906,
+                    "y": 1049.12133789062
                 }
             },
             "connections": [
