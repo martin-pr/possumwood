@@ -4,7 +4,6 @@
 
 #include <tbb/parallel_for.h>
 
-#include <lightfields/depth.h>
 #include <lightfields/nearest_integration.h>
 #include <lightfields/gaussian_integration.h>
 
