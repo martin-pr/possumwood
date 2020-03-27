@@ -3,17 +3,19 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <tbb/parallel_for.h>
+
 #include <possumwood_sdk/datatypes/enum.h>
 #include <actions/traits.h>
 
-#include "frame.h"
+#include "sequence.h"
 
 namespace {
 
-dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
+dependency_graph::InAttr<possumwood::opencv::Sequence> a_inSeq;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::InAttr<float> a_a, a_b;
-dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
+dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSeq;
 
 int modeToEnum(const std::string& mode) {
 	if(mode == "CV_8U")
@@ -27,31 +29,35 @@ int modeToEnum(const std::string& mode) {
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	cv::Mat result;
+	const possumwood::opencv::Sequence& in = data.get(a_inSeq).clone();
 
-	(*data.get(a_inFrame)).clone().convertTo(result, modeToEnum(data.get(a_mode).value()), data.get(a_a), data.get(a_b));
+	possumwood::opencv::Sequence out(in.size());
 
-	data.set(a_outFrame, possumwood::opencv::Frame(result));
+	tbb::parallel_for(std::size_t(0), in.size(), [&](std::size_t id) {
+		in[id]->convertTo(*out[id], modeToEnum(data.get(a_mode).value()), data.get(a_a), data.get(a_b));
+	});
+
+	data.set(a_outSeq, out);
 
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inSeq, "in_sequence");
 	meta.addAttribute(a_mode, "mode",
 		possumwood::Enum({"CV_8U", "CV_16U", "CV_32F"}));
 	meta.addAttribute(a_a, "a", 1.0f);
 	meta.addAttribute(a_b, "b", 0.0f);
-	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outSeq, "out_sequence");
 
-	meta.addInfluence(a_inFrame, a_outFrame);
-	meta.addInfluence(a_mode, a_outFrame);
-	meta.addInfluence(a_a, a_outFrame);
-	meta.addInfluence(a_b, a_outFrame);
+	meta.addInfluence(a_inSeq, a_outSeq);
+	meta.addInfluence(a_mode, a_outSeq);
+	meta.addInfluence(a_a, a_outSeq);
+	meta.addInfluence(a_b, a_outSeq);
 
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/convert", init);
+possumwood::NodeImplementation s_impl("opencv/sequence/convert", init);
 
 }

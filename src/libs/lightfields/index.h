@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 
 #include "vec2.h"
 
@@ -35,5 +36,10 @@ struct Index {
 			return V2i::sqdist(i1.pos, i2.pos) + (i1.n_layer - i2.n_layer);
 	}
 };
+
+inline std::ostream& operator << (std::ostream& out, const Index& i) {
+	out << "pos = (" << i.pos.x << ", " << i.pos.y << "), layer = " << i.n_layer;
+	return out;
+}
 
 }

@@ -98,6 +98,7 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input
 	const float widthf = width;
 	const float heightf = height;
 
+	// accumulate the sums for std dev
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		const auto end = samples.end(y);
 		const auto begin = samples.begin(y);
@@ -111,18 +112,34 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input
 				float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
 				const float* value = input.ptr<float>(it->source[1], it->source[0]);
 				const float* ave = integration.average.ptr<float>(target_y, target_x);
-				const uint16_t* n = integration.samples.ptr<uint16_t>(target_y, target_x);
 
 				if(input.channels() == 3)
 					for(int c=0; c<3; ++c) {
 						const float tmp = value[c] - ave[c]; // because pow() is expensive?!
-						*target += tmp*tmp / (float)n[c];
+						*target += tmp*tmp;
 					}
 				else {
-					const float tmp = *value - ave[it->color];
-					*target += tmp*tmp / (float)n[it->color];
+					const float tmp = (*value - ave[it->color]);
+					*target += tmp*tmp;
 				}
 			}
+		}
+	});
+
+	// normalization
+	tbb::parallel_for(0u, height, [&](unsigned y) {
+		for(unsigned x=0; x<width; ++x) {
+			float* target = corresp.ptr<float>(y, x);
+			const uint16_t* n = integration.samples.ptr<uint16_t>(y, x);
+
+			uint16_t norm = 0;
+			for(int c=0; c<input.channels(); ++c)
+				norm += n[c];
+
+			if(norm > 0)
+				*target = (*target / (float)(norm));
+			else
+				*target = 0.0f;
 		}
 	});
 

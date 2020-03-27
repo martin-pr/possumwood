@@ -18,6 +18,9 @@ class Enum {
 	Enum(std::initializer_list<std::string> options = std::initializer_list<std::string>(), int defaultValue = 0);
 	Enum(std::initializer_list<std::pair<std::string, int>> options, int defaultValue = 0);
 
+	template<typename ITER>
+	Enum(ITER begin, ITER end, int defaultValue = 0);
+
 	const std::string& value() const;
 	int intValue() const;
 	void setValue(const std::string& value);
@@ -48,5 +51,17 @@ struct Traits<Enum> {
 };
 
 std::ostream& operator << (std::ostream& out, const Enum& e);
+
+////////
+
+template<typename ITER>
+Enum::Enum(ITER begin, ITER end, int defaultValue) {
+	assert(begin != end);
+	assert(defaultValue < end-begin);
+
+	for(auto iter = begin; iter != end; ++iter)
+		m_options.push_back(*iter);
+	m_value = *(begin + defaultValue);
+}
 
 }

@@ -46,7 +46,7 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	cv::Mat norm = cv::Mat::zeros(height, width, CV_32FC3);
 
 	const float sigma = _sigma * (float)width / (float)data.cols;
-	const float sigma2 = sigma*sigma;
+	const float sigma2 = 2.0f*sigma*sigma;
 
 	const float x_scale = (float)width / (float)samples.sensorSize()[0];
 	const float y_scale = (float)height / (float)samples.sensorSize()[1];
@@ -54,8 +54,8 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	tbb::parallel_for(0, data.rows, [&](int y) {
 		const auto end = samples.end(y);
 		for(auto it = samples.begin(y); it != end; ++it) {
-			const float target_x = it->xy[0] * x_scale;
-			const float target_y = it->xy[1] * y_scale;
+			const float target_x = (it->xy[0] + offset * it->uv[0]) * x_scale;
+			const float target_y = (it->xy[1] + offset * it->uv[1]) * y_scale;
 
 			int xFrom = std::max((int)floor(target_x - 3.0f*sigma), 0);
 			int xTo = std::min((int)ceil(target_x + 3.0f*sigma + 1.0f), (int)width);
@@ -68,7 +68,7 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 					const float yf = (float)yt - target_y;
 
 					const float dist2 = xf*xf + yf*yf;
-					const float gauss = std::exp(-dist2/(2.0f*sigma2));
+					const float gauss = std::exp(-dist2/sigma2);
 
 					float* color = mat.ptr<float>(yt, xt);
 					float* n = norm.ptr<float>(yt, xt);
@@ -90,7 +90,7 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	return IntegrationResult { mat, norm };
 }
 
-cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data, const IntegrationResult& integration, float _sigma2, float offset) {
+cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data, const IntegrationResult& integration, float _sigma, float offset) {
 	if(data.type() != CV_32FC1 && data.type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input.");
 
@@ -100,8 +100,8 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data,
 	cv::Mat corresp = cv::Mat::zeros(height, width, CV_32FC1);
 	cv::Mat weights = cv::Mat::zeros(height, width, CV_32FC1);
 
-	const float sigma2 = _sigma2 * (float)width / (float)data.cols;
-	const float sigma = sqrt(sigma2);
+	const float sigma = _sigma * (float)width / (float)data.cols;
+	const float sigma2 = 2.0f*sigma*sigma;
 
 	const float x_scale = (float)width / (float)samples.sensorSize()[0];
 	const float y_scale = (float)height / (float)samples.sensorSize()[1];
@@ -126,7 +126,7 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data,
 					const float yf = (float)yt - target_y;
 
 					const float dist2 = xf*xf + yf*yf;
-					const float gauss = std::exp(-dist2/(2.0f*sigma2));
+					const float gauss = std::exp(-dist2/sigma2);
 
 					float* target = corresp.ptr<float>(yt, xt);
 					float* weight = weights.ptr<float>(yt, xt);
@@ -143,13 +143,13 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data,
 					if(data.channels() == 3)
 						for(int c=0; c<3; ++c) {
 							const float tmp = value[c] - ave[c]; // because pow() is expensive?!
-							*target += tmp*tmp / (float)n[c] * gauss;
-							*weight += gauss;
+							*target += tmp*tmp * gauss;
+							*weight += (float)n[c] * gauss;
 						}
 					else {
 						const float tmp = *value - ave[it->color];
-						*target += tmp*tmp / (float)n[it->color] * gauss;
-						*weight += gauss;
+						*target += tmp*tmp * gauss;
+						*weight += (float)n[it->color] * gauss;
 					}
 
 
