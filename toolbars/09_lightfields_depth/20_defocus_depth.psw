@@ -13,20 +13,14 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "pixel_normalize_0",
-            "in_port": "in",
-            "out_node": "convert_0",
-            "out_port": "out_sequence"
-        },
-        {
             "in_node": "concat_0",
             "in_port": "in_frame_2",
-            "out_node": "convert_1",
+            "out_node": "convert_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_0",
-            "in_port": "in_sequence",
+            "in_node": "pixel_normalize_0",
+            "in_port": "in",
             "out_node": "defocus_metric_0",
             "out_port": "out_seq"
         },
@@ -49,7 +43,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_1",
+            "in_node": "convert_0",
             "in_port": "in_frame",
             "out_node": "get_frame_0",
             "out_port": "frame"
@@ -91,14 +85,14 @@
             "out_port": "samples"
         }
     ],
-    "description": "### Raw depth reconstruction\n\nThis demo shows raw depth reconstruction using the correspondence metric of depth values - i.e., for each pixel, the algorithm picks the depth value where the variance of integrated samples was lowest.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
+    "description": "### Defocus depth reconstruction\n\nThis demo shows raw depth reconstruction using the defocus (Laplacian) metric of depth values - i.e., for each pixel, the algorithm picks the depth value where contrast value was highest.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
     "nodes": {
         "colormap_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1258.24096679688,
-                    "y": 780.601867675781
+                    "x": 1919.65393066406,
+                    "y": 817.2646484375
                 }
             },
             "name": "colormap",
@@ -111,8 +105,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1260.095703125,
-                    "y": 935.327880859375
+                    "x": 1921.50866699219,
+                    "y": 971.990661621094
                 }
             },
             "name": "concat",
@@ -126,24 +120,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 866.013732910156,
-                    "y": 496.852478027344
-                }
-            },
-            "name": "convert",
-            "ports": {
-                "a": -1.0,
-                "b": 0.0,
-                "mode": "CV_32F"
-            },
-            "type": "opencv/sequence/convert"
-        },
-        "convert_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 1389.43237304688,
-                    "y": 730.031677246094
+                    "x": 2050.84545898438,
+                    "y": 766.694458007812
                 }
             },
             "name": "convert",
@@ -158,8 +136,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 681.959411621094,
-                    "y": 441.866149902344
+                    "x": 1495.29125976562,
+                    "y": 476.476013183594
                 }
             },
             "name": "defocus_metric",
@@ -172,14 +150,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 468.469268798828,
-                    "y": 200.641204833984
+                    "x": 1281.80102539062,
+                    "y": 235.251068115234
                 }
             },
             "name": "depth",
             "ports": {
                 "integration/method": "Gaussian splatting",
-                "integration/sigma": 5.0,
+                "integration/sigma": 8.0,
                 "resolution": {
                     "x": 300,
                     "y": 300
@@ -194,8 +172,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 351.236450195312,
-                    "y": -23.8435878753662
+                    "x": 1164.56823730469,
+                    "y": 10.7662763595581
                 }
             },
             "name": "divide",
@@ -208,8 +186,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1397.26000976562,
-                    "y": 377.55908203125
+                    "x": 2058.67309570312,
+                    "y": 414.221923828125
                 }
             },
             "name": "get_frame",
@@ -222,8 +200,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 507.430267333984,
-                    "y": -198.361602783203
+                    "x": 1320.76208496094,
+                    "y": -163.751739501953
                 }
             },
             "name": "lytro_lightfield",
@@ -236,8 +214,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 311.256378173828,
-                    "y": -202.684555053711
+                    "x": 1124.58813476562,
+                    "y": -168.074691772461
                 }
             },
             "name": "lytro_lightfield",
@@ -250,8 +228,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1240.46728515625,
-                    "y": 640.404846191406
+                    "x": 1901.88024902344,
+                    "y": 677.067626953125
                 }
             },
             "name": "max_index",
@@ -261,8 +239,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1324.45202636719,
-                    "y": 1103.91442871094
+                    "x": 1985.86499023438,
+                    "y": 1140.57727050781
                 }
             },
             "connections": [
@@ -565,8 +543,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1044.73400878906,
-                    "y": 599.695007324219
+                    "x": 1706.14709472656,
+                    "y": 636.357788085938
                 }
             },
             "name": "pixel_normalize",
@@ -579,8 +557,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 574.80517578125,
-                    "y": -32.6950416564941
+                    "x": 1388.13696289062,
+                    "y": 1.91482281684875
                 }
             },
             "name": "samples_from_metadata",
@@ -596,5 +574,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQCAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMwAAAa4AAACqAQAAAwAAAdQAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACOgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACsAAAATEAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
