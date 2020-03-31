@@ -1,5 +1,7 @@
 #include "laplacian.h"
 
+#include <tbb/parallel_for.h>
+
 namespace possumwood { namespace opencv {
 
 namespace {
@@ -65,12 +67,12 @@ void convolution(const cv::Mat& src, cv::Mat& tgt, const cv::Mat& kernel) {
 	assert(tgt.channels() == 1);
 	assert(src.type() == CV_32FC1 && tgt.type() == CV_32FC1 && kernel.type() == CV_32FC1);
 
-	for(int y=0; y<src.rows; ++y)
+	tbb::parallel_for(0, src.rows, [&](int y) {
 		for(int x=0; x<src.cols; ++x) {
 			float& target = tgt.at<float>(y, x);
 
 			// convolution
-			for(int yi=0; yi<kernel.rows; ++yi)
+			for(int yi=0; yi<kernel.rows; ++yi) {
 				for(int xi=0; xi<kernel.cols; ++xi) {
 					int ypos = y + yi - kernel.rows/2;
 					int xpos = x + xi - kernel.cols/2;
@@ -95,7 +97,9 @@ void convolution(const cv::Mat& src, cv::Mat& tgt, const cv::Mat& kernel) {
 
 					target += k * source;
 				}
+			}
 		}
+	});
 }
 
 }
