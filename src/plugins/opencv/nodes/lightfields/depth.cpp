@@ -4,7 +4,6 @@
 
 #include <tbb/parallel_for.h>
 
-#include <lightfields/depth.h>
 #include <lightfields/nearest_integration.h>
 #include <lightfields/gaussian_integration.h>
 
@@ -33,6 +32,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	if(data.get(a_steps) < 1)
 		throw std::runtime_error("2 or more quantisation steps are required for the depth algorithm");
+
+	if(data.get(a_start) >= data.get(a_end))
+		throw std::runtime_error("Invalid interval - start needs to be lower than end");
 
 	possumwood::opencv::Sequence out(data.get(a_steps));
 	possumwood::opencv::Sequence corresp(data.get(a_steps));

@@ -7,10 +7,22 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "pixel_normalize_0",
             "in_port": "in",
             "out_node": "convert_0",
             "out_port": "out_sequence"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "convert_1",
+            "out_port": "out_frame"
         },
         {
             "in_node": "get_frame_0",
@@ -29,6 +41,12 @@
             "in_port": "in_image",
             "out_node": "divide_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "get_frame_0",
+            "out_port": "frame"
         },
         {
             "in_node": "divide_0",
@@ -65,34 +83,16 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "convert_1",
-            "in_port": "in_frame",
-            "out_node": "get_frame_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "concat_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_0",
-            "in_port": "in_frame_2",
-            "out_node": "convert_1",
-            "out_port": "out_frame"
         }
     ],
-    "description": "### Raw depth reconstruction\n\nThis demo shows raw depth reconstruction using the correspondence metric of depth values - i.e., for each pixel, the algorithm picks the depth value where the variance of integrated samples was lowest.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
+    "description": "### Correspondence depth reconstruction\n\nThis demo shows raw depth reconstruction using the correspondence metric of depth values - i.e., for each pixel, the algorithm picks the depth value where the variance of integrated samples was lowest.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
     "nodes": {
         "colormap_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1103.57763671875,
-                    "y": 725.808776855469
+                    "x": 2094.54272460938,
+                    "y": 784.731018066406
                 }
             },
             "name": "colormap",
@@ -105,8 +105,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1105.43237304688,
-                    "y": 880.534790039062
+                    "x": 2096.3974609375,
+                    "y": 939.45703125
                 }
             },
             "name": "concat",
@@ -120,8 +120,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 711.350402832031,
-                    "y": 442.059387207031
+                    "x": 1702.31555175781,
+                    "y": 500.981628417969
                 }
             },
             "name": "convert",
@@ -136,8 +136,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1234.76904296875,
-                    "y": 675.238586425781
+                    "x": 2225.73413085938,
+                    "y": 734.160827636719
                 }
             },
             "name": "convert",
@@ -152,14 +152,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 468.469268798828,
-                    "y": 200.641204833984
+                    "x": 1459.43444824219,
+                    "y": 259.563446044922
                 }
             },
             "name": "depth",
             "ports": {
                 "integration/method": "Gaussian splatting",
-                "integration/sigma": 3.0,
+                "integration/sigma": 8.0,
                 "resolution": {
                     "x": 300,
                     "y": 300
@@ -174,8 +174,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 351.236450195312,
-                    "y": -23.8435878753662
+                    "x": 1342.20166015625,
+                    "y": 35.0786666870117
                 }
             },
             "name": "divide",
@@ -188,8 +188,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1234.76904296875,
-                    "y": 377.55908203125
+                    "x": 2225.73413085938,
+                    "y": 436.481323242188
                 }
             },
             "name": "get_frame",
@@ -202,8 +202,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 507.430267333984,
-                    "y": -198.361602783203
+                    "x": 1498.39538574219,
+                    "y": -139.439346313477
                 }
             },
             "name": "lytro_lightfield",
@@ -216,8 +216,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 311.256378173828,
-                    "y": -202.684555053711
+                    "x": 1302.22155761719,
+                    "y": -143.762298583984
                 }
             },
             "name": "lytro_lightfield",
@@ -230,8 +230,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1085.80395507812,
-                    "y": 585.611755371094
+                    "x": 2076.76904296875,
+                    "y": 644.533996582031
                 }
             },
             "name": "max_index",
@@ -241,8 +241,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1169.78869628906,
-                    "y": 1049.12133789062
+                    "x": 2160.75390625,
+                    "y": 1108.04357910156
                 }
             },
             "connections": [
@@ -545,8 +545,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 890.070739746094,
-                    "y": 544.901916503906
+                    "x": 1881.03588867188,
+                    "y": 603.824157714844
                 }
             },
             "name": "pixel_normalize",
@@ -559,8 +559,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 574.80517578125,
-                    "y": -32.6950416564941
+                    "x": 1565.77038574219,
+                    "y": 26.2272109985352
                 }
             },
             "name": "samples_from_metadata",
