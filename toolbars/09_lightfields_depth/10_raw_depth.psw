@@ -7,10 +7,22 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "pixel_normalize_0",
             "in_port": "in",
             "out_node": "convert_0",
             "out_port": "out_sequence"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "convert_1",
+            "out_port": "out_frame"
         },
         {
             "in_node": "get_frame_0",
@@ -29,6 +41,12 @@
             "in_port": "in_image",
             "out_node": "divide_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "get_frame_0",
+            "out_port": "frame"
         },
         {
             "in_node": "divide_0",
@@ -65,24 +83,6 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "convert_1",
-            "in_port": "in_frame",
-            "out_node": "get_frame_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "concat_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_0",
-            "in_port": "in_frame_2",
-            "out_node": "convert_1",
-            "out_port": "out_frame"
         }
     ],
     "description": "### Raw depth reconstruction\n\nThis demo shows raw depth reconstruction using the correspondence metric of depth values - i.e., for each pixel, the algorithm picks the depth value where the variance of integrated samples was lowest.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
@@ -159,7 +159,7 @@
             "name": "depth",
             "ports": {
                 "integration/method": "Gaussian splatting",
-                "integration/sigma": 3.0,
+                "integration/sigma": 8.0,
                 "resolution": {
                     "x": 300,
                     "y": 300
