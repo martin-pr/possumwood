@@ -8,6 +8,8 @@
 
 #include <OpenImageIO/imageio.h>
 
+#include <dependency_graph/static_initialisation.h>
+
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/viewport_state.h>
 #include <possumwood_sdk/config.inl>
@@ -223,6 +225,9 @@ std::vector<Action> evaluateOptions(const Options& options) {
 }
 
 int main(int argc, char* argv[]) {
+	// static initialiser for the dependency graph library
+	std::unique_ptr<dependency_graph::StaticInitialisation> initialiser(new dependency_graph::StaticInitialisation());
+
 	// create the possumwood application
 	papp = std::unique_ptr<possumwood::App>(new possumwood::App());
 
@@ -258,6 +263,12 @@ int main(int argc, char* argv[]) {
 		while(!s.isFinished())
 			s.step();
 	}
+
+	// explicitly destroy the app object before exiting, to avoid initialisation order problems
+	papp.reset();
+
+	// and destroy the initialiser, to make sure the factories are removed before they can cause trouble
+	initialiser.reset();
 
 	return 0;
 }

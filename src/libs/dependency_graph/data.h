@@ -54,8 +54,6 @@ class Data {
 			Factory();
 		};
 
-		static std::map<std::string, std::function<Data()>>& factories();
-
 		struct Holder {
 			virtual ~Holder() {};
 

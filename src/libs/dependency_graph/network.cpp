@@ -20,6 +20,13 @@ bool Network::empty() const {
 }
 
 void Network::clear() {
+	// disconnect everything first
+	while(!m_connections.empty()) {
+		auto& conn = *m_connections.begin();
+
+		conn.first.disconnect(conn.second);
+	}
+
 	// first, unlink all the ports
 	for(unsigned i=0; i<portCount(); ++i) {
 		Port& p = port(i);
@@ -32,7 +39,7 @@ void Network::clear() {
 		if(n.is<Network>())
 			n.as<Network>().clear();
 
-	// clear only nodes - connections will clear themselves with the nodes
+	// clear nodes
 	m_nodes.clear();
 }
 

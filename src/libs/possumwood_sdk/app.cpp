@@ -161,6 +161,8 @@ App::App() : m_mainWindow(NULL), m_time(0.0f) {
 }
 
 App::~App() {
+	m_timeChanged.disconnect_all_slots();
+
 	assert(s_instance == this);
 	s_instance = nullptr;
 }

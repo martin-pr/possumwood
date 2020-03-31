@@ -3,8 +3,14 @@
 # exit on first error, with an error
 set -e
 
-# run the individual tests
+# run the individual unit tests
 for t in `find ./build/ -executable | grep '_tests$'`
 do
 	$t
+done
+
+# try to open all setups
+for s in `find ./toolbars/ | grep '.*\.psw$'`
+do
+	./build/possumwood_cli --scene $s
 done
