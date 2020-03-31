@@ -36,17 +36,10 @@ const std::type_info& Data::typeinfo() const {
 	return m_data->typeinfo();
 }
 
-std::map<std::string, std::function<Data()>>& Data::factories() {
-	static std::unique_ptr<std::map<std::string, std::function<Data()>>> s_factories;
-	if(s_factories == nullptr)
-		s_factories = std::unique_ptr<std::map<std::string, std::function<Data()>>>(new std::map<std::string, std::function<Data()>>());
-	return *s_factories;
-}
-
 Data Data::create(const std::string& type) {
-	auto it = factories().find(type);
+	auto it = StaticInitialisation::dataFactories().find(type);
 
-	if(it == factories().end()) {
+	if(it == StaticInitialisation::dataFactories().end()) {
 		std::stringstream err;
 		err << "Error instantiating type '" << type << "' - no registered factory found (plugin not loaded?)";
 

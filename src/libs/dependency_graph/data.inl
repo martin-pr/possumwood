@@ -5,6 +5,7 @@
 
 #include "data.h"
 #include "rtti.h"
+#include "static_initialisation.h"
 
 namespace dependency_graph {
 
@@ -66,9 +67,9 @@ Data makeData<void>() {
 
 template<typename T>
 Data::Factory<T>::Factory() {
-	Data::factories().insert(std::make_pair(unmangledTypeId<T>(), []() {
+	StaticInitialisation::registerDataFactory(unmangledTypeId<T>(), []() {
 		return makeData<T>();
-	}));
+	});
 }
 
 ////////////
