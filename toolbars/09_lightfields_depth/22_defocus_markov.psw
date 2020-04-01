@@ -25,6 +25,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "concat_3",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_2",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "concat_2",
             "in_port": "in_frame_1",
             "out_node": "concat_0",
@@ -34,6 +40,12 @@
             "in_node": "concat_2",
             "in_port": "in_frame_2",
             "out_node": "concat_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_3",
             "out_port": "out_frame"
         },
         {
@@ -121,6 +133,12 @@
             "out_port": "frame"
         },
         {
+            "in_node": "colormap_2",
+            "in_port": "in_frame",
+            "out_node": "markov_random_field_0",
+            "out_port": "out"
+        },
+        {
             "in_node": "colormap_1",
             "in_port": "in_frame",
             "out_node": "max_index_0",
@@ -173,24 +191,6 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "colormap_2",
-            "in_port": "in_frame",
-            "out_node": "markov_random_field_0",
-            "out_port": "out"
-        },
-        {
-            "in_node": "concat_3",
-            "in_port": "in_frame_2",
-            "out_node": "colormap_2",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "concat_3",
-            "out_port": "out_frame"
         }
     ],
     "description": "### Defocus depth reconstruction with confidence measure\n\nThis demo shows how to reconstruct raw depth using the defocus (Laplacian) metric of depth values.\n\nIn the bottom-right image, the defocus value's brightness is altered using a confidence metric value, based on the shape of the defocus curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
@@ -487,10 +487,10 @@
             },
             "name": "markov_random_field",
             "ports": {
-                "iterations_limit": 5,
-                "weights/flatness": 1.0,
-                "weights/inputs": 0.100000001490116,
-                "weights/smoothness": 0.0
+                "iterations_limit": 10,
+                "weights/flatness": 2.0,
+                "weights/inputs": 1.0,
+                "weights/smoothness": 1.0
             },
             "type": "opencv/lightfields/markov_random_field"
         },

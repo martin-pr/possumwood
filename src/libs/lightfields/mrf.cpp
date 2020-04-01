@@ -48,14 +48,24 @@ struct MinMax {
 
 template<typename FN>
 void neighbours(const V2i& size, const V2i& pos, const cv::Mat& state, const FN& fn) {
-	if(pos.x > 0)
-		fn(state.at<unsigned char>(pos.y, pos.x-1));
-	if(pos.x < size.x-1)
-		fn(state.at<unsigned char>(pos.y, pos.x+1));
-	if(pos.y > 0)
-		fn(state.at<unsigned char>(pos.y-1, pos.x));
-	if(pos.y < size.y-1)
-		fn(state.at<unsigned char>(pos.y+1, pos.x));
+	int min_x = std::max(0, pos.x-1);
+	int min_y = std::max(0, pos.y-1);
+	int max_x = std::min(pos.x+1, size.x-1);
+	int max_y = std::min(pos.y+1, size.y-1);
+
+	for(int y = min_y; y <= max_y; ++y)
+		for(int x = min_x; x <= max_x; ++x)
+			if(not(x == pos.x && y == pos.y))
+				fn(state.at<unsigned char>(y, x));
+
+	// if(pos.x > 0)
+	// 	fn(state.at<unsigned char>(pos.y, pos.x-1));
+	// if(pos.x < size.x-1)
+	// 	fn(state.at<unsigned char>(pos.y, pos.x+1));
+	// if(pos.y > 0)
+	// 	fn(state.at<unsigned char>(pos.y-1, pos.x));
+	// if(pos.y < size.y-1)
+	// 	fn(state.at<unsigned char>(pos.y+1, pos.x));
 }
 
 float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inputsWeight, float flatnessWeight, float smoothnessWeight) {

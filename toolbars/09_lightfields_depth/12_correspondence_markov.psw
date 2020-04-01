@@ -456,10 +456,10 @@
             },
             "name": "markov_random_field",
             "ports": {
-                "iterations_limit": 50,
-                "weights/flatness": 5.0,
+                "iterations_limit": 20,
+                "weights/flatness": 2.0,
                 "weights/inputs": 1.0,
-                "weights/smoothness": 1.0
+                "weights/smoothness": 0.800000011920929
             },
             "type": "opencv/lightfields/markov_random_field"
         },
