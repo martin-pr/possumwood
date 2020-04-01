@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include <opencv2/opencv.hpp>
+
 #include "vec2.h"
 
 namespace lightfields {
@@ -10,7 +12,7 @@ namespace lightfields {
 class MRF {
 	public:
 		struct Value {
-			Value() : value(0), confidence(0.0f) {
+			Value(int val = 0, float conf = 0.0f) : value(val), confidence(conf) {
 			}
 
 			int value;
@@ -21,6 +23,10 @@ class MRF {
 
 		Value& operator[](const V2i& index);
 		const Value& operator[](const V2i& index) const;
+
+		const V2i& size() const;
+
+		cv::Mat solveICM(float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit) const;
 
 	private:
 		V2i m_size;
