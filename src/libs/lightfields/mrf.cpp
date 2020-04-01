@@ -46,18 +46,25 @@ struct MinMax {
 	int min, max;
 };
 
+template<typename FN>
+void neighbours(const V2i& size, const V2i& pos, const cv::Mat& state, const FN& fn) {
+	if(pos.x > 0)
+		fn(state.at<unsigned char>(pos.y, pos.x-1));
+	if(pos.x < size.x-1)
+		fn(state.at<unsigned char>(pos.y, pos.x+1));
+	if(pos.y > 0)
+		fn(state.at<unsigned char>(pos.y-1, pos.x));
+	if(pos.y < size.y-1)
+		fn(state.at<unsigned char>(pos.y+1, pos.x));
+}
+
 float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inputsWeight, float flatnessWeight, float smoothnessWeight) {
 	// first find the min and max candidates
 	MinMax minmax(source[pos].value);
 	minmax.add(state.at<unsigned char>(pos.y, pos.x));
-	if(pos.x > 0)
-		minmax.add(state.at<unsigned char>(pos.y, pos.x-1));
-	if(pos.x < source.size().x-1)
-		minmax.add(state.at<unsigned char>(pos.y, pos.x+1));
-	if(pos.y > 0)
-		minmax.add(state.at<unsigned char>(pos.y-1, pos.x));
-	if(pos.y < source.size().y-1)
-		minmax.add(state.at<unsigned char>(pos.y+1, pos.x));
+	neighbours(source.size(), pos, state, [&](float n) {
+		minmax.add(n);
+	});
 
 	// get the min energy value
 	float energy = std::numeric_limits<float>::max();
@@ -68,41 +75,17 @@ float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inp
 
 		// flatness term
 		int e_flat = 0, e_flat_norm = 0;
-		if(pos.x > 0) {
-			e_flat += std::abs(val - state.at<unsigned char>(pos.y, pos.x-1));
+		neighbours(source.size(), pos, state, [&](float n) {
+			e_flat += std::abs(val - n);
 			++e_flat_norm;
-		}
-		if(pos.x < source.size().x-1) {
-			e_flat += std::abs(val - state.at<unsigned char>(pos.y, pos.x+1));
-			++e_flat_norm;
-		}
-		if(pos.y > 0) {
-			e_flat += std::abs(val - state.at<unsigned char>(pos.y-1, pos.x));
-			++e_flat_norm;
-		}
-		if(pos.y < source.size().y-1) {
-			e_flat += std::abs(val - state.at<unsigned char>(pos.y+1, pos.x));
-			++e_flat_norm;
-		}
+		});
 
 		// smoothness term (laplacian)
 		int e_smooth = 0, e_smooth_norm = 0;
-		if(pos.x > 0) {
-			e_smooth += val - state.at<unsigned char>(pos.y, pos.x-1);
+		neighbours(source.size(), pos, state, [&](float n) {
+			e_smooth += val - n;
 			++e_smooth_norm;
-		}
-		if(pos.x < source.size().x-1) {
-			e_smooth += val - state.at<unsigned char>(pos.y, pos.x+1);
-			++e_smooth_norm;
-		}
-		if(pos.y > 0) {
-			e_smooth += val - state.at<unsigned char>(pos.y-1, pos.x);
-			++e_smooth_norm;
-		}
-		if(pos.y < source.size().y-1) {
-			e_smooth += val - state.at<unsigned char>(pos.y+1, pos.x);
-			++e_smooth_norm;
-		}
+		});
 
 		// putting them all together
 		const float e =
