@@ -457,10 +457,10 @@
             "name": "markov_random_field",
             "ports": {
                 "iterations_limit": 20,
-                "method": "8-neighbourhood",
-                "weights/flatness": 2.0,
+                "method": "8-neighbourhood weighted",
+                "weights/flatness": 50.0,
                 "weights/inputs": 1.0,
-                "weights/smoothness": 0.800000011920929
+                "weights/smoothness": 1.0
             },
             "type": "opencv/lightfields/markov_random_field"
         },

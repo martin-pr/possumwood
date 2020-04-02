@@ -24,6 +24,7 @@ dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 static const std::vector<std::pair<std::string, int>> s_methods {{
 	std::pair<std::string, int>("4-neighbourhood", lightfields::MRF::k4),
 	std::pair<std::string, int>("8-neighbourhood", lightfields::MRF::k8),
+	std::pair<std::string, int>("8-neighbourhood weighted", lightfields::MRF::k8Weighted),
 }};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
