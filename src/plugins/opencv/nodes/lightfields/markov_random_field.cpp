@@ -8,6 +8,8 @@
 
 #include <lightfields/mrf.h>
 
+#include "possumwood_sdk/datatypes/enum.h"
+
 #include "frame.h"
 #include "tools.h"
 
@@ -16,7 +18,13 @@ namespace {
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in, a_confidence;
 dependency_graph::InAttr<float> a_inputsWeight, a_flatnessWeight, a_smoothnessWeight;
 dependency_graph::InAttr<unsigned> a_iterationLimit;
+dependency_graph::InAttr<possumwood::Enum> a_method;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
+
+static const std::vector<std::pair<std::string, int>> s_methods {{
+	std::pair<std::string, int>("4-neighbourhood", lightfields::MRF::k4),
+	std::pair<std::string, int>("8-neighbourhood", lightfields::MRF::k8),
+}};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const cv::Mat& in = *data.get(a_in);
@@ -41,7 +49,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 	});
 
-	cv::Mat result = mrf.solveICM(data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit));
+	cv::Mat result = mrf.solveICM(data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit),
+		lightfields::MRF::ICMNeighbourhood(data.get(a_method).intValue()));
 
 	data.set(a_out, possumwood::opencv::Frame(result));
 
@@ -55,6 +64,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_flatnessWeight, "weights/flatness", 2.0f);
 	meta.addAttribute(a_smoothnessWeight, "weights/smoothness", 2.0f);
 	meta.addAttribute(a_iterationLimit, "iterations_limit", 10u);
+	meta.addAttribute(a_method, "method", possumwood::Enum(s_methods.begin(), s_methods.end()));
 	meta.addAttribute(a_out, "out", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
@@ -63,6 +73,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addInfluence(a_flatnessWeight, a_out);
 	meta.addInfluence(a_smoothnessWeight, a_out);
 	meta.addInfluence(a_iterationLimit, a_out);
+	meta.addInfluence(a_method, a_out);
 
 	meta.setCompute(compute);
 }
