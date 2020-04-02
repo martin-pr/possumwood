@@ -32,7 +32,7 @@ class MRF {
 			k8Weighted
 		};
 
-		cv::Mat solveICM(float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, ICMNeighbourhood neighbourhood) const;
+		static cv::Mat solveICM(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, ICMNeighbourhood neighbourhood);
 
 	private:
 		V2i m_size;

@@ -50,7 +50,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 	});
 
-	cv::Mat result = mrf.solveICM(data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit),
+	cv::Mat result = lightfields::MRF::solveICM(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit),
 		lightfields::MRF::ICMNeighbourhood(data.get(a_method).intValue()));
 
 	data.set(a_out, possumwood::opencv::Frame(result));

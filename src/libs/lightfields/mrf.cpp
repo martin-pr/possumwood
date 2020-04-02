@@ -94,7 +94,7 @@ float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inp
 	// first find the min and max candidates
 	MinMax minmax(source[pos].value);
 	minmax.add(state.at<unsigned char>(pos.y, pos.x));
-	neighbours.eval(pos, state, [&](int n, int weight) {
+	neighbours.eval(pos, state, [&](int n, float weight) {
 		minmax.add(n);
 	});
 
@@ -106,15 +106,15 @@ float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inp
 		const int e_inputs = std::abs(source[pos].value - val);
 
 		// flatness term
-		int e_flat = 0, e_flat_norm = 0;
-		neighbours.eval(pos, state, [&](int n, int weight) {
+		float e_flat = 0, e_flat_norm = 0;
+		neighbours.eval(pos, state, [&](int n, float weight) {
 			e_flat += std::abs(val - n) * weight;
 			e_flat_norm += weight;
 		});
 
 		// smoothness term (laplacian)
-		int e_smooth = 0, e_smooth_norm = 0;
-		neighbours.eval(pos, state, [&](int n, int weight) {
+		float e_smooth = 0, e_smooth_norm = 0;
+		neighbours.eval(pos, state, [&](int n, float weight) {
 			e_smooth += (val - n) * weight;
 			++e_smooth_norm += weight;
 		});
@@ -137,7 +137,7 @@ float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inp
 
 }
 
-cv::Mat MRF::solveICM(float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, ICMNeighbourhood neighbourhood) const {
+cv::Mat MRF::solveICM(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, ICMNeighbourhood neighbourhood) {
 	using namespace std::placeholders;
 
 	std::function<float(const MRF&, const cv::Mat&, const V2i&, float, float, float)> evaluate;
@@ -149,20 +149,20 @@ cv::Mat MRF::solveICM(float inputsWeight, float flatnessWeight, float smoothness
 		evaluate = std::bind(evalICM<Neighbours_8_Weighted>, _1, _2, _3, _4, _5, _6, Neighbours_8_Weighted());
 	assert(evaluate);
 
-	cv::Mat state = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
+	cv::Mat state = cv::Mat::zeros(source.size().y, source.size().x, CV_8UC1);
 
-	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
+	cv::Mat result = cv::Mat::zeros(source.size().y, source.size().x, CV_8UC1);
 	for(int y=0;y<result.rows;++y)
 		for(int x=0;x<result.cols;++x)
-			result.at<unsigned char>(y, x) = (*this)[V2i(x, y)].value;
+			result.at<unsigned char>(y, x) = source[V2i(x, y)].value;
 
 	for(std::size_t it=0; it<iterationLimit; ++it) {
 		cv::swap(result, state);
 
-		tbb::parallel_for(tbb::blocked_range2d<int>(0, m_size.y, 0, m_size.x), [&](const tbb::blocked_range2d<int>& range) {
+		tbb::parallel_for(tbb::blocked_range2d<int>(0, source.size().y, 0, source.size().x), [&](const tbb::blocked_range2d<int>& range) {
 			for(int y=range.rows().begin(); y != range.rows().end(); ++y)
 				for(int x=range.cols().begin(); x != range.cols().end(); ++x) {
-					result.at<unsigned char>(y, x) = evaluate(*this, state, V2i(x, y), inputsWeight, flatnessWeight, smoothnessWeight);
+					result.at<unsigned char>(y, x) = evaluate(source, state, V2i(x, y), inputsWeight, flatnessWeight, smoothnessWeight);
 				}
 		});
 	}
