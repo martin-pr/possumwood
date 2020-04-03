@@ -42,7 +42,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					++it;
 				}
 
-				out.at<unsigned char>(r, c) = (unsigned char)((max_id * 255) / (in.size() - 1));
+				out.at<unsigned char>(r, c) = max_id;
 			}
 		});
 	}

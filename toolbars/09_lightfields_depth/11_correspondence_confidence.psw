@@ -61,15 +61,9 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "colormap_1",
-            "in_port": "in_frame",
-            "out_node": "convert_2",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "concat_0",
             "in_port": "in_frame_1",
-            "out_node": "convert_3",
+            "out_node": "convert_2",
             "out_port": "out_frame"
         },
         {
@@ -103,7 +97,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_3",
+            "in_node": "convert_2",
             "in_port": "in_frame",
             "out_node": "get_frame_0",
             "out_port": "frame"
@@ -127,7 +121,7 @@
             "out_port": "frame"
         },
         {
-            "in_node": "convert_2",
+            "in_node": "normalize_0",
             "in_port": "in_frame",
             "out_node": "max_index_0",
             "out_port": "out"
@@ -155,6 +149,12 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "colormap_1",
+            "in_port": "in_frame",
+            "out_node": "normalize_0",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Correspondence depth reconstruction with confidence measure\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values.\n\nIn the bottom-right image, the correspondence value's brightness is altered using a confidence metric value, based on the shape of the correspondence curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
@@ -163,8 +163,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2299.73217773438,
-                    "y": 716.382446289062
+                    "x": 2297.896484375,
+                    "y": 685.913146972656
                 }
             },
             "name": "color",
@@ -177,8 +177,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2079.8798828125,
-                    "y": 913.80419921875
+                    "x": 2078.04418945312,
+                    "y": 883.334838867188
                 }
             },
             "name": "colormap",
@@ -191,8 +191,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1948.71423339844,
-                    "y": 745.273376464844
+                    "x": 1946.87878417969,
+                    "y": 714.804077148438
                 }
             },
             "name": "colormap",
@@ -205,8 +205,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1787.45617675781,
-                    "y": 1088.95251464844
+                    "x": 1785.62072753906,
+                    "y": 1058.48315429688
                 }
             },
             "name": "concat",
@@ -220,8 +220,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1941.64807128906,
-                    "y": 1324.455078125
+                    "x": 1939.81262207031,
+                    "y": 1293.98571777344
                 }
             },
             "name": "concat",
@@ -235,8 +235,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2108.26806640625,
-                    "y": 1089.35620117188
+                    "x": 2106.43237304688,
+                    "y": 1058.88684082031
                 }
             },
             "name": "concat",
@@ -281,8 +281,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2081.51928710938,
-                    "y": 455.076812744141
+                    "x": 2079.68359375,
+                    "y": 604.641906738281
                 }
             },
             "name": "convert",
@@ -297,24 +297,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1948.64392089844,
-                    "y": 555.270690917969
-                }
-            },
-            "name": "convert",
-            "ports": {
-                "a": 1.0,
-                "b": 0.0,
-                "mode": "CV_8U"
-            },
-            "type": "opencv/convert"
-        },
-        "convert_3": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 1784.40710449219,
-                    "y": 711.295715332031
+                    "x": 1782.57165527344,
+                    "y": 680.826416015625
                 }
             },
             "name": "convert",
@@ -376,8 +360,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1785.45690917969,
-                    "y": 556.837219238281
+                    "x": 1783.62145996094,
+                    "y": 526.367919921875
                 }
             },
             "name": "get_frame",
@@ -429,8 +413,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2204.35424804688,
-                    "y": 893.229064941406
+                    "x": 2202.5185546875,
+                    "y": 862.759765625
                 }
             },
             "name": "multiply",
@@ -444,8 +428,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1999.30725097656,
-                    "y": 1506.73547363281
+                    "x": 1997.47180175781,
+                    "y": 1476.26611328125
                 }
             },
             "connections": [
@@ -743,6 +727,20 @@
                 }
             },
             "type": "network"
+        },
+        "normalize_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1945.96496582031,
+                    "y": 557.273193359375
+                }
+            },
+            "name": "normalize",
+            "ports": {
+                "mode": "Min-max"
+            },
+            "type": "opencv/normalize"
         },
         "pow_0": {
             "blind_data": {

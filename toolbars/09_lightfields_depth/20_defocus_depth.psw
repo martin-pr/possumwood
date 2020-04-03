@@ -67,7 +67,7 @@
             "out_port": "frame"
         },
         {
-            "in_node": "colormap_0",
+            "in_node": "normalize_0",
             "in_port": "in_frame",
             "out_node": "max_index_0",
             "out_port": "out"
@@ -83,6 +83,12 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "colormap_0",
+            "in_port": "in_frame",
+            "out_node": "normalize_0",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Defocus depth reconstruction\n\nThis demo shows raw depth reconstruction using the defocus (Laplacian) metric of depth values - i.e., for each pixel, the algorithm picks the depth value where contrast value was highest.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
@@ -91,8 +97,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1919.65393066406,
-                    "y": 817.2646484375
+                    "x": 1903.0732421875,
+                    "y": 946.594299316406
                 }
             },
             "name": "colormap",
@@ -105,8 +111,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1921.50866699219,
-                    "y": 971.990661621094
+                    "x": 1904.92797851562,
+                    "y": 1101.3203125
                 }
             },
             "name": "concat",
@@ -120,8 +126,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2050.84545898438,
-                    "y": 766.694458007812
+                    "x": 2034.26477050781,
+                    "y": 896.024108886719
                 }
             },
             "name": "convert",
@@ -239,8 +245,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1985.86499023438,
-                    "y": 1140.57727050781
+                    "x": 1969.28430175781,
+                    "y": 1269.90686035156
                 }
             },
             "connections": [
@@ -539,6 +545,20 @@
             },
             "type": "network"
         },
+        "normalize_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1902.86596679688,
+                    "y": 791.468994140625
+                }
+            },
+            "name": "normalize",
+            "ports": {
+                "mode": "Min-max"
+            },
+            "type": "opencv/normalize"
+        },
         "pixel_normalize_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -574,5 +594,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACOgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACsAAAATEAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABAwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABeQAAAmgAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
