@@ -9,47 +9,103 @@
 
 namespace {
 
+template<typename T>
+struct Traits {
+	static constexpr long norm() { return std::numeric_limits<T>::max(); };
+	typedef long accumulator;
+};
+
+template<>
+struct Traits<float> {
+	static constexpr float norm() { return 1.0f; };
+	typedef float accumulator;
+};
+
+template<typename T>
+struct MinMax {
+	static cv::Mat eval(const cv::Mat& input) {
+		// make sure we don't overwrite the data
+		cv::Mat m = input.clone();
+
+		T min = m.at<T>(0,0);
+		T max = m.at<T>(0,0);
+
+		for(int y=0;y<m.rows;++y)
+			for(int x=0;x<m.cols;++x) {
+				const T current = m.at<T>(y, x);
+				min = std::min(min, current);
+				max = std::max(max, current);
+			}
+
+		for(int y=0;y<m.rows;++y)
+			for(int x=0;x<m.cols;++x) {
+				T& current = m.at<T>(y, x);
+				current = (typename Traits<T>::accumulator(current - min) * Traits<T>::norm()) / typename Traits<T>::accumulator(max - min);
+			}
+
+		return m;
+	}
+};
+
+template<typename T>
+struct Max {
+	static cv::Mat eval(const cv::Mat& input) {
+		// make sure we don't overwrite the data
+		cv::Mat m = input.clone();
+
+		T max = m.at<T>(0,0);
+
+		for(int y=0;y<m.rows;++y)
+			for(int x=0;x<m.cols;++x) {
+				const T current = m.at<T>(y, x);
+				max = std::max(max, current);
+			}
+
+		for(int y=0;y<m.rows;++y)
+			for(int x=0;x<m.cols;++x) {
+				T& current = m.at<T>(y, x);
+				current = (typename Traits<T>::accumulator(current) * Traits<T>::norm()) / typename Traits<T>::accumulator(max);
+			}
+
+		return m;
+	}
+};
+
+template<template<class> typename FN>
+cv::Mat process(const cv::Mat& in) {
+	if(in.type() == CV_8UC1)
+		return FN<uint8_t>::eval(in);
+	else if(in.type() == CV_8SC1)
+		return FN<int8_t>::eval(in);
+	else if(in.type() == CV_16UC1)
+		return FN<uint16_t>::eval(in);
+	else if(in.type() == CV_16SC1)
+		return FN<int16_t>::eval(in);
+	else if(in.type() == CV_32FC1)
+		return FN<float>::eval(in);
+
+	throw std::runtime_error("Unsupported matrix type");
+}
+
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	cv::Mat m = *data.get(a_in).clone();
+	const cv::Mat& in = *data.get(a_in);
 
-	if(m.rows > 0 && m.cols > 0) {
-		if(data.get(a_mode).value() == "Min-max") {
-			float min = m.at<float>(0,0);
-			float max = m.at<float>(0,0);
+	if(in.channels() > 1)
+		throw std::runtime_error("Only single-channel normalization supported at the moment.");
 
-			for(int y=0;y<m.rows;++y)
-				for(int x=0;x<m.cols;++x) {
-					const float current = m.at<float>(y, x);
-					min = std::min(min, current);
-					max = std::max(max, current);
-				}
+	cv::Mat m;
 
-			for(int y=0;y<m.rows;++y)
-				for(int x=0;x<m.cols;++x) {
-					float& current = m.at<float>(y, x);
-					current = (current - min) / (max - min);
-				}
-		}
-
-		else if(data.get(a_mode).value() == "Max") {
-			float max = m.at<float>(0,0);
-
-			for(int y=0;y<m.rows;++y)
-				for(int x=0;x<m.cols;++x) {
-					const float current = m.at<float>(y, x);
-					max = std::max(max, current);
-				}
-
-			for(int y=0;y<m.rows;++y)
-				for(int x=0;x<m.cols;++x) {
-					float& current = m.at<float>(y, x);
-					current = current / max;
-				}
-		}
+	if(in.rows > 0 && in.cols > 0) {
+		if(data.get(a_mode).value() == "Min-max")
+			m = process<MinMax>(in);
+		else if(data.get(a_mode).value() == "Max")
+			m = process<Max>(in);
+		else
+			throw std::runtime_error("Unknown mode selected");
 	}
 
 	data.set(a_out, possumwood::opencv::Frame(m));
