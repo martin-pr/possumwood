@@ -14,7 +14,7 @@ class PMF {
 		static PMF fromConfidence(float c, unsigned value, unsigned size);
 
 		/// Initialises a probability mass function as a uniform distribution of n states
-		PMF(unsigned n);
+		explicit PMF(unsigned n);
 
 		/// Returns the size of the probability array
 		std::size_t size() const;
@@ -25,12 +25,12 @@ class PMF {
 		/// returns the value with maximum probability
 		unsigned max() const;
 
+		/// A weighted sum of two PMFs
+		static PMF combine(const PMF& p1, float w1, const PMF& p2, float w2);
+
 	private:
 		std::vector<float> m_p;
-		float m_weight;
 
-	friend PMF operator *(const PMF& p, const float& weight);
-	friend PMF operator *(const float& weight, const PMF& p);
 	friend PMF operator +(const PMF& p1, const PMF& p2);
 	friend PMF operator *(const PMF& p, const JointPMF& j);
 	friend PMF operator *(const JointPMF& j, const PMF& p);
@@ -44,9 +44,9 @@ class JointPMF {
 		static JointPMF difference(unsigned size, float widthMutiplier = 1.0f);
 
 		/// initialises a square-shaped joint PMF to a uniform distribution of size*size states
-		JointPMF(unsigned size);
+		explicit JointPMF(unsigned size);
 		/// initialises a rectangular-shaped joint PMF to a uniform distribution of rows*cols states
-		JointPMF(unsigned rows, unsigned cols);
+		explicit JointPMF(unsigned rows, unsigned cols);
 
 		unsigned rows() const;
 		unsigned cols() const;
@@ -58,18 +58,12 @@ class JointPMF {
 		std::function<float(unsigned, unsigned)> m_fn;
 		unsigned m_rows, m_cols;
 
-	friend PMF operator *(const PMF& p, const float& weight);
-	friend PMF operator *(const float& weight, const PMF& p);
 	friend PMF operator +(const PMF& p1, const PMF& p2);
 	friend PMF operator *(const PMF& p, const JointPMF& j);
 	friend PMF operator *(const JointPMF& j, const PMF& p);
 };
 
-/// Weights the PMF (does not actually change the output of the PMF, just the weight that is only applicable when summing two PMFs)
-PMF operator *(const PMF& p, const float& weight);
-/// Weights the PMF (does not actually change the output of the PMF, just the weight that is only applicable when summing two PMFs)
-PMF operator *(const float& weight, const PMF& p);
-/// Weighted sum of two PMFs (change the weight using scalar multiplication; defaults to 1)
+/// A sum of two PMFs
 PMF operator +(const PMF& p1, const PMF& p2);
 
 /// returns marginal probability given an input PMF (summed over columns)

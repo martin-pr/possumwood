@@ -25,8 +25,8 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "network_0",
-            "in_port": "frame",
+            "in_node": "concat_3",
+            "in_port": "in_frame_2",
             "out_node": "colormap_2",
             "out_port": "out_frame"
         },
@@ -145,6 +145,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "concat_3",
+            "in_port": "in_frame_1",
+            "out_node": "multiply_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "colormap_1",
             "in_port": "in_frame",
             "out_node": "normalize_0",
@@ -179,6 +185,12 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_3",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Correspondence depth reconstruction with confidence measure\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values.\n\nIn the bottom-right image, the correspondence value's brightness is altered using a confidence metric value, based on the shape of the correspondence curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
@@ -258,8 +270,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -152.24577331543,
-                    "y": 1272.54040527344
+                    "x": -353.153747558594,
+                    "y": 1403.00012207031
                 }
             },
             "name": "concat",
@@ -275,6 +287,21 @@
                 "value": {
                     "x": 14.3742189407349,
                     "y": 1037.44152832031
+                }
+            },
+            "name": "concat",
+            "ports": {
+                "mode": "Horizontal",
+                "separation": 0
+            },
+            "type": "opencv/concat"
+        },
+        "concat_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 51.2713890075684,
+                    "y": 1426.48291015625
                 }
             },
             "name": "concat",
@@ -432,7 +459,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/tea.lfr"
+                "filename": "$EXAMPLES/lytro/wall.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -446,9 +473,9 @@
             },
             "name": "markov_random_field",
             "ports": {
-                "iterations_limit": 20,
+                "iterations_limit": 50,
                 "method": "PMF propagation",
-                "weights/flatness": 100.0,
+                "weights/flatness": 10.0,
                 "weights/inputs": 1.0,
                 "weights/smoothness": 0.0
             },
@@ -822,7 +849,7 @@
             },
             "name": "pow",
             "ports": {
-                "power": 3.0
+                "power": 15.0
             },
             "type": "opencv/pow"
         },
@@ -847,5 +874,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALYAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAcwAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABxQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACOwAAAaYAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAFGAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAcwAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABxQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACOwAAAaYAAACqAQAAAwAABGwAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

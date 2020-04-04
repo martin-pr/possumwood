@@ -201,6 +201,14 @@ class Grid {
 			return m_cols;
 		}
 
+		void swap(Grid& g) {
+			std::swap(g.m_rows, m_rows);
+			std::swap(g.m_cols, m_cols);
+			std::swap(g.m_layers, m_layers);
+
+			m_p.swap(g.m_p);
+		}
+
 	private:
 		unsigned m_rows, m_cols, m_layers;
 		std::vector<PMF> m_p;
@@ -209,18 +217,55 @@ class Grid {
 }
 
 cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit) {
+	// find the range of values
 	MinMax minmax(0);
 	for(int y=0;y<source.size().y;++y)
 		for(int x=0;x<source.size().x;++x)
 			minmax.add(source[V2i(x, y)].value);
 
+	// build a grid of probability mass functions
 	Grid grid(source.size().y, source.size().x, minmax.max+1);
 	for(int y=0;y<source.size().y;++y)
 		for(int x=0;x<source.size().x;++x)
 			grid(y, x) = PMF::fromConfidence(source[V2i(x, y)].confidence, source[V2i(x, y)].value, minmax.max+1);
 
 	// todo: the main algorithm
+	const JointPMF diff = JointPMF::difference(minmax.max+1);
 
+	Grid state = grid;
+	for(std::size_t it=0; it<iterationLimit; ++it) {
+		grid.swap(state);
+
+		tbb::parallel_for(tbb::blocked_range2d<unsigned>(0u, grid.rows(), 0u, grid.cols()), [&](const tbb::blocked_range2d<unsigned>& range) {
+			for(unsigned y=range.rows().begin(); y != range.rows().end(); ++y)
+				for(unsigned x=range.cols().begin(); x != range.cols().end(); ++x) {
+					PMF current = PMF::fromConfidence(source[V2i(x, y)].confidence, source[V2i(x, y)].value, minmax.max+1);
+
+					PMF flatness = PMF(minmax.max+1);
+					float norm = 0.0f;
+					if(x > 0) {
+						flatness = PMF::combine(flatness, norm, state(y, x-1), 1.0f);
+						norm += 1.0f;
+					}
+					if(x < grid.cols()-1) {
+						flatness = PMF::combine(flatness, norm, state(y, x+1), 1.0f);
+						norm += 1.0f;
+					}
+					if(y > 0) {
+						flatness = PMF::combine(flatness, norm, state(y-1, x), 1.0f);
+						norm += 1.0f;
+					}
+					if(y < grid.rows()-1)
+						flatness = PMF::combine(flatness, norm, state(y+1, x), 1.0f);
+
+					current = PMF::combine(current, inputsWeight, flatness, flatnessWeight);
+
+					grid(y, x) = current;
+				}
+		});
+	}
+
+	// convert the result to a cv::Mat by picking the highest probability for each pixel
 	cv::Mat result = cv::Mat::zeros(grid.rows(), grid.cols(), CV_8UC1);
 	for(unsigned y=0;y<grid.rows();++y)
 		for(unsigned x=0;x<grid.cols();++x)

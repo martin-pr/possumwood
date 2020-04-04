@@ -16,7 +16,7 @@ PMF PMF::fromConfidence(float c, unsigned value, unsigned size) {
 	return result;
 }
 
-PMF::PMF(unsigned n) : m_weight(1.0f) {
+PMF::PMF(unsigned n) {
 	assert(n > 0);
 	m_p = std::vector<float>(n, 1.0f / (float)n);
 }
@@ -27,7 +27,6 @@ std::size_t PMF::size() const {
 
 float PMF::p(unsigned index) const {
 	assert(index < size());
-	assert(m_weight > 0.0f);
 
 	return m_p[index]; // ignoring weights to maintain valid PMF - weights are only relevant for sums of PMFs
 }
@@ -45,6 +44,19 @@ unsigned PMF::max() const {
 		}
 
 	return index;
+}
+
+PMF PMF::combine(const PMF& p1, float w1, const PMF& p2, float w2) {
+	assert(p1.size() == p2.size());
+	assert(w1 >= 0.0f && w2 >= 0.0f);
+
+	const float norm = w1 + w2;
+
+	PMF result(p1.size());
+	for(unsigned a=0;a<result.size();++a)
+		result.m_p[a] = (p1.m_p[a]*w1 + p2.m_p[a]*w2) / norm;
+
+	return result;
 }
 
 //////////////////////
@@ -100,20 +112,16 @@ float JointPMF::p(unsigned row, unsigned col) const {
 
 PMF operator *(const PMF& p, const float& weight) {
 	assert(weight >= 0.0f);
-	assert(p.m_weight >= 0.0f);
 
 	PMF result = p;
-	result.m_weight *= weight;
 
 	return result;
 }
 
 PMF operator *(const float& weight, const PMF& p) {
 	assert(weight >= 0.0f);
-	assert(p.m_weight >= 0.0f);
 
 	PMF result = p;
-	result.m_weight *= weight;
 
 	return result;
 }
@@ -121,16 +129,10 @@ PMF operator *(const float& weight, const PMF& p) {
 PMF operator +(const PMF& p1, const PMF& p2) {
 	assert(p1.size() == p2.size());
 
-	if(p1.m_weight == 0.0f)
-		return p2;
-	if(p2.m_weight == 0.0f)
-		return p1;
-
-	const float weight = p1.m_weight + p2.m_weight;
-
 	PMF result(p1.size());
 	for(unsigned a=0;a<p1.size();++a)
-		result.m_p[a] = (p1.m_p[a] * p1.m_weight + p2.m_p[a] * p2.m_weight) / weight;
+		result.m_p[a] = (p1.m_p[a] + p2.m_p[a]) / 2.0f;
+
 	return result;
 }
 

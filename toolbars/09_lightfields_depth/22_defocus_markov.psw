@@ -163,6 +163,18 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "colormap_1",
+            "in_port": "in_frame",
+            "out_node": "normalize_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "colormap_2",
+            "in_port": "in_frame",
+            "out_node": "normalize_1",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "confidence_0",
             "in_port": "in_sequence",
             "out_node": "pixel_normalize_0",
@@ -191,18 +203,6 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "colormap_1",
-            "in_port": "in_frame",
-            "out_node": "normalize_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "colormap_2",
-            "in_port": "in_frame",
-            "out_node": "normalize_1",
-            "out_port": "out_frame"
         }
     ],
     "description": "### Defocus depth reconstruction with confidence measure\n\nThis demo shows how to reconstruct raw depth using the defocus (Laplacian) metric of depth values.\n\nIn the bottom-right image, the defocus value's brightness is altered using a confidence metric value, based on the shape of the defocus curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
@@ -333,7 +333,7 @@
             },
             "name": "confidence",
             "ports": {
-                "mode": "Negative Entropy Measure",
+                "mode": "Probabilistic Measure",
                 "sigma": 1.0
             },
             "type": "opencv/sequence/confidence"
@@ -493,15 +493,15 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2171.26293945312,
+                    "x": 2174.5791015625,
                     "y": 1269.33374023438
                 }
             },
             "name": "markov_random_field",
             "ports": {
-                "iterations_limit": 10,
-                "method": "8-neighbourhood weighted",
-                "weights/flatness": 10.0,
+                "iterations_limit": 50,
+                "method": "PMF propagation",
+                "weights/flatness": 100.0,
                 "weights/inputs": 1.0,
                 "weights/smoothness": 1.0
             },
@@ -889,7 +889,7 @@
             },
             "name": "pow",
             "ports": {
-                "power": 3.0
+                "power": 5.0
             },
             "type": "opencv/pow"
         },
