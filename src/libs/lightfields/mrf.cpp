@@ -7,6 +7,8 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range2d.h>
 
+#include "pmf.h"
+
 namespace lightfields {
 
 MRF::MRF(const V2i& size) : m_size(size), m_nodes(m_size.x * m_size.y) {
@@ -135,6 +137,8 @@ float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inp
 	return label;
 }
 
+
+
 }
 
 cv::Mat MRF::solveICM(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, ICMNeighbourhood neighbourhood) {
@@ -167,6 +171,60 @@ cv::Mat MRF::solveICM(const MRF& source, float inputsWeight, float flatnessWeigh
 		});
 	}
 
+	return result;
+}
+
+///////////////////////
+
+namespace {
+
+class Grid {
+	public:
+		Grid(unsigned rows, unsigned cols, unsigned layers) : m_rows(rows), m_cols(cols), m_layers(layers), m_p(rows*cols, PMF(layers)) {
+		}
+
+		PMF& operator() (unsigned row, unsigned col) {
+			assert(row < m_rows && col < m_cols);
+			return m_p[row * m_cols + col];
+		}
+
+		const PMF& operator() (unsigned row, unsigned col) const {
+			assert(row < m_rows && col < m_cols);
+			return m_p[row * m_cols + col];
+		}
+
+		unsigned rows() const {
+			return m_rows;
+		}
+
+		unsigned cols() const {
+			return m_cols;
+		}
+
+	private:
+		unsigned m_rows, m_cols, m_layers;
+		std::vector<PMF> m_p;
+};
+
+}
+
+cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit) {
+	MinMax minmax(0);
+	for(int y=0;y<source.size().y;++y)
+		for(int x=0;x<source.size().x;++x)
+			minmax.add(source[V2i(x, y)].value);
+
+	Grid grid(source.size().y, source.size().x, minmax.max+1);
+	for(int y=0;y<source.size().y;++y)
+		for(int x=0;x<source.size().x;++x)
+			grid(y, x) = PMF::fromConfidence(source[V2i(x, y)].confidence, source[V2i(x, y)].value, minmax.max+1);
+
+	// todo: the main algorithm
+
+	cv::Mat result = cv::Mat::zeros(grid.rows(), grid.cols(), CV_8UC1);
+	for(unsigned y=0;y<grid.rows();++y)
+		for(unsigned x=0;x<grid.cols();++x)
+			result.at<unsigned char>(y, x) = grid(y, x).max();
 	return result;
 }
 

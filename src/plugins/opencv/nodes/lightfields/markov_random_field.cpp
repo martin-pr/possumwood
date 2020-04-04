@@ -25,6 +25,7 @@ static const std::vector<std::pair<std::string, int>> s_methods {{
 	std::pair<std::string, int>("4-neighbourhood", lightfields::MRF::k4),
 	std::pair<std::string, int>("8-neighbourhood", lightfields::MRF::k8),
 	std::pair<std::string, int>("8-neighbourhood weighted", lightfields::MRF::k8Weighted),
+	std::pair<std::string, int>("PMF propagation", 20),
 }};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -50,8 +51,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 	});
 
-	cv::Mat result = lightfields::MRF::solveICM(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit),
-		lightfields::MRF::ICMNeighbourhood(data.get(a_method).intValue()));
+	cv::Mat result;
+	if(data.get(a_method).value() != "PMF propagation")
+		result = lightfields::MRF::solveICM(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit),
+			lightfields::MRF::ICMNeighbourhood(data.get(a_method).intValue()));
+	else
+		result = lightfields::MRF::solvePropagation(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit));
 
 	data.set(a_out, possumwood::opencv::Frame(result));
 

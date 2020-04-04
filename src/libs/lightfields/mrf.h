@@ -33,6 +33,7 @@ class MRF {
 		};
 
 		static cv::Mat solveICM(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, ICMNeighbourhood neighbourhood);
+		static cv::Mat solvePropagation(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit);
 
 	private:
 		V2i m_size;
