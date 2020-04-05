@@ -13,41 +13,25 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
 dependency_graph::InAttr<possumwood::Enum> a_type;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
-int modeToEnum(const std::string& mode) {
-	if(mode == "COLORMAP_AUTUMN")
-		return cv::COLORMAP_AUTUMN;
-	if(mode == "COLORMAP_BONE")
-		return cv::COLORMAP_BONE;
-	if(mode == "COLORMAP_JET")
-		return cv::COLORMAP_JET;
-	if(mode == "COLORMAP_WINTER")
-		return cv::COLORMAP_WINTER;
-	if(mode == "COLORMAP_RAINBOW")
-		return cv::COLORMAP_RAINBOW;
-	if(mode == "COLORMAP_OCEAN")
-		return cv::COLORMAP_OCEAN;
-	if(mode == "COLORMAP_SUMMER")
-		return cv::COLORMAP_SUMMER;
-	if(mode == "COLORMAP_SPRING")
-		return cv::COLORMAP_SPRING;
-	if(mode == "COLORMAP_COOL")
-		return cv::COLORMAP_COOL;
-	if(mode == "COLORMAP_HSV")
-		return cv::COLORMAP_HSV;
-	if(mode == "COLORMAP_PINK")
-		return cv::COLORMAP_PINK;
-	if(mode == "COLORMAP_HOT")
-		return cv::COLORMAP_HOT;
-
-	throw std::runtime_error("Unknown colormap mode " + mode);
-}
+static const std::vector<std::pair<std::string, int>> s_modes {
+	{"COLORMAP_AUTUMN", cv::COLORMAP_AUTUMN},
+	{"COLORMAP_BONE", cv::COLORMAP_BONE},
+	{"COLORMAP_JET", cv::COLORMAP_JET},
+	{"COLORMAP_WINTER", cv::COLORMAP_WINTER},
+	{"COLORMAP_RAINBOW", cv::COLORMAP_RAINBOW},
+	{"COLORMAP_OCEAN", cv::COLORMAP_OCEAN},
+	{"COLORMAP_SUMMER", cv::COLORMAP_SUMMER},
+	{"COLORMAP_SPRING", cv::COLORMAP_SPRING},
+	{"COLORMAP_COOL", cv::COLORMAP_COOL},
+	{"COLORMAP_HSV", cv::COLORMAP_HSV},
+	{"COLORMAP_PINK", cv::COLORMAP_PINK},
+	{"COLORMAP_HOT", cv::COLORMAP_HOT},
+};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result = (*data.get(a_inFrame)).clone();
 
-	int mode = modeToEnum(data.get(a_type).value());
-
-	cv::applyColorMap(*data.get(a_inFrame), result, mode);
+	cv::applyColorMap(*data.get(a_inFrame), result, data.get(a_type).intValue());
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
@@ -56,8 +40,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_type, "type", possumwood::Enum({"COLORMAP_JET", "COLORMAP_AUTUMN", "COLORMAP_BONE", "COLORMAP_WINTER", "COLORMAP_RAINBOW",
-		"COLORMAP_OCEAN", "COLORMAP_SUMMER", "COLORMAP_SPRING", "COLORMAP_COOL", "COLORMAP_HSV", "COLORMAP_PINK", "COLORMAP_HOT"}));
+	meta.addAttribute(a_type, "type", possumwood::Enum(s_modes.begin(), s_modes.end()));
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
