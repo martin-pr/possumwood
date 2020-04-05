@@ -4,7 +4,7 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "vec2.h"
+#include "neighbours.h"
 
 namespace lightfields {
 
@@ -26,13 +26,7 @@ class MRF {
 
 		const V2i& size() const;
 
-		enum ICMNeighbourhood {
-			k4,
-			k8,
-			k8Weighted
-		};
-
-		static cv::Mat solveICM(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, ICMNeighbourhood neighbourhood);
+		static cv::Mat solveICM(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, const Neighbours& neighbourhood);
 		static cv::Mat solvePropagation(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit);
 
 	private:

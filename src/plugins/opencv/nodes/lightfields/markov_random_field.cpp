@@ -21,12 +21,19 @@ dependency_graph::InAttr<unsigned> a_iterationLimit;
 dependency_graph::InAttr<possumwood::Enum> a_method;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
-static const std::vector<std::pair<std::string, int>> s_methods {{
-	std::pair<std::string, int>("4-neighbourhood", lightfields::MRF::k4),
-	std::pair<std::string, int>("8-neighbourhood", lightfields::MRF::k8),
-	std::pair<std::string, int>("8-neighbourhood weighted", lightfields::MRF::k8Weighted),
-	std::pair<std::string, int>("PMF propagation", 20),
-}};
+const std::vector<std::pair<std::string, int>>& methods() {
+	static std::vector<std::pair<std::string, int>> s_methods;
+
+	if(s_methods.empty()) {
+		for(auto& m : lightfields::Neighbours::types())
+			s_methods.push_back(std::make_pair("ICM energy optimisation, " + m.first, m.second));
+
+		for(auto& m : lightfields::Neighbours::types())
+			s_methods.push_back(std::make_pair("PMF propagation, " + m.first, m.second + 20));
+	}
+
+	return s_methods;
+}
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const cv::Mat& in = *data.get(a_in);
@@ -52,9 +59,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	});
 
 	cv::Mat result;
-	if(data.get(a_method).value() != "PMF propagation")
+	if(data.get(a_method).intValue() < 20)
 		result = lightfields::MRF::solveICM(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit),
-			lightfields::MRF::ICMNeighbourhood(data.get(a_method).intValue()));
+			*lightfields::Neighbours::create(lightfields::Neighbours::Type(data.get(a_method).intValue()), lightfields::V2i(in.cols, in.rows)));
 	else
 		result = lightfields::MRF::solvePropagation(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit));
 
@@ -70,7 +77,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_flatnessWeight, "weights/flatness", 2.0f);
 	meta.addAttribute(a_smoothnessWeight, "weights/smoothness", 2.0f);
 	meta.addAttribute(a_iterationLimit, "iterations_limit", 10u);
-	meta.addAttribute(a_method, "method", possumwood::Enum(s_methods.begin(), s_methods.end()));
+	meta.addAttribute(a_method, "method", possumwood::Enum(methods().begin(), methods().end()));
 	meta.addAttribute(a_out, "out", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
