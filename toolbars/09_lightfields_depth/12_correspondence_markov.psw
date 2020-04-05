@@ -1,21 +1,21 @@
 {
     "connections": [
         {
-            "in_node": "concat_2",
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "multiply_0",
             "in_port": "in_frame_1",
             "out_node": "colormap_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "concat_0",
-            "in_port": "in_frame_2",
-            "out_node": "colormap_1",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "concat_2",
             "in_port": "in_frame_2",
-            "out_node": "colormap_2",
+            "out_node": "colormap_1",
             "out_port": "out_frame"
         },
         {
@@ -49,7 +49,7 @@
             "out_port": "out_sequence"
         },
         {
-            "in_node": "colormap_0",
+            "in_node": "color_0",
             "in_port": "in_frame",
             "out_node": "convert_1",
             "out_port": "out_frame"
@@ -85,7 +85,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "pow_0",
+            "in_node": "median_0",
             "in_port": "in_frame",
             "out_node": "equalize_float_0",
             "out_port": "out_frame"
@@ -121,25 +121,19 @@
             "out_port": "out"
         },
         {
-            "in_node": "markov_random_field_0",
-            "in_port": "in",
-            "out_node": "max_index_0",
-            "out_port": "out"
-        },
-        {
-            "in_node": "normalize_0",
+            "in_node": "median_1",
             "in_port": "in_frame",
             "out_node": "max_index_0",
             "out_port": "out"
         },
         {
-            "in_node": "colormap_1",
+            "in_node": "colormap_0",
             "in_port": "in_frame",
             "out_node": "normalize_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "colormap_2",
+            "in_node": "colormap_1",
             "in_port": "in_frame",
             "out_node": "normalize_1",
             "out_port": "out_frame"
@@ -161,25 +155,55 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "pow_0",
+            "in_port": "in_frame",
+            "out_node": "median_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "normalize_0",
+            "in_port": "in_frame",
+            "out_node": "median_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "markov_random_field_0",
+            "in_port": "in",
+            "out_node": "median_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_2",
+            "in_port": "in_frame_1",
+            "out_node": "multiply_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "multiply_0",
+            "in_port": "in_frame_2",
+            "out_node": "color_0",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Correspondence-based depth reconstructed using Markov Random Fields belief propagation\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values.\n\nIn the bottom-right image, the correspondence value's brightness is altered using a confidence metric value, based on the shape of the correspondence curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
     "nodes": {
-        "colormap_0": {
+        "color_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -14.0139646530151,
-                    "y": 861.889465332031
+                    "x": 0.204389572143555,
+                    "y": 681.830078125
                 }
             },
-            "name": "colormap",
+            "name": "color",
             "ports": {
-                "type": "COLORMAP_BONE"
+                "mode": "GRAY2BGR"
             },
-            "type": "opencv/colormap"
+            "type": "opencv/color"
         },
-        "colormap_1": {
+        "colormap_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -193,7 +217,7 @@
             },
             "type": "opencv/colormap"
         },
-        "colormap_2": {
+        "colormap_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -256,13 +280,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 63.8493156433105,
-                    "y": -104.285438537598
+                    "x": 76.8953018188477,
+                    "y": -273.883239746094
                 }
             },
             "name": "confidence",
             "ports": {
-                "mode": "Probabilistic Measure",
+                "mode": "Peak Ratio",
                 "sigma": 1.0
             },
             "type": "opencv/sequence/confidence"
@@ -271,8 +295,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -307.194091796875,
-                    "y": 179.510314941406
+                    "x": -298.982269287109,
+                    "y": 105.603790283203
                 }
             },
             "name": "convert",
@@ -287,8 +311,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -5.74227523803711,
-                    "y": 625.343627929688
+                    "x": -3.68931603431702,
+                    "y": 487.795379638672
                 }
             },
             "name": "convert",
@@ -331,7 +355,7 @@
                     "x": 300,
                     "y": 300
                 },
-                "samples/end": 40.2999992370605,
+                "samples/end": 40.0,
                 "samples/start": -30.0,
                 "samples/steps": 11
             },
@@ -355,8 +379,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 58.1227531433105,
-                    "y": 70.037841796875
+                    "x": 71.1687393188477,
+                    "y": -99.5599517822266
                 }
             },
             "name": "equalize_float",
@@ -372,7 +396,7 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 5
+                "index": 6
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -418,7 +442,7 @@
                 "method": "PMF propagation, 8-neighbourhood",
                 "weights/flatness": 1000.0,
                 "weights/inputs": 1.0,
-                "weights/smoothness": 10.0
+                "weights/smoothness": 1.0
             },
             "type": "opencv/lightfields/markov_random_field"
         },
@@ -426,12 +450,55 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -146.585159301758,
-                    "y": 277.160339355469
+                    "x": -138.373321533203,
+                    "y": 203.253814697266
                 }
             },
             "name": "max_index",
             "type": "opencv/sequence/max_index"
+        },
+        "median_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 80.9048080444336,
+                    "y": 41.4033317565918
+                }
+            },
+            "name": "median",
+            "ports": {
+                "kernel_size": 5
+            },
+            "type": "opencv/median"
+        },
+        "median_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -133.237945556641,
+                    "y": 338.985900878906
+                }
+            },
+            "name": "median",
+            "ports": {
+                "kernel_size": 5
+            },
+            "type": "opencv/median"
+        },
+        "multiply_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -96.2846908569336,
+                    "y": 839.907897949219
+                }
+            },
+            "name": "multiply",
+            "ports": {
+                "output_type": "Automatic",
+                "scale": 0.00400000018998981
+            },
+            "type": "opencv/multiply"
         },
         "network_0": {
             "blind_data": {
@@ -678,8 +745,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -144.930099487305,
-                    "y": 453.610992431641
+                    "x": -146.983062744141,
+                    "y": 548.047119140625
                 }
             },
             "name": "normalize",
@@ -706,13 +773,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 71.8817901611328,
-                    "y": 212.215408325195
+                    "x": 80.0936279296875,
+                    "y": 210.162445068359
                 }
             },
             "name": "pow",
             "ports": {
-                "power": 2.0
+                "power": 3.0
             },
             "type": "opencv/pow"
         },

@@ -73,7 +73,7 @@
             "out_port": "out"
         },
         {
-            "in_node": "colormap_0",
+            "in_node": "median_0",
             "in_port": "in_frame",
             "out_node": "normalize_0",
             "out_port": "out_frame"
@@ -89,6 +89,12 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "colormap_0",
+            "in_port": "in_frame",
+            "out_node": "median_0",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Correspondence depth reconstruction\n\nThis demo shows raw depth reconstruction using the correspondence metric of depth values - i.e., for each pixel, the algorithm picks the depth value where the variance of integrated samples was lowest.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
@@ -98,7 +104,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 521.154479980469,
-                    "y": 924.697143554688
+                    "y": 1053.92114257812
                 }
             },
             "name": "colormap",
@@ -112,7 +118,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 520.956237792969,
-                    "y": 1079.42321777344
+                    "y": 1208.64721679688
                 }
             },
             "name": "concat",
@@ -143,7 +149,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 650.292907714844,
-                    "y": 874.126953125
+                    "y": 1003.35095214844
                 }
             },
             "name": "convert",
@@ -243,12 +249,26 @@
             "name": "max_index",
             "type": "opencv/sequence/max_index"
         },
+        "median_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 523.354858398438,
+                    "y": 897.3642578125
+                }
+            },
+            "name": "median",
+            "ports": {
+                "kernel_size": 11
+            },
+            "type": "opencv/median"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 585.312683105469,
-                    "y": 1248.009765625
+                    "y": 1377.23376464844
                 }
             },
             "connections": [

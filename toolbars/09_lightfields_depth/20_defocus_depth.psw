@@ -73,6 +73,12 @@
             "out_port": "out"
         },
         {
+            "in_node": "median_0",
+            "in_port": "in_frame",
+            "out_node": "normalize_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "max_index_0",
             "in_port": "in",
             "out_node": "pixel_normalize_0",
@@ -87,7 +93,7 @@
         {
             "in_node": "colormap_0",
             "in_port": "in_frame",
-            "out_node": "normalize_0",
+            "out_node": "median_0",
             "out_port": "out_frame"
         }
     ],
@@ -98,7 +104,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 1903.0732421875,
-                    "y": 946.594299316406
+                    "y": 1100.56604003906
                 }
             },
             "name": "colormap",
@@ -112,7 +118,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 1904.92797851562,
-                    "y": 1101.3203125
+                    "y": 1255.29211425781
                 }
             },
             "name": "concat",
@@ -127,7 +133,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 2034.26477050781,
-                    "y": 896.024108886719
+                    "y": 1049.99584960938
                 }
             },
             "name": "convert",
@@ -198,7 +204,7 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 4
+                "index": 0
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -241,12 +247,26 @@
             "name": "max_index",
             "type": "opencv/sequence/max_index"
         },
+        "median_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1896.46826171875,
+                    "y": 944.7529296875
+                }
+            },
+            "name": "median",
+            "ports": {
+                "kernel_size": 11
+            },
+            "type": "opencv/median"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 1969.28430175781,
-                    "y": 1269.90686035156
+                    "y": 1423.87866210938
                 }
             },
             "connections": [
@@ -453,7 +473,7 @@
                     },
                     "name": "opencv_texture",
                     "ports": {
-                        "mode": "Nearest",
+                        "mode": "Linear",
                         "name": "image"
                     },
                     "type": "render/uniforms/opencv_texture"
@@ -594,5 +614,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABAwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABeQAAAmgAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGcAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACEgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACiAAAAVkAAACqAQAAAwAABDoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
