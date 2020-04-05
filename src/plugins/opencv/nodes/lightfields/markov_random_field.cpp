@@ -58,12 +58,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 	});
 
+	std::unique_ptr<lightfields::Neighbours> neighbours =
+		lightfields::Neighbours::create(lightfields::Neighbours::Type(data.get(a_method).intValue() % 20), lightfields::V2i(in.cols, in.rows));
+
 	cv::Mat result;
 	if(data.get(a_method).intValue() < 20)
 		result = lightfields::MRF::solveICM(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit),
-			*lightfields::Neighbours::create(lightfields::Neighbours::Type(data.get(a_method).intValue()), lightfields::V2i(in.cols, in.rows)));
+			*neighbours);
 	else
-		result = lightfields::MRF::solvePropagation(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit));
+		result = lightfields::MRF::solvePropagation(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit),
+			*neighbours);
 
 	data.set(a_out, possumwood::opencv::Frame(result));
 

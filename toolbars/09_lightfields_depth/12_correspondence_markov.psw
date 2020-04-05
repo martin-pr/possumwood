@@ -415,10 +415,10 @@
             "name": "markov_random_field",
             "ports": {
                 "iterations_limit": 100,
-                "method": "PMF propagation, 4-neighbourhood",
-                "weights/flatness": 100.0,
+                "method": "PMF propagation, 8-neighbourhood",
+                "weights/flatness": 1000.0,
                 "weights/inputs": 1.0,
-                "weights/smoothness": 0.0
+                "weights/smoothness": 10.0
             },
             "type": "opencv/lightfields/markov_random_field"
         },

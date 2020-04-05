@@ -160,16 +160,7 @@ class Grid {
 
 }
 
-cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit) {
-	// std::unique_ptr<Neighbours> neighbours;
-	// if(neighbourhood == k4)
-	// 	neighbours = std::unique_ptr<Neighbours>(new Neighbours_4());
-	// if(neighbourhood == k8)
-	// 	neighbours = std::unique_ptr<Neighbours>(new Neighbours_8());
-	// if(neighbourhood == k8Weighted)
-	// 	neighbours = std::unique_ptr<Neighbours>(new Neighbours_8_Weighted());
-	// assert(neighbours);
-
+cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, const Neighbours& neighbourhood) {
 	// find the range of values
 	MinMax minmax(0);
 	for(int y=0;y<source.size().y;++y)
@@ -197,26 +188,10 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 					PMF flatness = PMF(minmax.max+1);
 					float norm = 0.0f;
 
-					// neighbours->eval(V2i(x, y), state, [&](int n, float weight) {
-					// 	e_smooth += (val - n) * weight;
-					// 	++e_smooth_norm += weight;
-					// });
-
-
-					if(x > 0) {
-						flatness = PMF::combine(flatness, norm, state(y, x-1), 1.0f);
-						norm += 1.0f;
-					}
-					if(x < grid.cols()-1) {
-						flatness = PMF::combine(flatness, norm, state(y, x+1), 1.0f);
-						norm += 1.0f;
-					}
-					if(y > 0) {
-						flatness = PMF::combine(flatness, norm, state(y-1, x), 1.0f);
-						norm += 1.0f;
-					}
-					if(y < grid.rows()-1)
-						flatness = PMF::combine(flatness, norm, state(y+1, x), 1.0f);
+					neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
+						flatness = PMF::combine(flatness, norm, state(pos.y, pos.x), weight);
+						norm += weight;
+					});
 
 					current = PMF::combine(current, inputsWeight, flatness, flatnessWeight);
 
