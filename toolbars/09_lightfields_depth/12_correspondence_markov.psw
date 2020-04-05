@@ -1,6 +1,12 @@
 {
     "connections": [
         {
+            "in_node": "multiply_0",
+            "in_port": "in_frame_2",
+            "out_node": "color_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "concat_0",
             "in_port": "in_frame_2",
             "out_node": "colormap_0",
@@ -127,6 +133,30 @@
             "out_port": "out"
         },
         {
+            "in_node": "pow_0",
+            "in_port": "in_frame",
+            "out_node": "median_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "normalize_0",
+            "in_port": "in_frame",
+            "out_node": "median_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "markov_random_field_0",
+            "in_port": "in",
+            "out_node": "median_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_2",
+            "in_port": "in_frame_1",
+            "out_node": "multiply_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "colormap_0",
             "in_port": "in_frame",
             "out_node": "normalize_0",
@@ -155,39 +185,9 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "pow_0",
-            "in_port": "in_frame",
-            "out_node": "median_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "normalize_0",
-            "in_port": "in_frame",
-            "out_node": "median_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "markov_random_field_0",
-            "in_port": "in",
-            "out_node": "median_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_2",
-            "in_port": "in_frame_1",
-            "out_node": "multiply_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "multiply_0",
-            "in_port": "in_frame_2",
-            "out_node": "color_0",
-            "out_port": "out_frame"
         }
     ],
-    "description": "### Correspondence-based depth reconstructed using Markov Random Fields belief propagation\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values.\n\nIn the bottom-right image, the correspondence value's brightness is altered using a confidence metric value, based on the shape of the correspondence curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
+    "description": "### Correspondence-based depth reconstructed using Markov Random Fields belief propagation\n\nThis demo shows reconstructs the lightfield depth using the correspondence metric of depth values, and propagates it based on the confidence value for each reconstructed pixel.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
     "nodes": {
         "color_0": {
             "blind_data": {
