@@ -48,9 +48,14 @@ struct MinMax {
 	int min, max;
 };
 
-struct Neighbours_4 {
-	template<typename FN>
-	void eval(const V2i& pos, const cv::Mat& state, const FN& fn) const {
+struct Neighbours {
+	virtual ~Neighbours() {}
+
+	virtual void eval(const V2i& pos, const cv::Mat& state, const std::function<void(int, float)>& fn) const = 0;
+};
+
+struct Neighbours_4 : public Neighbours {
+	virtual void eval(const V2i& pos, const cv::Mat& state, const std::function<void(int, float)>& fn) const override {
 		if(pos.x > 0)
 			fn(state.at<unsigned char>(pos.y, pos.x-1), 1);
 		if(pos.x < state.cols-1)
@@ -62,9 +67,8 @@ struct Neighbours_4 {
 	}
 };
 
-struct Neighbours_8 {
-	template<typename FN>
-	void eval(const V2i& pos, const cv::Mat& state, const FN& fn) const {
+struct Neighbours_8 : public Neighbours {
+	virtual void eval(const V2i& pos, const cv::Mat& state, const std::function<void(int, float)>& fn) const override {
 		int min_x = std::max(0, pos.x-1);
 		int min_y = std::max(0, pos.y-1);
 		int max_x = std::min(pos.x+1, state.cols-1);
@@ -77,9 +81,8 @@ struct Neighbours_8 {
 	}
 };
 
-struct Neighbours_8_Weighted {
-	template<typename FN>
-	void eval(const V2i& pos, const cv::Mat& state, const FN& fn) const {
+struct Neighbours_8_Weighted : public Neighbours {
+	virtual void eval(const V2i& pos, const cv::Mat& state, const std::function<void(int, float)>& fn) const {
 		int min_x = std::max(0, pos.x-1);
 		int min_y = std::max(0, pos.y-1);
 		int max_x = std::min(pos.x+1, state.cols-1);
@@ -91,8 +94,8 @@ struct Neighbours_8_Weighted {
 					fn(state.at<unsigned char>(y, x), 1 + (x == pos.x || y == pos.y));
 	}
 };
-template<class NEIGHBOURS>
-float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inputsWeight, float flatnessWeight, float smoothnessWeight, const NEIGHBOURS& neighbours) {
+
+float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inputsWeight, float flatnessWeight, float smoothnessWeight, const Neighbours& neighbours) {
 	// first find the min and max candidates
 	MinMax minmax(source[pos].value);
 	minmax.add(state.at<unsigned char>(pos.y, pos.x));
@@ -142,16 +145,14 @@ float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inp
 }
 
 cv::Mat MRF::solveICM(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, ICMNeighbourhood neighbourhood) {
-	using namespace std::placeholders;
-
-	std::function<float(const MRF&, const cv::Mat&, const V2i&, float, float, float)> evaluate;
+	std::unique_ptr<Neighbours> neighbours;
 	if(neighbourhood == k4)
-		evaluate = std::bind(evalICM<Neighbours_4>, _1, _2, _3, _4, _5, _6, Neighbours_4());
+		neighbours = std::unique_ptr<Neighbours>(new Neighbours_4());
 	if(neighbourhood == k8)
-		evaluate = std::bind(evalICM<Neighbours_8>, _1, _2, _3, _4, _5, _6, Neighbours_8());
-	else if(neighbourhood == k8Weighted)
-		evaluate = std::bind(evalICM<Neighbours_8_Weighted>, _1, _2, _3, _4, _5, _6, Neighbours_8_Weighted());
-	assert(evaluate);
+		neighbours = std::unique_ptr<Neighbours>(new Neighbours_8());
+	if(neighbourhood == k8Weighted)
+		neighbours = std::unique_ptr<Neighbours>(new Neighbours_8_Weighted());
+	assert(neighbours);
 
 	cv::Mat state = cv::Mat::zeros(source.size().y, source.size().x, CV_8UC1);
 
@@ -165,9 +166,8 @@ cv::Mat MRF::solveICM(const MRF& source, float inputsWeight, float flatnessWeigh
 
 		tbb::parallel_for(tbb::blocked_range2d<int>(0, source.size().y, 0, source.size().x), [&](const tbb::blocked_range2d<int>& range) {
 			for(int y=range.rows().begin(); y != range.rows().end(); ++y)
-				for(int x=range.cols().begin(); x != range.cols().end(); ++x) {
-					result.at<unsigned char>(y, x) = evaluate(source, state, V2i(x, y), inputsWeight, flatnessWeight, smoothnessWeight);
-				}
+				for(int x=range.cols().begin(); x != range.cols().end(); ++x)
+					result.at<unsigned char>(y, x) = evalICM(source, state, V2i(x, y), inputsWeight, flatnessWeight, smoothnessWeight, *neighbours);
 		});
 	}
 
