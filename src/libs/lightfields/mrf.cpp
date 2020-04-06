@@ -8,6 +8,7 @@
 #include <tbb/blocked_range2d.h>
 
 #include "pmf.h"
+#include "grid.h"
 
 namespace lightfields {
 
@@ -120,46 +121,6 @@ cv::Mat MRF::solveICM(const MRF& source, float inputsWeight, float flatnessWeigh
 
 ///////////////////////
 
-namespace {
-
-class Grid {
-	public:
-		Grid(unsigned rows, unsigned cols, unsigned layers) : m_rows(rows), m_cols(cols), m_layers(layers), m_p(rows*cols, PMF(layers)) {
-		}
-
-		PMF& operator() (unsigned row, unsigned col) {
-			assert(row < m_rows && col < m_cols);
-			return m_p[row * m_cols + col];
-		}
-
-		const PMF& operator() (unsigned row, unsigned col) const {
-			assert(row < m_rows && col < m_cols);
-			return m_p[row * m_cols + col];
-		}
-
-		unsigned rows() const {
-			return m_rows;
-		}
-
-		unsigned cols() const {
-			return m_cols;
-		}
-
-		void swap(Grid& g) {
-			std::swap(g.m_rows, m_rows);
-			std::swap(g.m_cols, m_cols);
-			std::swap(g.m_layers, m_layers);
-
-			m_p.swap(g.m_p);
-		}
-
-	private:
-		unsigned m_rows, m_cols, m_layers;
-		std::vector<PMF> m_p;
-};
-
-}
-
 cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, const Neighbours& neighbourhood) {
 	// find the range of values
 	MinMax minmax(0);
@@ -168,7 +129,7 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 			minmax.add(source[V2i(x, y)].value);
 
 	// build a grid of probability mass functions
-	Grid grid(source.size().y, source.size().x, minmax.max+1);
+	Grid<PMF> grid(source.size().y, source.size().x, PMF(minmax.max+1));
 	for(int y=0;y<source.size().y;++y)
 		for(int x=0;x<source.size().x;++x)
 			grid(y, x) = PMF::fromConfidence(source[V2i(x, y)].confidence, source[V2i(x, y)].value, minmax.max+1);
@@ -176,7 +137,7 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 	// todo: the main algorithm
 	const JointPMF diff = JointPMF::difference(minmax.max+1);
 
-	Grid state = grid;
+	Grid<PMF> state = grid;
 	for(std::size_t it=0; it<iterationLimit; ++it) {
 		grid.swap(state);
 

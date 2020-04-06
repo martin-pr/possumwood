@@ -7,7 +7,7 @@
 
 #include "index.h"
 #include "bfs_visitors.h"
-#include "grid.h"
+#include "graph.h"
 
 namespace lightfields {
 
@@ -17,7 +17,7 @@ struct QueueItem {
 	Index current, parent;
 };
 
-int flow(Grid& grid, const BFSVisitors& visitors, const Index& end) {
+int flow(Graph& grid, const BFSVisitors& visitors, const Index& end) {
 	assert(end.pos.x != -1 && end.pos.y != -1);
 	assert(end.n_layer == grid.layerCount()-1);
 
@@ -43,7 +43,7 @@ int flow(Grid& grid, const BFSVisitors& visitors, const Index& end) {
 	return result;
 }
 
-void doFlow(Grid& grid, const BFSVisitors& visitors, const Index& end, int flow) {
+void doFlow(Graph& grid, const BFSVisitors& visitors, const Index& end, int flow) {
 	assert(end.pos.x != -1 && end.pos.y != -1);
 	assert(end.n_layer == grid.layerCount()-1);
 
@@ -67,7 +67,7 @@ void doFlow(Grid& grid, const BFSVisitors& visitors, const Index& end, int flow)
 	assert(current.n_layer == 0);
 }
 
-bool iterate(Grid& grid, const tbb::blocked_range2d<int>& range) {
+bool iterate(Graph& grid, const tbb::blocked_range2d<int>& range) {
 	bool foundPath = false;
 
 	BFSVisitors visited(range, grid.layerCount());
@@ -160,7 +160,7 @@ bool iterate(Grid& grid, const tbb::blocked_range2d<int>& range) {
 
 }
 
-void EdmondsKarp::solve(Grid& grid) {
+void EdmondsKarp::solve(Graph& grid) {
 	std::size_t counter = 0;
 
 	tbb::task_group tasks;

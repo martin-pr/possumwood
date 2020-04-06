@@ -1,13 +1,13 @@
-#include "grid.h"
+#include "graph.h"
 
 namespace lightfields {
 
-Grid::Grid(const V2i& size, int n_link_value, std::size_t layer_count) : m_size(size), m_nLinkValue(n_link_value) {
+Graph::Graph(const V2i& size, int n_link_value, std::size_t layer_count) : m_size(size), m_nLinkValue(n_link_value) {
 	m_tLinks = std::vector<TLinks>(layer_count, TLinks(size));
 	m_nLinks = std::vector<NLinks>(layer_count, NLinks(size, n_link_value));
 }
 
-std::size_t Grid::v2i(const V2i& v) const {
+std::size_t Graph::v2i(const V2i& v) const {
 	return v.x + v.y*m_size.x;
 }
 
@@ -21,7 +21,7 @@ namespace {
 	}
 }
 
-void Grid::setValue(const V2i& pos, const std::vector<int>& values, float power) {
+void Graph::setValue(const V2i& pos, const std::vector<int>& values, float power) {
 	assert(values.size() == m_tLinks.size());
 
 	auto tit = m_tLinks.begin();
@@ -53,7 +53,7 @@ namespace {
 	}
 }
 
-void Grid::setLayer(const cv::Mat& vals, const std::size_t& index, float power) {
+void Graph::setLayer(const cv::Mat& vals, const std::size_t& index, float power) {
 	assert(index < m_nLinks.size());
 	assert(vals.rows == m_nLinks[index].size().y);
 	assert(vals.cols == m_nLinks[index].size().x);
@@ -74,15 +74,15 @@ void Grid::setLayer(const cv::Mat& vals, const std::size_t& index, float power) 
 		}
 }
 
-std::size_t Grid::layerCount() const {
+std::size_t Graph::layerCount() const {
 	return m_tLinks.size();
 }
 
-V2i Grid::size() const {
+V2i Graph::size() const {
 	return m_size;
 }
 
-Link::Direction& Grid::edge(const Index& source, const Index& target) {
+Link::Direction& Graph::edge(const Index& source, const Index& target) {
 	assert(Index::sqdist(source, target) == 1);
 
 	assert(source.n_layer <= layerCount());
@@ -120,7 +120,7 @@ Link::Direction& Grid::edge(const Index& source, const Index& target) {
 	}
 }
 
-const Link::Direction& Grid::edge(const Index& source, const Index& target) const {
+const Link::Direction& Graph::edge(const Index& source, const Index& target) const {
 	assert(Index::sqdist(source, target) == 1);
 
 	assert(source.n_layer <= layerCount());
@@ -154,7 +154,7 @@ const Link::Direction& Grid::edge(const Index& source, const Index& target) cons
 	}
 }
 
-cv::Mat Grid::minCut() const {
+cv::Mat Graph::minCut() const {
 	// collects all reachable nodes from source or sink, and marks them appropriately
 	cv::Mat result = cv::Mat::zeros(m_size.y, m_size.x, CV_8UC1);
 
@@ -208,7 +208,7 @@ cv::Mat Grid::minCut() const {
 	return result;
 }
 
-std::vector<cv::Mat> Grid::debug() const {
+std::vector<cv::Mat> Graph::debug() const {
 	std::vector<cv::Mat> result;
 	for(std::size_t a=0;a<m_nLinks.size(); ++a) {
 		result.push_back(n_flow(m_nLinks[a]));
@@ -218,7 +218,7 @@ std::vector<cv::Mat> Grid::debug() const {
 	return result;
 }
 
-cv::Mat Grid::t_flow(const TLinks& t) const {
+cv::Mat Graph::t_flow(const TLinks& t) const {
 	cv::Mat result(m_size.y, m_size.x, CV_8UC1);
 
 	for(int y=0; y<m_size.y; ++y)
@@ -233,7 +233,7 @@ cv::Mat Grid::t_flow(const TLinks& t) const {
 	return result;
 }
 
-cv::Mat Grid::n_flow(const NLinks& n) const {
+cv::Mat Graph::n_flow(const NLinks& n) const {
 	cv::Mat result(m_size.y, m_size.x, CV_8UC1);
 
 	for(int y=0; y<m_size.y; ++y)

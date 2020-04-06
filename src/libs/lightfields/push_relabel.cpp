@@ -12,7 +12,7 @@
 #include "labels.h"
 #include "active_queue.h"
 #include "index.h"
-#include "grid.h"
+#include "graph.h"
 
 namespace lightfields {
 
@@ -36,7 +36,7 @@ std::size_t index2val(const Index& i, const V2i& size) {
 	return result;
 }
 
-bool pushHoriz(Grid& grid, const Index& current, const Index& next, const Labels& label, int& excess, ActiveQueue& queue) {
+bool pushHoriz(Graph& grid, const Index& current, const Index& next, const Labels& label, int& excess, ActiveQueue& queue) {
 	assert(V2i::sqdist(current.pos, next.pos) == 1);
 	assert(current.n_layer == next.n_layer);
 	assert(current.n_layer < grid.layerCount());
@@ -60,7 +60,7 @@ bool pushHoriz(Grid& grid, const Index& current, const Index& next, const Labels
 	return false;
 }
 
-bool pushVertDown(Grid& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
+bool pushVertDown(Graph& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
 	assert(current.n_layer < grid.layerCount());
 
 	const Index next {current.pos, current.n_layer+1};
@@ -86,7 +86,7 @@ bool pushVertDown(Grid& grid, const Index& current, const Labels& label, int& ex
 	return false;
 }
 
-bool pushVertUp(Grid& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
+bool pushVertUp(Graph& grid, const Index& current, const Labels& label, int& excess, ActiveQueue& queue) {
 	assert(current.n_layer < grid.layerCount());
 
 	const std::size_t current_v = index2val(current, grid.size());
@@ -123,7 +123,7 @@ bool pushVertUp(Grid& grid, const Index& current, const Labels& label, int& exce
 	return false;
 }
 
-void updateLabel(unsigned& label, const Index& current, const Index& target, const Grid& grid, const Labels& labels) {
+void updateLabel(unsigned& label, const Index& current, const Index& target, const Graph& grid, const Labels& labels) {
 	auto& e = grid.edge(current, target);
 	if(e.residualCapacity() > 0) {
 		const std::size_t target_v = index2val(target, grid.size());
@@ -131,7 +131,7 @@ void updateLabel(unsigned& label, const Index& current, const Index& target, con
 	}
 }
 
-bool relabel(const Grid& grid, const Index& current, Labels& labels) {
+bool relabel(const Graph& grid, const Index& current, Labels& labels) {
 	assert(current.n_layer < grid.layerCount());
 
 	const std::size_t current_v = index2val(current, grid.size());
@@ -175,7 +175,7 @@ bool relabel(const Grid& grid, const Index& current, Labels& labels) {
 	return false;
 }
 
-bool relabelBFS(const Index& source, const Index& current, const unsigned current_val, Labels& labels, std::queue<Index>& queue, const Grid& grid) {
+bool relabelBFS(const Index& source, const Index& current, const unsigned current_val, Labels& labels, std::queue<Index>& queue, const Graph& grid) {
 	if(grid.edge(source, current).residualCapacity() > 0) {
 		if(labels[index2val(source, grid.size())] > current_val + 1) {
 			labels[index2val(source, grid.size())] = current_val + 1;
@@ -188,7 +188,7 @@ bool relabelBFS(const Index& source, const Index& current, const unsigned curren
 	return false;
 }
 
-std::size_t relabelAll(const Grid& grid, Labels& labels, ActiveQueue& active) {
+std::size_t relabelAll(const Graph& grid, Labels& labels, ActiveQueue& active) {
 	// back-tracing BFS
 	labels.clear(grid.size().x * grid.size().y * grid.layerCount() + 1);
 
@@ -242,7 +242,7 @@ std::size_t relabelAll(const Grid& grid, Labels& labels, ActiveQueue& active) {
 
 }
 
-void PushRelabel::solve(Grid& grid) {
+void PushRelabel::solve(Graph& grid) {
 	assert(grid.layerCount() > 1);
 
 	Labels label(grid.size().x * grid.size().y * grid.layerCount(), grid.size().x * grid.size().y * grid.layerCount());

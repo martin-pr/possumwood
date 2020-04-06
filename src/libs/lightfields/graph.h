@@ -11,9 +11,9 @@
 namespace lightfields {
 
 /// An abstraction of a grid graph - interconnected layers, with horizontal N links and vertical T links
-class Grid {
+class Graph {
 	public:
-		Grid(const V2i& size, int n_link_value, std::size_t layer_count);
+		Graph(const V2i& size, int n_link_value, std::size_t layer_count);
 
 		// sets the value of all T links in a "stack"
 		void setValue(const V2i& pos, const std::vector<int>& values, float power = 1.0f);

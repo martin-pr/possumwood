@@ -2,10 +2,10 @@
 
 namespace lightfields {
 
-class Grid;
+class Graph;
 
 struct EdmondsKarp {
-	static void solve(Grid& grid);
+	static void solve(Graph& grid);
 };
 
 }
