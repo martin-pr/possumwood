@@ -185,12 +185,17 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 				for(unsigned x=range.cols().begin(); x != range.cols().end(); ++x) {
 					PMF current = PMF::fromConfidence(source[V2i(x, y)].confidence, source[V2i(x, y)].value, minmax.max+1);
 
-					PMF flatness = PMF(minmax.max+1);
-					float norm = 0.0f;
+					// PMF flatness = PMF(minmax.max+1);
+					// float norm = 0.0f;
 
+					// neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
+					// 	flatness = PMF::combine(flatness, norm, state(pos.y, pos.x), weight);
+					// 	norm += weight;
+					// });
+
+					PMF flatness = PMF(minmax.max+1);
 					neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
-						flatness = PMF::combine(flatness, norm, state(pos.y, pos.x), weight);
-						norm += weight;
+						flatness = flatness * state(pos.y, pos.x);
 					});
 
 					current = PMF::combine(current, inputsWeight, flatness, flatnessWeight);
