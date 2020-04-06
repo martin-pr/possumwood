@@ -9,6 +9,7 @@
 
 #include "pmf.h"
 #include "grid.h"
+#include "pdf_gaussian.h"
 
 namespace lightfields {
 
@@ -171,6 +172,61 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 	for(unsigned y=0;y<grid.rows();++y)
 		for(unsigned x=0;x<grid.cols();++x)
 			result.at<unsigned char>(y, x) = grid(y, x).max();
+	return result;
+}
+
+cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, const Neighbours& neighbourhood) {
+	// find the range of values
+	MinMax minmax(0);
+	for(int y=0;y<source.size().y;++y)
+		for(int x=0;x<source.size().x;++x)
+			minmax.add(source[V2i(x, y)].value);
+
+	// build a grid of probability mass functions
+	Grid<PDFGaussian> grid(source.size().y, source.size().x, PDFGaussian(0, 0));
+	for(int y=0;y<source.size().y;++y)
+		for(int x=0;x<source.size().x;++x)
+			grid(y, x) = PDFGaussian::fromPeak(source[V2i(x, y)].value, source[V2i(x, y)].confidence);
+
+	// todo: the main algorithm
+	const JointPMF diff = JointPMF::difference(minmax.max+1);
+
+	Grid<PDFGaussian> state = grid;
+	for(std::size_t it=0; it<iterationLimit; ++it) {
+		grid.swap(state);
+
+		tbb::parallel_for(tbb::blocked_range2d<unsigned>(0u, grid.rows(), 0u, grid.cols()), [&](const tbb::blocked_range2d<unsigned>& range) {
+			for(unsigned y=range.rows().begin(); y != range.rows().end(); ++y)
+				for(unsigned x=range.cols().begin(); x != range.cols().end(); ++x) {
+					PDFGaussian current = PDFGaussian::fromPeak(source[V2i(x, y)].value, source[V2i(x, y)].confidence);
+
+					// PMF flatness = PMF(minmax.max+1);
+					// float norm = 0.0f;
+
+					// neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
+					// 	flatness = PMF::combine(flatness, norm, state(pos.y, pos.x), weight);
+					// 	norm += weight;
+					// });
+
+					PDFGaussian flatness(0,0);
+					float norm = 0.0f;
+					neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
+						flatness = flatness + state(pos.y, pos.x) * weight;
+						norm += weight;
+					});
+
+					current = (current * inputsWeight + flatness / norm * flatnessWeight) / (inputsWeight + flatnessWeight);
+
+					grid(y, x) = current;
+				}
+		});
+	}
+
+	// convert the result to a cv::Mat by picking the highest probability for each pixel
+	cv::Mat result = cv::Mat::zeros(grid.rows(), grid.cols(), CV_8UC1);
+	for(unsigned y=0;y<grid.rows();++y)
+		for(unsigned x=0;x<grid.cols();++x)
+			result.at<unsigned char>(y, x) = grid(y, x).mu();
 	return result;
 }
 
