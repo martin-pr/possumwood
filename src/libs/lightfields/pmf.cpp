@@ -47,6 +47,7 @@ unsigned PMF::max() const {
 }
 
 PMF PMF::combine(const PMF& p1, float w1, const PMF& p2, float w2) {
+	// this should be implemented as a convolution. However, we'd need to normalize the result afterwards anyway, which will lead to simple sum no matter what.
 	assert(p1.size() == p2.size());
 	assert(w1 >= 0.0f && w2 >= 0.0f);
 
@@ -127,6 +128,7 @@ PMF operator *(const float& weight, const PMF& p) {
 }
 
 PMF operator +(const PMF& p1, const PMF& p2) {
+	// this should be implemented as a convolution. However, we'd need to normalize the result afterwards anyway, which will lead to simple sum no matter what.
 	assert(p1.size() == p2.size());
 
 	PMF result(p1.size());
