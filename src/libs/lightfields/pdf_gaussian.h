@@ -24,7 +24,7 @@ class PDFGaussian {
 			if(std::isinf(m_sigma))
 				return 0.0f;
 
-			return 1.0f / (m_sigma * sqrt(2.0f * M_PI)) * std::exp(-0.5f * pow((val - m_mu) / m_sigma, 2));
+			return 1.0f / (m_sigma * sqrt(2.0f * M_PI)) * std::exp(-0.5f * std::pow((val - m_mu) / m_sigma, 2));
 		}
 
 		float sigma() const {
@@ -33,6 +33,11 @@ class PDFGaussian {
 
 		float mu() const {
 			return m_mu;
+		}
+
+		static PDFGaussian pow(const PDFGaussian& p, float power) {
+			assert(power > 0.0f && "Only positive powers supported (for now)");
+			return PDFGaussian(p.mu(), p.sigma() / std::sqrt(power));
 		}
 
 	private:
@@ -76,7 +81,7 @@ PDFGaussian operator*(const PDFGaussian& p1, const PDFGaussian& p2) {
 			(p2.mu() * std::pow(p1.sigma(), 2) + p1.mu() * std::pow(p2.sigma(), 2)) /
 			(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2)),
 		std::sqrt(
-			std::pow(p1.sigma(), 2) * std::pow(p2.sigma(), 2) /
+			(std::pow(p1.sigma(), 2) * std::pow(p2.sigma(), 2)) /
 			(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2))
 		)
 	);

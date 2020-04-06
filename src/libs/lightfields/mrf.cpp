@@ -201,15 +201,20 @@ cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeigh
 					PDFGaussian current = PDFGaussian::fromPeak(source[V2i(x, y)].value, source[V2i(x, y)].confidence);
 
 					PDFGaussian flatness = PDFGaussian::fromPeak(0,0); // zero probability limit
-					// float norm = 0.0f;
+					float norm = 0.0f;
 					neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
 						// flatness = flatness + state(pos.y, pos.x) * weight;
-						// norm += weight;
 
-						flatness = flatness * state(pos.y, pos.x);
+						flatness = flatness * PDFGaussian::pow(state(pos.y, pos.x), weight);
+
+						norm += weight;
 					});
+					flatness = PDFGaussian::pow(flatness, 1.0f / norm);
 
-					current = (current * inputsWeight + flatness * flatnessWeight) / (inputsWeight + flatnessWeight);
+					// current = (current * inputsWeight + flatness * flatnessWeight) / (inputsWeight + flatnessWeight);
+
+					const float wnorm = inputsWeight + flatnessWeight;
+					current = PDFGaussian::pow(current, inputsWeight / wnorm) * PDFGaussian::pow(flatness, flatnessWeight / wnorm);
 
 					grid(y, x) = current;
 				}
