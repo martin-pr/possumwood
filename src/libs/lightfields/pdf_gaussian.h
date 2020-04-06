@@ -5,7 +5,8 @@
 
 namespace lightfields {
 
-/// A simple representation of Gaussian Probability Distribution Function
+/// A simple representation of Gaussian Probability Distribution Function.
+/// Based on Bromiley, Paul. "Products and convolutions of Gaussian probability density functions." Tina-Vision Memo 3.4 (2003): 1.
 class PDFGaussian {
 	public:
 		static PDFGaussian fromPeak(float mu, float confidence) {
@@ -61,6 +62,24 @@ PDFGaussian operator/(const PDFGaussian& p, float val) {
 PDFGaussian operator+(const PDFGaussian& p1, const PDFGaussian& p2) {
 	// return PDFGaussian(p1.mu() + p2.mu(), p1.sigma() + p2.sigma());
 	return PDFGaussian(p1.mu() + p2.mu(), std::sqrt(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2)));
+}
+
+PDFGaussian operator*(const PDFGaussian& p1, const PDFGaussian& p2) {
+	// using limits
+	if(std::isnan(p2.sigma()))
+		return p1;
+	if(std::isnan(p1.sigma()))
+		return p2;
+
+	// using the actual equation
+	return PDFGaussian(
+			(p2.mu() * std::pow(p1.sigma(), 2) + p1.mu() * std::pow(p2.sigma(), 2)) /
+			(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2)),
+		std::sqrt(
+			std::pow(p1.sigma(), 2) * std::pow(p2.sigma(), 2) /
+			(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2))
+		)
+	);
 }
 
 }
