@@ -73,7 +73,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_nearest_0",
+            "in_node": "integrate_gaussian_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -127,7 +127,7 @@
             "out_port": "samples"
         },
         {
-            "in_node": "integrate_nearest_0",
+            "in_node": "integrate_gaussian_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
             "out_port": "out_samples"
@@ -153,19 +153,19 @@
         {
             "in_node": "laplacian_smoothness_0",
             "in_port": "in_frame",
-            "out_node": "integrate_nearest_0",
+            "out_node": "integrate_gaussian_0",
             "out_port": "out_frame"
         },
         {
             "in_node": "gamma_0",
             "in_port": "in_frame",
-            "out_node": "integrate_nearest_0",
+            "out_node": "integrate_gaussian_0",
             "out_port": "out_frame"
         },
         {
             "in_node": "equalize_float_0",
             "in_port": "in_frame",
-            "out_node": "integrate_nearest_0",
+            "out_node": "integrate_gaussian_0",
             "out_port": "correspondence"
         }
     ],
@@ -392,22 +392,23 @@
             },
             "type": "opencv/gamma"
         },
-        "integrate_nearest_0": {
+        "integrate_gaussian_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 379.003112792969,
-                    "y": 197.203994750977
+                    "x": 450.277557373047,
+                    "y": 189.408203125
                 }
             },
-            "name": "integrate_nearest",
+            "name": "integrate_gaussian",
             "ports": {
+                "sigma": 8.0,
                 "size": {
                     "x": 300,
                     "y": 300
                 }
             },
-            "type": "opencv/lightfields/integrate_nearest"
+            "type": "opencv/lightfields/integrate_gaussian"
         },
         "laplacian_smoothness_0": {
             "blind_data": {
@@ -419,7 +420,7 @@
             },
             "name": "laplacian_smoothness",
             "ports": {
-                "kernel": "24_shaped"
+                "kernel": "8_uniform"
             },
             "type": "opencv/laplacian_smoothness"
         },
@@ -765,7 +766,7 @@
             },
             "name": "samples_from_metadata",
             "ports": {
-                "scale_compensation": 1.0
+                "scale_compensation": 0.998849987983704
             },
             "type": "opencv/lightfields/samples_from_metadata"
         },
@@ -803,5 +804,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAOgAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACqAQAAAwAAAjYAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAANRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACqAQAAAwAAAoUAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

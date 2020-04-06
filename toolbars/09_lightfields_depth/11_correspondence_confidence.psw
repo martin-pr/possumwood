@@ -121,10 +121,22 @@
             "out_port": "frame"
         },
         {
-            "in_node": "normalize_0",
+            "in_node": "median_1",
             "in_port": "in_frame",
             "out_node": "max_index_0",
             "out_port": "out"
+        },
+        {
+            "in_node": "pow_0",
+            "in_port": "in_frame",
+            "out_node": "median_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "normalize_0",
+            "in_port": "in_frame",
+            "out_node": "median_1",
+            "out_port": "out_frame"
         },
         {
             "in_node": "concat_2",
@@ -155,12 +167,6 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "pow_0",
-            "in_port": "in_frame",
-            "out_node": "median_0",
-            "out_port": "out_frame"
         }
     ],
     "description": "### Correspondence depth reconstruction with confidence measure\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values.\n\nIn the bottom-right image, the correspondence value's brightness is altered using a confidence metric value, based on the shape of the correspondence curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
@@ -271,8 +277,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1787.81225585938,
-                    "y": 494.730621337891
+                    "x": 1789.865234375,
+                    "y": 301.752655029297
                 }
             },
             "name": "convert",
@@ -372,7 +378,7 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 5
+                "index": 10
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -408,8 +414,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1948.42114257812,
-                    "y": 592.380676269531
+                    "x": 1950.47412109375,
+                    "y": 399.402709960938
                 }
             },
             "name": "max_index",
@@ -425,7 +431,21 @@
             },
             "name": "median",
             "ports": {
-                "kernel_size": 5
+                "kernel_size": 1
+            },
+            "type": "opencv/median"
+        },
+        "median_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1949.83349609375,
+                    "y": 535.828430175781
+                }
+            },
+            "name": "median",
+            "ports": {
+                "kernel_size": 1
             },
             "type": "opencv/median"
         },
@@ -448,8 +468,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2002.69018554688,
-                    "y": 1632.81787109375
+                    "x": 1993.23962402344,
+                    "y": 1689.44812011719
                 }
             },
             "connections": [
@@ -656,7 +676,7 @@
                     },
                     "name": "opencv_texture",
                     "ports": {
-                        "mode": "Nearest",
+                        "mode": "Linear",
                         "name": "image"
                     },
                     "type": "render/uniforms/opencv_texture"
@@ -797,5 +817,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKWAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAcwAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABxQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACOwAAAaYAAACqAQAAAwAAAxwAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABxQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACOwAAAaYAAACqAQAAAwAAA2UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
