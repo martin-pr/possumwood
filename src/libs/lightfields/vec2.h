@@ -22,6 +22,14 @@ struct Vec2 {
 		return (v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y);
 	}
 
+	Vec2 operator -(const Vec2& other) const {
+		return Vec2(x - other.x, y - other.y);
+	}
+
+	Vec2 operator +(const Vec2& other) const {
+		return Vec2(x + other.x, y + other.y);
+	}
+
 	T x, y;
 };
 

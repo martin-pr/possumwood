@@ -2,7 +2,6 @@
 
 #include <opencv2/opencv.hpp>
 
-#include <possumwood_sdk/datatypes/enum.h>
 #include <actions/traits.h>
 
 #include "frame.h"
@@ -10,7 +9,7 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
-dependency_graph::InAttr<possumwood::Enum> a_type;
+dependency_graph::InAttr<unsigned> a_kernelSize;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
 static const std::vector<std::pair<std::string, int>> s_modes {
@@ -31,7 +30,7 @@ static const std::vector<std::pair<std::string, int>> s_modes {
 dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result = (*data.get(a_inFrame)).clone();
 
-	cv::applyColorMap(*data.get(a_inFrame), result, data.get(a_type).intValue());
+	cv::medianBlur(*data.get(a_inFrame), result, data.get(a_kernelSize));
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
@@ -40,15 +39,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_type, "type", possumwood::Enum(s_modes.begin(), s_modes.end()));
+	meta.addAttribute(a_kernelSize, "kernel_size", 5u);
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
-	meta.addInfluence(a_type, a_outFrame);
+	meta.addInfluence(a_kernelSize, a_outFrame);
 
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/colormap", init);
+possumwood::NodeImplementation s_impl("opencv/median", init);
 
 }
