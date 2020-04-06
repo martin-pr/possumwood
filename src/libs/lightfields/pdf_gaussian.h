@@ -36,7 +36,11 @@ class PDFGaussian {
 		}
 
 		static PDFGaussian pow(const PDFGaussian& p, float power) {
-			assert(power > 0.0f && "Only positive powers supported (for now)");
+			assert(power >= 0.0f && "Only positive powers supported (for now)");
+
+			if(power == 0.0f)
+				return fromPeak(0, 0);
+
 			return PDFGaussian(p.mu(), p.sigma() / std::sqrt(power));
 		}
 
@@ -71,9 +75,9 @@ PDFGaussian operator+(const PDFGaussian& p1, const PDFGaussian& p2) {
 
 PDFGaussian operator*(const PDFGaussian& p1, const PDFGaussian& p2) {
 	// using limits
-	if(std::isnan(p2.sigma()))
+	if(std::isinf(p2.sigma()))
 		return p1;
-	if(std::isnan(p1.sigma()))
+	if(std::isinf(p1.sigma()))
 		return p2;
 
 	// using the actual equation
