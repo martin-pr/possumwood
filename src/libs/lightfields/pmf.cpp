@@ -47,6 +47,7 @@ unsigned PMF::max() const {
 }
 
 PMF PMF::combine(const PMF& p1, float w1, const PMF& p2, float w2) {
+	// this should be implemented as a convolution. However, we'd need to normalize the result afterwards anyway, which will lead to simple sum no matter what.
 	assert(p1.size() == p2.size());
 	assert(w1 >= 0.0f && w2 >= 0.0f);
 
@@ -110,28 +111,29 @@ float JointPMF::p(unsigned row, unsigned col) const {
 
 //////////////////////
 
-PMF operator *(const PMF& p, const float& weight) {
-	assert(weight >= 0.0f);
-
-	PMF result = p;
-
-	return result;
-}
-
-PMF operator *(const float& weight, const PMF& p) {
-	assert(weight >= 0.0f);
-
-	PMF result = p;
-
-	return result;
-}
-
 PMF operator +(const PMF& p1, const PMF& p2) {
+	// this should be implemented as a convolution. However, we'd need to normalize the result afterwards anyway, which will lead to simple sum no matter what.
 	assert(p1.size() == p2.size());
 
 	PMF result(p1.size());
 	for(unsigned a=0;a<p1.size();++a)
 		result.m_p[a] = (p1.m_p[a] + p2.m_p[a]) / 2.0f;
+
+	return result;
+}
+
+PMF operator *(const PMF& p1, const PMF& p2) {
+	assert(p1.size() == p2.size());
+
+	PMF result(p1.size());
+	float norm = 0.0f;
+	for(unsigned a=0;a<p1.size();++a) {
+		result.m_p[a] = p1.m_p[a] * p2.m_p[a];
+		norm += result.m_p[a];
+	}
+
+	for(unsigned a=0;a<p1.size();++a)
+		result.m_p[a] /= norm;
 
 	return result;
 }

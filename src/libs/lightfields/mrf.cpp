@@ -8,6 +8,8 @@
 #include <tbb/blocked_range2d.h>
 
 #include "pmf.h"
+#include "grid.h"
+#include "pdf_gaussian.h"
 
 namespace lightfields {
 
@@ -120,46 +122,6 @@ cv::Mat MRF::solveICM(const MRF& source, float inputsWeight, float flatnessWeigh
 
 ///////////////////////
 
-namespace {
-
-class Grid {
-	public:
-		Grid(unsigned rows, unsigned cols, unsigned layers) : m_rows(rows), m_cols(cols), m_layers(layers), m_p(rows*cols, PMF(layers)) {
-		}
-
-		PMF& operator() (unsigned row, unsigned col) {
-			assert(row < m_rows && col < m_cols);
-			return m_p[row * m_cols + col];
-		}
-
-		const PMF& operator() (unsigned row, unsigned col) const {
-			assert(row < m_rows && col < m_cols);
-			return m_p[row * m_cols + col];
-		}
-
-		unsigned rows() const {
-			return m_rows;
-		}
-
-		unsigned cols() const {
-			return m_cols;
-		}
-
-		void swap(Grid& g) {
-			std::swap(g.m_rows, m_rows);
-			std::swap(g.m_cols, m_cols);
-			std::swap(g.m_layers, m_layers);
-
-			m_p.swap(g.m_p);
-		}
-
-	private:
-		unsigned m_rows, m_cols, m_layers;
-		std::vector<PMF> m_p;
-};
-
-}
-
 cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, const Neighbours& neighbourhood) {
 	// find the range of values
 	MinMax minmax(0);
@@ -168,7 +130,7 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 			minmax.add(source[V2i(x, y)].value);
 
 	// build a grid of probability mass functions
-	Grid grid(source.size().y, source.size().x, minmax.max+1);
+	Grid<PMF> grid(source.size().y, source.size().x, PMF(minmax.max+1));
 	for(int y=0;y<source.size().y;++y)
 		for(int x=0;x<source.size().x;++x)
 			grid(y, x) = PMF::fromConfidence(source[V2i(x, y)].confidence, source[V2i(x, y)].value, minmax.max+1);
@@ -176,7 +138,7 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 	// todo: the main algorithm
 	const JointPMF diff = JointPMF::difference(minmax.max+1);
 
-	Grid state = grid;
+	Grid<PMF> state = grid;
 	for(std::size_t it=0; it<iterationLimit; ++it) {
 		grid.swap(state);
 
@@ -185,12 +147,17 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 				for(unsigned x=range.cols().begin(); x != range.cols().end(); ++x) {
 					PMF current = PMF::fromConfidence(source[V2i(x, y)].confidence, source[V2i(x, y)].value, minmax.max+1);
 
-					PMF flatness = PMF(minmax.max+1);
-					float norm = 0.0f;
+					// PMF flatness = PMF(minmax.max+1);
+					// float norm = 0.0f;
 
+					// neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
+					// 	flatness = PMF::combine(flatness, norm, state(pos.y, pos.x), weight);
+					// 	norm += weight;
+					// });
+
+					PMF flatness = PMF(minmax.max+1);
 					neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
-						flatness = PMF::combine(flatness, norm, state(pos.y, pos.x), weight);
-						norm += weight;
+						flatness = flatness * state(pos.y, pos.x);
 					});
 
 					current = PMF::combine(current, inputsWeight, flatness, flatnessWeight);
@@ -205,6 +172,56 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 	for(unsigned y=0;y<grid.rows();++y)
 		for(unsigned x=0;x<grid.cols();++x)
 			result.at<unsigned char>(y, x) = grid(y, x).max();
+	return result;
+}
+
+cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, const Neighbours& neighbourhood) {
+	// find the range of values
+	MinMax minmax(0);
+	for(int y=0;y<source.size().y;++y)
+		for(int x=0;x<source.size().x;++x)
+			minmax.add(source[V2i(x, y)].value);
+
+	// build a grid of probability mass functions
+	Grid<PDFGaussian> grid(source.size().y, source.size().x, PDFGaussian(0, 0));
+	for(int y=0;y<source.size().y;++y)
+		for(int x=0;x<source.size().x;++x)
+			grid(y, x) = PDFGaussian::fromPeak(source[V2i(x, y)].value, source[V2i(x, y)].confidence);
+
+	// todo: the main algorithm
+	const JointPMF diff = JointPMF::difference(minmax.max+1);
+
+	Grid<PDFGaussian> state = grid;
+	for(std::size_t it=0; it<iterationLimit; ++it) {
+		grid.swap(state);
+
+		tbb::parallel_for(tbb::blocked_range2d<unsigned>(0u, grid.rows(), 0u, grid.cols()), [&](const tbb::blocked_range2d<unsigned>& range) {
+			for(unsigned y=range.rows().begin(); y != range.rows().end(); ++y)
+				for(unsigned x=range.cols().begin(); x != range.cols().end(); ++x) {
+					PDFGaussian current = PDFGaussian::fromPeak(source[V2i(x, y)].value, source[V2i(x, y)].confidence);
+
+					PDFGaussian flatness = PDFGaussian::fromPeak(0,0); // zero probability limit
+					float norm = 0.0f;
+					neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
+						flatness = flatness * PDFGaussian::pow(state(pos.y, pos.x), weight);
+
+						norm += weight;
+					});
+					flatness = PDFGaussian::pow(flatness, 1.0f / norm);
+
+					const float wnorm = inputsWeight + flatnessWeight;
+					current = PDFGaussian::pow(current, inputsWeight / wnorm) * PDFGaussian::pow(flatness, flatnessWeight / wnorm);
+
+					grid(y, x) = current;
+				}
+		});
+	}
+
+	// convert the result to a cv::Mat by picking the highest probability for each pixel
+	cv::Mat result = cv::Mat::zeros(grid.rows(), grid.cols(), CV_8UC1);
+	for(unsigned y=0;y<grid.rows();++y)
+		for(unsigned x=0;x<grid.cols();++x)
+			result.at<unsigned char>(y, x) = grid(y, x).mu();
 	return result;
 }
 

@@ -37,6 +37,9 @@ struct MinMax {
 				max = std::max(max, current);
 			}
 
+		if(max == min)
+			throw std::runtime_error("Cannot normalize the result - no data on input (min == max, leads to division by zero)");
+
 		for(int y=0;y<m.rows;++y)
 			for(int x=0;x<m.cols;++x) {
 				T& current = m.at<T>(y, x);
@@ -60,6 +63,9 @@ struct Max {
 				const T current = m.at<T>(y, x);
 				max = std::max(max, current);
 			}
+
+		if(max == 0)
+			throw std::runtime_error("Cannot normalize the result - no data on input (max == 0, leads to division by zero)");
 
 		for(int y=0;y<m.rows;++y)
 			for(int x=0;x<m.cols;++x) {

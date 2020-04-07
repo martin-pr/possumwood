@@ -145,12 +145,6 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "markov_random_field_0",
-            "in_port": "in",
-            "out_node": "median_1",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "concat_2",
             "in_port": "in_frame_1",
             "out_node": "multiply_0",
@@ -163,20 +157,20 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "markov_random_field_0",
+            "in_port": "in",
+            "out_node": "normalize_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "colormap_1",
             "in_port": "in_frame",
             "out_node": "normalize_1",
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_1",
+            "in_node": "threshold_0",
             "in_port": "in_frame",
-            "out_node": "pow_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "markov_random_field_0",
-            "in_port": "confidence",
             "out_node": "pow_0",
             "out_port": "out_frame"
         },
@@ -185,6 +179,18 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "markov_random_field_0",
+            "in_port": "confidence",
+            "out_node": "threshold_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "threshold_0",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Correspondence-based depth reconstructed using Markov Random Fields belief propagation\n\nThis demo shows reconstructs the lightfield depth using the correspondence metric of depth values, and propagates it based on the confidence value for each reconstructed pixel.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
@@ -280,13 +286,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 76.8953018188477,
+                    "x": 74.8423461914062,
                     "y": -273.883239746094
                 }
             },
             "name": "confidence",
             "ports": {
-                "mode": "Peak Ratio",
+                "mode": "Probabilistic Measure",
                 "sigma": 1.0
             },
             "type": "opencv/sequence/confidence"
@@ -343,8 +349,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -587.011169433594,
-                    "y": -5.34570026397705
+                    "x": -560.322692871094,
+                    "y": -73.0933609008789
                 }
             },
             "name": "depth",
@@ -356,7 +362,7 @@
                     "y": 300
                 },
                 "samples/end": 40.0,
-                "samples/start": -30.0,
+                "samples/start": -40.0,
                 "samples/steps": 11
             },
             "type": "opencv/lightfields/depth"
@@ -391,12 +397,12 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": -308.436950683594,
-                    "y": 504.922485351562
+                    "y": 506.975433349609
                 }
             },
             "name": "get_frame",
             "ports": {
-                "index": 6
+                "index": 0
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -424,7 +430,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/tea.lfr"
+                "filename": "$EXAMPLES/lytro/road.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -432,15 +438,15 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 162.20475769043,
-                    "y": 471.548614501953
+                    "x": 193.770767211914,
+                    "y": 459.803863525391
                 }
             },
             "name": "markov_random_field",
             "ports": {
-                "iterations_limit": 100,
-                "method": "PMF propagation, 8-neighbourhood",
-                "weights/flatness": 1000.0,
+                "iterations_limit": 30,
+                "method": "Gaussian PDF propagation, 8-neighbourhood weighted",
+                "weights/flatness": 20.0,
                 "weights/inputs": 1.0,
                 "weights/smoothness": 1.0
             },
@@ -467,7 +473,7 @@
             },
             "name": "median",
             "ports": {
-                "kernel_size": 5
+                "kernel_size": 1
             },
             "type": "opencv/median"
         },
@@ -481,7 +487,7 @@
             },
             "name": "median",
             "ports": {
-                "kernel_size": 5
+                "kernel_size": 1
             },
             "type": "opencv/median"
         },
@@ -774,12 +780,12 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 80.0936279296875,
-                    "y": 210.162445068359
+                    "y": 206.494186401367
                 }
             },
             "name": "pow",
             "ports": {
-                "power": 3.0
+                "power": 1.0
             },
             "type": "opencv/pow"
         },
@@ -796,6 +802,24 @@
                 "scale_compensation": 0.998849987983704
             },
             "type": "opencv/lightfields/samples_from_metadata"
+        },
+        "threshold_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 303.740875244141,
+                    "y": 158.019668579102
+                }
+            },
+            "name": "threshold",
+            "ports": {
+                "max_val": 1.0,
+                "threshold": 0.0,
+                "type": "THRESH_TOZERO",
+                "use_otsu": false,
+                "use_triangle": false
+            },
+            "type": "opencv/threshold"
         }
     },
     "scene_config": {
@@ -804,5 +828,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABxQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACOwAAAaYAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJjAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABxQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACOwAAAaYAAACqAQAAAwAAA3MAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

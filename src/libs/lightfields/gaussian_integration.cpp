@@ -133,23 +133,21 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data,
 
 					const float* value = data.ptr<float>(it->source[1], it->source[0]);
 					const float* ave = integration.average.ptr<float>(yt, xt);
-					const uint16_t* n = integration.samples.ptr<uint16_t>(yt, xt);
 
-					// this is attempting to compute weighted variance of the samples.
+					// weighted variance of the samples.
 					// The algorithm to do this is a bit dubious - acc to wikipedia and stack overflow, weighted variance computation
 					// is much more complex than this simple weighting. This might be the reason for the "random peaks" in the confidence
 					// value. Ref: // https://www.itl.nist.gov/div898/software/dataplot/refman2/ch2/weighvar.pdf
-					// TODO: NEEDS RETHIKING
 					if(data.channels() == 3)
 						for(int c=0; c<3; ++c) {
 							const float tmp = value[c] - ave[c]; // because pow() is expensive?!
 							*target += tmp*tmp * gauss;
-							*weight += (float)n[c] * gauss;
+							*weight += gauss;
 						}
 					else {
 						const float tmp = *value - ave[it->color];
 						*target += tmp*tmp * gauss;
-						*weight += (float)n[it->color] * gauss;
+						*weight += gauss;
 					}
 
 

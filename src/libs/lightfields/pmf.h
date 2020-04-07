@@ -32,6 +32,7 @@ class PMF {
 		std::vector<float> m_p;
 
 	friend PMF operator +(const PMF& p1, const PMF& p2);
+	friend PMF operator *(const PMF& p1, const PMF& p2);
 	friend PMF operator *(const PMF& p, const JointPMF& j);
 	friend PMF operator *(const JointPMF& j, const PMF& p);
 };
@@ -58,7 +59,6 @@ class JointPMF {
 		std::function<float(unsigned, unsigned)> m_fn;
 		unsigned m_rows, m_cols;
 
-	friend PMF operator +(const PMF& p1, const PMF& p2);
 	friend PMF operator *(const PMF& p, const JointPMF& j);
 	friend PMF operator *(const JointPMF& j, const PMF& p);
 };

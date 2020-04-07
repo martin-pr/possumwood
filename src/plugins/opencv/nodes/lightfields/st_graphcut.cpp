@@ -8,7 +8,7 @@
 
 #include <lightfields/push_relabel.h>
 #include <lightfields/edmonds_karp.h>
-#include <lightfields/grid.h>
+#include <lightfields/graph.h>
 
 #include "possumwood_sdk/datatypes/enum.h"
 
@@ -49,7 +49,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if((*f).type() != CV_8UC1)
 			throw std::runtime_error("Only CV_8UC1 images accepted on input.");
 
-	lightfields::Grid grid(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size());
+	lightfields::Graph graph(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size());
 
 	// setting vertical data
 	{
@@ -63,25 +63,25 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					++ctr;
 				}
 
-				grid.setValue(lightfields::V2i(col, row), values, data.get(a_inPower));
+				graph.setValue(lightfields::V2i(col, row), values, data.get(a_inPower));
 			}
 	}
 
 	// setting horizontal data
 	if(!contrast.empty()) {
 		for(std::size_t a=0; a<contrast.size(); ++a)
-			grid.setLayer(*contrast[a], a, data.get(a_contPower));
+			graph.setLayer(*contrast[a], a, data.get(a_contPower));
 	}
 
 	if(data.get(a_mode).value() == "Edmonds-Karp")
-		lightfields::EdmondsKarp::solve(grid);
+		lightfields::EdmondsKarp::solve(graph);
 	else
-		lightfields::PushRelabel::solve(grid);
+		lightfields::PushRelabel::solve(graph);
 
-	data.set(a_out, possumwood::opencv::Frame(grid.minCut()));
+	data.set(a_out, possumwood::opencv::Frame(graph.minCut()));
 
 	possumwood::opencv::Sequence debug;
-	for(auto& m : grid.debug())
+	for(auto& m : graph.debug())
 		debug.add(m);
 
 	data.set(a_debug, debug);

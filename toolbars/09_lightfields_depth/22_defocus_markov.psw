@@ -133,6 +133,18 @@
             "out_port": "out"
         },
         {
+            "in_node": "threshold_0",
+            "in_port": "in_frame",
+            "out_node": "median_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "normalize_0",
+            "in_port": "in_frame",
+            "out_node": "median_1",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "concat_2",
             "in_port": "in_frame_1",
             "out_node": "multiply_0",
@@ -141,6 +153,12 @@
         {
             "in_node": "colormap_0",
             "in_port": "in_frame",
+            "out_node": "normalize_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "markov_random_field_0",
+            "in_port": "in",
             "out_node": "normalize_0",
             "out_port": "out_frame"
         },
@@ -171,25 +189,13 @@
         {
             "in_node": "markov_random_field_0",
             "in_port": "confidence",
-            "out_node": "median_0",
+            "out_node": "threshold_0",
             "out_port": "out_frame"
         },
         {
             "in_node": "color_0",
             "in_port": "in_frame",
-            "out_node": "median_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "normalize_0",
-            "in_port": "in_frame",
-            "out_node": "median_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "markov_random_field_0",
-            "in_port": "in",
-            "out_node": "median_1",
+            "out_node": "threshold_0",
             "out_port": "out_frame"
         }
     ],
@@ -292,7 +298,7 @@
             },
             "name": "confidence",
             "ports": {
-                "mode": "Probabilistic Measure",
+                "mode": "Negative Entropy Measure",
                 "sigma": 1.0
             },
             "type": "opencv/sequence/confidence"
@@ -442,8 +448,8 @@
             },
             "name": "markov_random_field",
             "ports": {
-                "iterations_limit": 50,
-                "method": "PMF propagation, 8-neighbourhood weighted",
+                "iterations_limit": 105,
+                "method": "Gaussian PDF propagation, 8-neighbourhood weighted",
                 "weights/flatness": 1000.0,
                 "weights/inputs": 1.0,
                 "weights/smoothness": 1.0
@@ -465,8 +471,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1847.28942871094,
-                    "y": 587.343200683594
+                    "x": 1858.59655761719,
+                    "y": 576.036071777344
                 }
             },
             "name": "median",
@@ -854,13 +860,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1857.00964355469,
+                    "x": 1858.625,
                     "y": 432.55712890625
                 }
             },
             "name": "pow",
             "ports": {
-                "power": 5.0
+                "power": 3.0
             },
             "type": "opencv/pow"
         },
@@ -877,6 +883,24 @@
                 "scale_compensation": 0.998849987983704
             },
             "type": "opencv/lightfields/samples_from_metadata"
+        },
+        "threshold_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 2029.1162109375,
+                    "y": 395.149444580078
+                }
+            },
+            "name": "threshold",
+            "ports": {
+                "max_val": 1.0,
+                "threshold": 0.100000001490116,
+                "type": "THRESH_TOZERO",
+                "use_otsu": false,
+                "use_triangle": false
+            },
+            "type": "opencv/threshold"
         }
     },
     "scene_config": {

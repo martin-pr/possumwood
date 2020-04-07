@@ -30,6 +30,9 @@ const std::vector<std::pair<std::string, int>>& methods() {
 
 		for(auto& m : lightfields::Neighbours::types())
 			s_methods.push_back(std::make_pair("PMF propagation, " + m.first, m.second + 20));
+
+		for(auto& m : lightfields::Neighbours::types())
+			s_methods.push_back(std::make_pair("Gaussian PDF propagation, " + m.first, m.second + 40));
 	}
 
 	return s_methods;
@@ -63,11 +66,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	cv::Mat result;
 	if(data.get(a_method).intValue() < 20)
-		result = lightfields::MRF::solveICM(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit),
-			*neighbours);
+		result = lightfields::MRF::solveICM(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit), *neighbours);
+	else if(data.get(a_method).intValue() < 40)
+		result = lightfields::MRF::solvePropagation(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit), *neighbours);
 	else
-		result = lightfields::MRF::solvePropagation(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit),
-			*neighbours);
+		result = lightfields::MRF::solvePDF(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit), *neighbours);
 
 	data.set(a_out, possumwood::opencv::Frame(result));
 
