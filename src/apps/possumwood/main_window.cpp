@@ -49,8 +49,27 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 
 }
 
+class MainWindow::TabFilter : public QObject {
+	public:
+		TabFilter(MainWindow* win) : QObject(win), m_win(win) {
+		}
+
+		bool eventFilter(QObject *o, QEvent *e) {
+			QKeyEvent* key = dynamic_cast<QKeyEvent*>(e);
+			if(key && key->key() == Qt::Key_Tab && m_win->m_adaptor->graphWidget()->underMouse())
+				m_win->m_adaptor->graphWidget()->setFocus(Qt::ShortcutFocusReason);
+
+			return false;
+		}
+
+	private:
+		MainWindow* m_win;
+};
+
 MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 	possumwood::App::instance().setMainWindow(this);
+
+	installEventFilter(new TabFilter(this));
 
 	QWidget* centralWidget = new QWidget();
 	QVBoxLayout* centralLayout = new QVBoxLayout(centralWidget);
@@ -100,20 +119,20 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 	m_adaptor->graphWidget()->setContextMenuPolicy(Qt::CustomContextMenu);
 
 	{
-		QMenu* contextMenu = new QMenu(m_adaptor);
+		QMenu* contextMenu = new QMenu(m_adaptor->graphWidget());
 
 		{
 			m_newNodeMenu = new SearchableMenu("Create");
-			m_newNodeMenu->menuAction()->setShortcut(Qt::Key_Tab);
 			contextMenu->addMenu(m_newNodeMenu);
 
 			{
-				QAction* newNodeAction = new QAction("Create node", m_adaptor);
+				QAction* newNodeAction = new QAction("Create node", m_adaptor->graphWidget());
 				newNodeAction->setShortcut(Qt::Key_Tab);
-				m_adaptor->addAction(newNodeAction);
+				newNodeAction->setShortcutContext(Qt::WidgetShortcut);
+				m_adaptor->graphWidget()->addAction(newNodeAction);
 
 				connect(newNodeAction, &QAction::triggered, [this]() {
-					if(m_adaptor->underMouse()) {
+					if(m_adaptor->graphWidget()->underMouse()) {
 						m_newNodeMenu->move(QCursor::pos());
 						m_newNodeMenu->popup(QCursor::pos());
 					}

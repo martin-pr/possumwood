@@ -20,6 +20,8 @@ class MainWindow : public QMainWindow {
 	Q_OBJECT
 
 	public:
+		class TabFilter;
+
 		MainWindow();
 		~MainWindow();
 
@@ -52,4 +54,6 @@ class MainWindow : public QMainWindow {
 		SearchableMenu* m_newNodeMenu;
 
 		QDockWidget* m_editorDock;
+
+		friend class TabFilter;
 };
