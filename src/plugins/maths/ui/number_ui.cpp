@@ -57,7 +57,7 @@ struct NumberTraits {
 	typedef int CallbackResult;
 
 	static void init(QSpinBox* ptr) {
-		ptr->setRange(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
+		ptr->setRange(std::numeric_limits<T>::min(), std::numeric_limits<int>::max());
 	}
 };
 
