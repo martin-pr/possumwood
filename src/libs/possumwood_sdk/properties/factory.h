@@ -40,6 +40,7 @@ class factory : public boost::noncopyable {
 		virtual ~factory();
 
 		virtual std::type_index type() const = 0;
+		virtual std::type_index uiType() const = 0;
 		virtual std::unique_ptr<property_base> create() = 0;
 
 	protected:
@@ -52,6 +53,7 @@ template<typename T>
 class factory_typed : public factory {
 	public:
 		virtual std::type_index type() const override;
+		virtual std::type_index uiType() const override;
 		virtual std::unique_ptr<property_base> create() override;
 
 	protected:

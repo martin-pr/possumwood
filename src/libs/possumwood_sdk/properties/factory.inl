@@ -12,6 +12,11 @@ std::type_index factory_typed<T>::type() const {
 }
 
 template<typename T>
+std::type_index factory_typed<T>::uiType() const {
+	return typeid(T);
+}
+
+template<typename T>
 std::unique_ptr<property_base> factory_typed<T>::create() {
 	return std::unique_ptr<property_base>(new T());
 }
