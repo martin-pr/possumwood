@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QDoubleSpinBox>
 #include <QMetaObject>
 
 #include <possumwood_sdk/properties/property.h>

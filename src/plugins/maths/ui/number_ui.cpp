@@ -1,5 +1,7 @@
 #include "number_ui.h"
 
+#include <QDoubleSpinBox>
+
 template<typename T>
 NumberUI<T>::NumberUI() : m_ui(new typename NumberTraits<T>::QtType(NULL)) {
 	m_valueChangeConnection = QObject::connect(
