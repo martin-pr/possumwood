@@ -116,18 +116,32 @@ std::string Description::html() const {
 		}
 
 		{
-			int state = 0;
+			int state = 1;
 			for(std::size_t i=0; i<line.length(); ++i) {
 				switch(state) {
 					case 0:
+						if(line[i] == ' ' || line[i] == '\r' || line[i] == '\n' || line[i] == '\t')
+							state = 1;
+						break;
+					case 1:
 						if(line[i] == '`') {
 							line = line.substr(0, i) + "<code>" + line.substr(i+1);
 							state = 1;
 						}
+						if(line[i] == '*') {
+							line = line.substr(0, i) + "<b>" + line.substr(i+1);
+							state = 3;
+						}
 						break;
-					case 1:
+					case 2:
 						if(line[i] == '`') {
 							line = line.substr(0, i) + "</code>" + line.substr(i+1);
+							state = 0;
+						}
+						break;
+					case 3:
+						if(line[i] == '*') {
+							line = line.substr(0, i) + "</b>" + line.substr(i+1);
 							state = 0;
 						}
 						break;
