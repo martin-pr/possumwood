@@ -43,7 +43,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "equalize_float_0",
+            "in_node": "normalize_2",
             "in_port": "in_frame",
             "out_node": "confidence_0",
             "out_port": "out_frame"
@@ -91,12 +91,6 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "median_0",
-            "in_port": "in_frame",
-            "out_node": "equalize_float_0",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "convert_2",
             "in_port": "in_frame",
             "out_node": "get_frame_0",
@@ -133,8 +127,14 @@
             "out_port": "out"
         },
         {
-            "in_node": "pow_0",
+            "in_node": "convert_1",
             "in_port": "in_frame",
+            "out_node": "median_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "markov_random_field_0",
+            "in_port": "confidence",
             "out_node": "median_0",
             "out_port": "out_frame"
         },
@@ -169,27 +169,27 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "threshold_0",
-            "in_port": "in_frame",
-            "out_node": "pow_0",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "depth_0",
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
         },
         {
-            "in_node": "markov_random_field_0",
-            "in_port": "confidence",
+            "in_node": "median_0",
+            "in_port": "in_frame",
             "out_node": "threshold_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_1",
+            "in_node": "threshold_0",
             "in_port": "in_frame",
-            "out_node": "threshold_0",
+            "out_node": "pow_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "pow_0",
+            "in_port": "in_frame",
+            "out_node": "normalize_2",
             "out_port": "out_frame"
         }
     ],
@@ -286,8 +286,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 74.8423461914062,
-                    "y": -273.883239746094
+                    "x": 119.19864654541,
+                    "y": -511.319915771484
                 }
             },
             "name": "confidence",
@@ -381,17 +381,6 @@
             },
             "type": "opencv/divide"
         },
-        "equalize_float_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 71.1687393188477,
-                    "y": -99.5599517822266
-                }
-            },
-            "name": "equalize_float",
-            "type": "opencv/equalize_float"
-        },
         "get_frame_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -430,7 +419,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/road.lfr"
+                "filename": "$EXAMPLES/lytro/tea.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -444,10 +433,10 @@
             },
             "name": "markov_random_field",
             "ports": {
-                "iterations_limit": 30,
+                "iterations_limit": 120,
                 "method": "Gaussian PDF propagation, 8-neighbourhood weighted",
-                "weights/flatness": 20.0,
-                "weights/inputs": 1.0,
+                "weights/flatness": 0.800000011920929,
+                "weights/inputs": 9.99999974737875e-06,
                 "weights/smoothness": 1.0
             },
             "type": "opencv/lightfields/markov_random_field"
@@ -467,13 +456,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 80.9048080444336,
-                    "y": 41.4033317565918
+                    "x": 127.870300292969,
+                    "y": 145.771087646484
                 }
             },
             "name": "median",
             "ports": {
-                "kernel_size": 1
+                "kernel_size": 3
             },
             "type": "opencv/median"
         },
@@ -775,12 +764,26 @@
             },
             "type": "opencv/normalize"
         },
+        "normalize_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 124.659461975098,
+                    "y": -355.664215087891
+                }
+            },
+            "name": "normalize",
+            "ports": {
+                "mode": "Min-max"
+            },
+            "type": "opencv/normalize"
+        },
         "pow_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 80.0936279296875,
-                    "y": 206.494186401367
+                    "x": 129.668319702148,
+                    "y": -226.632034301758
                 }
             },
             "name": "pow",
@@ -807,14 +810,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 303.740875244141,
-                    "y": 158.019668579102
+                    "x": 123.706489562988,
+                    "y": -89.8537673950195
                 }
             },
             "name": "threshold",
             "ports": {
                 "max_val": 1.0,
-                "threshold": 0.0,
+                "threshold": 0.100000001490116,
                 "type": "THRESH_TOZERO",
                 "use_otsu": false,
                 "use_triangle": false

@@ -188,6 +188,10 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 }
 
 cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, const Neighbours& neighbourhood) {
+	const float totalWeight = inputsWeight + flatnessWeight /*+ smoothnessWeight*/;
+	if(totalWeight > 1.0f)
+		throw std::runtime_error("Weights should sum to less than 1.0");
+
 	// find the range of values
 	const std::pair<int, int> minmax = source.range();
 
@@ -195,7 +199,7 @@ cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeigh
 	Grid<PDFGaussian> grid(source.size().y, source.size().x, PDFGaussian(0, 0));
 	for(int y=0;y<source.size().y;++y)
 		for(int x=0;x<source.size().x;++x)
-			grid(y, x) = PDFGaussian::fromPeak(source[V2i(x, y)].value, source[V2i(x, y)].confidence);
+			grid(y, x) = PDFGaussian::fromConfidence(source[V2i(x, y)].value, source[V2i(x, y)].confidence);
 
 	// todo: the main algorithm
 	const JointPMF diff = JointPMF::difference(minmax.second+1);
@@ -207,39 +211,23 @@ cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeigh
 		tbb::parallel_for(tbb::blocked_range2d<unsigned>(0u, grid.rows(), 0u, grid.cols()), [&](const tbb::blocked_range2d<unsigned>& range) {
 			for(unsigned y=range.rows().begin(); y != range.rows().end(); ++y)
 				for(unsigned x=range.cols().begin(); x != range.cols().end(); ++x) {
-					const PDFGaussian constness = PDFGaussian::fromPeak(source[V2i(x, y)].value, source[V2i(x, y)].confidence) - state(y, x);
+					const PDFGaussian constness = PDFGaussian::fromConfidence(source[V2i(x, y)].value, source[V2i(x, y)].confidence);
 
-					PDFGaussian flatness = PDFGaussian(0,0);
-					float norm = 0.0f;
-					neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
-						const PDFGaussian tmp = (state(pos.y, pos.x) - state(y, x));   // if ONE of these has 0 confidence, the result is 0 confidence! Zero confidence cells get NEVER UPDATED! FIX!!!
+					PDFGaussian flatness = PDFGaussian::fromConfidence(0,0);
+					{
+						float weightSum = 0.0f;
+						neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
+							weightSum += weight;
+						});
 
-						flatness = flatness + tmp * weight * tmp.confidence();
-
-						norm += weight * tmp.confidence();
-					});
-
-					if(norm > 0.0f)
-						flatness = flatness / norm;
-
-					PDFGaussian current(0, 0);
-					norm = 0.0f;
-					if(!std::isinf(constness.sigma()) && inputsWeight > 0.0f) {
-						current = current + constness * inputsWeight;
-						norm += inputsWeight;
+						neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
+							flatness = flatness + state(pos.y, pos.x) * PDFGaussian::fromConfidence(0, weight / weightSum);
+						});
 					}
 
-					if(!std::isinf(flatness.sigma()) && flatnessWeight > 0.0f) {
-						current = current + flatness * flatnessWeight;
-						norm += flatnessWeight;
-					}
-
-					if(!std::isinf(state(y, x).sigma()))
-						grid(y, x) = state(y, x) + current;
-					else if(norm > 0.0f)
-						grid(y, x) = current / norm;
-					else
-						grid(y, x) = state(y, x);
+					grid(y, x) = state(y, x) * PDFGaussian::fromConfidence(0, 1.0f - totalWeight) +
+						constness * PDFGaussian::fromConfidence(0, inputsWeight) +
+						flatness * PDFGaussian::fromConfidence(0, flatnessWeight);
 				}
 		});
 	}

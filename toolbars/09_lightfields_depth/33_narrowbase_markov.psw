@@ -455,10 +455,10 @@
             },
             "name": "markov_random_field",
             "ports": {
-                "iterations_limit": 50,
+                "iterations_limit": 200,
                 "method": "Gaussian PDF propagation, 8-neighbourhood weighted",
-                "weights/flatness": 1000.0,
-                "weights/inputs": 1.0,
+                "weights/flatness": 0.899999976158142,
+                "weights/inputs": 9.99999974737875e-06,
                 "weights/smoothness": 2.0
             },
             "type": "opencv/lightfields/markov_random_field"
@@ -1223,5 +1223,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKQAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAcYAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAChAAAAV0AAACqAQAAAwAAAygAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKQAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAcYAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACqAQAAAwAAAygAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

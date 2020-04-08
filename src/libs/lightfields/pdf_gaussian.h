@@ -9,7 +9,7 @@ namespace lightfields {
 /// Based on Bromiley, Paul. "Products and convolutions of Gaussian probability density functions." Tina-Vision Memo 3.4 (2003): 1.
 class PDFGaussian {
 	public:
-		static PDFGaussian fromPeak(float mu, float confidence) {
+		static PDFGaussian fromConfidence(float mu, float confidence) {
 			assert(confidence >= 0.0f);
 
 			if(confidence > 1e-5f)
@@ -43,7 +43,7 @@ class PDFGaussian {
 			assert(power >= 0.0f && "Only positive powers supported (for now)");
 
 			if(power == 0.0f)
-				return fromPeak(0, 0);
+				return fromConfidence(0, 0);
 
 			return PDFGaussian(p.mu(), p.sigma() / std::sqrt(power));
 		}
@@ -52,59 +52,10 @@ class PDFGaussian {
 		float m_mu, m_sigma;
 };
 
-PDFGaussian operator+(const PDFGaussian& p, float val) {
-	return PDFGaussian(p.mu() + val, p.sigma());
-}
-
-PDFGaussian operator+(float val, const PDFGaussian& p) {
-	return PDFGaussian(p.mu() + val, p.sigma());
-}
-
-PDFGaussian operator-(const PDFGaussian& p, float val) {
-	return PDFGaussian(p.mu() - val, p.sigma());
-}
-
-PDFGaussian operator-(float val, const PDFGaussian& p) {
-	return PDFGaussian(p.mu() - val, p.sigma());
-}
-
-PDFGaussian operator*(const PDFGaussian& p, float val) {
-	if(std::isinf(p.sigma()))
-		return PDFGaussian(p.mu() * val, std::numeric_limits<float>::infinity());
-	return PDFGaussian(p.mu() * val, p.sigma() * val);
-}
-
-PDFGaussian operator*(float val, const PDFGaussian& p) {
-	if(std::isinf(p.sigma()))
-		return PDFGaussian(p.mu() * val, std::numeric_limits<float>::infinity());
-	return PDFGaussian(p.mu() * val, p.sigma() * val);
-}
-
-PDFGaussian operator/(const PDFGaussian& p, float val) {
-	if(std::isinf(p.sigma()))
-		return PDFGaussian(p.mu() / val, std::numeric_limits<float>::infinity());
-	return PDFGaussian(p.mu() / val, p.sigma() / val);
-}
-
 PDFGaussian operator+(const PDFGaussian& p1, const PDFGaussian& p2) {
-	// special case - adding infinity
-	if(std::isinf(p1.sigma()) || std::isinf(p2.sigma()))
-		return PDFGaussian(p1.mu() + p2.mu(), std::numeric_limits<float>::infinity());
+	// implements the product of two gaussian distributions
+	// (i.e., does NOT implement the sum of the resulting value!)
 
-	// add two variables sums both the mean and variance
-	return PDFGaussian(p1.mu() + p2.mu(), std::sqrt(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2)));
-}
-
-PDFGaussian operator-(const PDFGaussian& p1, const PDFGaussian& p2) {
-	// special case - adding infinity
-	if(std::isinf(p1.sigma()) || std::isinf(p2.sigma()))
-		return PDFGaussian(p1.mu() - p2.mu(), std::numeric_limits<float>::infinity());
-
-	// subtracting two variables increases the variance
-	return PDFGaussian(p1.mu() - p2.mu(), std::sqrt(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2)));
-}
-
-PDFGaussian operator*(const PDFGaussian& p1, const PDFGaussian& p2) {
 	// using limits
 	if(std::isinf(p2.sigma()))
 		return p1;
@@ -120,6 +71,16 @@ PDFGaussian operator*(const PDFGaussian& p1, const PDFGaussian& p2) {
 			(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2))
 		)
 	);
+}
+
+PDFGaussian operator*(const PDFGaussian& p1, const PDFGaussian& p2) {
+	// implements the CONVOLUTION of two Gaussian PDFs, NOT the value multiplication
+	const float mu = p1.mu() + p2.mu();
+
+	if(std::isinf(p1.sigma()) || std::isinf(p2.sigma()))
+		return PDFGaussian(mu, std::numeric_limits<float>::infinity());
+
+	return PDFGaussian(mu, std::sqrt(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2)));
 }
 
 }
