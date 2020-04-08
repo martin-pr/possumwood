@@ -14,115 +14,63 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
-int modeToEnum(const std::string& mode) {
-	if(mode == "BGR2GRAY")
-		return cv::COLOR_BGR2GRAY;
-	else if(mode == "BGR2RGB")
-		return cv::COLOR_BGR2RGB;
-	else if(mode == "RGB2BGR")
-		return cv::COLOR_RGB2BGR;
-	else if(mode == "GRAY2BGR")
-		return cv::COLOR_GRAY2BGR;
-	else if(mode == "GRAY2RGB")
-		return cv::COLOR_GRAY2RGB;
-	else if(mode == "BGR2XYZ")
-		return cv::COLOR_BGR2XYZ;
-	else if(mode == "RGB2XYZ")
-		return cv::COLOR_RGB2XYZ;
-	else if(mode == "XYZ2BGR")
-		return cv::COLOR_XYZ2BGR;
-	else if(mode == "XYZ2RGB")
-		return cv::COLOR_XYZ2RGB;
-	else if(mode == "BGR2YCrCb")
-		return cv::COLOR_BGR2YCrCb;
-	else if(mode == "RGB2YCrCb")
-		return cv::COLOR_RGB2YCrCb;
-	else if(mode == "YCrCb2BGR")
-		return cv::COLOR_YCrCb2BGR;
-	else if(mode == "YCrCb2RGB")
-		return cv::COLOR_YCrCb2RGB;
-	else if(mode == "BGR2HSV")
-		return cv::COLOR_BGR2HSV;
-	else if(mode == "RGB2HSV")
-		return cv::COLOR_RGB2HSV;
-	else if(mode == "BGR2Lab")
-		return cv::COLOR_BGR2Lab;
-	else if(mode == "RGB2Lab")
-		return cv::COLOR_RGB2Lab;
-	else if(mode == "BGR2Luv")
-		return cv::COLOR_BGR2Luv;
-	else if(mode == "RGB2Luv")
-		return cv::COLOR_RGB2Luv;
-	else if(mode == "BGR2HLS")
-		return cv::COLOR_BGR2HLS;
-	else if(mode == "RGB2HLS")
-		return cv::COLOR_RGB2HLS;
-	else if(mode == "HSV2BGR")
-		return cv::COLOR_HSV2BGR;
-	else if(mode == "HSV2RGB")
-		return cv::COLOR_HSV2RGB;
-	else if(mode == "Lab2BGR")
-		return cv::COLOR_Lab2BGR;
-	else if(mode == "Lab2RGB")
-		return cv::COLOR_Lab2RGB;
-	else if(mode == "Luv2BGR")
-		return cv::COLOR_Luv2BGR;
-	else if(mode == "Luv2RGB")
-		return cv::COLOR_Luv2RGB;
-	else if(mode == "HLS2BGR")
-		return cv::COLOR_HLS2BGR;
-	else if(mode == "HLS2RGB")
-		return cv::COLOR_HLS2RGB;
-	else if(mode == "LBGR2Lab")
-		return cv::COLOR_LBGR2Lab;
-	else if(mode == "LRGB2Lab")
-		return cv::COLOR_LRGB2Lab;
-	else if(mode == "LBGR2Luv")
-		return cv::COLOR_LBGR2Luv;
-	else if(mode == "LRGB2Luv")
-		return cv::COLOR_LRGB2Luv;
-	else if(mode == "Lab2LBGR")
-		return cv::COLOR_Lab2LBGR;
-	else if(mode == "Lab2LRGB")
-		return cv::COLOR_Lab2LRGB;
-	else if(mode == "Luv2LBGR")
-		return cv::COLOR_Luv2LBGR;
-	else if(mode == "Luv2LRGB")
-		return cv::COLOR_Luv2LRGB;
-	else if(mode == "BGR2YUV")
-		return cv::COLOR_BGR2YUV;
-	else if(mode == "RGB2YUV")
-		return cv::COLOR_RGB2YUV;
-	else if(mode == "YUV2BGR")
-		return cv::COLOR_YUV2BGR;
-	else if(mode == "YUV2RGB")
-		return cv::COLOR_YUV2RGB;
-
-	throw std::runtime_error("Unknown conversion mode " + mode);
-}
+static const std::vector<std::pair<std::string, int>> s_colorEnum{
+	{"BGR2GRAY", cv::COLOR_BGR2GRAY},
+	{"BGR2RGB", cv::COLOR_BGR2RGB},
+	{"RGB2BGR", cv::COLOR_RGB2BGR},
+	{"GRAY2BGR", cv::COLOR_GRAY2BGR},
+	{"GRAY2RGB", cv::COLOR_GRAY2RGB},
+	{"BGR2XYZ", cv::COLOR_BGR2XYZ},
+	{"RGB2XYZ", cv::COLOR_RGB2XYZ},
+	{"XYZ2BGR", cv::COLOR_XYZ2BGR},
+	{"XYZ2RGB", cv::COLOR_XYZ2RGB},
+	{"BGR2YCrCb", cv::COLOR_BGR2YCrCb},
+	{"RGB2YCrCb", cv::COLOR_RGB2YCrCb},
+	{"YCrCb2BGR", cv::COLOR_YCrCb2BGR},
+	{"YCrCb2RGB", cv::COLOR_YCrCb2RGB},
+	{"BGR2HSV", cv::COLOR_BGR2HSV},
+	{"RGB2HSV", cv::COLOR_RGB2HSV},
+	{"BGR2Lab", cv::COLOR_BGR2Lab},
+	{"RGB2Lab", cv::COLOR_RGB2Lab},
+	{"BGR2Luv", cv::COLOR_BGR2Luv},
+	{"RGB2Luv", cv::COLOR_RGB2Luv},
+	{"BGR2HLS", cv::COLOR_BGR2HLS},
+	{"RGB2HLS", cv::COLOR_RGB2HLS},
+	{"HSV2BGR", cv::COLOR_HSV2BGR},
+	{"HSV2RGB", cv::COLOR_HSV2RGB},
+	{"Lab2BGR", cv::COLOR_Lab2BGR},
+	{"Lab2RGB", cv::COLOR_Lab2RGB},
+	{"Luv2BGR", cv::COLOR_Luv2BGR},
+	{"Luv2RGB", cv::COLOR_Luv2RGB},
+	{"HLS2BGR", cv::COLOR_HLS2BGR},
+	{"HLS2RGB", cv::COLOR_HLS2RGB},
+	{"LBGR2Lab", cv::COLOR_LBGR2Lab},
+	{"LRGB2Lab", cv::COLOR_LRGB2Lab},
+	{"LBGR2Luv", cv::COLOR_LBGR2Luv},
+	{"LRGB2Luv", cv::COLOR_LRGB2Luv},
+	{"Lab2LBGR", cv::COLOR_Lab2LBGR},
+	{"Lab2LRGB", cv::COLOR_Lab2LRGB},
+	{"Luv2LBGR", cv::COLOR_Luv2LBGR},
+	{"Luv2LRGB", cv::COLOR_Luv2LRGB},
+	{"BGR2YUV", cv::COLOR_BGR2YUV},
+	{"RGB2YUV", cv::COLOR_RGB2YUV},
+	{"YUV2BGR", cv::COLOR_YUV2BGR},
+	{"YUV2RGB", cv::COLOR_YUV2RGB}
+};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result;
 
-	cvtColor(*data.get(a_inFrame), result, modeToEnum(data.get(a_mode).value()));
+	cvtColor(*data.get(a_inFrame), result, data.get(a_mode).intValue());
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
-	
+
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_mode, "mode", 
-		possumwood::Enum({
-			"BGR2GRAY", "BGR2RGB", "RGB2BGR", "GRAY2BGR", "GRAY2RGB", "BGR2XYZ", 
-			"RGB2XYZ", "XYZ2BGR", "XYZ2RGB", "BGR2YCrCb", "RGB2YCrCb", "YCrCb2BGR", 
-			"YCrCb2RGB", "BGR2HSV", "RGB2HSV", "BGR2Lab", "RGB2Lab", "BGR2Luv", 
-			"RGB2Luv", "BGR2HLS", "RGB2HLS", "HSV2BGR", "HSV2RGB", "Lab2BGR", 
-			"Lab2RGB", "Luv2BGR", "Luv2RGB", "HLS2BGR", "HLS2RGB", "LBGR2Lab", 
-			"LRGB2Lab", "LBGR2Luv", "LRGB2Luv", "Lab2LBGR", "Lab2LRGB", "Luv2LBGR", 
-			"Luv2LRGB", "BGR2YUV", "RGB2YUV", "YUV2BGR", "YUV2RGB"
-		}));
+	meta.addAttribute(a_mode, "mode", possumwood::Enum(s_colorEnum.begin(), s_colorEnum.end()));
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
