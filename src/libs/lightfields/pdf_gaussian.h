@@ -12,8 +12,8 @@ class PDFGaussian {
 		static PDFGaussian fromPeak(float mu, float confidence) {
 			assert(confidence >= 0.0f);
 
-			if(confidence > 0.0f)
-				return PDFGaussian(mu, 1.0f / (confidence * sqrt(2.0f * M_PI)));
+			if(confidence > 1e-5f)
+				return PDFGaussian(mu, -std::log(confidence));
 			return PDFGaussian(mu, std::numeric_limits<float>::infinity());
 		}
 
@@ -33,6 +33,10 @@ class PDFGaussian {
 
 		float mu() const {
 			return m_mu;
+		}
+
+		float confidence() const {
+			return std::exp(-m_sigma);
 		}
 
 		static PDFGaussian pow(const PDFGaussian& p, float power) {
@@ -56,21 +60,48 @@ PDFGaussian operator+(float val, const PDFGaussian& p) {
 	return PDFGaussian(p.mu() + val, p.sigma());
 }
 
+PDFGaussian operator-(const PDFGaussian& p, float val) {
+	return PDFGaussian(p.mu() - val, p.sigma());
+}
+
+PDFGaussian operator-(float val, const PDFGaussian& p) {
+	return PDFGaussian(p.mu() - val, p.sigma());
+}
+
 PDFGaussian operator*(const PDFGaussian& p, float val) {
+	if(std::isinf(p.sigma()))
+		return PDFGaussian(p.mu() * val, std::numeric_limits<float>::infinity());
 	return PDFGaussian(p.mu() * val, p.sigma() * val);
 }
 
 PDFGaussian operator*(float val, const PDFGaussian& p) {
+	if(std::isinf(p.sigma()))
+		return PDFGaussian(p.mu() * val, std::numeric_limits<float>::infinity());
 	return PDFGaussian(p.mu() * val, p.sigma() * val);
 }
 
 PDFGaussian operator/(const PDFGaussian& p, float val) {
+	if(std::isinf(p.sigma()))
+		return PDFGaussian(p.mu() / val, std::numeric_limits<float>::infinity());
 	return PDFGaussian(p.mu() / val, p.sigma() / val);
 }
 
 PDFGaussian operator+(const PDFGaussian& p1, const PDFGaussian& p2) {
-	// return PDFGaussian(p1.mu() + p2.mu(), p1.sigma() + p2.sigma());
+	// special case - adding infinity
+	if(std::isinf(p1.sigma()) || std::isinf(p2.sigma()))
+		return PDFGaussian(p1.mu() + p2.mu(), std::numeric_limits<float>::infinity());
+
+	// add two variables sums both the mean and variance
 	return PDFGaussian(p1.mu() + p2.mu(), std::sqrt(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2)));
+}
+
+PDFGaussian operator-(const PDFGaussian& p1, const PDFGaussian& p2) {
+	// special case - adding infinity
+	if(std::isinf(p1.sigma()) || std::isinf(p2.sigma()))
+		return PDFGaussian(p1.mu() - p2.mu(), std::numeric_limits<float>::infinity());
+
+	// subtracting two variables increases the variance
+	return PDFGaussian(p1.mu() - p2.mu(), std::sqrt(std::pow(p1.sigma(), 2) + std::pow(p2.sigma(), 2)));
 }
 
 PDFGaussian operator*(const PDFGaussian& p1, const PDFGaussian& p2) {
