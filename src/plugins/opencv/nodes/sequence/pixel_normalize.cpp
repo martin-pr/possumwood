@@ -15,7 +15,8 @@ dependency_graph::OutAttr<possumwood::opencv::Sequence> a_out;
 enum Mode {
 	kMinMax,
 	kMax,
-	kSum
+	kSum,
+	kMinSum,
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -38,6 +39,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			mode = kMax;
 		else if(data.get(a_mode).value() == "Sum")
 			mode = kSum;
+		else if(data.get(a_mode).value() == "Minimum-Sum")
+			mode = kMinSum;
+
+
 
 		tbb::parallel_for(0, rows, [&](int r) {
 			for(int c=0; c<cols; ++c) {
@@ -61,18 +66,37 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				if(mode == kMinMax)
 					for(it = out.begin(); it != out.end(); ++it) {
 						float& val = (*it)->at<float>(r, c);
-						val = (val - min) / (max - min);
+						if(max != min)
+							val = (val - min) / (max - min);
+						else
+							val = 0.0f;
 					}
 				else if(mode == kMax)
 					for(it = out.begin(); it != out.end(); ++it) {
 						float& val = (*it)->at<float>(r, c);
-						val /= max;
+						if(max != 0.0f)
+							val /= max;
+						else
+							val = 0;
 					}
 				else if(mode == kSum)
 					for(it = out.begin(); it != out.end(); ++it) {
 						float& val = (*it)->at<float>(r, c);
-						val /= sum;
+						if(sum != 0.0f)
+							val /= sum;
+						else
+							val = 0.0f;
 					}
+				else if(mode == kMinSum) {
+					sum -= min * (float)out.size();
+					for(it = out.begin(); it != out.end(); ++it) {
+						float& val = (*it)->at<float>(r, c);
+						if(sum != 0.0f)
+							val = (val - min) / sum;
+						else
+							val = 0.0f;
+					}
+				}
 			}
 		});
 	}
@@ -84,8 +108,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in");
-	meta.addAttribute(a_mode, "mode",
-	                  possumwood::Enum({"Minimum-maximum", "Maximum", "Sum"}));
+	meta.addAttribute(a_mode, "mode", possumwood::Enum({"Minimum-maximum", "Maximum", "Sum", "Minimum-sum"}));
 	meta.addAttribute(a_out, "out");
 
 	meta.addInfluence(a_in, a_out);

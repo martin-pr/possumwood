@@ -24,7 +24,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	possumwood::opencv::Sequence result(std::max(seq1.size(), seq2.size()));
 	tbb::parallel_for(std::size_t(0), result.size(), [&](std::size_t index) {
-		cv::multiply(*seq1[std::min(index, seq1.size()-1)], *seq2[std::min(index, seq2.size()-1)], *result[index]);
+		cv::add(*seq1[std::min(index, seq1.size()-1)], *seq2[std::min(index, seq2.size()-1)], *result[index]);
 	});
 
 	data.set(a_out, result);
@@ -43,6 +43,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/sequence/multiply", init);
+possumwood::NodeImplementation s_impl("opencv/sequence/add", init);
 
 }

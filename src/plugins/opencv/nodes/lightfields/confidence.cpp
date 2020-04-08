@@ -168,7 +168,7 @@ class Curve {
 /////////////////////
 
 float MSM(const Curve& curve, float) {
-	return curve.c_1();
+	return -curve.c_1();
 }
 
 float CUR(const Curve& curve, float) {
