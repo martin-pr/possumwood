@@ -169,15 +169,9 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "depth_0",
-            "in_port": "samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
-        },
-        {
-            "in_node": "median_0",
+            "in_node": "pow_0",
             "in_port": "in_frame",
-            "out_node": "threshold_0",
+            "out_node": "normalize_2",
             "out_port": "out_frame"
         },
         {
@@ -187,9 +181,15 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "pow_0",
+            "in_node": "depth_0",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
+            "in_node": "median_0",
             "in_port": "in_frame",
-            "out_node": "normalize_2",
+            "out_node": "threshold_0",
             "out_port": "out_frame"
         }
     ],
@@ -433,11 +433,11 @@
             },
             "name": "markov_random_field",
             "ports": {
-                "iterations_limit": 120,
+                "iterations_limit": 250,
                 "method": "Gaussian PDF propagation, 8-neighbourhood weighted",
-                "weights/flatness": 0.800000011920929,
-                "weights/inputs": 9.99999974737875e-06,
-                "weights/smoothness": 1.0
+                "weights/flatness": 0.5,
+                "weights/inputs": 0.00100000004749745,
+                "weights/smoothness": 0.0
             },
             "type": "opencv/lightfields/markov_random_field"
         },
@@ -810,14 +810,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 123.706489562988,
+                    "x": 127.812400817871,
                     "y": -89.8537673950195
                 }
             },
             "name": "threshold",
             "ports": {
                 "max_val": 1.0,
-                "threshold": 0.100000001490116,
+                "threshold": 0.0,
                 "type": "THRESH_TOZERO",
                 "use_otsu": false,
                 "use_triangle": false

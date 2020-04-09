@@ -10,10 +10,11 @@ namespace lightfields {
 class PDFGaussian {
 	public:
 		static PDFGaussian fromConfidence(float mu, float confidence) {
-			assert(confidence >= 0.0f);
+			assert(confidence >= 0.0f && confidence <= 1.0f);
 
 			if(confidence > 1e-5f)
-				return PDFGaussian(mu, -std::log(confidence));
+				// return PDFGaussian(mu, -std::log(confidence));
+				return PDFGaussian(mu, 1.0f / confidence - 1.0f);
 			return PDFGaussian(mu, std::numeric_limits<float>::infinity());
 		}
 

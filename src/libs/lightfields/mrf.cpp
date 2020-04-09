@@ -3,6 +3,11 @@
 #include <cassert>
 #include <cmath>
 #include <limits>
+#include <memory>
+
+#include <random>
+#include <time.h>
+#include <thread>
 
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range2d.h>
@@ -187,8 +192,22 @@ cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatn
 	return result;
 }
 
+namespace {
+
+// A thread safe function generating random offsets required for the diffusion to work correctly
+int randomOffset(int max) {
+	static thread_local std::unique_ptr<std::mt19937> s_generator;
+	if(!s_generator)
+		s_generator = std::unique_ptr<std::mt19937>(new std::mt19937(std::clock() + std::hash<std::thread::id>()(std::this_thread::get_id())));
+
+	std::uniform_int_distribution<int> distribution(0, max-1);
+	return distribution(*s_generator);
+}
+
+}
+
 cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight, std::size_t iterationLimit, const Neighbours& neighbourhood) {
-	const float totalWeight = inputsWeight + flatnessWeight /*+ smoothnessWeight*/;
+	const float totalWeight = inputsWeight + flatnessWeight + smoothnessWeight;
 	if(totalWeight > 1.0f)
 		throw std::runtime_error("Weights should sum to less than 1.0");
 
@@ -211,23 +230,53 @@ cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeigh
 		tbb::parallel_for(tbb::blocked_range2d<unsigned>(0u, grid.rows(), 0u, grid.cols()), [&](const tbb::blocked_range2d<unsigned>& range) {
 			for(unsigned y=range.rows().begin(); y != range.rows().end(); ++y)
 				for(unsigned x=range.cols().begin(); x != range.cols().end(); ++x) {
+					float weightSum = 0.0f, weightMax = 0.0f;
+					neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
+						weightSum += weight;
+						weightMax = std::max(weightMax, weight);
+					});
+
+					// stick to the original value
 					const PDFGaussian constness = PDFGaussian::fromConfidence(source[V2i(x, y)].value, source[V2i(x, y)].confidence);
 
 					PDFGaussian flatness = PDFGaussian::fromConfidence(0,0);
-					{
-						float weightSum = 0.0f;
+					if(flatnessWeight > 0.0f) {
+						// need to permutate the order of evaluation - otherwise I'll end up with directional bias (whole image "shifting")
+						// (yes, this will introduce some randomness to the result, but at least it will look correct)
+						std::array<std::pair<V2i, float>, 8> arr;
+						unsigned ctr = 0;
 						neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
-							weightSum += weight;
+							assert(ctr < 8);
+							arr[ctr] = std::make_pair(pos, weight);
+
+							++ctr;
 						});
 
-						neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
-							flatness = flatness + state(pos.y, pos.x) * PDFGaussian::fromConfidence(0, weight / weightSum);
-						});
+						std::random_shuffle(arr.begin(), arr.begin()+ctr, randomOffset);
+
+						float weight = 1.0f;
+						for(unsigned a=0;a<ctr;++a) {
+							// find the nearest
+							const PDFGaussian& tmp = state(arr[a].first.y, arr[a].first.x);
+							if(flatness.sigma() > tmp.sigma()) {
+								flatness = tmp;
+								weight = arr[a].second;
+							}
+						}
+						flatness = flatness /* * PDFGaussian::fromConfidence(0, weight / weightMax) */; // THIS DOESN"T WORK!!!!
 					}
 
+					PDFGaussian smoothness = PDFGaussian::fromConfidence(0,0);
+					neighbourhood.eval(V2i(x, y), [&](const V2i& pos, float weight) {
+						// average the neighbourhood
+						smoothness = smoothness + state(pos.y, pos.x) /* * PDFGaussian::fromConfidence(0, weight / weightSum) */; // this doesn't EAT OUT the low probabilities!
+					});
+
+					// combine them all
 					grid(y, x) = state(y, x) * PDFGaussian::fromConfidence(0, 1.0f - totalWeight) +
 						constness * PDFGaussian::fromConfidence(0, inputsWeight) +
-						flatness * PDFGaussian::fromConfidence(0, flatnessWeight);
+						flatness * PDFGaussian::fromConfidence(0, flatnessWeight) +
+						smoothness * PDFGaussian::fromConfidence(0, smoothnessWeight);
 				}
 		});
 	}
