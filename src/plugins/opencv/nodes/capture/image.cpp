@@ -52,7 +52,7 @@ void copyData(ImageInput& input, cv::Mat& m) {
 				// reverse channels - oiio RGB to opencv BGR
 				std::size_t index = channels - c - 1;
 
-				unsigned char value = *(pixels.data() + (y*xres+x)*channels + c);
+				T value = *(pixels.data() + (y*xres+x)*channels + c);
 				assert(value > 0 || value == 0);
 				*(ptr + index) = value;
 			}
