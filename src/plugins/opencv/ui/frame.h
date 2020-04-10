@@ -21,6 +21,10 @@ class FrameUI : public possumwood::properties::property<possumwood::opencv::Fram
 		// virtual void onFlagsChanged(unsigned flags) override;
 
 	private:
+		QWidget* m_widget;
+
 		QLabel* m_label;
 		// QMetaObject::Connection m_valueChangeConnection;
+
+		cv::Mat m_value;
 };

@@ -48,7 +48,7 @@ bool Frame::operator != (const Frame& f) const {
 }
 
 std::ostream& operator << (std::ostream& out, const Frame& f) {
-	out << "(1 " << opencv::type2str((*f).type()) << " frame, " << (*f).cols << "x" << (*f).rows << ")";
+	out << "(" << opencv::type2str((*f).type()) << " frame, " << (*f).cols << "x" << (*f).rows << ")";
 	return out;
 }
 
