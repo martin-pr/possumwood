@@ -25,8 +25,8 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "anisotropic_diffusion_0",
-            "in_port": "in",
+            "in_node": "gaussian_blur_0",
+            "in_port": "in_frame",
             "out_node": "convert_0",
             "out_port": "out_frame"
         },
@@ -34,6 +34,12 @@
             "in_node": "colormap_1",
             "in_port": "in_frame",
             "out_node": "convert_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "anisotropic_diffusion_0",
+            "in_port": "in",
+            "out_node": "gaussian_blur_0",
             "out_port": "out_frame"
         },
         {
@@ -49,7 +55,7 @@
             "out_port": "frame"
         }
     ],
-    "description": "### Anisotropic Diffusion\n\nA simple implementation of the [Anisotropic Diffusion](https://en.wikipedia.org/wiki/Anisotropic_diffusion) filter, based on the legendary Perona-Malik paper.\n\n<sub>Perona, Pietro, and Jitendra Malik. [\"Scale-space and edge detection using anisotropic diffusion.\"](https://scholar.google.com/scholar_url?url=https://tauruspet.med.yale.edu/staff/edm42/IUPUI-website/emorris.tar/emorris/emorris/TransportCourse2008/papers/AnistropicDiffusionImageFilterPeronaIEEETPAMI_1990.pdf&hl=en&sa=T&oi=gsb-gga&ct=res&cd=0&d=8428017507787674860&ei=bAeSXv-RNbuF6rQPr7WAkAY&scisig=AAGBfm0fKXhkdkLFnkzdh3sEd6zOSarWWA) IEEE Transactions on pattern analysis and machine intelligence 12.7 (1990): 629-639.</sub>\n\n",
+    "description": "### Anisotropic Diffusion\n\nA simple implementation of the [Anisotropic Diffusion](https://en.wikipedia.org/wiki/Anisotropic_diffusion) filter, based on the legendary Perona-Malik paper. Implementation based on discretisation by Mackiewich (1995).\n\n<sub>Perona, Pietro, and Jitendra Malik. [\"Scale-space and edge detection using anisotropic diffusion.\"](https://scholar.google.com/scholar_url?url=https://tauruspet.med.yale.edu/staff/edm42/IUPUI-website/emorris.tar/emorris/emorris/TransportCourse2008/papers/AnistropicDiffusionImageFilterPeronaIEEETPAMI_1990.pdf&hl=en&sa=T&oi=gsb-gga&ct=res&cd=0&d=8428017507787674860&ei=bAeSXv-RNbuF6rQPr7WAkAY&scisig=AAGBfm0fKXhkdkLFnkzdh3sEd6zOSarWWA) IEEE Transactions on pattern analysis and machine intelligence 12.7 (1990): 629-639.</sub>\n\n<sub>Mackiewich, Blair. [Intracranial boundary detection and radio frequency correction in magnetic resonance images.](https://scholar.google.com/scholar_url?url=http://summit.sfu.ca/system/files/iritems1/6770/b17574493.pdf&hl=en&sa=T&oi=gsb-gga&ct=res&cd=0&d=4996846063260665273&ei=9xOSXqb1MZXGmAGc_LmYBg&scisig=AAGBfm2PB-BBMIbMYbpNOzQzp_Tb-ghnjQ) Diss. Theses (School of Computing Science)/Simon Fraser University, 1995.</sub>",
     "nodes": {
         "anisotropic_diffusion_0": {
             "blind_data": {
@@ -61,10 +67,10 @@
             },
             "name": "anisotropic_diffusion",
             "ports": {
-                "coefficient": 10.0,
-                "iterations_limit": 100,
+                "coefficient": 1.0,
+                "iterations_limit": 200,
                 "neighbourhood": "8-neighbourhood weighted",
-                "step": 0.200000002980232
+                "step": 5.0
             },
             "type": "opencv/lightfields/anisotropic_diffusion"
         },
@@ -115,8 +121,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 320.085968017578,
-                    "y": 426.440185546875
+                    "x": 327.711639404297,
+                    "y": 247.236999511719
                 }
             },
             "name": "convert",
@@ -143,12 +149,28 @@
             },
             "type": "opencv/convert"
         },
+        "gaussian_blur_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 299.016021728516,
+                    "y": 434.898895263672
+                }
+            },
+            "name": "gaussian_blur",
+            "ports": {
+                "adaptive_method": "BORDER_DEFAULT",
+                "sigma_x": 0.400000005960464,
+                "sigma_y": 0.0
+            },
+            "type": "opencv/gaussian_blur"
+        },
         "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 224.763275146484,
-                    "y": 227.263687133789
+                    "x": 228.576110839844,
+                    "y": 92.5435638427734
                 }
             },
             "name": "image",
@@ -467,6 +489,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHLAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACqAQAAAwAABAsAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAABAAAABwAAAd7AAAEDwAAAAAAAAAAB4AAAAAEAAAAHAAAB3sAAAQP",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHLAAADZPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADZAAAAJgBAAADAAAAAQAAAagAAANk/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABegAAAl8AAACqAQAAAwAABAMAAANkAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

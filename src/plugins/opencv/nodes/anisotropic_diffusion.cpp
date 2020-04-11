@@ -22,34 +22,13 @@ dependency_graph::InAttr<unsigned> a_iterationLimit;
 dependency_graph::InAttr<possumwood::Enum> a_neighbourhood;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
-/// creates an image representing the gradient magnitude, computed via Sobel filter
-cv::Mat constant(const cv::Mat& in, float k) {
-	assert(in.type() == CV_32FC1);
-	cv::Mat mat = cv::Mat::zeros(in.rows, in.cols, CV_32FC1);
-
-	static const float sobel[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
-
-	tbb::parallel_for(tbb::blocked_range2d<int>(0, mat.rows, 0, mat.cols), [&](const tbb::blocked_range2d<int>& range) {
-		for(int y=range.rows().begin(); y != range.rows().end(); ++y)
-			for(int x=range.cols().begin(); x != range.cols().end(); ++x) {
-				float xsobel = 0.0f;
-				float ysobel = 0.0f;
-
-				for(int yi = -1; yi <= 1; ++yi)
-					for(int xi = -1; xi <= 1; ++xi) {
-						xsobel += sobel[xi+1][yi+1] * in.at<float>(std::min(std::max(0, y+yi), in.rows-1), std::min(std::max(0, x+xi), in.cols-1));
-						ysobel += sobel[yi+1][xi+1] * in.at<float>(std::min(std::max(0, y+yi), in.rows-1), std::min(std::max(0, x+xi), in.cols-1));
-					}
-
-				mat.at<float>(y, x) = 1.0f / (1.0f + (xsobel*xsobel + ysobel*ysobel) / (k*k));
-			}
-	});
-
-	return mat;
+float c(float val, float k) {
+	return 1.0f / (1.0f + (val*val / k*k));
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const cv::Mat& in = *data.get(a_in);
+	const float k = data.get(a_coefficient);
 
 	if(in.type() != CV_32FC1)
 		throw std::runtime_error("Input needs to be of type CV_32FC1.");
@@ -63,55 +42,23 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	for(unsigned it=0; it<data.get(a_iterationLimit); ++it) {
 		cv::swap(source, mat);
 
-		// compute the "constant" function
-		const cv::Mat cf = constant(source, data.get(a_coefficient));
-
 		tbb::parallel_for(tbb::blocked_range2d<int>(0, mat.rows, 0, mat.cols), [&](const tbb::blocked_range2d<int>& range) {
 			for(int y=range.rows().begin(); y != range.rows().end(); ++y)
 				for(int x=range.cols().begin(); x != range.cols().end(); ++x) {
 					float laplacian = 0.0f;
-					float norm_x = 0.0f;
-					float norm_y = 0.0f;
-
-					float gradient_x = 0.0f;
-					float gradient_y = 0.0f;
-					float c_gradient_x = 0.0f;
-					float c_gradient_y = 0.0f;
-
-					float gradient = 0.0f;
+					float norm = 0.0f;
 
 					neighbours->eval(lightfields::V2i(x, y), [&](const lightfields::V2i& pos, float weight) {
-						norm_y += weight;
+						norm += weight;
 
-						laplacian += (source.at<float>(pos.y, pos.x) - source.at<float>(y, x)) * weight;
-						gradient_y += (source.at<float>(y, x) - source.at<float>(pos.y, pos.x)) * weight;
-						c_gradient_y += (cf.at<float>(y, x) - cf.at<float>(pos.y, pos.x)) * weight;
+						const float diff = source.at<float>(pos.y, pos.x) - source.at<float>(y, x);
 
-						gradient += (source.at<float>(y, x) - source.at<float>(pos.y, pos.x)) * (cf.at<float>(y, x) - cf.at<float>(pos.y, pos.x)) * weight;
+						laplacian += diff * c(diff, k) * weight;
 					});
 
-					laplacian = laplacian / (norm_x + norm_y) * cf.at<float>(y, x);
-					// laplacian = laplacian * cf.at<float>(y, x);
+					laplacian = laplacian / norm;
 
-					// gradient = std::sqrt(std::pow(gradient_x / norm_x, 2) + std::pow(gradient_y / norm_y, 2))
-					// 	* std::sqrt(std::pow(c_gradient_x / norm_x, 2) + std::pow(c_gradient_y / norm_y, 2));
-
-					mat.at<float>(y, x) = source.at<float>(y, x) + (/*gradient  + */ laplacian ) * data.get(a_step);
-					// mat.at<float>(y, x) = source.at<float>(y, x) + laplacian * data.get(a_step);
-
-					// GRADIENT PART DOESN'T WORK - PRODUCES "STARS"
-
-
-					// for(int yi = std::max(0, y-1); yi < std::min(source.rows, y+2); ++yi)
-					// 	for(int xi = std::max(0, x-1); xi < std::min(source.cols, x+2); ++xi)
-					// 		if(xi != x || yi != y) {
-					// 			norm += 1.0f;
-					// 			laplacian = laplacian + source.at<float>(yi, xi) - source.at<float>(y, x);
-					// 		}
-
-					// laplacian = laplacian * cf.at<float>(y, x);
-
-					// mat.at<float>(y, x) = source.at<float>(y, x) + laplacian * data.get(a_step);
+					mat.at<float>(y, x) = source.at<float>(y, x) + laplacian * data.get(a_step);
 				}
 		});
 	}
