@@ -7,6 +7,10 @@
 
 #include <actions/traits.h>
 
+#include <lightfields/neighbours.h>
+
+#include "possumwood_sdk/datatypes/enum.h"
+
 #include "frame.h"
 #include "tools.h"
 
@@ -15,6 +19,7 @@ namespace {
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<float> a_coefficient, a_step;
 dependency_graph::InAttr<unsigned> a_iterationLimit;
+dependency_graph::InAttr<possumwood::Enum> a_neighbourhood;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 /// creates an image representing the gradient magnitude, computed via Sobel filter
@@ -49,6 +54,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(in.type() != CV_32FC1)
 		throw std::runtime_error("Input needs to be of type CV_32FC1.");
 
+	std::unique_ptr<lightfields::Neighbours> neighbours = lightfields::Neighbours::create(
+		lightfields::Neighbours::Type(data.get(a_neighbourhood).intValue()), lightfields::V2i(in.cols, in.rows));
+
 	cv::Mat mat = in.clone();
 	cv::Mat source = mat.clone();
 
@@ -72,46 +80,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 					float gradient = 0.0f;
 
+					neighbours->eval(lightfields::V2i(x, y), [&](const lightfields::V2i& pos, float weight) {
+						norm_y += weight;
 
-					if(y > 0) {
-						norm_y += 1.0f;
+						laplacian += (source.at<float>(pos.y, pos.x) - source.at<float>(y, x)) * weight;
+						gradient_y += (source.at<float>(y, x) - source.at<float>(pos.y, pos.x)) * weight;
+						c_gradient_y += (cf.at<float>(y, x) - cf.at<float>(pos.y, pos.x)) * weight;
 
-						laplacian += source.at<float>(y-1, x) - source.at<float>(y, x);
-						gradient_y += source.at<float>(y, x) - source.at<float>(y-1, x);
-						c_gradient_y += cf.at<float>(y, x) - cf.at<float>(y-1, x);
-
-						gradient += (source.at<float>(y, x) - source.at<float>(y-1, x)) * (cf.at<float>(y, x) - cf.at<float>(y-1, x));
-					}
-
-					if(y < mat.rows-1) {
-						norm_y += 1.0f;
-
-						laplacian += source.at<float>(y+1, x) - source.at<float>(y, x);
-						gradient_y += source.at<float>(y+1, x) - source.at<float>(y, x);
-						c_gradient_y += cf.at<float>(y+1, x) - cf.at<float>(y, x);
-
-						gradient += (source.at<float>(y+1, x) - source.at<float>(y, x)) * (cf.at<float>(y+1, x) - cf.at<float>(y, x));
-					}
-
-					if(x > 0) {
-						norm_x += 1.0f;
-
-						laplacian += source.at<float>(y, x-1) - source.at<float>(y, x);
-						gradient_x += source.at<float>(y, x) - source.at<float>(y, x-1);
-						c_gradient_x += cf.at<float>(y, x) - cf.at<float>(y, x-1);
-
-						gradient += (source.at<float>(y, x) - source.at<float>(y, x-1)) * (cf.at<float>(y, x) - cf.at<float>(y, x-1));
-					}
-
-					if(x < mat.cols-1) {
-						norm_x += 1.0f;
-
-						laplacian += source.at<float>(y, x+1) - source.at<float>(y, x);
-						gradient_x += source.at<float>(y, x+1) - source.at<float>(y, x);
-						c_gradient_x += cf.at<float>(y, x+1) - cf.at<float>(y, x);
-
-						gradient += (source.at<float>(y, x+1) - source.at<float>(y, x)) * (cf.at<float>(y, x+1) - cf.at<float>(y, x));
-					}
+						gradient += (source.at<float>(y, x) - source.at<float>(pos.y, pos.x)) * (cf.at<float>(y, x) - cf.at<float>(pos.y, pos.x)) * weight;
+					});
 
 					laplacian = laplacian / (norm_x + norm_y) * cf.at<float>(y, x);
 					// laplacian = laplacian * cf.at<float>(y, x);
@@ -149,12 +126,14 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_coefficient, "coefficient", 0.1f);
 	meta.addAttribute(a_step, "step", 0.01f);
 	meta.addAttribute(a_iterationLimit, "iterations_limit", 10u);
+	meta.addAttribute(a_neighbourhood, "neighbourhood", possumwood::Enum(lightfields::Neighbours::types().begin(), lightfields::Neighbours::types().end()));
 	meta.addAttribute(a_out, "out", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_coefficient, a_out);
 	meta.addInfluence(a_step, a_out);
 	meta.addInfluence(a_iterationLimit, a_out);
+	meta.addInfluence(a_neighbourhood, a_out);
 
 	meta.setCompute(compute);
 }

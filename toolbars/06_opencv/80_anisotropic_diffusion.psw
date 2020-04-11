@@ -63,6 +63,7 @@
             "ports": {
                 "coefficient": 10.0,
                 "iterations_limit": 100,
+                "neighbourhood": "8-neighbourhood weighted",
                 "step": 0.200000002980232
             },
             "type": "opencv/lightfields/anisotropic_diffusion"
