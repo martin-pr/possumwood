@@ -3,19 +3,19 @@
         {
             "in_node": "convert_1",
             "in_port": "in_frame",
-            "out_node": "anisotropic_diffusion_0",
+            "out_node": "diffusion_0",
             "out_port": "out"
         },
         {
             "in_node": "convert_3",
             "in_port": "in_frame",
-            "out_node": "anisotropic_diffusion_1",
+            "out_node": "diffusion_1",
             "out_port": "out"
         },
         {
             "in_node": "convert_5",
             "in_port": "in_frame",
-            "out_node": "anisotropic_diffusion_2",
+            "out_node": "diffusion_2",
             "out_port": "out"
         },
         {
@@ -97,7 +97,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "anisotropic_diffusion_0",
+            "in_node": "diffusion_0",
             "in_port": "in",
             "out_node": "convert_0",
             "out_port": "out_frame"
@@ -121,7 +121,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "anisotropic_diffusion_1",
+            "in_node": "diffusion_1",
             "in_port": "in",
             "out_node": "convert_4",
             "out_port": "out_frame"
@@ -133,7 +133,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "anisotropic_diffusion_2",
+            "in_node": "diffusion_2",
             "in_port": "in",
             "out_node": "convert_6",
             "out_port": "out_frame"
@@ -211,6 +211,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "network_1",
+            "out_port": "output"
+        },
+        {
             "in_node": "convert_0",
             "in_port": "in_frame",
             "out_node": "normalize_0",
@@ -223,7 +229,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "anisotropic_diffusion_0",
+            "in_node": "diffusion_0",
             "in_port": "confidence",
             "out_node": "normalize_1",
             "out_port": "out_frame"
@@ -259,7 +265,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "anisotropic_diffusion_2",
+            "in_node": "diffusion_2",
             "in_port": "confidence",
             "out_node": "normalize_5",
             "out_port": "out_frame"
@@ -271,71 +277,14 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "anisotropic_diffusion_1",
+            "in_node": "diffusion_1",
             "in_port": "confidence",
             "out_node": "pow_0",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "network_1",
-            "out_port": "output"
         }
     ],
-    "description": "### Anisotropic diffusion depth reconstruction\n\nPrevious demos in this category demonstrated several options to reconstruct depth values from input lightfields data, with a confidence value for each recovered depth pixel.\n\nThis demo tries to use a data-driven anisotropic diffusion to propagate these values from pixels with high confidence to pixels with low confidence, reconstructing the whole field.\n",
+    "description": "### Anisotropic diffusion depth reconstruction\n\nPrevious demos in this category demonstrated several options to reconstruct depth values from input lightfields data, with a confidence value for each recovered depth pixel.\n\nThis demo tries to use a data-driven anisotropic diffusion to propagate these values from pixels with high confidence to pixels with low confidence, reconstructing the whole field.\n\n<sub>Mackiewich, Blair. [Intracranial boundary detection and radio frequency correction in magnetic resonance images.](http://summit.sfu.ca/system/files/iritems1/6770/b17574493.pdf) Diss. Theses (School of Computing Science)/Simon Fraser University, 1995.</sub>\n\n<sub>Perona, Pietro, and Jitendra Malik. [\"Scale-space and edge detection using anisotropic diffusion.\"](https://tauruspet.med.yale.edu/staff/edm42/IUPUI-website/emorris.tar/emorris/emorris/TransportCourse2008/papers/AnistropicDiffusionImageFilterPeronaIEEETPAMI_1990.pdf) IEEE Transactions on pattern analysis and machine intelligence 12.7 (1990): 629-639.</sub>",
     "nodes": {
-        "anisotropic_diffusion_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 465.777557373047,
-                    "y": 515.138305664062
-                }
-            },
-            "name": "anisotropic_diffusion",
-            "ports": {
-                "coefficient": 1.0,
-                "iterations_limit": 500,
-                "neighbourhood": "8-neighbourhood weighted",
-                "step": 80.0
-            },
-            "type": "opencv/lightfields/diffusion"
-        },
-        "anisotropic_diffusion_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 1022.89001464844,
-                    "y": 498.557586669922
-                }
-            },
-            "name": "anisotropic_diffusion",
-            "ports": {
-                "coefficient": 10.0,
-                "iterations_limit": 400,
-                "neighbourhood": "8-neighbourhood weighted",
-                "step": 50.0
-            },
-            "type": "opencv/lightfields/diffusion"
-        },
-        "anisotropic_diffusion_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 1583.31860351562,
-                    "y": 525.086730957031
-                }
-            },
-            "name": "anisotropic_diffusion",
-            "ports": {
-                "coefficient": 10.0,
-                "iterations_limit": 500,
-                "neighbourhood": "8-neighbourhood weighted",
-                "step": 50.0
-            },
-            "type": "opencv/lightfields/diffusion"
-        },
         "colormap_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -682,6 +631,57 @@
             },
             "type": "opencv/convert"
         },
+        "diffusion_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 465.777557373047,
+                    "y": 515.138305664062
+                }
+            },
+            "name": "anisotropic_diffusion",
+            "ports": {
+                "coefficient": 1.0,
+                "iterations_limit": 500,
+                "neighbourhood": "8-neighbourhood weighted",
+                "step": 80.0
+            },
+            "type": "opencv/lightfields/diffusion"
+        },
+        "diffusion_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1022.89001464844,
+                    "y": 498.557586669922
+                }
+            },
+            "name": "anisotropic_diffusion",
+            "ports": {
+                "coefficient": 10.0,
+                "iterations_limit": 400,
+                "neighbourhood": "8-neighbourhood weighted",
+                "step": 50.0
+            },
+            "type": "opencv/lightfields/diffusion"
+        },
+        "diffusion_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1583.31860351562,
+                    "y": 525.086730957031
+                }
+            },
+            "name": "anisotropic_diffusion",
+            "ports": {
+                "coefficient": 10.0,
+                "iterations_limit": 500,
+                "neighbourhood": "8-neighbourhood weighted",
+                "step": 50.0
+            },
+            "type": "opencv/lightfields/diffusion"
+        },
         "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -784,8 +784,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 919.404602050781,
-                    "y": 1849.93786621094
+                    "x": 906.760681152344,
+                    "y": 1774.07458496094
                 }
             },
             "connections": [
@@ -1088,11 +1088,41 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 990.587707519531,
-                    "y": 1650.49536132812
+                    "x": 902.080444335938,
+                    "y": 1616.7783203125
                 }
             },
             "connections": [
+                {
+                    "in_node": "metadata_1",
+                    "in_port": "frame",
+                    "out_node": "concat_0",
+                    "out_port": "out_frame"
+                },
+                {
+                    "in_node": "concat_1",
+                    "in_port": "in_frame_2",
+                    "out_node": "concat_0",
+                    "out_port": "out_frame"
+                },
+                {
+                    "in_node": "output_0",
+                    "in_port": "data",
+                    "out_node": "concat_1",
+                    "out_port": "out_frame"
+                },
+                {
+                    "in_node": "text_0",
+                    "in_port": "in_frame",
+                    "out_node": "empty_0",
+                    "out_port": "out_frame"
+                },
+                {
+                    "in_node": "text_3",
+                    "in_port": "in_frame",
+                    "out_node": "empty_1",
+                    "out_port": "out_frame"
+                },
                 {
                     "in_node": "metadata_0",
                     "in_port": "frame",
@@ -1106,16 +1136,28 @@
                     "out_port": "data"
                 },
                 {
+                    "in_node": "empty_0",
+                    "in_port": "size",
+                    "out_node": "make_vec2u_0",
+                    "out_port": "out"
+                },
+                {
+                    "in_node": "empty_1",
+                    "in_port": "size",
+                    "out_node": "make_vec2u_1",
+                    "out_port": "out"
+                },
+                {
                     "in_node": "split_vec2u_0",
                     "in_port": "vec",
                     "out_node": "metadata_0",
                     "out_port": "size"
                 },
                 {
-                    "in_node": "text_0",
-                    "in_port": "in_frame",
-                    "out_node": "empty_0",
-                    "out_port": "out_frame"
+                    "in_node": "split_vec2u_1",
+                    "in_port": "vec",
+                    "out_node": "metadata_1",
+                    "out_port": "size"
                 },
                 {
                     "in_node": "make_vec2u_0",
@@ -1124,22 +1166,10 @@
                     "out_port": "y"
                 },
                 {
-                    "in_node": "empty_0",
-                    "in_port": "size",
-                    "out_node": "make_vec2u_0",
-                    "out_port": "out"
-                },
-                {
-                    "in_node": "metadata_1",
-                    "in_port": "frame",
-                    "out_node": "concat_0",
-                    "out_port": "out_frame"
-                },
-                {
-                    "in_node": "concat_1",
-                    "in_port": "in_frame_2",
-                    "out_node": "concat_0",
-                    "out_port": "out_frame"
+                    "in_node": "make_vec2u_1",
+                    "in_port": "x",
+                    "out_node": "split_vec2u_1",
+                    "out_port": "x"
                 },
                 {
                     "in_node": "text_1",
@@ -1158,36 +1188,6 @@
                     "in_port": "in_frame_1",
                     "out_node": "text_2",
                     "out_port": "out_frame"
-                },
-                {
-                    "in_node": "output_0",
-                    "in_port": "data",
-                    "out_node": "concat_1",
-                    "out_port": "out_frame"
-                },
-                {
-                    "in_node": "text_3",
-                    "in_port": "in_frame",
-                    "out_node": "empty_1",
-                    "out_port": "out_frame"
-                },
-                {
-                    "in_node": "empty_1",
-                    "in_port": "size",
-                    "out_node": "make_vec2u_1",
-                    "out_port": "out"
-                },
-                {
-                    "in_node": "split_vec2u_1",
-                    "in_port": "vec",
-                    "out_node": "metadata_1",
-                    "out_port": "size"
-                },
-                {
-                    "in_node": "make_vec2u_1",
-                    "in_port": "x",
-                    "out_node": "split_vec2u_1",
-                    "out_port": "x"
                 },
                 {
                     "in_node": "text_4",
@@ -1628,5 +1628,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKWAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACMgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACqAAAATkAAACqAQAAAwAAA0AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALXAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABbAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB4gAAAf8AAACqAQAAAwAAAv8AAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

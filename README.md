@@ -1068,6 +1068,28 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/80_anisotropic_diffusion.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Anisotropic Diffusion
+
+A simple implementation of the [Anisotropic Diffusion](https://en.wikipedia.org/wiki/Anisotropic_diffusion) filter, based on the legendary Perona-Malik paper. Implementation based on discretisation by Mackiewich (1995).
+
+<sub>Perona, Pietro, and Jitendra Malik. ["Scale-space and edge detection using anisotropic diffusion."](https://scholar.google.com/scholar_url?url=https://tauruspet.med.yale.edu/staff/edm42/IUPUI-website/emorris.tar/emorris/emorris/TransportCourse2008/papers/AnistropicDiffusionImageFilterPeronaIEEETPAMI_1990.pdf&hl=en&sa=T&oi=gsb-gga&ct=res&cd=0&d=8428017507787674860&ei=bAeSXv-RNbuF6rQPr7WAkAY&scisig=AAGBfm0fKXhkdkLFnkzdh3sEd6zOSarWWA) IEEE Transactions on pattern analysis and machine intelligence 12.7 (1990): 629-639.</sub>
+
+<sub>Mackiewich, Blair. [Intracranial boundary detection and radio frequency correction in magnetic resonance images.](https://scholar.google.com/scholar_url?url=http://summit.sfu.ca/system/files/iritems1/6770/b17574493.pdf&hl=en&sa=T&oi=gsb-gga&ct=res&cd=0&d=4996846063260665273&ei=9xOSXqb1MZXGmAGc_LmYBg&scisig=AAGBfm2PB-BBMIbMYbpNOzQzp_Tb-ghnjQ) Diss. Theses (School of Computing Science)/Simon Fraser University, 1995.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/80_anisotropic_diffusion_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
 </table> 
 
 ### Hdr
@@ -2040,6 +2062,30 @@ Depth reconstruction resolved using a graph cut on a multi-level grid graph, wit
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_lightfields_depth/70_diffusion_depth.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Anisotropic diffusion depth reconstruction
+
+Previous demos in this category demonstrated several options to reconstruct depth values from input lightfields data, with a confidence value for each recovered depth pixel.
+
+This demo tries to use a data-driven anisotropic diffusion to propagate these values from pixels with high confidence to pixels with low confidence, reconstructing the whole field.
+
+<sub>Mackiewich, Blair. [Intracranial boundary detection and radio frequency correction in magnetic resonance images.](http://summit.sfu.ca/system/files/iritems1/6770/b17574493.pdf) Diss. Theses (School of Computing Science)/Simon Fraser University, 1995.</sub>
+
+<sub>Perona, Pietro, and Jitendra Malik. ["Scale-space and edge detection using anisotropic diffusion."](https://tauruspet.med.yale.edu/staff/edm42/IUPUI-website/emorris.tar/emorris/emorris/TransportCourse2008/papers/AnistropicDiffusionImageFilterPeronaIEEETPAMI_1990.pdf) IEEE Transactions on pattern analysis and machine intelligence 12.7 (1990): 629-639.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_lightfields_depth/70_diffusion_depth_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
 </table> 
 
 ## Tutorials
@@ -2237,6 +2283,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 
