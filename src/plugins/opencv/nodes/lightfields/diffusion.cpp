@@ -16,7 +16,7 @@
 
 namespace {
 
-dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
+dependency_graph::InAttr<possumwood::opencv::Frame> a_in, a_confidence;
 dependency_graph::InAttr<float> a_coefficient, a_step;
 dependency_graph::InAttr<unsigned> a_iterationLimit;
 dependency_graph::InAttr<possumwood::Enum> a_neighbourhood;
@@ -32,6 +32,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	if(in.type() != CV_32FC1)
 		throw std::runtime_error("Input needs to be of type CV_32FC1.");
+
+	cv::Mat confidence = cv::Mat::zeros(in.rows, in.cols, CV_32FC1);
+	if(!data.get(a_confidence).empty()) {
+		confidence = *data.get(a_confidence);
+		if(confidence.type() != CV_32FC1)
+			throw std::runtime_error("Confidence needs to be of type CV_32FC1.");
+		if(confidence.rows != in.rows || confidence.cols != in.cols)
+			throw std::runtime_error("Input and confidence sizes must match.");
+	}
 
 	std::unique_ptr<lightfields::Neighbours> neighbours = lightfields::Neighbours::create(
 		lightfields::Neighbours::Type(data.get(a_neighbourhood).intValue()), lightfields::V2i(in.cols, in.rows));
@@ -49,15 +58,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					float norm = 0.0f;
 
 					neighbours->eval(lightfields::V2i(x, y), [&](const lightfields::V2i& pos, float weight) {
-						norm += weight;
+						norm += weight * pow(1.0f - confidence.at<float>(pos.y, pos.x), 1);
 
 						const float diff = source.at<float>(pos.y, pos.x) - source.at<float>(y, x);
 
-						laplacian += diff * c(diff, k) * weight;
+						laplacian += diff * c(diff, k) * weight * pow(1.0f - confidence.at<float>(pos.y, pos.x), 1);
 					});
 
-					laplacian = laplacian / norm;
+					if(norm > 0.0f)
+						laplacian = laplacian / norm;
 
+					// mat.at<float>(y, x) = source.at<float>(y, x) + laplacian * data.get(a_step) * pow(1.0f - confidence.at<float>(y, x), 2);
 					mat.at<float>(y, x) = source.at<float>(y, x) + laplacian * data.get(a_step);
 				}
 		});
@@ -70,6 +81,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_confidence, "confidence", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_coefficient, "coefficient", 0.1f);
 	meta.addAttribute(a_step, "step", 0.01f);
 	meta.addAttribute(a_iterationLimit, "iterations_limit", 10u);
@@ -77,6 +89,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_out, "out", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_in, a_out);
+	meta.addInfluence(a_confidence, a_out);
 	meta.addInfluence(a_coefficient, a_out);
 	meta.addInfluence(a_step, a_out);
 	meta.addInfluence(a_iterationLimit, a_out);
@@ -85,6 +98,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/anisotropic_diffusion", init);
+possumwood::NodeImplementation s_impl("opencv/lightfields/diffusion", init);
 
 }

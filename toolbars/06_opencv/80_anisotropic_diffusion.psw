@@ -72,7 +72,7 @@
                 "neighbourhood": "8-neighbourhood weighted",
                 "step": 5.0
             },
-            "type": "opencv/lightfields/anisotropic_diffusion"
+            "type": "opencv/anisotropic_diffusion"
         },
         "colormap_0": {
             "blind_data": {
