@@ -120,8 +120,8 @@
             },
             "name": "convert",
             "ports": {
-                "a": 100.0,
-                "b": 0.0,
+                "a": 50.0,
+                "b": -15.0,
                 "mode": "CV_8U"
             },
             "type": "opencv/convert"
@@ -166,8 +166,8 @@
             },
             "name": "gamma",
             "ports": {
-                "gamma": 0.800000011920929,
-                "normalization_coef": 1.0
+                "gamma": 0.550000011920929,
+                "normalization_coef": 0.100000001490116
             },
             "type": "opencv/gamma"
         },
@@ -181,10 +181,10 @@
             },
             "name": "integrate_gaussian",
             "ports": {
-                "sigma": 4.0,
+                "sigma": 6.0,
                 "size": {
-                    "x": 200,
-                    "y": 200
+                    "x": 1000,
+                    "y": 1000
                 }
             },
             "type": "opencv/lightfields/integrate_gaussian"
@@ -213,7 +213,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/road.lfr"
+                "filename": "$EXAMPLES/lytro/tea.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -545,7 +545,7 @@
             },
             "name": "samples_refocus",
             "ports": {
-                "uv_offset": -20.0,
+                "uv_offset": 30.0,
                 "uv_threshold": 1.0,
                 "xy_scale": 1.0
             },
@@ -558,5 +558,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALlAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABnAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACEgAAAc8AAACqAQAAAwAAAvEAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAFFAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABnAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACEgAAAc8AAACqAQAAAwAABJEAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -43,7 +43,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "equalize_float_0",
+            "in_node": "normalize_1",
             "in_port": "in_frame",
             "out_node": "confidence_0",
             "out_port": "out_frame"
@@ -91,12 +91,6 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "median_0",
-            "in_port": "in_frame",
-            "out_node": "equalize_float_0",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "convert_2",
             "in_port": "in_frame",
             "out_node": "get_frame_0",
@@ -127,7 +121,13 @@
             "out_port": "out"
         },
         {
-            "in_node": "pow_0",
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "median_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "color_0",
             "in_port": "in_frame",
             "out_node": "median_0",
             "out_port": "out_frame"
@@ -151,15 +151,9 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_1",
+            "in_node": "median_0",
             "in_port": "in_frame",
-            "out_node": "pow_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "color_0",
-            "in_port": "in_frame",
-            "out_node": "pow_0",
+            "out_node": "normalize_1",
             "out_port": "out_frame"
         },
         {
@@ -262,8 +256,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2157.7431640625,
-                    "y": -52.3707122802734
+                    "x": 2170.7890625,
+                    "y": 235.634552001953
                 }
             },
             "name": "confidence",
@@ -357,17 +351,6 @@
             },
             "type": "opencv/divide"
         },
-        "equalize_float_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 2152.0166015625,
-                    "y": 121.952568054199
-                }
-            },
-            "name": "equalize_float",
-            "type": "opencv/equalize_float"
-        },
         "get_frame_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -425,8 +408,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2159.23510742188,
-                    "y": 252.520355224609
+                    "x": 2172.28100585938,
+                    "y": 542.140930175781
                 }
             },
             "name": "median",
@@ -468,8 +451,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1993.23962402344,
-                    "y": 1689.44812011719
+                    "x": 2007.77734375,
+                    "y": 1653.91149902344
                 }
             },
             "connections": [
@@ -782,19 +765,19 @@
             },
             "type": "opencv/normalize"
         },
-        "pow_0": {
+        "normalize_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 2170.994140625,
-                    "y": 420.681884765625
+                    "x": 2176.41577148438,
+                    "y": 400.830474853516
                 }
             },
-            "name": "pow",
+            "name": "normalize",
             "ports": {
-                "power": 3.0
+                "mode": "Min-max"
             },
-            "type": "opencv/pow"
+            "type": "opencv/normalize"
         },
         "samples_from_metadata_0": {
             "blind_data": {

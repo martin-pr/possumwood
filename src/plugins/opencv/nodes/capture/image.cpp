@@ -52,7 +52,7 @@ void copyData(ImageInput& input, cv::Mat& m) {
 				// reverse channels - oiio RGB to opencv BGR
 				std::size_t index = channels - c - 1;
 
-				unsigned char value = *(pixels.data() + (y*xres+x)*channels + c);
+				T value = *(pixels.data() + (y*xres+x)*channels + c);
 				assert(value > 0 || value == 0);
 				*(ptr + index) = value;
 			}
@@ -82,8 +82,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// get the image spec
 		const ImageSpec &spec = in->spec();
-		if(spec.nchannels != 3 && spec.nchannels != 1)
-			throw std::runtime_error("Error loading " + filename.filename().string() + " - only images with 1 or 3 channels are supported at the moment, " + std::to_string(spec.nchannels) + " found!");
 
 		// convert the raw data to a cv::Mat type
 		if(spec.format == TypeDesc::UINT8)
@@ -130,7 +128,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-		"Image files (*.png *.jpg *.jpe *.jpeg *.png *.exr)",
+		"Image files (*.png *.jpg *.jpe *.jpeg *.exr *.tif *.tiff)",
 	}));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_exif, "exif", possumwood::opencv::Exif(), possumwood::AttrFlags::kVertical);

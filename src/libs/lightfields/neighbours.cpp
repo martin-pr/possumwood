@@ -14,12 +14,14 @@ const V2i& Neighbours::size() const {
 	return m_size;
 }
 
-std::map<std::string, Neighbours::Type> Neighbours::types() {
-	return std::map<std::string, Type>{
+const std::vector<std::pair<std::string, Neighbours::Type>>& Neighbours::types() {
+	static const std::vector<std::pair<std::string, Type>> s_types {
 		std::pair<std::string, Type>("4-neighbourhood", k4),
 		std::pair<std::string, Type>("8-neighbourhood", k8),
 		std::pair<std::string, Type>("8-neighbourhood weighted", k8Weighted),
 	};
+
+	return s_types;
 }
 
 ////////////////////

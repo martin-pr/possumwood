@@ -1,116 +1,190 @@
 {
     "connections": [
         {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "color_0",
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "anisotropic_diffusion_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "colormap_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "color_0",
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "gaussian_blur_0",
             "in_port": "in_frame",
             "out_node": "convert_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "convert_0",
+            "in_node": "colormap_1",
             "in_port": "in_frame",
-            "out_node": "divide_0",
+            "out_node": "convert_1",
             "out_port": "out_frame"
         },
         {
-            "in_node": "divide_0",
-            "in_port": "in_frame_1",
-            "out_node": "lytro_lightfield_0",
+            "in_node": "anisotropic_diffusion_0",
+            "in_port": "in",
+            "out_node": "gaussian_blur_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "colormap_0",
+            "in_port": "in_frame",
+            "out_node": "image_0",
             "out_port": "frame"
         },
         {
-            "in_node": "divide_0",
-            "in_port": "in_frame_2",
-            "out_node": "lytro_lightfield_1",
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "image_0",
             "out_port": "frame"
         }
     ],
-    "description": "### Lytro light field normalisation\n\nCalibration of lightfield cameras is a complex process. One of the main issue facing microlens-based cameras is vignetting, caused both by the main lens, and by each of the microlenses.\n\nA naive approach to address vignetting is by simply dividing the image pixels by the values of a white diffuse image captured with the same settings. While this approach addresses vignetting sufficiently, it doesn't take into account the camera response curve, leading to some artifacts still being present in the final image.\n\nGeorgiev, Todor, et al. [\"Lytro camera technology: theory, algorithms, performance analysis.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.679.5441&rep=rep1&type=pdf) Multimedia Content and Mobile Devices. Vol. 8667. International Society for Optics and Photonics, 2013.",
+    "description": "### Anisotropic Diffusion\n\nA simple implementation of the [Anisotropic Diffusion](https://en.wikipedia.org/wiki/Anisotropic_diffusion) filter, based on the legendary Perona-Malik paper. Implementation based on discretisation by Mackiewich (1995).\n\n<sub>Perona, Pietro, and Jitendra Malik. [\"Scale-space and edge detection using anisotropic diffusion.\"](https://scholar.google.com/scholar_url?url=https://tauruspet.med.yale.edu/staff/edm42/IUPUI-website/emorris.tar/emorris/emorris/TransportCourse2008/papers/AnistropicDiffusionImageFilterPeronaIEEETPAMI_1990.pdf&hl=en&sa=T&oi=gsb-gga&ct=res&cd=0&d=8428017507787674860&ei=bAeSXv-RNbuF6rQPr7WAkAY&scisig=AAGBfm0fKXhkdkLFnkzdh3sEd6zOSarWWA) IEEE Transactions on pattern analysis and machine intelligence 12.7 (1990): 629-639.</sub>\n\n<sub>Mackiewich, Blair. [Intracranial boundary detection and radio frequency correction in magnetic resonance images.](https://scholar.google.com/scholar_url?url=http://summit.sfu.ca/system/files/iritems1/6770/b17574493.pdf&hl=en&sa=T&oi=gsb-gga&ct=res&cd=0&d=4996846063260665273&ei=9xOSXqb1MZXGmAGc_LmYBg&scisig=AAGBfm2PB-BBMIbMYbpNOzQzp_Tb-ghnjQ) Diss. Theses (School of Computing Science)/Simon Fraser University, 1995.</sub>",
     "nodes": {
-        "color_0": {
+        "anisotropic_diffusion_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 208.714782714844,
-                    "y": 533.814575195312
+                    "x": 281.304229736328,
+                    "y": 627.16162109375
                 }
             },
-            "name": "color",
+            "name": "anisotropic_diffusion",
             "ports": {
-                "mode": "GRAY2RGB"
+                "coefficient": 1.0,
+                "iterations_limit": 200,
+                "neighbourhood": "8-neighbourhood weighted",
+                "step": 5.0
             },
-            "type": "opencv/color"
+            "type": "opencv/anisotropic_diffusion"
+        },
+        "colormap_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 208.479995727539,
+                    "y": 1028.24169921875
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_BONE"
+            },
+            "type": "opencv/colormap"
+        },
+        "colormap_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 323.559509277344,
+                    "y": 1023.47039794922
+                }
+            },
+            "name": "colormap",
+            "ports": {
+                "type": "COLORMAP_BONE"
+            },
+            "type": "opencv/colormap"
+        },
+        "concat_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 227.70947265625,
+                    "y": 1169.05639648438
+                }
+            },
+            "name": "concat",
+            "ports": {
+                "mode": "Horizontal",
+                "separation": 0
+            },
+            "type": "opencv/concat"
         },
         "convert_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 209.376327514648,
-                    "y": 330.442321777344
+                    "x": 327.711639404297,
+                    "y": 247.236999511719
                 }
             },
             "name": "convert",
             "ports": {
-                "a": 512.0,
+                "a": 1.0,
+                "b": 0.0,
+                "mode": "CV_32F"
+            },
+            "type": "opencv/convert"
+        },
+        "convert_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 324.430419921875,
+                    "y": 830.093688964844
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 1.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
             "type": "opencv/convert"
         },
-        "divide_0": {
+        "gaussian_blur_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 154.831008911133,
-                    "y": 124.84593963623
+                    "x": 299.016021728516,
+                    "y": 434.898895263672
                 }
             },
-            "name": "divide",
+            "name": "gaussian_blur",
             "ports": {
-                "scale": 0.200000002980232
+                "adaptive_method": "BORDER_DEFAULT",
+                "sigma_x": 0.400000005960464,
+                "sigma_y": 0.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/gaussian_blur"
         },
-        "lytro_lightfield_0": {
+        "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 120.530220031738,
-                    "y": -35.1564865112305
+                    "x": 228.576110839844,
+                    "y": 92.5435638427734
                 }
             },
-            "name": "lytro_lightfield",
+            "name": "image",
             "ports": {
-                "filename": "$EXAMPLES/lytro/coin.lfr"
+                "filename": "$EXAMPLES/cae.wisc.edu_images/cameraman.tif"
             },
-            "type": "opencv/capture/lytro_lightfield"
-        },
-        "lytro_lightfield_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 277.530212402344,
-                    "y": -38.1564865112305
-                }
-            },
-            "name": "lytro_lightfield",
-            "ports": {
-                "filename": "$EXAMPLES/lytro/calibration.lfr"
-            },
-            "type": "opencv/capture/lytro_lightfield"
+            "type": "opencv/capture/image"
         },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 218.535095214844,
-                    "y": 674.102783203125
+                    "x": 234.133407592773,
+                    "y": 1369.21838378906
                 }
             },
             "connections": [
@@ -259,7 +333,7 @@
                     },
                     "name": "fragment_shader",
                     "ports": {
-                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform sampler2D image;\n\nvoid main() { \n\tif(uv.y < 0.0 || uv.y > 1.0)\n\t\tcolor = vec4(0,0,0,1);\n\telse\n\t\tcolor = vec4(texture(image, vec2(uv.x, 1.0-uv.y))); \n} \n"
+                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform sampler2D image;\n\nvoid main() { \n\tif(uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)\n\t\tcolor = vec4(0,0,0,1);\n\telse\n\t\tcolor = vec4(texture(image, vec2(uv.x, 1.0-uv.y))); \n} \n"
                     },
                     "type": "render/fragment_shader"
                 },
@@ -267,8 +341,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 1.098313331604,
-                            "y": -80.5660552978516
+                            "x": -52.2785568237305,
+                            "y": -160.631362915039
                         }
                     },
                     "name": "frame",
@@ -278,8 +352,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 391.519897460938,
-                            "y": -245.004028320312
+                            "x": 379.2021484375,
+                            "y": -162.885757446289
                         }
                     },
                     "name": "zoom",
@@ -337,8 +411,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 413.044067382812,
-                            "y": 122.308639526367
+                            "x": 398.541931152344,
+                            "y": 109.618537902832
                         }
                     },
                     "name": "split_vec2u",
@@ -404,7 +478,7 @@
                     "max": 8.0,
                     "min": 1.0,
                     "type": "linear",
-                    "value": 4.80099964141846
+                    "value": 1.0
                 }
             },
             "type": "network"
@@ -415,6 +489,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ7AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACqAQAAAwAAA1sAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAABAAAABwAAAd7AAAEDwAAAAAAAAAAB4AAAAAEAAAAHAAAB3sAAAQP",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHLAAADZPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADZAAAAJgBAAADAAAAAQAAAagAAANk/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABegAAAl8AAACqAQAAAwAABAMAAANkAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <functional>
-#include <map>
+#include <vector>
 
 #include "vec2.h"
 
@@ -23,7 +23,7 @@ class Neighbours {
 		virtual void eval(const V2i& pos, const std::function<void(const V2i&, float)>& fn) const = 0;
 
 		/// Factory enumerator
-		static std::map<std::string, Type> types();
+		static const std::vector<std::pair<std::string, Type>>& types();
 
 		/// Factory method
 		static std::unique_ptr<Neighbours> create(Type t, const V2i& size);
