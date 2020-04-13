@@ -169,6 +169,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "pow_0",
+            "in_port": "in_frame",
+            "out_node": "normalize_2",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "confidence_0",
             "in_port": "in_sequence",
             "out_node": "pixel_normalize_0",
@@ -185,12 +191,6 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "pow_0",
-            "in_port": "in_frame",
-            "out_node": "normalize_2",
-            "out_port": "out_frame"
         },
         {
             "in_node": "median_0",
@@ -437,10 +437,10 @@
             },
             "name": "markov_random_field",
             "ports": {
-                "iterations_limit": 105,
-                "method": "Gaussian PDF propagation, 8-neighbourhood weighted",
-                "weights/flatness": 0.990000009536743,
-                "weights/inputs": 9.99999974737875e-06,
+                "iterations_limit": 200,
+                "method": "ICM energy optimisation, 8-neighbourhood",
+                "weights/flatness": 150.0,
+                "weights/inputs": 9.99999974737875e-05,
                 "weights/smoothness": 1.0
             },
             "type": "opencv/lightfields/markov_random_field"
@@ -869,7 +869,7 @@
             },
             "name": "pow",
             "ports": {
-                "power": 3.0
+                "power": 5.0
             },
             "type": "opencv/pow"
         },
