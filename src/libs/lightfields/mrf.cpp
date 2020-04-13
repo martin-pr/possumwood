@@ -254,13 +254,13 @@ cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeigh
 
 						std::random_shuffle(arr.begin(), arr.begin()+ctr, randomOffset);
 
-						float weight = 1.0f;
+						// float weight = 1.0f;
 						for(unsigned a=0;a<ctr;++a) {
 							// find the nearest
 							const PDFGaussian& tmp = state(arr[a].first.y, arr[a].first.x);
 							if(flatness.sigma() > tmp.sigma()) {
 								flatness = tmp;
-								weight = arr[a].second;
+								// weight = arr[a].second;
 							}
 						}
 						flatness = flatness /* * PDFGaussian::fromConfidence(0, weight / weightMax) */; // THIS DOESN"T WORK!!!!
