@@ -56,6 +56,10 @@ FrameUI::FrameUI() {
 			QString qfilename = QFileDialog::getSaveFileName(m_widget, "Save image", "", formats.c_str(), &selectedFilter);
 
 			if(!qfilename.isEmpty()) {
+				// convert from BGR to RGB
+				cv::Mat rgb;
+				cv::cvtColor(m_value, rgb, cv::COLOR_BGR2RGB);
+
 				std::unique_ptr<OIIO::ImageOutput> out = OIIO::ImageOutput::create(qfilename.toStdString());
 				if(!out) {
 					std::stringstream err;
@@ -63,15 +67,15 @@ FrameUI::FrameUI() {
 					throw std::runtime_error(err.str());
 				}
 
-				OIIO::ImageSpec spec(m_value.cols, m_value.rows, m_value.channels(), type(m_value.depth()));
+				OIIO::ImageSpec spec(rgb.cols, rgb.rows, rgb.channels(), type(rgb.depth()));
 				if(!out->open(qfilename.toStdString(), spec)) {
 					std::stringstream err;
 					err << "Could not open " << qfilename.toStdString() << ", error = " << out->geterror();
 					throw std::runtime_error(err.str());
 				}
 
-				for(int y=0; y<m_value.rows; ++y) {
-					if(!out->write_scanline(y, 0, type(m_value.depth()), m_value.ptr(y))) {
+				for(int y=0; y<rgb.rows; ++y) {
+					if(!out->write_scanline(y, 0, type(rgb.depth()), rgb.ptr(y))) {
 						std::stringstream err;
 						err << "Could not write pixels to " << qfilename.toStdString() << ", error = " << out->geterror();
 						throw std::runtime_error(err.str());
@@ -86,23 +90,12 @@ FrameUI::FrameUI() {
 			}
 		}
 	);
-
-	// m_valueChangeConnection = QObject::connect(
-	// 	m_checkBox,
-	// 	&QCheckBox::stateChanged,
-	// 	[this]() -> void {
-	// 		callValueChangedCallbacks();
-	// 	}
-	// );
 }
 
 FrameUI::~FrameUI() {
-	// QObject::disconnect(m_valueChangeConnection);
 }
 
 void FrameUI::get(possumwood::opencv::Frame& value) const {
-	// value = m_checkBox->isChecked();
-
 	// do nothing, for now
 }
 
@@ -123,7 +116,3 @@ void FrameUI::set(const possumwood::opencv::Frame& value) {
 QWidget* FrameUI::widget() {
 	return m_widget;
 }
-
-// void FrameUI::onFlagsChanged(unsigned flags) {
-// 	m_checkBox->setDisabled((flags & kOutput) || (flags & kDisabled));
-// }
