@@ -9,7 +9,10 @@ namespace lightfields {
 template<typename VALUE>
 class Grid {
 	public:
-		Grid(unsigned rows, unsigned cols, const VALUE& value = VALUE()) : m_rows(rows), m_cols(cols), m_p(rows*cols, value) {
+		explicit Grid(unsigned rows, unsigned cols, const VALUE& value) : m_rows(rows), m_cols(cols), m_p(rows*cols, value) {
+		}
+
+		explicit Grid(unsigned rows, unsigned cols) : m_rows(rows), m_cols(cols), m_p(rows*cols) {
 		}
 
 		VALUE& operator() (unsigned row, unsigned col) {
