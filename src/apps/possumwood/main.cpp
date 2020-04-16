@@ -85,14 +85,18 @@ int main(int argc, char* argv[]) {
 		// initialise eigen
 		Eigen::initParallel();
 
-		// create the application object
-		QApplication app(argc, argv);
+		GL_CHECK_ERR;
 
 		// nice scaling on High DPI displays is support in Qt 5.6+
 		#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
 			QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 			QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 		#endif
+
+		GL_CHECK_ERR;
+
+		// create the application object
+		QApplication app(argc, argv);
 
 		GL_CHECK_ERR;
 
