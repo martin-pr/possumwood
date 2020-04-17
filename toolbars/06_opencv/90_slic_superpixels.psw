@@ -436,10 +436,10 @@
             },
             "name": "slic_superpixels",
             "ports": {
-                "filter": false,
-                "iterations": 10,
+                "filter": true,
+                "iterations": 1,
                 "spatial_bias": 20.0,
-                "target_pixel_count": 300
+                "target_pixel_count": 450
             },
             "type": "opencv/slic_superpixels"
         }

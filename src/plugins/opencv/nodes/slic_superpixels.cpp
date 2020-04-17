@@ -98,6 +98,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(in.type() != CV_8UC3)
 		throw std::runtime_error("Only CV_8UC3 type supported on input for the moment!");
 
+	if(data.get(a_targetPixelCount) == 0)
+		throw std::runtime_error("Only positive pixel counts are allowed.");
+
 	// compute the superpixel spacing S
 	const int S = sqrt((in.cols * in.rows) / data.get(a_targetPixelCount));
 	if(S <= 0)
@@ -169,103 +172,123 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	}
 
 	// address all disconnected components
-	{
-		// first, find all disconnected components
-		lightfields::Grid<bool, lightfields::Bitfield> connected(in.rows, in.cols);
-		std::vector<unsigned> counters(pixels.container().size());
+	if(data.get(a_filter)) {
+		// first, find all components for each label
+		//  label - component - pixels (pair of ints)
+		std::vector<std::vector<std::vector<std::pair<int, int>>>> components(pixels.container().size());
 
-		tbb::parallel_for(std::size_t(0), pixels.container().size(), [&](std::size_t a) {
-			static thread_local std::vector<std::pair<int, int>> stack;
-			assert(stack.empty());
+		{
+			lightfields::Grid<bool, lightfields::Bitfield> connected(in.rows, in.cols);
 
-			stack.push_back(std::make_pair(pixels.container()[a].row, pixels.container()[a].col));
-			while(!stack.empty()) {
-				const std::pair<int, int> current = stack.back();
-				stack.pop_back();
+			for(int y=0; y<in.rows; ++y)
+				for(int x=0; x<in.cols; ++x) {
+					// found a new component
+					if(!connected(y, x)) {
+						// recursively map it
+						const int currentLabel = labels(y, x).load().label;
 
-				assert(current.first < in.rows);
-				assert(current.second < in.cols);
+						components[currentLabel].push_back(std::vector<std::pair<int, int>>());
+						std::vector<std::pair<int, int>>& currentComponent = components[currentLabel].back();
 
-				if(!connected(current.first, current.second) && labels(current.first, current.second).load().label == (int)a) {
-					connected(current.first, current.second) = true;
+						std::vector<std::pair<int, int>> stack;
+						stack.push_back(std::make_pair(y, x));
 
-					++counters[a];
+						while(!stack.empty()) {
+							const std::pair<int, int> current = stack.back();
+							stack.pop_back();
 
-					if(current.first > 0)
-						stack.push_back(std::make_pair(current.first-1, current.second));
-					if(current.first < in.rows-1)
-						stack.push_back(std::make_pair(current.first+1, current.second));
-					if(current.second > 0)
-						stack.push_back(std::make_pair(current.first, current.second-1));
-					if(current.second < in.cols-1)
-						stack.push_back(std::make_pair(current.first, current.second+1));
-				}
-			}
-		});
+							assert(current.first < in.rows);
+							assert(current.second < in.cols);
 
-		for(std::size_t a=0;a<counters.size();++a)
-			std::cout << a << "  ->  " << counters[a] << std::endl; // THERE SHOULD BE NO ZEROES HERE - any zero means that the center is OUTSIDE the labelled pixels, bad!
+							if(!connected(current.first, current.second) && labels(current.first, current.second).load().label == currentLabel) {
+								connected(current.first, current.second) = true;
 
-		// if(data.get(a_filter)) {
-		// 	for(int row=0; row<in.rows; ++row)
-		// 		for(int col=0; col<in.cols; ++col)
-		// 			labels(row, col) = Pixel(connected(row, col));
-		// }
+								currentComponent.push_back(std::make_pair(current.first, current.second));
 
-		// for each disconnected component pixel
-		if(data.get(a_filter)) {
-			// find a disconnected pixel
-			for(int row=0; row<in.rows; ++row)
-				for(int col=0; col<in.cols; ++col) {
-					if(!connected(row, col)) {
-						// map the component's pixels and its surrounding
-						std::vector<std::pair<int, int>> component;
-						std::map<int, int> neighboursCounter;
-
-						{
-							std::vector<std::pair<int, int>> stack;
-							stack.push_back(std::make_pair(row, col));
-
-							while(!stack.empty()) {
-								const std::pair<int, int> current = stack.back();
-								stack.pop_back();
-
-								if(!connected(current.first, current.second)) {
-									connected(current.first, current.second) = true;
-									component.push_back(current);
-
-									if(current.first > 0)
-										stack.push_back(std::make_pair(current.first-1, current.second));
-									if(current.first < in.rows-1)
-										stack.push_back(std::make_pair(current.first+1, current.second));
-									if(current.second > 0)
-										stack.push_back(std::make_pair(current.first, current.second-1));
-									if(current.second < in.cols-1)
-										stack.push_back(std::make_pair(current.first, current.second+1));
-								}
-
-								else
-									neighboursCounter[labels(current.first, current.second).load().label]++;
+								if(current.first > 0)
+									stack.push_back(std::make_pair(current.first-1, current.second));
+								if(current.first < in.rows-1)
+									stack.push_back(std::make_pair(current.first+1, current.second));
+								if(current.second > 0)
+									stack.push_back(std::make_pair(current.first, current.second-1));
+								if(current.second < in.cols-1)
+									stack.push_back(std::make_pair(current.first, current.second+1));
 							}
 						}
-
-						// find the label with most items
-						int label = 0;
-						{
-							int ctr = 0;
-							for(const auto& n : neighboursCounter)
-								if(n.second > ctr) {
-									ctr = n.second;
-									label = n.first;
-								}
-						}
-
-						// and assign it to all the pixels of this component
-						for(const auto& p : component)
-							labels(p.first, p.second) = Pixel(label);
 					}
 				}
+		}
 
+		// the largest component is THE component for the label - let's remove it from the list of components to process
+		lightfields::Grid<bool, lightfields::Bitfield> processed(in.rows, in.cols);
+		for(std::size_t a=0; a<components.size(); ++a) {
+			auto& label = components[a];
+
+			if(!label.empty()) {
+				std::size_t maxSize = 0;
+				std::size_t maxIndex = 0;
+
+				for(int i=0; i<(int)label.size(); ++i)
+					if(label[i].size() > maxSize) {
+						maxIndex = i;
+						maxSize = label[i].size();
+					}
+
+				// mark the component as "processed"
+				for(auto& p : label[maxIndex])
+					processed(p.first, p.second) = true;
+
+				// and then remove the component from the label list
+				if(maxSize > 0)
+					label.erase(label.begin() + maxIndex);
+			}
+		}
+
+		// finally, go through all the remaining components and relabel them based on surrounding labels
+		// -> in some cases, the unlabelled components can be "nested" (especially in the presence of noise).
+		//    We need to run this algorithm iteratively until we managed to label everything.
+		std::size_t unprocessed = 1;
+		while(unprocessed > 0) {
+			unprocessed = 0;
+
+			for(std::size_t label_id=0; label_id<components.size(); ++label_id) {
+				auto& label = components[label_id];
+
+				for(auto& comp : label) {
+					std::vector<unsigned> counter(components.size());
+
+					for(auto& p : comp) {
+						if(p.first > 0 && processed(p.first-1, p.second))
+							counter[labels(p.first-1, p.second).load().label]++;
+						if(p.first < in.rows-1 && processed(p.first+1, p.second))
+							counter[labels(p.first+1, p.second).load().label]++;
+						if(p.second > 0 && processed(p.first, p.second-1))
+							counter[labels(p.first, p.second-1).load().label]++;
+						if(p.second < in.cols-1 && processed(p.first, p.second+1))
+							counter[labels(p.first, p.second+1).load().label]++;
+					}
+
+					// find the most prelevant resolved label (there might not be any!)
+					std::size_t maxLabel = 0;
+					unsigned maxCount = 0;
+
+					for(std::size_t a=0;a<counter.size();++a)
+						if(maxCount < counter[a]) {
+							maxCount = counter[a];
+							maxLabel = a;
+						}
+
+					if(maxCount > 0) {
+						// and label all the pixels with this label
+						for(auto& p : comp) {
+							labels(p.first, p.second) = Pixel(maxLabel);
+							processed(p.first, p.second) = true;
+						}
+					}
+					else
+						unprocessed++;
+				}
+			}
 		}
 	}
 
