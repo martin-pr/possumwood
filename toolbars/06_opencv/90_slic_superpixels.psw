@@ -1,9 +1,21 @@
 {
     "connections": [
         {
+            "in_node": "slic_superpixels_0",
+            "in_port": "in_frame",
+            "out_node": "color_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "network_0",
             "in_port": "frame",
-            "out_node": "colormap_0",
+            "out_node": "concat_0",
             "out_port": "out_frame"
         },
         {
@@ -13,9 +25,15 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "slic_superpixels_0",
+            "in_node": "color_0",
             "in_port": "in_frame",
-            "out_node": "image_0",
+            "out_node": "image_1",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "image_1",
             "out_port": "frame"
         },
         {
@@ -33,12 +51,26 @@
     ],
     "description": "",
     "nodes": {
+        "color_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 403.482452392578,
+                    "y": 455.088928222656
+                }
+            },
+            "name": "color",
+            "ports": {
+                "mode": "BGR2Lab"
+            },
+            "type": "opencv/color"
+        },
         "colormap_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 269.356536865234,
-                    "y": 1037.24731445312
+                    "x": 426.614532470703,
+                    "y": 1262.79077148438
                 }
             },
             "name": "colormap",
@@ -47,12 +79,27 @@
             },
             "type": "opencv/colormap"
         },
+        "concat_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 329.677947998047,
+                    "y": 1455.51281738281
+                }
+            },
+            "name": "concat",
+            "ports": {
+                "mode": "Horizontal",
+                "separation": 0
+            },
+            "type": "opencv/concat"
+        },
         "convert_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 264.71923828125,
-                    "y": 823.530212402344
+                    "x": 423.592529296875,
+                    "y": 1050.68896484375
                 }
             },
             "name": "convert",
@@ -67,8 +114,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 337.941162109375,
-                    "y": 169.812835693359
+                    "x": 455.941162109375,
+                    "y": 163.812835693359
                 }
             },
             "name": "empty",
@@ -86,8 +133,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 135.803024291992,
-                    "y": 196.706695556641
+                    "x": 304.803039550781,
+                    "y": 193.706695556641
                 }
             },
             "name": "image",
@@ -96,12 +143,40 @@
             },
             "type": "opencv/capture/image"
         },
+        "image_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 157.803024291992,
+                    "y": 191.706695556641
+                }
+            },
+            "name": "image",
+            "ports": {
+                "filename": "$EXAMPLES/narrowbase_color.png"
+            },
+            "type": "opencv/capture/image"
+        },
+        "image_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 15.8030242919922,
+                    "y": 191.706695556641
+                }
+            },
+            "name": "image",
+            "ports": {
+                "filename": "$EXAMPLES/pexels/adorable-beautiful-beauty-2418886.jpg"
+            },
+            "type": "opencv/capture/image"
+        },
         "mod_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 263.200927734375,
-                    "y": 632.666931152344
+                    "x": 420.458923339844,
+                    "y": 858.210327148438
                 }
             },
             "name": "mod",
@@ -114,8 +189,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 276.030914306641,
-                    "y": 1199.8134765625
+                    "x": 380.398681640625,
+                    "y": 1614.67529296875
                 }
             },
             "connections": [
@@ -355,14 +430,16 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 235.093597412109,
-                    "y": 404.77978515625
+                    "x": 392.351593017578,
+                    "y": 631.9384765625
                 }
             },
             "name": "slic_superpixels",
             "ports": {
-                "spatial_bias": 1.0,
-                "target_pixel_count": 40
+                "filter": false,
+                "iterations": 10,
+                "spatial_bias": 20.0,
+                "target_pixel_count": 300
             },
             "type": "opencv/slic_superpixels"
         }
@@ -373,5 +450,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACnAAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL8AAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABiAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB/gAAAeMAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJYAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABiAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB/gAAAeMAAACqAQAAAwAAA34AAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

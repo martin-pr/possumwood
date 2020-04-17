@@ -7,6 +7,7 @@
 
 #include <actions/traits.h>
 #include <lightfields/grid.h>
+#include <lightfields/bitfield.h>
 
 #include "frame.h"
 
@@ -16,14 +17,40 @@ namespace {
 // Achanta, Radhakrishna, et al. "SLIC superpixels compared to state-of-the-art superpixel methods." IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.
 
 struct Center {
+	Center() : row(0), col(0), color{{0, 0, 0}} {
+	}
+
 	Center(const cv::Mat& m, int r, int c) : row(r), col(c) {
+		assert(r >= 0 && r < m.rows);
+		assert(c >= 0 && c < m.cols);
+
 		auto ptr = m.ptr<unsigned char>(r, c);
 		for(int a=0;a<3;++a)
 			color[a] = ptr[a];
 	}
 
+	Center& operator +=(const Center& c) {
+		row += c.row;
+		col += c.col;
+
+		for(int a=0;a<3;++a)
+			color[a] += c.color[a];
+
+		return *this;
+	}
+
+	Center& operator /=(int div) {
+		row /= div;
+		col /= div;
+
+		for(int a=0;a<3;++a)
+			color[a] /= div;
+
+		return *this;
+	}
+
 	int row, col;
-	unsigned char color[3];
+	std::array<int, 3> color;
 };
 
 class Metric {
@@ -62,6 +89,8 @@ struct Pixel {
 dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
 dependency_graph::InAttr<unsigned> a_targetPixelCount;
 dependency_graph::InAttr<float> a_spatialBias;
+dependency_graph::InAttr<unsigned> a_iterations;
+dependency_graph::InAttr<bool> a_filter;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -75,14 +104,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		throw std::runtime_error("Too many superpixels for the size of input image!");
 
 	// start with a regular grid of superpixels
-	std::vector<Center> pixels;
+	lightfields::Grid<Center> pixels(0, 0);
 	{
-		const int ofx_y = (in.rows - (((in.rows-1) / S) * S)) / 2;
-		const int ofx_x = (in.cols - (((in.cols-1) / S) * S)) / 2;
+		const int rows = in.rows / S;
+		const int cols = in.cols / S;
 
-		for(int y=0; y<=(in.rows-1) / S; ++y)
-			for(int x=0; x<=(in.cols-1) / S; ++x)
-				pixels.push_back(Center(in, y*S + ofx_y, x*S + ofx_x));
+		pixels = lightfields::Grid<Center>(rows, cols);
+
+		for(int y=0; y<rows; ++y)
+			for(int x=0; x<cols; ++x)
+				pixels(y, x) = Center(in, (in.rows * y) / rows + S/2, (in.cols * x) / cols + S/2);
 	}
 
 	// create a Metric instance based on input parameters
@@ -98,21 +129,145 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	lightfields::Grid<std::atomic<Pixel>> labels(in.rows, in.cols);
 
-	// using the metric instance, label all pixels
-	tbb::parallel_for(0, int(pixels.size()), [&](int a) {
-		const Center& center = pixels[a];
+	for(unsigned i=0; i<data.get(a_iterations); ++i) {
+		// using the metric instance, label all pixels
+		tbb::parallel_for(0, int(pixels.container().size()), [&](int a) {
+			const Center& center = pixels.container()[a];
 
-		for(int row = std::max(0, center.row-S); row < std::min(in.rows, center.row+S+1); ++row)
-			for(int col = std::max(0, center.col-S); col < std::min(in.cols, center.col+S+1); ++col) {
-				const Pixel next(a, metric(center, in, row, col));
-				std::atomic<Pixel>& current = labels(row, col);
+			for(int row = std::max(0, center.row-S); row < std::min(in.rows, center.row+S+1); ++row)
+				for(int col = std::max(0, center.col-S); col < std::min(in.cols, center.col+S+1); ++col) {
+					const Pixel next(a, metric(center, in, row, col));
+					std::atomic<Pixel>& current = labels(row, col);
 
-				Pixel tmp(0, 0);
-				do {
-					tmp = current;
-				} while(tmp.metric > next.metric && !current.compare_exchange_weak(tmp, next));
+					Pixel tmp(0, 0);
+					do {
+						tmp = current;
+					} while(tmp.metric > next.metric && !current.compare_exchange_weak(tmp, next));
+				}
+		});
+
+		// recompute centres as means of all labelled pixels
+		{
+			std::vector<Center> sum(pixels.container().size());
+			std::vector<int> count(pixels.container().size(), 0);
+
+			for(int row=0; row<in.rows; ++row)
+				for(int col=0; col<in.cols; ++col) {
+					const int label = labels(row, col).load().label;
+					assert(label >= 0 && label < (int)sum.size());
+
+					sum[label] += Center(in, row, col);
+					count[label]++;
+				}
+
+			for(std::size_t a=0; a<sum.size(); ++a)
+				if(count[a] > 0) {
+					sum[a] /= count[a];
+					pixels.container()[a] = sum[a];
+				}
+		}
+	}
+
+	// address all disconnected components
+	{
+		// first, find all disconnected components
+		lightfields::Grid<bool, lightfields::Bitfield> connected(in.rows, in.cols);
+		std::vector<unsigned> counters(pixels.container().size());
+
+		tbb::parallel_for(std::size_t(0), pixels.container().size(), [&](std::size_t a) {
+			static thread_local std::vector<std::pair<int, int>> stack;
+			assert(stack.empty());
+
+			stack.push_back(std::make_pair(pixels.container()[a].row, pixels.container()[a].col));
+			while(!stack.empty()) {
+				const std::pair<int, int> current = stack.back();
+				stack.pop_back();
+
+				assert(current.first < in.rows);
+				assert(current.second < in.cols);
+
+				if(!connected(current.first, current.second) && labels(current.first, current.second).load().label == (int)a) {
+					connected(current.first, current.second) = true;
+
+					++counters[a];
+
+					if(current.first > 0)
+						stack.push_back(std::make_pair(current.first-1, current.second));
+					if(current.first < in.rows-1)
+						stack.push_back(std::make_pair(current.first+1, current.second));
+					if(current.second > 0)
+						stack.push_back(std::make_pair(current.first, current.second-1));
+					if(current.second < in.cols-1)
+						stack.push_back(std::make_pair(current.first, current.second+1));
+				}
 			}
-	});
+		});
+
+		for(std::size_t a=0;a<counters.size();++a)
+			std::cout << a << "  ->  " << counters[a] << std::endl; // THERE SHOULD BE NO ZEROES HERE - any zero means that the center is OUTSIDE the labelled pixels, bad!
+
+		// if(data.get(a_filter)) {
+		// 	for(int row=0; row<in.rows; ++row)
+		// 		for(int col=0; col<in.cols; ++col)
+		// 			labels(row, col) = Pixel(connected(row, col));
+		// }
+
+		// for each disconnected component pixel
+		if(data.get(a_filter)) {
+			// find a disconnected pixel
+			for(int row=0; row<in.rows; ++row)
+				for(int col=0; col<in.cols; ++col) {
+					if(!connected(row, col)) {
+						// map the component's pixels and its surrounding
+						std::vector<std::pair<int, int>> component;
+						std::map<int, int> neighboursCounter;
+
+						{
+							std::vector<std::pair<int, int>> stack;
+							stack.push_back(std::make_pair(row, col));
+
+							while(!stack.empty()) {
+								const std::pair<int, int> current = stack.back();
+								stack.pop_back();
+
+								if(!connected(current.first, current.second)) {
+									connected(current.first, current.second) = true;
+									component.push_back(current);
+
+									if(current.first > 0)
+										stack.push_back(std::make_pair(current.first-1, current.second));
+									if(current.first < in.rows-1)
+										stack.push_back(std::make_pair(current.first+1, current.second));
+									if(current.second > 0)
+										stack.push_back(std::make_pair(current.first, current.second-1));
+									if(current.second < in.cols-1)
+										stack.push_back(std::make_pair(current.first, current.second+1));
+								}
+
+								else
+									neighboursCounter[labels(current.first, current.second).load().label]++;
+							}
+						}
+
+						// find the label with most items
+						int label = 0;
+						{
+							int ctr = 0;
+							for(const auto& n : neighboursCounter)
+								if(n.second > ctr) {
+									ctr = n.second;
+									label = n.first;
+								}
+						}
+
+						// and assign it to all the pixels of this component
+						for(const auto& p : component)
+							labels(p.first, p.second) = Pixel(label);
+					}
+				}
+
+		}
+	}
 
 	// copy all to a cv::Mat
 	cv::Mat result = cv::Mat::zeros(in.rows, in.cols, CV_32SC1);
@@ -129,11 +284,15 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_targetPixelCount, "target_pixel_count", 2000u);
 	meta.addAttribute(a_spatialBias, "spatial_bias", 1.0f);
+	meta.addAttribute(a_iterations, "iterations", 10u);
+	meta.addAttribute(a_filter, "filter", true);
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
 	meta.addInfluence(a_targetPixelCount, a_outFrame);
 	meta.addInfluence(a_spatialBias, a_outFrame);
+	meta.addInfluence(a_iterations, a_outFrame);
+	meta.addInfluence(a_filter, a_outFrame);
 
 	meta.setCompute(compute);
 }
