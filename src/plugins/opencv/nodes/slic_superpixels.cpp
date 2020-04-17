@@ -8,6 +8,7 @@
 #include <actions/traits.h>
 #include <lightfields/grid.h>
 #include <lightfields/bitfield.h>
+#include <lightfields/slic_superpixels.h>
 
 #include "frame.h"
 
@@ -15,44 +16,6 @@ namespace {
 
 // Implementation of the SLIC superpixels algorithm
 // Achanta, Radhakrishna, et al. "SLIC superpixels compared to state-of-the-art superpixel methods." IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.
-
-struct Center {
-	Center() : row(0), col(0), color{{0, 0, 0}} {
-	}
-
-	Center(const cv::Mat& m, int r, int c) : row(r), col(c) {
-		assert(r >= 0 && r < m.rows);
-		assert(c >= 0 && c < m.cols);
-
-		auto ptr = m.ptr<unsigned char>(r, c);
-		for(int a=0;a<3;++a)
-			color[a] = ptr[a];
-	}
-
-	Center& operator +=(const Center& c) {
-		row += c.row;
-		col += c.col;
-
-		for(int a=0;a<3;++a)
-			color[a] += c.color[a];
-
-		return *this;
-	}
-
-	Center& operator /=(int div) {
-		row /= div;
-		col /= div;
-
-		for(int a=0;a<3;++a)
-			color[a] /= div;
-
-		return *this;
-	}
-
-	int row, col;
-	std::array<int, 3> color;
-};
-
 class Metric {
 	public:
 		/// S is the superpixel distance; m is the spatial-to-color weight
@@ -60,7 +23,7 @@ class Metric {
 		}
 
 		// implementation of eq. 3 of the paper
-		float operator()(const Center& c, const cv::Mat& m, const int row, const int col) const {
+		float operator()(const lightfields::SlicSuperpixels::Center& c, const cv::Mat& m, const int row, const int col) const {
 			float d_c = 0.0f;
 			for(int a=0;a<3;++a) {
 				float elem = float(c.color[a]) - float(m.ptr<unsigned char>(row, col)[a]);
@@ -102,21 +65,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		throw std::runtime_error("Only positive pixel counts are allowed.");
 
 	// compute the superpixel spacing S
-	const int S = sqrt((in.cols * in.rows) / data.get(a_targetPixelCount));
-	if(S <= 0)
-		throw std::runtime_error("Too many superpixels for the size of input image!");
+	const int S = lightfields::SlicSuperpixels::initS(in.rows, in.cols, data.get(a_targetPixelCount));
 
 	// start with a regular grid of superpixels
-	lightfields::Grid<Center> pixels(0, 0);
+	lightfields::Grid<lightfields::SlicSuperpixels::Center> pixels(0, 0);
 	{
 		const int rows = in.rows / S;
 		const int cols = in.cols / S;
 
-		pixels = lightfields::Grid<Center>(rows, cols);
+		pixels = lightfields::Grid<lightfields::SlicSuperpixels::Center>(rows, cols);
 
 		for(int y=0; y<rows; ++y)
 			for(int x=0; x<cols; ++x)
-				pixels(y, x) = Center(in, (in.rows * y) / rows + S/2, (in.cols * x) / cols + S/2);
+				pixels(y, x) = lightfields::SlicSuperpixels::Center(in, (in.rows * y) / rows + S/2, (in.cols * x) / cols + S/2);
 	}
 
 	// create a Metric instance based on input parameters
@@ -135,7 +96,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	for(unsigned i=0; i<data.get(a_iterations); ++i) {
 		// using the metric instance, label all pixels
 		tbb::parallel_for(0, int(pixels.container().size()), [&](int a) {
-			const Center& center = pixels.container()[a];
+			const lightfields::SlicSuperpixels::Center& center = pixels.container()[a];
 
 			for(int row = std::max(0, center.row-S); row < std::min(in.rows, center.row+S+1); ++row)
 				for(int col = std::max(0, center.col-S); col < std::min(in.cols, center.col+S+1); ++col) {
@@ -151,7 +112,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// recompute centres as means of all labelled pixels
 		{
-			std::vector<Center> sum(pixels.container().size());
+			std::vector<lightfields::SlicSuperpixels::Center> sum(pixels.container().size());
 			std::vector<int> count(pixels.container().size(), 0);
 
 			for(int row=0; row<in.rows; ++row)
@@ -159,7 +120,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					const int label = labels(row, col).load().label;
 					assert(label >= 0 && label < (int)sum.size());
 
-					sum[label] += Center(in, row, col);
+					sum[label] += lightfields::SlicSuperpixels::Center(in, row, col);
 					count[label]++;
 				}
 
