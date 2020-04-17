@@ -1,8 +1,11 @@
 #pragma once
 
 #include <array>
+#include <atomic>
 
 #include <opencv2/opencv.hpp>
+
+#include "grid.h"
 
 namespace lightfields {
 
@@ -22,7 +25,38 @@ struct SlicSuperpixels {
 		std::array<int, 3> color;
 	};
 
+	struct Label {
+		Label(int lbl = 0, float metr = std::numeric_limits<float>::max()) noexcept : id(lbl), metric(metr) {
+		}
+
+		int id;
+		float metric;
+	};
+
+	/// Implementation of the distance metric from the paper
+	class Metric {
+		public:
+			/// S is the superpixel distance; m is the spatial-to-color weight
+			Metric(int S, float m);
+
+			// implementation of eq. 3 of the paper
+			float operator()(const lightfields::SlicSuperpixels::Center& c, const cv::Mat& m, const int row, const int col) const;
+
+			int S() const;
+
+		private:
+			int m_S;
+			float m_SS, m_mm;
+	};
+
+	/// Initialise the S (grid spacing) variable
 	static int initS(int rows, int cols, int pixelCount);
+
+	/// initialise the grid of superpixels
+	static lightfields::Grid<lightfields::SlicSuperpixels::Center> initPixels(const cv::Mat& in, int S);
+
+	/// label all pixels based on the closest distance to centers
+	static void label(const cv::Mat& in, lightfields::Grid<std::atomic<Label>>& labels, const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers, const Metric& metric);
 };
 
 }

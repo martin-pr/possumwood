@@ -16,38 +16,6 @@ namespace {
 
 // Implementation of the SLIC superpixels algorithm
 // Achanta, Radhakrishna, et al. "SLIC superpixels compared to state-of-the-art superpixel methods." IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.
-class Metric {
-	public:
-		/// S is the superpixel distance; m is the spatial-to-color weight
-		Metric(float S, float m) : m_SS(S*S), m_mm(m*m) {
-		}
-
-		// implementation of eq. 3 of the paper
-		float operator()(const lightfields::SlicSuperpixels::Center& c, const cv::Mat& m, const int row, const int col) const {
-			float d_c = 0.0f;
-			for(int a=0;a<3;++a) {
-				float elem = float(c.color[a]) - float(m.ptr<unsigned char>(row, col)[a]);
-				elem *= elem;
-
-				d_c += elem;
-			}
-
-			const float d_s = float(c.row - row)*float(c.row - row) + float(c.col - col)*float(c.col - col);
-
-			return std::sqrt(d_c + d_s / m_SS * m_mm);
-		}
-
-	private:
-		float m_SS, m_mm;
-};
-
-struct Pixel {
-	Pixel(int lbl = 0, float metr = std::numeric_limits<float>::max()) noexcept : label(lbl), metric(metr) {
-	}
-
-	int label;
-	float metric;
-};
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
 dependency_graph::InAttr<unsigned> a_targetPixelCount;
@@ -68,47 +36,24 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const int S = lightfields::SlicSuperpixels::initS(in.rows, in.cols, data.get(a_targetPixelCount));
 
 	// start with a regular grid of superpixels
-	lightfields::Grid<lightfields::SlicSuperpixels::Center> pixels(0, 0);
-	{
-		const int rows = in.rows / S;
-		const int cols = in.cols / S;
-
-		pixels = lightfields::Grid<lightfields::SlicSuperpixels::Center>(rows, cols);
-
-		for(int y=0; y<rows; ++y)
-			for(int x=0; x<cols; ++x)
-				pixels(y, x) = lightfields::SlicSuperpixels::Center(in, (in.rows * y) / rows + S/2, (in.cols * x) / cols + S/2);
-	}
+	auto pixels = lightfields::SlicSuperpixels::initPixels(in, S);
 
 	// create a Metric instance based on input parameters
-	const Metric metric(S, data.get(a_spatialBias));
+	const lightfields::SlicSuperpixels::Metric metric(S, data.get(a_spatialBias));
 
 	// build the labelling and metric value matrices
 #ifndef NDEBUG
 	{
-		std::atomic<Pixel> tmp(Pixel(0, 0));
+		std::atomic<lightfields::SlicSuperpixels::Label> tmp(lightfields::SlicSuperpixels::Label(0, 0));
 		assert(tmp.is_lock_free() && "Atomics in this instance make sense only if they're lock free.");
 	}
 #endif
 
-	lightfields::Grid<std::atomic<Pixel>> labels(in.rows, in.cols);
+	lightfields::Grid<std::atomic<lightfields::SlicSuperpixels::Label>> labels(in.rows, in.cols);
 
 	for(unsigned i=0; i<data.get(a_iterations); ++i) {
 		// using the metric instance, label all pixels
-		tbb::parallel_for(0, int(pixels.container().size()), [&](int a) {
-			const lightfields::SlicSuperpixels::Center& center = pixels.container()[a];
-
-			for(int row = std::max(0, center.row-S); row < std::min(in.rows, center.row+S+1); ++row)
-				for(int col = std::max(0, center.col-S); col < std::min(in.cols, center.col+S+1); ++col) {
-					const Pixel next(a, metric(center, in, row, col));
-					std::atomic<Pixel>& current = labels(row, col);
-
-					Pixel tmp(0, 0);
-					do {
-						tmp = current;
-					} while(tmp.metric > next.metric && !current.compare_exchange_weak(tmp, next));
-				}
-		});
+		lightfields::SlicSuperpixels::label(in, labels, pixels, metric);
 
 		// recompute centres as means of all labelled pixels
 		{
@@ -117,7 +62,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			for(int row=0; row<in.rows; ++row)
 				for(int col=0; col<in.cols; ++col) {
-					const int label = labels(row, col).load().label;
+					const int label = labels(row, col).load().id;
 					assert(label >= 0 && label < (int)sum.size());
 
 					sum[label] += lightfields::SlicSuperpixels::Center(in, row, col);
@@ -146,7 +91,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					// found a new component
 					if(!connected(y, x)) {
 						// recursively map it
-						const int currentLabel = labels(y, x).load().label;
+						const int currentLabel = labels(y, x).load().id;
 
 						components[currentLabel].push_back(std::vector<std::pair<int, int>>());
 						std::vector<std::pair<int, int>>& currentComponent = components[currentLabel].back();
@@ -161,7 +106,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 							assert(current.first < in.rows);
 							assert(current.second < in.cols);
 
-							if(!connected(current.first, current.second) && labels(current.first, current.second).load().label == currentLabel) {
+							if(!connected(current.first, current.second) && labels(current.first, current.second).load().id == currentLabel) {
 								connected(current.first, current.second) = true;
 
 								currentComponent.push_back(std::make_pair(current.first, current.second));
@@ -220,13 +165,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 					for(auto& p : comp) {
 						if(p.first > 0 && processed(p.first-1, p.second))
-							counter[labels(p.first-1, p.second).load().label]++;
+							counter[labels(p.first-1, p.second).load().id]++;
 						if(p.first < in.rows-1 && processed(p.first+1, p.second))
-							counter[labels(p.first+1, p.second).load().label]++;
+							counter[labels(p.first+1, p.second).load().id]++;
 						if(p.second > 0 && processed(p.first, p.second-1))
-							counter[labels(p.first, p.second-1).load().label]++;
+							counter[labels(p.first, p.second-1).load().id]++;
 						if(p.second < in.cols-1 && processed(p.first, p.second+1))
-							counter[labels(p.first, p.second+1).load().label]++;
+							counter[labels(p.first, p.second+1).load().id]++;
 					}
 
 					// find the most prelevant resolved label (there might not be any!)
@@ -242,7 +187,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					if(maxCount > 0) {
 						// and label all the pixels with this label
 						for(auto& p : comp) {
-							labels(p.first, p.second) = Pixel(maxLabel);
+							labels(p.first, p.second) = lightfields::SlicSuperpixels::Label(maxLabel);
 							processed(p.first, p.second) = true;
 						}
 					}
@@ -257,7 +202,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result = cv::Mat::zeros(in.rows, in.cols, CV_32SC1);
 	tbb::parallel_for(0, in.rows, [&](int y) {
 		for(int x=0; x<in.cols; ++x)
-			result.at<int>(y, x) = labels(y, x).load().label;
+			result.at<int>(y, x) = labels(y, x).load().id;
 	});
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
