@@ -1,6 +1,18 @@
 {
     "connections": [
         {
+            "in_node": "convert_2",
+            "in_port": "in_frame",
+            "out_node": "abs_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_3",
+            "out_node": "add_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "slic_superpixels_0",
             "in_port": "in_frame",
             "out_node": "color_0",
@@ -8,14 +20,20 @@
         },
         {
             "in_node": "concat_0",
-            "in_port": "in_frame_2",
+            "in_port": "in_frame_1",
             "out_node": "colormap_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_1",
+            "in_port": "in_frame_2",
+            "out_node": "concat_0",
             "out_port": "out_frame"
         },
         {
             "in_node": "network_0",
             "in_port": "frame",
-            "out_node": "concat_0",
+            "out_node": "concat_1",
             "out_port": "out_frame"
         },
         {
@@ -25,16 +43,46 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "laplacian_smoothness_0",
+            "in_port": "in_frame",
+            "out_node": "convert_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "add_0",
+            "in_port": "in_frame_2",
+            "out_node": "convert_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "split_0",
+            "in_port": "in",
+            "out_node": "image_0",
+            "out_port": "frame"
+        },
+        {
             "in_node": "color_0",
             "in_port": "in_frame",
             "out_node": "image_0",
             "out_port": "frame"
         },
         {
-            "in_node": "concat_0",
+            "in_node": "concat_1",
             "in_port": "in_frame_1",
             "out_node": "image_0",
             "out_port": "frame"
+        },
+        {
+            "in_node": "abs_0",
+            "in_port": "in_frame",
+            "out_node": "laplacian_smoothness_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "merge_0",
+            "out_port": "out"
         },
         {
             "in_node": "convert_0",
@@ -47,10 +95,59 @@
             "in_port": "in_frame",
             "out_node": "slic_superpixels_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_1",
+            "in_port": "in_frame",
+            "out_node": "slic_superpixels_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_1",
+            "out_node": "split_0",
+            "out_port": "out_1"
+        },
+        {
+            "in_node": "merge_0",
+            "in_port": "in_2",
+            "out_node": "split_0",
+            "out_port": "out_2"
+        },
+        {
+            "in_node": "add_0",
+            "in_port": "in_frame_1",
+            "out_node": "split_0",
+            "out_port": "out_3"
         }
     ],
-    "description": "",
+    "description": "### SLIC Superpixels\n\nSuperpixel algorithms derive meaningful atomic primitives from dense grid images. Many computer vision algorithms can work with such regions, reducing both computational complexity and ambiguity.\n\nSLIC (Simple Linear Iterative Clustering) is a simple adaptation of k-means clustering that generates superpixels via iterative linear averaging and simple non-linear grouping.\n\n<sub>Achanta, Radhakrishna, et al. [\"SLIC superpixels compared to state-of-the-art superpixel methods.\"](https://infoscience.epfl.ch/record/149300/files/SLIC_Superpixels_TR_2.pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.</sub>",
     "nodes": {
+        "abs_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 891.574157714844,
+                    "y": 1262.51806640625
+                }
+            },
+            "name": "abs",
+            "ports": {
+                "offset": 1.0
+            },
+            "type": "opencv/abs"
+        },
+        "add_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 734.013793945312,
+                    "y": 1621.65881347656
+                }
+            },
+            "name": "add",
+            "type": "opencv/add"
+        },
         "color_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -83,8 +180,23 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 329.677947998047,
-                    "y": 1455.51281738281
+                    "x": 519.139709472656,
+                    "y": 1928.99475097656
+                }
+            },
+            "name": "concat",
+            "ports": {
+                "mode": "Horizontal",
+                "separation": 0
+            },
+            "type": "opencv/concat"
+        },
+        "concat_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 325.266571044922,
+                    "y": 2165.01440429688
                 }
             },
             "name": "concat",
@@ -110,66 +222,76 @@
             },
             "type": "opencv/convert"
         },
-        "empty_0": {
+        "convert_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 455.941162109375,
-                    "y": 163.812835693359
+                    "x": 890.855163574219,
+                    "y": 929.150390625
                 }
             },
-            "name": "empty",
+            "name": "convert",
             "ports": {
-                "color": 0.0,
-                "mode": "CV_8UC3",
-                "size": {
-                    "x": 200,
-                    "y": 200
+                "a": 1.0,
+                "b": 0.0,
+                "mode": "CV_32F"
+            },
+            "type": "opencv/convert"
+        },
+        "convert_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 890.25048828125,
+                    "y": 1407.09191894531
                 }
             },
-            "type": "opencv/capture/empty"
+            "name": "convert",
+            "ports": {
+                "a": 10000.0,
+                "b": 0.0,
+                "mode": "CV_8U"
+            },
+            "type": "opencv/convert"
         },
         "image_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 304.803039550781,
-                    "y": 193.706695556641
+                    "x": 290.420837402344,
+                    "y": 247.906967163086
                 }
             },
             "name": "image",
             "ports": {
-                "filename": "$EXAMPLES/diffusion_example.png"
+                "filename": "$EXAMPLES/cae.wisc.edu_images/cameraman.png"
             },
             "type": "opencv/capture/image"
         },
-        "image_1": {
+        "laplacian_smoothness_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 157.803024291992,
-                    "y": 191.706695556641
+                    "x": 842.945434570312,
+                    "y": 1124.24499511719
                 }
             },
-            "name": "image",
+            "name": "laplacian_smoothness",
             "ports": {
-                "filename": "$EXAMPLES/narrowbase_color.png"
+                "kernel": "4_cross"
             },
-            "type": "opencv/capture/image"
+            "type": "opencv/laplacian_smoothness"
         },
-        "image_2": {
+        "merge_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 15.8030242919922,
-                    "y": 191.706695556641
+                    "x": 621.626708984375,
+                    "y": 1762.03833007812
                 }
             },
-            "name": "image",
-            "ports": {
-                "filename": "$EXAMPLES/pexels/adorable-beautiful-beauty-2418886.jpg"
-            },
-            "type": "opencv/capture/image"
+            "name": "merge",
+            "type": "opencv/merge"
         },
         "mod_0": {
             "blind_data": {
@@ -189,8 +311,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 380.398681640625,
-                    "y": 1614.67529296875
+                    "x": 397.242828369141,
+                    "y": 2368.32690429688
                 }
             },
             "connections": [
@@ -438,10 +560,21 @@
             "ports": {
                 "filter": "connected components, final step",
                 "iterations": 10,
-                "spatial_bias": 1.0,
-                "target_pixel_count": 450
+                "spatial_bias": 50.0,
+                "target_pixel_count": 350
             },
             "type": "opencv/slic_superpixels"
+        },
+        "split_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 601.417236328125,
+                    "y": 1501.37145996094
+                }
+            },
+            "name": "split",
+            "type": "opencv/split"
         }
     },
     "scene_config": {
@@ -450,5 +583,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACnAAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJYAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABiAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB/gAAAeMAAACqAQAAAwAAA34AAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJAAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABiAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB/gAAAeMAAACqAQAAAwAAA5YAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
