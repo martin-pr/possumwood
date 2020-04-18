@@ -6,8 +6,8 @@
 #include <tbb/parallel_for.h>
 
 #include <actions/traits.h>
-#include <lightfields/grid.h>
 #include <lightfields/slic_superpixels.h>
+#include <possumwood_sdk/datatypes/enum.h>
 
 #include "frame.h"
 
@@ -20,8 +20,20 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
 dependency_graph::InAttr<unsigned> a_targetPixelCount;
 dependency_graph::InAttr<float> a_spatialBias;
 dependency_graph::InAttr<unsigned> a_iterations;
-dependency_graph::InAttr<bool> a_filter;
+dependency_graph::InAttr<possumwood::Enum> a_filter;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
+
+enum FilterMode {
+	kNone,
+	kComponentsFinalize,
+	kComponentsEachIteration
+};
+
+static std::vector<std::pair<std::string, int>> s_filterMode {
+	{"none", kNone},
+	{"connected components, final step", kComponentsFinalize},
+	{"connected components, each iteration", kComponentsEachIteration},
+};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const cv::Mat& in = *data.get(a_inFrame);
@@ -50,16 +62,27 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	lightfields::Grid<std::atomic<lightfields::SlicSuperpixels::Label>> labels(in.rows, in.cols);
 
+	// make sure labelling happens even with 0 iteration count
+	bool firstStep = true;
+	lightfields::SlicSuperpixels::label(in, labels, pixels, metric);
+
 	for(unsigned i=0; i<data.get(a_iterations); ++i) {
 		// using the metric instance, label all pixels
-		lightfields::SlicSuperpixels::label(in, labels, pixels, metric);
+		if(!firstStep)
+			lightfields::SlicSuperpixels::label(in, labels, pixels, metric);
+		else
+			firstStep = false;
+
+		// perform the filtering, if selected
+		if(data.get(a_filter).intValue() == kComponentsEachIteration)
+			lightfields::SlicSuperpixels::connectedComponents(labels, pixels);
 
 		// recompute centres as means of all labelled pixels
 		lightfields::SlicSuperpixels::findCenters(in, labels, pixels);
 	}
 
 	// address all disconnected components
-	if(data.get(a_filter))
+	if(data.get(a_filter).intValue() == kComponentsFinalize)
 		lightfields::SlicSuperpixels::connectedComponents(labels, pixels);
 
 	// copy all to a cv::Mat
@@ -78,7 +101,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_targetPixelCount, "target_pixel_count", 2000u);
 	meta.addAttribute(a_spatialBias, "spatial_bias", 1.0f);
 	meta.addAttribute(a_iterations, "iterations", 10u);
-	meta.addAttribute(a_filter, "filter", true);
+	meta.addAttribute(a_filter, "filter", possumwood::Enum(s_filterMode.begin(), s_filterMode.end(), kComponentsFinalize));
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
