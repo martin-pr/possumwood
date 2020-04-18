@@ -1090,6 +1090,28 @@ A simple implementation of the [Anisotropic Diffusion](https://en.wikipedia.org/
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/90_slic_superpixels.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### SLIC Superpixels
+
+Superpixel algorithms derive meaningful atomic primitives from dense grid images. Many computer vision algorithms can work with such regions, reducing both computational complexity and ambiguity.
+
+SLIC (Simple Linear Iterative Clustering) is a simple adaptation of k-means clustering that generates superpixels via iterative linear averaging and simple non-linear grouping.
+
+<sub>Achanta, Radhakrishna, et al. ["SLIC superpixels compared to state-of-the-art superpixel methods."](https://infoscience.epfl.ch/record/149300/files/SLIC_Superpixels_TR_2.pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/90_slic_superpixels_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
 </table> 
 
 ### Hdr
@@ -2283,6 +2305,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 

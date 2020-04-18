@@ -14,7 +14,7 @@ VecUI<T>::VecUI() {
 	QHBoxLayout* layout = new QHBoxLayout(m_widget);
 	layout->setContentsMargins(0,0,0,0);
 
-	for(unsigned a=0;a<VecTraits<T>::dims();++a) {
+	for(int a=0;a<VecTraits<T>::dims();++a) {
 		m_values[a] = new typename VecTraits<T>::QtType(NULL);
 		layout->addWidget(m_values[a]);
 
@@ -43,7 +43,7 @@ VecUI<T>::~VecUI() {
 
 template<typename T>
 void VecUI<T>::get(T& value) const {
-	for(unsigned a=0;a<VecTraits<T>::dims();++a)
+	for(int a=0;a<VecTraits<T>::dims();++a)
 		value[a] = m_values[a]->value();
 }
 
@@ -52,7 +52,7 @@ void VecUI<T>::set(const T& value) {
 	for(auto& v : m_values)
 		v->blockSignals(true);
 
-	for(unsigned a=0;a<VecTraits<T>::dims();++a)
+	for(int a=0;a<VecTraits<T>::dims();++a)
 		if(typename VecTraits<T>::Value(m_values[a]->value()) != value.getValue()[a])
 			m_values[a]->setValue(value.getValue()[a]);
 
