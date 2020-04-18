@@ -57,6 +57,14 @@ struct SlicSuperpixels {
 
 	/// label all pixels based on the closest distance to centers
 	static void label(const cv::Mat& in, lightfields::Grid<std::atomic<Label>>& labels, const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers, const Metric& metric);
+
+	/// recompute the centres based on labels
+	static void findCenters(const cv::Mat& in, const lightfields::Grid<std::atomic<Label>>& labels, lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers);
+
+	/// connect labels using connected components.
+	/// First find the largest continuous labelled region for each label, then relabel and connect all the smaller ones to the nearest region.
+	/// Results in one continuous region per superpixel, with all smaller ones merged into one of the large ones.
+	static void connectedComponents(lightfields::Grid<std::atomic<Label>>& labels, const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers);
 };
 
 }

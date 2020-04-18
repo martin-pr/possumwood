@@ -1,5 +1,7 @@
 #include "slic_superpixels.h"
 
+#include "bitfield.h"
+
 #include <tbb/parallel_for.h>
 
 namespace lightfields {
@@ -100,6 +102,146 @@ void SlicSuperpixels::label(const cv::Mat& in, lightfields::Grid<std::atomic<Lab
 				} while(tmp.metric > next.metric && !current.compare_exchange_weak(tmp, next));
 			}
 	});
+}
+
+void SlicSuperpixels::findCenters(const cv::Mat& in, const lightfields::Grid<std::atomic<Label>>& labels, lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers) {
+	std::vector<lightfields::SlicSuperpixels::Center> sum(centers.container().size());
+	std::vector<int> count(centers.container().size(), 0);
+
+	for(int row=0; row<in.rows; ++row)
+		for(int col=0; col<in.cols; ++col) {
+			const int label = labels(row, col).load().id;
+			assert(label >= 0 && label < (int)sum.size());
+
+			sum[label] += lightfields::SlicSuperpixels::Center(in, row, col);
+			count[label]++;
+		}
+
+	for(std::size_t a=0; a<sum.size(); ++a)
+		if(count[a] > 0) {
+			sum[a] /= count[a];
+			centers.container()[a] = sum[a];
+		}
+}
+
+void SlicSuperpixels::connectedComponents(lightfields::Grid<std::atomic<Label>>& labels, const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers) {
+	// first, find all components for each label
+	//  label - component - pixels (pair of ints)
+	std::vector<std::vector<std::vector<std::pair<int, int>>>> components(centers.container().size());
+
+	{
+		lightfields::Grid<bool, lightfields::Bitfield> connected(labels.rows(), labels.cols());
+
+		for(int y=0; y<(int)labels.rows(); ++y)
+			for(int x=0; x<(int)labels.cols(); ++x) {
+				// found a new component
+				if(!connected(y, x)) {
+					// recursively map it
+					const int currentLabel = labels(y, x).load().id;
+
+					components[currentLabel].push_back(std::vector<std::pair<int, int>>());
+					std::vector<std::pair<int, int>>& currentComponent = components[currentLabel].back();
+
+					std::vector<std::pair<int, int>> stack;
+					stack.push_back(std::make_pair(y, x));
+
+					while(!stack.empty()) {
+						const std::pair<int, int> current = stack.back();
+						stack.pop_back();
+
+						assert(current.first < (int)labels.rows());
+						assert(current.second < (int)labels.cols());
+
+						if(!connected(current.first, current.second) && labels(current.first, current.second).load().id == currentLabel) {
+							connected(current.first, current.second) = true;
+
+							currentComponent.push_back(std::make_pair(current.first, current.second));
+
+							if(current.first > 0)
+								stack.push_back(std::make_pair(current.first-1, current.second));
+							if(current.first < (int)labels.rows()-1)
+								stack.push_back(std::make_pair(current.first+1, current.second));
+							if(current.second > 0)
+								stack.push_back(std::make_pair(current.first, current.second-1));
+							if(current.second < (int)labels.cols()-1)
+								stack.push_back(std::make_pair(current.first, current.second+1));
+						}
+					}
+				}
+			}
+	}
+
+	// the largest component is THE component for the label - let's remove it from the list of components to process
+	lightfields::Grid<bool, lightfields::Bitfield> processed(labels.rows(), labels.cols());
+	for(std::size_t a=0; a<components.size(); ++a) {
+		auto& label = components[a];
+
+		if(!label.empty()) {
+			std::size_t maxSize = 0;
+			std::size_t maxIndex = 0;
+
+			for(int i=0; i<(int)label.size(); ++i)
+				if(label[i].size() > maxSize) {
+					maxIndex = i;
+					maxSize = label[i].size();
+				}
+
+			// mark the component as "processed"
+			for(auto& p : label[maxIndex])
+				processed(p.first, p.second) = true;
+
+			// and then remove the component from the label list
+			if(maxSize > 0)
+				label.erase(label.begin() + maxIndex);
+		}
+	}
+
+	// finally, go through all the remaining components and relabel them based on surrounding labels
+	// -> in some cases, the unlabelled components can be "nested" (especially in the presence of noise).
+	//    We need to run this algorithm iteratively until we managed to label everything.
+	std::size_t unprocessed = 1;
+	while(unprocessed > 0) {
+		unprocessed = 0;
+
+		for(std::size_t label_id=0; label_id<components.size(); ++label_id) {
+			auto& label = components[label_id];
+
+			for(auto& comp : label) {
+				std::vector<unsigned> counter(components.size());
+
+				for(auto& p : comp) {
+					if(p.first > 0 && processed(p.first-1, p.second))
+						counter[labels(p.first-1, p.second).load().id]++;
+					if(p.first < (int)labels.rows()-1 && processed(p.first+1, p.second))
+						counter[labels(p.first+1, p.second).load().id]++;
+					if(p.second > 0 && processed(p.first, p.second-1))
+						counter[labels(p.first, p.second-1).load().id]++;
+					if(p.second < (int)labels.cols()-1 && processed(p.first, p.second+1))
+						counter[labels(p.first, p.second+1).load().id]++;
+				}
+
+				// find the most prelevant resolved label (there might not be any!)
+				std::size_t maxLabel = 0;
+				unsigned maxCount = 0;
+
+				for(std::size_t a=0;a<counter.size();++a)
+					if(maxCount < counter[a]) {
+						maxCount = counter[a];
+						maxLabel = a;
+					}
+
+				if(maxCount > 0) {
+					// and label all the pixels with this label
+					for(auto& p : comp) {
+						labels(p.first, p.second) = lightfields::SlicSuperpixels::Label(maxLabel);
+						processed(p.first, p.second) = true;
+					}
+				}
+				else
+					unprocessed++;
+			}
+		}
+	}
 }
 
 }
