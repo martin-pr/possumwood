@@ -3,6 +3,7 @@
 #include "bitfield.h"
 
 #include <tbb/parallel_for.h>
+#include <tbb/blocked_range2d.h>
 
 namespace lightfields {
 
@@ -84,33 +85,44 @@ lightfields::Grid<lightfields::SlicSuperpixels::Center> SlicSuperpixels::initPix
 	return pixels;
 }
 
-void SlicSuperpixels::label(const cv::Mat& in, lightfields::Grid<std::atomic<Label>>& labels, const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers, const Metric& metric) {
+namespace {
+	void labelRange(const tbb::blocked_range2d<int>& range, const cv::Mat& in, Grid<SlicSuperpixels::Label>& labels, const Grid<SlicSuperpixels::Center>& centers, const SlicSuperpixels::Metric& metric) {
+		for(std::size_t center_id = 0; center_id < centers.container().size(); ++center_id) {
+			const lightfields::SlicSuperpixels::Center& center = centers.container()[center_id];
+
+			for(int y = std::max(range.rows().begin(), center.row - metric.S()); y < std::min(range.rows().end(), center.row + metric.S()+1); ++y)
+				for(int x = std::max(range.cols().begin(), center.col - metric.S()); x < std::min(range.cols().end(), center.col + metric.S()+1); ++x) {
+					const float dist = metric(center, in, y, x);
+					SlicSuperpixels::Label& current = labels(y, x);
+
+					if(current.metric > dist)
+						current = SlicSuperpixels::Label(center_id, dist);
+				}
+		}
+	}
+}
+
+void SlicSuperpixels::label(const cv::Mat& in, lightfields::Grid<Label>& labels, const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers, const Metric& metric) {
 	assert(in.rows == (int)labels.rows() && in.cols == (int)labels.cols());
 
+	// clear all labels
+	tbb::parallel_for(0, int(labels.container().size()), [&](int a) {
+		labels.container()[a] = Label();
+	});
+
 	// using the metric instance, label all pixels
-	tbb::parallel_for(0, int(centers.container().size()), [&](int a) {
-		const lightfields::SlicSuperpixels::Center& center = centers.container()[a];
-
-		for(int row = std::max(0, center.row-metric.S()); row < std::min(in.rows, center.row+metric.S()+1); ++row)
-			for(int col = std::max(0, center.col-metric.S()); col < std::min(in.cols, center.col+metric.S()+1); ++col) {
-				const Label next(a, metric(center, in, row, col));
-				std::atomic<Label>& current = labels(row, col);
-
-				Label tmp(0, 0);
-				do {
-					tmp = current;
-				} while(tmp.metric > next.metric && !current.compare_exchange_weak(tmp, next));
-			}
+	tbb::parallel_for(tbb::blocked_range2d<int>(0, in.rows, 0, in.cols), [&](const tbb::blocked_range2d<int>& range) {
+		labelRange(range, in, labels, centers, metric);
 	});
 }
 
-void SlicSuperpixels::findCenters(const cv::Mat& in, const lightfields::Grid<std::atomic<Label>>& labels, lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers) {
+void SlicSuperpixels::findCenters(const cv::Mat& in, const lightfields::Grid<Label>& labels, lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers) {
 	std::vector<lightfields::SlicSuperpixels::Center> sum(centers.container().size());
 	std::vector<int> count(centers.container().size(), 0);
 
 	for(int row=0; row<in.rows; ++row)
 		for(int col=0; col<in.cols; ++col) {
-			const int label = labels(row, col).load().id;
+			const int label = labels(row, col).id;
 			assert(label >= 0 && label < (int)sum.size());
 
 			sum[label] += lightfields::SlicSuperpixels::Center(in, row, col);
@@ -124,7 +136,7 @@ void SlicSuperpixels::findCenters(const cv::Mat& in, const lightfields::Grid<std
 		}
 }
 
-void SlicSuperpixels::connectedComponents(lightfields::Grid<std::atomic<Label>>& labels, const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers) {
+void SlicSuperpixels::connectedComponents(lightfields::Grid<Label>& labels, const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers) {
 	// first, find all components for each label
 	//  label - component - pixels (pair of ints)
 	std::vector<std::vector<std::vector<std::pair<int, int>>>> components(centers.container().size());
@@ -137,7 +149,7 @@ void SlicSuperpixels::connectedComponents(lightfields::Grid<std::atomic<Label>>&
 				// found a new component
 				if(!connected(y, x)) {
 					// recursively map it
-					const int currentLabel = labels(y, x).load().id;
+					const int currentLabel = labels(y, x).id;
 
 					components[currentLabel].push_back(std::vector<std::pair<int, int>>());
 					std::vector<std::pair<int, int>>& currentComponent = components[currentLabel].back();
@@ -152,7 +164,7 @@ void SlicSuperpixels::connectedComponents(lightfields::Grid<std::atomic<Label>>&
 						assert(current.first < (int)labels.rows());
 						assert(current.second < (int)labels.cols());
 
-						if(!connected(current.first, current.second) && labels(current.first, current.second).load().id == currentLabel) {
+						if(!connected(current.first, current.second) && labels(current.first, current.second).id == currentLabel) {
 							connected(current.first, current.second) = true;
 
 							currentComponent.push_back(std::make_pair(current.first, current.second));
@@ -211,13 +223,13 @@ void SlicSuperpixels::connectedComponents(lightfields::Grid<std::atomic<Label>>&
 
 				for(auto& p : comp) {
 					if(p.first > 0 && processed(p.first-1, p.second))
-						counter[labels(p.first-1, p.second).load().id]++;
+						counter[labels(p.first-1, p.second).id]++;
 					if(p.first < (int)labels.rows()-1 && processed(p.first+1, p.second))
-						counter[labels(p.first+1, p.second).load().id]++;
+						counter[labels(p.first+1, p.second).id]++;
 					if(p.second > 0 && processed(p.first, p.second-1))
-						counter[labels(p.first, p.second-1).load().id]++;
+						counter[labels(p.first, p.second-1).id]++;
 					if(p.second < (int)labels.cols()-1 && processed(p.first, p.second+1))
-						counter[labels(p.first, p.second+1).load().id]++;
+						counter[labels(p.first, p.second+1).id]++;
 				}
 
 				// find the most prelevant resolved label (there might not be any!)

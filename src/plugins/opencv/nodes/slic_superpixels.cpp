@@ -60,7 +60,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	}
 #endif
 
-	lightfields::Grid<std::atomic<lightfields::SlicSuperpixels::Label>> labels(in.rows, in.cols);
+	lightfields::Grid<lightfields::SlicSuperpixels::Label> labels(in.rows, in.cols);
 
 	// make sure labelling happens even with 0 iteration count
 	bool firstStep = true;
@@ -89,7 +89,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result = cv::Mat::zeros(in.rows, in.cols, CV_32SC1);
 	tbb::parallel_for(0, in.rows, [&](int y) {
 		for(int x=0; x<in.cols; ++x)
-			result.at<int>(y, x) = labels(y, x).load().id;
+			result.at<int>(y, x) = labels(y, x).id;
 	});
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
