@@ -1055,7 +1055,7 @@
                 }
             },
             "name": "subtract",
-            "type": "opencv/subtract"
+            "type": "opencv/maths/subtract"
         },
         "subtract_1": {
             "blind_data": {
@@ -1066,7 +1066,7 @@
                 }
             },
             "name": "subtract",
-            "type": "opencv/subtract"
+            "type": "opencv/maths/subtract"
         }
     },
     "scene_config": {

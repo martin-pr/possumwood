@@ -835,7 +835,7 @@
                         }
                     },
                     "name": "subtract",
-                    "type": "opencv/subtract"
+                    "type": "opencv/maths/subtract"
                 }
             },
             "type": "network"
