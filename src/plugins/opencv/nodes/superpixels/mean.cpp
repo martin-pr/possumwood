@@ -13,41 +13,29 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_superpixels;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 float getFloat(const cv::Mat& in, int row, int col, int channel) {
-	if(in.depth() == CV_32F)
-		return in.ptr<float>(row, col)[channel];
-	return in.ptr<double>(row, col)[channel];
-}
-
-long getLong(const cv::Mat& in, int row, int col, int channel) {
-	if(in.depth() == CV_8U)
-		return in.ptr<uint8_t>(row, col)[channel];
-	if(in.depth() == CV_8S)
-		return in.ptr<int8_t>(row, col)[channel];
-	if(in.depth() == CV_16U)
-		return in.ptr<uint16_t>(row, col)[channel];
-	if(in.depth() == CV_16S)
-		return in.ptr<int16_t>(row, col)[channel];
-	return in.ptr<int32_t>(row, col)[channel];
+	switch(in.depth()) {
+		case CV_8U: return in.ptr<uint8_t>(row, col)[channel];
+		case CV_8S: return in.ptr<int8_t>(row, col)[channel];
+		case CV_16U: return in.ptr<uint16_t>(row, col)[channel];
+		case CV_16S: return in.ptr<int16_t>(row, col)[channel];
+		case CV_32S: return in.ptr<int32_t>(row, col)[channel];
+		case CV_32F: return in.ptr<float>(row, col)[channel];
+		case CV_64F: return in.ptr<double>(row, col)[channel];
+		default: throw std::runtime_error("Unknown number type in input.");
+	}
 }
 
 void setFloat(cv::Mat& in, int row, int col, int channel, float val) {
-	if(in.depth() == CV_32F)
-		in.ptr<float>(row, col)[channel] = val;
-	else
-		in.ptr<double>(row, col)[channel] = val;
-}
-
-void setLong(cv::Mat& in, int row, int col, int channel, long val) {
-	if(in.depth() == CV_8U)
-		in.ptr<uint8_t>(row, col)[channel] = val;
-	else if(in.depth() == CV_8S)
-		in.ptr<int8_t>(row, col)[channel] = val;
-	else if(in.depth() == CV_16U)
-		in.ptr<uint16_t>(row, col)[channel] = val;
-	else if(in.depth() == CV_16S)
-		in.ptr<int16_t>(row, col)[channel] = val;
-	else
-		in.ptr<int32_t>(row, col)[channel] = val;
+	switch(in.depth()) {
+		case CV_8U: in.ptr<uint8_t>(row, col)[channel] = val; break;
+		case CV_8S: in.ptr<int8_t>(row, col)[channel] = val; break;
+		case CV_16U: in.ptr<uint16_t>(row, col)[channel] = val; break;
+		case CV_16S: in.ptr<int16_t>(row, col)[channel] = val; break;
+		case CV_32S: in.ptr<int32_t>(row, col)[channel] = val; break;
+		case CV_32F: in.ptr<float>(row, col)[channel] = val; break;
+		case CV_64F: in.ptr<double>(row, col)[channel] = val; break;
+		default: throw std::runtime_error("Unknown number type in input.");
+	}
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -68,55 +56,28 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	cv::Mat out = cv::Mat::zeros(in.rows, in.cols, in.type());
 
-	if(in.depth() == CV_32F || in.depth() == CV_64F) {
-		// make the right sized accumulator and norm array
-		std::vector<std::vector<float>> vals(in.channels(), std::vector<float>(maxIndex+1, 0.0f));
-		std::vector<long> norm(maxIndex+1, 0);
+	// make the right sized accumulator and norm array
+	std::vector<std::vector<float>> vals(in.channels(), std::vector<float>(maxIndex+1, 0.0f));
+	std::vector<float> norm(maxIndex+1, 0);
 
-		// and accumulate the values
-		for(int row=0; row<in.rows; ++row)
-			for(int col=0; col<in.cols; ++col) {
+	// and accumulate the values
+	for(int row=0; row<in.rows; ++row)
+		for(int col=0; col<in.cols; ++col) {
+			const int32_t index = superpixels.at<int32_t>(row, col);
+
+			for(int c=0;c<in.channels();++c)
+				vals[c][index] += getFloat(in, row, col, c);
+
+			norm[index]++;
+		}
+
+	// assign the result
+	for(int row=0; row<in.rows; ++row)
+		for(int col=0; col<in.cols; ++col)
+			for(int c=0;c<in.channels();++c) {
 				const int32_t index = superpixels.at<int32_t>(row, col);
-
-				for(int c=0;c<in.channels();++c)
-					vals[c][index] += getFloat(in, row, col, c);
-
-				norm[index]++;
+				setFloat(out, row, col, c, vals[c][index] / (float)norm[index]);
 			}
-
-		// assign the result
-		for(int row=0; row<in.rows; ++row)
-			for(int col=0; col<in.cols; ++col)
-				for(int c=0;c<in.channels();++c) {
-					const int32_t index = superpixels.at<int32_t>(row, col);
-					setFloat(out, row, col, c, vals[c][index] / (float)norm[index]);
-				}
-	}
-
-	else {
-		// make the right sized accumulator and norm array
-		std::vector<std::vector<long>> vals(in.channels(), std::vector<long>(maxIndex+1, 0.0f));
-		std::vector<long> norm(maxIndex+1, 0);
-
-		// and accumulate the values
-		for(int row=0; row<in.rows; ++row)
-			for(int col=0; col<in.cols; ++col) {
-				const int32_t index = superpixels.at<int32_t>(row, col);
-
-				for(int c=0;c<in.channels();++c)
-					vals[c][index] += getLong(in, row, col, c);
-
-				norm[index]++;
-			}
-
-		// assign the result
-		for(int row=0; row<in.rows; ++row)
-			for(int col=0; col<in.cols; ++col)
-				for(int c=0;c<in.channels();++c) {
-					const int32_t index = superpixels.at<int32_t>(row, col);
-					setLong(out, row, col, c, vals[c][index] / norm[index]);
-				}
-	}
 
 	data.set(a_out, possumwood::opencv::Frame(out));
 
