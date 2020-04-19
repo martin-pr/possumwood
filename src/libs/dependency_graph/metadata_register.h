@@ -23,11 +23,11 @@ class MetadataRegister {
 		void add(const MetadataHandle& handle);
 		void remove(const MetadataHandle& handle);
 
-		const MetadataHandle& operator[](const std::string& nodeName) const;
-
 		using const_iterator = std::set<MetadataHandle, Compare>::const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
+
+		const_iterator find(const std::string& nodeName) const;
 
 	private:
 		MetadataRegister();

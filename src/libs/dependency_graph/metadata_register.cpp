@@ -45,13 +45,8 @@ void MetadataRegister::remove(const MetadataHandle& handle) {
 		m_handles.erase(it);
 }
 
-const MetadataHandle& MetadataRegister::operator[](const std::string& nodeName) const {
-	auto it = m_handles.find(nodeName);
-
-	if(it == m_handles.end())
-		throw std::runtime_error("Node of type " + nodeName + " is not registered - missing a plugin?");
-
-	return *it;
+MetadataRegister::const_iterator MetadataRegister::find(const std::string& nodeName) const {
+	return m_handles.find(nodeName);
 }
 
 MetadataRegister::const_iterator MetadataRegister::begin() const {

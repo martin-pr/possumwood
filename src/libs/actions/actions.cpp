@@ -199,8 +199,8 @@ void copy(const dependency_graph::Selection& selection) {
 }
 
 namespace {
-	possumwood::UndoStack::Action pasteNetwork(const dependency_graph::UniqueId& targetIndex, const possumwood::io::json& source, std::set<dependency_graph::UniqueId>* ids = nullptr) {
-		possumwood::UndoStack::Action action;
+	dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action, const dependency_graph::UniqueId& targetIndex, const possumwood::io::json& source, std::set<dependency_graph::UniqueId>* ids = nullptr) {
+		dependency_graph::State state;
 
 		// indices of newly loaded nodes
 		std::map<std::string, dependency_graph::UniqueId> nodeIds;
@@ -221,31 +221,35 @@ namespace {
 				}
 
 				// find the metadata instance
-				const dependency_graph::MetadataHandle& meta = dependency_graph::MetadataRegister::singleton()[n["type"].get<std::string>()];
+				auto metaIt = dependency_graph::MetadataRegister::singleton().find(n["type"].get<std::string>());
+				if(metaIt == dependency_graph::MetadataRegister::singleton().end())
+					state.addError("Unregistered node type '" + n["type"].get<std::string>() + "' found in the setup - maybe a missing plugin? Skipping the creation of unregistered node type.");
 
-				// generate a new unique index for the node
-				assert(nodeIds.find(ni.key()) == nodeIds.end());
-				const dependency_graph::UniqueId nodeId;
-				nodeIds.insert(std::make_pair(ni.key(), nodeId));
+				else {
+					// generate a new unique index for the node
+					assert(nodeIds.find(ni.key()) == nodeIds.end());
+					const dependency_graph::UniqueId nodeId;
+					nodeIds.insert(std::make_pair(ni.key(), nodeId));
 
-				if(ids)
-					ids->insert(nodeId);
+					if(ids)
+						ids->insert(nodeId);
 
-				// add the action to create the node itself
-				action.append(detail::createNodeAction(targetIndex, meta, n["name"].get<std::string>(),
-					blindData, nodeId));
+					// add the action to create the node itself
+					action.append(detail::createNodeAction(targetIndex, *metaIt, n["name"].get<std::string>(),
+						blindData, nodeId));
 
-				// recurse to add nested networks
-				//   -> this will also construct the internals of the network, and instantiate
-				//      its inputs and outputs
-				if(n["type"] == "network")
-					action.append(pasteNetwork(nodeId, n));
+					// recurse to add nested networks
+					//   -> this will also construct the internals of the network, and instantiate
+					//      its inputs and outputs
+					if(n["type"] == "network")
+						state.append(pasteNetwork(action, nodeId, n));
 
-				// and another action to set all port values based on the json content
-				//   -> as the node doesn't exist yet, we can't interpret the types
-				if(n.find("ports") != n.end())
-					for(possumwood::io::json::const_iterator pi = n["ports"].begin(); pi != n["ports"].end(); ++pi)
-						action.append(detail::setValueAction(nodeId, pi.key(), pi.value()));
+					// and another action to set all port values based on the json content
+					//   -> as the node doesn't exist yet, we can't interpret the types
+					if(n.find("ports") != n.end())
+						for(possumwood::io::json::const_iterator pi = n["ports"].begin(); pi != n["ports"].end(); ++pi)
+							action.append(detail::setValueAction(nodeId, pi.key(), pi.value()));
+				}
 			}
 		}
 
@@ -253,18 +257,23 @@ namespace {
 		if(source.find("connections") != source.end()) {
 			for(auto& c : source["connections"]) {
 				auto id1 = nodeIds.find(c["out_node"].get<std::string>());
-				assert(id1 != nodeIds.end());
 				auto port1 = c["out_port"].get<std::string>();
 
 				auto id2 = nodeIds.find(c["in_node"].get<std::string>());
-				assert(id2 != nodeIds.end());
 				auto port2 = c["in_port"].get<std::string>();
 
-				action.append(detail::connectAction(id1->second, port1, id2->second, port2));
+				if(id1 == nodeIds.end())
+					state.addError("Connection from a non-existing node '" + c["out_node"].get<std::string>() + "' cannot be added!");
+
+				if(id2 == nodeIds.end())
+					state.addError("Connection to a non-existing node '" + c["in_node"].get<std::string>() + "' cannot be added!");
+
+				if(id1 != nodeIds.end() && id2 != nodeIds.end())
+					action.append(detail::connectAction(id1->second, port1, id2->second, port2));
 			}
 		}
 
-		return action;
+		return state;
 	}
 }
 
@@ -293,15 +302,17 @@ dependency_graph::State paste(dependency_graph::Network& current, dependency_gra
 }
 
 dependency_graph::State fromJson(dependency_graph::Network& current, dependency_graph::Selection& selection, const possumwood::io::json& json, bool haltOnError) {
+	dependency_graph::State state;
+
 	possumwood::UndoStack::Action action;
 
 	std::set<dependency_graph::UniqueId> pastedNodeIds;
 
 	// paste the network extracted from the JSON
-	action.append(pasteNetwork(current.index(), json, &pastedNodeIds));
+	state.append(pasteNetwork(action, current.index(), json, &pastedNodeIds));
 
 	// execute the action (will actually make the nodes and connections)
-	dependency_graph::State state = possumwood::AppCore::instance().undoStack().execute(action, haltOnError);
+	state.append(possumwood::AppCore::instance().undoStack().execute(action, haltOnError));
 
 	// and make the selection based on added nodes
 	for(auto& n : pastedNodeIds)
