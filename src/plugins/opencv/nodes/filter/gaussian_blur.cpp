@@ -53,7 +53,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_sigmaX, "sigma_x", 7.0f);
 	meta.addAttribute(a_sigmaY, "sigma_y", 0.0f);
-	meta.addAttribute(a_borderType, "adaptive_method", possumwood::Enum({ "BORDER_DEFAULT", "BORDER_CONSTANT", "BORDER_REPLICATE", "BORDER_REFLECT", "BORDER_WRAP", "BORDER_REFLECT_101", "BORDER_TRANSPARENT", "BORDER_REFLECT101", "BORDER_ISOLATED" }));
+	meta.addAttribute(a_borderType, "border", possumwood::Enum({ "BORDER_DEFAULT", "BORDER_CONSTANT", "BORDER_REPLICATE", "BORDER_REFLECT", "BORDER_WRAP", "BORDER_REFLECT_101", "BORDER_TRANSPARENT", "BORDER_REFLECT101", "BORDER_ISOLATED" }));
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
@@ -64,6 +64,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/gaussian_blur", init);
+possumwood::NodeImplementation s_impl("opencv/filter/gaussian_blur", init);
 
 }

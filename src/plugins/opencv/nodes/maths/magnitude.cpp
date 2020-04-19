@@ -8,13 +8,19 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
-dependency_graph::InAttr<float> a_power;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	cv::Mat result = (*data.get(a_inFrame)).clone();
+	const cv::Mat input(*data.get(a_inFrame));
 
-	cv::pow(result, data.get(a_power), result);
+	if(input.type() != CV_32FC2)
+		throw std::runtime_error("Only 2-channel floating point input is supported.");
+
+	std::array<cv::Mat, 2> split;
+	cv::split(input, split);
+
+	cv::Mat result;
+	magnitude(split[0], split[1], result);
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
@@ -23,15 +29,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_power, "power", 2.0f);
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
-	meta.addInfluence(a_power, a_outFrame);
 
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/pow", init);
+possumwood::NodeImplementation s_impl("opencv/maths/magnitude", init);
 
 }

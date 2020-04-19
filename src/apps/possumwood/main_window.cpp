@@ -122,7 +122,8 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 		QMenu* contextMenu = new QMenu(m_adaptor->graphWidget());
 
 		{
-			m_newNodeMenu = new SearchableMenu("Create");
+			m_newNodeMenu = new SearchableMenu("Create\tTab");
+			m_newNodeMenu->setIcon(QIcon(":icons/edit-add.png"));
 			contextMenu->addMenu(m_newNodeMenu);
 
 			{

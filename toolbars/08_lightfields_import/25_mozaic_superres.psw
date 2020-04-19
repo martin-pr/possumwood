@@ -165,7 +165,7 @@
             "ports": {
                 "scale": 0.200000002980232
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "gamma_0": {
             "blind_data": {
@@ -614,7 +614,7 @@
                 "use_otsu": false,
                 "use_triangle": false
             },
-            "type": "opencv/threshold"
+            "type": "opencv/filter/threshold"
         },
         "threshold_1": {
             "blind_data": {
@@ -632,7 +632,7 @@
                 "use_otsu": false,
                 "use_triangle": false
             },
-            "type": "opencv/threshold"
+            "type": "opencv/filter/threshold"
         }
     },
     "scene_config": {

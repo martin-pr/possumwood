@@ -34,6 +34,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/subtract", init);
+possumwood::NodeImplementation s_impl("opencv/maths/subtract", init);
 
 }

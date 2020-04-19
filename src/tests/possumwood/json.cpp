@@ -192,8 +192,10 @@ BOOST_AUTO_TEST_CASE(nested_graph_saving) {
 	{
 		// add an empty network
 		{
-			MetadataHandle networkMeta = MetadataRegister::singleton()["network"];
-			NodeBase& base = app.graph().nodes().add(networkMeta, "test_network");
+			auto networkFactoryIterator = MetadataRegister::singleton().find("network");
+			BOOST_REQUIRE(networkFactoryIterator != MetadataRegister::singleton().end());
+
+			NodeBase& base = app.graph().nodes().add(*networkFactoryIterator, "test_network");
 
 			BOOST_REQUIRE(base.is<Network>());
 		}

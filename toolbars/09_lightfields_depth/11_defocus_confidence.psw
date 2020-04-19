@@ -369,7 +369,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "get_frame_0": {
             "blind_data": {
@@ -437,7 +437,7 @@
                 "output_type": "8UC3",
                 "scale": 1.0
             },
-            "type": "opencv/multiply"
+            "type": "opencv/maths/multiply"
         },
         "network_0": {
             "blind_data": {
@@ -797,7 +797,7 @@
             "ports": {
                 "power": 5.0
             },
-            "type": "opencv/pow"
+            "type": "opencv/maths/pow"
         },
         "samples_from_metadata_0": {
             "blind_data": {

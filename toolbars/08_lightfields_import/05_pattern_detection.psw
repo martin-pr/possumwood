@@ -323,7 +323,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "draw_samples_0": {
             "blind_data": {
@@ -367,7 +367,7 @@
                 }
             },
             "name": "filter2d",
-            "type": "opencv/filter2d"
+            "type": "opencv/filter/filter2d"
         },
         "gaussian_blur_0": {
             "blind_data": {
@@ -379,11 +379,11 @@
             },
             "name": "gaussian_blur",
             "ports": {
-                "adaptive_method": "BORDER_DEFAULT",
+                "border": "BORDER_DEFAULT",
                 "sigma_x": 5.0,
                 "sigma_y": 0.0
             },
-            "type": "opencv/gaussian_blur"
+            "type": "opencv/filter/gaussian_blur"
         },
         "lytro_lightfield_0": {
             "blind_data": {

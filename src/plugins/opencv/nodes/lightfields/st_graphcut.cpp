@@ -49,6 +49,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if((*f).type() != CV_8UC1)
 			throw std::runtime_error("Only CV_8UC1 images accepted on input.");
 
+	for(auto& f : contrast)
+		if((*f).type() != CV_8UC1 && (*f).type() != CV_8UC3)
+			throw std::runtime_error("Only CV_8UC1 or CV_8UC3 images accepted as contrast input.");
+
 	lightfields::Graph graph(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size());
 
 	// setting vertical data

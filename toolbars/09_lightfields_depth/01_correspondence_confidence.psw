@@ -349,7 +349,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "get_frame_0": {
             "blind_data": {
@@ -416,7 +416,7 @@
             "ports": {
                 "kernel_size": 1
             },
-            "type": "opencv/median"
+            "type": "opencv/filter/median"
         },
         "median_1": {
             "blind_data": {
@@ -430,7 +430,7 @@
             "ports": {
                 "kernel_size": 1
             },
-            "type": "opencv/median"
+            "type": "opencv/filter/median"
         },
         "multiply_0": {
             "blind_data": {
@@ -445,7 +445,7 @@
                 "output_type": "8UC3",
                 "scale": 1.0
             },
-            "type": "opencv/multiply"
+            "type": "opencv/maths/multiply"
         },
         "network_0": {
             "blind_data": {

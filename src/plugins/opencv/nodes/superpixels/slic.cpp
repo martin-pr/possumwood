@@ -97,12 +97,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inFrame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_targetPixelCount, "target_pixel_count", 2000u);
 	meta.addAttribute(a_spatialBias, "spatial_bias", 1.0f);
 	meta.addAttribute(a_iterations, "iterations", 10u);
 	meta.addAttribute(a_filter, "filter", possumwood::Enum(s_filterMode.begin(), s_filterMode.end(), kComponentsFinalize));
-	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outFrame, "superpixels", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
 	meta.addInfluence(a_targetPixelCount, a_outFrame);
@@ -113,6 +113,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/slic_superpixels", init);
+possumwood::NodeImplementation s_impl("opencv/superpixels/slic", init);
 
 }

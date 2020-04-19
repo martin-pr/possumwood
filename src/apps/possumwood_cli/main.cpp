@@ -85,8 +85,21 @@ void loadScene(const Options::Item& option) {
 		throw std::runtime_error("--scene option allows only exactly one filename");
 
 	std::cout << "Loading " << option.parameters[0] << "... " << std::flush;
-	papp->loadFile(boost::filesystem::path(option.parameters[0]));
+	dependency_graph::State state = papp->loadFile(boost::filesystem::path(option.parameters[0]));
 	std::cout << "done" << std::endl;
+
+	for(auto& msg : state) {
+		if(msg.first == dependency_graph::State::kInfo)
+			std::cout << "[info] ";
+		if(msg.first == dependency_graph::State::kWarning)
+			std::cout << "[warning] ";
+		if(msg.first == dependency_graph::State::kError)
+			std::cout << "[error] ";
+		std::cout << msg.second << std::endl;
+	}
+
+	if(state.errored())
+		throw std::runtime_error("Error loading scene file. Exiting.");
 }
 
 std::vector<Action> render(const Options::Item& option) {

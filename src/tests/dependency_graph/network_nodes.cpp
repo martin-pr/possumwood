@@ -49,7 +49,10 @@ BOOST_AUTO_TEST_CASE(network_nodes_instantiation) {
 	const MetadataHandle& addition = additionNode();
 	const MetadataHandle& multiplication = multiplicationNode();
 
-	NodeBase& networkBase = g.nodes().add(MetadataRegister::singleton()["network"], "new_network");
+	auto networkFactoryIterator = MetadataRegister::singleton().find("network");
+	BOOST_REQUIRE(networkFactoryIterator != MetadataRegister::singleton().end());
+
+	NodeBase& networkBase = g.nodes().add(*networkFactoryIterator, "new_network");
 	BOOST_REQUIRE(networkBase.is<Network>());
 	Network& network = networkBase.as<Network>();
 
@@ -77,7 +80,10 @@ BOOST_AUTO_TEST_CASE(network_node_iterator) {
 	const MetadataHandle& addition = additionNode();
 	const MetadataHandle& multiplication = multiplicationNode();
 
-	NodeBase& networkBase = g.nodes().add(MetadataRegister::singleton()["network"], "new_network");
+	auto networkFactoryIterator = MetadataRegister::singleton().find("network");
+	BOOST_REQUIRE(networkFactoryIterator != MetadataRegister::singleton().end());
+
+	NodeBase& networkBase = g.nodes().add(*networkFactoryIterator, "new_network");
 	BOOST_REQUIRE(networkBase.is<Network>());
 	Network& network = networkBase.as<Network>();
 
@@ -130,11 +136,14 @@ BOOST_AUTO_TEST_CASE(network_node_iterator_2) {
 	const MetadataHandle& addition = additionNode();
 	const MetadataHandle& multiplication = multiplicationNode();
 
-	NodeBase& parentNetworkBase = g.nodes().add(MetadataRegister::singleton()["network"], "parent_network");
+	auto networkFactoryIterator = MetadataRegister::singleton().find("network");
+	BOOST_REQUIRE(networkFactoryIterator != MetadataRegister::singleton().end());
+
+	NodeBase& parentNetworkBase = g.nodes().add(*networkFactoryIterator, "parent_network");
 	BOOST_REQUIRE(parentNetworkBase.is<Network>());
 	Network& parentNetwork = parentNetworkBase.as<Network>();
 
-	NodeBase& networkBase = parentNetwork.nodes().add(MetadataRegister::singleton()["network"], "new_network");
+	NodeBase& networkBase = parentNetwork.nodes().add(*networkFactoryIterator, "new_network");
 	BOOST_REQUIRE(networkBase.is<Network>());
 	Network& network = networkBase.as<Network>();
 

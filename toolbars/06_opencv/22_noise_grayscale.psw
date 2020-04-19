@@ -154,7 +154,7 @@
                 "photo_render": 10.0,
                 "search_window": 21
             },
-            "type": "opencv/denoise"
+            "type": "opencv/filter/denoise"
         },
         "equalize_0": {
             "blind_data": {
@@ -431,7 +431,7 @@
                 }
             },
             "name": "subtract",
-            "type": "opencv/subtract"
+            "type": "opencv/maths/subtract"
         }
     },
     "scene_config": {

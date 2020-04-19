@@ -303,7 +303,7 @@
             "ports": {
                 "offset": 1.0
             },
-            "type": "opencv/abs"
+            "type": "opencv/maths/abs"
         },
         "abs_1": {
             "blind_data": {
@@ -317,7 +317,7 @@
             "ports": {
                 "offset": 1.0
             },
-            "type": "opencv/abs"
+            "type": "opencv/maths/abs"
         },
         "add_0": {
             "blind_data": {
@@ -328,7 +328,7 @@
                 }
             },
             "name": "add",
-            "type": "opencv/add"
+            "type": "opencv/maths/add"
         },
         "add_1": {
             "blind_data": {
@@ -339,7 +339,7 @@
                 }
             },
             "name": "add",
-            "type": "opencv/add"
+            "type": "opencv/maths/add"
         },
         "add_2": {
             "blind_data": {
@@ -350,7 +350,7 @@
                 }
             },
             "name": "add",
-            "type": "opencv/add"
+            "type": "opencv/maths/add"
         },
         "add_3": {
             "blind_data": {
@@ -361,7 +361,7 @@
                 }
             },
             "name": "add",
-            "type": "opencv/add"
+            "type": "opencv/maths/add"
         },
         "colormap_0": {
             "blind_data": {
@@ -512,7 +512,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "divide_1": {
             "blind_data": {
@@ -526,7 +526,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "divide_2": {
             "blind_data": {
@@ -540,7 +540,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "integrate_gaussian_0": {
             "blind_data": {
@@ -1055,7 +1055,7 @@
                 }
             },
             "name": "subtract",
-            "type": "opencv/subtract"
+            "type": "opencv/maths/subtract"
         },
         "subtract_1": {
             "blind_data": {
@@ -1066,7 +1066,7 @@
                 }
             },
             "name": "subtract",
-            "type": "opencv/subtract"
+            "type": "opencv/maths/subtract"
         }
     },
     "scene_config": {

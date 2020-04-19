@@ -67,6 +67,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/threshold", init);
+possumwood::NodeImplementation s_impl("opencv/filter/threshold", init);
 
 }

@@ -43,11 +43,14 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	dependency_graph::Network* network = nullptr;
 	auto netIt = app.graph().nodes().end();
 
+	auto networkFactoryIterator = MetadataRegister::singleton().find("network");
+	BOOST_REQUIRE(networkFactoryIterator != MetadataRegister::singleton().end());
+
 	// create a subnetwork in the graph, via actions
 	commands.push_back([&]() {
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 			app.graph(),
-			dependency_graph::MetadataRegister::singleton()["network"],
+			*networkFactoryIterator,
 			"network",
 			possumwood::NodeData(),
 			netId
@@ -73,11 +76,14 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	auto inIt = app.graph().nodes().end();
 	dependency_graph::NodeBase* input = nullptr;
 
+	auto inputFactoryIterator = MetadataRegister::singleton().find("input");
+	BOOST_REQUIRE(inputFactoryIterator != MetadataRegister::singleton().end());
+
 	// create a tiny subnetwork
 	commands.push_back([&]() {
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 			*network,
-			dependency_graph::MetadataRegister::singleton()["input"],
+			*inputFactoryIterator,
 			"network_input",
 			possumwood::NodeData(),
 			inId
@@ -96,10 +102,13 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	auto outIt = app.graph().nodes().end();
 	dependency_graph::NodeBase* output = nullptr;
 
+	auto outputFactoryIterator = MetadataRegister::singleton().find("output");
+	BOOST_REQUIRE(outputFactoryIterator != MetadataRegister::singleton().end());
+
 	commands.push_back([&]() {
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 			*network,
-			dependency_graph::MetadataRegister::singleton()["output"],
+			*outputFactoryIterator,
 			"network_output",
 			possumwood::NodeData(),
 			outId
@@ -247,7 +256,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	commands.push_back([&]() {
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 			*network,
-			dependency_graph::MetadataRegister::singleton()["output"],
+			*outputFactoryIterator,
 			"network_output_2",
 			possumwood::NodeData(),
 			out2Id

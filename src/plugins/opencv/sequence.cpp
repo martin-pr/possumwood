@@ -1,5 +1,7 @@
 #include "sequence.h"
 
+#include "tools.h"
+
 namespace possumwood { namespace opencv {
 
 Sequence::Sequence(std::size_t size) : m_sequence(size) {
@@ -94,7 +96,13 @@ bool Sequence::operator != (const Sequence& f) const {
 }
 
 std::ostream& operator << (std::ostream& out, const Sequence& f) {
-	out << "(" << f.size() << " Sequence)";
+	if(f.empty())
+		out << "(empty sequence)" << std::endl;
+	else if(f.size() == 1)
+		out << "(a sequence with 1 frame, " << opencv::type2str((*f[0]).type()) << ", " << (*f[0]).cols << "x" << (*f[0]).rows << ")";
+	else
+		out << "(a sequence of " << f.size() << " frames, " << opencv::type2str((*f[0]).type()) << ", " << (*f[0]).cols << "x" << (*f[0]).rows << ")";
+
 	return out;
 }
 

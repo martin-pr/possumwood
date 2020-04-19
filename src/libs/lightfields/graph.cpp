@@ -63,13 +63,13 @@ void Graph::setLayer(const cv::Mat& vals, const std::size_t& index, float power)
 
 	for(int y=0;y<vals.rows;++y)
 		for(int x=0;x<vals.cols-1;++x) {
-			const int cap = powi(differential(vals.ptr<unsigned char>(y, x), vals.ptr<unsigned char>(y, x+1), vals.channels()), power) * m_nLinkValue / 256;
+			const int cap = powi(255 - differential(vals.ptr<unsigned char>(y, x), vals.ptr<unsigned char>(y, x+1), vals.channels()), power) * m_nLinkValue / 256;
 			n_links.edge(V2i(x, y), V2i(x+1, y)).setCapacity(cap, cap);
 		}
 
 	for(int y=0;y<vals.rows-1;++y)
 		for(int x=0;x<vals.cols;++x) {
-			const int cap = powi(differential(vals.ptr<unsigned char>(y, x), vals.ptr<unsigned char>(y+1, x), vals.channels()), power) * m_nLinkValue / 256;
+			const int cap = powi(255 - differential(vals.ptr<unsigned char>(y, x), vals.ptr<unsigned char>(y+1, x), vals.channels()), power) * m_nLinkValue / 256;
 			n_links.edge(V2i(x, y), V2i(x, y+1)).setCapacity(cap, cap);
 		}
 }

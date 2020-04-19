@@ -27,11 +27,14 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	// make the app "singleton"
 	possumwood::AppCore app;
 
+	auto networkFactoryIterator = MetadataRegister::singleton().find("network");
+	BOOST_REQUIRE(networkFactoryIterator != MetadataRegister::singleton().end());
+
 	// create a subnetwork in the graph, via actions
 	UniqueId netId;
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 		app.graph(),
-		dependency_graph::MetadataRegister::singleton()["network"],
+		*networkFactoryIterator,
 		"network",
 		possumwood::NodeData(),
 		netId
@@ -48,11 +51,14 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK(network.connections().empty());
 	BOOST_CHECK_EQUAL(network.metadata()->attributeCount(), 0u);
 
+	auto inputFactoryIterator = MetadataRegister::singleton().find("input");
+	BOOST_REQUIRE(inputFactoryIterator != MetadataRegister::singleton().end());
+
 	// create a tiny subnetwork
 	UniqueId inId;
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 		network,
-		dependency_graph::MetadataRegister::singleton()["input"],
+		*inputFactoryIterator,
 		"network_input",
 		possumwood::NodeData(),
 		inId
@@ -62,10 +68,13 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_REQUIRE(inIt != network.nodes().end());
 	dependency_graph::NodeBase& input = *inIt;
 
+	auto outputFactoryIterator = MetadataRegister::singleton().find("output");
+	BOOST_REQUIRE(outputFactoryIterator != MetadataRegister::singleton().end());
+
 	UniqueId outId;
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 		network,
-		dependency_graph::MetadataRegister::singleton()["output"],
+		*outputFactoryIterator,
 		"network_output",
 		possumwood::NodeData(),
 		outId
@@ -289,6 +298,12 @@ BOOST_AUTO_TEST_CASE(input_output_root) {
 	// make the app "singleton"
 	possumwood::AppCore app;
 
+	auto inputFactoryIterator = MetadataRegister::singleton().find("input");
+	BOOST_REQUIRE(inputFactoryIterator != MetadataRegister::singleton().end());
+
+	auto outputFactoryIterator = MetadataRegister::singleton().find("output");
+	BOOST_REQUIRE(outputFactoryIterator != MetadataRegister::singleton().end());
+
 	// initial state check
 	BOOST_CHECK(app.graph().nodes().empty());
 	BOOST_CHECK(app.graph().connections().empty());
@@ -298,7 +313,7 @@ BOOST_AUTO_TEST_CASE(input_output_root) {
 	UniqueId inId;
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 		app.graph(),
-		dependency_graph::MetadataRegister::singleton()["input"],
+		*inputFactoryIterator,
 		"network_input",
 		possumwood::NodeData(),
 		inId
@@ -311,7 +326,7 @@ BOOST_AUTO_TEST_CASE(input_output_root) {
 	UniqueId outId;
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
 		app.graph(),
-		dependency_graph::MetadataRegister::singleton()["output"],
+		*outputFactoryIterator,
 		"network_output",
 		possumwood::NodeData(),
 		outId
