@@ -280,7 +280,7 @@
             "ports": {
                 "kernel": "4_cross"
             },
-            "type": "opencv/laplacian_smoothness"
+            "type": "opencv/filter/laplacian"
         },
         "merge_0": {
             "blind_data": {

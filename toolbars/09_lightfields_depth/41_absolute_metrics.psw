@@ -1316,7 +1316,7 @@
             "ports": {
                 "kernel": "8_uniform"
             },
-            "type": "opencv/laplacian_smoothness"
+            "type": "opencv/filter/laplacian"
         },
         "laplacian_smoothness_1": {
             "blind_data": {
@@ -1330,7 +1330,7 @@
             "ports": {
                 "kernel": "8_uniform"
             },
-            "type": "opencv/laplacian_smoothness"
+            "type": "opencv/filter/laplacian"
         },
         "laplacian_smoothness_2": {
             "blind_data": {
@@ -1344,7 +1344,7 @@
             "ports": {
                 "kernel": "8_uniform"
             },
-            "type": "opencv/laplacian_smoothness"
+            "type": "opencv/filter/laplacian"
         },
         "lytro_lightfield_0": {
             "blind_data": {
