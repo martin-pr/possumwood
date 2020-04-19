@@ -328,7 +328,7 @@
                 }
             },
             "name": "add",
-            "type": "opencv/add"
+            "type": "opencv/maths/add"
         },
         "add_1": {
             "blind_data": {
@@ -339,7 +339,7 @@
                 }
             },
             "name": "add",
-            "type": "opencv/add"
+            "type": "opencv/maths/add"
         },
         "add_2": {
             "blind_data": {
@@ -350,7 +350,7 @@
                 }
             },
             "name": "add",
-            "type": "opencv/add"
+            "type": "opencv/maths/add"
         },
         "add_3": {
             "blind_data": {
@@ -361,7 +361,7 @@
                 }
             },
             "name": "add",
-            "type": "opencv/add"
+            "type": "opencv/maths/add"
         },
         "colormap_0": {
             "blind_data": {

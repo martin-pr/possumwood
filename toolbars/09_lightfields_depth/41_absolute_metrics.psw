@@ -1795,7 +1795,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "add_1": {
                     "blind_data": {
@@ -1806,7 +1806,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "input_0": {
                     "blind_data": {
@@ -1961,7 +1961,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "add_1": {
                     "blind_data": {
@@ -1972,7 +1972,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "input_0": {
                     "blind_data": {
@@ -2127,7 +2127,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "add_1": {
                     "blind_data": {
@@ -2138,7 +2138,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "input_0": {
                     "blind_data": {
@@ -2293,7 +2293,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "add_1": {
                     "blind_data": {
@@ -2304,7 +2304,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "input_0": {
                     "blind_data": {
@@ -2459,7 +2459,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "add_1": {
                     "blind_data": {
@@ -2470,7 +2470,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "input_0": {
                     "blind_data": {
@@ -2625,7 +2625,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "add_1": {
                     "blind_data": {
@@ -2636,7 +2636,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "input_0": {
                     "blind_data": {

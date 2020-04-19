@@ -980,7 +980,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "add_3": {
                     "blind_data": {
@@ -991,7 +991,7 @@
                         }
                     },
                     "name": "add",
-                    "type": "opencv/add"
+                    "type": "opencv/maths/add"
                 },
                 "add_frame_0": {
                     "blind_data": {
