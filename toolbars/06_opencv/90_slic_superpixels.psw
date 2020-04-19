@@ -13,8 +13,8 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "slic_superpixels_0",
-            "in_port": "in_frame",
+            "in_node": "slic_0",
+            "in_port": "frame",
             "out_node": "color_0",
             "out_port": "out_frame"
         },
@@ -93,14 +93,14 @@
         {
             "in_node": "mod_0",
             "in_port": "in_frame",
-            "out_node": "slic_superpixels_0",
-            "out_port": "out_frame"
+            "out_node": "slic_0",
+            "out_port": "superpixels"
         },
         {
             "in_node": "convert_1",
             "in_port": "in_frame",
-            "out_node": "slic_superpixels_0",
-            "out_port": "out_frame"
+            "out_node": "slic_0",
+            "out_port": "superpixels"
         },
         {
             "in_node": "merge_0",
@@ -548,7 +548,7 @@
             },
             "type": "network"
         },
-        "slic_superpixels_0": {
+        "slic_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -563,7 +563,7 @@
                 "spatial_bias": 50.0,
                 "target_pixel_count": 350
             },
-            "type": "opencv/slic_superpixels"
+            "type": "opencv/superpixels/slic"
         },
         "split_0": {
             "blind_data": {
