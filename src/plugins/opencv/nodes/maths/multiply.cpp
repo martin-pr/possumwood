@@ -49,6 +49,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/multiply", init);
+possumwood::NodeImplementation s_impl("opencv/maths/multiply", init);
 
 }

@@ -196,7 +196,7 @@
                 }
             },
             "name": "multiply",
-            "type": "opencv/multiply"
+            "type": "opencv/maths/multiply"
         },
         "network_0": {
             "blind_data": {

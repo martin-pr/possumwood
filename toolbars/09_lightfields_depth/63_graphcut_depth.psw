@@ -570,7 +570,7 @@
                 "output_type": "Automatic",
                 "scale": 0.00400000018998981
             },
-            "type": "opencv/multiply"
+            "type": "opencv/maths/multiply"
         },
         "network_0": {
             "blind_data": {
