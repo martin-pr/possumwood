@@ -614,7 +614,7 @@
                 "use_otsu": false,
                 "use_triangle": false
             },
-            "type": "opencv/threshold"
+            "type": "opencv/filter/threshold"
         },
         "threshold_1": {
             "blind_data": {
@@ -632,7 +632,7 @@
                 "use_otsu": false,
                 "use_triangle": false
             },
-            "type": "opencv/threshold"
+            "type": "opencv/filter/threshold"
         }
     },
     "scene_config": {
