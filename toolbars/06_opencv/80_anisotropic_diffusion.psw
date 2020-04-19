@@ -159,11 +159,11 @@
             },
             "name": "gaussian_blur",
             "ports": {
-                "adaptive_method": "BORDER_DEFAULT",
+                "border": "BORDER_DEFAULT",
                 "sigma_x": 0.400000005960464,
                 "sigma_y": 0.0
             },
-            "type": "opencv/gaussian_blur"
+            "type": "opencv/filter/gaussian_blur"
         },
         "image_0": {
             "blind_data": {
