@@ -75,7 +75,7 @@
             "ports": {
                 "scale": 0.200000002980232
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "lytro_lightfield_0": {
             "blind_data": {

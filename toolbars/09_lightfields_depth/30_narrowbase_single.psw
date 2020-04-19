@@ -512,7 +512,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "divide_1": {
             "blind_data": {
@@ -526,7 +526,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "divide_2": {
             "blind_data": {
@@ -540,7 +540,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "integrate_gaussian_0": {
             "blind_data": {

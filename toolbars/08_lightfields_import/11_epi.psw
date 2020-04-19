@@ -307,7 +307,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "empty_0": {
             "blind_data": {

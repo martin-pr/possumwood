@@ -194,7 +194,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "get_frame_0": {
             "blind_data": {

@@ -323,7 +323,7 @@
             "ports": {
                 "scale": 1.0
             },
-            "type": "opencv/divide"
+            "type": "opencv/maths/divide"
         },
         "draw_samples_0": {
             "blind_data": {

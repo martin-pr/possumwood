@@ -36,6 +36,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/divide", init);
+possumwood::NodeImplementation s_impl("opencv/maths/divide", init);
 
 }
