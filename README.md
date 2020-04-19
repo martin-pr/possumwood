@@ -1112,6 +1112,28 @@ SLIC (Simple Linear Iterative Clustering) is a simple adaptation of k-means clus
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/91_superpixel_mean.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Superpixel Mean
+
+Superpixel algorithms derive meaningful atomic primitives from dense grid images, which can then be used as inputs to other computer vision algorithms.
+
+One of the simplest such algorithm is mean, averaging the values in a superpixel, leading to a "mosaic-like" look. 
+
+<sub>Achanta, Radhakrishna, et al. ["SLIC superpixels compared to state-of-the-art superpixel methods."](https://infoscience.epfl.ch/record/149300/files/SLIC_Superpixels_TR_2.pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/06_opencv/91_superpixel_mean_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
 </table> 
 
 ### Hdr
