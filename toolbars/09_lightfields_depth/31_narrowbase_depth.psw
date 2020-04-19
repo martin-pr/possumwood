@@ -389,7 +389,7 @@
             "ports": {
                 "kernel_size": 11
             },
-            "type": "opencv/median"
+            "type": "opencv/filter/median"
         },
         "network_0": {
             "blind_data": {

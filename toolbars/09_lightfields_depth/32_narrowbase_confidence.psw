@@ -440,7 +440,7 @@
             "ports": {
                 "kernel_size": 3
             },
-            "type": "opencv/median"
+            "type": "opencv/filter/median"
         },
         "median_1": {
             "blind_data": {
@@ -454,7 +454,7 @@
             "ports": {
                 "kernel_size": 3
             },
-            "type": "opencv/median"
+            "type": "opencv/filter/median"
         },
         "multiply_0": {
             "blind_data": {
