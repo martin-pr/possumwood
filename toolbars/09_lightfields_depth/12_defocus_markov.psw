@@ -871,7 +871,7 @@
             "ports": {
                 "power": 5.0
             },
-            "type": "opencv/pow"
+            "type": "opencv/maths/pow"
         },
         "samples_from_metadata_0": {
             "blind_data": {

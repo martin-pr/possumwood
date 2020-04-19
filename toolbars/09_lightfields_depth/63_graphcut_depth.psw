@@ -930,7 +930,7 @@
             "ports": {
                 "power": 0.5
             },
-            "type": "opencv/pow"
+            "type": "opencv/maths/pow"
         },
         "pow_1": {
             "blind_data": {
@@ -944,7 +944,7 @@
             "ports": {
                 "power": 4.0
             },
-            "type": "opencv/pow"
+            "type": "opencv/maths/pow"
         },
         "samples_from_metadata_0": {
             "blind_data": {

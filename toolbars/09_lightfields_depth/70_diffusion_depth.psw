@@ -1619,7 +1619,7 @@
             "ports": {
                 "power": 2.0
             },
-            "type": "opencv/pow"
+            "type": "opencv/maths/pow"
         }
     },
     "scene_config": {
