@@ -73,6 +73,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/adaptive_threshold", init);
+possumwood::NodeImplementation s_impl("opencv/filter/adaptive_threshold", init);
 
 }
