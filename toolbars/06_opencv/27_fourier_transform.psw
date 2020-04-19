@@ -359,7 +359,7 @@
                 }
             },
             "name": "magnitude",
-            "type": "opencv/dft/magnitude"
+            "type": "opencv/maths/magnitude"
         },
         "magnitude_1": {
             "blind_data": {
@@ -370,7 +370,7 @@
                 }
             },
             "name": "magnitude",
-            "type": "opencv/dft/magnitude"
+            "type": "opencv/maths/magnitude"
         },
         "network_0": {
             "blind_data": {

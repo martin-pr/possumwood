@@ -36,6 +36,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/dft/magnitude", init);
+possumwood::NodeImplementation s_impl("opencv/maths/magnitude", init);
 
 }
