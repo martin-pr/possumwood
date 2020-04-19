@@ -367,7 +367,7 @@
                 }
             },
             "name": "filter2d",
-            "type": "opencv/filter2d"
+            "type": "opencv/filter/filter2d"
         },
         "gaussian_blur_0": {
             "blind_data": {

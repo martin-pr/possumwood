@@ -33,6 +33,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/filter2d", init);
+possumwood::NodeImplementation s_impl("opencv/filter/filter2d", init);
 
 }
