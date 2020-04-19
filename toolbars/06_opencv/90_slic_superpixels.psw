@@ -305,7 +305,7 @@
             "ports": {
                 "modulo": 16
             },
-            "type": "opencv/mod"
+            "type": "opencv/maths/mod"
         },
         "network_0": {
             "blind_data": {
