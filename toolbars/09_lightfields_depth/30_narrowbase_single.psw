@@ -303,7 +303,7 @@
             "ports": {
                 "offset": 1.0
             },
-            "type": "opencv/abs"
+            "type": "opencv/maths/abs"
         },
         "abs_1": {
             "blind_data": {
@@ -317,7 +317,7 @@
             "ports": {
                 "offset": 1.0
             },
-            "type": "opencv/abs"
+            "type": "opencv/maths/abs"
         },
         "add_0": {
             "blind_data": {

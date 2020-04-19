@@ -135,7 +135,7 @@
             "ports": {
                 "offset": 1.0
             },
-            "type": "opencv/abs"
+            "type": "opencv/maths/abs"
         },
         "add_0": {
             "blind_data": {
