@@ -834,7 +834,7 @@
                 }
             },
             "name": "min",
-            "type": "opencv/min"
+            "type": "opencv/maths/min"
         },
         "network_0": {
             "blind_data": {
