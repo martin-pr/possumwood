@@ -38,6 +38,28 @@ void setFloat(cv::Mat& in, int row, int col, int channel, float val) {
 	}
 }
 
+class Mean {
+	public:
+		Mean() : m_val(0.0f), m_norm(0.0f) {
+		}
+
+		Mean& operator += (float val) {
+			m_val += val;
+			m_norm += 1.0f;
+
+			return *this;
+		}
+
+		float operator*() const {
+			if(m_norm > 0.0f)
+				return m_val / m_norm;
+			return 0.0f;
+		}
+
+	private:
+		float m_val, m_norm;
+};
+
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const cv::Mat& in = *data.get(a_in);
 	const cv::Mat& superpixels = *data.get(a_superpixels);
@@ -57,8 +79,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat out = cv::Mat::zeros(in.rows, in.cols, in.type());
 
 	// make the right sized accumulator and norm array
-	std::vector<std::vector<float>> vals(in.channels(), std::vector<float>(maxIndex+1, 0.0f));
-	std::vector<float> norm(maxIndex+1, 0);
+	std::vector<std::vector<Mean>> vals(in.channels(), std::vector<Mean>(maxIndex+1, Mean()));
 
 	// and accumulate the values
 	for(int row=0; row<in.rows; ++row)
@@ -67,8 +88,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			for(int c=0;c<in.channels();++c)
 				vals[c][index] += getFloat(in, row, col, c);
-
-			norm[index]++;
 		}
 
 	// assign the result
@@ -76,7 +95,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(int col=0; col<in.cols; ++col)
 			for(int c=0;c<in.channels();++c) {
 				const int32_t index = superpixels.at<int32_t>(row, col);
-				setFloat(out, row, col, c, vals[c][index] / (float)norm[index]);
+				setFloat(out, row, col, c, *vals[c][index]);
 			}
 
 	data.set(a_out, possumwood::opencv::Frame(out));
