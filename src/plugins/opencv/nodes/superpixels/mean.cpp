@@ -60,23 +60,13 @@ class Mean {
 		float m_val, m_norm;
 };
 
-dependency_graph::State compute(dependency_graph::Values& data) {
-	const cv::Mat& in = *data.get(a_in);
-	const cv::Mat& superpixels = *data.get(a_superpixels);
-
-	if(in.rows != superpixels.rows || in.cols != superpixels.cols)
-		throw std::runtime_error("Input and superpixel size have to match.");
-
-	if(superpixels.type() != CV_32SC1)
-		throw std::runtime_error("Only CV_32SC1 type supported on the superpixels input!");
-
+template<typename MEAN>
+cv::Mat process(const cv::Mat& in, const cv::Mat& superpixels) {
 	// first of all, get the maximum index of the superpixels
 	int32_t maxIndex = 0;
 	for(int row=0; row<superpixels.rows; ++row)
 		for(int col=0; col<superpixels.cols; ++col)
 			maxIndex = std::max(maxIndex, superpixels.at<int32_t>(row, col));
-
-	cv::Mat out = cv::Mat::zeros(in.rows, in.cols, in.type());
 
 	// make the right sized accumulator and norm array
 	std::vector<std::vector<Mean>> vals(in.channels(), std::vector<Mean>(maxIndex+1, Mean()));
@@ -90,6 +80,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				vals[c][index] += getFloat(in, row, col, c);
 		}
 
+	cv::Mat out = cv::Mat::zeros(in.rows, in.cols, in.type());
+
 	// assign the result
 	for(int row=0; row<in.rows; ++row)
 		for(int col=0; col<in.cols; ++col)
@@ -97,6 +89,21 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				const int32_t index = superpixels.at<int32_t>(row, col);
 				setFloat(out, row, col, c, *vals[c][index]);
 			}
+
+	return out;
+}
+
+dependency_graph::State compute(dependency_graph::Values& data) {
+	const cv::Mat& in = *data.get(a_in);
+	const cv::Mat& superpixels = *data.get(a_superpixels);
+
+	if(in.rows != superpixels.rows || in.cols != superpixels.cols)
+		throw std::runtime_error("Input and superpixel size have to match.");
+
+	if(superpixels.type() != CV_32SC1)
+		throw std::runtime_error("Only CV_32SC1 type supported on the superpixels input!");
+
+	const cv::Mat& out = process<Mean>(in, superpixels);
 
 	data.set(a_out, possumwood::opencv::Frame(out));
 
