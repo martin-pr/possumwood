@@ -21,7 +21,7 @@ struct MeanAttrs {
 	dependency_graph::InAttr<possumwood::Enum> a_mode;
 	dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
-	std::function<float(int, int)> weightFn(dependency_graph::Values& data) const;
+	virtual std::function<float(int, int)> weightFn(dependency_graph::Values& data) const;
 	void init(possumwood::Metadata& meta);
 
 	virtual const std::vector<std::pair<std::string, int>>& modes() const {
@@ -39,7 +39,7 @@ struct MeanAttrs {
 struct WeightedMeanAttrs : public MeanAttrs {
 	dependency_graph::InAttr<possumwood::opencv::Frame> a_weights;
 
-	std::function<float(int, int)> weightFn(dependency_graph::Values& data) const;
+	virtual std::function<float(int, int)> weightFn(dependency_graph::Values& data) const override;
 	void init(possumwood::Metadata& meta);
 
 	virtual const std::vector<std::pair<std::string, int>>& modes() const override {
@@ -95,6 +95,10 @@ class Mean {
 			m_norm += weight;
 		}
 
+		void normalise() {
+			// no-op
+		}
+
 		float operator*() const {
 			if(m_norm > 0.0f)
 				return m_val / m_norm;
@@ -107,46 +111,49 @@ class Mean {
 
 class Median {
 	public:
-		Median() : m_weightsSum(0.0f) {
+		Median() : m_weightsSum(0.0f), m_result(0.0f) {
 		}
 
 		void add(float val, float weight) {
 			if(weight < 0.0f)
 				throw std::runtime_error("Negative weight in weights input!");
 
-			m_val.push_back(std::make_pair(val, weight));
+			m_val[val] += weight;
 			m_weightsSum += weight;
 		}
 
-		float operator*() {
-			if(m_weightsSum == 0.0f)
-				return 0.0f;
+		void normalise() {
+			if(m_weightsSum == 0.0f || m_val.empty())
+				m_result = 0.0f;
+			else {
+				float weight = 0.0f;
+				for(auto& v : m_val) {
+					if(weight + v.second >= m_weightsSum/2.0f) {
+						m_result = v.first;
+						return;
+					}
 
-			std::sort(m_val.begin(), m_val.end(),
-				[](const std::pair<float, float>& p1, const std::pair<float, float>& p2) { return p1.first < p2.first; });
+					weight += v.second;
+				}
 
-			auto it = m_val.begin();
-			float weight = 0.0f;
-			weight += it->second;
-
-			while(weight < m_weightsSum/2.0f && it != m_val.end()-1) {
-				++it;
-
-				if(it != m_val.end())
-					weight += it->second;
+				m_result = m_val.rbegin()->first;
 			}
+		}
 
-			return it->first;
+		float operator*() const {
+			return m_result;
 		}
 
 	private:
-		std::vector<std::pair<float, float>> m_val;
+		std::map<float, float> m_val;
 		float m_weightsSum;
+
+		float m_result;
 };
 
 class MaxWeight {
 	public:
-		MaxWeight() {
+		MaxWeight() : m_result(0.0f) {
 		}
 
 		void add(float val, float weight) {
@@ -156,7 +163,8 @@ class MaxWeight {
 			m_vals[val] += weight;
 		}
 
-		float operator*() const {
+		void normalise() {
+			m_result = 0.0f;
 			if(!m_vals.empty()) {
 				auto max = m_vals.begin();
 
@@ -164,13 +172,18 @@ class MaxWeight {
 					if(max->second < it->second)
 						max = it;
 
-				return max->first;
+				m_result = max->first;
+				return;
 			}
-			return 0.0f;
+		}
+
+		float operator*() const {
+			return m_result;
 		}
 
 	private:
 		std::map<float, float> m_vals;
+		float m_result;
 };
 
 template<typename MEAN>
@@ -184,24 +197,33 @@ cv::Mat process(const cv::Mat& in, const cv::Mat& superpixels, std::function<flo
 	// make the right sized accumulator and norm array
 	std::vector<std::vector<MEAN>> vals(in.channels(), std::vector<MEAN>(maxIndex+1, MEAN()));
 
-	// and accumulate the values
-	for(int row=0; row<in.rows; ++row)
-		for(int col=0; col<in.cols; ++col) {
-			const int32_t index = superpixels.at<int32_t>(row, col);
+	// accumulate the values
+	tbb::parallel_for(0, in.channels(), [&](int color) {
+		for(int row=0; row<in.rows; ++row) {
+			for(int col=0; col<in.cols; ++col) {
+				const int32_t index = superpixels.at<int32_t>(row, col);
 
-			for(int c=0;c<in.channels();++c)
-				vals[c][index].add(getFloat(in, row, col, c), weights(row, col));
-		}
+				vals[color][index].add(getFloat(in, row, col, color), weights(row, col));
+			}
+		};
+	});
+
+	// normalise the superpixels (compute the result?)
+	for(int c=0;c<in.channels();++c)
+		tbb::parallel_for(std::size_t(0), vals[c].size(), [&](std::size_t index) {
+			vals[c][index].normalise();
+		});
 
 	cv::Mat out = cv::Mat::zeros(in.rows, in.cols, in.type());
 
 	// assign the result
-	for(int row=0; row<in.rows; ++row)
+	tbb::parallel_for(0, in.rows, [&](int row) {
 		for(int col=0; col<in.cols; ++col)
 			for(int c=0;c<in.channels();++c) {
 				const int32_t index = superpixels.at<int32_t>(row, col);
 				setFloat(out, row, col, c, *vals[c][index]);
 			}
+	});
 
 	return out;
 }
@@ -212,7 +234,7 @@ std::function<float(int, int)> MeanAttrs::weightFn(dependency_graph::Values& dat
 
 std::function<float(int, int)> WeightedMeanAttrs::weightFn(dependency_graph::Values& data) const {
 	const cv::Mat& in = *data.get(a_in);
-	const cv::Mat& weights = *data.get(a_weights);
+	const cv::Mat weights = *data.get(a_weights); // shallow copy
 
 	if(in.rows != weights.rows || in.cols != weights.cols)
 		throw std::runtime_error("Input and weights size have to match.");
@@ -220,7 +242,7 @@ std::function<float(int, int)> WeightedMeanAttrs::weightFn(dependency_graph::Val
 	if(weights.type() != CV_32FC1)
 		throw std::runtime_error("Only CV_32FC1 type supported on the weights input!");
 
-	return [&](int row, int col) {
+	return [weights](int row, int col) {
 		return weights.at<float>(row, col);
 	};
 }
