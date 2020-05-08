@@ -1,7 +1,5 @@
 #include <possumwood_sdk/node_implementation.h>
 
-#include <atomic>
-
 #include <opencv2/opencv.hpp>
 #include <tbb/parallel_for.h>
 
