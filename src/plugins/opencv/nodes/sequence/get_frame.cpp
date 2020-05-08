@@ -19,7 +19,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(seq.size() <= data.get(a_index))
 		throw std::runtime_error("Invalid index requested.");
 
-	data.set(a_frame, *(seq.begin() + data.get(a_index)));
+	data.set(a_frame, possumwood::opencv::Frame((seq.begin() + data.get(a_index))->mat));
 
 	return dependency_graph::State();
 }

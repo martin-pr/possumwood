@@ -12,6 +12,19 @@ namespace possumwood { namespace opencv {
 
 class Sequence final {
 	public:
+		struct Item {
+			cv::Mat mat;
+
+			cv::Mat& operator*() { return mat; }
+			const cv::Mat& operator*() const { return mat; }
+
+			cv::Mat* operator->() { return &mat; }
+			const cv::Mat* operator->() const { return &mat; }
+
+			bool operator == (const Item& i) const;
+			bool operator != (const Item& i) const;
+		};
+
 		Sequence(std::size_t size = 0);
 
 		Sequence clone() const;
@@ -27,25 +40,25 @@ class Sequence final {
 		int rows() const;
 		int cols() const;
 
-		Frame& operator[](std::size_t index);
-		const Frame& operator[](std::size_t index) const;
+		Item& operator[](std::size_t index);
+		const Item& operator[](std::size_t index) const;
 
-		typedef std::vector<Frame>::iterator iterator;
+		typedef std::vector<Item>::iterator iterator;
 		iterator begin();
 		iterator end();
 
-		typedef std::vector<Frame>::const_iterator const_iterator;
+		typedef std::vector<Item>::const_iterator const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
 
-		const Frame& front() const;
-		const Frame& back() const;
+		const Item& front() const;
+		const Item& back() const;
 
 		bool operator == (const Sequence& f) const;
 		bool operator != (const Sequence& f) const;
 
 	private:
-		std::vector<Frame> m_sequence;
+		std::vector<Item> m_sequence;
 };
 
 std::ostream& operator << (std::ostream& out, const Sequence& f);

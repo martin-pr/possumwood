@@ -39,7 +39,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(std::size_t a=1; a<tmp.size(); ++a)
 			cv::add(tmp[0], tmp[a], tmp[0]);
 
-		outSeq[i] = tmp[0];
+		outSeq[i].mat = tmp[0];
 	});
 
 	data.set(a_out, outSeq);
