@@ -120,6 +120,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		exif = possumwood::opencv::Exif(exposure, fnumber, iso);
 		data.set(a_exif, exif);
 	}
+	else
+		throw std::runtime_error("Filename '" + filename.filename().string() + "' not found or not accessible!");
 
 	data.set(a_frame, possumwood::opencv::Frame(result));
 
