@@ -24,7 +24,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	possumwood::opencv::Sequence result(std::max(seq1.size(), seq2.size()));
 	tbb::parallel_for(std::size_t(0), result.size(), [&](std::size_t index) {
-		cv::divide(*seq1[std::min(index, seq1.size()-1)], *seq2[std::min(index, seq2.size()-1)], *result[index]);
+		const std::size_t id1 = std::min(index, seq1.size()-1);
+		const std::size_t id2 = std::min(index, seq2.size()-1);
+
+		cv::divide(*seq1[id1], *seq2[id2], *result[index]);
+
+		result[index].meta() = possumwood::opencv::Sequence::Item::Meta::merge(seq1[id1].meta(), seq2[id2].meta());
 	});
 
 	data.set(a_out, result);

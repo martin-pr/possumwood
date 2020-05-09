@@ -35,6 +35,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	tbb::parallel_for(std::size_t(0), in.size(), [&](std::size_t id) {
 		in[id]->convertTo(*out[id], modeToEnum(data.get(a_mode).value()), data.get(a_a), data.get(a_b));
+
+		out[id].meta() = in[id].meta();
 	});
 
 	data.set(a_outSeq, out);

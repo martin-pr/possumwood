@@ -12,17 +12,41 @@ namespace possumwood { namespace opencv {
 
 class Sequence final {
 	public:
-		struct Item {
-			cv::Mat mat;
+		class Item {
+			public:
+				class Meta {
+					public:
+						float operator[](const std::string& key) const;
+						float& operator[](const std::string& key);
 
-			cv::Mat& operator*() { return mat; }
-			const cv::Mat& operator*() const { return mat; }
+						typedef std::map<std::string, float>::const_iterator const_iterator;
+						const_iterator begin() const;
+						const_iterator end() const;
 
-			cv::Mat* operator->() { return &mat; }
-			const cv::Mat* operator->() const { return &mat; }
+						static Meta merge(const Meta& m1, const Meta& m2);
 
-			bool operator == (const Item& i) const;
-			bool operator != (const Item& i) const;
+					private:
+						std::map<std::string, float> m_meta;
+				};
+
+				Item();
+				Item(const cv::Mat& m);
+
+				cv::Mat& operator*() { return m_mat; }
+				const cv::Mat& operator*() const { return m_mat; }
+
+				cv::Mat* operator->() { return &m_mat; }
+				const cv::Mat* operator->() const { return &m_mat; }
+
+				Meta& meta();
+				const Meta& meta() const;
+
+				bool operator == (const Item& i) const;
+				bool operator != (const Item& i) const;
+
+			private:
+				cv::Mat m_mat;
+				Meta m_meta;
 		};
 
 		Sequence(std::size_t size = 0);

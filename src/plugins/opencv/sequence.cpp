@@ -11,18 +11,18 @@ Sequence Sequence::clone() const {
 	Sequence result;
 
 	for(auto& f : m_sequence)
-		result.add(f.mat.clone());
+		result.add(f->clone());
 
 	return result;
 }
 
 void Sequence::add(const cv::Mat& frame) {
-	m_sequence.push_back(Item{frame});
+	m_sequence.push_back(Item(frame));
 }
 
 bool Sequence::isValid() const {
 	for(auto& f : m_sequence)
-		if(f.mat.rows != m_sequence.front().mat.rows || f.mat.cols != m_sequence.front().mat.cols || f.mat.type() != m_sequence.front().mat.type())
+		if(f->rows != m_sequence.front()->rows || f->cols != m_sequence.front()->cols || f->type() != m_sequence.front()->type())
 			return false;
 	return true;
 }
@@ -38,19 +38,19 @@ std::size_t Sequence::size() const {
 int Sequence::type() const {
 	if(m_sequence.empty())
 		return 0;
-	return m_sequence.front().mat.type();
+	return m_sequence.front()->type();
 }
 
 int Sequence::rows() const {
 	if(m_sequence.empty())
 		return 0;
-	return m_sequence.front().mat.rows;
+	return m_sequence.front()->rows;
 }
 
 int Sequence::cols() const {
 	if(m_sequence.empty())
 		return 0;
-	return m_sequence.front().mat.cols;
+	return m_sequence.front()->cols;
 }
 
 Sequence::iterator Sequence::begin() {
@@ -95,13 +95,31 @@ bool Sequence::operator != (const Sequence& f) const {
 	return m_sequence != f.m_sequence;
 }
 
+///////////////
+
+Sequence::Item::Item() {
+}
+
+Sequence::Item::Item(const cv::Mat& m) : m_mat(m) {
+}
+
+Sequence::Item::Meta& Sequence::Item::meta() {
+	return m_meta;
+}
+
+const Sequence::Item::Meta& Sequence::Item::meta() const {
+	return m_meta;
+}
+
 bool Sequence::Item::operator == (const Item& i) const {
-	return mat.ptr() == i.mat.ptr();
+	return m_mat.ptr() == i->ptr();
 }
 
 bool Sequence::Item::operator != (const Item& i) const {
-	return mat.ptr() != i.mat.ptr();
+	return m_mat.ptr() != i->ptr();
 }
+
+/////////////
 
 std::ostream& operator << (std::ostream& out, const Sequence& f) {
 	if(f.empty())
