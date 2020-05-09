@@ -16,6 +16,8 @@ class Sequence final {
 			public:
 				class Meta {
 					public:
+						bool empty() const;
+
 						float operator[](const std::string& key) const;
 						float& operator[](const std::string& key);
 
@@ -30,7 +32,7 @@ class Sequence final {
 				};
 
 				Item();
-				Item(const cv::Mat& m);
+				Item(const cv::Mat& m, const Meta& meta = Meta());
 
 				cv::Mat& operator*() { return m_mat; }
 				const cv::Mat& operator*() const { return m_mat; }
@@ -53,7 +55,7 @@ class Sequence final {
 
 		Sequence clone() const;
 
-		void add(const cv::Mat& frame);
+		Item& add(const cv::Mat& frame, const Item::Meta& meta = Item::Meta());
 
 		bool isValid() const;
 
