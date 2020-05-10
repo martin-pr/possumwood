@@ -50,11 +50,15 @@ filenames_ui::filenames_ui() {
 			for(auto& p : paths)
 				p = possumwood::App::instance().expandPath(p.toStdString()).string().c_str();
 
+			QString parentPath = possumwood::App::instance().filename().parent_path().string().c_str();
+			if(paths.size() > 0)
+				parentPath = boost::filesystem::path(paths[0].toStdString()).parent_path().string().c_str();
+
 			// run the file dialog
 			paths = QFileDialog::getOpenFileNames(
 				possumwood::App::instance().mainWindow(),
 				"Select input files...",
-				possumwood::App::instance().filename().parent_path().string().c_str(),
+				parentPath,
 				boost::algorithm::join(m_value.extensions(), ";;").c_str()
 			);
 

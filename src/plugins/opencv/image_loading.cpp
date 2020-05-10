@@ -58,10 +58,10 @@ void copyData(ImageInput& input, cv::Mat& m) {
 std::pair<cv::Mat, Exif> load(const boost::filesystem::path& filename) {
 	std::pair<cv::Mat, Exif> result;
 
-	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
-		std::unique_ptr<ImageInput> in(ImageInput::open(filename.filename().string()));
+	if(!filename.empty() && boost::filesystem::exists(filename)) {
+		std::unique_ptr<ImageInput> in(ImageInput::open(filename.string()));
 		if (!in)
-			throw std::runtime_error("Error loading " + filename.filename().string());
+			throw std::runtime_error("Error loading " + filename.string());
 
 		// get the image spec
 		const ImageSpec &spec = in->spec();
@@ -72,7 +72,7 @@ std::pair<cv::Mat, Exif> load(const boost::filesystem::path& filename) {
 		else if(spec.format == TypeDesc::FLOAT)
 			copyData<float>(*in, result.first);
 		else
-			throw std::runtime_error("Error loading " + filename.filename().string() + " - only images with 8 or 32 bits per channel are supported at the moment!");
+			throw std::runtime_error("Error loading " + filename.string() + " - only images with 8 or 32 bits per channel are supported at the moment!");
 
 		// process metadata (EXIF)
 		float exposure = 0.0f;
@@ -103,7 +103,7 @@ std::pair<cv::Mat, Exif> load(const boost::filesystem::path& filename) {
 		result.second = possumwood::opencv::Exif(exposure, fnumber, iso);
 	}
 	else
-		throw std::runtime_error("Filename '" + filename.filename().string() + "' not found or not accessible!");
+		throw std::runtime_error("Filename '" + filename.string() + "' not found or not accessible!");
 
 	return result;
 }
