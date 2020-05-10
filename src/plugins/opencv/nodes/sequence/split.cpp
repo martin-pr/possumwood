@@ -22,8 +22,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			std::vector<cv::Mat> mats(4);
 			cv::split(*in[a], mats);
 
-			for(std::size_t i=0; i<4; ++i)
-				result[i][a] = possumwood::opencv::Frame(mats[i]);
+			for(std::size_t i=0; i<4; ++i) {
+				*result[i][a] = mats[i];
+				result[i][a].meta() = in[a].meta();
+			}
 		}
 	}
 

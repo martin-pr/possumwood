@@ -16,8 +16,14 @@ Sequence Sequence::clone() const {
 	return result;
 }
 
-void Sequence::add(const cv::Mat& frame) {
-	m_sequence.push_back(Frame((frame)));
+Sequence::Item& Sequence::add(const cv::Mat& frame, const Item::Meta& meta) {
+	// check for consistency
+	if(!m_sequence.empty())
+		if(frame.rows != m_sequence.front()->rows || frame.cols != m_sequence.front()->cols || frame.type() != m_sequence.front()->type())
+			throw std::runtime_error("Adding an inconsistent frame to a sequence!"); // TODO: more details
+
+	m_sequence.push_back(Item(frame, meta));
+	return m_sequence.back();
 }
 
 bool Sequence::isValid() const {
@@ -69,20 +75,20 @@ Sequence::const_iterator Sequence::end() const {
 	return m_sequence.end();
 }
 
-const Frame& Sequence::front() const {
+const Sequence::Item& Sequence::front() const {
 	return m_sequence.front();
 }
 
-const Frame& Sequence::back() const {
+const Sequence::Item& Sequence::back() const {
 	return m_sequence.back();
 }
 
-Frame& Sequence::operator[](std::size_t index) {
+Sequence::Item& Sequence::operator[](std::size_t index) {
 	assert(index < m_sequence.size());
 	return m_sequence[index];
 }
 
-const Frame& Sequence::operator[](std::size_t index) const {
+const Sequence::Item& Sequence::operator[](std::size_t index) const {
 	assert(index < m_sequence.size());
 	return m_sequence[index];
 }
@@ -95,13 +101,85 @@ bool Sequence::operator != (const Sequence& f) const {
 	return m_sequence != f.m_sequence;
 }
 
-std::ostream& operator << (std::ostream& out, const Sequence& f) {
-	if(f.empty())
-		out << "(empty sequence)" << std::endl;
-	else if(f.size() == 1)
-		out << "(a sequence with 1 frame, " << opencv::type2str((*f[0]).type()) << ", " << (*f[0]).cols << "x" << (*f[0]).rows << ")";
+///////////////
+
+Sequence::Item::Item() {
+}
+
+Sequence::Item::Item(const cv::Mat& m, const Meta& meta) : m_mat(m), m_meta(meta) {
+}
+
+Sequence::Item::Meta& Sequence::Item::meta() {
+	return m_meta;
+}
+
+const Sequence::Item::Meta& Sequence::Item::meta() const {
+	return m_meta;
+}
+
+bool Sequence::Item::operator == (const Item& i) const {
+	return m_mat.ptr() == i->ptr();
+}
+
+bool Sequence::Item::operator != (const Item& i) const {
+	return m_mat.ptr() != i->ptr();
+}
+
+/////////////
+
+bool Sequence::Item::Meta::empty() const {
+	return m_meta.empty();
+}
+
+float Sequence::Item::Meta::operator[](const std::string& key) const {
+	auto it = m_meta.find(key);
+	if(it != m_meta.end())
+		return it->second;
+	return 0.0f;
+}
+
+float& Sequence::Item::Meta::operator[](const std::string& key) {
+	return m_meta[key];
+}
+
+Sequence::Item::Meta::const_iterator Sequence::Item::Meta::begin() const {
+	return m_meta.begin();
+}
+
+Sequence::Item::Meta::const_iterator Sequence::Item::Meta::end() const {
+	return m_meta.end();
+}
+
+Sequence::Item::Meta Sequence::Item::Meta::merge(const Meta& m1, const Meta& m2) {
+	Sequence::Item::Meta result = m2;
+	for(auto& m : m1)
+		result[m.first] = m.second;
+	return result;
+}
+
+/////////////
+
+std::ostream& operator << (std::ostream& out, const Sequence& seq) {
+	if(seq.empty())
+		out << "Empty sequence" << std::endl;
+	else if(seq.size() == 1)
+		out << "A sequence with 1 frame, " << opencv::type2str((*seq[0]).type()) << ", " << (*seq[0]).cols << "x" << (*seq[0]).rows << std::endl;
 	else
-		out << "(a sequence of " << f.size() << " frames, " << opencv::type2str((*f[0]).type()) << ", " << (*f[0]).cols << "x" << (*f[0]).rows << ")";
+		out << "A sequence of " << seq.size() << " frames, " << opencv::type2str((*seq[0]).type()) << ", " << (*seq[0]).cols << "x" << (*seq[0]).rows << std::endl;
+
+	unsigned ctr = 0;
+	for(auto& f : seq) {
+		out << "  [" << ctr << "] ->";
+		if(f.meta().empty())
+			out << " no metadata" << std::endl;
+		else {
+			for(auto& m : f.meta())
+				out << " " << m.first << "=" << m.second;
+			out << std::endl;
+		}
+
+		++ctr;
+	}
 
 	return out;
 }

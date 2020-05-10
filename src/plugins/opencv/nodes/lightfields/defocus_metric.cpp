@@ -20,7 +20,7 @@ dependency_graph::OutAttr<possumwood::opencv::Sequence> a_out;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& inSeq = data.get(a_in);
 
-	possumwood::opencv::Sequence outSeq(inSeq.size());
+	possumwood::opencv::Sequence outSeq(inSeq);
 
 	tbb::parallel_for(std::size_t(0), inSeq.size(), [&](std::size_t i) {
 		const cv::Mat& in = *inSeq[i];
@@ -39,7 +39,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(std::size_t a=1; a<tmp.size(); ++a)
 			cv::add(tmp[0], tmp[a], tmp[0]);
 
-		outSeq[i] = tmp[0];
+		*outSeq[i] = tmp[0];
 	});
 
 	data.set(a_out, outSeq);
