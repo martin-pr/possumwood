@@ -16,7 +16,7 @@ void Uniforms::addUniform(
 
 	uniform->name = name;
 	uniform->glslType = std::string("uniform ") + GLSLTraits<T>::typeString() + " " + name;
-	if(size > 0)
+	if(size > 1)
 		uniform->glslType += "[" + std::to_string(size) + "];";
 	else
 		uniform->glslType += ";";

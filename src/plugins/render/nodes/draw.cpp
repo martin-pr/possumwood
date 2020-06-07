@@ -143,11 +143,12 @@ struct Drawable : public possumwood::Drawable {
 
 			// use the program
 			glUseProgram(program.id());
-
 			GL_CHECK_ERR;
 
 			// feed in the uniforms
 			dependency_graph::State uniState = uniforms.use(program.id(), viewport());
+			GL_CHECK_ERR;
+
 			state.append(uniState);
 
 			// get all the uniforms and test them

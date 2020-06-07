@@ -25,6 +25,14 @@ void Uniforms::addTexture(const std::string& name, const float* data, std::size_
 	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(data, width, height, format));
 }
 
+void Uniforms::addTextureArray(const std::string& name, std::vector<const unsigned char*> data, std::size_t width, std::size_t height, const Texture::Format& format) {
+	m_textures.push_back(TextureHolder());
+
+	m_textures.back().name = name;
+	m_textures.back().glslType = "uniform sampler2DArray " + name + ";";
+	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(data, width, height, format));
+}
+
 dependency_graph::State Uniforms::use(GLuint programId, const ViewportState& vs) const {
 	dependency_graph::State state;
 
