@@ -47,6 +47,17 @@ int Sequence::type() const {
 	return m_sequence.front()->type();
 }
 
+int Sequence::depth() const {
+	if(m_sequence.empty())
+		return 0;
+	return m_sequence.front()->depth();
+}
+
+int Sequence::channels() const {
+	if(m_sequence.empty())
+		return 0;
+	return m_sequence.front()->channels();
+}
 int Sequence::rows() const {
 	if(m_sequence.empty())
 		return 0;
