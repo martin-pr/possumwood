@@ -91,7 +91,7 @@
             "out_port": "out_uniforms"
         }
     ],
-    "description": "",
+    "description": "### 2D+1D Lightfields Integration (OpenGL)\n\nA simple lighfield slicing example (depth-based 2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail.\n\nThe camera captures a sequence of evenly-spaced 2D images, which are then offset and merged using a simple average. This corresponds to a 3D lightfield (i.e., a standard 4D lightfield with one sample on the second spatial axis).\n\nIgnoring the lends deformation, each offset value makes the average images converge on a particular focal plane, which allows to synthesize a sharp image for particular depths while leaving other depth values blurred-out on the free spatial axis (horizonatlly, in this case).\n\nThe average is computed on the GPU - this allows much faster image synthesis than would be possible on the CPU.",
     "nodes": {
         "background_0": {
             "blind_data": {
@@ -326,5 +326,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJsAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAc0AAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABVQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABywAAAaMAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJsAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAc0AAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAAB1AAABVQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAdQAAAvkAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

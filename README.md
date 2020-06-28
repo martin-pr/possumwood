@@ -2156,6 +2156,52 @@ By averaging the depth values derived from the correspondence metric for each su
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_lightfields_depth/80_linear_mean.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### 2D+1D Lightfields Integration (OpenCV)
+
+A simple lighfield slicing example (depth-based 2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail.
+
+The camera captures a sequence of evenly-spaced 2D images, which are then offset and merged using a simple average. This corresponds to a 3D lightfield (i.e., a standard 4D lightfield with one sample on the second spatial axis).
+
+Ignoring the lends deformation, each offset value makes the average images converge on a particular focal plane, which allows to synthesize a sharp image for particular depths while leaving other depth values blurred-out on the free spatial axis (horizonatlly, in this case).
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_lightfields_depth/80_linear_mean_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_lightfields_depth/81_linear_gldraw.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### 2D+1D Lightfields Integration (OpenGL)
+
+A simple lighfield slicing example (depth-based 2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail.
+
+The camera captures a sequence of evenly-spaced 2D images, which are then offset and merged using a simple average. This corresponds to a 3D lightfield (i.e., a standard 4D lightfield with one sample on the second spatial axis).
+
+Ignoring the lends deformation, each offset value makes the average images converge on a particular focal plane, which allows to synthesize a sharp image for particular depths while leaving other depth values blurred-out on the free spatial axis (horizonatlly, in this case).
+
+The average is computed on the GPU - this allows much faster image synthesis than would be possible on the CPU.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_lightfields_depth/81_linear_gldraw_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
 </table> 
 
 ## Tutorials
@@ -2353,6 +2399,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 
