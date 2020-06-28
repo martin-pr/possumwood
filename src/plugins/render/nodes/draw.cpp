@@ -124,10 +124,14 @@ struct Drawable : public possumwood::Drawable {
 
 		program.link();
 
+		GL_CHECK_ERR;
+
 		if(program.id() == 0) {
 			program = defaultProgram();
 			program.link();
 		}
+
+		GL_CHECK_ERR;
 
 		if(program.state().errored())
 			state.append(program.state());

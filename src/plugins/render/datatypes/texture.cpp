@@ -74,7 +74,7 @@ std::string makeTexture(GLuint id, T_PTR data, std::size_t width, std::size_t he
 			break;
 		case Texture::kBGR:
 			TextureTraits<T_PTR>::init(GL_RGB8, width, height, data);
-			TextureTraits<T_PTR>::apply(GL_BGR, width, height, GL_BGR, TextureTraits<T_PTR>::GLType(), data);
+			TextureTraits<T_PTR>::apply(GL_RGB, width, height, GL_BGR, TextureTraits<T_PTR>::GLType(), data);
 			break;
 		case Texture::kGray:
 			TextureTraits<T_PTR>::init(GL_R8, width, height, data);
