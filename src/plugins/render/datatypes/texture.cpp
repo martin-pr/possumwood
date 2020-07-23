@@ -21,7 +21,7 @@ void applyArrayTexture(GLint internalformat, GLsizei width, GLsizei height, GLen
 			0,
 			0, 0, i,
 			width, height, 1,
-			internalformat, type,
+			format, type,
 			data[i]);
 }
 
