@@ -23,17 +23,25 @@ struct Reduce : public boost::noncopyable {
 	Reduce(const Reduce& r, tbb::split) : mats(r.mats) {
 	}
 
+	Reduce(const Reduce&) = delete;
+	Reduce& operator = (const Reduce&) = delete;
+
 	/// converts a range of input images int double format, and sums them together
 	void operator() (const tbb::blocked_range<std::size_t>& range) {
 		assert(!range.empty());
 
-		std::vector<cv::Mat> converted(range.size());
-		for(std::size_t i=range.begin(); i != range.end(); ++i)
-			mats[i].convertTo(converted[i - range.begin()], CV_MAKETYPE(CV_64F, mats[i].channels()));
+		auto it = range.begin();
 
-		accum = converted.front();
-		for(auto it = converted.begin()+1; it != converted.end(); ++it)
-			accum += *it;
+		if(accum.empty()) {
+			mats[it].convertTo(accum, CV_MAKETYPE(CV_64F, mats[it].channels()));
+			++it;
+		}
+
+		cv::Mat tmp;
+		for(; it != range.end(); ++it) {
+			mats[it].convertTo(tmp, CV_MAKETYPE(CV_64F, mats[it].channels()));
+			accum += tmp;
+		}
 	}
 
 	// combine two results together
