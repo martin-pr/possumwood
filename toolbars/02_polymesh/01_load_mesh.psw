@@ -1,144 +1,113 @@
 {
     "connections": [
         {
-            "in_node": "network_0",
-            "in_port": "input",
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
             "out_node": "loader_0",
-            "out_port": "generic_polymesh"
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
         }
     ],
-    "description": "### OBJ file loading\n\nThis simple demo shows how to load an object from `.obj` file, and display it in the viewport.\n\nThe display code is contained in a subnetwork (double click the blue node to \"enter\" it), and is based on a trivial implementation of a vertex and fragment OpenGL shader.",
+    "description": "### OBJ file loading\n\nThis simple demo shows how to load an object from .obj file, and display it in the viewport.\n\nThe display code is contained in a subnetwork (double click the blue node to \"enter\" it), and is based on a trivial implementation of a vertex and fragment OpenGL shader.",
     "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 122.497360229492,
+                    "y": 929.636596679688
+                }
+            },
+            "name": "display",
+            "type": "render/vertex_data/cgal"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 326.637939453125,
+                    "y": 826.474548339844
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -91.7326736450195,
+                    "y": 632.002502441406
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec4 frag_position;\n\nout vec4 color; \n \nvoid main() { \n\t// compute fake normal by cross product of surface derivatives\n\tvec3 norm = cross(dFdx(frag_position).xyz, dFdy(frag_position).xyz);\n\tnorm = normalize(norm);\n \n\tcolor = vec4(norm.z, norm.z, norm.z, 1); \n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
         "loader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 155.0,
-                    "y": 352.0
+                    "x": 120.766845703125,
+                    "y": 761.318786621094
                 }
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/stanford_models/bunny.obj"
+                "filename": "$EXAMPLES/stanford_models/bunny.obj",
+                "name": "mesh"
             },
-            "type": "polymesh/loader"
+            "type": "cgal/loader"
         },
-        "network_0": {
+        "program_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 398.0,
-                    "y": 429.0
+                    "x": 135.267425537109,
+                    "y": 564.163391113281
                 }
             },
-            "connections": [
-                {
-                    "in_node": "program_0",
-                    "in_port": "fragment_shader",
-                    "out_node": "fragment_shader_0",
-                    "out_port": "shader"
-                },
-                {
-                    "in_node": "vertex_data_0",
-                    "in_port": "generic_mesh",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "draw_0",
-                    "in_port": "program",
-                    "out_node": "program_0",
-                    "out_port": "program"
-                },
-                {
-                    "in_node": "draw_0",
-                    "in_port": "vertex_data",
-                    "out_node": "vertex_data_0",
-                    "out_port": "vertex_data"
-                },
-                {
-                    "in_node": "program_0",
-                    "in_port": "vertex_shader",
-                    "out_node": "vertex_shader_0",
-                    "out_port": "shader"
-                }
-            ],
-            "name": "polymesh_draw",
-            "nodes": {
-                "draw_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 511.844787597656,
-                            "y": 651.059997558594
-                        }
-                    },
-                    "name": "draw",
-                    "type": "render/draw"
-                },
-                "fragment_shader_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 123.0,
-                            "y": 584.0
-                        }
-                    },
-                    "name": "fragment_shader",
-                    "ports": {
-                        "source": "#version 130 \n \nout vec4 color; \n \nin vec3 vertexPosition; \n \nvoid main() { \n\tvec3 dx = dFdx(vertexPosition); \n\tvec3 dy = dFdy(vertexPosition); \n \n\tvec3 norm = normalize(cross(dx, dy));\n\n\tfloat val = abs(norm.z);\n\tcolor = vec4(val, val, val, 1); \n} \n"
-                    },
-                    "type": "render/fragment_shader"
-                },
-                "input_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 160.14860534668,
-                            "y": 727.89599609375
-                        }
-                    },
-                    "name": "input",
-                    "type": "input"
-                },
-                "program_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 296.0,
-                            "y": 531.0
-                        }
-                    },
-                    "name": "program",
-                    "type": "render/program"
-                },
-                "vertex_data_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 295.148590087891,
-                            "y": 746.89599609375
-                        }
-                    },
-                    "name": "vertex_data",
-                    "type": "polymesh/vertex_data"
-                },
-                "vertex_shader_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 156.0,
-                            "y": 416.0
-                        }
-                    },
-                    "name": "vertex_shader",
-                    "ports": {
-                        "source": "#version 130 \n\nout vec3 vertexPosition;       // vertex position for the fragment shader \n \nin vec3 P;              // position attr from the vbo \n\nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P.x, P.y, P.z, 1);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
-                    },
-                    "type": "render/vertex_shader"
+            "name": "program",
+            "type": "render/program"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -60.4222717285156,
+                    "y": 504.151916503906
                 }
             },
-            "type": "network"
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nout vec4 frag_position;        // fragment position for fake normal computation\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nvoid main() {\n\tfrag_position = iModelView * vec4(position, 1.0);\n   \tgl_Position = iProjection * frag_position;\n} \n"
+            },
+            "type": "render/vertex_shader"
         }
     },
     "scene_config": {
