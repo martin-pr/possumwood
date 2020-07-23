@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <boost/noncopyable.hpp>
 
 #include <GL/glew.h>
@@ -30,7 +32,10 @@ class Texture : public boost::noncopyable {
 		};
 
 		Texture(const unsigned char* data, std::size_t width, std::size_t height, const Format& format = Format());
+		Texture(const std::vector<const unsigned char*>& data, std::size_t width, std::size_t height, const Format& format = Format());
+
 		Texture(const float* data, std::size_t width, std::size_t height, const Format& format = Format());
+
 		~Texture();
 
 		GLuint id() const;
@@ -39,6 +44,7 @@ class Texture : public boost::noncopyable {
 
 	private:
 		GLuint m_id;
+		GLint m_bindType;
 };
 
 }

@@ -32,6 +32,8 @@ class Uniforms {
 	void addTexture(const std::string& name, const unsigned char* data, std::size_t width, std::size_t height, const Texture::Format& format = Texture::Format());
 	void addTexture(const std::string& name, const float* data, std::size_t width, std::size_t height, const Texture::Format& format = Texture::Format());
 
+	void addTextureArray(const std::string& name, std::vector<const unsigned char*> data, std::size_t width, std::size_t height, const Texture::Format& format = Texture::Format());
+
 	dependency_graph::State use(GLuint programId, const ViewportState&) const;
 
 	/// returns the number of uniforms and textures stored in this container

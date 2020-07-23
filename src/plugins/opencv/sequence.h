@@ -65,6 +65,8 @@ class Sequence final {
 		int type() const;
 		int rows() const;
 		int cols() const;
+		int depth() const;
+		int channels() const;
 
 		Item& operator[](std::size_t index);
 		const Item& operator[](std::size_t index) const;
