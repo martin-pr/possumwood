@@ -260,11 +260,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		// evaluate our script
 		int err = luaL_dostring(state, src.c_str());
 
+		std::string errstr;
+		if(err)
+			errstr = lua_tostring(state, -1);
+
 		// and return the resulting state
 		data.set(a_state, std::move(state));
 
 		if(err)
-			throw std::runtime_error(lua_tostring(state, -1));
+			throw std::runtime_error(errstr);
 	}
 	catch(const luabind::error& err) {
 		throw std::runtime_error(lua_tostring(err.state(), -1));
