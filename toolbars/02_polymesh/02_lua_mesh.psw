@@ -41,6 +41,12 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "in_context",
+            "out_node": "float_0",
+            "out_port": "out_context"
         }
     ],
     "description": "",
@@ -61,7 +67,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 647.3974609375,
-                    "y": 711.034118652344
+                    "y": 834.315734863281
                 }
             },
             "name": "display",
@@ -77,6 +83,21 @@
             },
             "name": "draw",
             "type": "render/draw"
+        },
+        "float_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 248.215728759766,
+                    "y": 216.859252929688
+                }
+            },
+            "name": "NUMBER_OF_FACES",
+            "ports": {
+                "name": "edge_count",
+                "value": 120.0
+            },
+            "type": "lua/inject/float"
         },
         "fragment_shader_0": {
             "blind_data": {
@@ -127,7 +148,7 @@
             },
             "name": "script",
             "ports": {
-                "source": "mesh = cgal.mesh(\"mesh\")\n\np1 = mesh:addPoint(0,0,0)\np2 = mesh:addPoint(1,0,0)\np3 = mesh:addPoint(0,1,0)\np4 = mesh:addPoint(1,1,0)\n\nface = cgal.face()\n\nface:addVertex(p2)\nface:addVertex(p3)\nface:addVertex(p1)\nface:addVertex(p4)\n\nmesh:addFace(face)"
+                "source": "-- edge_count = 12\n\n-------------\n\nmesh = cgal.mesh(\"mesh\")\n\nfor i=0,edge_count do\n  param = i/edge_count*3.1415*2\n  mesh:addPoint(math.cos(param), 0, math.sin(param))\n  mesh:addPoint(math.cos(param), 1, math.sin(param))\nend\n\nfor i=0,edge_count-1 do\n  face = cgal.face()\n\n  face:addVertex((i*2))\n  face:addVertex((i*2+3))\n  face:addVertex((i*2+1))\n  face:addVertex((i*2+2))\n\n  mesh:addFace(face)\nend\n\nfor i=1,edge_count-1 do\n  face = cgal.face()\n  face:addVertex(0)\n  face:addVertex((i*2))\n  face:addVertex((i*2+2))\n  mesh:addFace(face)\nend\n\nfor i=1,edge_count-1 do\n  face = cgal.face()\n  face:addVertex(1)\n  face:addVertex((i*2+1))\n  face:addVertex((i*2+3))\n  mesh:addFace(face)\nend\n"
             },
             "type": "lua/script"
         },
@@ -152,5 +173,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAGAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAE0PwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAE0AAAAJgBAAADAAAAAQAAAagAAATQ/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACKAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACngAAAqcAAACqAQAAAwAABBoAAATQAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAE0PwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAE0AAAAJgBAAADAAAAAQAAAjgAAATQ/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACKAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACngAAAqcAAACqAQAAAwAAA4oAAATQAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
