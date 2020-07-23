@@ -34,4 +34,4 @@ class Mesh {
 
 	friend class Meshes;
 };
-}
+}  // namespace possumwood

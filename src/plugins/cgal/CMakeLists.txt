@@ -9,6 +9,15 @@ add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 find_package(CGAL REQUIRED)
 set(LIBS ${LIBS} CGAL::CGAL)
 
+# Find luabind
+FIND_PACKAGE(PkgConfig REQUIRED)
+
+pkg_check_modules (LUABIND luabind)
+
+pkg_search_module(LUABIND REQUIRED)
+include_directories(${LUABIND_INCLUDE_DIRS})
+set(LIBS ${LIBS} ${LUABIND_LIBRARIES})
+
 include_directories(./)
 
 #####
@@ -24,9 +33,9 @@ install(TARGETS psw_cgal DESTINATION lib)
 
 #####
 
-file(GLOB_RECURSE node_sources nodes/*.cpp)
+file(GLOB_RECURSE node_sources nodes/*.cpp lua/*.cpp)
 
 add_library(cgal SHARED ${node_sources})
 install(TARGETS cgal DESTINATION ${PLUGINS_INSTALL_PATH})
 
-target_link_libraries(cgal psw_cgal ${LIBS})
+target_link_libraries(cgal psw_cgal psw_lua ${LIBS})

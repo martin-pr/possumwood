@@ -1,0 +1,156 @@
+{
+    "connections": [
+        {
+            "in_node": "script_0",
+            "in_port": "context",
+            "out_node": "cgal_0",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_1",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "mesh_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "mesh_0",
+            "in_port": "state",
+            "out_node": "script_0",
+            "out_port": "state"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        }
+    ],
+    "description": "",
+    "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 282.0,
+                    "y": 411.0
+                }
+            },
+            "name": "cgal",
+            "type": "lua/modules/cgal"
+        },
+        "cgal_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 647.3974609375,
+                    "y": 711.034118652344
+                }
+            },
+            "name": "display",
+            "type": "render/vertex_data/cgal"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 851.5380859375,
+                    "y": 607.8720703125
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 433.167449951172,
+                    "y": 413.400024414062
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec4 frag_position;\n\nout vec4 color; \n \nvoid main() { \n\t// compute fake normal by cross product of surface derivatives\n\tvec3 norm = cross(dFdx(frag_position).xyz, dFdy(frag_position).xyz);\n\tnorm = normalize(norm);\n \n\tcolor = vec4(norm.z, norm.z, norm.z, 1); \n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "mesh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 451.0,
+                    "y": 574.0
+                }
+            },
+            "name": "mesh",
+            "ports": {
+                "name": "mesh"
+            },
+            "type": "lua/extract/mesh"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 660.167541503906,
+                    "y": 345.560913085938
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "script_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 297.0,
+                    "y": 558.0
+                }
+            },
+            "name": "script",
+            "ports": {
+                "source": "mesh = cgal.mesh(\"mesh\")\n\np1 = mesh:addPoint(0,0,0)\np2 = mesh:addPoint(1,0,0)\np3 = mesh:addPoint(0,1,0)\np4 = mesh:addPoint(1,1,0)\n\nface = cgal.face()\n\nface:addVertex(p2)\nface:addVertex(p3)\nface:addVertex(p1)\nface:addVertex(p4)\n\nmesh:addFace(face)"
+            },
+            "type": "lua/script"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 464.477844238281,
+                    "y": 285.549438476562
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nout vec4 frag_position;        // fragment position for fake normal computation\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nvoid main() {\n\tfrag_position = iModelView * vec4(position, 1.0);\n   \tgl_Position = iProjection * frag_position;\n} \n"
+            },
+            "type": "render/vertex_shader"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAGAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAE0PwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAE0AAAAJgBAAADAAAAAQAAAagAAATQ/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACKAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACngAAAqcAAACqAQAAAwAABBoAAATQAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
