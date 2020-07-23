@@ -32,7 +32,7 @@ class Texture : public boost::noncopyable {
 		};
 
 		Texture(const unsigned char* data, std::size_t width, std::size_t height, const Format& format = Format());
-		Texture(const std::vector<const unsigned char*> data, std::size_t width, std::size_t height, const Format& format = Format());
+		Texture(const std::vector<const unsigned char*>& data, std::size_t width, std::size_t height, const Format& format = Format());
 
 		Texture(const float* data, std::size_t width, std::size_t height, const Format& format = Format());
 

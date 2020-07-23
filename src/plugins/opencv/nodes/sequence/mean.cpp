@@ -13,7 +13,7 @@ dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 struct Reduce : public boost::noncopyable {
-	Reduce(const possumwood::opencv::Sequence& seq) {
+	explicit Reduce(const possumwood::opencv::Sequence& seq) {
 		for(auto& f : seq)
 			mats.push_back(*f); // "shallow" copy
 	}

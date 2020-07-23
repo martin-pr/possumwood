@@ -123,7 +123,7 @@ Texture::Texture(const float* data, std::size_t width, std::size_t height, const
 	}
 }
 
-Texture::Texture(const std::vector<const unsigned char*> data, std::size_t width, std::size_t height, const Format& format) {
+Texture::Texture(const std::vector<const unsigned char*>& data, std::size_t width, std::size_t height, const Format& format) {
 	glGenTextures(1, &m_id);
 
 	const std::string err = makeTexture(m_id, data, width, height, format);
