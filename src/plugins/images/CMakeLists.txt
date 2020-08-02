@@ -13,10 +13,8 @@ pkg_search_module(LUABIND REQUIRED)
 include_directories(${LUABIND_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${LUABIND_LIBRARIES})
 
-# Find OpenImageIO
-pkg_check_modules(OPENIMAGEIO REQUIRED OpenImageIO)
-include_directories(${OPENIMAGEIO_INCLUDE_DIRS}) # make sure OPENIMAGEIO/ include prefix is maintained
-set(LIBS ${LIBS} ${OPENIMAGEIO_LIBRARIES})
+# Find OpenImageIO using a custom module
+include(possumwood_oiio)
 
 # Find opencv
 find_package(OpenCV REQUIRED)
