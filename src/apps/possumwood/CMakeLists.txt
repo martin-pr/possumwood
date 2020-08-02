@@ -24,6 +24,10 @@ set(LIBS ${LIBS} ${GLUT_LIBRARY})
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
+# Find opencv - cannot be dynamically loaded due to use of jemalloc
+find_package(OpenCV REQUIRED)
+set(LIBS ${LIBS} ${OpenCV_LIBS})
+
 # Build the executable
 include_directories(./)
 qt5_add_resources(resources resources/resources.qrc)

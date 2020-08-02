@@ -1,21 +1,20 @@
 # Find Qt
 SET(QT_USE_QTOPENGL TRUE)
-FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Gui OpenGL Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui OpenGL Widgets)
 set(LIBS ${LIBS} Qt5::Widgets Qt5::OpenGL)
 
-# Find luabind
-FIND_PACKAGE(PkgConfig REQUIRED)
+# using pkg-config
+find_package(PkgConfig REQUIRED)
 
+# Find luabind
 pkg_check_modules (LUABIND luabind)
 
 pkg_search_module(LUABIND REQUIRED)
 include_directories(${LUABIND_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${LUABIND_LIBRARIES})
 
-# Find OpenImageIO
-find_package(OpenImageIO REQUIRED)
-include_directories(${OPENIMAGEIO_INCLUDE_DIRS}/..) # make sure OpenImageIO/ include prefix is maintained
-set(LIBS ${LIBS} ${OPENIMAGEIO_LIBRARIES})
+# Find OpenImageIO using a custom module
+include(possumwood_oiio)
 
 # Find opencv
 find_package(OpenCV REQUIRED)

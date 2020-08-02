@@ -3,10 +3,8 @@ file(GLOB_RECURSE headers *.h)
 file(GLOB_RECURSE sources *.cpp)
 file(GLOB sources_common ../*.cpp)
 
-# Find OpenImageIO
-find_package(OpenImageIO REQUIRED)
-include_directories(${OPENIMAGEIO_INCLUDE_DIRS}/..) # make sure OpenImageIO/ include prefix is maintained
-set(LIBS ${LIBS} ${OPENIMAGEIO_LIBRARIES})
+# Find OpenImageIO using a custom module
+include(possumwood_oiio)
 
 # Find OpenGL
 #FIND_PACKAGE(OpenGL REQUIRED)

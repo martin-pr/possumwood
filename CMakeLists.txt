@@ -31,6 +31,7 @@ message("- C++ flags: ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_STANDARD 14)
 
 list(APPEND CMAKE_MODULE_PATH "/usr/share/cmake/Modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake") # allow custom modules
 
 add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 add_definitions(-Wl,--no-undefined)

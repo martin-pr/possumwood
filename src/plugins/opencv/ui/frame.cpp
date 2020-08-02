@@ -60,7 +60,7 @@ FrameUI::FrameUI() {
 				cv::Mat rgb;
 				cv::cvtColor(m_value, rgb, cv::COLOR_BGR2RGB);
 
-				std::unique_ptr<OIIO::ImageOutput> out = OIIO::ImageOutput::create(qfilename.toStdString());
+				std::unique_ptr<OIIO::ImageOutput> out(OIIO::ImageOutput::create(qfilename.toStdString()));
 				if(!out) {
 					std::stringstream err;
 					err << "Could not create an ImageOutput for " << qfilename.toStdString() << ", error = " << OIIO::geterror();

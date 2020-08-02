@@ -14,6 +14,9 @@ pkg_search_module(JSONCPP REQUIRED jsoncpp)
 include_directories(${JSONCPP_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${JSONCPP_LIBRARIES})
 
+# Find OpenImageIO using a custom module
+include(possumwood_oiio)
+
 # eigen
 find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})

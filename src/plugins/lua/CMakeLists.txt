@@ -8,9 +8,11 @@ FIND_PACKAGE(PkgConfig REQUIRED)
 
 pkg_check_modules (LUABIND luabind)
 
-pkg_search_module(LUABIND REQUIRED)
+pkg_search_module(LUABIND REQUIRED luabind)
 include_directories(${LUABIND_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${LUABIND_LIBRARIES})
+
+message("************ ${LUABIND_LIBRARIES}")
 
 include_directories(./)
 

@@ -17,7 +17,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		throw std::runtime_error("Only 2-channel floating point input is supported.");
 
 	std::array<cv::Mat, 2> split;
-	cv::split(input, split);
+	cv::split(input, split.data());
 
 	cv::Mat result;
 	magnitude(split[0], split[1], result);

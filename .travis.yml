@@ -23,7 +23,6 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - sourceline: 'ppa:cgi-daily-devs/cgi-daily'
     packages:
       - libboost-all-dev
       - doxygen
@@ -45,9 +44,9 @@ addons:
       - libqt5opengl5-dev
       - libluabind-dev
       - libtbb-dev
-      - libopencv-daily-dev
-      - libcgal-daily-dev
-      - libopenimageio-daily-dev
+      - libopencv-dev
+      - libcgal-dev
+      - libopenimageio-dev
       - libjsoncpp-dev
       - libeigen3-dev
 
