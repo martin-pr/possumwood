@@ -14,6 +14,11 @@ pkg_search_module(JSONCPP REQUIRED jsoncpp)
 include_directories(${JSONCPP_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${JSONCPP_LIBRARIES})
 
+# Find OpenImageIO
+pkg_check_modules(OPENIMAGEIO REQUIRED OpenImageIO)
+include_directories(${OPENIMAGEIO_INCLUDE_DIRS}) # make sure OPENIMAGEIO/ include prefix is maintained
+set(LIBS ${LIBS} ${OPENIMAGEIO_LIBRARIES})
+
 # eigen
 find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
