@@ -17,7 +17,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		throw std::runtime_error("Only CV_32FC2 type allowed on input.");
 
 	cv::Mat output;
-	dft(input, output, cv::DFT_COMPLEX_INPUT | cv::DFT_REAL_OUTPUT | cv::DFT_INVERSE | cv::DFT_SCALE);
+
+	// DFT_COMPLEX_INPUT doesn't exist in OpenCV 1.11.14 in Bionic, but with 2-channel input, it is implied
+	dft(input, output, /*cv::DFT_COMPLEX_INPUT |*/ cv::DFT_REAL_OUTPUT | cv::DFT_INVERSE | cv::DFT_SCALE);
 	assert(output.type() == CV_32FC1);
 
 	data.set(a_outFrame, possumwood::opencv::Frame(output));

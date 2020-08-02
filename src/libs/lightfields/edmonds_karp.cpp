@@ -1,6 +1,7 @@
 #include "edmonds_karp.h"
 
 #include <queue>
+#include <functional>
 
 #include <tbb/blocked_range2d.h>
 #include <tbb/task_group.h>

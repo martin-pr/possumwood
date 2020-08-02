@@ -78,23 +78,37 @@ std::pair<cv::Mat, Exif> load(const boost::filesystem::path& filename) {
 		float exposure = 0.0f;
 		{
 			auto it = spec.extra_attribs.find("ExposureTime");
-			if(it != spec.extra_attribs.end())
-				// exposure = (*static_cast<const float*>(it->data()));
+			if(it != spec.extra_attribs.end()) {
+				#if OIIO_VERSION_MAJOR < 2
+				exposure = (*static_cast<const float*>(it->data()));
+				#else
 				exposure = it->get_float();
+				#endif
+			}
 		}
 
 		float fnumber = 0.0f;
 		{
 			auto it = spec.extra_attribs.find("FNumber");
-			if(it != spec.extra_attribs.end())
+			if(it != spec.extra_attribs.end()) {
+				#if OIIO_VERSION_MAJOR < 2
+				fnumber = (*static_cast<const float*>(it->data()));
+				#else
 				fnumber = it->get_float();
+				#endif
+			}
 		}
 
 		float iso = 100.0f;
 		{
 			auto it = spec.extra_attribs.find("Exif:PhotographicSensitivity");
-			if(it != spec.extra_attribs.end())
+			if(it != spec.extra_attribs.end()) {
+				#if OIIO_VERSION_MAJOR < 2
+				iso = (*static_cast<const float*>(it->data()));
+				#else
 				iso = it->get_float();
+				#endif
+			}
 		}
 
 		// for(auto& a : spec.extra_attribs)
