@@ -34,7 +34,8 @@ list(APPEND CMAKE_MODULE_PATH "/usr/share/cmake/Modules")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake") # allow custom modules
 
 add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
-add_definitions(-Wl,--no-undefined)
+set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-Wl,--no-undefined")
+set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-Wl,--no-undefined")
 
 # required by CGAL
 add_definitions(-DBOOST_PARAMETER_MAX_ARITY=12)

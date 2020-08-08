@@ -18,7 +18,7 @@ add_definitions(${QT_DEFINITIONS})
 
 add_library(psw_maths SHARED ${sources} ${headers_moc})
 
-target_link_libraries(psw_maths ${LIBS})
+target_link_libraries(psw_maths ${LIBS} possumwood_sdk)
 
 install(TARGETS psw_maths DESTINATION lib)
 
@@ -31,4 +31,4 @@ SET_TARGET_PROPERTIES(maths PROPERTIES PREFIX "")
 
 install(TARGETS maths DESTINATION ${PLUGINS_INSTALL_PATH})
 
-target_link_libraries(maths psw_maths ${LIBS} possumwood_sdk)
+target_link_libraries(maths psw_maths ${LIBS})

@@ -46,6 +46,10 @@ add_definitions(-DPOSSUMWOOD_CONF_PATH=${CONF_PATH})
 
 include_directories(./)
 
+# Find OpenGL
+FIND_PACKAGE(OpenGL REQUIRED)
+set(LIBS ${LIBS} ${OPENGL_LIBRARIES})
+
 # Building the library
 file(GLOB_RECURSE headers *.h)
 file(GLOB_RECURSE sources *.cpp)

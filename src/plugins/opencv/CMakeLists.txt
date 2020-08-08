@@ -5,6 +5,7 @@ set(LIBS ${LIBS} Qt5::Widgets Qt5::OpenGL)
 
 # Find opencv
 find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${OpenCV_LIBS})
 
 # pkg-config to find jsoncpp
@@ -21,6 +22,11 @@ include(possumwood_oiio)
 find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
+# tbb
+pkg_search_module(TBB REQUIRED tbb)
+include_directories(${TBB_INCLUDE_DIRS})
+set(LIBS ${LIBS} ${TBB_LIBRARIES})
+
 include_directories(./)
 
 #####
@@ -34,7 +40,7 @@ add_library(psw_opencv SHARED ${sources} ${headers_moc})
 
 install(TARGETS psw_opencv DESTINATION lib)
 
-target_link_libraries(psw_opencv ${LIBS} possumwood_sdk)
+target_link_libraries(psw_opencv ${LIBS} possumwood_sdk lightfields)
 
 #####
 
@@ -49,6 +55,4 @@ target_link_libraries(opencv
 	psw_opencv
 	psw_render
 	${LIBS}
-	OpenImageIO
-	lightfields
 )

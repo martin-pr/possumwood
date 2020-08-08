@@ -49,6 +49,7 @@ addons:
       - libopenimageio-dev
       - libjsoncpp-dev
       - libeigen3-dev
+      - libjemalloc-dev
 
 # Run build
 script:

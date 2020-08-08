@@ -24,9 +24,8 @@ set(LIBS ${LIBS} ${GLUT_LIBRARY})
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
-# Find opencv - cannot be dynamically loaded due to use of jemalloc
-find_package(OpenCV REQUIRED)
-set(LIBS ${LIBS} ${OpenCV_LIBS})
+# jemalloc required in Ubuntu for OpenCV to be dynamically loadable
+include(possumwood_jemalloc)
 
 # Build the executable
 include_directories(./)

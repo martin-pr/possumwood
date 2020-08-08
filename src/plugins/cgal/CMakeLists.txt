@@ -17,7 +17,7 @@ file(GLOB sources *.cpp datatypes/*.cpp ui/*.cpp)
 
 add_library(psw_cgal SHARED ${sources})
 
-target_link_libraries(psw_cgal ${LIBS})
+target_link_libraries(psw_cgal ${LIBS} dependency_graph possumwood_sdk)
 
 
 install(TARGETS psw_cgal DESTINATION lib)
