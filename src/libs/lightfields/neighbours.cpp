@@ -1,6 +1,8 @@
 #include "neighbours.h"
 
 #include <cassert>
+#include <string>
+#include <stdexcept>
 
 namespace lightfields {
 

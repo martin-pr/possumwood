@@ -4,6 +4,7 @@
 #include <memory>
 #include <set>
 #include <typeindex>
+#include <string>
 
 #include "generic_array.h"
 

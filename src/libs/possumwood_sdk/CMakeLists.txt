@@ -60,6 +60,12 @@ set(LIBS ${LIBS} Qt5::Widgets)
 
 QT5_WRAP_CPP(headers_moc ${headers})
 add_definitions(${QT_DEFINITIONS})
+
+# Qt 5 on Ubuntu 20.10 generates a lot of deprecation warnings,
+# which are turned into errors in our build. Let's disable them
+# for now.
+add_definitions(-Wno-error=deprecated-declarations)
+
 add_library(possumwood_sdk SHARED ${sources})
 install(TARGETS possumwood_sdk DESTINATION lib)
 

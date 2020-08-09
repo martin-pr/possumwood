@@ -1,6 +1,8 @@
 #include "static_initialisation.h"
 
 #include <cassert>
+#include <algorithm>
+#include <string>
 
 namespace dependency_graph {
 
