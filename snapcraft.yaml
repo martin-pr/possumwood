@@ -40,6 +40,7 @@ build-packages:
   - software-properties-common
   - dirmngr
   - libjsoncpp-dev
+  - libjemalloc-dev
 
 apps:
   possumwood:
