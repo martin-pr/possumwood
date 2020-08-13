@@ -12,6 +12,10 @@ Possumwood is built on top of a simple graph-evaluation engine and a Qt-based no
 
 ## Table of contents
 - [Synopsis](#synopsis)
+- [Installation](#installation)
+  - [Launchpad PPA for Ubuntu 18.04+](#launchpad-ppa-for-ubuntu-1804)
+  - [Installation using Snap](#installation-using-snap)
+  - [Building from source](#building-from-source)
 - [Example setups](#example-setups)
   - [Opengl](#opengl)
   - [Polymesh](#polymesh)
@@ -26,14 +30,51 @@ Possumwood is built on top of a simple graph-evaluation engine and a Qt-based no
   - [Basics](#basics)
   - [OpenGL / GLSL](#opengl--glsl)
   - [Image manipulation](#image-manipulation)
-- [Installation](#installation)
-  - [Launchpad PPA for Ubuntu 18.04+](#launchpad-ppa-for-ubuntu-1804)
-  - [Installation using Snap](#installation-using-snap)
-  - [Building from source](#building-from-source)
 - [Code Example](#code-example)
 - [API Reference](#api-reference)
 - [Contributors](#contributors)
 - [License](#license)
+
+## Installation
+
+Possumwood has been tested only on Linux (several distributions). While it should work on Windows, it has not been compiled or tested there. No support for MacOS is planned for the time being due to heavy dependency on OpenGL.
+
+### Launchpad PPA for Ubuntu 18.04+
+
+On Ubuntu, the easiest way to install Possumwood is to use the [snapshots PPA](https://code.launchpad.net/~martin-prazak/+archive/ubuntu/possumwood):
+
+```
+sudo add-apt-repository ppa:martin-prazak/possumwood
+sudo apt-get update
+sudo apt-get install possumwood
+```
+
+This will install Possumwood to your system, enabling to simply run `possumwood` command from any terminal.
+
+### Installation using Snap
+
+Currently, Possumwood is released in [Snap](https://snapcraft.io/) as a development/testing package only. The latest build and its status can be accessed [here](https://build.snapcraft.io/user/martin-pr/possumwood).
+
+To install a testing version, please run:
+
+```
+sudo snap install --edge possumwood --devmode
+```
+
+This will download and install the latest successful build of Possumwood with its dependencies. To start the application, run `possumwood` from the command line. As a dev build, snap will not automatically update this installation. Moreover, snap skin support is currently rather rudimentary, making Possumwood not inherit the system look correctly.
+
+### Building from source
+
+The project is structured as a standard CMake-built project. To build, just run these in the directory of the repository on any Linux distro:
+
+```
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release && make
+```
+
+And the result could be just run via `./possumwood` or `./build/possumwood`.
+
 
 ## Example setups
 Possumwood comes with a number of example setups that can serve as a starting point for experimentation.
@@ -2293,54 +2334,6 @@ This tutorial introduces basic concepts of image manipulation in Possumwood, and
 Apart from [rendering existing images loaded from a file](Images-Loading-and-Display), Possumwood can also generate and edit images using [Lua scripting](https://en.wikipedia.org/wiki/Lua_(programming_language)). In this tutorial, we explore a very simple setup which uses Lua and per-pixel expressions to generate an image.
 
 
-## Installation
-
-Possumwood has been tested only on Linux (several distributions). While it should work on Windows, it has not been compiled or tested there. No support for MacOS is planned for the time being due to heavy dependency on OpenGL.
-
-### Launchpad PPA for Ubuntu 18.04+
-
-On Ubuntu, the easiest way to install Possumwood is to use the [snapshots PPA](https://code.launchpad.net/~martin-prazak/+archive/ubuntu/possumwood), which is built against daily builds of common CGI libraries in the [cg-daily PPA](https://code.launchpad.net/~cgi-daily-devs/+archive/ubuntu/cgi-daily):
-
-```
-sudo add-apt-repository ppa:martin-prazak/possumwood
-sudo add-apt-repository ppa:cgi-daily-devs/cgi-daily
-sudo apt-get update
-sudo apt-get install possumwood
-```
-
-This will install Possumwood to your system, enabling to simply run `possumwood` command from any terminal.
-
-Daily build of Possumwood is built against a number of packages that are newer than most distros provide out of the box. These are contained in the [`ppa:martin-prazak/cgi-daily`](https://launchpad.net/~martin-prazak/+archive/ubuntu/cgi-daily) PPA. Some packages might conflict with the system versions (OpenImageIO, OpenCV), requiring the original system packages to be uninstalled first.
-
-### Installation using Snap
-
-Currently, Possumwood is released in [Snap](https://snapcraft.io/) as a development/testing package only. The latest build and its status can be accessed [here](https://build.snapcraft.io/user/martin-pr/possumwood).
-
-To install a testing version, please run:
-
-```
-sudo snap install --edge possumwood --devmode
-```
-
-This will download and install the latest successful build of Possumwood with its dependencies. To start the application, run `possumwood` from the command line. As a dev build, snap will not automatically update this installation. Moreover, snap skin support is currently rather rudimentary, making Possumwood not inherit the system look correctly.
-
-### Building from source
-
-The project is structured as a standard CMake-built project. To build, just run these in the directory of the repository on any Linux distro:
-
-```
-mkdir build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install && make -j
-```
-
-This will build Possumwood and all its plugins, and install the result inside `./install` directory. Installation is necessary to make sure Possumwood is able to find its plugins and its dependencies. After that, you can run the build via:
-
-```
-./install/bin/possumwood
-```
-
-
 ## Code Example
 
 Possumwood is designed to be easily extensible. A simple addition node, using float attributes, can be implemented in a few lines of code:
@@ -2399,6 +2392,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 
