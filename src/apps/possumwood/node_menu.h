@@ -3,6 +3,8 @@
 #include <functional>
 #include <memory>
 
+#include <boost/filesystem/path.hpp>
+
 #include <QMenu>
 
 #include <dependency_graph/metadata_register.h>
@@ -14,6 +16,7 @@ class NodeMenu {
 	NodeMenu(Adaptor* adaptor);
 
 	void addFromNodeRegister(const dependency_graph::MetadataRegister& r);
+	void addFromDirectory(const boost::filesystem::path& path);
 
 	// builds the menu out of the information provided.
 	// Using a raw pointer argument to match Qt signature - the lifetime of the

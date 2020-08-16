@@ -3,9 +3,11 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/filesystem.hpp>
 
 #include <actions/actions.h>
 #include <actions/node_data.h>
+#include <possumwood_sdk/app.h>
 
 #include "searchable_menu.h"
 
@@ -74,6 +76,45 @@ void NodeMenu::addFromNodeRegister(const dependency_graph::MetadataRegister& r) 
 
 			possumwood::actions::createNode(adaptor->currentNetwork(), m, itemName, p);
 		});
+	}
+}
+
+void NodeMenu::addFromDirectory(const boost::filesystem::path& startPath) {
+	// raw pointers for binding
+	auto newNodeMenuPtr = m_newNodeMenu.get();
+	Adaptor* adaptor = m_adaptor;
+
+	// scan the directory recursively
+	boost::filesystem::recursive_directory_iterator it(startPath), end;
+
+	while(it != end) {
+		if(boost::filesystem::is_regular_file(it->status())) {
+			const boost::filesystem::path path = boost::filesystem::relative(*it, startPath);
+
+			addItem((path.parent_path() / path.stem()).string(), [path, newNodeMenuPtr, adaptor]() {
+				auto qp =
+				    adaptor->graphWidget()->mapToScene(adaptor->graphWidget()->mapFromGlobal(newNodeMenuPtr->pos()));
+				const possumwood::NodeData::Point p{(float)qp.x(), (float)qp.y()};
+
+				auto metaIt = dependency_graph::MetadataRegister::singleton().find("network");
+				assert(metaIt != dependency_graph::MetadataRegister::singleton().end());
+
+				dependency_graph::UniqueId networkId;
+				possumwood::actions::createNode(adaptor->currentNetwork(), *metaIt, path.stem().string(), p, networkId);
+
+				auto networkIt = adaptor->currentNetwork().nodes().find(networkId);
+				assert(networkIt != adaptor->currentNetwork().nodes().end());
+
+				std::ifstream in((possumwood::App::instance().expandPath("$NODES") / path).string());
+				possumwood::io::json json;
+				in >> json;
+
+				dependency_graph::Selection selection;  // throwaway
+				possumwood::actions::fromJson(networkIt->as<dependency_graph::Network>(), selection, json, false);
+			});
+		}
+
+		++it;
 	}
 }
 
