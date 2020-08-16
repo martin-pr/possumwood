@@ -68,6 +68,11 @@ find_package(Boost REQUIRED COMPONENTS
 include_directories(${Boost_INCLUDE_DIR})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
+# setup the OpenGL preference for CMake, to fix CMP0072 warning
+if(POLICY CMP0072)
+  cmake_policy(SET CMP0072 NEW)
+endif()
+
 # looking for OpenGL libraries
 #find_package(OpenGL REQUIRED)
 #include_directories(${OPENGL_INCLUDE_DIR})
