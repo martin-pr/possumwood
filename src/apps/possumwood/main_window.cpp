@@ -112,7 +112,7 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 		{
 			NodeMenu builder(m_adaptor);
 			builder.addFromNodeRegister(dependency_graph::MetadataRegister::singleton());
-			builder.addFromDirectory(possumwood::App::instance().expandPath("$NODES"));
+			builder.addFromDirectory(possumwood::App::instance().filesystem().expandPath("$NODES"));
 			std::unique_ptr<QMenu> newNodeMenu = builder.build();
 
 			newNodeMenu->setIcon(QIcon(":icons/edit-add.png"));

@@ -12,7 +12,7 @@ namespace fs = boost::filesystem;
 
 PluginsRAII::PluginsRAII() {
 	// scan for plugins
-	for(fs::directory_iterator itr(possumwood::App::instance().expandPath("$PLUGINS"));
+	for(fs::directory_iterator itr(possumwood::App::instance().filesystem().expandPath("$PLUGINS"));
 	    itr != fs::directory_iterator(); ++itr) {
 		if(fs::is_regular_file(itr->status()) && itr->path().extension() == ".so") {
 			std::cout << "Loading plugin " << itr->path().string() << " ... " << std::flush;
@@ -34,5 +34,4 @@ PluginsRAII::~PluginsRAII() {
 		dlclose(m_pluginHandles.back().first);
 		m_pluginHandles.pop_back();
 	}
-
 }

@@ -9,10 +9,10 @@
 #include <QApplication>
 #include <QMainWindow>
 
-#include <dependency_graph/port.inl>
 #include <dependency_graph/node.h>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes_iterator.inl>
+#include <dependency_graph/port.inl>
 
 #include <actions/actions.h>
 
@@ -21,12 +21,7 @@
 
 #include "config.inl"
 
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-
 namespace possumwood {
-
-App* App::s_instance = NULL;
 
 namespace {
 
@@ -60,104 +55,26 @@ boost::filesystem::path expandEnvvars(const boost::filesystem::path& p) {
 	return result;
 }
 
-}
+}  // namespace
 
-App::App() : m_mainWindow(NULL), m_time(0.0f) {
+App* App::s_instance = NULL;
+
+App::App(std::unique_ptr<IFilesystem> filesystem)
+    : m_mainWindow(NULL), m_time(0.0f), m_filesystem(std::move(filesystem)) {
 	assert(s_instance == nullptr);
 	s_instance = this;
 
 	////////////////////////
 	// scene configuration
 
-	m_sceneConfig.addItem(Config::Item("start_time", "timeline", 0.0f,
-	                                   Config::Item::kNoFlags,
-	                                   "Start of the timeline (seconds)"));
+	m_sceneConfig.addItem(
+	    Config::Item("start_time", "timeline", 0.0f, Config::Item::kNoFlags, "Start of the timeline (seconds)"));
 
-	m_sceneConfig.addItem(Config::Item("end_time", "timeline", 5.0f,
-	                                   Config::Item::kNoFlags,
-	                                   "End of the timeline (seconds)"));
+	m_sceneConfig.addItem(
+	    Config::Item("end_time", "timeline", 5.0f, Config::Item::kNoFlags, "End of the timeline (seconds)"));
 
-	m_sceneConfig.addItem(Config::Item("fps", "timeline", 24.0f, Config::Item::kNoFlags,
-	                                   "Scene's frames-per-second value"));
-
-	///////////////////////
-	// resolving paths from possumwood.conf
-
-	boost::filesystem::path conf_path;
-
-	// conf path can be explicitly defined during the build (at which point we just use it)
-#ifdef POSSUMWOOD_CONF_PATH
-	conf_path = boost::filesystem::path(TOSTRING(POSSUMWOOD_CONF_PATH));
-
-	conf_path = expandEnvvars(conf_path);
-
-	// however, if that path doesn't exist (for development only)
-	if(!boost::filesystem::exists(conf_path)) {
-#endif
-
-	// find the config file in the current or parent directories
-	conf_path = boost::filesystem::path(boost::filesystem::current_path());
-	while(!conf_path.empty()) {
-		if(boost::filesystem::exists(conf_path / "possumwood.conf")) {
-			conf_path = conf_path / "possumwood.conf";
-			break;
-		}
-		else
-			conf_path = conf_path.parent_path();
-	}
-
-#ifdef POSSUMWOOD_CONF_PATH
-	}
-#endif
-
-	if(!conf_path.empty()) {
-		// parent directory for the config file - used for resolving relative paths
-		const boost::filesystem::path full_path = conf_path.parent_path();
-
-		std::ifstream cfg(conf_path.string());
-		while(!cfg.eof() && cfg.good()) {
-			std::string line;
-			std::getline(cfg, line);
-
-			if(!line.empty()) {
-				// read the key/value pair of key->path from the file
-				std::string key;
-				std::string value;
-
-				int state = 0;
-				for(std::size_t c=0;c<line.length(); ++c) {
-					if(state == 0) {
-						if(line[c] != ' ' && line[c] != '\t')
-							key.push_back(line[c]);
-						else
-							state = 1;
-					}
-
-					if(state == 1) {
-						if(line[c] != ' ' && line[c] != '\t')
-							state = 2;
-					}
-
-					if(state == 2)
-						value.push_back(line[c]);
-				}
-
-				boost::filesystem::path path(value);
-
-				// expand any env vars
-				path = expandEnvvars(path);
-
-				// resolve relative paths to absolute
-				if(path.is_relative())
-					path = full_path / path;
-
-				// store this path variable
-				m_pathVariables[key] = path.string();
-			}
-		}
-	}
-	else
-		std::cout << "Warning: configuration file 'possumwood.conf' not found!" << std::endl;
+	m_sceneConfig.addItem(
+	    Config::Item("fps", "timeline", 24.0f, Config::Item::kNoFlags, "Scene's frames-per-second value"));
 }
 
 App::~App() {
@@ -188,7 +105,7 @@ dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 	undoStack().clear();
 	m_sceneDescription.clear();
 
-	dependency_graph::Selection selection; // throwaway
+	dependency_graph::Selection selection;  // throwaway
 
 	dependency_graph::State state;
 
@@ -221,11 +138,9 @@ dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 		// read the UI configuration
 		if(QCoreApplication::instance() != nullptr) {
 			if(json.find("ui_geometry") != json.end())
-				mainWindow()->restoreGeometry(
-				    QByteArray::fromBase64(json["ui_geometry"].get<std::string>().c_str()));
+				mainWindow()->restoreGeometry(QByteArray::fromBase64(json["ui_geometry"].get<std::string>().c_str()));
 			if(json.find("ui_state") != json.end())
-				mainWindow()->restoreState(
-				    QByteArray::fromBase64(json["ui_state"].get<std::string>().c_str()));
+				mainWindow()->restoreState(QByteArray::fromBase64(json["ui_state"].get<std::string>().c_str()));
 		}
 	}
 	catch(std::exception& exc) {
@@ -237,8 +152,7 @@ dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 
 dependency_graph::State App::loadFile(const boost::filesystem::path& filename, bool alterCurrentFilename) {
 	if(!boost::filesystem::exists(filename))
-		throw std::runtime_error("Cannot open " + filename.string() +
-		                         " - file not found.");
+		throw std::runtime_error("Cannot open " + filename.string() + " - file not found.");
 	// read the json file
 	std::ifstream in(filename.string());
 	possumwood::io::json json;
@@ -302,12 +216,12 @@ QMainWindow* App::mainWindow() const {
 }
 
 void App::setMainWindow(QMainWindow* win) {
-	assert(m_mainWindow == NULL &&
-	       "setMainWindow is called only once at the beginning of an application");
+	assert(m_mainWindow == NULL && "setMainWindow is called only once at the beginning of an application");
 	m_mainWindow = win;
 }
 
-void App::draw(const possumwood::ViewportState& viewport, std::function<void(const dependency_graph::NodeBase&)> stateChangedCallback) {
+void App::draw(const possumwood::ViewportState& viewport,
+               std::function<void(const dependency_graph::NodeBase&)> stateChangedCallback) {
 	GL_CHECK_ERR;
 
 	for(auto it = graph().nodes().begin(dependency_graph::Nodes::kRecursive); it != graph().nodes().end(); ++it) {
@@ -337,7 +251,8 @@ void App::setTime(float time) {
 		m_timeChanged(time);
 
 		// TERRIBLE HACK - a special node type that outputs time is handled here
-		for(dependency_graph::Nodes::iterator i = graph().nodes().begin(dependency_graph::Nodes::kRecursive); i != graph().nodes().end(); ++i) {
+		for(dependency_graph::Nodes::iterator i = graph().nodes().begin(dependency_graph::Nodes::kRecursive);
+		    i != graph().nodes().end(); ++i) {
 			if(i->metadata()->type() == "time")
 				i->port(0).set<float>(time);
 			if(i->metadata()->type() == "frame")
@@ -362,40 +277,8 @@ Description& App::sceneDescription() {
 	return m_sceneDescription;
 }
 
-boost::filesystem::path App::expandPath(const boost::filesystem::path& path) const {
-	std::string p = path.string();
-
-	const std::regex var("\\$[A-Z]+");
-	std::smatch match;
-	while(std::regex_search(p, match, var)) {
-		auto it = m_pathVariables.find(match.str().substr(1));
-		if(it != m_pathVariables.end())
-			p = match.prefix().str() + it->second.string() + match.suffix().str();
-		else
-			break;
-	}
-
-	return p;
+const IFilesystem& App::filesystem() const {
+	return *m_filesystem;
 }
 
-boost::filesystem::path App::shrinkPath(const boost::filesystem::path& path) const {
-	std::string p = path.string();
-
-	bool cont = true;
-	while(cont) {
-		cont = false;
-		for(auto& i : m_pathVariables) {
-			auto it = p.find(i.second.string());
-			if(it != std::string::npos) {
-				cont = true;
-
-				p = p.substr(0, it) + "$" + i.first + p.substr(it + i.second.string().length());
-			}
-		}
-	}
-
-	return p;
-}
-
-
-}
+}  // namespace possumwood

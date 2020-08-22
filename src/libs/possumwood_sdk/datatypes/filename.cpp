@@ -14,18 +14,18 @@ const boost::filesystem::path Filename::filename(bool makeAbsolute) const {
 	if(!makeAbsolute)
 		return m_filename;
 	else
-		return App::instance().expandPath(m_filename);
+		return App::instance().filesystem().expandPath(m_filename);
 }
 
 void Filename::setFilename(const boost::filesystem::path& filename) {
-	m_filename = App::instance().shrinkPath(filename);
+	m_filename = App::instance().filesystem().shrinkPath(filename);
 }
 
 const std::set<std::string>& Filename::extensions() const {
 	return m_extensions;
 }
 
-Filename& Filename::operator = (const Filename& fn) {
+Filename& Filename::operator=(const Filename& fn) {
 	// only assign a value if the m_extension array is empty
 	// -> allows to keep the extensions list while allowing to change
 	//    the filename value in the UI / serialization
@@ -37,15 +37,15 @@ Filename& Filename::operator = (const Filename& fn) {
 	return *this;
 }
 
-bool Filename::operator == (const Filename& fn) const {
+bool Filename::operator==(const Filename& fn) const {
 	return m_filename == fn.m_filename && m_extensions == fn.m_extensions;
 }
 
-bool Filename::operator != (const Filename& fn) const {
+bool Filename::operator!=(const Filename& fn) const {
 	return m_filename != fn.m_filename || m_extensions != fn.m_extensions;
 }
 
-std::ostream& operator << (std::ostream& out, const Filename& f) {
+std::ostream& operator<<(std::ostream& out, const Filename& f) {
 	out << f.filename();
 	return out;
 }
@@ -62,8 +62,8 @@ void fromJson(const ::possumwood::io::json& json, Filename& value) {
 	value.setFilename(json.get<std::string>());
 }
 
-}
+}  // namespace
 
 IO<Filename> Traits<Filename>::io(&toJson, &fromJson);
 
-}
+}  // namespace possumwood

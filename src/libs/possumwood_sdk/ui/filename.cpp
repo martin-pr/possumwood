@@ -3,12 +3,12 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
-#include <QHBoxLayout>
-#include <QStyle>
-#include <QFileDialog>
 #include <QAction>
 #include <QApplication>
+#include <QFileDialog>
+#include <QHBoxLayout>
 #include <QMainWindow>
+#include <QStyle>
 
 #include <possumwood_sdk/app.h>
 
@@ -16,50 +16,37 @@ filename_ui::filename_ui() {
 	m_widget = new QWidget(NULL);
 
 	QHBoxLayout* layout = new QHBoxLayout(m_widget);
-	layout->setContentsMargins(0,0,0,0);
+	layout->setContentsMargins(0, 0, 0, 0);
 
 	m_lineEdit = new QLineEdit();
 	layout->addWidget(m_lineEdit, 1);
 
-	m_lineEditConnection = QObject::connect(
-		m_lineEdit,
-		&QLineEdit::editingFinished,
-		[this]() -> void {
-			callValueChangedCallbacks();
-		}
-	);
+	m_lineEditConnection =
+	    QObject::connect(m_lineEdit, &QLineEdit::editingFinished, [this]() -> void { callValueChangedCallbacks(); });
 
 	m_browseButton = new QToolButton();
 	m_browseButton->setIcon(m_browseButton->style()->standardIcon(QStyle::SP_DialogOpenButton));
 	layout->addWidget(m_browseButton);
 
-	m_buttonConnection = QObject::connect(
-		m_browseButton,
-		&QToolButton::released,
-		[this]() -> void {
-			// starting directory
-			QString path = m_lineEdit->text();
-			if(path.isEmpty())
-				path = possumwood::App::instance().filename().parent_path().string().c_str();
-			else
-				path = possumwood::App::instance().expandPath(path.toStdString()).string().c_str();
+	m_buttonConnection = QObject::connect(m_browseButton, &QToolButton::released, [this]() -> void {
+		// starting directory
+		QString path = m_lineEdit->text();
+		if(path.isEmpty())
+			path = possumwood::App::instance().filename().parent_path().string().c_str();
+		else
+			path = possumwood::App::instance().filesystem().expandPath(path.toStdString()).string().c_str();
 
-			// run the file dialog
-			path = QFileDialog::getOpenFileName(
-				possumwood::App::instance().mainWindow(),
-				"Select an input file...",
-				path,
-				boost::algorithm::join(m_value.extensions(), ";;").c_str()
-			);
+		// run the file dialog
+		path = QFileDialog::getOpenFileName(possumwood::App::instance().mainWindow(), "Select an input file...", path,
+		                                    boost::algorithm::join(m_value.extensions(), ";;").c_str());
 
-			if(!path.isEmpty()) {
-				path = possumwood::App::instance().shrinkPath(path.toStdString()).string().c_str();
+		if(!path.isEmpty()) {
+			path = possumwood::App::instance().filesystem().shrinkPath(path.toStdString()).string().c_str();
 
-				m_lineEdit->setText(path);
-				m_lineEdit->editingFinished();
-			}
+			m_lineEdit->setText(path);
+			m_lineEdit->editingFinished();
 		}
-	);
+	});
 }
 
 filename_ui::~filename_ui() {
