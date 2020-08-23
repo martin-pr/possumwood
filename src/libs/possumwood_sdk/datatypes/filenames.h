@@ -1,11 +1,12 @@
 #pragma once
 
-#include <string>
 #include <set>
+#include <string>
 
 #include <boost/filesystem/path.hpp>
 
 #include <dependency_graph/data_traits.h>
+#include <possumwood_sdk/filepath.h>
 
 #include "actions/io.h"
 #include "actions/traits.h"
@@ -13,29 +14,29 @@
 namespace possumwood {
 
 class Filenames {
-	public:
-		Filenames(std::initializer_list<std::string> extensions = std::initializer_list<std::string>());
+  public:
+	Filenames(std::initializer_list<std::string> extensions = std::initializer_list<std::string>());
 
-		const std::vector<boost::filesystem::path> filenames(bool makeAbsolute = true) const;
+	const std::vector<possumwood::Filepath>& filenames() const;
 
-		bool empty() const;
-		void addFilename(const boost::filesystem::path& filename);
-		void clear();
+	bool empty() const;
+	void addFilename(const possumwood::Filepath& filename);
+	void clear();
 
-		const std::set<std::string>& extensions() const;
+	const std::set<std::string>& extensions() const;
 
-		Filenames(const Filenames& fn);
-		Filenames& operator = (const Filenames& fn);
+	Filenames(const Filenames& fn);
+	Filenames& operator=(const Filenames& fn);
 
-		bool operator == (const Filenames& fn) const;
-		bool operator != (const Filenames& fn) const;
+	bool operator==(const Filenames& fn) const;
+	bool operator!=(const Filenames& fn) const;
 
-	private:
-		std::vector<boost::filesystem::path> m_filenames;
-		std::set<std::string> m_extensions;
+  private:
+	std::vector<possumwood::Filepath> m_filenames;
+	std::set<std::string> m_extensions;
 };
 
-template<>
+template <>
 struct Traits<Filenames> {
 	static IO<Filenames> io;
 
@@ -44,6 +45,6 @@ struct Traits<Filenames> {
 	}
 };
 
-std::ostream& operator << (std::ostream& out, const Filenames& f);
+std::ostream& operator<<(std::ostream& out, const Filenames& f);
 
-}
+}  // namespace possumwood

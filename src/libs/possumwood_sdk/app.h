@@ -11,6 +11,7 @@
 
 #include "config.h"
 #include "description.h"
+#include "filepath.h"
 #include "filesystem.h"
 #include "viewport_state.h"
 
@@ -27,13 +28,13 @@ class App : public AppCore {
 	App(std::unique_ptr<IFilesystem> filesystem = std::make_unique<Filesystem>());
 	~App();
 
-	const boost::filesystem::path& filename() const;
+	const Filepath& filename() const;
 
 	void newFile();
-	dependency_graph::State loadFile(const boost::filesystem::path& fn, bool alterCurrentFilename = true);
+	dependency_graph::State loadFile(const Filepath& fn, bool alterCurrentFilename = true);
 	dependency_graph::State loadFile(const possumwood::io::json& json);
 	void saveFile();
-	void saveFile(const boost::filesystem::path& fn);
+	void saveFile(const Filepath& fn);
 	void saveFile(possumwood::io::json& json, bool saveSceneConfig = true);
 
 	QMainWindow* mainWindow() const;
@@ -55,7 +56,7 @@ class App : public AppCore {
   private:
 	static App* s_instance;
 
-	boost::filesystem::path m_filename;
+	Filepath m_filename;
 
 	QMainWindow* m_mainWindow;
 

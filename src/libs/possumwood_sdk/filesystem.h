@@ -5,24 +5,42 @@
 
 #include <boost/filesystem/path.hpp>
 
+#include "filepath.h"
+
 namespace possumwood {
 
+/// A mockable filesystem access interface.
+/// Allows for different implementation of file access, and for conditional implementation of specific file access types
+/// (e.g. plugins).
 class IFilesystem {
   public:
 	virtual ~IFilesystem(){};
 
-	virtual boost::filesystem::path expandPath(const boost::filesystem::path& path) const = 0;
-	virtual boost::filesystem::path shrinkPath(const boost::filesystem::path& path) const = 0;
+	virtual std::unique_ptr<std::istream> read(const Filepath& path) const = 0;
+	virtual std::unique_ptr<std::ostream> write(const Filepath& path) const = 0;
+	virtual bool exists(const Filepath& path) const = 0;
 
-  private:
+  protected:
+	static Filepath makeFilepath(const std::string& base, const boost::filesystem::path& path);
+
+	// TODO: should these be moved to Filepath? No real need to abstract them like this.
+	virtual boost::filesystem::path expandPath(const Filepath& path) const = 0;
+	virtual Filepath shrinkPath(const boost::filesystem::path& path) const = 0;
+
+	friend class Filepath;
 };
 
 class Filesystem : public IFilesystem {
   public:
 	Filesystem();
 
-	boost::filesystem::path expandPath(const boost::filesystem::path& path) const override;
-	boost::filesystem::path shrinkPath(const boost::filesystem::path& path) const override;
+	std::unique_ptr<std::istream> read(const Filepath& path) const override;
+	std::unique_ptr<std::ostream> write(const Filepath& path) const override;
+	bool exists(const Filepath& path) const override;
+
+  protected:
+	boost::filesystem::path expandPath(const Filepath& path) const override;
+	Filepath shrinkPath(const boost::filesystem::path& path) const override;
 
   private:
 	std::map<std::string, boost::filesystem::path> m_pathVariables;

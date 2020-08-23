@@ -4,6 +4,7 @@
 #include <iostream>
 #include <regex>
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem.hpp>
 
 #define STRINGIFY(x) #x
@@ -126,39 +127,55 @@ Filesystem::Filesystem() {
 		std::cout << "Warning: configuration file 'possumwood.conf' not found!" << std::endl;
 }
 
-boost::filesystem::path Filesystem::expandPath(const boost::filesystem::path& path) const {
-	std::string p = path.string();
+boost::filesystem::path Filesystem::expandPath(const Filepath& path) const {
+	// special case - the path is already absolute
+	if(path.base.empty())
+		return path.relativePath;
 
-	const std::regex var("\\$[A-Z]+");
-	std::smatch match;
-	while(std::regex_search(p, match, var)) {
-		auto it = m_pathVariables.find(match.str().substr(1));
-		if(it != m_pathVariables.end())
-			p = match.prefix().str() + it->second.string() + match.suffix().str();
-		else
-			break;
-	}
+	// path contains a base variable - expand it
+	auto it = m_pathVariables.find(path.base);
+	if(it == m_pathVariables.end())
+		throw std::runtime_error("Cannot expand path - variable " + path.base + " not found");
 
-	return p;
+	return it->second / path.relativePath;
 }
 
-boost::filesystem::path Filesystem::shrinkPath(const boost::filesystem::path& path) const {
+Filepath Filesystem::shrinkPath(const boost::filesystem::path& path) const {
 	std::string p = path.string();
 
-	bool cont = true;
-	while(cont) {
-		cont = false;
-		for(auto& i : m_pathVariables) {
-			auto it = p.find(i.second.string());
-			if(it != std::string::npos) {
-				cont = true;
+	auto match = m_pathVariables.end();
+	std::size_t len = 0;
 
-				p = p.substr(0, it) + "$" + i.first + p.substr(it + i.second.string().length());
-			}
+	for(auto it = m_pathVariables.begin(); it != m_pathVariables.end(); ++it) {
+		if(boost::starts_with(p, it->second.string()) && it->second.string().length() > len) {
+			len = it->second.string().length();
+			match = it;
 		}
 	}
 
-	return p;
+	if(match != m_pathVariables.end())
+		return makeFilepath(match->first, path.string().substr(match->second.string().length() + 1));
+
+	return Filepath::fromString(path.string());
+}
+
+std::unique_ptr<std::istream> Filesystem::read(const Filepath& path) const {
+	if(!exists(path))
+		throw std::runtime_error("File " + path.toString() + " doesn't exist!");
+
+	return std::unique_ptr<std::istream>(new std::ifstream(path.toPath().string()));
+}
+
+std::unique_ptr<std::ostream> Filesystem::write(const Filepath& path) const {
+	return std::unique_ptr<std::ostream>(new std::ofstream(path.toPath().string()));
+}
+
+bool Filesystem::exists(const Filepath& path) const {
+	return boost::filesystem::exists(path.toPath());
+}
+
+Filepath IFilesystem::makeFilepath(const std::string& base, const boost::filesystem::path& path) {
+	return Filepath(base, path);
 }
 
 }  // namespace possumwood

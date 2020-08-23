@@ -11,6 +11,7 @@
 #include <QStyle>
 
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/filepath.h>
 
 filename_ui::filename_ui() {
 	m_widget = new QWidget(NULL);
@@ -32,16 +33,17 @@ filename_ui::filename_ui() {
 		// starting directory
 		QString path = m_lineEdit->text();
 		if(path.isEmpty())
-			path = possumwood::App::instance().filename().parent_path().string().c_str();
+			path = possumwood::App::instance().filename().toPath().parent_path().string().c_str();
 		else
-			path = possumwood::App::instance().filesystem().expandPath(path.toStdString()).string().c_str();
+			// expand to a full filename, but then convert the result to a QString
+			path = possumwood::Filepath::fromString(path.toStdString()).toPath().string().c_str();
 
 		// run the file dialog
 		path = QFileDialog::getOpenFileName(possumwood::App::instance().mainWindow(), "Select an input file...", path,
 		                                    boost::algorithm::join(m_value.extensions(), ";;").c_str());
 
 		if(!path.isEmpty()) {
-			path = possumwood::App::instance().filesystem().shrinkPath(path.toStdString()).string().c_str();
+			path = possumwood::Filepath::fromPath(path.toStdString()).toString().c_str();
 
 			m_lineEdit->setText(path);
 			m_lineEdit->editingFinished();

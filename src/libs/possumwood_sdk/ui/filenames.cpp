@@ -37,21 +37,24 @@ filenames_ui::filenames_ui() {
 	layout->addWidget(m_browseButton);
 
 	m_buttonConnection = QObject::connect(m_browseButton, &QToolButton::released, [this]() -> void {
-		// starting directory
 		QStringList paths = m_textEdit->toPlainText().split('\n');
-		for(auto& p : paths)
-			p = possumwood::App::instance().filesystem().expandPath(p.toStdString()).string().c_str();
 
-		QString parentPath = possumwood::App::instance().filename().parent_path().string().c_str();
-		if(paths.size() > 0)
+		// expand all the starting paths
+		for(auto& p : paths)
+			p = possumwood::Filepath::fromString(p.toStdString()).toPath().string().c_str();
+
+		// get a parent path to start at
+		QString parentPath = possumwood::App::instance().filename().toPath().parent_path().string().c_str();
+		if(!paths.empty())
 			parentPath = boost::filesystem::path(paths[0].toStdString()).parent_path().string().c_str();
 
-		// run the file dialog
+		// run the file dialog using fully expanded absolute paths
 		paths = QFileDialog::getOpenFileNames(possumwood::App::instance().mainWindow(), "Select input files...",
 		                                      parentPath, boost::algorithm::join(m_value.extensions(), ";;").c_str());
 
+		// compress all the paths from the UI
 		for(auto& p : paths)
-			p = possumwood::App::instance().filesystem().shrinkPath(p.toStdString()).string().c_str();
+			p = possumwood::Filepath::fromPath(p.toStdString()).toString().c_str();
 
 		m_textEdit->setText(paths.join('\n'));
 	});
@@ -66,7 +69,7 @@ void filenames_ui::get(possumwood::Filenames& value) const {
 	value.clear();
 
 	for(auto& s : m_textEdit->toPlainText().split('\n'))
-		value.addFilename(s.toStdString());
+		value.addFilename(possumwood::Filepath::fromString(s.toStdString()));
 }
 
 void filenames_ui::set(const possumwood::Filenames& value) {
@@ -74,7 +77,7 @@ void filenames_ui::set(const possumwood::Filenames& value) {
 
 	QString content;
 	for(auto& f : value.filenames())
-		content = content + (f.string() + "\n").c_str();
+		content = content + (f.toString() + "\n").c_str();
 	content = content.trimmed();
 
 	const bool bs = m_textEdit->blockSignals(true);

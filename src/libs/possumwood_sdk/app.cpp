@@ -89,13 +89,13 @@ App& App::instance() {
 	return *s_instance;
 }
 
-const boost::filesystem::path& App::filename() const {
+const Filepath& App::filename() const {
 	return m_filename;
 }
 
 void App::newFile() {
 	graph().clear();
-	m_filename = "";
+	m_filename = Filepath();
 	m_sceneDescription.clear();
 }
 
@@ -150,13 +150,13 @@ dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 	return state;
 }
 
-dependency_graph::State App::loadFile(const boost::filesystem::path& filename, bool alterCurrentFilename) {
-	if(!boost::filesystem::exists(filename))
-		throw std::runtime_error("Cannot open " + filename.string() + " - file not found.");
+dependency_graph::State App::loadFile(const Filepath& filename, bool alterCurrentFilename) {
+	if(!m_filesystem->exists(filename))
+		throw std::runtime_error("Cannot open " + filename.toString() + " - file not found.");
 	// read the json file
-	std::ifstream in(filename.string());
+	auto in = m_filesystem->read(filename);
 	possumwood::io::json json;
-	in >> json;
+	(*in) >> json;
 
 	// update the opened filename
 	if(alterCurrentFilename)
@@ -199,13 +199,13 @@ void App::saveFile(possumwood::io::json& json, bool saveSceneConfig) {
 	}
 }
 
-void App::saveFile(const boost::filesystem::path& fn) {
+void App::saveFile(const Filepath& fn) {
 	possumwood::io::json json;
 	saveFile(json);
 
 	// save the json to the file
-	std::ofstream out(fn.string());
-	out << std::setw(4) << json;
+	auto out = m_filesystem->write(fn);
+	(*out) << std::setw(4) << json;
 
 	// and update the filename
 	m_filename = fn;

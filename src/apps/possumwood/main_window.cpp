@@ -112,7 +112,7 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 		{
 			NodeMenu builder(m_adaptor);
 			builder.addFromNodeRegister(dependency_graph::MetadataRegister::singleton());
-			builder.addFromDirectory(possumwood::App::instance().filesystem().expandPath("$NODES"));
+			builder.addFromDirectory(possumwood::Filepath::fromString("$NODES").toPath());
 			std::unique_ptr<QMenu> newNodeMenu = builder.build();
 
 			newNodeMenu->setIcon(QIcon(":icons/edit-add.png"));
@@ -231,9 +231,9 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 	QAction* openAct = new QAction(QIcon(":icons/fileopen.png"), "&Open...", this);
 	openAct->setShortcuts(QKeySequence::Open);
 	connect(openAct, &QAction::triggered, [this](bool) {
-		QString filename =
-		    QFileDialog::getOpenFileName(this, tr("Open File"), possumwood::App::instance().filename().string().c_str(),
-		                                 tr("Possumwood files (*.psw)"));
+		QString filename = QFileDialog::getOpenFileName(
+		    this, tr("Open File"), possumwood::App::instance().filename().toPath().string().c_str(),
+		    tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty())
 			loadFile(filename.toStdString());
@@ -255,22 +255,22 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error saving file...",
 				                      "Error saving " +
-				                          QString(possumwood::App::instance().filename().string().c_str()) + ":\n" +
+				                          QString(possumwood::App::instance().filename().toString().c_str()) + ":\n" +
 				                          err.what());
 			}
 			catch(...) {
 				QMessageBox::critical(this, "Error saving file...",
 				                      "Error saving " +
-				                          QString(possumwood::App::instance().filename().string().c_str()) +
+				                          QString(possumwood::App::instance().filename().toString().c_str()) +
 				                          ":\nUnhandled exception thrown during saving.");
 			}
 		}
 	});
 
 	connect(saveAsAct, &QAction::triggered, [this](bool) {
-		QString filename =
-		    QFileDialog::getSaveFileName(this, tr("Save File"), possumwood::App::instance().filename().string().c_str(),
-		                                 tr("Possumwood files (*.psw)"));
+		QString filename = QFileDialog::getSaveFileName(
+		    this, tr("Save File"), possumwood::App::instance().filename().toPath().string().c_str(),
+		    tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty()) {
 			try {
@@ -278,18 +278,18 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 				if(!path.has_extension())
 					path.replace_extension(".psw");
 
-				possumwood::App::instance().saveFile(path);
+				possumwood::App::instance().saveFile(possumwood::Filepath::fromPath(path));
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error saving file...",
 				                      "Error saving " +
-				                          QString(possumwood::App::instance().filename().string().c_str()) + ":\n" +
+				                          QString(possumwood::App::instance().filename().toString().c_str()) + ":\n" +
 				                          err.what());
 			}
 			catch(...) {
 				QMessageBox::critical(this, "Error saving file...",
 				                      "Error saving " +
-				                          QString(possumwood::App::instance().filename().string().c_str()) +
+				                          QString(possumwood::App::instance().filename().toString().c_str()) +
 				                          ":\nUnhandled exception thrown during saving.");
 			}
 		}
@@ -613,7 +613,8 @@ void MainWindow::selectionChanged(const dependency_graph::Selection& selection) 
 
 void MainWindow::loadFile(const boost::filesystem::path& filename, bool updateFilename) {
 	m_properties->show({});
-	const dependency_graph::State state = possumwood::App::instance().loadFile(filename, updateFilename);
+	const dependency_graph::State state =
+	    possumwood::App::instance().loadFile(possumwood::Filepath::fromPath(filename), updateFilename);
 
 	m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
 	selectionChanged(dependency_graph::Selection());

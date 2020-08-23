@@ -105,7 +105,7 @@ void NodeMenu::addFromDirectory(const boost::filesystem::path& startPath) {
 				auto networkIt = adaptor->currentNetwork().nodes().find(networkId);
 				assert(networkIt != adaptor->currentNetwork().nodes().end());
 
-				std::ifstream in((possumwood::App::instance().filesystem().expandPath("$NODES") / path).string());
+				std::ifstream in((possumwood::Filepath::fromString("$NODES").toPath() / path).string());
 				possumwood::io::json json;
 				in >> json;
 

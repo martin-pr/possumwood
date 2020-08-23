@@ -25,7 +25,7 @@ struct Setup {
 }  // namespace
 
 Toolbar::Toolbar() {
-	const boost::filesystem::path path = possumwood::App::instance().filesystem().expandPath("$TOOLBARS");
+	const boost::filesystem::path path = possumwood::Filepath::fromString("$TOOLBARS").toPath();
 
 	if(boost::filesystem::exists(path)) {
 		std::map<boost::filesystem::path, std::string> paths;
