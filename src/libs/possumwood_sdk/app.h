@@ -25,17 +25,17 @@ class App : public AppCore {
   public:
 	static App& instance();
 
-	App(std::unique_ptr<IFilesystem> filesystem = std::make_unique<Filesystem>());
+	/// App initialises with a mockable filesystem instance. It is shared to enable it being used
+	/// in tests.
+	App(std::shared_ptr<IFilesystem> filesystem = std::make_shared<Filesystem>());
 	~App();
 
 	const Filepath& filename() const;
 
 	void newFile();
 	dependency_graph::State loadFile(const Filepath& fn, bool alterCurrentFilename = true);
-	dependency_graph::State loadFile(const possumwood::io::json& json);
 	void saveFile();
-	void saveFile(const Filepath& fn);
-	void saveFile(possumwood::io::json& json, bool saveSceneConfig = true);
+	void saveFile(const Filepath& fn, bool saveSceneConfig = true);
 
 	QMainWindow* mainWindow() const;
 	void setMainWindow(QMainWindow* win);
@@ -54,6 +54,9 @@ class App : public AppCore {
 	const IFilesystem& filesystem() const;
 
   private:
+	dependency_graph::State loadFile(const possumwood::io::json& json);
+	void saveFile(possumwood::io::json& json, bool saveSceneConfig = true);
+
 	static App* s_instance;
 
 	Filepath m_filename;
@@ -65,7 +68,7 @@ class App : public AppCore {
 
 	Config m_sceneConfig;
 	Description m_sceneDescription;
-	std::unique_ptr<IFilesystem> m_filesystem;
+	std::shared_ptr<IFilesystem> m_filesystem;
 };
 
 }  // namespace possumwood

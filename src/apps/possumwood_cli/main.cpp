@@ -1,5 +1,5 @@
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -15,13 +15,12 @@
 #include <possumwood_sdk/config.inl>
 
 #include "common.h"
+#include "expression.h"
 #include "options.h"
 #include "render_context.h"
 #include "stack.h"
-#include "expression.h"
 
 using namespace OIIO;
-
 
 // The CLI unfortunately has to be designed around GLUT - it is not possible in current
 // version of GLUT to re-enter the event loop, and OSmesa does not support GL>2.0 on
@@ -30,7 +29,6 @@ using namespace OIIO;
 // The RenderContext object provides an "execution engine" wired around GLUT to evaluate
 // each step of execution inside the OpenGL loop. It initialises the OpenGL on the first
 // --render parameter, and destroys it once the evaluation of all parameters finishes.
-
 
 // global viewport state
 possumwood::ViewportState viewport;
@@ -46,25 +44,25 @@ float cam_orbit = 0.0f;
 
 // expression expansion
 int currentFrame() {
-	return std::round(possumwood::App::instance().time() * possumwood::App::instance().sceneConfig()["fps"].as<float>());
+	return std::round(possumwood::App::instance().time() *
+	                  possumwood::App::instance().sceneConfig()["fps"].as<float>());
 };
 
 float currentTime() {
 	return possumwood::App::instance().time();
 };
 
-const ExpressionExpansion expr({
-	{"T", []() { return (boost::format("%.2f") % currentTime()).str(); }},
-	{"F", []() { return (boost::format("%d") % currentFrame()).str(); }},
-	{"2F", []() { return (boost::format("%02d") % currentFrame()).str(); }},
-	{"3F", []() { return (boost::format("%03d") % currentFrame()).str(); }},
-	{"4F", []() { return (boost::format("%04d") % currentFrame()).str(); }}
-});
+const ExpressionExpansion expr({{"T", []() { return (boost::format("%.2f") % currentTime()).str(); }},
+                                {"F", []() { return (boost::format("%d") % currentFrame()).str(); }},
+                                {"2F", []() { return (boost::format("%02d") % currentFrame()).str(); }},
+                                {"3F", []() { return (boost::format("%03d") % currentFrame()).str(); }},
+                                {"4F", []() { return (boost::format("%04d") % currentFrame()).str(); }}});
 
 void printHelp() {
 	std::cout << "Parameters:" << std::endl;
 	std::cout << "  --scene <filename> - Loads a .psw scene file." << std::endl;
-	std::cout << "  --render <filename> - renders a frame to a file. Only PPM files supported at the moment." << std::endl;
+	std::cout << "  --render <filename> - renders a frame to a file. Only PPM files supported at the moment."
+	          << std::endl;
 	std::cout << "  --window <width> <height> - defines the render window size in pixels" << std::endl;
 	std::cout << "  --cam_pos <x> <y> <z> - defines camera position in world space" << std::endl;
 	std::cout << "  --cam_target <x> <y> <z> - defines camera target (default 0,0,0)" << std::endl;
@@ -85,7 +83,7 @@ void loadScene(const Options::Item& option) {
 		throw std::runtime_error("--scene option allows only exactly one filename");
 
 	std::cout << "Loading " << option.parameters[0] << "... " << std::flush;
-	dependency_graph::State state = papp->loadFile(boost::filesystem::path(option.parameters[0]));
+	dependency_graph::State state = papp->loadFile(possumwood::Filepath::fromPath(option.parameters[0]));
 	std::cout << "done" << std::endl;
 
 	for(auto& msg : state) {
@@ -111,7 +109,9 @@ std::vector<Action> render(const Options::Item& option) {
 	std::size_t end_param = 0;
 	if(frame_step > 0) {
 		const possumwood::Config& cfg = possumwood::App::instance().sceneConfig();
-		end_param = std::size_t(round((cfg["end_time"].as<float>() - cfg["start_time"].as<float>()) * cfg["fps"].as<float>())) / frame_step;
+		end_param =
+		    std::size_t(round((cfg["end_time"].as<float>() - cfg["start_time"].as<float>()) * cfg["fps"].as<float>())) /
+		    frame_step;
 	}
 
 	for(std::size_t param = 0; param <= end_param; ++param) {
@@ -130,10 +130,10 @@ std::vector<Action> render(const Options::Item& option) {
 
 			ImageSpec spec(viewport.width(), viewport.height(), 3, TypeDesc::UINT8);
 			if(out->open(filename, spec)) {
-				for(int y = viewport.height()-1; y >= 0; --y) {
-					const GLubyte* ptr = &(buffer[y*viewport.width()*3]);
+				for(int y = viewport.height() - 1; y >= 0; --y) {
+					const GLubyte* ptr = &(buffer[y * viewport.width() * 3]);
 
-					out->write_scanline (y, 0, TypeDesc::UINT8, ptr);
+					out->write_scanline(y, 0, TypeDesc::UINT8, ptr);
 				}
 
 				out->close();
@@ -148,11 +148,7 @@ std::vector<Action> render(const Options::Item& option) {
 		Imath::V3f viewVec = viewport.eyePosition() - viewport.target();
 
 		const float angle = (float)param / (float)end_param * 2.0f * M_PI * cam_orbit;
-		const Imath::M33f rotate(
-			cos(angle), 0, sin(angle),
-			0, 1, 0,
-			-sin(angle), 0, cos(angle)
-		);
+		const Imath::M33f rotate(cos(angle), 0, sin(angle), 0, 1, 0, -sin(angle), 0, cos(angle));
 		viewVec = viewVec * rotate;
 
 		possumwood::ViewportState current = viewport;
@@ -217,9 +213,7 @@ std::vector<Action> evaluateOption(const Options::const_iterator& current) {
 		if(option.parameters.size() != 2)
 			throw std::runtime_error("--window option allows only exactly two integer parameters");
 
-		viewport.resize(
-			atoi(option.parameters[0].c_str()),
-			atoi(option.parameters[1].c_str()));
+		viewport.resize(atoi(option.parameters[0].c_str()), atoi(option.parameters[1].c_str()));
 	}
 
 	else
@@ -260,10 +254,8 @@ int main(int argc, char* argv[]) {
 
 	// two types of loops - "non-GL" loop when no --render parameter passed
 	//                    - "GL" loop based on GLUT when at least one --render parameter is present
-	auto renderParamIt = std::find_if(options.begin(), options.end(),
-		[](const Options::Item& item) {
-			return item.name == "--render";
-		});
+	auto renderParamIt =
+	    std::find_if(options.begin(), options.end(), [](const Options::Item& item) { return item.name == "--render"; });
 
 	if(renderParamIt != options.end()) {
 		// use GL-based loop

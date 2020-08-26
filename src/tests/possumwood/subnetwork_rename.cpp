@@ -1,15 +1,16 @@
 #include <boost/test/unit_test.hpp>
 
 #include <dependency_graph/graph.h>
+#include <dependency_graph/metadata_register.h>
+#include <dependency_graph/rtti.h>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/port.inl>
-#include <dependency_graph/rtti.h>
-#include <dependency_graph/metadata_register.h>
 
 #include <actions/actions.h>
 
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/filesystem_mock.h>
 
 #include "common.h"
 
@@ -31,10 +32,22 @@ dependency_graph::NodeBase& findNode(const std::string& name) {
 	return findNode(possumwood::AppCore::instance().graph(), name);
 }
 
+json readJson(possumwood::IFilesystem& filesystem, const std::string& filename) {
+	json result;
+
+	auto stream = filesystem.read(possumwood::Filepath::fromString(filename));
+
+	(*stream) >> result;
+
+	return result;
 }
 
+}  // namespace
+
 BOOST_AUTO_TEST_CASE(network_in_out_rename) {
-	possumwood::App app;
+	auto filesystem = std::make_shared<possumwood::FilesystemMock>();
+
+	possumwood::App app(filesystem);
 
 	// make sure the static handles are initialised
 	passThroughNode();
@@ -42,67 +55,46 @@ BOOST_AUTO_TEST_CASE(network_in_out_rename) {
 	// three nodes, a connection, blind data
 	{
 		const json result(
-			{
-				{
-					"nodes", {
-						{"network_0", {
-							{"name", "test_network"},
-							{"type", "network"},
-							{"blind_data", nullptr},
-							{"nodes", {
-								{"input_0", {
-									{"name", "this_is_an_input"},
-									{"type", "input"},
-									{"blind_data", nullptr}
-								}},
-								{"pass_through_0", {
-									{"name", "pass_through"},
-									{"type", "pass_through"},
-									{"blind_data", nullptr}
-								}},
-								{"output_0", {
-									{"name", "this_is_an_output"},
-									{"type", "output"},
-									{"blind_data", nullptr}
-								}}
-							}},
-							{
-								"connections", {
-									{
-										{"in_node", "pass_through_0"},
-										{"in_port", "input"},
-										{"out_node", "input_0"},
-										{"out_port", "data"}
-									},
-									{
-										{"in_node", "output_0"},
-										{"in_port", "data"},
-										{"out_node", "pass_through_0"},
-										{"out_port", "output"}
-									}
-								}
-							},
-							{"ports", {
-								{"this_is_an_input", 5.0},
-							}},
-						}}
-					},
-				},
-				{
-					"connections", "[]"_json
-				}
-			}
-		);
+		    {{
+		         "nodes",
+		         {{"network_0",
+		           {
+		               {"name", "test_network"},
+		               {"type", "network"},
+		               {"blind_data", nullptr},
+		               {"nodes",
+		                {{"input_0", {{"name", "this_is_an_input"}, {"type", "input"}, {"blind_data", nullptr}}},
+		                 {"pass_through_0",
+		                  {{"name", "pass_through"}, {"type", "pass_through"}, {"blind_data", nullptr}}},
+		                 {"output_0", {{"name", "this_is_an_output"}, {"type", "output"}, {"blind_data", nullptr}}}}},
+		               {"connections",
+		                {{{"in_node", "pass_through_0"},
+		                  {"in_port", "input"},
+		                  {"out_node", "input_0"},
+		                  {"out_port", "data"}},
+		                 {{"in_node", "output_0"},
+		                  {"in_port", "data"},
+		                  {"out_node", "pass_through_0"},
+		                  {"out_port", "output"}}}},
+		               {"ports",
+		                {
+		                    {"this_is_an_input", 5.0},
+		                }},
+		           }}},
+		     },
+		     {"connections", "[]"_json}});
 
-		BOOST_REQUIRE_NO_THROW(app.loadFile(result));
+		(*filesystem->write(possumwood::Filepath::fromString("network_in_out_rename.psw"))) << result;
+
+		BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("network_in_out_rename.psw")));
 
 		// lets make sure this loads and saves correctly
 		{
-			::json json;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
-			BOOST_CHECK_EQUAL(json, result);
+			BOOST_REQUIRE_NO_THROW(
+			    app.saveFile(possumwood::Filepath::fromString("network_in_out_rename_too.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "network_in_out_rename_too.psw"), result);
 
-			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+			BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("network_in_out_rename_too.psw")));
 		}
 
 		// input port on the network should match the above

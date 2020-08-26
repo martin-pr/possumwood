@@ -159,14 +159,14 @@ Filepath Filesystem::shrinkPath(const boost::filesystem::path& path) const {
 	return Filepath::fromString(path.string());
 }
 
-std::unique_ptr<std::istream> Filesystem::read(const Filepath& path) const {
+std::unique_ptr<std::istream> Filesystem::read(const Filepath& path) {
 	if(!exists(path))
 		throw std::runtime_error("File " + path.toString() + " doesn't exist!");
 
 	return std::unique_ptr<std::istream>(new std::ifstream(path.toPath().string()));
 }
 
-std::unique_ptr<std::ostream> Filesystem::write(const Filepath& path) const {
+std::unique_ptr<std::ostream> Filesystem::write(const Filepath& path) {
 	return std::unique_ptr<std::ostream>(new std::ofstream(path.toPath().string()));
 }
 

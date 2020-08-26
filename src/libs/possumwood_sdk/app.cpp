@@ -59,7 +59,7 @@ boost::filesystem::path expandEnvvars(const boost::filesystem::path& p) {
 
 App* App::s_instance = NULL;
 
-App::App(std::unique_ptr<IFilesystem> filesystem)
+App::App(std::shared_ptr<IFilesystem> filesystem)
     : m_mainWindow(NULL), m_time(0.0f), m_filesystem(std::move(filesystem)) {
 	assert(s_instance == nullptr);
 	s_instance = this;
@@ -199,9 +199,9 @@ void App::saveFile(possumwood::io::json& json, bool saveSceneConfig) {
 	}
 }
 
-void App::saveFile(const Filepath& fn) {
+void App::saveFile(const Filepath& fn, bool saveSceneConfig) {
 	possumwood::io::json json;
-	saveFile(json);
+	saveFile(json, saveSceneConfig);
 
 	// save the json to the file
 	auto out = m_filesystem->write(fn);

@@ -46,6 +46,12 @@ bool Filepath::operator!=(const Filepath& p) const {
 	return base != p.base || relativePath != p.relativePath;
 }
 
+bool Filepath::operator<(const Filepath& p) const {
+	if(base != p.base)
+		return base < p.base;
+	return relativePath < p.relativePath;
+}
+
 Filepath::Filepath(const std::string& _base, const boost::filesystem::path& relative)
     : base(_base), relativePath(relative) {
 }

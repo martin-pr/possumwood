@@ -26,6 +26,8 @@ class Filepath {
 	bool operator==(const Filepath& p) const;
 	bool operator!=(const Filepath& p) const;
 
+	bool operator<(const Filepath& p) const;
+
 	std::string base;
 	boost::filesystem::path relativePath;
 

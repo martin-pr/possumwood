@@ -1,15 +1,16 @@
 #include <boost/test/unit_test.hpp>
 
 #include <dependency_graph/graph.h>
+#include <dependency_graph/metadata_register.h>
+#include <dependency_graph/rtti.h>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/port.inl>
-#include <dependency_graph/rtti.h>
-#include <dependency_graph/metadata_register.h>
 
 #include <actions/actions.h>
 
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/filesystem_mock.h>
 
 #include "common.h"
 
@@ -31,10 +32,22 @@ dependency_graph::NodeBase& findNode(const std::string& name) {
 	return findNode(possumwood::AppCore::instance().graph(), name);
 }
 
+json readJson(possumwood::IFilesystem& filesystem, const std::string& filename) {
+	json result;
+
+	auto stream = filesystem.read(possumwood::Filepath::fromString(filename));
+
+	(*stream) >> result;
+
+	return result;
 }
 
+}  // namespace
+
 BOOST_AUTO_TEST_CASE(simple_graph_saving) {
-	possumwood::App app;
+	auto filesystem = std::make_shared<possumwood::FilesystemMock>();
+
+	possumwood::App app(filesystem);
 
 	// make sure the static handles are initialised
 	additionNode();
@@ -47,18 +60,16 @@ BOOST_AUTO_TEST_CASE(simple_graph_saving) {
 		{
 			assert(!app.graph().hasParentNetwork());
 
-			::json json;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("empty.psw"), false));
 
-			BOOST_CHECK_EQUAL(json, result);
+			BOOST_CHECK_EQUAL(result, readJson(*filesystem, "empty.psw"));
 		}
 
 		{
-			BOOST_REQUIRE_NO_THROW(app.loadFile(result));
+			BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("empty.psw")));
 
-			::json json2;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
-			BOOST_CHECK_EQUAL(json2, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("empty_too.psw"), false));
+			BOOST_CHECK_EQUAL(result, readJson(*filesystem, "empty_too.psw"));
 		}
 	}
 
@@ -66,42 +77,28 @@ BOOST_AUTO_TEST_CASE(simple_graph_saving) {
 	{
 		NodeBase& a = app.graph().nodes().add(additionNode(), "add");
 
-		const json result(
-			{
-				{
-					"nodes", {
-						{"addition_0", {
-							{"name", "add"},
-							{"type", "addition"},
-							{"ports", {
-								{"input_1", 2.0},
-								{"input_2", 4.0}}},
-							{"blind_data", nullptr}
-						}}
-					}
-				},
-				{
-					"connections", "[]"_json
-				}
-			});
-
+		const json result({{"nodes",
+		                    {{"addition_0",
+		                      {{"name", "add"},
+		                       {"type", "addition"},
+		                       {"ports", {{"input_1", 2.0}, {"input_2", 4.0}}},
+		                       {"blind_data", nullptr}}}}},
+		                   {"connections", "[]"_json}});
 
 		a.port(0).set<float>(2.0f);
 		a.port(1).set<float>(4.0f);
 
 		{
-			::json json;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
-			BOOST_CHECK_EQUAL(json, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("single.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "single.psw"), result);
 
-
-			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+			BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("single.psw")));
 		}
 
 		{
 			::json json2;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
-			BOOST_CHECK_EQUAL(json2, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("single_too.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "single_too.psw"), result);
 		}
 	}
 
@@ -111,53 +108,27 @@ BOOST_AUTO_TEST_CASE(simple_graph_saving) {
 		app.graph().nodes().add(multiplicationNode(), "mult");
 
 		const json result(
-			{
-				{
-					"nodes", {
-						{"addition_0", {
-							{"name", "add"},
-							{"type", "addition"},
-							{"ports", {
-								{"input_1", 2.0},
-								{"input_2", 4.0}
-							}},
-							{"blind_data", nullptr}
-						}},
-						{"multiplication_0", {
-							{"name", "mult"},
-							{"type", "multiplication"},
-							{"ports", {
-								{"input_2", 5.0}
-							}},
-							{"blind_data", {
-								{"type", unmangledTypeId<std::string>()},
-								{"value", "test blind data"}
-							}}
-						}},
-						{"multiplication_1", {
-							{"name", "mult"},
-							{"type", "multiplication"},
-							{"ports", {
-								{"input_1", 0.0},
-								{"input_2", 0.0}
-							}},
-							{"blind_data", nullptr}
-						}}
-					}
-				},
-				{
-					"connections", {
-						{
-							{"in_node", "multiplication_0"},
-							{"in_port", "input_1"},
-							{"out_node", "addition_0"},
-							{"out_port", "output"}
-						}
-					}
-				}
-			}
-		);
-
+		    {{"nodes",
+		      {{"addition_0",
+		        {{"name", "add"},
+		         {"type", "addition"},
+		         {"ports", {{"input_1", 2.0}, {"input_2", 4.0}}},
+		         {"blind_data", nullptr}}},
+		       {"multiplication_0",
+		        {{"name", "mult"},
+		         {"type", "multiplication"},
+		         {"ports", {{"input_2", 5.0}}},
+		         {"blind_data", {{"type", unmangledTypeId<std::string>()}, {"value", "test blind data"}}}}},
+		       {"multiplication_1",
+		        {{"name", "mult"},
+		         {"type", "multiplication"},
+		         {"ports", {{"input_1", 0.0}, {"input_2", 0.0}}},
+		         {"blind_data", nullptr}}}}},
+		     {"connections",
+		      {{{"in_node", "multiplication_0"},
+		        {"in_port", "input_1"},
+		        {"out_node", "addition_0"},
+		        {"out_port", "output"}}}}});
 
 		m.port(0).set<float>(3.0f);
 		m.port(1).set<float>(5.0f);
@@ -166,27 +137,24 @@ BOOST_AUTO_TEST_CASE(simple_graph_saving) {
 
 		m.setBlindData<std::string>("test blind data");
 
-
 		{
-			::json json;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
-			BOOST_CHECK_EQUAL(json, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("three_nodes.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "three_nodes.psw"), result);
 
-
-			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+			BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("three_nodes.psw")));
 		}
 
 		{
-			::json json2;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
-			BOOST_CHECK_EQUAL(json2, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("three_nodes_too.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "three_nodes_too.psw"), result);
 		}
 	}
 }
 
-
 BOOST_AUTO_TEST_CASE(nested_graph_saving) {
-	possumwood::App app;
+	auto filesystem = std::make_shared<possumwood::FilesystemMock>();
+
+	possumwood::App app(filesystem);
 
 	// empty network serialization
 	{
@@ -200,94 +168,65 @@ BOOST_AUTO_TEST_CASE(nested_graph_saving) {
 			BOOST_REQUIRE(base.is<Network>());
 		}
 
-		const json result(
-			{
-				{
-					"nodes", {
-						{"network_0", {
-							{"name", "test_network"},
-							{"type", "network"},
-							// {"ports", {}},
-							{"blind_data", nullptr},
-							{"nodes", "{}"_json},
-							{"connections", "[]"_json}
-						}}
-					},
-				},
-				{
-					"connections", "[]"_json
-				}
-			}
-		);
-
-		::json json;
+		const json result({{
+		                       "nodes",
+		                       {{"network_0",
+		                         {{"name", "test_network"},
+		                          {"type", "network"},
+		                          // {"ports", {}},
+		                          {"blind_data", nullptr},
+		                          {"nodes", "{}"_json},
+		                          {"connections", "[]"_json}}}},
+		                   },
+		                   {"connections", "[]"_json}});
 
 		{
-			::json json;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
-			BOOST_CHECK_EQUAL(json, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("network.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "network.psw"), result);
 
-
-			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+			BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("network.psw")));
 		}
 
 		{
-			::json json2;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
-			BOOST_CHECK_EQUAL(json2, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("network_too.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "network_too.psw"), result);
 		}
 	}
 
 	// a single node, no connections, no blind data
 	{
-		NodeBase& a = findNode("test_network").as<dependency_graph::Network>().
-			nodes().add(additionNode(), "add");
+		NodeBase& a = findNode("test_network").as<dependency_graph::Network>().nodes().add(additionNode(), "add");
 
-		const json result(
-			{
-				{
-					"nodes", {
-						{"network_0", {
-							{"name", "test_network"},
-							{"type", "network"},
-							// {"ports", {}},
-							{"blind_data", nullptr},
-							{"nodes", {
-								{"addition_0", {
-									{"name", "add"},
-									{"type", "addition"},
-									{"ports", {
-										{"input_1", 2.0},
-										{"input_2", 4.0}}},
-									{"blind_data", nullptr}
-								}}
-							}},
-							{"connections", "[]"_json}
-						}}
-					},
-				},
-				{
-					"connections", "[]"_json
-				}
-			}
-		);
+		const json result({{
+		                       "nodes",
+		                       {{"network_0",
+		                         {{"name", "test_network"},
+		                          {"type", "network"},
+		                          // {"ports", {}},
+		                          {"blind_data", nullptr},
+		                          {"nodes",
+		                           {{"addition_0",
+		                             {{"name", "add"},
+		                              {"type", "addition"},
+		                              {"ports", {{"input_1", 2.0}, {"input_2", 4.0}}},
+		                              {"blind_data", nullptr}}}}},
+		                          {"connections", "[]"_json}}}},
+		                   },
+		                   {"connections", "[]"_json}});
 
 		a.port(0).set<float>(2.0f);
 		a.port(1).set<float>(4.0f);
 
 		{
-			::json json;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
-			BOOST_CHECK_EQUAL(json, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("single_node.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "single_node.psw"), result);
 
-
-			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+			BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("single_node.psw")));
 		}
 
 		{
-			::json json2;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
-			BOOST_CHECK_EQUAL(json2, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("single_node_too.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "single_node_too.psw"), result);
 		}
 	}
 
@@ -299,64 +238,36 @@ BOOST_AUTO_TEST_CASE(nested_graph_saving) {
 		net.nodes().add(multiplicationNode(), "mult");
 
 		const json result(
-			{
-				{
-					"nodes", {
-						{"network_0", {
-							{"name", "test_network"},
-							{"type", "network"},
-							// {"ports", {}},
-							{"blind_data", nullptr},
-							{"nodes", {
-								{"addition_0", {
-									{"name", "add"},
-									{"type", "addition"},
-									{"ports", {
-										{"input_1", 2.0},
-										{"input_2", 4.0}
-									}},
-									{"blind_data", nullptr}
-								}},
-								{"multiplication_0", {
-									{"name", "mult"},
-									{"type", "multiplication"},
-									{"ports", {
-										{"input_2", 5.0}
-									}},
-									{"blind_data", {
-										{"type", unmangledTypeId<std::string>()},
-										{"value", "test blind data"}
-									}}
-								}},
-								{"multiplication_1", {
-									{"name", "mult"},
-									{"type", "multiplication"},
-									{"ports", {
-										{"input_1", 0.0},
-										{"input_2", 0.0}
-									}},
-									{"blind_data", nullptr}
-								}}
-							}},
-							{
-								"connections", {
-									{
-										{"in_node", "multiplication_0"},
-										{"in_port", "input_1"},
-										{"out_node", "addition_0"},
-										{"out_port", "output"}
-									}
-								}
-							}
-						}}
-					},
-				},
-				{
-					"connections", "[]"_json
-				}
-			}
-		);
-
+		    {{
+		         "nodes",
+		         {{"network_0",
+		           {{"name", "test_network"},
+		            {"type", "network"},
+		            // {"ports", {}},
+		            {"blind_data", nullptr},
+		            {"nodes",
+		             {{"addition_0",
+		               {{"name", "add"},
+		                {"type", "addition"},
+		                {"ports", {{"input_1", 2.0}, {"input_2", 4.0}}},
+		                {"blind_data", nullptr}}},
+		              {"multiplication_0",
+		               {{"name", "mult"},
+		                {"type", "multiplication"},
+		                {"ports", {{"input_2", 5.0}}},
+		                {"blind_data", {{"type", unmangledTypeId<std::string>()}, {"value", "test blind data"}}}}},
+		              {"multiplication_1",
+		               {{"name", "mult"},
+		                {"type", "multiplication"},
+		                {"ports", {{"input_1", 0.0}, {"input_2", 0.0}}},
+		                {"blind_data", nullptr}}}}},
+		            {"connections",
+		             {{{"in_node", "multiplication_0"},
+		               {"in_port", "input_1"},
+		               {"out_node", "addition_0"},
+		               {"out_port", "output"}}}}}}},
+		     },
+		     {"connections", "[]"_json}});
 
 		m.port(0).set<float>(3.0f);
 		m.port(1).set<float>(5.0f);
@@ -365,20 +276,16 @@ BOOST_AUTO_TEST_CASE(nested_graph_saving) {
 
 		m.setBlindData<std::string>("test blind data");
 
-
 		{
-			::json json;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json, false));
-			BOOST_CHECK_EQUAL(json, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("blind_data.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "blind_data.psw"), result);
 
-
-			BOOST_REQUIRE_NO_THROW(app.loadFile(json));
+			BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("blind_data.psw")));
 		}
 
 		{
-			::json json2;
-			BOOST_REQUIRE_NO_THROW(app.saveFile(json2, false));
-			BOOST_CHECK_EQUAL(json2, result);
+			BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("blind_data_too.psw"), false));
+			BOOST_CHECK_EQUAL(readJson(*filesystem, "blind_data_too.psw"), result);
 		}
 	}
 }

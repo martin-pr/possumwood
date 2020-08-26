@@ -16,8 +16,8 @@ class IFilesystem {
   public:
 	virtual ~IFilesystem(){};
 
-	virtual std::unique_ptr<std::istream> read(const Filepath& path) const = 0;
-	virtual std::unique_ptr<std::ostream> write(const Filepath& path) const = 0;
+	virtual std::unique_ptr<std::istream> read(const Filepath& path) = 0;
+	virtual std::unique_ptr<std::ostream> write(const Filepath& path) = 0;
 	virtual bool exists(const Filepath& path) const = 0;
 
   protected:
@@ -34,8 +34,8 @@ class Filesystem : public IFilesystem {
   public:
 	Filesystem();
 
-	std::unique_ptr<std::istream> read(const Filepath& path) const override;
-	std::unique_ptr<std::ostream> write(const Filepath& path) const override;
+	std::unique_ptr<std::istream> read(const Filepath& path) override;
+	std::unique_ptr<std::ostream> write(const Filepath& path) override;
 	bool exists(const Filepath& path) const override;
 
   protected:
