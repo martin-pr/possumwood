@@ -9,8 +9,8 @@
 
 #include <actions/actions.h>
 
+#include <actions/filesystem_mock.h>
 #include <possumwood_sdk/app.h>
-#include <possumwood_sdk/filesystem_mock.h>
 
 #include "common.h"
 

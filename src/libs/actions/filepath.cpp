@@ -27,11 +27,11 @@ std::string Filepath::toString() const {
 
 /// path methods always provide "long" version of the path, and can be used to open files
 Filepath Filepath::fromPath(const boost::filesystem::path& path) {
-	return App::instance().filesystem().shrinkPath(path);
+	return AppCore::instance().filesystem().shrinkPath(path);
 }
 
 boost::filesystem::path Filepath::toPath() const {
-	return App::instance().filesystem().expandPath(*this);
+	return AppCore::instance().filesystem().expandPath(*this);
 }
 
 bool Filepath::empty() const {

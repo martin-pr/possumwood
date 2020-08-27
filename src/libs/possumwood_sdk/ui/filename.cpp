@@ -10,8 +10,8 @@
 #include <QMainWindow>
 #include <QStyle>
 
+#include <actions/filepath.h>
 #include <possumwood_sdk/app.h>
-#include <possumwood_sdk/filepath.h>
 
 filename_ui::filename_ui() {
 	m_widget = new QWidget(NULL);

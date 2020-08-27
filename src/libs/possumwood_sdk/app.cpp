@@ -59,8 +59,7 @@ boost::filesystem::path expandEnvvars(const boost::filesystem::path& p) {
 
 App* App::s_instance = NULL;
 
-App::App(std::shared_ptr<IFilesystem> filesystem)
-    : m_mainWindow(NULL), m_time(0.0f), m_filesystem(std::move(filesystem)) {
+App::App(std::shared_ptr<IFilesystem> filesystem) : AppCore(filesystem), m_mainWindow(NULL), m_time(0.0f) {
 	assert(s_instance == nullptr);
 	s_instance = this;
 
@@ -151,10 +150,10 @@ dependency_graph::State App::loadFile(const possumwood::io::json& json) {
 }
 
 dependency_graph::State App::loadFile(const Filepath& filename, bool alterCurrentFilename) {
-	if(!m_filesystem->exists(filename))
+	if(!filesystem().exists(filename))
 		throw std::runtime_error("Cannot open " + filename.toString() + " - file not found.");
 	// read the json file
-	auto in = m_filesystem->read(filename);
+	auto in = filesystem().read(filename);
 	possumwood::io::json json;
 	(*in) >> json;
 
@@ -204,7 +203,7 @@ void App::saveFile(const Filepath& fn, bool saveSceneConfig) {
 	saveFile(json, saveSceneConfig);
 
 	// save the json to the file
-	auto out = m_filesystem->write(fn);
+	auto out = filesystem().write(fn);
 	(*out) << std::setw(4) << json;
 
 	// and update the filename
@@ -275,10 +274,6 @@ Config& App::sceneConfig() {
 
 Description& App::sceneDescription() {
 	return m_sceneDescription;
-}
-
-const IFilesystem& App::filesystem() const {
-	return *m_filesystem;
 }
 
 }  // namespace possumwood

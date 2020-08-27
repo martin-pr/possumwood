@@ -7,7 +7,7 @@
 
 #include <dependency_graph/data_traits.h>
 
-#include "possumwood_sdk/filepath.h"
+#include "actions/filepath.h"
 
 #include "actions/io.h"
 #include "actions/traits.h"

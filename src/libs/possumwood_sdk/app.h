@@ -7,12 +7,12 @@
 #include <dependency_graph/graph.h>
 
 #include "actions/app.h"
+#include "actions/filepath.h"
+#include "actions/filesystem.h"
 #include "actions/io.h"
 
 #include "config.h"
 #include "description.h"
-#include "filepath.h"
-#include "filesystem.h"
 #include "viewport_state.h"
 
 class QMainWindow;
@@ -51,7 +51,6 @@ class App : public AppCore {
 
 	Config& sceneConfig();
 	Description& sceneDescription();
-	const IFilesystem& filesystem() const;
 
   private:
 	dependency_graph::State loadFile(const possumwood::io::json& json);
@@ -68,7 +67,6 @@ class App : public AppCore {
 
 	Config m_sceneConfig;
 	Description m_sceneDescription;
-	std::shared_ptr<IFilesystem> m_filesystem;
 };
 
 }  // namespace possumwood
