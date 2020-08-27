@@ -34,11 +34,11 @@ State::const_iterator State::end() const {
 	return m_messages.end();
 }
 
-bool State::operator == (const State& s) const {
+bool State::operator==(const State& s) const {
 	return m_errored == s.m_errored && m_messages == s.m_messages;
 }
 
-bool State::operator != (const State& s) const {
+bool State::operator!=(const State& s) const {
 	return m_errored != s.m_errored || m_messages != s.m_messages;
 }
 
@@ -48,17 +48,22 @@ void State::append(const State& s) {
 		m_messages.push_back(m);
 }
 
-std::ostream& operator << (std::ostream& out, const State& s) {
-	out << "-- err = " << s.errored() << " --" << std::endl;
+std::ostream& operator<<(std::ostream& out, const State& s) {
 	for(auto& m : s) {
 		switch(m.first) {
-			case State::kInfo: out << "  (i) " << m.second << std::endl; break;
-			case State::kWarning: out << "  (w) " << m.second << std::endl; break;
-			case State::kError: out << "  (e) " << m.second << std::endl; break;
+			case State::kInfo:
+				out << "  (i) " << m.second << std::endl;
+				break;
+			case State::kWarning:
+				out << "  (w) " << m.second << std::endl;
+				break;
+			case State::kError:
+				out << "  (e) " << m.second << std::endl;
+				break;
 		}
 	}
 
 	return out;
 }
 
-}
+}  // namespace dependency_graph

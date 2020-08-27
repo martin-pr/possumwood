@@ -1,16 +1,18 @@
 #include "nodes.h"
 
+#include <dependency_graph/network.h>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes_iterator.inl>
-#include <dependency_graph/network.h>
 
 #include "../app.h"
 
-#include "tools.h"
 #include "connections.h"
 #include "metadata.h"
+#include "tools.h"
 
-namespace possumwood { namespace actions { namespace detail {
+namespace possumwood {
+namespace actions {
+namespace detail {
 
 namespace {
 
@@ -18,7 +20,7 @@ bool isCompatible(const dependency_graph::Metadata& m1, const dependency_graph::
 	if(m1.attributeCount() != m2.attributeCount())
 		return false;
 
-	for(std::size_t i=0; i<m1.attributeCount(); ++i) {
+	for(std::size_t i = 0; i < m1.attributeCount(); ++i) {
 		const dependency_graph::Attr& a1 = m1.attr(i);
 		const dependency_graph::Attr& a2 = m2.attr(i);
 
@@ -35,16 +37,16 @@ bool isCompatible(const dependency_graph::Metadata& m1, const dependency_graph::
 	return true;
 }
 
-
-dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& currentNetworkIndex, const dependency_graph::MetadataHandle& meta, const std::string& name, const dependency_graph::UniqueId& id,
-	const dependency_graph::Data& blindData, boost::optional<const dependency_graph::Datablock> data = boost::optional<const dependency_graph::Datablock>()) {
-
+dependency_graph::NodeBase& doCreateNode(
+    const dependency_graph::UniqueId& currentNetworkIndex, const dependency_graph::MetadataHandle& meta,
+    const std::string& name, const dependency_graph::UniqueId& id, const dependency_graph::Data& blindData,
+    boost::optional<const dependency_graph::Datablock> data = boost::optional<const dependency_graph::Datablock>()) {
 #ifndef NDEBUG
 	if(data) {
 		// assert(data->meta() == meta);
 		assert(data->meta()->attributeCount() == meta->attributeCount());
 
-		for(std::size_t i=0; i<meta->attributeCount(); ++i) {
+		for(std::size_t i = 0; i < meta->attributeCount(); ++i) {
 			assert(data->meta()->attr(i).type() == meta->attr(i).type());
 			assert(data->meta()->attr(i).category() == meta->attr(i).category());
 		}
@@ -68,47 +70,46 @@ dependency_graph::NodeBase& doCreateNode(const dependency_graph::UniqueId& curre
 
 void doRemoveNode(const dependency_graph::UniqueId& id) {
 	auto& graph = possumwood::AppCore::instance().graph();
-	auto it = std::find_if(graph.nodes().begin(dependency_graph::Nodes::kRecursive), graph.nodes().end(), [&](const dependency_graph::NodeBase & i) {
-		return i.index() == id;
-	});
+	auto it = std::find_if(graph.nodes().begin(dependency_graph::Nodes::kRecursive), graph.nodes().end(),
+	                       [&](const dependency_graph::NodeBase& i) { return i.index() == id; });
 
 	assert(it != graph.nodes().end());
 
-	// removing a network - the network should be empty at this stage, as all its
-	// nodes and connections are handled already
-	#ifndef NDEBUG
+// removing a network - the network should be empty at this stage, as all its
+// nodes and connections are handled already
+#ifndef NDEBUG
 	dependency_graph::Network* net = dynamic_cast<dependency_graph::Network*>(&(*it));
 	if(net)
 		assert(net->empty());
-	#endif
+#endif
 
 	it->network().nodes().erase(it);
 }
 
-}
+}  // namespace
 
-possumwood::UndoStack::Action createNodeAction(const dependency_graph::UniqueId& currentNetworkId, const dependency_graph::MetadataHandle& meta, const std::string& name,
-	const dependency_graph::Data& blindData, const dependency_graph::UniqueId& id,
-	boost::optional<const dependency_graph::Datablock> datablock) {
-
+possumwood::UndoStack::Action createNodeAction(const dependency_graph::UniqueId& currentNetworkId,
+                                               const dependency_graph::MetadataHandle& meta, const std::string& name,
+                                               const dependency_graph::Data& blindData,
+                                               const dependency_graph::UniqueId& id,
+                                               boost::optional<const dependency_graph::Datablock> datablock) {
 	std::stringstream ss;
 	ss << "Creating node " << name << " of type " << meta->type();
 
 	possumwood::UndoStack::Action action;
-	action.addCommand(
-		ss.str(),
-		std::bind(&doCreateNode, currentNetworkId, meta, name, id, blindData, boost::optional<const dependency_graph::Datablock>(datablock)),
-		std::bind(&doRemoveNode, id)
-	);
+	action.addCommand(ss.str(),
+	                  std::bind(&doCreateNode, currentNetworkId, meta, name, id, blindData,
+	                            boost::optional<const dependency_graph::Datablock>(datablock)),
+	                  std::bind(&doRemoveNode, id));
 
 	return action;
 }
 
-
-possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name,
-	const dependency_graph::Data& blindData, const dependency_graph::UniqueId& id,
-	boost::optional<const dependency_graph::Datablock> datablock) {
-
+possumwood::UndoStack::Action createNodeAction(dependency_graph::Network& current,
+                                               const dependency_graph::MetadataHandle& meta, const std::string& name,
+                                               const dependency_graph::Data& blindData,
+                                               const dependency_graph::UniqueId& id,
+                                               boost::optional<const dependency_graph::Datablock> datablock) {
 	assert(!blindData.empty());
 
 	return createNodeAction(current.index(), meta, name, blindData, id, datablock);
@@ -126,12 +127,9 @@ possumwood::UndoStack::Action removeNodeAction(dependency_graph::NodeBase& node)
 	ss << "Removing node " << node.name() << " of type " << node.metadata()->type();
 
 	// and remove current node
-	action.addCommand(
-		ss.str(),
-		std::bind(&doRemoveNode, node.index()),
-		std::bind(&doCreateNode, node.network().index(), node.metadata(), node.name(), node.index(),
-			node.blindData(), cnode.datablock())
-	);
+	action.addCommand(ss.str(), std::bind(&doRemoveNode, node.index()),
+	                  std::bind(&doCreateNode, node.network().index(), node.metadata(), node.name(), node.index(),
+	                            node.blindData(), cnode.datablock()));
 
 	return action;
 }
@@ -189,11 +187,11 @@ possumwood::UndoStack::Action removeAction(const dependency_graph::Selection& _s
 
 namespace {
 
-void doRenameNode(const dependency_graph::UniqueId& id, std::shared_ptr<std::string> newName, std::shared_ptr<std::string> originalName) {
+void doRenameNode(const dependency_graph::UniqueId& id, std::shared_ptr<std::string> newName,
+                  std::shared_ptr<std::string> originalName) {
 	auto& graph = possumwood::AppCore::instance().graph();
-	auto it = std::find_if(graph.nodes().begin(dependency_graph::Nodes::kRecursive), graph.nodes().end(), [&](const dependency_graph::NodeBase & i) {
-		return i.index() == id;
-	});
+	auto it = std::find_if(graph.nodes().begin(dependency_graph::Nodes::kRecursive), graph.nodes().end(),
+	                       [&](const dependency_graph::NodeBase& i) { return i.index() == id; });
 
 	assert(it != graph.nodes().end());
 
@@ -204,7 +202,7 @@ void doRenameNode(const dependency_graph::UniqueId& id, std::shared_ptr<std::str
 		buildNetwork(it->network());
 }
 
-}
+}  // namespace
 
 possumwood::UndoStack::Action renameNodeAction(const dependency_graph::UniqueId& nodeId, const std::string& name) {
 	possumwood::UndoStack::Action action;
@@ -215,13 +213,46 @@ possumwood::UndoStack::Action renameNodeAction(const dependency_graph::UniqueId&
 	std::stringstream ss;
 	ss << "Renaming node " << nodeId << " to " << name;
 
-	action.addCommand(
-		ss.str(),
-		std::bind(&doRenameNode, nodeId, newName, originalName),
-		std::bind(&doRenameNode, nodeId, originalName, newName)
-	);
+	action.addCommand(ss.str(), std::bind(&doRenameNode, nodeId, newName, originalName),
+	                  std::bind(&doRenameNode, nodeId, originalName, newName));
 
 	return action;
 }
 
-} } }
+namespace {
+
+void doSetSource(const dependency_graph::UniqueId& nodeId, std::shared_ptr<boost::filesystem::path> newPath,
+                 std::shared_ptr<boost::filesystem::path> originalPath) {
+	auto& graph = possumwood::AppCore::instance().graph();
+	auto it = std::find_if(graph.nodes().begin(dependency_graph::Nodes::kRecursive), graph.nodes().end(),
+	                       [&](const dependency_graph::NodeBase& i) { return i.index() == nodeId; });
+
+	assert(it != graph.nodes().end());
+	assert(it->is<dependency_graph::Network>());
+	dependency_graph::Network& net = it->as<dependency_graph::Network>();
+
+	*originalPath = net.source();
+	net.setSource(*newPath);
+}
+
+}  // namespace
+
+possumwood::UndoStack::Action setSourceAction(const dependency_graph::UniqueId& networkId,
+                                              const boost::filesystem::path& path) {
+	possumwood::UndoStack::Action action;
+
+	std::shared_ptr<boost::filesystem::path> newPath(new boost::filesystem::path(path));
+	std::shared_ptr<boost::filesystem::path> originalPath(new boost::filesystem::path());
+
+	std::stringstream ss;
+	ss << "Setting network source of " << networkId << " to " << path;
+
+	action.addCommand(ss.str(), std::bind(&doSetSource, networkId, newPath, originalPath),
+	                  std::bind(&doSetSource, networkId, originalPath, newPath));
+
+	return action;
+}
+
+}  // namespace detail
+}  // namespace actions
+}  // namespace possumwood

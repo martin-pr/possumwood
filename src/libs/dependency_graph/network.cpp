@@ -2,13 +2,13 @@
 
 #include "graph.h"
 #include "metadata_register.h"
-#include "nodes.inl"
 #include "node_base.inl"
+#include "nodes.inl"
 
 namespace dependency_graph {
 
-Network::Network(const std::string& name, const UniqueId& id, const MetadataHandle& md, Network* parent) : NodeBase(name, id, md, parent), m_nodes(this), m_connections(this) {
-
+Network::Network(const std::string& name, const UniqueId& id, const MetadataHandle& md, Network* parent)
+    : NodeBase(name, id, md, parent), m_nodes(this), m_connections(this) {
 }
 
 Network::~Network() {
@@ -28,7 +28,7 @@ void Network::clear() {
 	}
 
 	// first, unlink all the ports
-	for(unsigned i=0; i<portCount(); ++i) {
+	for(unsigned i = 0; i < portCount(); ++i) {
 		Port& p = port(i);
 		if(p.isLinked())
 			p.unlink();
@@ -59,6 +59,13 @@ const Connections& Network::connections() const {
 	return m_connections;
 }
 
+void Network::setSource(const boost::filesystem::path& path) {
+	m_source = path;
+}
+
+const boost::filesystem::path& Network::source() const {
+	return m_source;
+}
 
 const MetadataHandle& Network::defaultMetadata() {
 	static std::unique_ptr<MetadataHandle> s_handle;
@@ -72,4 +79,4 @@ const MetadataHandle& Network::defaultMetadata() {
 	return *s_handle;
 }
 
-}
+}  // namespace dependency_graph

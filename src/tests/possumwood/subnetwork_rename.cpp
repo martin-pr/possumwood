@@ -86,7 +86,9 @@ BOOST_AUTO_TEST_CASE(network_in_out_rename) {
 
 		(*filesystem->write(possumwood::Filepath::fromString("network_in_out_rename.psw"))) << result;
 
-		BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("network_in_out_rename.psw")));
+		dependency_graph::State state;
+		BOOST_REQUIRE_NO_THROW(state = app.loadFile(possumwood::Filepath::fromString("network_in_out_rename.psw")));
+		BOOST_REQUIRE(!state.errored());
 
 		// lets make sure this loads and saves correctly
 		{
