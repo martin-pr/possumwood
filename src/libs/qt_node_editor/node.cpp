@@ -3,13 +3,13 @@
 #include <cassert>
 #include <iostream>
 
-#include <QPainter>
 #include <QBrush>
+#include <QPainter>
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
 
-#include "graph_scene.h"
 #include "connected_edge.h"
+#include "graph_scene.h"
 
 namespace node_editor {
 
@@ -93,7 +93,8 @@ void Node::updateRect() {
 	if(hin_width > 0) {
 		qreal x = 0;
 		for(auto& p : m_ports)
-			if(p->orientation() == Port::Orientation::kVertical && p->portType() == Port::Type::kInput && p->isVisible()) {
+			if(p->orientation() == Port::Orientation::kVertical && p->portType() == Port::Type::kInput &&
+			   p->isVisible()) {
 				qreal delta_width = p->minWidth() * width / hin_width;
 				p->setRect(QRect(x, 0, delta_width, hin_height));
 				x += delta_width;
@@ -116,7 +117,8 @@ void Node::updateRect() {
 	if(hout_width > 0) {
 		qreal x = 0;
 		for(auto& p : m_ports)
-			if(p->orientation() == Port::Orientation::kVertical && p->portType() == Port::Type::kOutput && p->isVisible()) {
+			if(p->orientation() == Port::Orientation::kVertical && p->portType() == Port::Type::kOutput &&
+			   p->isVisible()) {
 				qreal delta_width = p->minWidth() * width / hout_width;
 				p->setRect(QRect(x, height, delta_width, hout_height));
 				x += delta_width;
@@ -155,7 +157,6 @@ void Node::removePort(Port& p) {
 
 	updateRect();
 }
-
 
 QVariant Node::itemChange(GraphicsItemChange change, const QVariant& value) {
 	if(change == ItemPositionHasChanged && scene()) {
@@ -202,7 +203,7 @@ void Node::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 		// and paint the white outline if selected
 		painter->setPen(QPen(Qt::white, 3));
 
-	QRectF rect(m_rect.left()+1, m_rect.top()+1, m_rect.width()-2, m_rect.height()-2);
+	QRectF rect(m_rect.left() + 1, m_rect.top() + 1, m_rect.width() - 2, m_rect.height() - 2);
 	painter->drawRoundedRect(rect, 3, 3);
 }
 
@@ -226,4 +227,15 @@ QRectF Node::boundingRect() const {
 	return result;
 }
 
+bool Node::isReadOnly() const {
+	return flags() & ItemIsMovable;
 }
+
+void Node::setReadOnly(bool ro) {
+	if(ro)
+		setFlags(ItemIsSelectable | ItemSendsGeometryChanges);
+	else
+		setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
+}
+
+}  // namespace node_editor

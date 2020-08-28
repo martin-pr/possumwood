@@ -3,12 +3,12 @@
 #include <cassert>
 #include <iostream>
 
-#include <QGraphicsView>
-#include <QGraphicsSceneMouseEvent>
 #include <QApplication>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
 
-#include "node.h"
 #include "connected_edge.h"
+#include "node.h"
 
 namespace node_editor {
 
@@ -55,11 +55,9 @@ unsigned GraphScene::edgeCount() const {
 	return m_edges.size();
 }
 
-Node& GraphScene::addNode(const QString& name,
-                          const QPointF& position,
-                          const QColor& color) {
-
+Node& GraphScene::addNode(const QString& name, const QPointF& position, const QColor& color) {
 	Node* n = new Node(name, position, color);
+	n->setReadOnly(m_readOnly);
 	m_nodes.push_back(n);
 	addItem(n);
 
@@ -108,9 +106,8 @@ void GraphScene::disconnect(ConnectedEdge& e) {
 }
 
 bool GraphScene::isConnected(const Port& p1, const Port& p2) {
-	auto it = std::find_if(m_edges.begin(), m_edges.end(), [&](const ConnectedEdge * e) {
-		return &e->fromPort() == &p1 && &e->toPort() == &p2;
-	});
+	auto it = std::find_if(m_edges.begin(), m_edges.end(),
+	                       [&](const ConnectedEdge* e) { return &e->fromPort() == &p1 && &e->toPort() == &p2; });
 
 	return it != m_edges.end();
 }
@@ -129,7 +126,7 @@ void GraphScene::remove(Edge* e) {
 
 namespace {
 
-template<typename ITEM>
+template <typename ITEM>
 ITEM* findItem(QGraphicsItem* item) {
 	ITEM* result = NULL;
 	while(item && !result) {
@@ -139,7 +136,7 @@ ITEM* findItem(QGraphicsItem* item) {
 	return result;
 }
 
-}
+}  // namespace
 
 Port* GraphScene::findConnectionPort(QPointF pos) const {
 	auto it = items(pos, Qt::IntersectsItemBoundingRect);
@@ -164,7 +161,7 @@ QPointF GraphScene::findConnectionPoint(QPointF pos, Port::Type portType) const 
 }
 
 void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
-	if(mouseEvent->button() == Qt::LeftButton) {
+	if(mouseEvent->button() == Qt::LeftButton && !m_readOnly) {
 		Port* port = findItem<Port>(itemAt(mouseEvent->scenePos(), QTransform()));
 		if(port && port->inActiveRegion(mouseEvent->scenePos())) {
 			QPointF pos = port->connectionPoint();
@@ -190,11 +187,13 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 }
 
 void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
-	if(m_editedEdge->isVisible()) {
+	if(!m_readOnly && m_editedEdge->isVisible()) {
 		if(m_connectedSide == Port::Type::kInput)
-			m_editedEdge->setPoints(findConnectionPoint(mouseEvent->scenePos(), m_connectedSide), m_editedEdge->target());
+			m_editedEdge->setPoints(findConnectionPoint(mouseEvent->scenePos(), m_connectedSide),
+			                        m_editedEdge->target());
 		else
-			m_editedEdge->setPoints(m_editedEdge->origin(), findConnectionPoint(mouseEvent->scenePos(), m_connectedSide));
+			m_editedEdge->setPoints(m_editedEdge->origin(),
+			                        findConnectionPoint(mouseEvent->scenePos(), m_connectedSide));
 
 		mouseEvent->accept();
 	}
@@ -203,15 +202,14 @@ void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 }
 
 void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
-	if(m_editedEdge->isVisible()) {
+	if(!m_readOnly && m_editedEdge->isVisible()) {
 		m_editedEdge->setVisible(false);
 
 		Port* portFrom = findConnectionPort(m_editedEdge->origin());
 		Port* portTo = findConnectionPort(m_editedEdge->target());
 
-		if(portFrom != NULL && portTo != NULL && portFrom != portTo &&
-		        portFrom->portType() == Port::Type::kOutput && portTo->portType() == Port::Type::kInput) {
-
+		if(portFrom != NULL && portTo != NULL && portFrom != portTo && portFrom->portType() == Port::Type::kOutput &&
+		   portTo->portType() == Port::Type::kInput) {
 			if(!isConnected(*portFrom, *portTo)) {
 				connect(*portFrom, *portTo);
 
@@ -222,7 +220,7 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) {
 		mouseEvent->accept();
 	}
 	else {
-		if(mouseEvent->button() == Qt::LeftButton) {
+		if(!m_readOnly && mouseEvent->button() == Qt::LeftButton) {
 			if(m_leftMouseDown) {
 				m_leftMouseDown = false;
 
@@ -282,4 +280,22 @@ void GraphScene::registerNodeMove(Node* n) {
 		m_movingNodes.insert(n);
 }
 
+bool GraphScene::isReadOnly() const {
+	return m_readOnly;
 }
+
+void GraphScene::setReadOnly(bool ro) {
+	m_readOnly = ro;
+
+	// if(ro)
+	// 	setBackgroundBrush(QBrush(QColor(255, 0, 0, 128)));
+	// else
+	// 	setBackgroundBrush(QBrush(QColor(0, 0, 0)));
+	update();
+
+	for(auto& n : m_nodes) {
+		n->setReadOnly(ro);
+	}
+}
+
+}  // namespace node_editor

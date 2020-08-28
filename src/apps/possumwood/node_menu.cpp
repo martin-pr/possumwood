@@ -96,21 +96,11 @@ void NodeMenu::addFromDirectory(const boost::filesystem::path& startPath) {
 				    adaptor->graphWidget()->mapToScene(adaptor->graphWidget()->mapFromGlobal(newNodeMenuPtr->pos()));
 				const possumwood::NodeData::Point p{(float)qp.x(), (float)qp.y()};
 
-				auto metaIt = dependency_graph::MetadataRegister::singleton().find("network");
-				assert(metaIt != dependency_graph::MetadataRegister::singleton().end());
+				dependency_graph::Selection selection;
 
-				dependency_graph::UniqueId networkId;
-				possumwood::actions::createNode(adaptor->currentNetwork(), *metaIt, path.stem().string(), p, networkId);
-
-				auto networkIt = adaptor->currentNetwork().nodes().find(networkId);
-				assert(networkIt != adaptor->currentNetwork().nodes().end());
-
-				std::ifstream in((possumwood::Filepath::fromString("$NODES").toPath() / path).string());
-				possumwood::io::json json;
-				in >> json;
-
-				dependency_graph::Selection selection;  // throwaway
-				possumwood::actions::fromJson(networkIt->as<dependency_graph::Network>(), selection, json, false);
+				dependency_graph::State state = possumwood::actions::importNetwork(
+				    adaptor->currentNetwork(), selection, possumwood::Filepath::fromString("$NODES/" + path.string()),
+				    "whats_this", dependency_graph::Data(possumwood::NodeData(p)));
 			});
 		}
 

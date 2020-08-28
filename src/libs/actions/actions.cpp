@@ -210,9 +210,12 @@ void copy(const dependency_graph::Selection& selection) {
 }
 
 namespace {
+
+enum PasteFlags { kNone = 0, kRoot = 1 };
+
 dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action,
                                      const dependency_graph::UniqueId& targetIndex, const possumwood::io::json& _source,
-                                     std::set<dependency_graph::UniqueId>* ids = nullptr) {
+                                     PasteFlags flags, std::set<dependency_graph::UniqueId>* ids = nullptr) {
 	dependency_graph::State state;
 	possumwood::io::json tmp;
 
@@ -273,7 +276,7 @@ dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action,
 				//   -> this will also construct the internals of the network, and instantiate
 				//      its inputs and outputs
 				if(n["type"] == "network")
-					state.append(pasteNetwork(action, nodeId, n));
+					state.append(pasteNetwork(action, nodeId, n, kNone));
 
 				// and another action to set all port values based on the json content
 				//   -> as the node doesn't exist yet, we can't interpret the types
@@ -307,7 +310,7 @@ dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action,
 	}
 
 	// and add the "source" if any, with a compressed filepath
-	if(_source.find("source") != _source.end()) {
+	if(_source.find("source") != _source.end() && !(flags & kRoot)) {
 		action.append(detail::setSourceAction(
 		    targetIndex, possumwood::Filepath::fromString(_source["source"].get<std::string>()).toString()));
 	}
@@ -350,7 +353,7 @@ dependency_graph::State fromJson(dependency_graph::Network& current, dependency_
 	std::set<dependency_graph::UniqueId> pastedNodeIds;
 
 	// paste the network extracted from the JSON
-	state.append(pasteNetwork(action, current.index(), json, &pastedNodeIds));
+	state.append(pasteNetwork(action, current.index(), json, kRoot, &pastedNodeIds));
 
 	// execute the action (will actually make the nodes and connections)
 	state.append(possumwood::AppCore::instance().undoStack().execute(action, haltOnError));
@@ -396,6 +399,35 @@ void renameNode(dependency_graph::NodeBase& node, const std::string& name) {
 	possumwood::UndoStack::Action action = detail::renameNodeAction(node.index(), name);
 
 	AppCore::instance().undoStack().execute(action);
+}
+
+dependency_graph::State importNetwork(dependency_graph::Network& current, dependency_graph::Selection& selection,
+                                      const possumwood::Filepath& filepath, const std::string& name,
+                                      const dependency_graph::Data& blindData) {
+	dependency_graph::State state;
+
+	possumwood::UndoStack::Action action;
+
+	possumwood::io::json tmp;
+	tmp["source"] = filepath.toString();
+
+	const dependency_graph::UniqueId networkId;
+
+	auto metaIt = dependency_graph::MetadataRegister::singleton().find("network");
+
+	action.append(detail::createNodeAction(current.index(), *metaIt, name, blindData, networkId));
+
+	// paste the network extracted from the JSON
+	std::set<dependency_graph::UniqueId> pastedNodeIds;
+	state.append(pasteNetwork(action, networkId, tmp, kNone, &pastedNodeIds));
+
+	// execute the action (will actually make the nodes and connections)
+	state.append(possumwood::AppCore::instance().undoStack().execute(action, false));
+
+	// and make the selection based on added nodes
+	selection.addNode(detail::findNode(networkId));
+
+	return state;
 }
 
 }  // namespace actions

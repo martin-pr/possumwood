@@ -5,8 +5,8 @@
 
 #include <QGraphicsScene>
 
-#include "node.h"
 #include "edge.h"
+#include "node.h"
 
 namespace node_editor {
 
@@ -14,76 +14,79 @@ class ConnectedEdge;
 class Node;
 
 class GraphScene : public QGraphicsScene {
-		Q_OBJECT
+	Q_OBJECT
 
-	public:
-		GraphScene(QGraphicsView* parent);
-		virtual ~GraphScene();
+  public:
+	GraphScene(QGraphicsView* parent);
+	virtual ~GraphScene();
 
-		Node& node(unsigned index);
-		const Node& node(unsigned index) const;
-		unsigned nodeCount() const;
+	bool isReadOnly() const;
+	void setReadOnly(bool ro);
 
-		ConnectedEdge& edge(unsigned index);
-		const ConnectedEdge& edge(unsigned index) const;
-		unsigned edgeCount() const;
+	Node& node(unsigned index);
+	const Node& node(unsigned index) const;
+	unsigned nodeCount() const;
 
-		Node& addNode(const QString& name,
-		              const QPointF& position,
-		              const QColor& color = QColor(64, 64, 64));
+	ConnectedEdge& edge(unsigned index);
+	const ConnectedEdge& edge(unsigned index) const;
+	unsigned edgeCount() const;
 
-		void removeNode(Node& n);
+	Node& addNode(const QString& name, const QPointF& position, const QColor& color = QColor(64, 64, 64));
 
-		void connect(Port& p1, Port& p2);
-		void disconnect(Port& p1, Port& p2);
-		void disconnect(ConnectedEdge& e);
-		bool isConnected(const Port& p1, const Port& p2);
+	void removeNode(Node& n);
 
-		bool isEdgeEditInProgress() const;
+	void connect(Port& p1, Port& p2);
+	void disconnect(Port& p1, Port& p2);
+	void disconnect(ConnectedEdge& e);
+	bool isConnected(const Port& p1, const Port& p2);
 
-		struct Selection {
-			std::set<Node*> nodes;
-			std::set<ConnectedEdge*> connections;
-		};
+	bool isEdgeEditInProgress() const;
 
-	signals:
-		void selectionChanged(const Selection&);
-		void portsConnected(Port&, Port&);
-		void nodesMoved(const std::set<Node*>&);
+	struct Selection {
+		std::set<Node*> nodes;
+		std::set<ConnectedEdge*> connections;
+	};
 
-		void doubleClicked(Node*);
-		void middleClicked(Node*);
-		void rightClicked(Node*);
+  signals:
+	void selectionChanged(const Selection&);
+	void portsConnected(Port&, Port&);
+	void nodesMoved(const std::set<Node*>&);
 
-	protected:
-		virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
-		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
-		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
-		virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
+	void doubleClicked(Node*);
+	void middleClicked(Node*);
+	void rightClicked(Node*);
 
-	private slots:
-		void onSelectionChanged();
+  protected:
+	virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
+	virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
+	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
+	virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
 
-	private:
-		void remove(Node* n);
-		void remove(Edge* e);
+  private slots:
+	void onSelectionChanged();
 
-		Port* findConnectionPort(QPointF pos) const;
-		QPointF findConnectionPoint(QPointF pos, Port::Type portType) const;
+  private:
+	void remove(Node* n);
+	void remove(Edge* e);
 
-		QVector<Node*> m_nodes;
-		QVector<ConnectedEdge*> m_edges;
+	Port* findConnectionPort(QPointF pos) const;
+	QPointF findConnectionPoint(QPointF pos, Port::Type portType) const;
 
-		Edge* m_editedEdge;
-		Port::Type m_connectedSide;
+	QVector<Node*> m_nodes;
+	QVector<ConnectedEdge*> m_edges;
 
-		void registerNodeMove(Node*);
+	Edge* m_editedEdge;
+	Port::Type m_connectedSide;
 
-		bool m_leftMouseDown;
-		std::set<Node*> m_movingNodes;
+	void registerNodeMove(Node*);
 
-		friend class Edge;
-		friend class Node;
+	bool m_leftMouseDown;
+	std::set<Node*> m_movingNodes;
+
+	bool m_readOnly;
+
+	friend class Edge;
+	friend class Node;
 };
 
-}
+}  // namespace node_editor
