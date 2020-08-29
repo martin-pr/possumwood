@@ -238,4 +238,13 @@ void Node::setReadOnly(bool ro) {
 		setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
 }
 
+void Node::setColor(const QColor& color) {
+	m_color = color;
+	m_titleBackground->setBrush(QColor(color.red() + 32, color.green() + 32, color.blue() + 32));
+}
+
+const QColor Node::color() const {
+	return m_color;
+}
+
 }  // namespace node_editor

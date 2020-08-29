@@ -251,23 +251,9 @@ void Adaptor::onAddNode(dependency_graph::NodeBase& node) {
 				typeString = typeString.substr(pos + 1);
 		}
 
-		// node colour - hardcoded different colour for networks (for now)
-		QColor nodeColor(64, 64, 64);
-		if(node.metadata()->type() == "network") {
-			nodeColor = QColor(32, 64, 96);
-
-			const dependency_graph::Network& net = node.as<dependency_graph::Network>();
-			if(isReadOnly(net))
-				nodeColor = QColor(96, 32, 64);
-		}
-		if(node.metadata()->type() == "input")
-			nodeColor = QColor(96, 64, 32);
-		if(node.metadata()->type() == "output")
-			nodeColor = QColor(64, 96, 32);
-
 		// make the new node
-		node_editor::Node& newNode = m_graphWidget->scene().addNode(
-		    node.name().c_str(), QPointF(data.position().x, data.position().y), nodeColor);
+		node_editor::Node& newNode =
+		    m_graphWidget->scene().addNode(node.name().c_str(), QPointF(data.position().x, data.position().y));
 		uiNode = &newNode;
 
 		// add all ports, based on the node's metadata
@@ -425,6 +411,22 @@ void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
 			n.editorNode->setState(node_editor::Node::kInfo);
 		else
 			n.editorNode->setState(node_editor::Node::kOk);
+
+		// node colour - hardcoded different colour for networks (for now)
+		QColor nodeColor(64, 64, 64);
+		if(n.graphNode->metadata()->type() == "network") {
+			nodeColor = QColor(32, 64, 96);
+
+			const dependency_graph::Network& net = n.graphNode->as<dependency_graph::Network>();
+			if(isReadOnly(net))
+				nodeColor = QColor(96, 32, 64);
+		}
+		if(n.graphNode->metadata()->type() == "input")
+			nodeColor = QColor(96, 64, 32);
+		if(n.graphNode->metadata()->type() == "output")
+			nodeColor = QColor(64, 96, 32);
+
+		n.editorNode->setColor(nodeColor);
 	}
 }
 

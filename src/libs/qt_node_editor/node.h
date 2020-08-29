@@ -42,6 +42,9 @@ class Node : public QGraphicsItem {
 	void setState(const State& s);
 	const State& state() const;
 
+	void setColor(const QColor& color);
+	const QColor color() const;
+
 	virtual QRectF boundingRect() const override;
 
 	bool isReadOnly() const;

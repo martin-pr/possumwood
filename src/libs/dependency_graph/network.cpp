@@ -61,6 +61,8 @@ const Connections& Network::connections() const {
 
 void Network::setSource(const boost::filesystem::path& path) {
 	m_source = path;
+
+	graph().stateChanged(*this);
 }
 
 const boost::filesystem::path& Network::source() const {
