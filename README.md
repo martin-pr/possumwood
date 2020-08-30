@@ -19,6 +19,7 @@ Possumwood is built on top of a simple graph-evaluation engine and a Qt-based no
 - [Example setups](#example-setups)
   - [Opengl](#opengl)
   - [Polymesh](#polymesh)
+  - [Lua mesh generation](#lua-mesh-generation)
   - [Image](#image)
   - [Lua](#lua)
   - [Animation](#animation)
@@ -414,6 +415,26 @@ The display code is contained in a subnetwork (double click the blue node to "en
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 <img src="toolbars/02_polymesh/01_load_mesh_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/02_lua_mesh.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+### Lua mesh generation
+
+A simple setup demonstrating a way to generate a new mesh in Lua using simple mesh bindings, and display the result using OpenGL. The main functionality is contained within the script node, which functions in the environment constructed by its inputs, and produces a state with new values on its output. The mesh extract node then extracts a mesh from the state and feeds it into CGAL mesh display node.
+
+
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/02_lua_mesh_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 

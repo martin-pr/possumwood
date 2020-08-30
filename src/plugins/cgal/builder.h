@@ -1,5 +1,7 @@
 #pragma once
 
+#include <CGAL/Polyhedron_3.h>
+
 namespace possumwood {
 
 template <class HDS, class POINTS, class FACES>
@@ -33,4 +35,4 @@ class CGALBuilder : public CGAL::Modifier_base<HDS> {
 	const FACES* m_faces;
 };
 
-}
+}  // namespace possumwood

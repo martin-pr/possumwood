@@ -39,12 +39,6 @@
                     "out_port": "shader"
                 },
                 {
-                    "in_node": "vertex_data_0",
-                    "in_port": "generic_mesh",
-                    "out_node": "grid_0",
-                    "out_port": "polymesh"
-                },
-                {
                     "in_node": "opencv_texture_0",
                     "in_port": "frame",
                     "out_node": "input_0",
@@ -55,6 +49,18 @@
                     "in_port": "frame",
                     "out_node": "input_0",
                     "out_port": "data"
+                },
+                {
+                    "in_node": "split_vec2u_0",
+                    "in_port": "vec",
+                    "out_node": "metadata_0",
+                    "out_port": "size"
+                },
+                {
+                    "in_node": "viewport_0",
+                    "in_port": "in_uniforms",
+                    "out_node": "opencv_texture_0",
+                    "out_port": "out_uniforms"
                 },
                 {
                     "in_node": "draw_0",
@@ -87,12 +93,6 @@
                     "out_port": "out_uniforms"
                 },
                 {
-                    "in_node": "draw_0",
-                    "in_port": "vertex_data",
-                    "out_node": "vertex_data_0",
-                    "out_port": "vertex_data"
-                },
-                {
                     "in_node": "program_0",
                     "in_port": "vertex_shader",
                     "out_node": "vertex_shader_0",
@@ -105,20 +105,31 @@
                     "out_port": "out_uniforms"
                 },
                 {
-                    "in_node": "split_vec2u_0",
-                    "in_port": "vec",
-                    "out_node": "metadata_0",
-                    "out_port": "size"
+                    "in_node": "cgal_0",
+                    "in_port": "mesh",
+                    "out_node": "grid_0",
+                    "out_port": "mesh"
                 },
                 {
-                    "in_node": "viewport_0",
-                    "in_port": "in_uniforms",
-                    "out_node": "opencv_texture_0",
-                    "out_port": "out_uniforms"
+                    "in_node": "draw_0",
+                    "in_port": "vertex_data",
+                    "out_node": "cgal_0",
+                    "out_port": "vertex_data"
                 }
             ],
             "name": "image_display",
             "nodes": {
+                "cgal_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 132.787628173828,
+                            "y": 492.509735107422
+                        }
+                    },
+                    "name": "cgal",
+                    "type": "render/vertex_data/cgal"
+                },
                 "draw_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
@@ -148,8 +159,8 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 10.684497833252,
-                            "y": 268.905548095703
+                            "x": -13.6900844573975,
+                            "y": 276.425964355469
                         }
                     },
                     "name": "grid",
@@ -164,7 +175,7 @@
                         "subdivision/x": 1,
                         "subdivision/y": 1
                     },
-                    "type": "polymesh/grid"
+                    "type": "cgal/grid"
                 },
                 "input_0": {
                     "blind_data": {
@@ -253,17 +264,6 @@
                     },
                     "type": "render/uniforms/unsigned"
                 },
-                "vertex_data_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 196.808380126953,
-                            "y": 306.509704589844
-                        }
-                    },
-                    "name": "vertex_data",
-                    "type": "polymesh/vertex_data"
-                },
                 "vertex_shader_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
@@ -298,6 +298,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACTwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ0AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAcUAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABFQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABiwAAAeMAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAACiAAAAAACAAAACgAAAAAAAAAAGAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ0AAAE0PwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAE0AAAAJgBAAADAAAAAQAAAcUAAATQ/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABwQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACNwAAAw4AAACqAQAAAwAABcUAAATQAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
