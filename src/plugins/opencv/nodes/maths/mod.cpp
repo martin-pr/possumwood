@@ -1,9 +1,8 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
-
-#include <opencv2/opencv.hpp>
 #include <tbb/parallel_for.h>
 
-#include <actions/traits.h>
+#include <opencv2/opencv.hpp>
 
 #include "frame.h"
 #include "tools.h"
@@ -14,12 +13,12 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<unsigned> a_mod;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
-template<typename T>
+template <typename T>
 void process(cv::Mat& data, const T& val) {
 	tbb::parallel_for(0, data.rows, [&](int row) {
-		for(int col=0; col<data.cols; ++col) {
+		for(int col = 0; col < data.cols; ++col) {
 			T* ptr = data.ptr<T>(row, col);
-			for(int a=0; a<data.channels(); ++a)
+			for(int a = 0; a < data.channels(); ++a)
 				ptr[a] = ptr[a] % val;
 		}
 	});
@@ -59,4 +58,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/maths/mod", init);
 
-}
+}  // namespace

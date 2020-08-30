@@ -127,4 +127,4 @@ void Tokenizer::State::setActive() {
 	assert(m_parent != NULL);
 	m_parent->m_active = this;
 }
-}
+}  // namespace anim

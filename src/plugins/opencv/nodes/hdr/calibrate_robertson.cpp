@@ -1,12 +1,11 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/photo.hpp>
 
-#include <actions/traits.h>
-
-#include "sequence.h"
-#include "exif_sequence.h"
 #include "camera_response.h"
+#include "exif_sequence.h"
+#include "sequence.h"
 #include "tools.h"
 
 namespace {
@@ -85,5 +84,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/hdr/calibrate_robertson", init);
 
-}
-
+}  // namespace

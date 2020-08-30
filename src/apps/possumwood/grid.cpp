@@ -1,10 +1,11 @@
 #include "grid.h"
 
-#include <vector>
-#include <cassert>
-
 #include <GL/glew.h>
+
 #include <GL/gl.h>
+
+#include <cassert>
+#include <vector>
 
 namespace possumwood {
 
@@ -56,11 +57,11 @@ const std::string& fragmentShaderSource() {
 
 	return s_source;
 }
-}
+}  // namespace
 
 Grid::Grid() : GLRenderable(GL_LINES, vertexShaderSource(), fragmentShaderSource()) {
 	possumwood::GLRenderable::VBO vbo = updateVertexData();
 
 	vbo.data = makeGrid();
 }
-}
+}  // namespace possumwood

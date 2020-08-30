@@ -1,15 +1,14 @@
-#include <boost/test/unit_test.hpp>
+#include <actions/actions.h>
+#include <actions/app.h>
+#include <dependency_graph/graph.h>
+#include <dependency_graph/metadata_register.h>
 
+#include <boost/test/unit_test.hpp>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/metadata.inl>
-#include <dependency_graph/graph.h>
+#include <dependency_graph/nodes_iterator.inl>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/values.inl>
-#include <dependency_graph/metadata_register.h>
-#include <dependency_graph/nodes_iterator.inl>
-
-#include <actions/app.h>
-#include <actions/actions.h>
 
 #include "common.h"
 
@@ -30,12 +29,9 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	///
 
 	// initial state
-	commands.push_back([]() {
-	});
+	commands.push_back([]() {});
 
-	tests.push_back([&]() {
-		BOOST_CHECK(app.instance().graph().empty());
-	});
+	tests.push_back([&]() { BOOST_CHECK(app.instance().graph().empty()); });
 
 	///
 
@@ -48,13 +44,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	// create a subnetwork in the graph, via actions
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-			app.graph(),
-			*networkFactoryIterator,
-			"network",
-			possumwood::NodeData(),
-			netId
-		));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), *networkFactoryIterator, "network",
+		                                                       possumwood::NodeData(), netId));
 	});
 
 	// empty network state test
@@ -81,13 +72,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	// create a tiny subnetwork
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-			*network,
-			*inputFactoryIterator,
-			"network_input",
-			possumwood::NodeData(),
-			inId
-		));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(*network, *inputFactoryIterator, "network_input",
+		                                                       possumwood::NodeData(), inId));
 	});
 
 	tests.push_back([&]() {
@@ -106,13 +92,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	BOOST_REQUIRE(outputFactoryIterator != MetadataRegister::singleton().end());
 
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-			*network,
-			*outputFactoryIterator,
-			"network_output",
-			possumwood::NodeData(),
-			outId
-		));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(*network, *outputFactoryIterator, "network_output",
+		                                                       possumwood::NodeData(), outId));
 	});
 
 	tests.push_back([&]() {
@@ -128,13 +109,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	dependency_graph::NodeBase* middle = nullptr;
 
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-			*network,
-			passThroughNode(),
-			"passthru",
-			possumwood::NodeData(),
-			midId
-		));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(*network, passThroughNode(), "passthru", possumwood::NodeData(), midId));
 	});
 
 	tests.push_back([&]() {
@@ -152,9 +128,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		BOOST_CHECK_EQUAL(middle->port(1).get<float>(), 0.0f);
 	});
 
-	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(middle->port(0), 3.0f));
-	});
+	commands.push_back([&]() { BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(middle->port(0), 3.0f)); });
 
 	tests.push_back([&]() {
 		BOOST_CHECK_EQUAL(middle->port(0).get<float>(), 3.0f);
@@ -192,14 +166,13 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		BOOST_CHECK_EQUAL(app.instance().graph().connections().size(), 0u);
 		BOOST_CHECK_EQUAL(network->connections().size(), 1u);
 
-		BOOST_CHECK_EQUAL(input->port(0).get<float>(), 5.0f); // transferred from the connected port
+		BOOST_CHECK_EQUAL(input->port(0).get<float>(), 5.0f);  // transferred from the connected port
 		BOOST_CHECK_THROW(output->port(0).get<float>(), std::exception);
 
 		BOOST_CHECK(not output->port(0).isDirty());
 		BOOST_CHECK(middle->port(0).isDirty());
 		BOOST_CHECK(middle->port(1).isDirty());
 	});
-
 
 	commands.push_back([&]() {
 		// connect the output
@@ -211,12 +184,14 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		BOOST_CHECK_EQUAL(network->metadata()->attributeCount(), 2u);
 		BOOST_CHECK_EQUAL(network->portCount(), 2u);
 
-		BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(network->port(0).type()), dependency_graph::unmangledTypeId<float>());
+		BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(network->port(0).type()),
+		                  dependency_graph::unmangledTypeId<float>());
 		BOOST_CHECK_EQUAL(network->port(0).category(), dependency_graph::Attr::kInput);
-		BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(network->port(1).type()), dependency_graph::unmangledTypeId<float>());
+		BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(network->port(1).type()),
+		                  dependency_graph::unmangledTypeId<float>());
 		BOOST_CHECK_EQUAL(network->port(1).category(), dependency_graph::Attr::kOutput);
 
-	/////
+		/////
 
 		// check that the connected passthru works as expected (internal connections only)
 		//  -> value was set before connecting, and should be transferred to input/output
@@ -230,11 +205,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		BOOST_CHECK_EQUAL(network->port(1).get<float>(), 5.0f);
 	});
 
-
 	// set a value on the external connection
-	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(network->port(0), 3.0f));
-	});
+	commands.push_back([&]() { BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(network->port(0), 3.0f)); });
 
 	tests.push_back([&]() {
 		BOOST_CHECK_EQUAL(network->port(0).get<float>(), 3.0f);
@@ -254,13 +226,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	dependency_graph::NodeBase* output2 = nullptr;
 
 	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-			*network,
-			*outputFactoryIterator,
-			"network_output_2",
-			possumwood::NodeData(),
-			out2Id
-		));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(*network, *outputFactoryIterator, "network_output_2",
+		                                                       possumwood::NodeData(), out2Id));
 	});
 
 	tests.push_back([&]() {
@@ -338,9 +305,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	});
 
 	// and setting that value works as expected
-	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(middle->port(0), 13.0f));
-	});
+	commands.push_back([&]() { BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(middle->port(0), 13.0f)); });
 
 	tests.push_back([&]() {
 		BOOST_CHECK_EQUAL(middle->port(0).get<float>(), 13.0f);
@@ -390,13 +355,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 	commands.push_back([&]() {
 		// make a passthru node
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-			app.graph(),
-			passThroughNode(),
-			"passthru",
-			possumwood::NodeData(),
-			indirectInputId
-		));
+		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), passThroughNode(), "passthru",
+		                                                       possumwood::NodeData(), indirectInputId));
 	});
 
 	tests.push_back([&]() {
@@ -476,11 +436,7 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	});
 
 	// remove the network
-	commands.push_back([&]() {
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::removeNode(
-			*network
-		));
-	});
+	commands.push_back([&]() { BOOST_REQUIRE_NO_THROW(possumwood::actions::removeNode(*network)); });
 
 	// check that the network was removed
 	tests.push_back([&]() {
@@ -494,14 +450,14 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	// execute all actions + tests afterwards
 	assert(commands.size() == tests.size());
 
-	for(std::size_t i=0; i<commands.size(); ++i) {
+	for(std::size_t i = 0; i < commands.size(); ++i) {
 		commands[i]();
 		tests[i]();
 
 		BOOST_REQUIRE_NO_THROW(app.undoStack().undo());
 
 		if(i > 0)
-			tests[i-1]();
+			tests[i - 1]();
 
 		BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
 
@@ -515,7 +471,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 	//   - do redo
 	//   - check state + stack
 	//   - do undo, finally (leaves the last action undone)
-	auto checkUndo = [&](std::function<void()> testBefore, std::function<void()> testAfter, std::size_t undoActionCount, std::size_t redoActionCount) {
+	auto checkUndo = [&](std::function<void()> testBefore, std::function<void()> testAfter, std::size_t undoActionCount,
+	                     std::size_t redoActionCount) {
 		testBefore();
 
 		BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), undoActionCount);
@@ -525,8 +482,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 
 		testAfter();
 
-		BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), undoActionCount-1);
-		BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), redoActionCount+1);
+		BOOST_CHECK_EQUAL(app.undoStack().undoActionCount(), undoActionCount - 1);
+		BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), redoActionCount + 1);
 
 		BOOST_REQUIRE_NO_THROW(app.undoStack().redo());
 
@@ -540,6 +497,6 @@ BOOST_AUTO_TEST_CASE(simple_subnet_values) {
 		testAfter();
 	};
 
-	for(std::size_t i = commands.size()-1; i > 0; --i)
-		checkUndo(tests[i], tests[i-1], i, commands.size()-i-1);
+	for(std::size_t i = commands.size() - 1; i > 0; --i)
+		checkUndo(tests[i], tests[i - 1], i, commands.size() - i - 1);
 }

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
-#include <initializer_list>
-
 #include <ImathVec.h>
+
+#include <initializer_list>
+#include <vector>
 
 #include "skinning.h"
 
@@ -49,4 +49,4 @@ class SkinnedVertices {
   private:
 	std::vector<Vertex> m_vertices;
 };
-}
+}  // namespace anim

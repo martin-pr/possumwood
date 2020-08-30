@@ -2,15 +2,12 @@
 
 #define EIGEN_STACK_ALLOCATION_LIMIT 0
 
-#include <mutex>
-
-#include <opencv2/opencv.hpp>
-
-#include <Eigen/Sparse>
-
+#include <actions/traits.h>
 #include <tbb/task_group.h>
 
-#include <actions/traits.h>
+#include <Eigen/Sparse>
+#include <mutex>
+#include <opencv2/opencv.hpp>
 
 #include "frame.h"
 
@@ -19,64 +16,59 @@ namespace {
 class Triplets;
 
 class Row {
-	public:
-		Row() = default;
+  public:
+	Row() = default;
 
-		void addValue(int64_t row, int64_t col, double value) {
-			if(value != 0.0)
-				m_values[(row << 32) + col] += value;
-		}
+	void addValue(int64_t row, int64_t col, double value) {
+		if(value != 0.0)
+			m_values[(row << 32) + col] += value;
+	}
 
-	private:
-		Row(const Row&) = delete;
-		Row& operator = (const Row&) = delete;
+  private:
+	Row(const Row&) = delete;
+	Row& operator=(const Row&) = delete;
 
-		std::map<int64_t, double> m_values;
+	std::map<int64_t, double> m_values;
 
 	friend class Triplets;
 };
 
 class Triplets {
-	public:
-		Triplets(int rows, int cols) : m_rowCount(0), m_rows(rows), m_cols(cols) {
+  public:
+	Triplets(int rows, int cols) : m_rowCount(0), m_rows(rows), m_cols(cols) {
+	}
+
+	void addRow(const Row& r) {
+		for(auto& v : r.m_values) {
+			int32_t row = v.first >> 32;
+			int32_t col = v.first & 0xffffffff;
+
+			assert(row < m_rows);
+			assert(col < m_cols);
+
+			m_triplets.push_back(Eigen::Triplet<double>(m_rowCount, row * m_cols + col, v.second));
 		}
 
-		void addRow(const Row& r) {
-			for(auto& v : r.m_values) {
-				int32_t row = v.first >> 32;
-				int32_t col = v.first & 0xffffffff;
+		++m_rowCount;
+	}
 
-				assert(row < m_rows);
-				assert(col < m_cols);
+	std::size_t rows() const {
+		return m_rowCount;
+	}
 
-				m_triplets.push_back(Eigen::Triplet<double>(m_rowCount, row*m_cols + col, v.second));
-			}
+	const std::vector<Eigen::Triplet<double>>& triplets() const {
+		return m_triplets;
+	}
 
-			++m_rowCount;
-		}
+  private:
+	std::vector<Eigen::Triplet<double>> m_triplets;
 
-		std::size_t rows() const {
-			return m_rowCount;
-		}
+	int m_rowCount, m_rows, m_cols;
 
-		const std::vector<Eigen::Triplet<double>>& triplets() const {
-			return m_triplets;
-		}
-
-	private:
-		std::vector<Eigen::Triplet<double>> m_triplets;
-
-		int m_rowCount, m_rows, m_cols;
-
-		friend class Row;
+	friend class Row;
 };
 
-
-static const cv::Mat kernel = (cv::Mat_<double>(3,3) <<
-	 0.0, -1.0,  0.0,
-	-1.0,  4.0, -1.0,
-	 0.0, -1.0,  0.0
-);
+static const cv::Mat kernel = (cv::Mat_<double>(3, 3) << 0.0, -1.0, 0.0, -1.0, 4.0, -1.0, 0.0, -1.0, 0.0);
 
 // static const cv::Mat kernel = (cv::Mat_<double>(3,3) <<
 // 	-1.0, -1.0, -1.0,
@@ -98,14 +90,15 @@ static const cv::Mat kernel = (cv::Mat_<double>(3,3) <<
 // 	 0.0,  0.0,  1.0,  0.0,  0.0
 // );
 
-float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<double>& A, Eigen::VectorXd& b, const cv::Rect2i& roi) {
+float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatrix<double>& A, Eigen::VectorXd& b,
+                    const cv::Rect2i& roi) {
 	Triplets triplets(roi.height, roi.width);
 	std::vector<double> values;
 
 	std::size_t validCtr = 0, interpolatedCtr = 0;
 
-	for(int y=roi.y; y<roi.y+roi.height; ++y)
-		for(int x=roi.x; x<roi.x+roi.width; ++x) {
+	for(int y = roi.y; y < roi.y + roi.height; ++y)
+		for(int x = roi.x; x < roi.x + roi.width; ++x) {
 			Row row;
 
 			// masked and/or edge
@@ -113,10 +106,10 @@ float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatr
 				values.push_back(0.0f);
 
 				// convolution
-				for(int yi=0; yi<kernel.rows; ++yi)
-					for(int xi=0; xi<kernel.cols; ++xi) {
-						int ypos = y + yi - kernel.rows/2;
-						int xpos = x + xi - kernel.cols/2;
+				for(int yi = 0; yi < kernel.rows; ++yi)
+					for(int xi = 0; xi < kernel.cols; ++xi) {
+						int ypos = y + yi - kernel.rows / 2;
+						int xpos = x + xi - kernel.cols / 2;
 
 						// handling of edges - "clip" (or "mirror", commented out for now)
 						if(ypos < roi.y)
@@ -142,7 +135,7 @@ float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatr
 			// non-masked
 			if(mask.at<unsigned char>(y, x) <= 128) {
 				values.push_back(image.at<float>(y, x));
-				row.addValue(y-roi.y, x-roi.x, 1);
+				row.addValue(y - roi.y, x - roi.x, 1);
 
 				++validCtr;
 			}
@@ -157,12 +150,11 @@ float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatr
 	// and the "b" vector
 	assert(values.size() == triplets.rows());
 	b = Eigen::VectorXd(values.size());
-	for(std::size_t i=0; i<values.size(); ++i)
+	for(std::size_t i = 0; i < values.size(); ++i)
 		b[i] = values[i];
 
 	return (float)validCtr / ((float)validCtr + (float)interpolatedCtr);
 }
-
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame, a_inMask;
 dependency_graph::InAttr<unsigned> a_mosaic;
@@ -184,7 +176,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(input.size != mask.size)
 		throw std::runtime_error("Laplacian inpainting - input and mask image size have to match.");
 	if(input.cols % mosaic != 0 || input.rows % mosaic != 0)
-		throw std::runtime_error("Laplacian inpainting - image size is not divisible by mosaic count - invalid mosaic?.");
+		throw std::runtime_error(
+		    "Laplacian inpainting - image size is not divisible by mosaic count - invalid mosaic?.");
 
 	std::vector<std::vector<float>> x(input.channels(), std::vector<float>(input.rows * input.cols, 0.0f));
 
@@ -202,16 +195,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const unsigned mosaic_rows = input.rows / mosaic;
 	const unsigned mosaic_cols = input.cols / mosaic;
 
-	for(unsigned yi=0;yi<mosaic; ++yi) {
-		for(unsigned xi=0;xi<mosaic; ++xi) {
+	for(unsigned yi = 0; yi < mosaic; ++yi) {
+		for(unsigned xi = 0; xi < mosaic; ++xi) {
 			cv::Rect2i roi;
 			roi.y = yi * mosaic_rows;
 			roi.x = xi * mosaic_cols;
 			roi.height = mosaic_rows;
 			roi.width = mosaic_cols;
 
-			for(int channel=0; channel<input.channels(); ++channel) {
-
+			for(int channel = 0; channel < input.channels(); ++channel) {
 				tasks.run([channel, &inputs, &masks, &x, &state, &solve_mutex, roi]() {
 					cv::Mat inTile = inputs[channel];
 
@@ -229,7 +221,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					if(ratio > 0.003) {
 						const char* stage = "solver construction";
 
-						Eigen::SparseLU<Eigen::SparseMatrix<double> /*, Eigen::NaturalOrdering<int>*/ > chol(A);
+						Eigen::SparseLU<Eigen::SparseMatrix<double> /*, Eigen::NaturalOrdering<int>*/> chol(A);
 
 						if(chol.info() == Eigen::Success) {
 							stage = "analyze pattern";
@@ -247,7 +239,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 									tmp = chol.solve(b);
 
 									assert(tmp.size() == roi.height * roi.width);
-									for(int i=0;i<tmp.size();++i) {
+									for(int i = 0; i < tmp.size(); ++i) {
 										const int row = i / roi.width;
 										const int col = i % roi.width;
 										const int index = (row + roi.y) * masks[0].cols + col + roi.x;
@@ -263,11 +255,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 						std::lock_guard<std::mutex> guard(solve_mutex);
 
 						if(chol.info() == Eigen::NumericalIssue)
-							state.addWarning("Decomposition failed - Eigen::NumericalIssue at stage " + std::string(stage));
+							state.addWarning("Decomposition failed - Eigen::NumericalIssue at stage " +
+							                 std::string(stage));
 						else if(chol.info() == Eigen::NoConvergence)
-							state.addWarning("Decomposition failed - Eigen::NoConvergence at stage " + std::string(stage));
+							state.addWarning("Decomposition failed - Eigen::NoConvergence at stage " +
+							                 std::string(stage));
 						else if(chol.info() == Eigen::InvalidInput)
-							state.addWarning("Decomposition failed - Eigen::InvalidInput at stage " + std::string(stage));
+							state.addWarning("Decomposition failed - Eigen::InvalidInput at stage " +
+							                 std::string(stage));
 						else if(chol.info() != Eigen::Success)
 							state.addWarning("Decomposition failed - unknown error at stage " + std::string(stage));
 					}
@@ -279,10 +274,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	tasks.wait();
 
 	cv::Mat result = input.clone();
-	for(int yi=0;yi<result.rows;++yi)
-		for(int xi=0;xi<result.cols;++xi)
-			for(int c=0;c<input.channels();++c)
-				result.ptr<float>(yi, xi)[c] = x[c][yi*result.cols + xi];
+	for(int yi = 0; yi < result.rows; ++yi)
+		for(int xi = 0; xi < result.cols; ++xi)
+			for(int c = 0; c < input.channels(); ++c)
+				result.ptr<float>(yi, xi)[c] = x[c][yi * result.cols + xi];
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
@@ -304,4 +299,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/inpaint_laplacian", init);
 
-}
+}  // namespace

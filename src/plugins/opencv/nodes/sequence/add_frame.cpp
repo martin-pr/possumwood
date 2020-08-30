@@ -1,9 +1,8 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <actions/traits.h>
 #include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <actions/traits.h>
 
 #include "sequence.h"
 
@@ -36,4 +35,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/add_frame", init);
 
-}
+}  // namespace

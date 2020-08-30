@@ -1,7 +1,5 @@
-#include <possumwood_sdk/node_implementation.h>
-
 #include <actions/traits.h>
-
+#include <possumwood_sdk/node_implementation.h>
 #include <tbb/parallel_for.h>
 
 #include "sequence.h"
@@ -24,8 +22,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	possumwood::opencv::Sequence result(std::max(seq1.size(), seq2.size()));
 	tbb::parallel_for(std::size_t(0), result.size(), [&](std::size_t index) {
-		const std::size_t id1 = std::min(index, seq1.size()-1);
-		const std::size_t id2 = std::min(index, seq2.size()-1);
+		const std::size_t id1 = std::min(index, seq1.size() - 1);
+		const std::size_t id2 = std::min(index, seq2.size() - 1);
 
 		cv::subtract(*seq1[id1], *seq2[id2], *result[index]);
 
@@ -50,4 +48,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/subtract", init);
 
-}
+}  // namespace

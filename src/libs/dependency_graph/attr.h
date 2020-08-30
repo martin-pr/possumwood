@@ -1,11 +1,10 @@
 #pragma once
 
-#include <string>
-#include <memory>
-#include <typeinfo>
-#include <functional>
-
 #include <boost/noncopyable.hpp>
+#include <functional>
+#include <memory>
+#include <string>
+#include <typeinfo>
 
 #include "data.h"
 
@@ -20,97 +19,97 @@ class Datablock;
 /// TypedAttr, InAttr and OutAttr don't hold any data, and are intended mainly
 /// as an API layer.
 class Attr {
-	public:
-		enum Category { kInput, kOutput };
+  public:
+	enum Category { kInput, kOutput };
 
-		virtual ~Attr();
+	virtual ~Attr();
 
-		const std::string& name() const;
-		const Category& category() const;
-		const unsigned& offset() const;
-		const std::type_info& type() const;
-		unsigned flags() const;
+	const std::string& name() const;
+	const Category& category() const;
+	const unsigned& offset() const;
+	const std::type_info& type() const;
+	unsigned flags() const;
 
-		bool isValid() const;
+	bool isValid() const;
 
-		bool operator == (const Attr& a) const;
-		bool operator != (const Attr& a) const;
+	bool operator==(const Attr& a) const;
+	bool operator!=(const Attr& a) const;
 
-		/// todo: make private - no need for it in public interface
-		Data createData() const;
+	/// todo: make private - no need for it in public interface
+	Data createData() const;
 
-	protected:
-		Attr(const std::string& name, Category cat, const Data& data, unsigned flags);
+  protected:
+	Attr(const std::string& name, Category cat, const Data& data, unsigned flags);
 
-		void setOffset(unsigned o);
+	void setOffset(unsigned o);
 
-	private:
-		struct AttrData;
-		std::shared_ptr<const AttrData> m_data;
+  private:
+	struct AttrData;
+	std::shared_ptr<const AttrData> m_data;
 
-		friend class Datablock;
-		friend class Node;
-		friend class Metadata;
+	friend class Datablock;
+	friend class Node;
+	friend class Metadata;
 };
 
-template<typename T>
+template <typename T>
 class TypedAttr : public Attr {
-	protected:
-		TypedAttr(const std::string& name, Category cat, T&& defaultValue, unsigned flags);
+  protected:
+	TypedAttr(const std::string& name, Category cat, T&& defaultValue, unsigned flags);
 };
 
-template<>
+template <>
 class TypedAttr<void> : public Attr {
-	public:
-		TypedAttr(const std::string& name, Category cat, unsigned flags);
+  public:
+	TypedAttr(const std::string& name, Category cat, unsigned flags);
 };
 
 /// Input attribute type (constructed by Metadata class)
-template<typename T>
+template <typename T>
 class InAttr final : public TypedAttr<T> {
-	public:
-		InAttr();
+  public:
+	InAttr();
 
-	protected:
-		InAttr(const std::string& name, T&& defaultValue, unsigned flags);
+  protected:
+	InAttr(const std::string& name, T&& defaultValue, unsigned flags);
 
-		friend class Metadata;
+	friend class Metadata;
 };
 
-template<>
+template <>
 class InAttr<void> final : public TypedAttr<void> {
-	public:
-		InAttr();
+  public:
+	InAttr();
 
-	protected:
-		InAttr(const std::string& name, unsigned flags);
+  protected:
+	InAttr(const std::string& name, unsigned flags);
 
-		friend class Metadata;
+	friend class Metadata;
 };
 
 /// Output attribute type (constructed by Metadata class)
-template<typename T>
+template <typename T>
 class OutAttr final : public TypedAttr<T> {
-	public:
-		OutAttr();
+  public:
+	OutAttr();
 
-	protected:
-		OutAttr(const std::string& name, T&& defaultValue, unsigned flags);
+  protected:
+	OutAttr(const std::string& name, T&& defaultValue, unsigned flags);
 
-		friend class Metadata;
+	friend class Metadata;
 };
 
-template<>
+template <>
 class OutAttr<void> final : public TypedAttr<void> {
-	public:
-		OutAttr();
+  public:
+	OutAttr();
 
-	protected:
-		OutAttr(const std::string& name, unsigned flags);
+  protected:
+	OutAttr(const std::string& name, unsigned flags);
 
-		friend class Metadata;
+	friend class Metadata;
 };
 
-std::ostream& operator << (std::ostream& out, const Attr& attr);
+std::ostream& operator<<(std::ostream& out, const Attr& attr);
 
-}
+}  // namespace dependency_graph

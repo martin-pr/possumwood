@@ -1,20 +1,17 @@
 #pragma once
 
-#include <vector>
-
 #include <boost/bimap.hpp>
 #include <boost/signals2.hpp>
-
-#include <QAction>
-#include <QWidget>
-
-#include <possumwood_sdk/drawable.h>
-#include <possumwood_sdk/index.h>
+#include <vector>
 
 #include <dependency_graph/graph.h>
 #include <dependency_graph/selection.h>
-
+#include <possumwood_sdk/drawable.h>
+#include <possumwood_sdk/index.h>
 #include <qt_node_editor/graph_widget.h>
+
+#include <QAction>
+#include <QWidget>
 
 #include "path_widget.h"
 #include "tree_widget.h"

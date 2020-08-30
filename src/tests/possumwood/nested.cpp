@@ -1,12 +1,11 @@
-#include <boost/test/unit_test.hpp>
-
-#include <dependency_graph/graph.h>
-#include <dependency_graph/metadata_register.h>
-#include <dependency_graph/nodes.inl>
-#include <dependency_graph/port.inl>
-
 #include <actions/actions.h>
 #include <actions/app.h>
+#include <dependency_graph/graph.h>
+#include <dependency_graph/metadata_register.h>
+
+#include <boost/test/unit_test.hpp>
+#include <dependency_graph/nodes.inl>
+#include <dependency_graph/port.inl>
 
 #include "common.h"
 
@@ -23,7 +22,7 @@ dependency_graph::NodeBase& findNode(dependency_graph::Network& net, const std::
 	throw;
 }
 
-}
+}  // namespace
 
 BOOST_AUTO_TEST_CASE(nested) {
 	possumwood::AppCore app;
@@ -49,25 +48,33 @@ BOOST_AUTO_TEST_CASE(nested) {
 	// │└── net2 ───┘   └─── net3 ──┘│
 	// └─────────── net1 ────────────┘
 
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), *networkFactoryIterator, "net1", possumwood::NodeData()));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(app.graph(), *networkFactoryIterator, "net1", possumwood::NodeData()));
 	Network& net1 = dynamic_cast<Network&>(findNode(app.graph(), "net1"));
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net1, *networkFactoryIterator, "net2", possumwood::NodeData()));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(net1, *networkFactoryIterator, "net2", possumwood::NodeData()));
 	Network& net2 = dynamic_cast<Network&>(findNode(net1, "net2"));
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net1, *networkFactoryIterator, "net3", possumwood::NodeData()));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(net1, *networkFactoryIterator, "net3", possumwood::NodeData()));
 	Network& net3 = dynamic_cast<Network&>(findNode(net1, "net3"));
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net2, *networkFactoryIterator, "net4", possumwood::NodeData()));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(net2, *networkFactoryIterator, "net4", possumwood::NodeData()));
 	Network& net4 = dynamic_cast<Network&>(findNode(net2, "net4"));
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net3, *networkFactoryIterator, "net5", possumwood::NodeData()));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(net3, *networkFactoryIterator, "net5", possumwood::NodeData()));
 	Network& net5 = dynamic_cast<Network&>(findNode(net3, "net5"));
 
 	{
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net5, addition, "add5", possumwood::NodeData()));
 		NodeBase& net5_add5 = findNode(net5, "add5");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net5, *inputFactoryIterator, "net5_in1", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net5, *inputFactoryIterator, "net5_in1", possumwood::NodeData()));
 		NodeBase& net5_in1 = findNode(net5, "net5_in1");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net5, *inputFactoryIterator, "net5_in2", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net5, *inputFactoryIterator, "net5_in2", possumwood::NodeData()));
 		NodeBase& net5_in2 = findNode(net5, "net5_in2");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net5, *outputFactoryIterator, "net5_out", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net5, *outputFactoryIterator, "net5_out", possumwood::NodeData()));
 		NodeBase& net5_out = findNode(net5, "net5_out");
 
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(net5_in1.port(0), net5_add5.port(0)));
@@ -78,11 +85,14 @@ BOOST_AUTO_TEST_CASE(nested) {
 	{
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net4, addition, "add4", possumwood::NodeData()));
 		NodeBase& add4 = findNode(net4, "add4");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net4, *inputFactoryIterator, "net4_in1", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net4, *inputFactoryIterator, "net4_in1", possumwood::NodeData()));
 		NodeBase& in1 = findNode(net4, "net4_in1");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net4, *inputFactoryIterator, "net4_in2", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net4, *inputFactoryIterator, "net4_in2", possumwood::NodeData()));
 		NodeBase& in2 = findNode(net4, "net4_in2");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net4, *outputFactoryIterator, "net4_out", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net4, *outputFactoryIterator, "net4_out", possumwood::NodeData()));
 		NodeBase& out = findNode(net4, "net4_out");
 
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(in1.port(0), add4.port(0)));
@@ -96,13 +106,17 @@ BOOST_AUTO_TEST_CASE(nested) {
 	{
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net3, multiplication, "mult3", possumwood::NodeData()));
 		NodeBase& net3_mult3 = findNode(net3, "mult3");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net3, *inputFactoryIterator, "net3_in1", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net3, *inputFactoryIterator, "net3_in1", possumwood::NodeData()));
 		NodeBase& net3_in1 = findNode(net3, "net3_in1");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net3, *inputFactoryIterator, "net3_in2", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net3, *inputFactoryIterator, "net3_in2", possumwood::NodeData()));
 		NodeBase& net3_in2 = findNode(net3, "net3_in2");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net3, *inputFactoryIterator, "net3_in3", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net3, *inputFactoryIterator, "net3_in3", possumwood::NodeData()));
 		NodeBase& net3_in3 = findNode(net3, "net3_in3");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net3, *outputFactoryIterator, "net3_out", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net3, *outputFactoryIterator, "net3_out", possumwood::NodeData()));
 		NodeBase& net3_out = findNode(net3, "net3_out");
 
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(net3_in1.port(0), net5.port(0)));
@@ -116,13 +130,17 @@ BOOST_AUTO_TEST_CASE(nested) {
 	{
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net2, multiplication, "mult2", possumwood::NodeData()));
 		NodeBase& mult2 = findNode(net2, "mult2");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net2, *inputFactoryIterator, "net2_in1", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net2, *inputFactoryIterator, "net2_in1", possumwood::NodeData()));
 		NodeBase& net2_in1 = findNode(net2, "net2_in1");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net2, *inputFactoryIterator, "net2_in2", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net2, *inputFactoryIterator, "net2_in2", possumwood::NodeData()));
 		NodeBase& net2_in2 = findNode(net2, "net2_in2");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net2, *inputFactoryIterator, "net2_in3", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net2, *inputFactoryIterator, "net2_in3", possumwood::NodeData()));
 		NodeBase& net2_in3 = findNode(net2, "net2_in3");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net2, *outputFactoryIterator, "net2_out", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net2, *outputFactoryIterator, "net2_out", possumwood::NodeData()));
 		NodeBase& net2_out = findNode(net2, "net2_out");
 
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(net2_in1.port(0), net4.port(0)));
@@ -136,15 +154,20 @@ BOOST_AUTO_TEST_CASE(nested) {
 	{
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net1, addition, "add1", possumwood::NodeData()));
 		NodeBase& add1 = findNode(net1, "add1");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net1, *inputFactoryIterator, "net1_in1", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net1, *inputFactoryIterator, "net1_in1", possumwood::NodeData()));
 		NodeBase& in1 = findNode(net1, "net1_in1");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net1, *inputFactoryIterator, "net1_in2", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net1, *inputFactoryIterator, "net1_in2", possumwood::NodeData()));
 		NodeBase& in2 = findNode(net1, "net1_in2");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net1, *inputFactoryIterator, "net1_in3", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net1, *inputFactoryIterator, "net1_in3", possumwood::NodeData()));
 		NodeBase& in3 = findNode(net1, "net1_in3");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net1, *inputFactoryIterator, "net1_in4", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net1, *inputFactoryIterator, "net1_in4", possumwood::NodeData()));
 		NodeBase& in4 = findNode(net1, "net1_in4");
-		BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(net1, *outputFactoryIterator, "net1_out", possumwood::NodeData()));
+		BOOST_REQUIRE_NO_THROW(
+		    possumwood::actions::createNode(net1, *outputFactoryIterator, "net1_out", possumwood::NodeData()));
 		NodeBase& out = findNode(net1, "net1_out");
 
 		BOOST_REQUIRE_NO_THROW(possumwood::actions::connect(in1.port(0), net2.port(0)));
@@ -163,7 +186,6 @@ BOOST_AUTO_TEST_CASE(nested) {
 	// just after creation, the output should be 0
 	BOOST_CHECK_EQUAL(net1.port(4).get<float>(), 0.0f);
 
-
 	// setting a to 1 should give the value of net4 and net5 output to 1
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(net1.port(0), 1.0f));
 
@@ -181,13 +203,11 @@ BOOST_AUTO_TEST_CASE(nested) {
 
 	BOOST_CHECK_EQUAL(net1.port(4).get<float>(), 0.0f);
 
-
 	// setting A to 1 and C to 1 should lead to 1.0f
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(net1.port(0), 1.0f));
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(net1.port(2), 1.0f));
 
 	BOOST_CHECK_EQUAL(net1.port(4).get<float>(), 1.0f);
-
 
 	// setting all to 1 should lead to 4.0f
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(net1.port(0), 1.0f));
@@ -196,7 +216,6 @@ BOOST_AUTO_TEST_CASE(nested) {
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(net1.port(3), 1.0f));
 
 	BOOST_CHECK_EQUAL(net1.port(4).get<float>(), 4.0f);
-
 
 	// setting the inputs to 1,2,3,4 should lead to 21
 	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(net1.port(0), 1.0f));

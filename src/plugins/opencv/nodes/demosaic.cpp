@@ -1,10 +1,9 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
 
 #include "frame.h"
 
@@ -14,19 +13,13 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
-static std::vector<std::pair<std::string, int>> s_modes {
-	{"BayerBG2BGR", cv::COLOR_BayerBG2BGR},
-	{"BayerGB2BGR", cv::COLOR_BayerGB2BGR},
-	{"BayerRG2BGR", cv::COLOR_BayerRG2BGR},
-	{"BayerGR2BGR", cv::COLOR_BayerGR2BGR},
-	{"BayerBG2BGR_VNG", cv::COLOR_BayerBG2BGR_VNG},
-	{"BayerGB2BGR_VNG", cv::COLOR_BayerGB2BGR_VNG},
-	{"BayerRG2BGR_VNG", cv::COLOR_BayerRG2BGR_VNG},
-	{"BayerGR2BGR_VNG", cv::COLOR_BayerGR2BGR_VNG},
-	{"BayerBG2BGR_EA", cv::COLOR_BayerBG2BGR_EA},
-	{"BayerGB2BGR_EA", cv::COLOR_BayerGB2BGR_EA},
-	{"BayerRG2BGR_EA", cv::COLOR_BayerRG2BGR_EA},
-	{"BayerGR2BGR_EA", cv::COLOR_BayerGR2BGR_EA},
+static std::vector<std::pair<std::string, int>> s_modes{
+    {"BayerBG2BGR", cv::COLOR_BayerBG2BGR},         {"BayerGB2BGR", cv::COLOR_BayerGB2BGR},
+    {"BayerRG2BGR", cv::COLOR_BayerRG2BGR},         {"BayerGR2BGR", cv::COLOR_BayerGR2BGR},
+    {"BayerBG2BGR_VNG", cv::COLOR_BayerBG2BGR_VNG}, {"BayerGB2BGR_VNG", cv::COLOR_BayerGB2BGR_VNG},
+    {"BayerRG2BGR_VNG", cv::COLOR_BayerRG2BGR_VNG}, {"BayerGR2BGR_VNG", cv::COLOR_BayerGR2BGR_VNG},
+    {"BayerBG2BGR_EA", cv::COLOR_BayerBG2BGR_EA},   {"BayerGB2BGR_EA", cv::COLOR_BayerGB2BGR_EA},
+    {"BayerRG2BGR_EA", cv::COLOR_BayerRG2BGR_EA},   {"BayerGR2BGR_EA", cv::COLOR_BayerGR2BGR_EA},
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -52,4 +45,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/demosaic", init);
 
-}
+}  // namespace

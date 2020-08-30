@@ -1,10 +1,11 @@
 #pragma once
 
-#include <vector>
-
 #include <GL/glew.h>
+
 #include <GL/gl.h>
 #include <GL/glu.h>
+
+#include <vector>
 
 /// WHY?
 #ifndef GLAPI
@@ -19,17 +20,17 @@ class Stack;
 class GLFWwindow;
 
 class RenderContext {
-	public:
-		RenderContext(const possumwood::ViewportState& viewport);
-		~RenderContext();
+  public:
+	RenderContext(const possumwood::ViewportState& viewport);
+	~RenderContext();
 
-		void run(Stack& stack);
+	void run(Stack& stack);
 
-		Action render(const possumwood::ViewportState& viewport, std::function<void(std::vector<GLubyte>&)> callback);
+	Action render(const possumwood::ViewportState& viewport, std::function<void(std::vector<GLubyte>&)> callback);
 
-	private:
-		RenderContext(const RenderContext&) = delete;
-		RenderContext& operator = (const RenderContext&) = delete;
+  private:
+	RenderContext(const RenderContext&) = delete;
+	RenderContext& operator=(const RenderContext&) = delete;
 
-		GLFWwindow* m_window;
+	GLFWwindow* m_window;
 };

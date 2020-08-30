@@ -1,9 +1,8 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <actions/traits.h>
 #include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <actions/traits.h>
 
 #include "sequence.h"
 
@@ -18,18 +17,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// open the capture device
 	cv::VideoCapture cap(filename.filename().string());
-	// seek to the requested frame
-	#if CV_MAJOR_VERSION > 2
-		cap.set(cv::CAP_PROP_POS_FRAMES, data.get(a_start));
-	#else
-		cap.set(CV_CAP_PROP_POS_FRAMES, data.get(a_start));
-	#endif
+// seek to the requested frame
+#if CV_MAJOR_VERSION > 2
+	cap.set(cv::CAP_PROP_POS_FRAMES, data.get(a_start));
+#else
+	cap.set(CV_CAP_PROP_POS_FRAMES, data.get(a_start));
+#endif
 
 	// and feed the read frames into the Sequence datastructure
 	possumwood::opencv::Sequence result;
 
-	for(std::size_t f=0; f<data.get(a_count); ++f)
-	{
+	for(std::size_t f = 0; f < data.get(a_count); ++f) {
 		cv::Mat frame;
 		possumwood::opencv::Sequence::Item::Meta meta;
 
@@ -47,9 +45,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-		"MP4 files (*.mp4)",
-	}));
+	meta.addAttribute(a_filename, "filename",
+	                  possumwood::Filename({
+	                      "MP4 files (*.mp4)",
+	                  }));
 	meta.addAttribute(a_start, "frame_range/start");
 	meta.addAttribute(a_count, "frame_range/count");
 	meta.addAttribute(a_sequence, "sequence");
@@ -63,4 +62,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/capture/video_sequence", init);
 
-}
+}  // namespace

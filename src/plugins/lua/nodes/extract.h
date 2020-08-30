@@ -5,9 +5,10 @@
 #include "lua/datatypes/context.h"
 #include "lua/datatypes/variable.inl"
 
-namespace possumwood { namespace lua {
+namespace possumwood {
+namespace lua {
 
-template<typename T, typename HOLDER = T>
+template <typename T, typename HOLDER = T>
 struct Extract {
 	struct Params {
 		dependency_graph::InAttr<std::string> a_name;
@@ -45,10 +46,9 @@ struct Extract {
 		meta.addInfluence(s_params.a_name, s_params.a_out);
 		meta.addInfluence(s_params.a_state, s_params.a_out);
 
-		meta.setCompute([&](dependency_graph::Values& data) {
-			return compute(data, s_params);
-		});
+		meta.setCompute([&](dependency_graph::Values& data) { return compute(data, s_params); });
 	}
 };
 
-} }
+}  // namespace lua
+}  // namespace possumwood

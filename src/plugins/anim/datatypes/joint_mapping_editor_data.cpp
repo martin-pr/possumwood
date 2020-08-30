@@ -39,15 +39,13 @@ JointMappingEditorData::const_iterator JointMappingEditorData::end() const {
 }
 
 JointMappingEditorData::const_iterator JointMappingEditorData::findSource(int index) const {
-	return std::find_if(m_mapping.begin(), m_mapping.end(), [index](const std::pair<int, int>& p) {
-		return p.first == index;
-	});
+	return std::find_if(m_mapping.begin(), m_mapping.end(),
+	                    [index](const std::pair<int, int>& p) { return p.first == index; });
 }
 
 JointMappingEditorData::const_iterator JointMappingEditorData::findTarget(int index) const {
-	return std::find_if(m_mapping.begin(), m_mapping.end(), [index](const std::pair<int, int>& p) {
-		return p.second == index;
-	});
+	return std::find_if(m_mapping.begin(), m_mapping.end(),
+	                    [index](const std::pair<int, int>& p) { return p.second == index; });
 }
 
 JointMappingEditorData::iterator JointMappingEditorData::begin() {
@@ -75,21 +73,19 @@ std::size_t JointMappingEditorData::size() const {
 }
 
 bool JointMappingEditorData::operator==(const JointMappingEditorData& d) const {
-	return m_targetSkeleton == d.m_targetSkeleton && m_sourceSkeleton == d.m_sourceSkeleton &&
-	       m_mapping == d.m_mapping;
+	return m_targetSkeleton == d.m_targetSkeleton && m_sourceSkeleton == d.m_sourceSkeleton && m_mapping == d.m_mapping;
 }
 
 bool JointMappingEditorData::operator!=(const JointMappingEditorData& d) const {
-	return m_targetSkeleton != d.m_targetSkeleton || m_sourceSkeleton != d.m_sourceSkeleton ||
-	       m_mapping != d.m_mapping;
+	return m_targetSkeleton != d.m_targetSkeleton || m_sourceSkeleton != d.m_sourceSkeleton || m_mapping != d.m_mapping;
 }
 
-std::ostream& operator << (std::ostream& out, const JointMappingEditorData& d) {
+std::ostream& operator<<(std::ostream& out, const JointMappingEditorData& d) {
 	out << "(joint mapping editor data)";
 	return out;
 }
 
-}
+}  // namespace anim
 
 namespace {
 
@@ -110,7 +106,7 @@ void fromJson(const ::possumwood::io::json& json, anim::JointMappingEditorData& 
 		value.add(i[0].get<int>(), i[1].get<int>());
 }
 
-}
+}  // namespace
 
 namespace possumwood {
 

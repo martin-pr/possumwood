@@ -6,19 +6,19 @@
 #include <QToolButton>
 
 class string_ui : public possumwood::properties::property<std::string, string_ui> {
-	public:
-		string_ui();
-		virtual ~string_ui();
+  public:
+	string_ui();
+	virtual ~string_ui();
 
-		virtual void get(std::string& value) const override;
-		virtual void set(const std::string& value) override;
+	virtual void get(std::string& value) const override;
+	virtual void set(const std::string& value) override;
 
-		virtual QWidget* widget() override;
+	virtual QWidget* widget() override;
 
-	protected:
-		virtual void onFlagsChanged(unsigned flags) override;
+  protected:
+	virtual void onFlagsChanged(unsigned flags) override;
 
-	private:
-		QLineEdit* m_lineEdit;
-		QMetaObject::Connection m_lineEditConnection;
+  private:
+	QLineEdit* m_lineEdit;
+	QMetaObject::Connection m_lineEditConnection;
 };

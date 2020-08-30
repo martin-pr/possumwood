@@ -1,12 +1,11 @@
 #pragma once
 
 #include <OpenEXR/ImathVec.h>
-
 #include <actions/traits.h>
 
 namespace possumwood {
 
-template<>
+template <>
 struct Traits<Imath::Vec2<float>> {
 	static IO<Imath::Vec2<float>> io;
 
@@ -15,7 +14,7 @@ struct Traits<Imath::Vec2<float>> {
 	}
 };
 
-template<>
+template <>
 struct Traits<Imath::Vec2<unsigned>> {
 	static IO<Imath::Vec2<unsigned>> io;
 
@@ -24,7 +23,7 @@ struct Traits<Imath::Vec2<unsigned>> {
 	}
 };
 
-template<>
+template <>
 struct Traits<Imath::Vec2<int>> {
 	static IO<Imath::Vec2<int>> io;
 
@@ -33,4 +32,4 @@ struct Traits<Imath::Vec2<int>> {
 	}
 };
 
-}
+}  // namespace possumwood

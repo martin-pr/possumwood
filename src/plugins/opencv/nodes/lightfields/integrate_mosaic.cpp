@@ -1,17 +1,14 @@
+#include <actions/traits.h>
+#include <lightfields/samples.h>
 #include <possumwood_sdk/node_implementation.h>
-
 #include <tbb/parallel_for.h>
 
 #include <opencv2/opencv.hpp>
 
-#include <actions/traits.h>
-
-#include <lightfields/samples.h>
-
-#include "maths/io/vec2.h"
 #include "frame.h"
-#include "tools.h"
 #include "lightfields.h"
+#include "maths/io/vec2.h"
+#include "tools.h"
 
 namespace {
 
@@ -41,7 +38,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const lightfields::Samples samples = data.get(a_samples);
 
 	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
-		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
+		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " +
+		                         possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
 
 	auto applyFn = &add1channel;
 	if((*data.get(a_in)).type() == CV_32FC3)
@@ -55,8 +53,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
 
-	cv::Mat mat = cv::Mat::zeros(height*elements, width*elements, CV_32FC3);
-	cv::Mat norm = cv::Mat::zeros(height*elements, width*elements, CV_16UC3);
+	cv::Mat mat = cv::Mat::zeros(height * elements, width * elements, CV_32FC3);
+	cv::Mat norm = cv::Mat::zeros(height * elements, width * elements, CV_16UC3);
 
 	tbb::parallel_for(0, input.rows, [&](int y) {
 		auto begin = samples.begin(y);
@@ -65,13 +63,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(auto it = begin; it != end; ++it) {
 			const lightfields::Samples::Sample& sample = *it;
 
-			const double uv_magnitude_2 = sample.uv[0]*sample.uv[0] + sample.uv[1]*sample.uv[1];
+			const double uv_magnitude_2 = sample.uv[0] * sample.uv[0] + sample.uv[1] * sample.uv[1];
 			if(uv_magnitude_2 < 1.0) {
 				float target_x = sample.xy[0] / (float)samples.sensorSize()[0] * (float)width;
 				float target_y = sample.xy[1] / (float)samples.sensorSize()[1] * (float)height;
 
-				target_x = std::min(target_x, (float)(width-1));
-				target_y = std::min(target_y, (float)(height-1));
+				target_x = std::min(target_x, (float)(width - 1));
+				target_y = std::min(target_y, (float)(height - 1));
 
 				target_x = std::max(target_x, 0.0f);
 				target_y = std::max(target_y, 0.0f);
@@ -79,7 +77,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				target_x += floor((sample.uv[0] + 1.0) / 2.0 * (float)elements) * (float)width;
 				target_y += floor((sample.uv[1] + 1.0) / 2.0 * (float)elements) * (float)height;
 
-				const int colorId = (sample.source[0]%2) + (y%2); // hardcoded bayer pattern, for now
+				const int colorId = (sample.source[0] % 2) + (y % 2);  // hardcoded bayer pattern, for now
 
 				float* color = mat.ptr<float>(floor(target_y), floor(target_x));
 				uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
@@ -91,10 +89,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	});
 
 	tbb::parallel_for(0, mat.rows, [&](int y) {
-		for(int x=0;x<mat.cols;++x)
-			for(int a=0;a<3;++a)
-				if(norm.ptr<uint16_t>(y,x)[a] > 0.0f)
-					mat.ptr<float>(y,x)[a] /= (float)norm.ptr<uint16_t>(y,x)[a];
+		for(int x = 0; x < mat.cols; ++x)
+			for(int a = 0; a < 3; ++a)
+				if(norm.ptr<uint16_t>(y, x)[a] > 0.0f)
+					mat.ptr<float>(y, x)[a] /= (float)norm.ptr<uint16_t>(y, x)[a];
 	});
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
@@ -124,9 +122,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/lightfields/integrate_mosaic", init);
 
-}
-
-
+}  // namespace

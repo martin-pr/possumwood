@@ -4,7 +4,8 @@
 
 #include "samples.h"
 
-namespace lightfields { namespace nearest {
+namespace lightfields {
+namespace nearest {
 
 namespace {
 
@@ -24,9 +25,10 @@ void add3channel(float* color, uint16_t* n, int colorIndex, const float* value) 
 	++n[2];
 }
 
-}
+}  // namespace
 
-IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& input, float offset) {
+IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size,
+                            const cv::Mat& input, float offset) {
 	if(input.type() != CV_32FC3 && input.type() != CV_32FC1)
 		throw std::runtime_error("Nearest neighbour integration - only 1 or 3 channel float data allowed on input.");
 
@@ -74,16 +76,17 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	});
 
 	tbb::parallel_for(0, average.rows, [&](int y) {
-		for(int x=0;x<average.cols;++x)
-			for(int a=0;a<3;++a)
-				if(norm.ptr<uint16_t>(y,x)[a] > 0)
-					average.ptr<float>(y,x)[a] /= (float)norm.ptr<uint16_t>(y,x)[a];
+		for(int x = 0; x < average.cols; ++x)
+			for(int a = 0; a < 3; ++a)
+				if(norm.ptr<uint16_t>(y, x)[a] > 0)
+					average.ptr<float>(y, x)[a] /= (float)norm.ptr<uint16_t>(y, x)[a];
 	});
 
-	return IntegrationResult { average, norm };
+	return IntegrationResult{average, norm};
 }
 
-cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input, const IntegrationResult& integration, float offset) {
+cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input, const IntegrationResult& integration,
+                       float offset) {
 	if(input.type() != CV_32FC1 && input.type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input.");
 
@@ -114,13 +117,13 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input
 				const float* ave = integration.average.ptr<float>(target_y, target_x);
 
 				if(input.channels() == 3)
-					for(int c=0; c<3; ++c) {
-						const float tmp = value[c] - ave[c]; // because pow() is expensive?!
-						*target += tmp*tmp;
+					for(int c = 0; c < 3; ++c) {
+						const float tmp = value[c] - ave[c];  // because pow() is expensive?!
+						*target += tmp * tmp;
 					}
 				else {
 					const float tmp = (*value - ave[it->color]);
-					*target += tmp*tmp;
+					*target += tmp * tmp;
 				}
 			}
 		}
@@ -128,12 +131,12 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input
 
 	// normalization
 	tbb::parallel_for(0u, height, [&](unsigned y) {
-		for(unsigned x=0; x<width; ++x) {
+		for(unsigned x = 0; x < width; ++x) {
 			float* target = corresp.ptr<float>(y, x);
 			const uint16_t* n = integration.samples.ptr<uint16_t>(y, x);
 
 			uint16_t norm = 0;
-			for(int c=0; c<input.channels(); ++c)
+			for(int c = 0; c < input.channels(); ++c)
 				norm += n[c];
 
 			if(norm > 0)
@@ -146,4 +149,5 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input
 	return corresp;
 }
 
-} }
+}  // namespace nearest
+}  // namespace lightfields

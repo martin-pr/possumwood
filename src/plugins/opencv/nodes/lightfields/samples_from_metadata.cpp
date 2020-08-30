@@ -1,14 +1,13 @@
+#include <actions/traits.h>
+#include <lightfields/metadata.h>
+#include <lightfields/pattern.h>
+#include <lightfields/samples.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
 
-#include <actions/traits.h>
-
-#include <lightfields/metadata.h>
-#include <lightfields/pattern.h>
-#include <lightfields/samples.h>
-#include "tools.h"
 #include "lightfields.h"
+#include "tools.h"
 
 namespace {
 
@@ -43,7 +42,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/lightfields/samples_from_metadata", init);
 
-}
+}  // namespace

@@ -43,4 +43,4 @@ Polygons::iterator Polygons::end() {
 	return m_polygons.end();
 }
 
-}
+}  // namespace anim

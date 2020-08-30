@@ -1,8 +1,7 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <actions/traits.h>
 
 #include "frame.h"
 #include "tools.h"
@@ -21,15 +20,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	if(in.rows > 0 && in.cols > 0) {
 		if(in.type() == CV_8UC1 || in.type() == CV_32FC1)
-			cv::fastNlMeansDenoising(*data.get(a_inFrame), mat, data.get(a_h), data.get(a_searchWindow), data.get(a_blockSize));
+			cv::fastNlMeansDenoising(*data.get(a_inFrame), mat, data.get(a_h), data.get(a_searchWindow),
+			                         data.get(a_blockSize));
 
 		else if(in.type() == CV_8UC3 || in.type() == CV_32FC3)
-			cv::fastNlMeansDenoisingColored(*data.get(a_inFrame), mat, data.get(a_h), data.get(a_photoRender), data.get(a_searchWindow), data.get(a_blockSize));
+			cv::fastNlMeansDenoisingColored(*data.get(a_inFrame), mat, data.get(a_h), data.get(a_photoRender),
+			                                data.get(a_searchWindow), data.get(a_blockSize));
 
 		// else if(mat.type() == CV_32FC3)
 
 		else
-			throw std::runtime_error("Unsupported data type " + possumwood::opencv::type2str(mat.type()) + " - needs extending to support this type!");
+			throw std::runtime_error("Unsupported data type " + possumwood::opencv::type2str(mat.type()) +
+			                         " - needs extending to support this type!");
 	}
 
 	data.set(a_outFrame, possumwood::opencv::Frame(mat));
@@ -56,4 +58,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/filter/denoise", init);
 
-}
+}  // namespace

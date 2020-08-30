@@ -1,15 +1,13 @@
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
+#include <tbb/parallel_for.h>
 
 #include <opencv2/opencv.hpp>
 
-#include <tbb/parallel_for.h>
-
-#include <actions/traits.h>
-#include <possumwood_sdk/datatypes/enum.h>
-
+#include "laplacian.h"
 #include "sequence.h"
 #include "tools.h"
-#include "laplacian.h"
 
 namespace {
 
@@ -28,7 +26,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if((in.type() != CV_32FC1) && (in.type() != CV_32FC3))
 			throw std::runtime_error("Only works with CV_32FC1 and CV_32FC3");
 
-		const cv::Mat out = possumwood::opencv::laplacian(in, possumwood::opencv::LaplacianKernel(data.get(a_kernel).intValue()));
+		const cv::Mat out =
+		    possumwood::opencv::laplacian(in, possumwood::opencv::LaplacianKernel(data.get(a_kernel).intValue()));
 
 		std::vector<cv::Mat> tmp(out.channels());
 		cv::split(out, tmp);
@@ -36,7 +35,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(auto& m : tmp)
 			m = cv::abs(m);
 
-		for(std::size_t a=1; a<tmp.size(); ++a)
+		for(std::size_t a = 1; a < tmp.size(); ++a)
 			cv::add(tmp[0], tmp[a], tmp[0]);
 
 		*outSeq[i] = tmp[0];
@@ -49,7 +48,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_seq", possumwood::opencv::Sequence());
-	meta.addAttribute(a_kernel, "kernel", possumwood::Enum(possumwood::opencv::laplacianKernels().begin(), possumwood::opencv::laplacianKernels().end()));
+	meta.addAttribute(
+	    a_kernel, "kernel",
+	    possumwood::Enum(possumwood::opencv::laplacianKernels().begin(), possumwood::opencv::laplacianKernels().end()));
 	meta.addAttribute(a_out, "out_seq", possumwood::opencv::Sequence());
 
 	meta.addInfluence(a_in, a_out);
@@ -60,4 +61,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/lightfields/defocus_metric", init);
 
-}
+}  // namespace

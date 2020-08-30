@@ -4,8 +4,7 @@
 
 namespace anim {
 
-SkinnedVertices::Vertex::Vertex(const Imath::V3f& pos, const Skinning& skin)
-    : m_pos(pos), m_skinning(skin) {
+SkinnedVertices::Vertex::Vertex(const Imath::V3f& pos, const Skinning& skin) : m_pos(pos), m_skinning(skin) {
 }
 
 const Imath::V3f& SkinnedVertices::Vertex::pos() const {
@@ -24,8 +23,7 @@ void SkinnedVertices::Vertex::setSkinning(const Skinning& skin) {
 	m_skinning = skin;
 }
 
-SkinnedVertices::Vertex& SkinnedVertices::add(const Imath::V3f& pos,
-                                              const Skinning& skin) {
+SkinnedVertices::Vertex& SkinnedVertices::add(const Imath::V3f& pos, const Skinning& skin) {
 	m_vertices.push_back(Vertex(pos, skin));
 
 	return m_vertices.back();
@@ -59,4 +57,4 @@ SkinnedVertices::iterator SkinnedVertices::end() {
 	return m_vertices.end();
 }
 
-}
+}  // namespace anim

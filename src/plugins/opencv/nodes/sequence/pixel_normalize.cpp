@@ -1,9 +1,7 @@
 #include <possumwood_sdk/node_implementation.h>
-
 #include <tbb/parallel_for.h>
 
 #include "possumwood_sdk/datatypes/enum.h"
-
 #include "sequence.h"
 
 namespace {
@@ -42,10 +40,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		else if(data.get(a_mode).value() == "Minimum-Sum")
 			mode = kMinSum;
 
-
-
 		tbb::parallel_for(0, rows, [&](int r) {
-			for(int c=0; c<cols; ++c) {
+			for(int c = 0; c < cols; ++c) {
 				auto it = out.begin();
 
 				float max = (*it)->at<float>(r, c);
@@ -119,4 +115,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/pixel_normalize", init);
 
-}
+}  // namespace

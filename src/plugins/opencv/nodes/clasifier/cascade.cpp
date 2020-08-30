@@ -1,11 +1,9 @@
-#include <boost/filesystem.hpp>
-
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/datatypes/filename.h>
-
-#include <opencv2/opencv.hpp>
-
 #include <actions/traits.h>
+#include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
+
+#include <boost/filesystem.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "frame.h"
 #include "rectangles.h"
@@ -49,4 +47,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/clasifier/cascade", init);
 
-}
+}  // namespace

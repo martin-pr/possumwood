@@ -1,26 +1,25 @@
 #include "interval.h"
 
-#include <boost/algorithm/string/join.hpp>
-#include <boost/algorithm/string/predicate.hpp>
+#include <possumwood_sdk/app.h>
 
-#include <QHBoxLayout>
-#include <QFormLayout>
 #include <QAction>
 #include <QApplication>
-#include <QMainWindow>
-#include <QDialogButtonBox>
-#include <QStyle>
-#include <QDoubleSpinBox>
-#include <QComboBox>
 #include <QCheckBox>
-
-#include <possumwood_sdk/app.h>
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QFormLayout>
+#include <QHBoxLayout>
+#include <QMainWindow>
+#include <QStyle>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 interval_ui::interval_ui() {
 	m_widget = new QWidget(NULL);
 
 	QHBoxLayout* layout = new QHBoxLayout(m_widget);
-	layout->setContentsMargins(0,0,0,0);
+	layout->setContentsMargins(0, 0, 0, 0);
 
 	m_slider = new QSlider();
 	m_slider->setMinimum(0);
@@ -28,59 +27,50 @@ interval_ui::interval_ui() {
 	m_slider->setOrientation(Qt::Horizontal);
 	layout->addWidget(m_slider, 1);
 
-	m_sliderConnection = QObject::connect(
-		m_slider,
-		&QSlider::valueChanged,
-		[this](int value) -> void {
-			float norm_val = (float)value / 1000.0f;
-			assert(norm_val >= 0.0f && norm_val <= 1.0f);
+	m_sliderConnection = QObject::connect(m_slider, &QSlider::valueChanged, [this](int value) -> void {
+		float norm_val = (float)value / 1000.0f;
+		assert(norm_val >= 0.0f && norm_val <= 1.0f);
 
-			if(m_value.type() == possumwood::maths::Interval::kLinear) {
-				m_value = m_value.min() + (m_value.max() - m_value.min()) * norm_val;
-			}
-			else if(m_value.type() == possumwood::maths::Interval::kLog) {
-				assert(m_value.min() > 0.0f);
-
-				const float min = log10(m_value.min());
-				const float max = log10(m_value.max());
-
-				norm_val = min + norm_val * (max - min);
-				norm_val = powf(10.0f, norm_val);
-
-				m_value = norm_val;
-			}
-			else
-				assert(false);
-
-
-			callValueChangedCallbacks();
+		if(m_value.type() == possumwood::maths::Interval::kLinear) {
+			m_value = m_value.min() + (m_value.max() - m_value.min()) * norm_val;
 		}
-	);
+		else if(m_value.type() == possumwood::maths::Interval::kLog) {
+			assert(m_value.min() > 0.0f);
+
+			const float min = log10(m_value.min());
+			const float max = log10(m_value.max());
+
+			norm_val = min + norm_val * (max - min);
+			norm_val = powf(10.0f, norm_val);
+
+			m_value = norm_val;
+		}
+		else
+			assert(false);
+
+		callValueChangedCallbacks();
+	});
 
 	m_detailsButton = new QToolButton();
 	m_detailsButton->setIcon(QIcon::fromTheme("preferences-other"));
 	layout->addWidget(m_detailsButton);
 
-	m_buttonConnection = QObject::connect(
-		m_detailsButton,
-		&QToolButton::released,
-		[this]() -> void {
-			possumwood::maths::Interval current;
-			get(current);
+	m_buttonConnection = QObject::connect(m_detailsButton, &QToolButton::released, [this]() -> void {
+		possumwood::maths::Interval current;
+		get(current);
 
-			IntervalDialog* dialog = new IntervalDialog(m_widget, current);
-			if(dialog->exec() == QDialog::Accepted) {
-				// apply the settings
-				dialog->updateInterval(current);
+		IntervalDialog* dialog = new IntervalDialog(m_widget, current);
+		if(dialog->exec() == QDialog::Accepted) {
+			// apply the settings
+			dialog->updateInterval(current);
 
-				set(current);
+			set(current);
 
-				callValueChangedCallbacks();
-			}
-
-			dialog->deleteLater();
+			callValueChangedCallbacks();
 		}
-	);
+
+		dialog->deleteLater();
+	});
 }
 
 interval_ui::~interval_ui() {
@@ -149,7 +139,6 @@ IntervalDialog::IntervalDialog(QWidget* parent, const possumwood::maths::Interva
 
 	connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
 	connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
 
 	QFormLayout* layout = new QFormLayout(frame);
 

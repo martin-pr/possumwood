@@ -1,15 +1,13 @@
 #include "searchable_menu.h"
 
+#include <QApplication>
+#include <QKeyEvent>
+#include <QLineEdit>
+#include <QWidgetAction>
 #include <cassert>
 #include <iostream>
 
-#include <QKeyEvent>
-#include <QApplication>
-#include <QWidgetAction>
-#include <QLineEdit>
-
 SearchableMenu::SearchableMenu(const QString& name, QWidget* parent) : QMenu(name, parent), m_menu(NULL) {
-
 }
 
 void SearchableMenu::init(QMenu* menu, const QString& path) {
@@ -35,7 +33,6 @@ void SearchableMenu::init(QMenu* menu, const QString& path) {
 
 			QAction* searchAction = new QAction(name, m_menu);
 			connect(searchAction, &QAction::triggered, [this, act]() {
-
 				// triggering the original action
 				act->trigger();
 
@@ -54,45 +51,42 @@ void SearchableMenu::init(QMenu* menu, const QString& path) {
 namespace {
 
 class KeyEventFilter : public QObject {
-	public:
-		KeyEventFilter(QWidget* target) : QObject(target), m_target(target) {
-		}
+  public:
+	KeyEventFilter(QWidget* target) : QObject(target), m_target(target) {
+	}
 
-	protected:
+  protected:
+	bool eventFilter(QObject* obj, QEvent* event) {
+		bool processed = false;
 
-		bool eventFilter(QObject *obj, QEvent *event) {
-			bool processed = false;
+		// keystroke redirection
+		if(event->type() == QEvent::KeyPress) {
+			QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 
-			// keystroke redirection
-			if(event->type() == QEvent::KeyPress) {
+			if(
+			    // moving in the child menu
+			    keyEvent->key() != Qt::Key_Down && keyEvent->key() != Qt::Key_Up &&
+			    // activation of selected item
+			    keyEvent->key() != Qt::Key_Enter && keyEvent->key() != Qt::Key_Return &&
+			    // first close this menu, then parent
+			    keyEvent->key() != Qt::Key_Escape) {
+				QApplication::sendEvent(m_target, keyEvent);
 
-				QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-
-				if(
-					// moving in the child menu
-					keyEvent->key() != Qt::Key_Down && keyEvent->key() != Qt::Key_Up &&
-					// activation of selected item
-					keyEvent->key() != Qt::Key_Enter && keyEvent->key() != Qt::Key_Return &&
-					// first close this menu, then parent
-					keyEvent->key() != Qt::Key_Escape) {
-
-					QApplication::sendEvent(m_target, keyEvent);
-
-					processed = true;
-				}
+				processed = true;
 			}
-
-			// standard event processing
-			if(!processed)
-				return QObject::eventFilter(obj, event);
-			return true;
 		}
 
-	private:
-		QWidget* m_target;
+		// standard event processing
+		if(!processed)
+			return QObject::eventFilter(obj, event);
+		return true;
+	}
+
+  private:
+	QWidget* m_target;
 };
 
-}
+}  // namespace
 
 void SearchableMenu::showEvent(QShowEvent* event) {
 	if(actions().length() > 0) {
@@ -169,7 +163,7 @@ bool fuzzyMatch(const QString& fuzzy, const QString& text) {
 	return false;
 }
 
-}
+}  // namespace
 
 void SearchableMenu::onTextEdited(const QString& text) {
 	if(text.isEmpty())

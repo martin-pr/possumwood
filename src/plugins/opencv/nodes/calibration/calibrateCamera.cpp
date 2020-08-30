@@ -2,9 +2,9 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "frame.h"
 #include "calibration_points.h"
 #include "camera_intrinsics.h"
+#include "frame.h"
 
 namespace {
 
@@ -18,7 +18,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::vector<cv::Mat> rvecs, tvecs;
 	cv::Mat distCoeffs;
 
-	cv::calibrateCamera(calibrationPoints.objectPoints(), calibrationPoints.cameraPoints(), calibrationPoints.imageSize(), cameraMatrix, distCoeffs, rvecs, tvecs);
+	cv::calibrateCamera(calibrationPoints.objectPoints(), calibrationPoints.cameraPoints(),
+	                    calibrationPoints.imageSize(), cameraMatrix, distCoeffs, rvecs, tvecs);
 
 	possumwood::opencv::CameraIntrinsics intrinsics(cameraMatrix, distCoeffs, calibrationPoints.imageSize());
 	data.set(a_camIntrinsics, intrinsics);
@@ -37,4 +38,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/calibration/calibrate_camera", init);
 
-}
+}  // namespace

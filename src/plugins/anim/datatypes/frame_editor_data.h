@@ -26,18 +26,18 @@ class FrameEditorData {
 
   protected:
   private:
-  	// this should be only a list of bones!
+	// this should be only a list of bones!
 	Skeleton m_skeleton;
 	std::map<std::size_t, Transform> m_transforms;
 };
 
-std::ostream& operator << (std::ostream& out, const FrameEditorData& d);
+std::ostream& operator<<(std::ostream& out, const FrameEditorData& d);
 
-}
+}  // namespace anim
 
 namespace possumwood {
 
-template<>
+template <>
 struct Traits<anim::FrameEditorData> {
 	static IO<anim::FrameEditorData> io;
 
@@ -46,4 +46,4 @@ struct Traits<anim::FrameEditorData> {
 	}
 };
 
-}
+}  // namespace possumwood

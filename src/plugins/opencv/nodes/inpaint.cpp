@@ -1,11 +1,9 @@
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
-
-#include <opencv2/opencv.hpp>
-
 #include <tbb/task_group.h>
 
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
+#include <opencv2/opencv.hpp>
 
 #include "frame.h"
 
@@ -51,13 +49,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(mask.channels() == 1) {
 		result = cv::Mat(input.rows, input.cols, input.type());
 
-		for(unsigned a=0;a<mosaic; ++a) {
-			for(unsigned b=0;b<mosaic; ++b) {
+		for(unsigned a = 0; a < mosaic; ++a) {
+			for(unsigned b = 0; b < mosaic; ++b) {
 				cv::Rect2i roi;
 				roi.y = (a * input.rows) / mosaic;
 				roi.x = (b * input.cols) / mosaic;
-				roi.height = ((a+1) * input.rows) / mosaic - roi.y;
-				roi.width = ((b+1) * input.cols) / mosaic - roi.x;
+				roi.height = ((a + 1) * input.rows) / mosaic - roi.y;
+				roi.width = ((b + 1) * input.cols) / mosaic - roi.x;
 
 				tasks.run([&input, &mask, &result, roi, &radius, &method]() {
 					cv::Mat inTile(input, roi);
@@ -80,21 +78,22 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		cv::split(input, inputs);
 		cv::split(mask, masks);
 
-		// initialise output as separate images (can't use resize because cv::Mat copy shares data and is not const correct)
+		// initialise output as separate images (can't use resize because cv::Mat copy shares data and is not const
+		// correct)
 		std::vector<cv::Mat> results;
-		for(std::size_t i=0;i<inputs.size();++i)
+		for(std::size_t i = 0; i < inputs.size(); ++i)
 			results.push_back(cv::Mat(input.rows, input.cols, input.depth()));
 
 		// spin a task per tile and per channel
-		for(unsigned a=0;a<mosaic; ++a) {
-			for(unsigned b=0;b<mosaic; ++b) {
+		for(unsigned a = 0; a < mosaic; ++a) {
+			for(unsigned b = 0; b < mosaic; ++b) {
 				cv::Rect2i roi;
 				roi.y = (a * input.rows) / mosaic;
 				roi.x = (b * input.cols) / mosaic;
-				roi.height = ((a+1) * input.rows) / mosaic - roi.y;
-				roi.width = ((b+1) * input.cols) / mosaic - roi.x;
+				roi.height = ((a + 1) * input.rows) / mosaic - roi.y;
+				roi.width = ((b + 1) * input.cols) / mosaic - roi.x;
 
-				for(std::size_t c=0;c<inputs.size();++c) {
+				for(std::size_t c = 0; c < inputs.size(); ++c) {
 					tasks.run([&inputs, &masks, &results, roi, &radius, &method, c]() {
 						cv::Mat inTile(inputs[c], roi);
 
@@ -142,4 +141,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/inpaint", init);
 
-}
+}  // namespace

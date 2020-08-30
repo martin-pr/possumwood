@@ -1,7 +1,7 @@
 #include "connections.h"
 
-#include "port.h"
 #include "graph.h"
+#include "port.h"
 
 namespace dependency_graph {
 
@@ -117,7 +117,8 @@ bool Connections::empty() const {
 }
 
 /// dereferencing function to convert internal connection representation to a pair of port references
-const std::pair<const Port&, const Port&> Connections::convert(const Connections::connections_container::left_value_type& val) const {
+const std::pair<const Port&, const Port&> Connections::convert(
+    const Connections::connections_container::left_value_type& val) const {
 	const Port& left = getPort(val.first);
 	const Port& right = getPort(val.second);
 
@@ -125,7 +126,8 @@ const std::pair<const Port&, const Port&> Connections::convert(const Connections
 }
 
 /// dereferencing function to convert internal connection representation to a pair of port references
-const std::pair<Port&, Port&> Connections::convertConst(const Connections::connections_container::left_value_type& val) {
+const std::pair<Port&, Port&> Connections::convertConst(
+    const Connections::connections_container::left_value_type& val) {
 	Port& left = getPort(val.first);
 	Port& right = getPort(val.second);
 
@@ -133,31 +135,23 @@ const std::pair<Port&, Port&> Connections::convertConst(const Connections::conne
 }
 
 Connections::const_iterator Connections::begin() const {
-	auto fn = [this](const Connections::connections_container::left_value_type& val) {
-		return convert(val);
-	};
+	auto fn = [this](const Connections::connections_container::left_value_type& val) { return convert(val); };
 	return const_iterator(m_connections.left.begin(), fn);
 }
 
 Connections::const_iterator Connections::end() const {
-	auto fn = [this](const Connections::connections_container::left_value_type& val) {
-		return convert(val);
-	};
+	auto fn = [this](const Connections::connections_container::left_value_type& val) { return convert(val); };
 	return const_iterator(m_connections.left.end(), fn);
 }
 
 Connections::iterator Connections::begin() {
-	auto fn = [this](const Connections::connections_container::left_value_type& val) {
-		return convertConst(val);
-	};
+	auto fn = [this](const Connections::connections_container::left_value_type& val) { return convertConst(val); };
 	return iterator(m_connections.left.begin(), fn);
 }
 
 Connections::iterator Connections::end() {
-	auto fn = [this](const Connections::connections_container::left_value_type& val) {
-		return convertConst(val);
-	};
+	auto fn = [this](const Connections::connections_container::left_value_type& val) { return convertConst(val); };
 	return iterator(m_connections.left.end(), fn);
 }
 
-}
+}  // namespace dependency_graph

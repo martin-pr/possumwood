@@ -24,7 +24,7 @@ dependency_graph::State checkProgramState(const GLuint& programId) {
 	return state;
 }
 
-}
+}  // namespace
 
 struct Program::Pimpl : public boost::noncopyable {
 	Pimpl(const std::vector<Shader>& shaders) : m_programId(0), m_shaders(shaders) {
@@ -92,10 +92,10 @@ void Program::link() {
 		m_pimpl->link();
 }
 
-std::ostream& operator << (std::ostream& out, const Program& p) {
+std::ostream& operator<<(std::ostream& out, const Program& p) {
 	out << "(program " << p.id() << ")";
 
 	return out;
 }
 
-}
+}  // namespace possumwood

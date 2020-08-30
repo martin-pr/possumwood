@@ -1,83 +1,89 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include <actions/traits.h>
-
-#include "possumwood_sdk/datatypes/enum.h"
-
-#include "tools.h"
 #include "frame.h"
+#include "possumwood_sdk/datatypes/enum.h"
+#include "tools.h"
 
 namespace {
 
-template<typename T>
+template <typename T>
 struct Traits {
-	static constexpr long norm() { return std::numeric_limits<T>::max(); };
+	static constexpr long norm() {
+		return std::numeric_limits<T>::max();
+	};
 	typedef long accumulator;
 };
 
-template<>
+template <>
 struct Traits<float> {
-	static constexpr float norm() { return 1.0f; };
+	static constexpr float norm() {
+		return 1.0f;
+	};
 	typedef float accumulator;
 };
 
-template<typename T>
+template <typename T>
 struct MinMax {
 	static cv::Mat eval(const cv::Mat& input) {
 		// make sure we don't overwrite the data
 		cv::Mat m = input.clone();
 
-		T min = m.at<T>(0,0);
-		T max = m.at<T>(0,0);
+		T min = m.at<T>(0, 0);
+		T max = m.at<T>(0, 0);
 
-		for(int y=0;y<m.rows;++y)
-			for(int x=0;x<m.cols;++x) {
+		for(int y = 0; y < m.rows; ++y)
+			for(int x = 0; x < m.cols; ++x) {
 				const T current = m.at<T>(y, x);
 				min = std::min(min, current);
 				max = std::max(max, current);
 			}
 
 		if(max == min)
-			throw std::runtime_error("Cannot normalize the result - no data on input (min == max, leads to division by zero)");
+			throw std::runtime_error(
+			    "Cannot normalize the result - no data on input (min == max, leads to division by zero)");
 
-		for(int y=0;y<m.rows;++y)
-			for(int x=0;x<m.cols;++x) {
+		for(int y = 0; y < m.rows; ++y)
+			for(int x = 0; x < m.cols; ++x) {
 				T& current = m.at<T>(y, x);
-				current = (typename Traits<T>::accumulator(current - min) * Traits<T>::norm()) / typename Traits<T>::accumulator(max - min);
+				current = (typename Traits<T>::accumulator(current - min) * Traits<T>::norm()) /
+				          typename Traits<T>::accumulator(max - min);
 			}
 
 		return m;
 	}
 };
 
-template<typename T>
+template <typename T>
 struct Max {
 	static cv::Mat eval(const cv::Mat& input) {
 		// make sure we don't overwrite the data
 		cv::Mat m = input.clone();
 
-		T max = m.at<T>(0,0);
+		T max = m.at<T>(0, 0);
 
-		for(int y=0;y<m.rows;++y)
-			for(int x=0;x<m.cols;++x) {
+		for(int y = 0; y < m.rows; ++y)
+			for(int x = 0; x < m.cols; ++x) {
 				const T current = m.at<T>(y, x);
 				max = std::max(max, current);
 			}
 
 		if(max == 0)
-			throw std::runtime_error("Cannot normalize the result - no data on input (max == 0, leads to division by zero)");
+			throw std::runtime_error(
+			    "Cannot normalize the result - no data on input (max == 0, leads to division by zero)");
 
-		for(int y=0;y<m.rows;++y)
-			for(int x=0;x<m.cols;++x) {
+		for(int y = 0; y < m.rows; ++y)
+			for(int x = 0; x < m.cols; ++x) {
 				T& current = m.at<T>(y, x);
-				current = (typename Traits<T>::accumulator(current) * Traits<T>::norm()) / typename Traits<T>::accumulator(max);
+				current = (typename Traits<T>::accumulator(current) * Traits<T>::norm()) /
+				          typename Traits<T>::accumulator(max);
 			}
 
 		return m;
 	}
 };
 
-template<template<class> typename FN>
+template <template <class> typename FN>
 cv::Mat process(const cv::Mat& in) {
 	if(in.type() == CV_8UC1)
 		return FN<uint8_t>::eval(in);
@@ -130,7 +136,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/normalize", init);
 
-}
+}  // namespace

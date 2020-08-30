@@ -1,13 +1,13 @@
 #include "node_menu.h"
 
+#include <actions/actions.h>
+#include <actions/node_data.h>
+#include <possumwood_sdk/app.h>
+
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/filesystem.hpp>
-
-#include <actions/actions.h>
-#include <actions/node_data.h>
-#include <possumwood_sdk/app.h>
 
 #include "searchable_menu.h"
 

@@ -51,12 +51,12 @@ bool FrameEditorData::operator!=(const FrameEditorData& d) const {
 	return m_skeleton != d.m_skeleton || m_transforms != d.m_transforms;
 }
 
-std::ostream& operator << (std::ostream& out, const FrameEditorData& d) {
+std::ostream& operator<<(std::ostream& out, const FrameEditorData& d) {
 	out << "(frame editor data)";
 	return out;
 }
 
-}
+}  // namespace anim
 
 namespace {
 
@@ -64,7 +64,7 @@ void toJson(::possumwood::io::json& json, const anim::FrameEditorData& value) {
 	for(auto& i : value) {
 		::possumwood::io::json jval;
 		jval[0] = i.first;
-		for(unsigned a=0;a<4;++a)
+		for(unsigned a = 0; a < 4; ++a)
 			jval[1][a] = i.second.rotation[a];
 
 		json.push_back(jval);
@@ -76,13 +76,13 @@ void fromJson(const ::possumwood::io::json& json, anim::FrameEditorData& value) 
 
 	for(auto& i : json) {
 		Imath::Quatf q;
-		for(unsigned a=0;a<4;++a)
+		for(unsigned a = 0; a < 4; ++a)
 			q[a] = i[1][a];
 		value.setTransform(i[0].get<std::size_t>(), anim::Transform(q));
 	}
 }
 
-}
+}  // namespace
 
 namespace possumwood {
 

@@ -40,7 +40,8 @@ dependency_graph::State fromJson(dependency_graph::Network& current, dependency_
 possumwood::io::json toJson(const dependency_graph::Selection& selection = dependency_graph::Selection());
 
 dependency_graph::State importNetwork(dependency_graph::Network& current, dependency_graph::Selection& selection,
-                                      const possumwood::Filepath& filepath, const std::string& name, const dependency_graph::Data& blindData);
+                                      const possumwood::Filepath& filepath, const std::string& name,
+                                      const dependency_graph::Data& blindData);
 
 ////
 

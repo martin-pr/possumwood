@@ -29,7 +29,6 @@ boost::signals2::connection Graph::onRemoveNode(std::function<void(NodeBase&)> c
 	return m_signals->m_onRemoveNode.connect(callback);
 }
 
-
 boost::signals2::connection Graph::onConnect(std::function<void(Port&, Port&)> callback) {
 	return m_signals->m_onConnect.connect(callback);
 }
@@ -94,4 +93,4 @@ void Graph::blindDataChanged(NodeBase& node) {
 	m_signals->m_onBlindDataChanged(node);
 }
 
-}
+}  // namespace dependency_graph

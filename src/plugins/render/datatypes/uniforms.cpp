@@ -1,15 +1,16 @@
 #include "uniforms.inl"
 
-#include <limits>
-
 #include <possumwood_sdk/app.h>
+
+#include <limits>
 
 namespace possumwood {
 
 Uniforms::Uniforms() : m_currentTime(std::numeric_limits<float>::infinity()) {
 }
 
-void Uniforms::addTexture(const std::string& name, const unsigned char* data, std::size_t width, std::size_t height, const Texture::Format& format) {
+void Uniforms::addTexture(const std::string& name, const unsigned char* data, std::size_t width, std::size_t height,
+                          const Texture::Format& format) {
 	m_textures.push_back(TextureHolder());
 
 	m_textures.back().name = name;
@@ -17,7 +18,8 @@ void Uniforms::addTexture(const std::string& name, const unsigned char* data, st
 	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(data, width, height, format));
 }
 
-void Uniforms::addTexture(const std::string& name, const float* data, std::size_t width, std::size_t height, const Texture::Format& format) {
+void Uniforms::addTexture(const std::string& name, const float* data, std::size_t width, std::size_t height,
+                          const Texture::Format& format) {
 	m_textures.push_back(TextureHolder());
 
 	m_textures.back().name = name;
@@ -25,7 +27,8 @@ void Uniforms::addTexture(const std::string& name, const float* data, std::size_
 	m_textures.back().texture = std::shared_ptr<const Texture>(new Texture(data, width, height, format));
 }
 
-void Uniforms::addTextureArray(const std::string& name, std::vector<const unsigned char*> data, std::size_t width, std::size_t height, const Texture::Format& format) {
+void Uniforms::addTextureArray(const std::string& name, std::vector<const unsigned char*> data, std::size_t width,
+                               std::size_t height, const Texture::Format& format) {
 	m_textures.push_back(TextureHolder());
 
 	m_textures.back().name = name;
@@ -54,7 +57,8 @@ dependency_graph::State Uniforms::use(GLuint programId, const ViewportState& vs)
 		if(attr >= 0)
 			m_textures[tex].texture->use(attr, GL_TEXTURE0 + tex);
 		// else
-		// 	state.addWarning("Texture '" + m_textures[tex].name + "' cannot be mapped to an attribute location - not used in any of the programs?");
+		// 	state.addWarning("Texture '" + m_textures[tex].name + "' cannot be mapped to an attribute location - not
+		// used in any of the programs?");
 	}
 
 	return state;
@@ -92,7 +96,7 @@ std::set<std::string> Uniforms::names() const {
 	return result;
 }
 
-std::ostream& operator << (std::ostream& out, const Uniforms& uniforms) {
+std::ostream& operator<<(std::ostream& out, const Uniforms& uniforms) {
 	if(!uniforms.m_uniforms.empty()) {
 		out << "Uniforms:" << std::endl;
 
@@ -110,4 +114,4 @@ std::ostream& operator << (std::ostream& out, const Uniforms& uniforms) {
 	return out;
 }
 
-}
+}  // namespace possumwood

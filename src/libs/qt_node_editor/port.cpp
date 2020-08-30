@@ -1,22 +1,19 @@
 #include "port.h"
 
-#include <cassert>
-#include <iostream>
-
 #include <QBrush>
 #include <QFont>
 #include <QPainter>
 #include <QPen>
+#include <cassert>
+#include <iostream>
 
 #include "connected_edge.h"
 #include "node.h"
 
 namespace node_editor {
 
-Port::Port(const QString& name, Port::Type t, Port::Orientation o, QColor color,
-           Node* parent, unsigned id)
-	: QGraphicsItem(parent), m_orientation(o), m_color(color), m_in(NULL), m_out(NULL),
-	  m_parent(parent), m_id(id) {
+Port::Port(const QString& name, Port::Type t, Port::Orientation o, QColor color, Node* parent, unsigned id)
+    : QGraphicsItem(parent), m_orientation(o), m_color(color), m_in(NULL), m_out(NULL), m_parent(parent), m_id(id) {
 	m_name = new QGraphicsTextItem(name, this);
 	m_name->setPos(margin() + m_name->boundingRect().height() / 2, 0);
 	m_name->setDefaultTextColor(QColor(192, 192, 192));
@@ -37,8 +34,7 @@ Port::Port(const QString& name, Port::Type t, Port::Orientation o, QColor color,
 		m_out->setPen(Qt::NoPen);
 	}
 
-	setRect(
-	    QRect(rect().left(), rect().top(), minWidth(), m_name->boundingRect().height()));
+	setRect(QRect(rect().left(), rect().top(), minWidth(), m_name->boundingRect().height()));
 
 	setZValue(1);
 }
@@ -104,8 +100,7 @@ QRectF Port::boundingRect() const {
 	return result;
 }
 
-void Port::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
-                 QWidget* widget) {
+void Port::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
 	// nothing
 
 	// painter->setPen(QPen(Qt::red, 1, Qt::DotLine));
@@ -120,9 +115,8 @@ QRectF Port::rect() const {
 void Port::setRect(const QRectF& rect) {
 	prepareGeometryChange();
 
-	m_rect =
-	    QRectF(rect.x(), rect.y(), std::max(rect.width(), m_name->boundingRect().width()),
-	           m_name->boundingRect().height());
+	m_rect = QRectF(rect.x(), rect.y(), std::max(rect.width(), m_name->boundingRect().width()),
+	                m_name->boundingRect().height());
 
 	assert(m_in || m_out);
 	if(m_in) {
@@ -132,19 +126,19 @@ void Port::setRect(const QRectF& rect) {
 		}
 		else {
 			m_name->setPos((rect.width() - m_name->boundingRect().width()) / 2 + rect.x(), rect.y());
-			m_in->setPos((rect.width()-circleSize()) / 2 + rect.x(), -circleSize() / 2 + rect.y());
+			m_in->setPos((rect.width() - circleSize()) / 2 + rect.x(), -circleSize() / 2 + rect.y());
 		}
 	}
 	else if(m_out) {
 		if(m_orientation == Orientation::kHorizontal) {
-			m_name->setPos(m_rect.width() - m_name->boundingRect().width() - margin() -
-			               circleSize() / 2 + rect.x(), rect.y());
+			m_name->setPos(m_rect.width() - m_name->boundingRect().width() - margin() - circleSize() / 2 + rect.x(),
+			               rect.y());
 
 			m_out->setPos(m_rect.width() - circleSize() / 2 + rect.x(), margin() + rect.y());
 		}
 		else {
 			m_name->setPos((rect.width() - m_name->boundingRect().width()) / 2 + rect.x(), rect.y());
-			m_out->setPos((rect.width()-circleSize()) / 2 + rect.x(), rect.height() - circleSize() / 2 + rect.y());
+			m_out->setPos((rect.width() - circleSize()) / 2 + rect.x(), rect.height() - circleSize() / 2 + rect.y());
 		}
 	}
 }

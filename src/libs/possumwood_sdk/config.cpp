@@ -1,14 +1,16 @@
 #include "config.inl"
 
-#include <cassert>
 #include <algorithm>
+#include <cassert>
 
 namespace possumwood {
 
-Config::Item::Item(const Item& i) : m_name(i.name()), m_group(i.group()), m_description(i.description()), m_flags(i.flags()), m_value(i.m_value), m_defaultValue(i.m_defaultValue) {
+Config::Item::Item(const Item& i)
+    : m_name(i.name()), m_group(i.group()), m_description(i.description()), m_flags(i.flags()), m_value(i.m_value),
+      m_defaultValue(i.m_defaultValue) {
 }
 
-Config::Item& Config::Item::operator = (const Item& i) {
+Config::Item& Config::Item::operator=(const Item& i) {
 	m_name = i.m_name;
 	m_group = i.m_group;
 	m_description = i.m_description;
@@ -57,23 +59,21 @@ boost::signals2::connection Config::Item::onChanged(std::function<void(Item&)> c
 ///////////
 
 Config::~Config() {
-
 }
 
 namespace {
-	struct Compare {
-		std::string name;
+struct Compare {
+	std::string name;
 
-		bool operator() (const Config::Item& i) const {
-			return i.name() == name;
-		}
-	};
-}
+	bool operator()(const Config::Item& i) const {
+		return i.name() == name;
+	}
+};
+}  // namespace
 
 Config::Item& Config::operator[](const std::string& name) {
-	std::vector<Item>::iterator it = std::find_if(m_items.begin(), m_items.end(), [&name](const Config::Item& i) {
-		return name == i.name();
-	});
+	std::vector<Item>::iterator it =
+	    std::find_if(m_items.begin(), m_items.end(), [&name](const Config::Item& i) { return name == i.name(); });
 	assert(it != m_items.end());
 	assert(it->name() == name);
 
@@ -81,9 +81,8 @@ Config::Item& Config::operator[](const std::string& name) {
 }
 
 const Config::Item& Config::operator[](const std::string& name) const {
-	std::vector<Item>::const_iterator it = std::find_if(m_items.begin(), m_items.end(), [&name](const Config::Item& i) {
-		return name == i.name();
-	});
+	std::vector<Item>::const_iterator it =
+	    std::find_if(m_items.begin(), m_items.end(), [&name](const Config::Item& i) { return name == i.name(); });
 	assert(it != m_items.end());
 	assert(it->name() == name);
 
@@ -117,4 +116,4 @@ void Config::reset() {
 	}
 }
 
-}
+}  // namespace possumwood

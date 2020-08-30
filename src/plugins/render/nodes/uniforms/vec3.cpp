@@ -1,18 +1,18 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
+#include "maths/io/vec3.h"
 
 #include <GL/glew.h>
 #include <GL/glu.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/uniforms.inl"
-#include "maths/io/vec3.h"
 
 namespace std {
-	static std::ostream& operator << (std::ostream& out, const Imath::Vec3<float>& val) {
-		out << val[0] << " " << val[1] << " " << val[2];
-		return out;
-	}
+static std::ostream& operator<<(std::ostream& out, const Imath::Vec3<float>& val) {
+	out << val[0] << " " << val[1] << " " << val[2];
+	return out;
 }
+}  // namespace std
 
 namespace {
 
@@ -29,15 +29,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const Imath::Vec3<float> value = data.get(a_value);
 
 	uniforms.addUniform<Imath::Vec3<float>>(
-		data.get(a_name),
-		1,
-		possumwood::Uniforms::kPerFrame,
-		[value](Imath::Vec3<float>* data, std::size_t size, const possumwood::ViewportState& vs) {
-			assert(size == 1);
+	    data.get(a_name), 1, possumwood::Uniforms::kPerFrame,
+	    [value](Imath::Vec3<float>* data, std::size_t size, const possumwood::ViewportState& vs) {
+		    assert(size == 1);
 
-			*data = value;
-		}
-	);
+		    *data = value;
+	    });
 
 	data.set(a_outUniforms, uniforms);
 
@@ -59,4 +56,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/uniforms/vec3", init);
 
-}
+}  // namespace

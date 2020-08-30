@@ -1,8 +1,8 @@
 #include "samples.h"
 
-#include <cassert>
-
 #include <tbb/parallel_for.h>
+
+#include <cassert>
 
 namespace lightfields {
 
@@ -28,8 +28,8 @@ void Samples::makeRowOffsets() {
 			assert(it->source[1] >= current);
 
 			// propagate current value, to account for "empty" scanlines
-			for(int r=current+1; r<it->source[1]; ++r)
-				m_rowOffsets[r] = m_rowOffsets[r-1];
+			for(int r = current + 1; r < it->source[1]; ++r)
+				m_rowOffsets[r] = m_rowOffsets[r - 1];
 			current = it->source[1];
 
 			// and update the current starting index
@@ -80,7 +80,7 @@ void Samples::filterInvalid() {
 }
 
 void Samples::scale(float xy_scale) {
-	const Imath::V2f center(m_size[0]/2, m_size[1]/2);
+	const Imath::V2f center(m_size[0] / 2, m_size[1] / 2);
 
 	tbb::parallel_for(std::size_t(0), m_samples.size(), [&](std::size_t i) {
 		auto& sample = m_samples[i];
@@ -101,8 +101,8 @@ Samples::const_iterator Samples::begin(std::size_t row) const {
 }
 
 Samples::const_iterator Samples::end(std::size_t row) const {
-	row = std::min(row, std::numeric_limits<std::size_t>::max()-1);
-	return begin(row+1);
+	row = std::min(row, std::numeric_limits<std::size_t>::max() - 1);
+	return begin(row + 1);
 }
 
 std::size_t Samples::size() const {
@@ -128,10 +128,10 @@ Samples Samples::fromPattern(const Pattern& pattern) {
 
 	// assemble the samples
 	tbb::parallel_for(std::size_t(0), (std::size_t)result.m_size[0], [&](std::size_t y) {
-		for(std::size_t x=0; x<(std::size_t)result.m_size[1]; ++x) {
-			Sample& sample = result.m_samples[y*result.m_size[0] + x];
+		for(std::size_t x = 0; x < (std::size_t)result.m_size[1]; ++x) {
+			Sample& sample = result.m_samples[y * result.m_size[0] + x];
 
-			const Pattern::Sample coords = pattern.sample(Imath::V2i(x,y));
+			const Pattern::Sample coords = pattern.sample(Imath::V2i(x, y));
 
 			// input image pixel position, integer in pixels
 			sample.source = Imath::V2i(x, y);
@@ -142,7 +142,7 @@ Samples Samples::fromPattern(const Pattern& pattern) {
 			sample.xy = coords.lensCenter;
 
 			// hardcoded bayer pattern, for now
-			sample.color = Color((x%2) + (y%2));
+			sample.color = Color((x % 2) + (y % 2));
 		}
 	});
 
@@ -153,10 +153,10 @@ Samples Samples::fromPattern(const Pattern& pattern) {
 
 /////////
 
-std::ostream& operator << (std::ostream& out, const Samples& f) {
+std::ostream& operator<<(std::ostream& out, const Samples& f) {
 	out << "(lightfield samples - " << f.size() << " samples)";
 
 	return out;
 }
 
-}
+}  // namespace lightfields

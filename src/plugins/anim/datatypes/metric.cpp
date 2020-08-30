@@ -1,6 +1,7 @@
 #include "metric.h"
 
-namespace anim { namespace metric {
+namespace anim {
+namespace metric {
 
 Base::~Base() {
 }
@@ -29,4 +30,5 @@ float LocalAngle::eval(const Animation& a1, std::size_t f1, const Animation& a2,
 	return result;
 }
 
-} }
+}  // namespace metric
+}  // namespace anim

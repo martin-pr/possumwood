@@ -1,16 +1,12 @@
+#include <actions/traits.h>
+#include <lightfields/mrf.h>
 #include <possumwood_sdk/node_implementation.h>
-
 #include <tbb/parallel_for.h>
 
 #include <opencv2/opencv.hpp>
 
-#include <actions/traits.h>
-
-#include <lightfields/mrf.h>
-
-#include "possumwood_sdk/datatypes/enum.h"
-
 #include "frame.h"
+#include "possumwood_sdk/datatypes/enum.h"
 #include "tools.h"
 
 namespace {
@@ -54,23 +50,27 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	lightfields::MRF mrf(lightfields::V2i(in.cols, in.rows));
 
 	tbb::parallel_for(0, in.rows, [&](int y) {
-		for(int x=0; x<in.cols; ++x) {
+		for(int x = 0; x < in.cols; ++x) {
 			auto& val = mrf[lightfields::V2i(x, y)];
 			val.confidence = confidence.at<float>(y, x);
 			val.value = in.at<unsigned char>(y, x);
 		}
 	});
 
-	std::unique_ptr<lightfields::Neighbours> neighbours =
-		lightfields::Neighbours::create(lightfields::Neighbours::Type(data.get(a_method).intValue() % 20), lightfields::V2i(in.cols, in.rows));
+	std::unique_ptr<lightfields::Neighbours> neighbours = lightfields::Neighbours::create(
+	    lightfields::Neighbours::Type(data.get(a_method).intValue() % 20), lightfields::V2i(in.cols, in.rows));
 
 	cv::Mat result;
 	if(data.get(a_method).intValue() < 20)
-		result = lightfields::MRF::solveICM(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit), *neighbours);
+		result = lightfields::MRF::solveICM(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight),
+		                                    data.get(a_smoothnessWeight), data.get(a_iterationLimit), *neighbours);
 	else if(data.get(a_method).intValue() < 40)
-		result = lightfields::MRF::solvePropagation(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit), *neighbours);
+		result =
+		    lightfields::MRF::solvePropagation(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight),
+		                                       data.get(a_smoothnessWeight), data.get(a_iterationLimit), *neighbours);
 	else
-		result = lightfields::MRF::solvePDF(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight), data.get(a_smoothnessWeight), data.get(a_iterationLimit), *neighbours);
+		result = lightfields::MRF::solvePDF(mrf, data.get(a_inputsWeight), data.get(a_flatnessWeight),
+		                                    data.get(a_smoothnessWeight), data.get(a_iterationLimit), *neighbours);
 
 	data.set(a_out, possumwood::opencv::Frame(result));
 
@@ -100,4 +100,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/lightfields/markov_random_field", init);
 
-}
+}  // namespace

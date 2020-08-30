@@ -1,9 +1,8 @@
 #include <possumwood_sdk/node_implementation.h>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_reduce.h>
 
 #include <boost/noncopyable.hpp>
-
-#include <tbb/parallel_reduce.h>
-#include <tbb/blocked_range.h>
 
 #include "sequence.h"
 
@@ -15,7 +14,7 @@ dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 struct Reduce : public boost::noncopyable {
 	explicit Reduce(const possumwood::opencv::Sequence& seq) {
 		for(auto& f : seq)
-			mats.push_back(*f); // "shallow" copy
+			mats.push_back(*f);  // "shallow" copy
 	}
 
 	// splitting constructor - copies the input matrices but there is no need to initialise the accumulator
@@ -24,10 +23,10 @@ struct Reduce : public boost::noncopyable {
 	}
 
 	Reduce(const Reduce&) = delete;
-	Reduce& operator = (const Reduce&) = delete;
+	Reduce& operator=(const Reduce&) = delete;
 
 	/// converts a range of input images int double format, and sums them together
-	void operator() (const tbb::blocked_range<std::size_t>& range) {
+	void operator()(const tbb::blocked_range<std::size_t>& range) {
 		assert(!range.empty());
 
 		auto it = range.begin();
@@ -50,8 +49,8 @@ struct Reduce : public boost::noncopyable {
 		accum += r.accum;
 	}
 
-	std::vector<cv::Mat> mats; // input matrices (shallow copy)
-	cv::Mat accum; // resulting accumulator
+	std::vector<cv::Mat> mats;  // input matrices (shallow copy)
+	cv::Mat accum;              // resulting accumulator
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -91,4 +90,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/mean", init);
 
-}
+}  // namespace

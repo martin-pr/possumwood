@@ -29,6 +29,6 @@ class Meshes {
 	std::vector<Mesh> m_data;
 };
 
-std::ostream& operator << (std::ostream& out, const Meshes& m);
+std::ostream& operator<<(std::ostream& out, const Meshes& m);
 
-}
+}  // namespace possumwood

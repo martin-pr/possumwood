@@ -1,71 +1,106 @@
-#include <possumwood_sdk/node_implementation.h>
-
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range2d.h>
-
 #include <actions/traits.h>
+#include <possumwood_sdk/node_implementation.h>
+#include <tbb/blocked_range2d.h>
+#include <tbb/parallel_for.h>
 
 #include "possumwood_sdk/datatypes/enum.h"
-
 #include "sequence.h"
 #include "tools.h"
 
 namespace {
 
-// Based on Hu, Xiaoyan, and Philippos Mordohai. "A quantitative evaluation of confidence measures for stereo vision." IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.
+// Based on Hu, Xiaoyan, and Philippos Mordohai. "A quantitative evaluation of confidence measures for stereo vision."
+// IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.
 
 class Curve {
-	public:
-		Curve(const possumwood::opencv::Sequence& s, const cv::Vec2i& pos) : m_seq(&s), m_pos(pos) {
-			assert(s.size() > 0);
-			assert(pos[0] < s[0]->cols);
-			assert(pos[1] < s[0]->rows);
+  public:
+	Curve(const possumwood::opencv::Sequence& s, const cv::Vec2i& pos) : m_seq(&s), m_pos(pos) {
+		assert(s.size() > 0);
+		assert(pos[0] < s[0]->cols);
+		assert(pos[1] < s[0]->rows);
+	}
+
+	bool empty() const {
+		return m_seq->empty();
+	}
+
+	std::size_t size() const {
+		return m_seq->size();
+	}
+
+	float operator[](std::size_t index) const {
+		return get(index);
+	}
+
+	// returns the minimum element index
+	std::size_t d_1() const {
+		assert(!empty());
+
+		float min = get(0);
+		std::size_t min_index = 0;
+
+		for(std::size_t i = 1; i < size(); ++i)
+			if(min > get(i)) {
+				min_index = i;
+				min = get(i);
+			}
+
+		return min_index;
+	}
+
+	// returns the minimum element value
+	float c_1() const {
+		return get(d_1());
+	}
+
+	// returns the second minimum element index
+	std::size_t d_2() const {
+		assert(!empty());
+
+		float min = std::numeric_limits<float>::max();
+		std::size_t min_index = 0;
+
+		float min_2 = min;
+		std::size_t min_2_index = 0;
+
+		for(std::size_t i = 0; i < size(); ++i) {
+			const float current = get(i);
+
+			if(min > current) {
+				min_2_index = min_index;
+				min_2 = min;
+
+				min_index = i;
+				min = current;
+			}
+			else if(min_2 > current) {
+				min_2_index = i;
+				min_2 = current;
+			}
 		}
 
-		bool empty() const {
-			return m_seq->empty();
-		}
+		if(min_2 < std::numeric_limits<float>::max())
+			return min_2_index;
+		return min_index;
+	}
 
-		std::size_t size() const {
-			return m_seq->size();
-		}
+	// returns the second minimum element value
+	float c_2() const {
+		return get(d_2());
+	}
 
-		float operator[](std::size_t index) const {
-			return get(index);
-		}
+	// returns the second local minimum element index
+	std::size_t d_2m() const {
+		assert(!empty());
 
-		// returns the minimum element index
-		std::size_t d_1() const {
-			assert(!empty());
+		float min = std::numeric_limits<float>::max();
+		std::size_t min_index = 0;
 
-			float min = get(0);
-			std::size_t min_index = 0;
+		float min_2 = min;
+		std::size_t min_2_index = 0;
 
-			for(std::size_t i=1; i<size(); ++i)
-				if(min > get(i)) {
-					min_index = i;
-					min = get(i);
-				}
-
-			return min_index;
-		}
-
-		// returns the minimum element value
-		float c_1() const {
-			return get(d_1());
-		}
-
-		// returns the second minimum element index
-		std::size_t d_2() const {
-			assert(!empty());
-
-			float min = std::numeric_limits<float>::max();
-			std::size_t min_index = 0;
-
-			float min_2 = min;
-			std::size_t min_2_index = 0;
-
-			for(std::size_t i=0; i<size(); ++i) {
+		for(std::size_t i = 0; i < size(); ++i)
+			if(isPeak(i)) {
 				const float current = get(i);
 
 				if(min > current) {
@@ -81,88 +116,51 @@ class Curve {
 				}
 			}
 
-			if(min_2 < std::numeric_limits<float>::max())
-				return min_2_index;
-			return min_index;
+		if(min_2 < std::numeric_limits<float>::max())
+			return min_2_index;
+		return min_index;
+	}
+
+	// returns the second minimum element value
+	float c_2m() const {
+		return get(d_2m());
+	}
+
+	std::pair<float, float> minmax() const {
+		float min = get(0);
+		float max = get(0);
+
+		for(std::size_t i = 1; i < size(); ++i) {
+			min = std::min(min, get(i));
+			max = std::max(max, get(i));
 		}
 
-		// returns the second minimum element value
-		float c_2() const {
-			return get(d_2());
-		}
+		return std::make_pair(min, max);
+	}
 
-		// returns the second local minimum element index
-		std::size_t d_2m() const {
-			assert(!empty());
+	float sum() const {
+		float result = 0.0f;
+		for(std::size_t i = 1; i < size(); ++i)
+			result += get(i);
+		return result;
+	}
 
-			float min = std::numeric_limits<float>::max();
-			std::size_t min_index = 0;
+  private:
+	float get(std::size_t index) const {
+		return (*m_seq)[index]->at<float>(m_pos[1], m_pos[0]);
+	}
 
-			float min_2 = min;
-			std::size_t min_2_index = 0;
+	bool isPeak(std::size_t index) const {
+		bool result = true;
+		if(index > 0)
+			result &= get(index - 1) > get(index);
+		if(index + 1 < size())
+			result &= get(index + 1) > get(index);
+		return result;
+	}
 
-			for(std::size_t i=0; i<size(); ++i)
-				if(isPeak(i)) {
-					const float current = get(i);
-
-					if(min > current) {
-						min_2_index = min_index;
-						min_2 = min;
-
-						min_index = i;
-						min = current;
-					}
-					else if(min_2 > current) {
-						min_2_index = i;
-						min_2 = current;
-					}
-				}
-
-			if(min_2 < std::numeric_limits<float>::max())
-				return min_2_index;
-			return min_index;
-		}
-
-		// returns the second minimum element value
-		float c_2m() const {
-			return get(d_2m());
-		}
-
-		std::pair<float, float> minmax() const {
-			float min = get(0);
-			float max = get(0);
-
-			for(std::size_t i=1; i<size(); ++i) {
-				min = std::min(min, get(i));
-				max = std::max(max, get(i));
-			}
-
-			return std::make_pair(min, max);
-		}
-
-		float sum() const {
-			float result = 0.0f;
-			for(std::size_t i=1; i<size(); ++i)
-				result += get(i);
-			return result;
-		}
-
-	private:
-		float get(std::size_t index) const {
-			return (*m_seq)[index]->at<float>(m_pos[1], m_pos[0]);
-		}
-
-		bool isPeak(std::size_t index) const {
-			bool result = true;
-			if(index > 0)
-				result &= get(index-1) > get(index);
-			if(index+1 < size())
-				result &= get(index+1) > get(index);
-			return result;
-		}
-
-		const possumwood::opencv::Sequence* m_seq;
-		cv::Vec2i m_pos;
+	const possumwood::opencv::Sequence* m_seq;
+	cv::Vec2i m_pos;
 };
 
 /////////////////////
@@ -176,11 +174,11 @@ float CUR(const Curve& curve, float) {
 	const std::size_t d_1 = curve.d_1();
 
 	if(d_1 == 0)
-		return -2.0f * curve[d_1] + 2.0f*curve[d_1+1];
-	else if(d_1+1 == curve.size())
-		return -2.0f * curve[d_1] + 2.0f*curve[d_1-1];
+		return -2.0f * curve[d_1] + 2.0f * curve[d_1 + 1];
+	else if(d_1 + 1 == curve.size())
+		return -2.0f * curve[d_1] + 2.0f * curve[d_1 - 1];
 	else
-		return -2.0f * curve[d_1] + curve[d_1-1] + curve[d_1+1];
+		return -2.0f * curve[d_1] + curve[d_1 - 1] + curve[d_1 + 1];
 }
 
 float PKR(const Curve& curve, float) {
@@ -204,11 +202,11 @@ float PRB(const Curve& curve, float) {
 }
 
 float MLM(const Curve& curve, float sigma) {
-	const float val = std::exp(-curve.c_1() / (2*sigma*sigma));
+	const float val = std::exp(-curve.c_1() / (2 * sigma * sigma));
 
 	float sum = 0.0f;
-	for(std::size_t a=0; a<curve.size(); ++a)
-		sum += std::exp(-curve[a] / (2*sigma*sigma));
+	for(std::size_t a = 0; a < curve.size(); ++a)
+		sum += std::exp(-curve[a] / (2 * sigma * sigma));
 
 	return val / sum;
 }
@@ -217,20 +215,20 @@ float AML(const Curve& curve, float sigma) {
 	const float c1 = curve.c_1();
 
 	float sum = 0.0f;
-	for(std::size_t a=0; a<curve.size(); ++a)
-		sum += std::exp(-std::pow(curve[a] - c1, 2) / (2*sigma*sigma));
+	for(std::size_t a = 0; a < curve.size(); ++a)
+		sum += std::exp(-std::pow(curve[a] - c1, 2) / (2 * sigma * sigma));
 
 	return 1.0f / sum;
 }
 
 float NEM(const Curve& curve, float sigma) {
 	float p_denom = 0.0f;
-	for(std::size_t a=0; a<curve.size(); ++a)
+	for(std::size_t a = 0; a < curve.size(); ++a)
 		p_denom += std::exp(-curve[a]);
 	assert(p_denom > 0.0f);
 
 	float result = 0;
-	for(std::size_t a=0; a<curve.size(); ++a) {
+	for(std::size_t a = 0; a < curve.size(); ++a) {
 		assert(curve[a] >= 0.0f);
 		assert(std::exp(-curve[a]) >= 0.0f);
 
@@ -250,25 +248,25 @@ float NOI(const Curve& curve, float sigma) {
 
 	const int delta = std::ceil(sigma * 3.0f);
 
-	for(int i=0; i<int(curve.size()); ++i)
-		for(int o = std::max(i-delta, 0); i <= std::min(i+delta, int(curve.size()-1)); ++i) {
-			const float w = std::exp(-0.5f * std::pow(float(i-o) / sigma, 2));
+	for(int i = 0; i < int(curve.size()); ++i)
+		for(int o = std::max(i - delta, 0); i <= std::min(i + delta, int(curve.size() - 1)); ++i) {
+			const float w = std::exp(-0.5f * std::pow(float(i - o) / sigma, 2));
 
 			norms[i] += w;
-			vals[i] += curve[i]*w;
+			vals[i] += curve[i] * w;
 		}
 
-	for(int i=0; i<int(curve.size()); ++i)
+	for(int i = 0; i < int(curve.size()); ++i)
 		vals[i] /= norms[i];
 
 	// inflection points counting
 	int count = 0;
 	if(vals[0] < vals[1])
 		++count;
-	if(vals[vals.size()-1] < vals[vals.size()-2])
+	if(vals[vals.size() - 1] < vals[vals.size() - 2])
 		++count;
-	for(std::size_t a=1; a<vals.size()-1; ++a)
-		if(vals[a-1] > vals[a] && vals[a] < vals[a+1])
+	for(std::size_t a = 1; a < vals.size() - 1; ++a)
+		if(vals[a - 1] > vals[a] && vals[a] < vals[a + 1])
 			++count;
 
 	return -count;
@@ -288,34 +286,21 @@ struct Measure {
 	float (*fn)(const Curve&, float);
 };
 
-enum Mode {
-	kMSM,
-	kCUR,
-	kPKR,
-	kPKRN,
-	kMMN,
-	kPRB,
-	kMLM,
-	kAML,
-	kNEM,
-	kNOI,
-	kWMN,
-	kWMNN
-};
+enum Mode { kMSM, kCUR, kPKR, kPKRN, kMMN, kPRB, kMLM, kAML, kNEM, kNOI, kWMN, kWMNN };
 
-static const std::vector<Measure> s_measures {{
-	Measure {kMSM, "Matching Score Measure", &MSM},
-	Measure {kCUR, "Curvature", &CUR},
-	Measure {kPKR, "Peak Ratio", &PKR},
-	Measure {kPKRN, "Peak Ratio (naive)", &PKRN},
-	Measure {kMMN, "Maximum Margin", &MMN},
-	Measure {kPRB, "Probabilistic Measure", &PRB},
-	Measure {kMLM, "Maximum Likelihood Measure", &MLM},
-	Measure {kAML, "Attainable Maximum Likelihood", &AML},
-	Measure {kNEM, "Negative Entropy Measure", &NEM},
-	Measure {kNOI, "Number of Inflections (filtered)", &NOI},
-	Measure {kWMN, "Winner Margin", &WMN},
-	Measure {kWMNN, "Winner Margin (naive)", &WMNN},
+static const std::vector<Measure> s_measures{{
+    Measure{kMSM, "Matching Score Measure", &MSM},
+    Measure{kCUR, "Curvature", &CUR},
+    Measure{kPKR, "Peak Ratio", &PKR},
+    Measure{kPKRN, "Peak Ratio (naive)", &PKRN},
+    Measure{kMMN, "Maximum Margin", &MMN},
+    Measure{kPRB, "Probabilistic Measure", &PRB},
+    Measure{kMLM, "Maximum Likelihood Measure", &MLM},
+    Measure{kAML, "Attainable Maximum Likelihood", &AML},
+    Measure{kNEM, "Negative Entropy Measure", &NEM},
+    Measure{kNOI, "Number of Inflections (filtered)", &NOI},
+    Measure{kWMN, "Winner Margin", &WMN},
+    Measure{kWMNN, "Winner Margin (naive)", &WMNN},
 }};
 
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
@@ -376,7 +361,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/sequence/confidence", init);
 
-}
+}  // namespace

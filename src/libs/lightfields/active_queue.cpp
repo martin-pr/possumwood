@@ -17,7 +17,7 @@ bool ActiveQueue::checkEmpty() const {
 	if(!m_queue.empty())
 		return false;
 
-	for(std::size_t a=0;a<m_active.size();++a)
+	for(std::size_t a = 0; a < m_active.size(); ++a)
 		if(m_active[a])
 			return false;
 
@@ -52,7 +52,8 @@ ActiveQueue::Item ActiveQueue::pop() {
 	assert(!empty());
 
 	// discard all elements that don't match
-	while(!m_queue.empty() && (m_queue.top().excess != m_excess[m_queue.top().index] || m_queue.top().label != m_labels[m_queue.top().index]))
+	while(!m_queue.empty() && (m_queue.top().excess != m_excess[m_queue.top().index] ||
+	                           m_queue.top().label != m_labels[m_queue.top().index]))
 		m_queue.pop();
 
 	const Item result = m_queue.top();
@@ -63,7 +64,8 @@ ActiveQueue::Item ActiveQueue::pop() {
 	m_excess[result.index] = 0;
 
 	// discard all elements that don't match
-	while(!m_queue.empty() && (m_queue.top().excess != m_excess[m_queue.top().index] || m_queue.top().label != m_labels[m_queue.top().index]))
+	while(!m_queue.empty() && (m_queue.top().excess != m_excess[m_queue.top().index] ||
+	                           m_queue.top().label != m_labels[m_queue.top().index]))
 		m_queue.pop();
 
 	return result;
@@ -73,9 +75,9 @@ bool ActiveQueue::isActive(std::size_t index) const {
 	return m_active[index];
 }
 
-bool ActiveQueue::Item::operator < (const Item& i) const {
+bool ActiveQueue::Item::operator<(const Item& i) const {
 	// if(label != i.label)
-		return label > i.label;
+	return label > i.label;
 
 	// if(excess != i.excess)
 	// 	return excess > i.excess;
@@ -99,7 +101,7 @@ void ActiveQueue::relabel(const Labels& l) {
 	}
 	m_queue = new_q;
 
-	for(std::size_t a=0;a<l.size();++a)
+	for(std::size_t a = 0; a < l.size(); ++a)
 		m_labels[a] = l[a];
 }
 
@@ -108,4 +110,4 @@ int ActiveQueue::excess(std::size_t index) const {
 	return m_excess[index];
 }
 
-}
+}  // namespace lightfields

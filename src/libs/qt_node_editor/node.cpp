@@ -1,12 +1,11 @@
 #include "node.h"
 
-#include <cassert>
-#include <iostream>
-
 #include <QBrush>
 #include <QPainter>
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
+#include <cassert>
+#include <iostream>
 
 #include "connected_edge.h"
 #include "graph_scene.h"

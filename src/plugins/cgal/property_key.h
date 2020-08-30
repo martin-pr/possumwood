@@ -15,7 +15,7 @@ class PropertyKey {
   private:
 	int m_index;
 
-	template<typename T>
+	template <typename T>
 	friend class Property;
 };
-}
+}  // namespace possumwood

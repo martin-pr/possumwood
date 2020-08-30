@@ -8,33 +8,33 @@
 namespace dependency_graph {
 
 namespace {
-	bool isCompatible(const dependency_graph::Metadata& m1, const dependency_graph::Metadata& m2) {
-		if(m1.attributeCount() != m2.attributeCount())
+bool isCompatible(const dependency_graph::Metadata& m1, const dependency_graph::Metadata& m2) {
+	if(m1.attributeCount() != m2.attributeCount())
+		return false;
+
+	for(std::size_t i = 0; i < m1.attributeCount(); ++i) {
+		const Attr& a1 = m1.attr(i);
+		const Attr& a2 = m2.attr(i);
+
+		if(a1.name() != a2.name())
 			return false;
 
-		for(std::size_t i=0; i<m1.attributeCount(); ++i) {
-			const Attr& a1 = m1.attr(i);
-			const Attr& a2 = m2.attr(i);
+		if(a1.category() != a2.category())
+			return false;
 
-			if(a1.name() != a2.name())
-				return false;
-
-			if(a1.category() != a2.category())
-				return false;
-
-			if(a1.type() != a2.type())
-				return false;
-		}
-
-		return true;
+		if(a1.type() != a2.type())
+			return false;
 	}
+
+	return true;
 }
+}  // namespace
 
 Nodes::Nodes(Network* parent) : m_parent(parent) {
-
 }
 
-NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, const Data& blindData, boost::optional<const dependency_graph::Datablock&> datablock, const UniqueId& id) {
+NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, const Data& blindData,
+                     boost::optional<const dependency_graph::Datablock&> datablock, const UniqueId& id) {
 	std::unique_ptr<dependency_graph::NodeBase> node = type->createNode(name, *m_parent, id);
 	assert(isCompatible(node->metadata().metadata(), type.metadata()));
 
@@ -132,4 +132,4 @@ const NodeBase& Nodes::operator[](const dependency_graph::UniqueId& index) const
 	return **it;
 }
 
-}
+}  // namespace dependency_graph

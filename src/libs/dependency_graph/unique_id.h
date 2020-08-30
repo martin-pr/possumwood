@@ -12,20 +12,20 @@ namespace dependency_graph {
 /// sorted indexes, but the same ID will not be generated using the default
 /// constructor again.
 class UniqueId {
-	public:
-		UniqueId();
+  public:
+	UniqueId();
 
-		bool operator == (const UniqueId& id) const;
-		bool operator != (const UniqueId& id) const;
+	bool operator==(const UniqueId& id) const;
+	bool operator!=(const UniqueId& id) const;
 
-		bool operator < (const UniqueId& id) const;
+	bool operator<(const UniqueId& id) const;
 
-	private:
-		std::size_t m_id;
+  private:
+	std::size_t m_id;
 
-	friend std::ostream& operator <<(std::ostream& out, const UniqueId& id);
+	friend std::ostream& operator<<(std::ostream& out, const UniqueId& id);
 };
 
-std::ostream& operator <<(std::ostream& out, const UniqueId& id);
+std::ostream& operator<<(std::ostream& out, const UniqueId& id);
 
-}
+}  // namespace dependency_graph

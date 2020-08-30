@@ -1,23 +1,19 @@
 #include "app.h"
 
-#include <cassert>
-#include <fstream>
-#include <regex>
-
-#include <boost/filesystem.hpp>
+#include <actions/actions.h>
+#include <dependency_graph/node.h>
+#include <possumwood_sdk/gl.h>
+#include <possumwood_sdk/metadata.h>
 
 #include <QApplication>
 #include <QMainWindow>
-
-#include <dependency_graph/node.h>
+#include <boost/filesystem.hpp>
+#include <cassert>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes_iterator.inl>
 #include <dependency_graph/port.inl>
-
-#include <actions/actions.h>
-
-#include <possumwood_sdk/gl.h>
-#include <possumwood_sdk/metadata.h>
+#include <fstream>
+#include <regex>
 
 #include "config.inl"
 

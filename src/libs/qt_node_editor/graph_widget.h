@@ -2,28 +2,28 @@
 
 #include <QGraphicsView>
 
-#include "node.h"
 #include "graph_scene.h"
+#include "node.h"
 
 namespace node_editor {
 
 /// a simple graph widget
 class GraphWidget : public QGraphicsView {
-		Q_OBJECT
+	Q_OBJECT
 
-	public:
-		GraphWidget(QWidget* parent = NULL);
+  public:
+	GraphWidget(QWidget* parent = NULL);
 
-		GraphScene& scene();
+	GraphScene& scene();
 
-	protected:
-		virtual void mouseMoveEvent(QMouseEvent* event) override;
-		virtual void wheelEvent(QWheelEvent *event) override;
+  protected:
+	virtual void mouseMoveEvent(QMouseEvent* event) override;
+	virtual void wheelEvent(QWheelEvent* event) override;
 
-	private:
-		GraphScene m_scene;
+  private:
+	GraphScene m_scene;
 
-		int m_mouseX, m_mouseY;
+	int m_mouseX, m_mouseY;
 };
 
-}
+}  // namespace node_editor

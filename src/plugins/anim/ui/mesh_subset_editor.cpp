@@ -1,18 +1,19 @@
 #include "mesh_subset_editor.h"
 
+#include <ImathEuler.h>
+
 #include <QComboBox>
 #include <QHeaderView>
-
-#include <ImathEuler.h>
 
 MeshSubsetEditor::MeshSubsetEditor() : m_widget(new QTreeWidget()), m_signalsBlocked(false) {
 	m_widget->setRootIsDecorated(false);
 
 	m_widget->header()->hide();
 
-	QObject::connect(m_widget->model(), &QAbstractItemModel::dataChanged, [this](const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles) {
-		valueUpdatedSignal();
-	});
+	QObject::connect(m_widget->model(), &QAbstractItemModel::dataChanged,
+	                 [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles) {
+		                 valueUpdatedSignal();
+	                 });
 }
 
 MeshSubsetEditor::~MeshSubsetEditor() {
@@ -50,7 +51,7 @@ void MeshSubsetEditor::set(const anim::SubsetSelection& value) {
 	// update the values on all items
 	{
 		auto it = value.begin();
-		for(int a = 0; a<m_widget->topLevelItemCount(); ++a) {
+		for(int a = 0; a < m_widget->topLevelItemCount(); ++a) {
 			assert(it != value.end());
 
 			QTreeWidgetItem* item = m_widget->topLevelItem(a);

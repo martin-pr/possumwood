@@ -2,32 +2,30 @@
 
 #include <QDoubleSpinBox>
 
-template<typename T>
+template <typename T>
 NumberUI<T>::NumberUI() : m_ui(new typename NumberTraits<T>::QtType(NULL)) {
-	m_valueChangeConnection = QObject::connect(
-		m_ui,
-		static_cast<void(NumberTraits<T>::QtType::*)(typename NumberTraits<T>::CallbackResult)>(&NumberTraits<T>::QtType::valueChanged),
-		[this]() -> void {
-			this->callValueChangedCallbacks();
-		}
-	);
+	m_valueChangeConnection =
+	    QObject::connect(m_ui,
+	                     static_cast<void (NumberTraits<T>::QtType::*)(typename NumberTraits<T>::CallbackResult)>(
+	                         &NumberTraits<T>::QtType::valueChanged),
+	                     [this]() -> void { this->callValueChangedCallbacks(); });
 
 	m_ui->setKeyboardTracking(false);
 
 	NumberTraits<T>::init(m_ui);
 }
 
-template<typename T>
+template <typename T>
 NumberUI<T>::~NumberUI() {
 	QObject::disconnect(m_valueChangeConnection);
 }
 
-template<typename T>
+template <typename T>
 void NumberUI<T>::get(typename NumberTraits<T>::Value& value) const {
 	value = m_ui->value();
 }
 
-template<typename T>
+template <typename T>
 void NumberUI<T>::set(const typename NumberTraits<T>::Value& value) {
 	bool block = m_ui->blockSignals(true);
 
@@ -37,12 +35,12 @@ void NumberUI<T>::set(const typename NumberTraits<T>::Value& value) {
 	m_ui->blockSignals(block);
 }
 
-template<typename T>
+template <typename T>
 QWidget* NumberUI<T>::widget() {
 	return m_ui;
 }
 
-template<typename T>
+template <typename T>
 void NumberUI<T>::onFlagsChanged(unsigned flags) {
 	m_ui->setReadOnly(flags & possumwood::properties::property_base::kOutput);
 	m_ui->setDisabled(flags & possumwood::properties::property_base::kDisabled);
@@ -50,7 +48,7 @@ void NumberUI<T>::onFlagsChanged(unsigned flags) {
 
 ///////////////////
 
-template<typename T>
+template <typename T>
 struct NumberTraits {
 	typedef T Value;
 	typedef QSpinBox QtType;
@@ -61,7 +59,7 @@ struct NumberTraits {
 	}
 };
 
-template<>
+template <>
 struct NumberTraits<float> {
 	typedef float Value;
 	typedef QDoubleSpinBox QtType;
@@ -73,7 +71,7 @@ struct NumberTraits<float> {
 	}
 };
 
-template<>
+template <>
 struct NumberTraits<double> {
 	typedef double Value;
 	typedef QDoubleSpinBox QtType;

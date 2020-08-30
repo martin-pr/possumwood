@@ -1,12 +1,14 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
-#include <possumwood_sdk/metadata.inl>
-#include <possumwood_sdk/gl_renderable.h>
-#include <possumwood_sdk/gl.h>
+#include <GL/glew.h>
 
-#include <GL/glut.h>
+#include <GL/gl.h>
 
 #include <maths/io/vec3.h>
+
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/gl.h>
+#include <possumwood_sdk/gl_renderable.h>
+#include <possumwood_sdk/node_implementation.h>
+#include <possumwood_sdk/metadata.inl>
 
 #include "datatypes/skeleton.h"
 
@@ -33,10 +35,8 @@ class Skeleton : public possumwood::Drawable {
   public:
 	Skeleton(dependency_graph::Values&& vals)
 	    : possumwood::Drawable(std::move(vals)),
-	      m_renderable(GL_LINES, possumwood::GLRenderable::defaultVertexShader(),
-	                   fragmentShaderSource()) {
-		m_timeChangedConnection =
-		    possumwood::App::instance().onTimeChanged([](float t) { refresh(); });
+	      m_renderable(GL_LINES, possumwood::GLRenderable::defaultVertexShader(), fragmentShaderSource()) {
+		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([](float t) { refresh(); });
 	}
 
 	~Skeleton() {
@@ -93,10 +93,10 @@ class Skeleton : public possumwood::Drawable {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_colour, "colour", Imath::V3f(1,1,1));
+	meta.addAttribute(a_colour, "colour", Imath::V3f(1, 1, 1));
 
 	meta.setDrawable<Skeleton>();
 }
 
 possumwood::NodeImplementation s_impl("anim/frame/display", init);
-}
+}  // namespace

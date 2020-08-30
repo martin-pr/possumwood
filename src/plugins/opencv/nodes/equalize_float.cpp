@@ -1,8 +1,7 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <actions/traits.h>
 
 #include "frame.h"
 #include "tools.h"
@@ -21,8 +20,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	std::multimap<float, cv::Vec2i> pixels;
 
-	for(int y=0;y<src.rows;++y)
-		for(int x=0;x<src.cols;++x)
+	for(int y = 0; y < src.rows; ++y)
+		for(int x = 0; x < src.cols; ++x)
 			pixels.insert(std::make_pair(src.at<float>(y, x), cv::Vec2i(y, x)));
 
 	cv::Mat mat = cv::Mat::zeros(src.rows, src.cols, CV_32FC1);
@@ -59,4 +58,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/equalize_float", init);
 
-}
+}  // namespace

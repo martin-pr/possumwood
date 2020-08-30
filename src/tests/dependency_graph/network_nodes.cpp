@@ -1,14 +1,13 @@
-#include <boost/test/unit_test.hpp>
-
-#include <iostream>
-
 #include <dependency_graph/graph.h>
-#include <dependency_graph/node.h>
-#include <dependency_graph/nodes.inl>
-#include <dependency_graph/node_base.inl>
-#include <dependency_graph/port.inl>
-#include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata_register.h>
+#include <dependency_graph/node.h>
+
+#include <boost/test/unit_test.hpp>
+#include <dependency_graph/datablock.inl>
+#include <dependency_graph/node_base.inl>
+#include <dependency_graph/nodes.inl>
+#include <dependency_graph/port.inl>
+#include <iostream>
 
 #include "common.h"
 
@@ -16,16 +15,17 @@ using namespace dependency_graph;
 
 namespace dependency_graph {
 
-static std::ostream& operator << (std::ostream& out, const Nodes::iterator& i) {
+static std::ostream& operator<<(std::ostream& out, const Nodes::iterator& i) {
 	out << "(it " << i->index() << ")";
 	return out;
 }
 
-}
+}  // namespace dependency_graph
 
 namespace {
 
-bool checkNodes(const Network& g, std::vector<NodeBase*> nodes, dependency_graph::Nodes::SearchType st = dependency_graph::Nodes::kThisNetwork) {
+bool checkNodes(const Network& g, std::vector<NodeBase*> nodes,
+                dependency_graph::Nodes::SearchType st = dependency_graph::Nodes::kThisNetwork) {
 	auto it1 = g.nodes().begin(st);
 	auto it2 = nodes.begin();
 
@@ -40,7 +40,7 @@ bool checkNodes(const Network& g, std::vector<NodeBase*> nodes, dependency_graph
 	return it1 == g.nodes().end() && it2 == nodes.end();
 }
 
-}
+}  // namespace
 
 BOOST_AUTO_TEST_CASE(network_nodes_instantiation) {
 	Graph g;

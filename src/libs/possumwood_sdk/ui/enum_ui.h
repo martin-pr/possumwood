@@ -1,10 +1,10 @@
 #pragma once
 
-#include "datatypes/enum.h"
-
 #include <possumwood_sdk/properties/property.h>
 
 #include <QComboBox>
+
+#include "datatypes/enum.h"
 
 class enum_ui : public possumwood::properties::property<possumwood::Enum, enum_ui> {
   public:

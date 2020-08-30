@@ -23,7 +23,8 @@ dependency_graph::State VertexData::use(GLuint programId, const ViewportState& v
 		if(attrLocation >= 0)
 			v.vbo->use(attrLocation);
 		// else
-		// 	state.addWarning("VBO '" + v.name + "' cannot be mapped to an attribute location - not used in any of the programs?");
+		// 	state.addWarning("VBO '" + v.name + "' cannot be mapped to an attribute location - not used in any of the
+		// programs?");
 	}
 
 	return state;
@@ -62,7 +63,7 @@ std::set<std::string> VertexData::names() const {
 	return result;
 }
 
-std::ostream& operator << (std::ostream& out, const VertexData& vd) {
+std::ostream& operator<<(std::ostream& out, const VertexData& vd) {
 	out << "vertex data with " << vd.vboCount() << " VBOs:" << std::endl;
 	for(auto& v : vd.m_vbos)
 		out << "  - " << v.glslType << std::endl;
@@ -70,4 +71,4 @@ std::ostream& operator << (std::ostream& out, const VertexData& vd) {
 	return out;
 }
 
-}
+}  // namespace possumwood

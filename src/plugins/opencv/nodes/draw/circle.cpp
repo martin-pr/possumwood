@@ -1,9 +1,8 @@
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
 
 #include "frame.h"
 
@@ -18,8 +17,7 @@ dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result = (*data.get(a_inFrame)).clone();
 	cv::circle(result, cv::Point(data.get(a_centerX), data.get(a_centerY)), data.get(a_radius),
-		cv::Scalar(data.get(a_color)),
-		data.get(a_fill) ? -1 : data.get(a_thickness));
+	           cv::Scalar(data.get(a_color)), data.get(a_fill) ? -1 : data.get(a_thickness));
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
@@ -49,4 +47,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/draw/circle", init);
 
-}
+}  // namespace

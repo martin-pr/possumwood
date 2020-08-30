@@ -5,7 +5,8 @@
 
 namespace dependency_graph {
 
-NodeBase::NodeBase(const std::string& name, const UniqueId& id, const MetadataHandle& metadata, Network* parent) : m_name(name), m_network(parent), m_index(id), m_metadata(metadata), m_data(metadata) {
+NodeBase::NodeBase(const std::string& name, const UniqueId& id, const MetadataHandle& metadata, Network* parent)
+    : m_name(name), m_network(parent), m_index(id), m_metadata(metadata), m_data(metadata) {
 	for(std::size_t a = 0; a < metadata.metadata().attributeCount(); ++a) {
 		auto& meta = metadata.metadata().attr(a);
 		assert(meta.offset() == a);
@@ -28,7 +29,7 @@ void NodeBase::disconnectAll() {
 		while(it != network().connections().end())
 			if(&it->first.node() == this || &it->second.node() == this) {
 				it->first.disconnect(it->second);
-				it = network().connections().begin(); // inefficient!
+				it = network().connections().begin();  // inefficient!
 			}
 			else
 				++it;
@@ -185,7 +186,7 @@ void NodeBase::computeInput(size_t index) {
 	boost::optional<Port&> out = network().connections().connectedFrom(port(index));
 	assert(out);
 	if(out->isDirty()) {
-		out->getData(); // throw away (bad)
+		out->getData();  // throw away (bad)
 	}
 	assert(not out->isDirty());
 
@@ -215,7 +216,8 @@ void NodeBase::computeOutput(size_t index) {
 		// pull on all inputs - triggers their recomputation
 		for(std::size_t& i : inputs) {
 			if(port(i).isDirty())
-				port(i).getData(); // throw away (bad! should eventually start using shader_ptr to hold data to avoid wasting resources)
+				port(i).getData();  // throw away (bad! should eventually start using shader_ptr to hold data to avoid
+				                    // wasting resources)
 
 			assert(!port(i).isDirty());
 		}
@@ -244,7 +246,8 @@ void NodeBase::computeOutput(size_t index) {
 			auto conn = network().connections().connectedTo(port(index));
 			if(conn.empty()) {
 				std::stringstream err;
-				err << "Error evaluating " << name() << "/" << port(index).name() << " - untyped port without a connection cannot be evaluated." << std::endl;
+				err << "Error evaluating " << name() << "/" << port(index).name()
+				    << " - untyped port without a connection cannot be evaluated." << std::endl;
 
 				// throw an exception later, after all other state handling is finished
 				error_to_throw = err.str();
@@ -298,4 +301,4 @@ const Data& NodeBase::blindData() const {
 	return m_blindData;
 }
 
-}
+}  // namespace dependency_graph

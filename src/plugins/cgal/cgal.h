@@ -1,8 +1,7 @@
 #pragma once
 
-#include <OpenEXR/ImathVec.h>
-
 #include <CGAL/Simple_cartesian.h>
+#include <OpenEXR/ImathVec.h>
 // #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 
@@ -12,61 +11,61 @@ namespace possumwood {
 
 template <class Refs>
 struct CGALFace : public CGAL::HalfedgeDS_face_base<Refs> {
-	public:
-		PropertyKey& property_key() {
-			return m_propKey;
-		}
+  public:
+	PropertyKey& property_key() {
+		return m_propKey;
+	}
 
-		const PropertyKey& property_key() const {
-			return m_propKey;
-		}
+	const PropertyKey& property_key() const {
+		return m_propKey;
+	}
 
-	private:
-		PropertyKey m_propKey;
+  private:
+	PropertyKey m_propKey;
 };
 
 template <class Refs>
 class CGALVertex : public CGAL::HalfedgeDS_vertex_base<Refs> {
-	public:
-		typedef CGAL::Simple_cartesian<float>::Point_3 Point;
+  public:
+	typedef CGAL::Simple_cartesian<float>::Point_3 Point;
 
-		CGALVertex(const Point& p = Point(0, 0, 0)) : m_point(p) {
-		}
+	CGALVertex(const Point& p = Point(0, 0, 0)) : m_point(p) {
+	}
 
-		PropertyKey& property_key() {
-			return m_propKey;
-		}
+	PropertyKey& property_key() {
+		return m_propKey;
+	}
 
-		Point& point() {
-			return m_point;
-		}
+	Point& point() {
+		return m_point;
+	}
 
-		const PropertyKey& property_key() const {
-			return m_propKey;
-		}
+	const PropertyKey& property_key() const {
+		return m_propKey;
+	}
 
-		const Point& point() const {
-			return m_point;
-		}
+	const Point& point() const {
+		return m_point;
+	}
 
-	private:
-		Point m_point;
-		PropertyKey m_propKey;
+  private:
+	Point m_point;
+	PropertyKey m_propKey;
 };
 
 template <class Refs>
 struct CGALHalfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-	public:
-		PropertyKey& property_key() {
-			return m_propKey;
-		}
+  public:
+	PropertyKey& property_key() {
+		return m_propKey;
+	}
 
-		const PropertyKey& property_key() const {
-			return m_propKey;
-		}
+	const PropertyKey& property_key() const {
+		return m_propKey;
+	}
 
-	private:
-		PropertyKey m_propKey;
+  private:
+	PropertyKey m_propKey;
 };
 
 struct CGALItems : public CGAL::Polyhedron_items_3 {
@@ -89,4 +88,4 @@ struct CGALItems : public CGAL::Polyhedron_items_3 {
 typedef CGAL::Simple_cartesian<float> CGALKernel;
 // typedef CGAL::Surface_mesh<CGALKernel::Point_3> CGALPolyhedron;
 typedef CGAL::Polyhedron_3<CGALKernel, CGALItems> CGALPolyhedron;
-}
+}  // namespace possumwood

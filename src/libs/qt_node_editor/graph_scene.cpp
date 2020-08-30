@@ -1,11 +1,10 @@
 #include "graph_scene.h"
 
-#include <cassert>
-#include <iostream>
-
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
+#include <cassert>
+#include <iostream>
 
 #include "connected_edge.h"
 #include "node.h"

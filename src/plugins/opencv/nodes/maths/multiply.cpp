@@ -1,23 +1,21 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <actions/traits.h>
 #include <possumwood_sdk/datatypes/enum.h>
-
-#include <sstream>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <actions/traits.h>
+#include <sstream>
 
 #include "frame.h"
 #include "tools.h"
 
 namespace {
 
-static const std::vector<std::pair<std::string, int>> s_output {{
-	std::pair<std::string, int>("Automatic", -1),
-	std::pair<std::string, int>("8UC1", CV_8UC1),
-	std::pair<std::string, int>("8UC3", CV_8UC3),
-	std::pair<std::string, int>("32FC1", CV_32FC1),
-	std::pair<std::string, int>("32FC3", CV_32FC3),
+static const std::vector<std::pair<std::string, int>> s_output{{
+    std::pair<std::string, int>("Automatic", -1),
+    std::pair<std::string, int>("8UC1", CV_8UC1),
+    std::pair<std::string, int>("8UC3", CV_8UC3),
+    std::pair<std::string, int>("32FC1", CV_32FC1),
+    std::pair<std::string, int>("32FC3", CV_32FC3),
 }};
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in1, a_in2;
@@ -51,4 +49,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/maths/multiply", init);
 
-}
+}  // namespace

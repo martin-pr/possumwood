@@ -50,16 +50,12 @@ Properties& Mesh::halfedgeProperties() {
 }
 
 bool Mesh::operator==(const Mesh& i) const {
-	return m_name == i.m_name && m_polyhedron == i.m_polyhedron &&
-	       m_faceProperties == i.m_faceProperties &&
-	       m_vertexProperties == i.m_vertexProperties &&
-	       m_halfedgeProperties == i.m_halfedgeProperties;
+	return m_name == i.m_name && m_polyhedron == i.m_polyhedron && m_faceProperties == i.m_faceProperties &&
+	       m_vertexProperties == i.m_vertexProperties && m_halfedgeProperties == i.m_halfedgeProperties;
 }
 
 bool Mesh::operator!=(const Mesh& i) const {
-	return m_name != i.m_name || m_polyhedron != i.m_polyhedron ||
-	       m_faceProperties != i.m_faceProperties ||
-	       m_vertexProperties != i.m_vertexProperties ||
-	       m_halfedgeProperties != i.m_halfedgeProperties;
+	return m_name != i.m_name || m_polyhedron != i.m_polyhedron || m_faceProperties != i.m_faceProperties ||
+	       m_vertexProperties != i.m_vertexProperties || m_halfedgeProperties != i.m_halfedgeProperties;
 }
-}
+}  // namespace possumwood

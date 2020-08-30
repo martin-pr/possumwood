@@ -5,7 +5,9 @@
 
 namespace lightfields {
 
-NLinks::NLinks(const V2i& size, int n_link_value) : m_size(size), m_horiz((size.x-1) * size.y, Link(n_link_value)), m_vert(size.x * (size.y - 1), Link(n_link_value)) {
+NLinks::NLinks(const V2i& size, int n_link_value)
+    : m_size(size), m_horiz((size.x - 1) * size.y, Link(n_link_value)),
+      m_vert(size.x * (size.y - 1), Link(n_link_value)) {
 }
 
 std::size_t NLinks::h_index(const V2i& i) const {
@@ -70,4 +72,4 @@ V2i NLinks::size() const {
 	return m_size;
 }
 
-}
+}  // namespace lightfields

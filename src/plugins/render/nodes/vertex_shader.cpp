@@ -1,7 +1,7 @@
-#include <memory>
-
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/source_editor.h>
+
+#include <memory>
 
 #include "datatypes/shader.h"
 #include "default_shaders.h"
@@ -12,10 +12,9 @@ dependency_graph::InAttr<std::string> a_src;
 dependency_graph::OutAttr<possumwood::VertexShader> a_shader;
 
 class Editor : public possumwood::SourceEditor {
-	public:
-		Editor() : SourceEditor(a_src) {
-		}
-
+  public:
+	Editor() : SourceEditor(a_src) {
+	}
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -47,4 +46,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/vertex_shader", init);
 
-}
+}  // namespace

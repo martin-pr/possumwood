@@ -1,14 +1,14 @@
-#include <boost/test/unit_test.hpp>
-
 #include <dependency_graph/graph.h>
+#include <dependency_graph/metadata_register.h>
 #include <dependency_graph/node.h>
+
+#include <boost/test/unit_test.hpp>
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/datablock.inl>
+#include <dependency_graph/metadata.inl>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/port.inl>
-#include <dependency_graph/datablock.inl>
-#include <dependency_graph/metadata_register.h>
 #include <dependency_graph/values.inl>
-#include <dependency_graph/attr.inl>
-#include <dependency_graph/metadata.inl>
 
 #include "common.h"
 
@@ -84,7 +84,7 @@ bool checkDirtyPorts(const NodeBase& n, const std::set<size_t>& dirtyPorts) {
 	return result;
 }
 
-}
+}  // namespace
 
 // need to add dirty querying on dependency_graph::Values, to allow partial evaluation
 //   -> allows to do a multiple-output multiple-input complex node (or NETWORK)

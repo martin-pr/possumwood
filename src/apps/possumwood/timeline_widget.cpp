@@ -1,9 +1,9 @@
 #include "timeline_widget.h"
 
-#include <QHBoxLayout>
-#include <QAction>
-
 #include <possumwood_sdk/app.h>
+
+#include <QAction>
+#include <QHBoxLayout>
 #include <possumwood_sdk/config.inl>
 
 TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTimer(new QTimer(this)) {
@@ -27,14 +27,10 @@ TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTim
 	}));
 
 	// signal for time changing in App
-	m_connections.push_back(possumwood::App::instance().onTimeChanged([this](float t) {
-		m_timeline->setValue(t);
-	}));
+	m_connections.push_back(possumwood::App::instance().onTimeChanged([this](float t) { m_timeline->setValue(t); }));
 
 	// response to time changed by clicking in the timeline widget
-	connect(m_timeline, &Timeline::valueChanged, [this](float t) {
-		possumwood::App::instance().setTime(t);
-	});
+	connect(m_timeline, &Timeline::valueChanged, [this](float t) { possumwood::App::instance().setTime(t); });
 
 	// assemble the context menu
 	setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -51,7 +47,7 @@ TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTim
 	connect(m_frameFwdAction, &QAction::triggered, [this]() {
 		auto& app = possumwood::App::instance();
 
-		float t = app.time() + 1.0f/app.sceneConfig()["fps"].as<float>();
+		float t = app.time() + 1.0f / app.sceneConfig()["fps"].as<float>();
 		t = std::min(t, app.sceneConfig()["end_time"].as<float>());
 
 		app.setTime(t);
@@ -64,7 +60,7 @@ TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTim
 	connect(m_frameBwdAction, &QAction::triggered, [this]() {
 		auto& app = possumwood::App::instance();
 
-		float t = app.time() - 1.0f/app.sceneConfig()["fps"].as<float>();
+		float t = app.time() - 1.0f / app.sceneConfig()["fps"].as<float>();
 		t = std::max(t, app.sceneConfig()["start_time"].as<float>());
 
 		app.setTime(t);
@@ -115,5 +111,5 @@ void TimelineWidget::onTimer() {
 }
 
 void TimelineWidget::paintEvent(QPaintEvent* event) {
-		QWidget::paintEvent(event);
+	QWidget::paintEvent(event);
 }

@@ -1,10 +1,9 @@
+#include "datatypes/font.h"
+
+#include <possumwood_sdk/datatypes/filename.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <boost/filesystem.hpp>
-
-#include <possumwood_sdk/datatypes/filename.h>
-
-#include "datatypes/font.h"
 
 namespace {
 
@@ -37,4 +36,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/font", init);
 
-}
+}  // namespace

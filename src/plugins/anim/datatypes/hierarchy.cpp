@@ -10,8 +10,8 @@ namespace anim {
 
 ////////
 
-Hierarchy::Item::Item(const std::string& n, int p, std::size_t chld_begin, std::size_t chld_end) :
-	name(n), parent(p), children_begin(chld_begin), children_end(chld_end) {
+Hierarchy::Item::Item(const std::string& n, int p, std::size_t chld_begin, std::size_t chld_end)
+    : name(n), parent(p), children_begin(chld_begin), children_end(chld_end) {
 }
 
 ////////
@@ -41,7 +41,7 @@ void Hierarchy::addRoot(const std::string& name) {
 		// add a new Item at the beginning
 		m_items.insert(m_items.begin(), Item{name, -1, 1, 2});
 		// and update the children indices of all following Items
-		for(auto it = m_items.begin()+1; it != m_items.end(); ++it) {
+		for(auto it = m_items.begin() + 1; it != m_items.end(); ++it) {
 			++it->children_begin;
 			++it->children_end;
 
@@ -63,7 +63,7 @@ std::size_t Hierarchy::addChild(const Item& j, const std::string& name) {
 		if(ji == currentIndex) {
 			// update the m_end of Item's children to include this new Item
 			++i.children_end;
-			assert(lastChild == i.children_end-1);
+			assert(lastChild == i.children_end - 1);
 		}
 		else if(i.children_begin > lastChild) {
 			++i.children_begin;
@@ -79,8 +79,8 @@ std::size_t Hierarchy::addChild(const Item& j, const std::string& name) {
 	}
 
 	// figure out the new children position
-	unsigned childPos = lastChild+1;
-	while((childPos-1 < m_items.size()) && (m_items[childPos-1].parent <= (int)lastChild))
+	unsigned childPos = lastChild + 1;
+	while((childPos - 1 < m_items.size()) && (m_items[childPos - 1].parent <= (int)lastChild))
 		++childPos;
 
 	// and insert the Item
@@ -121,7 +121,7 @@ bool Hierarchy::isCompatibleWith(const Hierarchy& h) const {
 	if(m_items.size() != h.m_items.size())
 		return false;
 
-	for(unsigned i=0; i<m_items.size(); ++i) {
+	for(unsigned i = 0; i < m_items.size(); ++i) {
 		auto& i1 = m_items[i];
 		auto& i2 = h.m_items[i];
 
@@ -132,4 +132,4 @@ bool Hierarchy::isCompatibleWith(const Hierarchy& h) const {
 	return true;
 }
 
-}
+}  // namespace anim

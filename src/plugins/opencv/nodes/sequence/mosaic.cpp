@@ -1,8 +1,8 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <opencv2/opencv.hpp>
-
 #include <actions/traits.h>
 #include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/node_implementation.h>
+
+#include <opencv2/opencv.hpp>
 
 #include "sequence.h"
 
@@ -12,14 +12,11 @@ dependency_graph::InAttr<possumwood::opencv::Sequence> a_inSequence;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
-enum Modes {
-	kHorizontalID,
-	kVerticalID
-};
+enum Modes { kHorizontalID, kVerticalID };
 
-static std::vector<std::pair<std::string, int>> s_mode {
-	{"horizontal, ID-based", kHorizontalID},
-	{"vertical, ID-based", kVerticalID},
+static std::vector<std::pair<std::string, int>> s_mode{
+    {"horizontal, ID-based", kHorizontalID},
+    {"vertical, ID-based", kVerticalID},
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -55,4 +52,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/mosaic", init);
 
-}
+}  // namespace

@@ -1,6 +1,6 @@
-#include <regex>
-
 #include <possumwood_sdk/node_implementation.h>
+
+#include <regex>
 
 #include "datatypes/skeleton.h"
 
@@ -27,9 +27,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(!inSkeleton.empty()) {
 		outSkeleton.addRoot(processName(inSkeleton[0].name(), regex), inSkeleton[0].tr());
 
-		for(unsigned a=1;a<inSkeleton.size();++a)
-			outSkeleton.addChild(outSkeleton[inSkeleton[a].parent().index()],
-				inSkeleton[a].tr(), processName(inSkeleton[a].name(), regex));
+		for(unsigned a = 1; a < inSkeleton.size(); ++a)
+			outSkeleton.addChild(outSkeleton[inSkeleton[a].parent().index()], inSkeleton[a].tr(),
+			                     processName(inSkeleton[a].name(), regex));
 	}
 
 	data.set(a_outSkeleton, outSkeleton);
@@ -50,4 +50,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/frame/bone_rename", init);
 
-}
+}  // namespace

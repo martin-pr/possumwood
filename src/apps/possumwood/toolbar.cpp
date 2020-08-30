@@ -1,17 +1,15 @@
 #include "toolbar.h"
 
+#include <actions/actions.h>
+#include <possumwood_sdk/app.h>
+
+#include <QToolBar>
+#include <QToolButton>
+#include <boost/filesystem.hpp>
 #include <fstream>
 #include <regex>
 #include <sstream>
 #include <streambuf>
-
-#include <boost/filesystem.hpp>
-
-#include <QToolBar>
-#include <QToolButton>
-
-#include <actions/actions.h>
-#include <possumwood_sdk/app.h>
 
 #include "error_dialog.h"
 #include "main_window.h"

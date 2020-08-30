@@ -2,7 +2,8 @@
 
 #include "tools.h"
 
-namespace possumwood { namespace opencv {
+namespace possumwood {
+namespace opencv {
 
 Frame::Frame(const cv::Mat& data, bool copy) {
 	if(!copy)
@@ -39,17 +40,18 @@ bool Frame::empty() const {
 	return m_frame.empty();
 }
 
-bool Frame::operator == (const Frame& f) const {
+bool Frame::operator==(const Frame& f) const {
 	return m_frame.ptr() == f.m_frame.ptr();
 }
 
-bool Frame::operator != (const Frame& f) const {
+bool Frame::operator!=(const Frame& f) const {
 	return m_frame.ptr() != f.m_frame.ptr();
 }
 
-std::ostream& operator << (std::ostream& out, const Frame& f) {
+std::ostream& operator<<(std::ostream& out, const Frame& f) {
 	out << "(" << opencv::type2str((*f).type()) << " frame, " << (*f).cols << "x" << (*f).rows << ")";
 	return out;
 }
 
-} }
+}  // namespace opencv
+}  // namespace possumwood

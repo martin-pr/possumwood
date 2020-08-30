@@ -1,20 +1,18 @@
+#include <possumwood_sdk/app.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include <utility>
-
-#include <possumwood_sdk/app.h>
-
-#include <QGraphicsView>
-#include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
+#include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
-#include <QMouseEvent>
+#include <QGraphicsView>
 #include <QLayout>
+#include <QMouseEvent>
+#include <utility>
 
-#include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
 #include "datatypes/motion_graph.h"
+#include "datatypes/skeleton.h"
 #include "ui/motion_map.h"
 
 namespace {
@@ -25,35 +23,35 @@ dependency_graph::OutAttr<anim::MotionMap> a_mmap;
 dependency_graph::OutAttr<anim::MotionGraph> a_mgraph;
 
 class Editor : public possumwood::Editor {
-	public:
-		Editor() {
-			m_widget = new anim::ui::MotionMap(this);
-			layout()->addWidget(m_widget);
+  public:
+	Editor() {
+		m_widget = new anim::ui::MotionMap(this);
+		layout()->addWidget(m_widget);
+	}
+
+  protected:
+	virtual void valueChanged(const dependency_graph::Attr& attr) override {
+		QPixmap pixmap;
+
+		const anim::MotionMap& mmap = values().get(a_mmap);
+
+		// draw the motion map
+		m_widget->init(mmap);
+
+		// and draw the local minima
+		for(auto& m : mmap.localMinima()) {
+			m_widget->setPixel(m.first - 1, m.second, QColor(255, 0, 0));
+			m_widget->setPixel(m.first, m.second, QColor(255, 0, 0));
+			m_widget->setPixel(m.first + 1, m.second, QColor(255, 0, 0));
+			m_widget->setPixel(m.first, m.second - 1, QColor(255, 0, 0));
+			m_widget->setPixel(m.first, m.second + 1, QColor(255, 0, 0));
 		}
 
-	protected:
-		virtual void valueChanged(const dependency_graph::Attr& attr) override {
-			QPixmap pixmap;
+		m_widget->update();
+	}
 
-			const anim::MotionMap& mmap = values().get(a_mmap);
-
-			// draw the motion map
-			m_widget->init(mmap);
-
-			// and draw the local minima
-			for(auto& m : mmap.localMinima()) {
-				m_widget->setPixel(m.first-1, m.second, QColor(255, 0, 0));
-				m_widget->setPixel(m.first, m.second, QColor(255, 0, 0));
-				m_widget->setPixel(m.first+1, m.second, QColor(255, 0, 0));
-				m_widget->setPixel(m.first, m.second-1, QColor(255, 0, 0));
-				m_widget->setPixel(m.first, m.second+1, QColor(255, 0, 0));
-			}
-
-			m_widget->update();
-		}
-
-	private:
-		anim::ui::MotionMap* m_widget;
+  private:
+	anim::ui::MotionMap* m_widget;
 };
 
 dependency_graph::State compute(dependency_graph::Values& values) {
@@ -67,7 +65,7 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 		::anim::filter::IgnoreIdentity ident(values.get(a_filterSelftransitions));
 		mmap.filter(ident);
 
-		mmap.computeLocalMinima(values.get(a_transitionCount), values.get(a_transitionLength)/2+1);
+		mmap.computeLocalMinima(values.get(a_transitionCount), values.get(a_transitionLength) / 2 + 1);
 
 		values.set(a_mmap, mmap);
 	}
@@ -108,4 +106,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/animation/motiongraph/create", init);
 
-}
+}  // namespace

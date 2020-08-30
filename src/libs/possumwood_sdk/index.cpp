@@ -85,7 +85,6 @@ const Index::Item& Index::operator[](const dependency_graph::NodeBase* id) const
 	return it->second;
 }
 
-
 Index::const_iterator Index::begin() const {
 	return m_data.begin();
 }
@@ -120,4 +119,4 @@ void Index::clear() {
 	m_nodeIndex.clear();
 }
 
-}
+}  // namespace possumwood

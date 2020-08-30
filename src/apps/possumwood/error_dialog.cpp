@@ -1,11 +1,11 @@
 #include "error_dialog.h"
 
-#include <QVBoxLayout>
-#include <QFormLayout>
 #include <QDialogButtonBox>
-#include <QListWidget>
-#include <QLabel>
+#include <QFormLayout>
 #include <QFrame>
+#include <QLabel>
+#include <QListWidget>
+#include <QVBoxLayout>
 
 ErrorDialog::ErrorDialog(const dependency_graph::State& state, QWidget* parent, QString title) : QDialog(parent) {
 	setWindowTitle(title);

@@ -1,9 +1,8 @@
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
 
 #include "frame.h"
 
@@ -47,7 +46,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	int method = methodToEnum(data.get(a_method).value());
 	int type = typeToEnum(data.get(a_type).value());
 
-	cv::adaptiveThreshold(*data.get(a_inFrame), result, data.get(a_maxVal), method, type, data.get(a_blockSize), data.get(a_const));
+	cv::adaptiveThreshold(*data.get(a_inFrame), result, data.get(a_maxVal), method, type, data.get(a_blockSize),
+	                      data.get(a_const));
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
@@ -58,8 +58,13 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_const, "const", 127.0f);
 	meta.addAttribute(a_maxVal, "max_val", 255.0f);
-	meta.addAttribute(a_method, "adaptive_method", possumwood::Enum({"ADAPTIVE_THRESH_MEAN_C", "ADAPTIVE_THRESH_GAUSSIAN_C"}));
-	meta.addAttribute(a_type, "threshold_type", possumwood::Enum({"THRESH_BINARY", "THRESH_BINARY_INV" /*, "THRESH_TRUNC", "THRESH_TOZERO", "THRESH_TOZERO_INV", "THRESH_MASK" */ }));
+	meta.addAttribute(a_method, "adaptive_method",
+	                  possumwood::Enum({"ADAPTIVE_THRESH_MEAN_C", "ADAPTIVE_THRESH_GAUSSIAN_C"}));
+	meta.addAttribute(
+	    a_type, "threshold_type",
+	    possumwood::Enum(
+	        {"THRESH_BINARY",
+	         "THRESH_BINARY_INV" /*, "THRESH_TRUNC", "THRESH_TOZERO", "THRESH_TOZERO_INV", "THRESH_MASK" */}));
 	meta.addAttribute(a_blockSize, "block_size", 21u);
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
@@ -75,4 +80,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/filter/adaptive_threshold", init);
 
-}
+}  // namespace

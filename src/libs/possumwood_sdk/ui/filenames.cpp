@@ -1,7 +1,6 @@
 #include "filenames.h"
 
-#include <boost/algorithm/string/join.hpp>
-#include <boost/algorithm/string/predicate.hpp>
+#include <possumwood_sdk/app.h>
 
 #include <QAction>
 #include <QApplication>
@@ -10,8 +9,8 @@
 #include <QMainWindow>
 #include <QSizePolicy>
 #include <QStyle>
-
-#include <possumwood_sdk/app.h>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 filenames_ui::filenames_ui() {
 	m_widget = new QWidget(NULL);

@@ -1,18 +1,18 @@
-#include <possumwood_sdk/node_implementation.h>
-
-#include <opencv2/opencv.hpp>
-#include <tbb/parallel_for.h>
-
 #include <actions/traits.h>
 #include <lightfields/slic_superpixels.h>
 #include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/node_implementation.h>
+#include <tbb/parallel_for.h>
+
+#include <opencv2/opencv.hpp>
 
 #include "frame.h"
 
 namespace {
 
 // Implementation of the SLIC superpixels algorithm
-// Achanta, Radhakrishna, et al. "SLIC superpixels compared to state-of-the-art superpixel methods." IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.
+// Achanta, Radhakrishna, et al. "SLIC superpixels compared to state-of-the-art superpixel methods." IEEE transactions
+// on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
 dependency_graph::InAttr<unsigned> a_targetPixelCount;
@@ -21,16 +21,12 @@ dependency_graph::InAttr<unsigned> a_iterations;
 dependency_graph::InAttr<possumwood::Enum> a_filter;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
-enum FilterMode {
-	kNone,
-	kComponentsFinalize,
-	kComponentsEachIteration
-};
+enum FilterMode { kNone, kComponentsFinalize, kComponentsEachIteration };
 
-static std::vector<std::pair<std::string, int>> s_filterMode {
-	{"none", kNone},
-	{"connected components, final step", kComponentsFinalize},
-	{"connected components, each iteration", kComponentsEachIteration},
+static std::vector<std::pair<std::string, int>> s_filterMode{
+    {"none", kNone},
+    {"connected components, final step", kComponentsFinalize},
+    {"connected components, each iteration", kComponentsEachIteration},
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -64,7 +60,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	bool firstStep = true;
 	lightfields::SlicSuperpixels::label(in, labels, pixels, metric);
 
-	for(unsigned i=0; i<data.get(a_iterations); ++i) {
+	for(unsigned i = 0; i < data.get(a_iterations); ++i) {
 		// using the metric instance, label all pixels
 		if(!firstStep)
 			lightfields::SlicSuperpixels::label(in, labels, pixels, metric);
@@ -86,7 +82,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// copy all to a cv::Mat
 	cv::Mat result = cv::Mat::zeros(in.rows, in.cols, CV_32SC1);
 	tbb::parallel_for(0, in.rows, [&](int y) {
-		for(int x=0; x<in.cols; ++x)
+		for(int x = 0; x < in.cols; ++x)
 			result.at<int>(y, x) = labels(y, x).id;
 	});
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
@@ -99,7 +95,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_targetPixelCount, "target_pixel_count", 2000u);
 	meta.addAttribute(a_spatialBias, "spatial_bias", 1.0f);
 	meta.addAttribute(a_iterations, "iterations", 10u);
-	meta.addAttribute(a_filter, "filter", possumwood::Enum(s_filterMode.begin(), s_filterMode.end(), kComponentsFinalize));
+	meta.addAttribute(a_filter, "filter",
+	                  possumwood::Enum(s_filterMode.begin(), s_filterMode.end(), kComponentsFinalize));
 	meta.addAttribute(a_outFrame, "superpixels", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
@@ -113,4 +110,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/superpixels/slic", init);
 
-}
+}  // namespace

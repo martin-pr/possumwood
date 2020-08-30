@@ -24,8 +24,8 @@ void stringFromJson(const possumwood::io::json& json, std::string& f) {
 	f = json.get<std::string>();
 }
 
-}
+}  // namespace
 
 IO<std::string> Traits<std::string>::io(&stringToJson, &stringFromJson);
 
-}
+}  // namespace possumwood

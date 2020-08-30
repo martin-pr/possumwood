@@ -3,17 +3,17 @@
 #include "action.h"
 
 class Stack {
-	public:
-		Stack() = default;
+  public:
+	Stack() = default;
 
-		void add(const Action& action);
+	void add(const Action& action);
 
-		void step();
-		bool isFinished() const;
+	void step();
+	bool isFinished() const;
 
-	private:
-		Stack(const Stack&) = delete;
-		Stack& operator = (const Stack&) = delete;
+  private:
+	Stack(const Stack&) = delete;
+	Stack& operator=(const Stack&) = delete;
 
-		std::vector<Action> m_actions;
+	std::vector<Action> m_actions;
 };

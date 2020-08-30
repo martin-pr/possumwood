@@ -1,11 +1,10 @@
 #include "main_window.h"
 
-#include <actions/actions.h>
-#include <actions/node_data.h>
-#include <dependency_graph/metadata_register.h>
-#include <possumwood_sdk/app.h>
-#include <possumwood_sdk/gl.h>
-#include <qt_node_editor/connected_edge.h>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/filesystem.hpp>
 
 #include <QAction>
 #include <QApplication>
@@ -21,11 +20,13 @@
 #include <QTextBrowser>
 #include <QToolBar>
 #include <QVBoxLayout>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/join.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/filesystem.hpp>
+
+#include <actions/actions.h>
+#include <actions/node_data.h>
+#include <dependency_graph/metadata_register.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/gl.h>
+#include <qt_node_editor/connected_edge.h>
 #include <dependency_graph/values.inl>
 #include <possumwood_sdk/metadata.inl>
 

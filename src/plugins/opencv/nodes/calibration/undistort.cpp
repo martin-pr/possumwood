@@ -19,7 +19,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	if(inFrame.size() != intrinsics.imageSize()) {
 		std::stringstream ss;
-		ss << "Provided intrinsics expect a different image size! Intrinics expect " << intrinsics.imageSize().width << "x" << intrinsics.imageSize().height << " while image is of size " << inFrame.size().width << "x" << inFrame.size().height << ".";
+		ss << "Provided intrinsics expect a different image size! Intrinics expect " << intrinsics.imageSize().width
+		   << "x" << intrinsics.imageSize().height << " while image is of size " << inFrame.size().width << "x"
+		   << inFrame.size().height << ".";
 
 		status.addWarning(ss.str());
 	}
@@ -45,4 +47,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/calibration/undistort", init);
 
-}
+}  // namespace

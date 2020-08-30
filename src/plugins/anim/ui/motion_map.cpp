@@ -2,13 +2,15 @@
 
 #include <QGraphicsSceneWheelEvent>
 #include <QGraphicsWidget>
-#include <QWidget>
-#include <QScrollBar>
 #include <QLayout>
+#include <QScrollBar>
+#include <QWidget>
 
-namespace anim { namespace ui {
+namespace anim {
+namespace ui {
 
-MotionMap::MotionMap(QWidget* parent) : QGraphicsView(parent), m_pixmap(new QGraphicsPixmapItem()), m_imageChanged(false) {
+MotionMap::MotionMap(QWidget* parent)
+    : QGraphicsView(parent), m_pixmap(new QGraphicsPixmapItem()), m_imageChanged(false) {
 	m_scene = new QGraphicsScene(this);
 	setScene(m_scene);
 
@@ -67,13 +69,10 @@ void MotionMap::mouseReleaseEvent(QMouseEvent* mouseEvent) {
 namespace {
 
 void adjustScrollBar(QScrollBar* scrollBar, float factor, float pos) {
-
-
-	scrollBar->setValue(int(factor * scrollBar->value()
-	                        + ((factor - 1) * scrollBar->pageStep() * pos)));
+	scrollBar->setValue(int(factor * scrollBar->value() + ((factor - 1) * scrollBar->pageStep() * pos)));
 }
 
-}
+}  // namespace
 
 void MotionMap::wheelEvent(QWheelEvent* mouseEvent) {
 	const float sc = powf(10.0f, (float)mouseEvent->delta() / 480.0f);
@@ -87,7 +86,7 @@ void MotionMap::wheelEvent(QWheelEvent* mouseEvent) {
 	adjustScrollBar(verticalScrollBar(), sc, pos.y() / (float)QGraphicsView::height());
 }
 
-void MotionMap::paintEvent(QPaintEvent *event) {
+void MotionMap::paintEvent(QPaintEvent* event) {
 	if(m_imageChanged) {
 		m_pixmap->setPixmap(QPixmap::fromImage(m_image));
 		m_imageChanged = false;
@@ -96,4 +95,5 @@ void MotionMap::paintEvent(QPaintEvent *event) {
 	QGraphicsView::paintEvent(event);
 }
 
-} }
+}  // namespace ui
+}  // namespace anim

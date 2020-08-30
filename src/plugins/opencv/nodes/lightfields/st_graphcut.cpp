@@ -1,17 +1,13 @@
+#include <actions/traits.h>
+#include <lightfields/edmonds_karp.h>
+#include <lightfields/graph.h>
+#include <lightfields/push_relabel.h>
 #include <possumwood_sdk/node_implementation.h>
-
 #include <tbb/parallel_for.h>
 
 #include <opencv2/opencv.hpp>
 
-#include <actions/traits.h>
-
-#include <lightfields/push_relabel.h>
-#include <lightfields/edmonds_karp.h>
-#include <lightfields/graph.h>
-
 #include "possumwood_sdk/datatypes/enum.h"
-
 #include "sequence.h"
 #include "tools.h"
 
@@ -24,10 +20,7 @@ dependency_graph::InAttr<float> a_inPower, a_contPower;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_debug;
 
-enum Mode {
-	kEdmondsKarp,
-	kPushRelabel
-};
+enum Mode { kEdmondsKarp, kPushRelabel };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& sequence = data.get(a_in);
@@ -73,7 +66,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// setting horizontal data
 	if(!contrast.empty()) {
-		for(std::size_t a=0; a<contrast.size(); ++a)
+		for(std::size_t a = 0; a < contrast.size(); ++a)
 			graph.setLayer(*contrast[a], a, data.get(a_contPower));
 	}
 
@@ -120,7 +113,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/lightfields/st_graphcut", init);
 
-}
+}  // namespace

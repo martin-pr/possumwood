@@ -10,34 +10,34 @@ namespace node_editor {
 class GraphWidget;
 
 class Edge : public QGraphicsItem {
-	public:
-		Edge(QPointF origin, QPointF target);
-		virtual ~Edge();
+  public:
+	Edge(QPointF origin, QPointF target);
+	virtual ~Edge();
 
-		virtual QRectF boundingRect() const override;
-		virtual QPainterPath shape() const override;
+	virtual QRectF boundingRect() const override;
+	virtual QPainterPath shape() const override;
 
-		void setPen(QPen pen);
-		const QPen& pen() const;
+	void setPen(QPen pen);
+	const QPen& pen() const;
 
-		virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+	virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 
-	protected:
-		void setPoints(QPointF origin, QPointF target);
-		const QPointF& origin() const;
-		const QPointF& target() const;
+  protected:
+	void setPoints(QPointF origin, QPointF target);
+	const QPointF& origin() const;
+	const QPointF& target() const;
 
-		void setDirection(Port::Orientation ori, Port::Orientation tgt);
+	void setDirection(Port::Orientation ori, Port::Orientation tgt);
 
-	private:
-		QPointF bezierPoint(float t) const;
-		QPainterPath makePath() const;
+  private:
+	QPointF bezierPoint(float t) const;
+	QPainterPath makePath() const;
 
-		QPointF m_origin, m_target;
-		Port::Orientation m_originDirection, m_targetDirection;
-		QPen m_pen;
+	QPointF m_origin, m_target;
+	Port::Orientation m_originDirection, m_targetDirection;
+	QPen m_pen;
 
-		friend class GraphScene;
+	friend class GraphScene;
 };
 
-}
+}  // namespace node_editor

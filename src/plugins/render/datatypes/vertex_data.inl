@@ -1,8 +1,7 @@
 #pragma once
 
-#include "vertex_data.h"
-
 #include "vbo.inl"
+#include "vertex_data.h"
 
 namespace possumwood {
 
@@ -74,7 +73,7 @@ std::string makeVBOName(std::size_t width, const std::string& name) {
 
 	return ss.str();
 }
-}
+}  // namespace
 
 template <typename T>
 void VertexData::addVBO(
@@ -87,8 +86,7 @@ void VertexData::addVBO(
 
 	VBOHolder holder;
 	holder.name = name;
-	holder.glslType =
-	    makeVBOName<typename VBOTraits<T>::element>(VBOTraits<T>::width(), name);
+	holder.glslType = makeVBOName<typename VBOTraits<T>::element>(VBOTraits<T>::width(), name);
 	holder.size = size;
 	holder.updateType = updateType;
 
@@ -108,4 +106,4 @@ void VertexData::addVBO(
 
 	m_vbos.push_back(std::move(holder));
 }
-}
+}  // namespace possumwood

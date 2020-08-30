@@ -1,16 +1,15 @@
 #include "edge.h"
 
-#include <cassert>
-#include <iostream>
-#include <cmath>
-
-#include <QPainter>
 #include <QGraphicsScene>
-#include <QStyleOptionGraphicsItem>
+#include <QPainter>
 #include <QPainterPathStroker>
+#include <QStyleOptionGraphicsItem>
+#include <cassert>
+#include <cmath>
+#include <iostream>
 
-#include "port.h"
 #include "graph_scene.h"
+#include "port.h"
 
 namespace node_editor {
 
@@ -27,20 +26,15 @@ float max(float a, float b, float c, float d) {
 }
 
 QPointF evalBezier(qreal t, const QPointF& p0, const QPointF& p1, const QPointF& p2, const QPointF& p3) {
-	return QPointF(
-	           powf(1.0f - t, 3) * p0 +
-	           3.0 * (1.0 - t) * (1.0 - t) * t * p1 +
-	           3.0 * (1.0 - t) * t * t * p2 +
-	           t * t * t * p3
-	       );
+	return QPointF(powf(1.0f - t, 3) * p0 + 3.0 * (1.0 - t) * (1.0 - t) * t * p1 + 3.0 * (1.0 - t) * t * t * p2 +
+	               t * t * t * p3);
 }
 
-}
+}  // namespace
 
-
-Edge::Edge(QPointF origin, QPointF target) : m_origin(origin), m_target(target), 
-	m_originDirection(Port::Orientation::kHorizontal), m_targetDirection(Port::Orientation::kHorizontal) {
-
+Edge::Edge(QPointF origin, QPointF target)
+    : m_origin(origin), m_target(target), m_originDirection(Port::Orientation::kHorizontal),
+      m_targetDirection(Port::Orientation::kHorizontal) {
 	setFlags(ItemIsSelectable);
 
 	setPoints(origin, target);
@@ -63,17 +57,13 @@ QRectF Edge::boundingRect() const {
 	const float x_tangent = s_curvature * (m_target.x() - m_origin.x());
 	const float y_tangent = s_curvature * (m_target.y() - m_origin.y());
 
-	const float xMin = min(p1.x(), p2.x(),
-	                       p1.x() + x_tangent * (m_originDirection == Port::Orientation::kHorizontal),
+	const float xMin = min(p1.x(), p2.x(), p1.x() + x_tangent * (m_originDirection == Port::Orientation::kHorizontal),
 	                       p2.x() - x_tangent * (m_targetDirection == Port::Orientation::kHorizontal));
-	const float xMax = max(p1.x(), p2.x(),
-	                       p1.x() + x_tangent * (m_originDirection == Port::Orientation::kHorizontal),
+	const float xMax = max(p1.x(), p2.x(), p1.x() + x_tangent * (m_originDirection == Port::Orientation::kHorizontal),
 	                       p2.x() - x_tangent * (m_targetDirection == Port::Orientation::kHorizontal));
-	const float yMin = min(p1.y(), p2.y(),
-	                       p1.y() + y_tangent * (m_originDirection == Port::Orientation::kVertical),
+	const float yMin = min(p1.y(), p2.y(), p1.y() + y_tangent * (m_originDirection == Port::Orientation::kVertical),
 	                       p2.y() - y_tangent * (m_targetDirection == Port::Orientation::kVertical));
-	const float yMax = max(p1.y(), p2.y(),
-	                       p1.y() + y_tangent * (m_originDirection == Port::Orientation::kVertical),
+	const float yMax = max(p1.y(), p2.y(), p1.y() + y_tangent * (m_originDirection == Port::Orientation::kVertical),
 	                       p2.y() - y_tangent * (m_targetDirection == Port::Orientation::kVertical));
 
 	const QRectF box(xMin - 3, yMin - 3, xMax - xMin + 6, yMax - yMin + 6);
@@ -97,14 +87,7 @@ QPointF Edge::bezierPoint(float t) const {
 	else
 		p2_tangent = QPointF(0, y_tangent);
 
-
-	return evalBezier(
-	           t,
-	           m_origin,
-	           m_origin + p1_tangent,
-	           m_target - p2_tangent,
-	           m_target
-	       );
+	return evalBezier(t, m_origin, m_origin + p1_tangent, m_target - p2_tangent, m_target);
 }
 
 QPainterPath Edge::makePath() const {
@@ -174,4 +157,4 @@ void Edge::setDirection(Port::Orientation ori, Port::Orientation tgt) {
 	setPoints(m_origin, m_target);
 }
 
-}
+}  // namespace node_editor

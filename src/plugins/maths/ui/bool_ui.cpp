@@ -1,13 +1,8 @@
 #include "bool_ui.h"
 
 bool_ui::bool_ui() : m_checkBox(new QCheckBox(NULL)) {
-	m_valueChangeConnection = QObject::connect(
-		m_checkBox,
-		&QCheckBox::stateChanged,
-		[this]() -> void {
-			callValueChangedCallbacks();
-		}
-	);
+	m_valueChangeConnection =
+	    QObject::connect(m_checkBox, &QCheckBox::stateChanged, [this]() -> void { callValueChangedCallbacks(); });
 }
 
 bool_ui::~bool_ui() {

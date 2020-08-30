@@ -1,21 +1,17 @@
+#include <actions/traits.h>
+#include <lightfields/samples.h>
 #include <possumwood_sdk/node_implementation.h>
-
-#include <fstream>
-
 #include <tbb/parallel_for.h>
 
+#include <fstream>
 #include <opencv2/opencv.hpp>
 
-#include <actions/traits.h>
-
-#include <lightfields/samples.h>
-
-#include "maths/io/vec2.h"
-#include "frame.h"
-#include "tools.h"
-#include "bspline_hierarchy.h"
 #include "bspline.inl"
+#include "bspline_hierarchy.h"
+#include "frame.h"
 #include "lightfields.h"
+#include "maths/io/vec2.h"
+#include "tools.h"
 
 namespace {
 
@@ -34,7 +30,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const lightfields::Samples& samples = data.get(a_samples);
 
 	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
-		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
+		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " +
+		                         possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
 
 	const cv::Mat& input = *data.get(a_in);
 
@@ -47,30 +44,24 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::vector<Sample> cache[3];
 	if((*data.get(a_in)).type() == CV_32FC1)
 		for(auto s : samples)
-			cache[s.color].push_back(Sample{
-				Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale),
-				input.at<float>(s.source[1], s.source[0])
-			});
+			cache[s.color].push_back(
+			    Sample{Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale), input.at<float>(s.source[1], s.source[0])});
 	else
 		for(auto s : samples)
-			for(int c=0;c<3;++c)
-				cache[c].push_back(Sample{
-					Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale),
-					*(input.ptr<float>(s.source[1], s.source[0]) + c)
-				});
+			for(int c = 0; c < 3; ++c)
+				cache[c].push_back(Sample{Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale),
+				                          *(input.ptr<float>(s.source[1], s.source[0]) + c)});
 
 	const std::size_t levels = data.get(a_levels);
 	const std::size_t offset = data.get(a_offset);
 
 	// lets make a hierarchy of b splines
-	possumwood::opencv::BSplineHierarchy splines[3] = {
-		possumwood::opencv::BSplineHierarchy(levels, offset),
-		possumwood::opencv::BSplineHierarchy(levels, offset),
-		possumwood::opencv::BSplineHierarchy(levels, offset)
-	};
+	possumwood::opencv::BSplineHierarchy splines[3] = {possumwood::opencv::BSplineHierarchy(levels, offset),
+	                                                   possumwood::opencv::BSplineHierarchy(levels, offset),
+	                                                   possumwood::opencv::BSplineHierarchy(levels, offset)};
 
-	for(std::size_t c=0;c<3;++c) {
-		for(std::size_t a=0;a<levels;++a) {
+	for(std::size_t c = 0; c < 3; ++c) {
+		for(std::size_t a = 0; a < levels; ++a) {
 			auto& spline = splines[c].level(a);
 
 			tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
@@ -78,7 +69,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				spline.addSample({{s.target[0], s.target[1]}}, s.value);
 			});
 
-			if(a < levels-1)
+			if(a < levels - 1)
 				tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
 					auto& s = cache[c][a];
 					s.value -= spline.sample({{s.target[0], s.target[1]}});
@@ -87,14 +78,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	}
 
 	cv::Mat mat = cv::Mat::zeros(height, width, CV_32FC3);
-	for(int a=0;a<3;++a)
+	for(int a = 0; a < 3; ++a)
 		tbb::parallel_for(0, mat.rows, [&](int y) {
-			for(int x=0;x<mat.cols;++x)
+			for(int x = 0; x < mat.cols; ++x)
 				// mat.ptr<float>(y,x)[a] = splines[a].level(levels-1).sample(
-				mat.ptr<float>(y,x)[a] = splines[a].sample(
-					(float)x / (float)(mat.cols-1),
-					(float)y / (float)(mat.rows-1)
-				);
+				mat.ptr<float>(y, x)[a] =
+				    splines[a].sample((float)x / (float)(mat.cols - 1), (float)y / (float)(mat.rows - 1));
 		});
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
@@ -119,7 +108,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/lightfields/integrate_bezier", init);
 
-}
+}  // namespace

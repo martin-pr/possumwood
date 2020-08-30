@@ -1,17 +1,15 @@
 #pragma once
 
-#include "uniforms.h"
-
 #include <cassert>
 
 #include "glsl_traits.h"
+#include "uniforms.h"
 
 namespace possumwood {
 
 template <typename T>
-void Uniforms::addUniform(
-    const std::string& name, std::size_t size, const UpdateType& updateType,
-    std::function<void(T*, std::size_t, const ViewportState&)> updateFunctor) {
+void Uniforms::addUniform(const std::string& name, std::size_t size, const UpdateType& updateType,
+                          std::function<void(T*, std::size_t, const ViewportState&)> updateFunctor) {
 	std::unique_ptr<UniformHolder> uniform(new UniformHolder());
 
 	uniform->name = name;
@@ -29,8 +27,7 @@ void Uniforms::addUniform(
 		uniform->data = std::move(data);
 	}
 
-	uniform->updateFunctor = [updateFunctor, size](DataBase& baseData,
-	                                              const ViewportState& vs) {
+	uniform->updateFunctor = [updateFunctor, size](DataBase& baseData, const ViewportState& vs) {
 		Data<T>& data = dynamic_cast<Data<T>&>(baseData);
 		assert(data.data.size() == size);
 
@@ -38,7 +35,7 @@ void Uniforms::addUniform(
 	};
 
 	uniform->useFunctor = [size](GLuint programId, const std::string& name,
-	                            const DataBase& baseData) -> dependency_graph::State {
+	                             const DataBase& baseData) -> dependency_graph::State {
 		dependency_graph::State state;
 
 		const Data<T>& data = dynamic_cast<const Data<T>&>(baseData);
@@ -48,7 +45,8 @@ void Uniforms::addUniform(
 		if(attr >= 0)
 			GLSLTraits<T>::applyUniform(attr, size, &(data.data[0]));
 		// else
-		// 	state.addWarning("Uniform '" + name + "' cannot be mapped to an attribute location - not used in any of the programs?");
+		// 	state.addWarning("Uniform '" + name + "' cannot be mapped to an attribute location - not used in any of the
+		// programs?");
 
 		return state;
 	};
@@ -58,4 +56,4 @@ void Uniforms::addUniform(
 
 	m_uniforms.push_back(std::shared_ptr<const UniformHolder>(uniform.release()));
 }
-}
+}  // namespace possumwood

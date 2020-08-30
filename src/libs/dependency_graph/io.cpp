@@ -1,6 +1,7 @@
 #include "io.h"
 
-namespace dependency_graph { namespace io {
+namespace dependency_graph {
+namespace io {
 
 namespace {
 
@@ -10,7 +11,7 @@ std::function<bool(const Data& data)>& isSaveableCallback() {
 	return fn;
 }
 
-}
+}  // namespace
 
 void setIsSaveableCallback(std::function<bool(const Data& data)> fn) {
 	isSaveableCallback() = fn;
@@ -23,4 +24,5 @@ bool isSaveable(const Data& data) {
 	return false;
 }
 
-} }
+}  // namespace io
+}  // namespace dependency_graph

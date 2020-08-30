@@ -1,8 +1,7 @@
 #include "metadata.inl"
 
-#include <cassert>
-
 #include <boost/iterator/indirect_iterator.hpp>
+#include <cassert>
 
 #include "attr.h"
 #include "network.h"
@@ -59,7 +58,6 @@ unsigned Metadata::doAddAttribute(const std::string& name, Attr::Category cat, c
 	doAddAttribute(tmp);
 	return tmp.offset();
 }
-
 
 void Metadata::doAddAttribute(Attr& attr) {
 	attr.setOffset(m_attrs.size());
@@ -121,11 +119,11 @@ const Metadata* MetadataHandle::operator->() const {
 	return m_meta.get();
 }
 
-bool MetadataHandle::operator == (const MetadataHandle& h) const {
+bool MetadataHandle::operator==(const MetadataHandle& h) const {
 	return m_meta == h.m_meta;
 }
 
-bool MetadataHandle::operator != (const MetadataHandle& h) const {
+bool MetadataHandle::operator!=(const MetadataHandle& h) const {
 	return m_meta != h.m_meta;
 }
 
@@ -154,4 +152,4 @@ MetadataFactory::~MetadataFactory() {
 	s_factoryInstance = nullptr;
 }
 
-}
+}  // namespace dependency_graph

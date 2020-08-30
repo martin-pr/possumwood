@@ -1,9 +1,8 @@
+#include <possumwood_sdk/app.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include <possumwood_sdk/app.h>
-
-#include "datatypes/constraints.h"
 #include "datatypes/animation.h"
+#include "datatypes/constraints.h"
 
 namespace {
 
@@ -22,16 +21,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		constraints.process(j.first, [&](anim::constraints::Frames& frames) {
 			result.clear();
 
-			for(int frameIndex=0; frameIndex < (int)frames.size(); ++frameIndex) {
-				const int start = std::max(frameIndex - width/2, 0);
-				const int end = std::min(frameIndex + width/2, (int)frames.size() - 1);
+			for(int frameIndex = 0; frameIndex < (int)frames.size(); ++frameIndex) {
+				const int start = std::max(frameIndex - width / 2, 0);
+				const int end = std::min(frameIndex + width / 2, (int)frames.size() - 1);
 
-				tmp.resize(end-start+1);
-				for(int a=start;a<=end;++a)
-					tmp[a-start] = frames[a].value();
+				tmp.resize(end - start + 1);
+				for(int a = start; a <= end; ++a)
+					tmp[a - start] = frames[a].value();
 				std::sort(tmp.begin(), tmp.end());
 
-				result.push_back(tmp[tmp.size()/2]);
+				result.push_back(tmp[tmp.size() / 2]);
 			}
 
 			assert(result.size() == frames.size());
@@ -64,4 +63,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/constraints/filter_median", init);
 
-}
+}  // namespace

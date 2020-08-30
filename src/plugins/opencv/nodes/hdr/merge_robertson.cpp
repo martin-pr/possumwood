@@ -1,11 +1,10 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/photo.hpp>
 
-#include <actions/traits.h>
-
-#include "sequence.h"
 #include "camera_response.h"
+#include "sequence.h"
 #include "tools.h"
 
 namespace {
@@ -15,7 +14,6 @@ dependency_graph::InAttr<possumwood::opencv::CameraResponse> a_response;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-
 	cv::Ptr<cv::MergeRobertson> merger = cv::createMergeRobertson();
 
 	// doesn't copy, just uses shared references
@@ -26,7 +24,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::CameraResponse& response = data.get(a_response);
 
 	if(response.exposures().size() != inputs.size())
-		throw std::runtime_error("Image input count and exif metadata count (from camera response data) need to match!");
+		throw std::runtime_error(
+		    "Image input count and exif metadata count (from camera response data) need to match!");
 
 	cv::Mat result;
 
@@ -51,4 +50,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/hdr/merge_robertson", init);
 
-}
+}  // namespace

@@ -1,10 +1,10 @@
 #pragma once
 
+#include <dependency_graph/graph.h>
+
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/signals2.hpp>
-
-#include <dependency_graph/graph.h>
 
 #include "filesystem.h"
 #include "undo_stack.h"

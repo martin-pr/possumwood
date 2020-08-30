@@ -1,12 +1,10 @@
-#include <boost/filesystem.hpp>
-
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/datatypes/filename.h>
-
-#include <opencv2/opencv.hpp>
-
 #include <actions/traits.h>
 #include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
+
+#include <boost/filesystem.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "frame.h"
 
@@ -31,9 +29,9 @@ int flagsToEnum(const std::string& mode) {
 dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result;
 
-	cv::calcOpticalFlowFarneback(*data.get(a_prevFrame), *data.get(a_nextFrame), result,
-		data.get(a_pyrScale), data.get(a_levels), data.get(a_winSize), data.get(a_iterations),
-		data.get(a_polyN), data.get(a_polySigma), flagsToEnum(data.get(a_flags).value()));
+	cv::calcOpticalFlowFarneback(*data.get(a_prevFrame), *data.get(a_nextFrame), result, data.get(a_pyrScale),
+	                             data.get(a_levels), data.get(a_winSize), data.get(a_iterations), data.get(a_polyN),
+	                             data.get(a_polySigma), flagsToEnum(data.get(a_flags).value()));
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
@@ -50,8 +48,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_polyN, "polygon/neighbourhood", 7u);
 	meta.addAttribute(a_polySigma, "polygon/sigma", 1.5f);
 
-	meta.addAttribute(a_flags, "flags", 
-		possumwood::Enum({"USE_INITIAL_FLOW", "FARNEBACK_GAUSSIAN"}));
+	meta.addAttribute(a_flags, "flags", possumwood::Enum({"USE_INITIAL_FLOW", "FARNEBACK_GAUSSIAN"}));
 
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
@@ -70,4 +67,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/optical_flow/dense", init);
 
-}
+}  // namespace

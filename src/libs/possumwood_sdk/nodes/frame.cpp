@@ -1,5 +1,6 @@
-#include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/node_implementation.h>
+
 #include <possumwood_sdk/config.inl>
 
 namespace {
@@ -10,9 +11,9 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_frame, "frame");
 
 	meta.setCompute([](dependency_graph::Values& vals) {
-		vals.set(a_frame, static_cast<unsigned>(std::round(
-			possumwood::App::instance().time() * 
-			possumwood::App::instance().sceneConfig()["fps"].as<float>())));
+		vals.set(a_frame,
+		         static_cast<unsigned>(std::round(possumwood::App::instance().time() *
+		                                          possumwood::App::instance().sceneConfig()["fps"].as<float>())));
 
 		return dependency_graph::State();
 	});
@@ -22,4 +23,4 @@ void init(possumwood::Metadata& meta) {
 /// possumwood SDK's App object
 possumwood::NodeImplementation s_impl("frame", init);
 
-}
+}  // namespace

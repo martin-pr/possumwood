@@ -2,9 +2,9 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "frame.h"
 #include "calibration_pattern.h"
 #include "calibration_points.h"
+#include "frame.h"
 
 namespace {
 
@@ -20,7 +20,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const cv::Mat& camPattern = *data.get(a_inCameraPattern);
 
 	if(objPattern.rows != camPattern.rows)
-		throw std::runtime_error("Number of object points doesn't match number of camera points - " + std::to_string(objPattern.rows) + " vs " + std::to_string(camPattern.rows));
+		throw std::runtime_error("Number of object points doesn't match number of camera points - " +
+		                         std::to_string(objPattern.rows) + " vs " + std::to_string(camPattern.rows));
 
 	if(objPattern.size() != camPattern.size())
 		throw std::runtime_error("Object and camera pattern sizes don't match!");
@@ -37,7 +38,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// copy all the points
 	possumwood::opencv::CalibrationPoints::Layer layer;
-	for(int r=0;r<objPattern.rows;++r) {
+	for(int r = 0; r < objPattern.rows; ++r) {
 		cv::Vec3f obj(objPattern.ptr<float>(r)[0], objPattern.ptr<float>(r)[1], 0.0f);
 		cv::Vec2f cam(camPattern.ptr<float>(r)[0], camPattern.ptr<float>(r)[1]);
 
@@ -51,8 +52,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inCameraPattern, "camera_pattern", possumwood::opencv::CalibrationPattern(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_inObjectPattern, "object_pattern", possumwood::opencv::CalibrationPattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inCameraPattern, "camera_pattern", possumwood::opencv::CalibrationPattern(),
+	                  possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inObjectPattern, "object_pattern", possumwood::opencv::CalibrationPattern(),
+	                  possumwood::AttrFlags::kVertical);
 
 	meta.addAttribute(a_inPoints, "in_points");
 	meta.addAttribute(a_outPoints, "out_points");
@@ -66,4 +69,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/calibration/calibration_points", init);
 
-}
+}  // namespace

@@ -1,8 +1,7 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
-
 #include <GL/glew.h>
 #include <GL/glu.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/uniforms.inl"
 
@@ -20,15 +19,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	const float value = data.get(a_value);
 
-	uniforms.addUniform<unsigned>(
-		data.get(a_name),
-		1,
-		possumwood::Uniforms::kPerFrame,
-		[value](unsigned* data, std::size_t size, const possumwood::ViewportState& vs) {
-			assert(size == 1);
-			return *data = value;
-		}
-	);
+	uniforms.addUniform<unsigned>(data.get(a_name), 1, possumwood::Uniforms::kPerFrame,
+	                              [value](unsigned* data, std::size_t size, const possumwood::ViewportState& vs) {
+		                              assert(size == 1);
+		                              return *data = value;
+	                              });
 
 	data.set(a_outUniforms, uniforms);
 
@@ -50,4 +45,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/uniforms/unsigned", init);
 
-}
+}  // namespace

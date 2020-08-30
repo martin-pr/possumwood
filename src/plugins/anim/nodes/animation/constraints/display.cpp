@@ -1,12 +1,14 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
-#include <possumwood_sdk/metadata.inl>
-#include <possumwood_sdk/gl_renderable.h>
-#include <possumwood_sdk/gl.h>
+#include <GL/glew.h>
 
-#include <GL/glut.h>
+#include <GL/gl.h>
 
 #include <maths/io/vec3.h>
+
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/gl.h>
+#include <possumwood_sdk/gl_renderable.h>
+#include <possumwood_sdk/node_implementation.h>
+#include <possumwood_sdk/metadata.inl>
 
 #include "datatypes/constraints.h"
 
@@ -32,31 +34,31 @@ const std::string& fragmentShaderSource() {
 
 const std::string& vertexShaderSource() {
 	static std::string s_src =
-		"#version 130 \n"
-		" \n"
-		"in vec3 P;                     // position attr from the vbo \n"
-		" \n"
-		"uniform mat4 in_Projection;      // projection matrix \n"
-		"uniform mat4 in_Modelview;       // modelview matrix \n"
-		" \n"
-		"out vec3 vertexPosition;       // vertex position for the fragment shader \n"
-		" \n"
-		"void main() {\n"
-		"	vec4 pos4 = vec4(P.x, P.y, P.z, 1);\n"
-		"\n"
-		"	vertexPosition = (in_Modelview * pos4).xyz;\n"
-		"   	gl_Position = in_Projection * in_Modelview * pos4;\n"
-		"   gl_PointSize = 5;\n"
-		"} \n";
+	    "#version 130 \n"
+	    " \n"
+	    "in vec3 P;                     // position attr from the vbo \n"
+	    " \n"
+	    "uniform mat4 in_Projection;      // projection matrix \n"
+	    "uniform mat4 in_Modelview;       // modelview matrix \n"
+	    " \n"
+	    "out vec3 vertexPosition;       // vertex position for the fragment shader \n"
+	    " \n"
+	    "void main() {\n"
+	    "	vec4 pos4 = vec4(P.x, P.y, P.z, 1);\n"
+	    "\n"
+	    "	vertexPosition = (in_Modelview * pos4).xyz;\n"
+	    "   	gl_Position = in_Projection * in_Modelview * pos4;\n"
+	    "   gl_PointSize = 5;\n"
+	    "} \n";
 
 	return s_src;
 }
 
-
 class Drawable : public possumwood::Drawable {
   public:
 	Drawable(dependency_graph::Values&& vals)
-	    : possumwood::Drawable(std::move(vals)), m_points(GL_POINTS, vertexShaderSource(), fragmentShaderSource()), m_lines(GL_LINES, vertexShaderSource(), fragmentShaderSource()) {
+	    : possumwood::Drawable(std::move(vals)), m_points(GL_POINTS, vertexShaderSource(), fragmentShaderSource()),
+	      m_lines(GL_LINES, vertexShaderSource(), fragmentShaderSource()) {
 	}
 
 	~Drawable() {
@@ -89,7 +91,6 @@ class Drawable : public possumwood::Drawable {
 				auto vbo = m_points.updateVertexData();
 
 				if(pointCount > 0) {
-
 					vbo.data.resize(pointCount);
 
 					std::size_t ctr = 0;
@@ -130,9 +131,9 @@ class Drawable : public possumwood::Drawable {
 
 						else if(values().get(a_showConstrained))
 							for(auto& i : c.second)
-								for(std::size_t fr=i.startFrame(); fr<i.endFrame(); ++fr) {
+								for(std::size_t fr = i.startFrame(); fr < i.endFrame(); ++fr) {
 									vbo.data[ctr++] = c.second.frames()[fr].tr().translation;
-									vbo.data[ctr++] = c.second.frames()[fr+1].tr().translation;
+									vbo.data[ctr++] = c.second.frames()[fr + 1].tr().translation;
 								}
 
 					assert(ctr == lineCount * 2);
@@ -167,7 +168,7 @@ class Drawable : public possumwood::Drawable {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_constraints, "constraints", anim::Constraints(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_colour, "colour", Imath::V3f(1,1,1));
+	meta.addAttribute(a_colour, "colour", Imath::V3f(1, 1, 1));
 	meta.addAttribute(a_showTrajectory, "show_trajectory", false);
 	meta.addAttribute(a_showConstrained, "show_constrained", true);
 
@@ -175,4 +176,4 @@ void init(possumwood::Metadata& meta) {
 }
 
 possumwood::NodeImplementation s_impl("anim/constraints/display", init);
-}
+}  // namespace

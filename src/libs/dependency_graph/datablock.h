@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "data.h"
 #include "metadata.h"
@@ -14,28 +14,28 @@ class Port;
 /// A data storage class used by Node implementation.
 /// Each data value is strongly typed, and stored as base class pointer.
 class Datablock {
-	public:
-		Datablock(const MetadataHandle& meta);
+  public:
+	Datablock(const MetadataHandle& meta);
 
-		template<typename T>
-		const T& get(size_t index) const;
+	template <typename T>
+	const T& get(size_t index) const;
 
-		template<typename T>
-		void set(size_t index, T value);
+	template <typename T>
+	void set(size_t index, T value);
 
-		void set(size_t index, const Port& port);
+	void set(size_t index, const Port& port);
 
-		void reset(size_t index);
+	void reset(size_t index);
 
-		const Data& data(size_t index) const;
-		void setData(size_t index, const Data& data);
-		bool isNull(std::size_t index) const;
+	const Data& data(size_t index) const;
+	void setData(size_t index, const Data& data);
+	bool isNull(std::size_t index) const;
 
-		const MetadataHandle& meta() const;
+	const MetadataHandle& meta() const;
 
-	private:
-		std::vector<Data> m_data;
-		MetadataHandle m_meta;
+  private:
+	std::vector<Data> m_data;
+	MetadataHandle m_meta;
 };
 
-}
+}  // namespace dependency_graph

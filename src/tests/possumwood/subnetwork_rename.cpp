@@ -1,16 +1,14 @@
-#include <boost/test/unit_test.hpp>
-
+#include <actions/actions.h>
+#include <actions/filesystem_mock.h>
 #include <dependency_graph/graph.h>
 #include <dependency_graph/metadata_register.h>
 #include <dependency_graph/rtti.h>
+#include <possumwood_sdk/app.h>
+
+#include <boost/test/unit_test.hpp>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/port.inl>
-
-#include <actions/actions.h>
-
-#include <actions/filesystem_mock.h>
-#include <possumwood_sdk/app.h>
 
 #include "common.h"
 

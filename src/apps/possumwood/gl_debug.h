@@ -3,7 +3,7 @@
 #include <boost/noncopyable.hpp>
 
 class GlDebug final {
-	public:
-		GlDebug();
-		~GlDebug();
+  public:
+	GlDebug();
+	~GlDebug();
 };

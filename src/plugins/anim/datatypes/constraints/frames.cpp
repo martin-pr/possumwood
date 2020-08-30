@@ -2,7 +2,8 @@
 
 #include <cassert>
 
-namespace anim { namespace constraints {
+namespace anim {
+namespace constraints {
 
 Frames::Frames() {
 }
@@ -45,4 +46,5 @@ std::size_t Frames::size() const {
 	return m_frames.size();
 }
 
-} }
+}  // namespace constraints
+}  // namespace anim

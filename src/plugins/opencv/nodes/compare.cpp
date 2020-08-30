@@ -1,10 +1,9 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
 
 #include "frame.h"
 
@@ -44,8 +43,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame1, "in_frame_1", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_inFrame2, "in_frame_2", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_mode, "mode",
-		possumwood::Enum({"CMP_EQ", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE", "CMP_NE"}));
+	meta.addAttribute(a_mode, "mode", possumwood::Enum({"CMP_EQ", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE", "CMP_NE"}));
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame1, a_outFrame);
@@ -57,4 +55,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/compare", init);
 
-}
+}  // namespace

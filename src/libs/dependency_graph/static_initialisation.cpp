@@ -1,13 +1,13 @@
 #include "static_initialisation.h"
 
-#include <cassert>
 #include <algorithm>
+#include <cassert>
 #include <string>
 
 namespace dependency_graph {
 
 namespace {
-	StaticInitialisation::Pimpl* s_currentInstance = nullptr;
+StaticInitialisation::Pimpl* s_currentInstance = nullptr;
 }
 
 /// Private implementation - only one instance can exist at any point
@@ -23,26 +23,26 @@ struct StaticInitialisation::Pimpl {
 	}
 
 	Pimpl(const Pimpl&) = delete;
-	Pimpl& operator = (const Pimpl&) = delete;
+	Pimpl& operator=(const Pimpl&) = delete;
 
 	std::map<std::string, std::function<Data()>> factories;
 };
 
 namespace {
-	/// static Pimpl instance, if the Static initialisation class is not used explicitly - automagically created
-	std::unique_ptr<StaticInitialisation::Pimpl> s_pimpl;
+/// static Pimpl instance, if the Static initialisation class is not used explicitly - automagically created
+std::unique_ptr<StaticInitialisation::Pimpl> s_pimpl;
 
-	/// returns a valid instance - either explicitly created, or implicit
-	StaticInitialisation::Pimpl& instance() {
-		if(s_currentInstance != nullptr)
-			return *s_currentInstance;
-
-		s_pimpl = std::unique_ptr<StaticInitialisation::Pimpl>(new StaticInitialisation::Pimpl());
-		assert(s_pimpl.get() == s_currentInstance);
-
+/// returns a valid instance - either explicitly created, or implicit
+StaticInitialisation::Pimpl& instance() {
+	if(s_currentInstance != nullptr)
 		return *s_currentInstance;
-	};
-}
+
+	s_pimpl = std::unique_ptr<StaticInitialisation::Pimpl>(new StaticInitialisation::Pimpl());
+	assert(s_pimpl.get() == s_currentInstance);
+
+	return *s_currentInstance;
+};
+}  // namespace
 
 StaticInitialisation::StaticInitialisation() {
 	if(s_pimpl.get() != nullptr)
@@ -64,5 +64,4 @@ const std::map<std::string, std::function<Data()>>& StaticInitialisation::dataFa
 	return instance().factories;
 }
 
-
-}
+}  // namespace dependency_graph

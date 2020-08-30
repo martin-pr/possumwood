@@ -1,8 +1,7 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <GL/glut.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl_renderable.h>
-
-#include <GL/glut.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/skinned_mesh.h"
 
@@ -25,9 +24,8 @@ float halton(std::size_t index, std::size_t base) {
 Imath::V3f color(unsigned index) {
 	static std::vector<Imath::V3f> s_colors;
 	while(s_colors.size() <= index)
-		s_colors.push_back(Imath::V3f{halton(s_colors.size(), 2),
-		                              halton(s_colors.size(), 3),
-		                              halton(s_colors.size(), 5)});
+		s_colors.push_back(
+		    Imath::V3f{halton(s_colors.size(), 2), halton(s_colors.size(), 3), halton(s_colors.size(), 5)});
 
 	return s_colors[index];
 };
@@ -94,8 +92,7 @@ class Drawable : public possumwood::Drawable {
 	}
 
 	dependency_graph::State draw() {
-		std::shared_ptr<const std::vector<anim::SkinnedMesh>> meshes =
-		    values().get(a_meshes);
+		std::shared_ptr<const std::vector<anim::SkinnedMesh>> meshes = values().get(a_meshes);
 		bool colorBones = values().get(a_colorBones);
 
 		{
@@ -114,12 +111,9 @@ class Drawable : public possumwood::Drawable {
 				for(auto& mesh : *meshes) {
 					std::size_t ctr = 0;
 					for(auto& poly : mesh.polygons()) {
-						const anim::SkinnedVertices::Vertex& v1 =
-						    mesh.vertices()[poly[0]];
-						const anim::SkinnedVertices::Vertex& v2 =
-						    mesh.vertices()[poly[1]];
-						const anim::SkinnedVertices::Vertex& v3 =
-						    mesh.vertices()[poly[2]];
+						const anim::SkinnedVertices::Vertex& v1 = mesh.vertices()[poly[0]];
+						const anim::SkinnedVertices::Vertex& v2 = mesh.vertices()[poly[1]];
+						const anim::SkinnedVertices::Vertex& v3 = mesh.vertices()[poly[2]];
 
 						const Imath::V3f& v1p = v1.pos();
 						const Imath::V3f& v2p = v2.pos();
@@ -167,4 +161,4 @@ void init(possumwood::Metadata& meta) {
 }
 
 possumwood::NodeImplementation s_impl("anim/mesh/display", init);
-}
+}  // namespace

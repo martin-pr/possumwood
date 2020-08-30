@@ -1,12 +1,11 @@
 #pragma once
 
-#include <set>
-#include <string>
-
-#include <boost/filesystem/path.hpp>
-
 #include <actions/filepath.h>
 #include <dependency_graph/data_traits.h>
+
+#include <boost/filesystem/path.hpp>
+#include <set>
+#include <string>
 
 #include "actions/io.h"
 #include "actions/traits.h"

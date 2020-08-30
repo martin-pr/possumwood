@@ -27,4 +27,4 @@ template <typename T>
 OutAttr<T>::OutAttr(const std::string& name, T&& defaultValue, unsigned flags)
     : TypedAttr<T>(name, Attr::kOutput, std::move(defaultValue), flags) {
 }
-}
+}  // namespace dependency_graph

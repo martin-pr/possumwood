@@ -1,17 +1,19 @@
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
-#include <boost/noncopyable.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/noncopyable.hpp>
+
+#include <GL/glew.h>
+
+#include <ImathMatrix.h>
+#include <ImathVec.h>
 
 #include <QtWidgets/QOpenGLWidget>
 
 #include <possumwood_sdk/viewport_state.h>
-
-#include <ImathVec.h>
-#include <ImathMatrix.h>
 
 class Viewport : public QOpenGLWidget, public boost::noncopyable {
 	Q_OBJECT

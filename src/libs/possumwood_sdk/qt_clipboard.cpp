@@ -15,4 +15,4 @@ std::string QtClipboard::clipboardContent() const {
 
 QtClipboard QtClipboard::m_instance;
 
-}
+}  // namespace possumwood

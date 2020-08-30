@@ -7,24 +7,26 @@ namespace possumwood {
 namespace {
 
 class PossumwoodNode : public dependency_graph::Node {
-	public:
-		PossumwoodNode(const std::string& name, const dependency_graph::UniqueId& id, const dependency_graph::MetadataHandle& def, dependency_graph::Network* parent) : dependency_graph::Node(name, id, def, parent) {
-			const possumwood::Metadata& meta = dynamic_cast<const possumwood::Metadata&>(def.metadata());
+  public:
+	PossumwoodNode(const std::string& name, const dependency_graph::UniqueId& id,
+	               const dependency_graph::MetadataHandle& def, dependency_graph::Network* parent)
+	    : dependency_graph::Node(name, id, def, parent) {
+		const possumwood::Metadata& meta = dynamic_cast<const possumwood::Metadata&>(def.metadata());
 
-			m_drawable = meta.createDrawable(dependency_graph::Values(*this));
-		}
+		m_drawable = meta.createDrawable(dependency_graph::Values(*this));
+	}
 
-		boost::optional<Drawable&> drawable() const {
-			if(m_drawable)
-				return *m_drawable;
-			return boost::optional<Drawable&>();
-		}
+	boost::optional<Drawable&> drawable() const {
+		if(m_drawable)
+			return *m_drawable;
+		return boost::optional<Drawable&>();
+	}
 
-	private:
-		std::unique_ptr<Drawable> m_drawable;
+  private:
+	std::unique_ptr<Drawable> m_drawable;
 };
 
-}
+}  // namespace
 
 Metadata::Metadata(const std::string& nodeType) : dependency_graph::Metadata(nodeType) {
 }
@@ -40,10 +42,10 @@ void Metadata::addAttribute(dependency_graph::OutAttr<void>& in, const std::stri
 	dependency_graph::Metadata::addAttribute(in, name, static_cast<unsigned>(flags));
 }
 
-void Metadata::setDrawable(std::function<dependency_graph::State(const dependency_graph::Values&, const possumwood::ViewportState&)> fn) {
+void Metadata::setDrawable(
+    std::function<dependency_graph::State(const dependency_graph::Values&, const possumwood::ViewportState&)> fn) {
 	m_drawableFactory = [fn](dependency_graph::Values&& vals) {
-		return std::unique_ptr<possumwood::Drawable>(
-			new possumwood::DrawableFunctor(std::move(vals), fn));
+		return std::unique_ptr<possumwood::Drawable>(new possumwood::DrawableFunctor(std::move(vals), fn));
 	};
 }
 
@@ -73,7 +75,9 @@ std::unique_ptr<Editor> Metadata::createEditor(dependency_graph::NodeBase& node)
 	return editor;
 }
 
-std::unique_ptr<dependency_graph::NodeBase> Metadata::createNode(const std::string& name, dependency_graph::Network& parent, const dependency_graph::UniqueId& id) const {
+std::unique_ptr<dependency_graph::NodeBase> Metadata::createNode(const std::string& name,
+                                                                 dependency_graph::Network& parent,
+                                                                 const dependency_graph::UniqueId& id) const {
 	return std::unique_ptr<dependency_graph::NodeBase>(new PossumwoodNode(name, id, *this, &parent));
 };
 
@@ -102,6 +106,6 @@ struct Factory : public dependency_graph::MetadataFactory {
 
 static Factory s_factoryInstance;
 
-}
+}  // namespace
 
-}
+}  // namespace possumwood

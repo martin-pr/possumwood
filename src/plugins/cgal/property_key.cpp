@@ -9,4 +9,4 @@ bool PropertyKey::isDefault() const {
 	return m_index < 0;
 };
 
-}
+}  // namespace possumwood

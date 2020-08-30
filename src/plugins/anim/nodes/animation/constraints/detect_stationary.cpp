@@ -1,9 +1,8 @@
+#include <possumwood_sdk/app.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include <possumwood_sdk/app.h>
-
-#include "datatypes/constraints.h"
 #include "datatypes/animation.h"
+#include "datatypes/constraints.h"
 
 namespace {
 
@@ -16,12 +15,13 @@ Imath::V3f velocity(const anim::constraints::Frames& source, std::size_t frame, 
 	else if(frame == 0)
 		return (source[1].tr().translation - source[0].tr().translation) * fps;
 
-	else if(frame == source.size()-1)
-		return (source[source.size()-1].tr().translation - source[source.size()-2].tr().translation) * fps;
+	else if(frame == source.size() - 1)
+		return (source[source.size() - 1].tr().translation - source[source.size() - 2].tr().translation) * fps;
 
 	// frames in the middle - average velocity from previous and next frame differential
-	return (source[frame].tr().translation - source[frame-1].tr().translation +
-		source[frame+1].tr().translation - source[frame].tr().translation) / 2.0f * fps;
+	return (source[frame].tr().translation - source[frame - 1].tr().translation + source[frame + 1].tr().translation -
+	        source[frame].tr().translation) /
+	       2.0f * fps;
 }
 
 dependency_graph::InAttr<anim::Constraints> a_inConstraints;
@@ -34,7 +34,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const float velocityThreshold = data.get(a_velocityThreshold);
 
 	constraints.process(data.get(a_joint), [&](anim::constraints::Frames& frames) {
-		for(std::size_t frameIndex=0; frameIndex < frames.size(); ++frameIndex) {
+		for(std::size_t frameIndex = 0; frameIndex < frames.size(); ++frameIndex) {
 			const float currentVelocity = velocity(frames, frameIndex, constraints.anim().fps()).length();
 			frames[frameIndex].setValue(currentVelocity / velocityThreshold);
 		}
@@ -65,4 +65,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/constraints/detect_stationary", init);
 
-}
+}  // namespace

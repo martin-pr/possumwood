@@ -2,7 +2,6 @@
 
 #include <lua/datatypes/context.h>
 #include <lua/datatypes/state.h>
-
 #include <possumwood_sdk/node_implementation.h>
 
 namespace {
@@ -21,10 +20,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inContext, "in_context", possumwood::lua::Context(),
-	                  possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_outContext, "out_context", possumwood::lua::Context(),
-	                  possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inContext, "in_context", possumwood::lua::Context(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outContext, "out_context", possumwood::lua::Context(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inContext, a_outContext);
 

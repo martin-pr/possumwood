@@ -1,16 +1,15 @@
 #pragma once
 
+#include <dependency_graph/graph.h>
+
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/signals2.hpp>
-
-#include <dependency_graph/graph.h>
 
 #include "actions/app.h"
 #include "actions/filepath.h"
 #include "actions/filesystem.h"
 #include "actions/io.h"
-
 #include "config.h"
 #include "description.h"
 #include "viewport_state.h"

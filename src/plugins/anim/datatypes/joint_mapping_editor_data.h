@@ -39,18 +39,18 @@ class JointMappingEditorData {
 
   protected:
   private:
-  	// this should be only a list of bones!
+	// this should be only a list of bones!
 	Skeleton m_sourceSkeleton, m_targetSkeleton;
 	std::vector<std::pair<int, int>> m_mapping;
 };
 
-std::ostream& operator << (std::ostream& out, const JointMappingEditorData& d);
+std::ostream& operator<<(std::ostream& out, const JointMappingEditorData& d);
 
-}
+}  // namespace anim
 
 namespace possumwood {
 
-template<>
+template <>
 struct Traits<anim::JointMappingEditorData> {
 	static IO<anim::JointMappingEditorData> io;
 
@@ -59,4 +59,4 @@ struct Traits<anim::JointMappingEditorData> {
 	}
 };
 
-}
+}  // namespace possumwood

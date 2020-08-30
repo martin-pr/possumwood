@@ -1,13 +1,12 @@
 #include "source_editor.h"
 
-#include <dependency_graph/attr.inl>
-#include <dependency_graph/values.inl>
-
-#include <QVBoxLayout>
+#include <QAction>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QStyle>
-#include <QAction>
+#include <QVBoxLayout>
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/values.inl>
 
 namespace possumwood {
 
@@ -53,7 +52,6 @@ SourceEditor::SourceEditor(dependency_graph::InAttr<std::string>& src) : m_src(&
 		values().set(*m_src, m_editor->toPlainText().toStdString());
 		m_blockedSignals = false;
 	});
-
 }
 
 SourceEditor::~SourceEditor() {
@@ -72,4 +70,4 @@ QPlainTextEdit* SourceEditor::editorWidget() const {
 	return m_editor;
 }
 
-}
+}  // namespace possumwood

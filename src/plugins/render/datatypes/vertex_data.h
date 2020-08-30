@@ -1,15 +1,14 @@
 #pragma once
 
-#include <functional>
-#include <memory>
-
-#include <boost/noncopyable.hpp>
-
 #include <actions/traits.h>
 #include <possumwood_sdk/drawable.h>
 
-#include "vbo.h"
+#include <boost/noncopyable.hpp>
+#include <functional>
+#include <memory>
+
 #include "buffer.h"
+#include "vbo.h"
 
 namespace possumwood {
 
@@ -19,10 +18,10 @@ class VertexData {
 	VertexData(GLenum drawElementType = GL_TRIANGLE_STRIP);
 
 	VertexData(const VertexData&) = delete;
-	VertexData& operator = (const VertexData&) = delete;
+	VertexData& operator=(const VertexData&) = delete;
 
 	VertexData(VertexData&&) = default;
-	VertexData& operator = (VertexData&&) = default;
+	VertexData& operator=(VertexData&&) = default;
 
 	/// type of update - static (updated with the DAG), per drawing (updated on each frame
 	/// - usable only for camera-dependent data)
@@ -30,8 +29,7 @@ class VertexData {
 
 	/// adds a generic VBO with an update functor.
 	template <typename T>
-	void addVBO(const std::string& name, std::size_t size,
-	            const UpdateType& updateType,
+	void addVBO(const std::string& name, std::size_t size, const UpdateType& updateType,
 	            std::function<void(Buffer<typename VBOTraits<T>::element>&, const ViewportState& viewport)> updateFn);
 
 	/// updates and uses the program
@@ -58,16 +56,16 @@ class VertexData {
 		std::size_t size;
 		UpdateType updateType;
 		std::function<std::unique_ptr<BufferBase>(const ViewportState& vs)> update;
-		mutable std::unique_ptr<BufferBase> buffer; // MESSY
+		mutable std::unique_ptr<BufferBase> buffer;  // MESSY
 	};
 
 	std::vector<VBOHolder> m_vbos;
 	GLenum m_drawElementType;
 
-	friend std::ostream& operator << (std::ostream& out, const VertexData& vd);
+	friend std::ostream& operator<<(std::ostream& out, const VertexData& vd);
 };
 
-std::ostream& operator << (std::ostream& out, const VertexData& vd);
+std::ostream& operator<<(std::ostream& out, const VertexData& vd);
 
 template <>
 struct Traits<VertexData> {
@@ -75,4 +73,4 @@ struct Traits<VertexData> {
 		return std::array<float, 3>{{1, 0.5, 1}};
 	}
 };
-}
+}  // namespace possumwood

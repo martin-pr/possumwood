@@ -67,9 +67,10 @@ bool Meshes::operator!=(const Meshes& m) const {
 	return false;
 }
 
-std::ostream& operator << (std::ostream& out, const Meshes& m) {
-	out << "( " << m.size() << " meshes" << ")";
+std::ostream& operator<<(std::ostream& out, const Meshes& m) {
+	out << "( " << m.size() << " meshes"
+	    << ")";
 	return out;
 }
 
-}
+}  // namespace possumwood

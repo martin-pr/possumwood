@@ -1,9 +1,9 @@
 #include "property.h"
 
-namespace possumwood { namespace properties {
+namespace possumwood {
+namespace properties {
 
 property_base::~property_base() {
-
 }
 
 unsigned property_base::flags() const {
@@ -27,4 +27,5 @@ void property_base::callValueChangedCallbacks() {
 	m_valueChanged();
 }
 
-} }
+}  // namespace properties
+}  // namespace possumwood

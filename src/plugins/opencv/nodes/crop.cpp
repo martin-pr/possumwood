@@ -1,10 +1,8 @@
+#include <actions/traits.h>
+#include <maths/io/vec2.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <actions/traits.h>
-
-#include <maths/io/vec2.h>
 
 #include "frame.h"
 #include "tools.h"
@@ -27,8 +25,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_from, "crop/from", Imath::Vec2<unsigned>(0,0));
-	meta.addAttribute(a_to, "crop/to", Imath::Vec2<unsigned>(100,100));
+	meta.addAttribute(a_from, "crop/from", Imath::Vec2<unsigned>(0, 0));
+	meta.addAttribute(a_to, "crop/to", Imath::Vec2<unsigned>(100, 100));
 	meta.addAttribute(a_outFrame, "out", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
@@ -40,4 +38,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/crop", init);
 
-}
+}  // namespace

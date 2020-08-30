@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-
 #include <opencv2/opencv.hpp>
 
 #include "grid.h"
@@ -9,16 +8,17 @@
 namespace lightfields {
 
 /// Implementation of the SLIC superpixels algorithm.
-/// Achanta, Radhakrishna, et al. "SLIC superpixels compared to state-of-the-art superpixel methods." IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.
-/// Each step of the algorithm is explicitly exposed to allow for different wiring based on the use-case.
+/// Achanta, Radhakrishna, et al. "SLIC superpixels compared to state-of-the-art superpixel methods." IEEE transactions
+/// on pattern analysis and machine intelligence 34.11 (2012): 2274-2282. Each step of the algorithm is explicitly
+/// exposed to allow for different wiring based on the use-case.
 struct SlicSuperpixels {
 	/// Representation of one center of a superpixel
 	struct Center {
 		Center();
 		Center(const cv::Mat& m, int r, int c);
 
-		Center& operator +=(const Center& c);
-		Center& operator /=(int div);
+		Center& operator+=(const Center& c);
+		Center& operator/=(int div);
 
 		int row, col;
 		std::array<int, 3> color;
@@ -34,18 +34,19 @@ struct SlicSuperpixels {
 
 	/// Implementation of the distance metric from the paper
 	class Metric {
-		public:
-			/// S is the superpixel distance; m is the spatial-to-color weight
-			Metric(int S, float m);
+	  public:
+		/// S is the superpixel distance; m is the spatial-to-color weight
+		Metric(int S, float m);
 
-			// implementation of eq. 3 of the paper
-			float operator()(const lightfields::SlicSuperpixels::Center& c, const cv::Mat& m, const int row, const int col) const;
+		// implementation of eq. 3 of the paper
+		float operator()(const lightfields::SlicSuperpixels::Center& c, const cv::Mat& m, const int row,
+		                 const int col) const;
 
-			int S() const;
+		int S() const;
 
-		private:
-			int m_S;
-			float m_SS, m_mm;
+	  private:
+		int m_S;
+		float m_SS, m_mm;
 	};
 
 	/// Initialise the S (grid spacing) variable
@@ -55,15 +56,19 @@ struct SlicSuperpixels {
 	static lightfields::Grid<lightfields::SlicSuperpixels::Center> initPixels(const cv::Mat& in, int S);
 
 	/// label all pixels based on the closest distance to centers
-	static void label(const cv::Mat& in, lightfields::Grid<Label>& labels, const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers, const Metric& metric);
+	static void label(const cv::Mat& in, lightfields::Grid<Label>& labels,
+	                  const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers, const Metric& metric);
 
 	/// recompute the centres based on labels
-	static void findCenters(const cv::Mat& in, const lightfields::Grid<Label>& labels, lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers);
+	static void findCenters(const cv::Mat& in, const lightfields::Grid<Label>& labels,
+	                        lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers);
 
 	/// connect labels using connected components.
-	/// First find the largest continuous labelled region for each label, then relabel and connect all the smaller ones to the nearest region.
-	/// Results in one continuous region per superpixel, with all smaller ones merged into one of the large ones.
-	static void connectedComponents(lightfields::Grid<Label>& labels, const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers);
+	/// First find the largest continuous labelled region for each label, then relabel and connect all the smaller ones
+	/// to the nearest region. Results in one continuous region per superpixel, with all smaller ones merged into one of
+	/// the large ones.
+	static void connectedComponents(lightfields::Grid<Label>& labels,
+	                                const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers);
 };
 
-}
+}  // namespace lightfields

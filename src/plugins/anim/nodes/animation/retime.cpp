@@ -16,7 +16,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	data.set(a_outAnim, anim);
 
 	return dependency_graph::State();
-
 }
 
 void init(possumwood::Metadata& meta) {
@@ -32,4 +31,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/animation/retime", init);
 
-}
+}  // namespace

@@ -6,7 +6,7 @@
 
 namespace possumwood {
 
-template<>
+template <>
 struct Traits<Meshes> {
 	// static IO<std::shared_ptr<const Mesh>> io;
 
@@ -15,4 +15,4 @@ struct Traits<Meshes> {
 	}
 };
 
-}
+}  // namespace possumwood

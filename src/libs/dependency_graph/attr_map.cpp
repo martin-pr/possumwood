@@ -6,15 +6,15 @@ namespace dependency_graph {
 
 AttrMap::AttrMap(const MetadataHandle& src, const MetadataHandle& dest) : m_src(src), m_dest(dest) {
 	std::set<unsigned> unmappedSrcAttrs;
-	for(std::size_t a=0;a<src->attributeCount(); ++a)
+	for(std::size_t a = 0; a < src->attributeCount(); ++a)
 		unmappedSrcAttrs.insert(a);
 
 	std::set<unsigned> unmappedDestAttrs;
-	for(std::size_t a=0;a<dest->attributeCount(); ++a)
+	for(std::size_t a = 0; a < dest->attributeCount(); ++a)
 		unmappedDestAttrs.insert(a);
 
 	// first try 1:1 mapping
-	for(unsigned ai=0;ai<std::min(src->attributeCount(), dest->attributeCount()); ++ai) {
+	for(unsigned ai = 0; ai < std::min(src->attributeCount(), dest->attributeCount()); ++ai) {
 		const Attr& sa = src->attr(ai);
 		const Attr& da = dest->attr(ai);
 
@@ -34,7 +34,8 @@ AttrMap::AttrMap(const MetadataHandle& src, const MetadataHandle& dest) : m_src(
 			auto destIt = unmappedDestAttrs.end();
 			for(auto i = unmappedDestAttrs.begin(); i != unmappedDestAttrs.end(); ++i) {
 				const Attr& destAttr = m_dest->attr(*i);
-				if(srcAttr.name() == destAttr.name() && srcAttr.category() == destAttr.category() && srcAttr.type() == destAttr.type()) {
+				if(srcAttr.name() == destAttr.name() && srcAttr.category() == destAttr.category() &&
+				   srcAttr.type() == destAttr.type()) {
 					destIt = i;
 					break;
 				}
@@ -122,4 +123,4 @@ std::size_t AttrMap::size() const {
 	return m_map.size();
 }
 
-}
+}  // namespace dependency_graph

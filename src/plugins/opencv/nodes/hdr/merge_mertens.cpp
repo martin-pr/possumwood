@@ -1,8 +1,7 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/photo.hpp>
-
-#include <actions/traits.h>
 
 #include "sequence.h"
 #include "tools.h"
@@ -14,7 +13,6 @@ dependency_graph::InAttr<float> a_contrastWeight, a_saturationWeight, a_exposure
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-
 	cv::Ptr<cv::MergeMertens> merger = cv::createMergeMertens();
 	merger->setContrastWeight(data.get(a_contrastWeight));
 	merger->setExposureWeight(data.get(a_exposureWeight));
@@ -52,4 +50,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/hdr/merge_mertens", init);
 
-}
+}  // namespace

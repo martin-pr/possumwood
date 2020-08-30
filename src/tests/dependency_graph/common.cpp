@@ -1,45 +1,45 @@
 #include "common.h"
 
-#include <boost/test/unit_test.hpp>
-
-#include <dependency_graph/attr.inl>
-#include <dependency_graph/values.inl>
-#include <dependency_graph/port.inl>
-#include <dependency_graph/metadata.inl>
-#include <dependency_graph/node.h>
-#include <dependency_graph/node_base.inl>
 #include <dependency_graph/metadata_register.h>
+#include <dependency_graph/node.h>
+
+#include <boost/test/unit_test.hpp>
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/metadata.inl>
+#include <dependency_graph/node_base.inl>
+#include <dependency_graph/port.inl>
+#include <dependency_graph/values.inl>
 
 using namespace dependency_graph;
 
 namespace std {
 
-ostream& operator << (ostream& out, const type_info& t) {
+ostream& operator<<(ostream& out, const type_info& t) {
 	out << t.name();
 
 	return out;
 }
 
-}
+}  // namespace std
 
 /////////////
 
 namespace {
-	static unsigned s_counter = 0;
+static unsigned s_counter = 0;
 }
 
 TestStruct::TestStruct() : id(s_counter++) {
 }
 
-bool TestStruct::operator == (const TestStruct& ts) const {
+bool TestStruct::operator==(const TestStruct& ts) const {
 	return id == ts.id;
 }
 
-bool TestStruct::operator != (const TestStruct& ts) const {
+bool TestStruct::operator!=(const TestStruct& ts) const {
 	return id != ts.id;
 }
 
-std::ostream& operator << (std::ostream& out, const TestStruct& t) {
+std::ostream& operator<<(std::ostream& out, const TestStruct& t) {
 	out << t.id;
 
 	return out;
@@ -48,7 +48,7 @@ std::ostream& operator << (std::ostream& out, const TestStruct& t) {
 NoncopyableStruct::NoncopyableStruct() : id(s_counter++) {
 }
 
-std::ostream& operator << (std::ostream& out, const NoncopyableStruct& t) {
+std::ostream& operator<<(std::ostream& out, const NoncopyableStruct& t) {
 	out << t.id;
 
 	return out;
@@ -120,7 +120,7 @@ const MetadataHandle& multiplicationNode() {
 
 		static InAttr<float> multiplicationInput1, multiplicationInput2;
 		static OutAttr<float> multiplicationOutput;
-		std::function<State(Values&)> multiplicationCompute = [&](Values & data) {
+		std::function<State(Values&)> multiplicationCompute = [&](Values& data) {
 			const float a = data.get(multiplicationInput1);
 			const float b = data.get(multiplicationInput2);
 

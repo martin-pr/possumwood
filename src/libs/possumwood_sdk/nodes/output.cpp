@@ -1,5 +1,5 @@
-#include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/node_implementation.h>
 
 namespace {
 
@@ -17,4 +17,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("output", init);
 
-}
+}  // namespace

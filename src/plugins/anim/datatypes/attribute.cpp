@@ -24,14 +24,14 @@ Attribute::Attribute(const Attribute& a) {
 Attribute::Attribute(Attribute&& a) : m_data(std::move(a.m_data)) {
 }
 
-Attribute& Attribute::operator = (const Attribute& a) {
+Attribute& Attribute::operator=(const Attribute& a) {
 	if(a.m_data.get() != NULL)
 		m_data = a.m_data->clone();
 
 	return *this;
 }
 
-Attribute& Attribute::operator = (Attribute&& a) {
+Attribute& Attribute::operator=(Attribute&& a) {
 	m_data = std::move(a.m_data);
 
 	return *this;
@@ -51,10 +51,10 @@ bool Attribute::empty() const {
 	return m_data.get() == NULL;
 }
 
-Attribute& Attribute::operator = (const char* value) {
+Attribute& Attribute::operator=(const char* value) {
 	*this = std::string(value);
 
 	return *this;
 }
 
-}
+}  // namespace anim

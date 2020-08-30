@@ -1,7 +1,7 @@
-#include <boost/test/unit_test.hpp>
-
 #include <dependency_graph/attr_map.h>
 #include <dependency_graph/graph.h>
+
+#include <boost/test/unit_test.hpp>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/metadata.inl>
 #include <dependency_graph/node_base.inl>
@@ -10,7 +10,7 @@ using namespace dependency_graph;
 
 namespace {
 
-bool compare(const AttrMap& map, const std::vector<std::pair<unsigned,unsigned>>& data) {
+bool compare(const AttrMap& map, const std::vector<std::pair<unsigned, unsigned>>& data) {
 	if(map.size() != data.size())
 		return false;
 
@@ -29,7 +29,7 @@ bool compare(const AttrMap& map, const std::vector<std::pair<unsigned,unsigned>>
 
 std::unique_ptr<MetadataHandle> meta_1;
 
-}
+}  // namespace
 
 ////////
 
@@ -57,9 +57,7 @@ BOOST_AUTO_TEST_CASE(attr_map_same_map) {
 	const AttrMap map(*meta_1, *meta_1);
 
 	// check that its correct
-	BOOST_CHECK(compare(map, {{
-		{0,0}, {1,1}, {2,2}, {3,3}
-	}}));
+	BOOST_CHECK(compare(map, {{{0, 0}, {1, 1}, {2, 2}, {3, 3}}}));
 }
 
 BOOST_AUTO_TEST_CASE(attr_map_flip_map) {
@@ -88,17 +86,13 @@ BOOST_AUTO_TEST_CASE(attr_map_flip_map) {
 	const AttrMap map(*meta_2, *meta_1);
 
 	// check that its correct
-	BOOST_CHECK(compare(map, {{
-		{0,1}, {1,2}, {2,0}, {3,3}
-	}}));
+	BOOST_CHECK(compare(map, {{{0, 1}, {1, 2}, {2, 0}, {3, 3}}}));
 
 	// and make the reversed attr map
 	const AttrMap map_rev(*meta_1, *meta_2);
 
 	// check that its correct (flipped attributes are correctly matched)
-	BOOST_CHECK(compare(map_rev, {{
-		{0,2}, {1,0}, {2,1}, {3,3}
-	}}));
+	BOOST_CHECK(compare(map_rev, {{{0, 2}, {1, 0}, {2, 1}, {3, 3}}}));
 }
 
 BOOST_AUTO_TEST_CASE(attr_map_rename_attribute) {
@@ -127,17 +121,13 @@ BOOST_AUTO_TEST_CASE(attr_map_rename_attribute) {
 	const AttrMap map(*meta_1, *meta_2);
 
 	// check that its correct (renamed attr is correctly matched)
-	BOOST_CHECK(compare(map, {{
-		{0,0}, {1,1}, {2,2}, {3,3}
-	}}));
+	BOOST_CHECK(compare(map, {{{0, 0}, {1, 1}, {2, 2}, {3, 3}}}));
 
 	// and make the reversed attr map
 	const AttrMap map_rev(*meta_2, *meta_1);
 
 	// check that its correct (renamed attr is correctly matched)
-	BOOST_CHECK(compare(map_rev, {{
-		{0,0}, {1,1}, {2,2}, {3,3}
-	}}));
+	BOOST_CHECK(compare(map_rev, {{{0, 0}, {1, 1}, {2, 2}, {3, 3}}}));
 }
 
 BOOST_AUTO_TEST_CASE(attr_map_retype_attribute) {
@@ -166,17 +156,13 @@ BOOST_AUTO_TEST_CASE(attr_map_retype_attribute) {
 	const AttrMap map(*meta_1, *meta_2);
 
 	// check that its correct (retyped attr is not matched)
-	BOOST_CHECK(compare(map, {{
-		{0,0}, {2,2}, {3,3}
-	}}));
+	BOOST_CHECK(compare(map, {{{0, 0}, {2, 2}, {3, 3}}}));
 
 	// and make the reversed attr map
 	const AttrMap map_rev(*meta_2, *meta_1);
 
 	// check that its correct (retyped attr is not matched)
-	BOOST_CHECK(compare(map_rev, {{
-		{0,0}, {2,2}, {3,3}
-	}}));
+	BOOST_CHECK(compare(map_rev, {{{0, 0}, {2, 2}, {3, 3}}}));
 }
 
 BOOST_AUTO_TEST_CASE(attr_map_remove_attribute) {
@@ -202,15 +188,11 @@ BOOST_AUTO_TEST_CASE(attr_map_remove_attribute) {
 	const AttrMap map(*meta_1, *meta_2);
 
 	// check that its correct (removed attr is not matched)
-	BOOST_CHECK(compare(map, {{
-		{0,0}, {2,1}, {3,2}
-	}}));
+	BOOST_CHECK(compare(map, {{{0, 0}, {2, 1}, {3, 2}}}));
 
 	// and make the reversed attr map
 	const AttrMap map_rev(*meta_2, *meta_1);
 
 	// check that its correct (removed attr is not matched)
-	BOOST_CHECK(compare(map_rev, {{
-		{0,0}, {1,2}, {2,3}
-	}}));
+	BOOST_CHECK(compare(map_rev, {{{0, 0}, {1, 2}, {2, 3}}}));
 }

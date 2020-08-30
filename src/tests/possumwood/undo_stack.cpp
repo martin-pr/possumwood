@@ -1,12 +1,12 @@
-#include <boost/test/unit_test.hpp>
-
 #include <actions/undo_stack.h>
 
+#include <boost/test/unit_test.hpp>
+
 namespace std {
-	std::ostream& operator << (std::ostream& out, const std::vector<unsigned>& vals) {
-		return out;
-	}
+std::ostream& operator<<(std::ostream& out, const std::vector<unsigned>& vals) {
+	return out;
 }
+}  // namespace std
 
 BOOST_AUTO_TEST_CASE(simple_undo_redo) {
 	std::vector<unsigned> values;
@@ -16,15 +16,11 @@ BOOST_AUTO_TEST_CASE(simple_undo_redo) {
 	{
 		possumwood::UndoStack::Action a;
 		a.addCommand(
-			"Pushing back 10",
-			[&values]() {
-				values.push_back(10);
-			},
-			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 10u);
-				values.pop_back();
-			}
-		);
+		    "Pushing back 10", [&values]() { values.push_back(10); },
+		    [&values]() {
+			    BOOST_CHECK_EQUAL(values.back(), 10u);
+			    values.pop_back();
+		    });
 		stack.execute(a);
 	}
 
@@ -57,26 +53,18 @@ BOOST_AUTO_TEST_CASE(multi_command_undo_redo) {
 	{
 		possumwood::UndoStack::Action a;
 		a.addCommand(
-			"Pushing back 10",
-			[&values]() {
-				values.push_back(10);
-			},
-			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 10u);
-				values.pop_back();
-			}
-		);
+		    "Pushing back 10", [&values]() { values.push_back(10); },
+		    [&values]() {
+			    BOOST_CHECK_EQUAL(values.back(), 10u);
+			    values.pop_back();
+		    });
 
 		a.addCommand(
-			"Pushing back 10",
-			[&values]() {
-				values.push_back(20);
-			},
-			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 20u);
-				values.pop_back();
-			}
-		);
+		    "Pushing back 10", [&values]() { values.push_back(20); },
+		    [&values]() {
+			    BOOST_CHECK_EQUAL(values.back(), 20u);
+			    values.pop_back();
+		    });
 
 		stack.execute(a);
 	}
@@ -112,26 +100,18 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 	{
 		possumwood::UndoStack::Action a;
 		a.addCommand(
-			"Pushing back 10",
-			[&values]() {
-				values.push_back(10);
-			},
-			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 10u);
-				values.pop_back();
-			}
-		);
+		    "Pushing back 10", [&values]() { values.push_back(10); },
+		    [&values]() {
+			    BOOST_CHECK_EQUAL(values.back(), 10u);
+			    values.pop_back();
+		    });
 
 		a.addCommand(
-			"Pushing back 20",
-			[&values]() {
-				values.push_back(20);
-			},
-			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 20u);
-				values.pop_back();
-			}
-		);
+		    "Pushing back 20", [&values]() { values.push_back(20); },
+		    [&values]() {
+			    BOOST_CHECK_EQUAL(values.back(), 20u);
+			    values.pop_back();
+		    });
 
 		stack.execute(a);
 	}
@@ -139,26 +119,18 @@ BOOST_AUTO_TEST_CASE(multi_action_undo_redo) {
 	{
 		possumwood::UndoStack::Action a;
 		a.addCommand(
-			"Pushing back 30",
-			[&values]() {
-				values.push_back(30);
-			},
-			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 30u);
-				values.pop_back();
-			}
-		);
+		    "Pushing back 30", [&values]() { values.push_back(30); },
+		    [&values]() {
+			    BOOST_CHECK_EQUAL(values.back(), 30u);
+			    values.pop_back();
+		    });
 
 		a.addCommand(
-			"Pushing back 40",
-			[&values]() {
-				values.push_back(40);
-			},
-			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 40u);
-				values.pop_back();
-			}
-		);
+		    "Pushing back 40", [&values]() { values.push_back(40); },
+		    [&values]() {
+			    BOOST_CHECK_EQUAL(values.back(), 40u);
+			    values.pop_back();
+		    });
 
 		stack.execute(a);
 	}
@@ -217,29 +189,20 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 	BOOST_CHECK_EQUAL(values, empty_result);
 
 	{
-
 		possumwood::UndoStack::Action a;
 		a.addCommand(
-			"Pushing back 10",
-			[&values]() {
-				values.push_back(10);
-			},
-			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 10u);
-				values.pop_back();
-			}
-		);
+		    "Pushing back 10", [&values]() { values.push_back(10); },
+		    [&values]() {
+			    BOOST_CHECK_EQUAL(values.back(), 10u);
+			    values.pop_back();
+		    });
 
 		a.addCommand(
-			"Pushing back 20",
-			[&values]() {
-				values.push_back(20);
-			},
-			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 20u);
-				values.pop_back();
-			}
-		);
+		    "Pushing back 20", [&values]() { values.push_back(20); },
+		    [&values]() {
+			    BOOST_CHECK_EQUAL(values.back(), 20u);
+			    values.pop_back();
+		    });
 
 		BOOST_REQUIRE_NO_THROW(stack.execute(a));
 	}
@@ -249,30 +212,23 @@ BOOST_AUTO_TEST_CASE(exception_handling) {
 	{
 		possumwood::UndoStack::Action a;
 		a.addCommand(
-			"Pushing back 30",
-			[&values]() {
-				values.push_back(30);
+		    "Pushing back 30",
+		    [&values]() {
+			    values.push_back(30);
 
-				const std::vector<unsigned> tmp{10, 20, 30};
-				BOOST_CHECK_EQUAL(values, tmp);
-			},
-			[&values]() {
-				BOOST_CHECK_EQUAL(values.back(), 30u);
-				values.pop_back();
+			    const std::vector<unsigned> tmp{10, 20, 30};
+			    BOOST_CHECK_EQUAL(values, tmp);
+		    },
+		    [&values]() {
+			    BOOST_CHECK_EQUAL(values.back(), 30u);
+			    values.pop_back();
 
-				const std::vector<unsigned> tmp{10, 20};
-				BOOST_CHECK_EQUAL(values, tmp);
-			}
-		);
+			    const std::vector<unsigned> tmp{10, 20};
+			    BOOST_CHECK_EQUAL(values, tmp);
+		    });
 
 		a.addCommand(
-			"Throwing",
-			[]() {
-				throw "stuff";
-			},
-			[]() {
-			}
-		);
+		    "Throwing", []() { throw "stuff"; }, []() {});
 
 		// executing this command throws, and UNROLLS push_back of 30
 		BOOST_REQUIRE_THROW(stack.execute(a), std::runtime_error);

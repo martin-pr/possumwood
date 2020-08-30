@@ -1,5 +1,5 @@
-#include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/node_implementation.h>
 
 namespace {
 
@@ -19,4 +19,4 @@ void init(possumwood::Metadata& meta) {
 /// possumwood SDK's App object
 possumwood::NodeImplementation s_impl("time", init);
 
-}
+}  // namespace

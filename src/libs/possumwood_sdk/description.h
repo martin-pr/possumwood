@@ -6,21 +6,21 @@ namespace possumwood {
 
 /// A description of a setup, using a subset of markdown
 class Description {
-	public:
-		Description(const std::string& md = "");
+  public:
+	Description(const std::string& md = "");
 
-		void clear();
+	void clear();
 
-		void setMarkdown(const std::string& md);
-		const std::string& markdown() const;
+	void setMarkdown(const std::string& md);
+	const std::string& markdown() const;
 
-		std::string html() const;
+	std::string html() const;
 
-		std::string serialize() const;
-		void deserialize(const std::string& s);
+	std::string serialize() const;
+	void deserialize(const std::string& s);
 
-	private:
-		std::string m_markDown;
+  private:
+	std::string m_markDown;
 };
 
-}
+}  // namespace possumwood

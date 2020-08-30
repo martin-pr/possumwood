@@ -1,16 +1,15 @@
 #include <boost/test/unit_test.hpp>
-
-#include "common.h"
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata.inl>
+
+#include "common.h"
 
 using namespace dependency_graph;
 
 // struct TestStruct {
 // 	bool operator == (const TestStruct& ts) const { return true; }
 // };
-
 
 BOOST_AUTO_TEST_CASE(input_attr_instantiation) {
 	Metadata meta("test_type");

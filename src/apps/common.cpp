@@ -1,12 +1,10 @@
 #include "common.h"
 
 #include <dlfcn.h>
-
-#include <iostream>
+#include <possumwood_sdk/app.h>
 
 #include <boost/filesystem.hpp>
-
-#include <possumwood_sdk/app.h>
+#include <iostream>
 
 namespace fs = boost::filesystem;
 

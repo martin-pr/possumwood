@@ -1,15 +1,13 @@
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include "possumwood_sdk/datatypes/enum.h"
-
 #include "datatypes/meshes.h"
-
-#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+#include "possumwood_sdk/datatypes/enum.h"
 
 namespace {
 
-using possumwood::Meshes;
 using possumwood::CGALPolyhedron;
+using possumwood::Meshes;
 
 typedef possumwood::CGALPolyhedron Mesh;
 
@@ -37,4 +35,4 @@ void init(possumwood::Metadata& meta) {
 }
 
 possumwood::NodeImplementation s_impl("cgal/topology/stitch_borders", init);
-}
+}  // namespace

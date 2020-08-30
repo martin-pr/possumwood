@@ -1,72 +1,70 @@
-#include <boost/test/unit_test.hpp>
+#include <actions/actions.h>
+#include <dependency_graph/graph.h>
+#include <possumwood_sdk/app.h>
 
+#include <boost/test/unit_test.hpp>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/metadata.inl>
-#include <dependency_graph/graph.h>
+#include <dependency_graph/nodes_iterator.inl>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/values.inl>
-#include <dependency_graph/nodes_iterator.inl>
-
-#include <possumwood_sdk/app.h>
-#include <actions/actions.h>
 
 #include "common.h"
 
 using namespace dependency_graph;
 
 namespace {
-	template<typename T>
-	bool checkPort(const Port& p, const std::string& name, const Attr::Category& cat) {
-		if(p.name() != name)
-			return false;
+template <typename T>
+bool checkPort(const Port& p, const std::string& name, const Attr::Category& cat) {
+	if(p.name() != name)
+		return false;
 
-		if(p.category() != cat)
-			return false;
+	if(p.category() != cat)
+		return false;
 
-		if(p.type() != typeid(T))
-			return false;
+	if(p.type() != typeid(T))
+		return false;
 
-		return true;
-	}
-
-	struct ConnectionItem {
-		dependency_graph::UniqueId fromNode;
-		std::size_t fromPort;
-		dependency_graph::UniqueId toNode;
-		std::size_t toPort;
-	};
-
-	bool checkConnections(const dependency_graph::Network& net, const std::vector<ConnectionItem>& conns) {
-		if(conns.size() != net.connections().size()) {
-			std::cout << "checkConnections - size not matching - " << conns.size() << " != " << net.connections().size() << std::endl;
-			return false;
-		}
-
-		auto i1 = net.connections().begin();
-		auto i2 = conns.begin();
-
-		while(i1 != net.connections().end()) {
-			if(i1->first.node().index() != i2->fromNode || i1->first.index() != i2->fromPort) {
-				std::cout << "checkConnections - fromNode / port not matching - " <<
-					i1->first.node().index() << "/" << i1->first.index() << " != " <<
-					i2->fromNode << "/" << i2->fromPort << std::endl;
-				return false;
-			}
-
-			if(i1->second.node().index() != i2->toNode || i1->second.index() != i2->toPort) {
-				std::cout << "checkConnections - toNode / port not matching - " <<
-					i1->second.node().index() << "/" << i1->second.index() << " != " <<
-					i2->toNode << "/" << i2->toPort << std::endl;
-				return false;
-			}
-
-			++i1;
-			++i2;
-		}
-
-		return true;
-	}
+	return true;
 }
+
+struct ConnectionItem {
+	dependency_graph::UniqueId fromNode;
+	std::size_t fromPort;
+	dependency_graph::UniqueId toNode;
+	std::size_t toPort;
+};
+
+bool checkConnections(const dependency_graph::Network& net, const std::vector<ConnectionItem>& conns) {
+	if(conns.size() != net.connections().size()) {
+		std::cout << "checkConnections - size not matching - " << conns.size() << " != " << net.connections().size()
+		          << std::endl;
+		return false;
+	}
+
+	auto i1 = net.connections().begin();
+	auto i2 = conns.begin();
+
+	while(i1 != net.connections().end()) {
+		if(i1->first.node().index() != i2->fromNode || i1->first.index() != i2->fromPort) {
+			std::cout << "checkConnections - fromNode / port not matching - " << i1->first.node().index() << "/"
+			          << i1->first.index() << " != " << i2->fromNode << "/" << i2->fromPort << std::endl;
+			return false;
+		}
+
+		if(i1->second.node().index() != i2->toNode || i1->second.index() != i2->toPort) {
+			std::cout << "checkConnections - toNode / port not matching - " << i1->second.node().index() << "/"
+			          << i1->second.index() << " != " << i2->toNode << "/" << i2->toPort << std::endl;
+			return false;
+		}
+
+		++i1;
+		++i2;
+	}
+
+	return true;
+}
+}  // namespace
 
 BOOST_AUTO_TEST_CASE(meta_single_node) {
 	// make the app "singleton"
@@ -275,9 +273,12 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 
 	// create nodes using an Action
 	UniqueId id_front, id_middle, id_back;
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), additionNode(), "front", possumwood::NodeData(), id_front));
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), additionNode(), "middle", possumwood::NodeData(), id_middle));
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), additionNode(), "back", possumwood::NodeData(), id_back));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(app.graph(), additionNode(), "front", possumwood::NodeData(), id_front));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(app.graph(), additionNode(), "middle", possumwood::NodeData(), id_middle));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(app.graph(), additionNode(), "back", possumwood::NodeData(), id_back));
 
 	// make sure they have been created, and get their pointers
 	NodeBase *front, *middle, *back;
@@ -316,14 +317,11 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
 	// check connections
-	BOOST_CHECK(checkConnections(
-		app.graph(),
-		{
-			{front->index(), 2, middle->index(), 0},
-			{front->index(), 2, back->index(), 1},
-			{middle->index(), 2, back->index(), 0},
-		}
-	));
+	BOOST_CHECK(checkConnections(app.graph(), {
+	                                              {front->index(), 2, middle->index(), 0},
+	                                              {front->index(), 2, back->index(), 1},
+	                                              {middle->index(), 2, back->index(), 0},
+	                                          }));
 
 	// and test the "pull"
 	BOOST_CHECK_EQUAL(back->port(2).get<float>(), 15.0f);
@@ -340,14 +338,11 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
 	// check connections
-	BOOST_CHECK(checkConnections(
-		app.graph(),
-		{
-			{front->index(), 2, back->index(), 1},
-			{front->index(), 2, middle->index(), 0},
-			{middle->index(), 2, back->index(), 0},
-		}
-	));
+	BOOST_CHECK(checkConnections(app.graph(), {
+	                                              {front->index(), 2, back->index(), 1},
+	                                              {front->index(), 2, middle->index(), 0},
+	                                              {middle->index(), 2, back->index(), 0},
+	                                          }));
 
 	// and test the "pull"
 	BOOST_CHECK_EQUAL(back->port(2).get<float>(), 30.0f);
@@ -364,14 +359,11 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 1u);
 
 	// check connections
-	BOOST_CHECK(checkConnections(
-		app.graph(),
-		{
-			{front->index(), 2, back->index(), 1},
-			{front->index(), 2, middle->index(), 0},
-			{middle->index(), 2, back->index(), 0},
-		}
-	));
+	BOOST_CHECK(checkConnections(app.graph(), {
+	                                              {front->index(), 2, back->index(), 1},
+	                                              {front->index(), 2, middle->index(), 0},
+	                                              {middle->index(), 2, back->index(), 0},
+	                                          }));
 
 	// and test the "pull"
 	BOOST_CHECK_EQUAL(back->port(2).get<float>(), 15.0f);
@@ -388,14 +380,11 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
 	// check connections
-	BOOST_CHECK(checkConnections(
-		app.graph(),
-		{
-			{front->index(), 2, back->index(), 1},
-			{front->index(), 2, middle->index(), 0},
-			{middle->index(), 2, back->index(), 0},
-		}
-	));
+	BOOST_CHECK(checkConnections(app.graph(), {
+	                                              {front->index(), 2, back->index(), 1},
+	                                              {front->index(), 2, middle->index(), 0},
+	                                              {middle->index(), 2, back->index(), 0},
+	                                          }));
 
 	// and test the "pull"
 	BOOST_CHECK_EQUAL(back->port(2).get<float>(), 30.0f);
@@ -414,14 +403,11 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
 	// check connections - output is now #0, and float input is #2
-	BOOST_CHECK(checkConnections(
-		app.graph(),
-		{
-			{front->index(), 2, back->index(), 1},
-			{front->index(), 2, middle->index(), 2},
-			{middle->index(), 0, back->index(), 0},
-		}
-	));
+	BOOST_CHECK(checkConnections(app.graph(), {
+	                                              {front->index(), 2, back->index(), 1},
+	                                              {front->index(), 2, middle->index(), 2},
+	                                              {middle->index(), 0, back->index(), 0},
+	                                          }));
 
 	// check values on the ports of the new node
 	BOOST_CHECK_EQUAL(middle->port(0).get<float>(), 5.0f);
@@ -453,14 +439,11 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 2u);
 
 	// check connections
-	BOOST_CHECK(checkConnections(
-		app.graph(),
-		{
-			{front->index(), 2, back->index(), 1},
-			{front->index(), 2, middle->index(), 0},
-			{middle->index(), 2, back->index(), 0},
-		}
-	));
+	BOOST_CHECK(checkConnections(app.graph(), {
+	                                              {front->index(), 2, back->index(), 1},
+	                                              {front->index(), 2, middle->index(), 0},
+	                                              {middle->index(), 2, back->index(), 0},
+	                                          }));
 
 	// and test the "pull"
 	BOOST_CHECK_EQUAL(back->port(2).get<float>(), 30.0f);
@@ -478,14 +461,11 @@ BOOST_AUTO_TEST_CASE(meta_connected_node) {
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
 	// check connections
-	BOOST_CHECK(checkConnections(
-		app.graph(),
-		{
-			{front->index(), 2, back->index(), 1},
-			{front->index(), 2, middle->index(), 2},
-			{middle->index(), 0, back->index(), 0},
-		}
-	));
+	BOOST_CHECK(checkConnections(app.graph(), {
+	                                              {front->index(), 2, back->index(), 1},
+	                                              {front->index(), 2, middle->index(), 2},
+	                                              {middle->index(), 0, back->index(), 0},
+	                                          }));
 
 	// and test the "pull"
 	BOOST_CHECK_EQUAL(back->port(2).get<float>(), 13.0f);

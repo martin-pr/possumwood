@@ -1,9 +1,8 @@
 #include "gl.h"
 
-#include <iostream>
-
-#include <GL/glew.h>
 #include <GL/gl.h>
+
+#include <iostream>
 
 namespace possumwood {
 
@@ -24,6 +23,6 @@ ScopedEnable::~ScopedEnable() {
 	glDisable(m_id);
 }
 
-};
+};  // namespace possumwood
 
 #define GL_CHECK_ERR possumwood::glCheckError(__FILE__, __LINE__);

@@ -1,8 +1,8 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
-#include <opencv2/opencv.hpp>
 #include <tbb/parallel_for.h>
 
-#include <actions/traits.h>
+#include <opencv2/opencv.hpp>
 
 #include "sequence.h"
 
@@ -41,4 +41,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/log", init);
 
-}
+}  // namespace

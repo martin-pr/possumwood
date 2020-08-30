@@ -1,12 +1,11 @@
 #include "graph_widget.h"
 
-#include <cassert>
-#include <iostream>
-#include <cmath>
-
 #include <QHBoxLayout>
 #include <QResizeEvent>
 #include <QScrollBar>
+#include <cassert>
+#include <cmath>
+#include <iostream>
 
 #include "connected_edge.h"
 
@@ -40,8 +39,8 @@ GraphScene& GraphWidget::scene() {
 void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 	// "eat" the left mouse moves while edge editing is in progress
 	if(m_scene.isEdgeEditInProgress()) {
-		QMouseEvent tmp(event->type(), event->pos(), Qt::NoButton,
-		                event->buttons() & ~Qt::LeftButton, event->modifiers());
+		QMouseEvent tmp(event->type(), event->pos(), Qt::NoButton, event->buttons() & ~Qt::LeftButton,
+		                event->modifiers());
 		QGraphicsView::mouseMoveEvent(&tmp);
 
 		event->accept();
@@ -51,7 +50,7 @@ void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 		const QPointF tr = QPointF(event->x(), event->y()) - QPointF(m_mouseX, m_mouseY);
 
 		const QMatrix m = matrix();
-		const float scale = sqrt(m.m11()*m.m22());
+		const float scale = sqrt(m.m11() * m.m22());
 
 		translate(tr.x() / scale, tr.y() / scale);
 
@@ -66,7 +65,7 @@ void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 	m_mouseY = event->y();
 }
 
-void GraphWidget::wheelEvent(QWheelEvent *event) {
+void GraphWidget::wheelEvent(QWheelEvent* event) {
 	const QPointF orig = mapToScene(event->x(), event->y());
 	const float delta = pow(1.002, (float)event->angleDelta().y());
 
@@ -77,4 +76,4 @@ void GraphWidget::wheelEvent(QWheelEvent *event) {
 	translate((current - orig).x(), (current - orig).y());
 }
 
-}
+}  // namespace node_editor

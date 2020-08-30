@@ -1,8 +1,7 @@
-#include <possumwood_sdk/node_implementation.h>
-
-#include <OpenEXR/ImathVec.h>
 #include <OpenEXR/ImathEuler.h>
 #include <OpenEXR/ImathMatrix.h>
+#include <OpenEXR/ImathVec.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/animation.h"
 #include "datatypes/frame_editor_data.h"
@@ -43,7 +42,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	data.set(a_outFrame, frame);
 
 	return dependency_graph::State();
-
 }
 
 void init(possumwood::Metadata& meta) {
@@ -63,4 +61,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/frame/edit", init);
 
-}
+}  // namespace

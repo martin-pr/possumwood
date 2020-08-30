@@ -1,6 +1,6 @@
-#include <regex>
-
 #include <possumwood_sdk/node_implementation.h>
+
+#include <regex>
 
 #include "datatypes/skeleton.h"
 #include "datatypes/skinned_mesh.h"
@@ -34,22 +34,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// and compute transformations for the skinning itself
 		std::vector<Imath::M44f> transforms(baseSkeleton.size());
-		for(unsigned bi = 0; bi<transforms.size(); ++bi)
-			transforms[bi] =
-				(posedSkeleton[bi].tr().toMatrix44() *
-				 baseSkeleton[bi].tr().toMatrix44().inverse());
+		for(unsigned bi = 0; bi < transforms.size(); ++bi)
+			transforms[bi] = (posedSkeleton[bi].tr().toMatrix44() * baseSkeleton[bi].tr().toMatrix44().inverse());
 
 		// and do the skinning
 		std::set<unsigned> missingBones;
 
-		std::unique_ptr<std::vector<anim::SkinnedMesh>> posedMeshes(
-			new std::vector<anim::SkinnedMesh>());
+		std::unique_ptr<std::vector<anim::SkinnedMesh>> posedMeshes(new std::vector<anim::SkinnedMesh>());
 		for(auto& m : *meshes) {
 			posedMeshes->push_back(m);
 			anim::SkinnedMesh& mesh = posedMeshes->back();
 
 			for(auto& v : mesh.vertices()) {
-				Imath::V3f pos(0,0,0);
+				Imath::V3f pos(0, 0, 0);
 				float sum = 0.0f;
 
 				for(auto& w : v.skinning()) {
@@ -68,7 +65,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// remove the translational component, and convert to normal matrix
 		for(auto& m : transforms) {
-			for(unsigned a=0;a<3;++a) {
+			for(unsigned a = 0; a < 3; ++a) {
 				m[a][3] = 0.0f;
 				m[3][a] = 0.0f;
 			}
@@ -79,10 +76,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(auto& mesh : *posedMeshes) {
 			std::size_t normalIndex = 0;
 			for(auto& n : mesh.normals()) {
-				Imath::V3f norm(0,0,0);
+				Imath::V3f norm(0, 0, 0);
 
-				const std::size_t vertexIndex =
-					mesh.polygons()[normalIndex / 3][normalIndex % 3];
+				const std::size_t vertexIndex = mesh.polygons()[normalIndex / 3][normalIndex % 3];
 				for(auto& w : mesh.vertices()[vertexIndex].skinning())
 					if(w.bone < transforms.size())
 						norm += (n * transforms[w.bone].transposed()) * w.weight;
@@ -105,8 +101,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 
 		// move the output
-		data.set(a_posedMeshes, std::shared_ptr<const std::vector<anim::SkinnedMesh>>(
-					 posedMeshes.release()));
+		data.set(a_posedMeshes, std::shared_ptr<const std::vector<anim::SkinnedMesh>>(posedMeshes.release()));
 	}
 	else
 		data.set(a_posedMeshes, std::shared_ptr<const std::vector<anim::SkinnedMesh>>());
@@ -129,4 +124,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/mesh/skin", init);
 
-}
+}  // namespace

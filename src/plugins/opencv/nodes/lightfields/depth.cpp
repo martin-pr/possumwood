@@ -1,13 +1,9 @@
-#include <possumwood_sdk/node_implementation.h>
-
-#include <possumwood_sdk/datatypes/enum.h>
-
-#include <tbb/parallel_for.h>
-
-#include <lightfields/nearest_integration.h>
 #include <lightfields/gaussian_integration.h>
-
+#include <lightfields/nearest_integration.h>
 #include <maths/io/vec2.h>
+#include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/node_implementation.h>
+#include <tbb/parallel_for.h>
 
 #include "lightfields.h"
 #include "sequence.h"
@@ -40,7 +36,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::opencv::Sequence corresp(data.get(a_steps));
 
 	tbb::parallel_for(0u, data.get(a_steps), [&](unsigned a) {
-		const float w = (float)a / (float)(data.get(a_steps)-1);
+		const float w = (float)a / (float)(data.get(a_steps) - 1);
 		const float d = data.get(a_start) + (data.get(a_end) - data.get(a_start)) * w;
 
 		if(data.get(a_method).intValue() == 0) {
@@ -98,4 +94,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/lightfields/depth", init);
 
-}
+}  // namespace

@@ -1,14 +1,14 @@
 #include "undo_stack.h"
 
+#include <boost/noncopyable.hpp>
 #include <cassert>
 #include <iostream>
 #include <sstream>
 
-#include <boost/noncopyable.hpp>
-
 namespace possumwood {
 
-void UndoStack::Action::addCommand(const std::string& name, const std::function<void()>& redo, const std::function<void()>& undo) {
+void UndoStack::Action::addCommand(const std::string& name, const std::function<void()>& redo,
+                                   const std::function<void()>& undo) {
 	assert(undo);
 	assert(redo);
 
@@ -28,7 +28,7 @@ void UndoStack::Action::append(const Action& a) {
 
 UndoStack::UndoStack()
 #ifndef NDEBUG
-: m_executionInProgress(false)
+    : m_executionInProgress(false)
 #endif
 {
 }
@@ -39,7 +39,8 @@ dependency_graph::State UndoStack::execute(const Action& input_action, bool halt
 
 	dependency_graph::State state;
 	// construct an action to be pushed on the stack - when haltOnError is false, this action might not contain all
-	// undo/redo commands the input action does, as some parts might have errored and will now be skipped on next evaluation.
+	// undo/redo commands the input action does, as some parts might have errored and will now be skipped on next
+	// evaluation.
 	Action action;
 
 #ifndef NDEBUG
@@ -62,7 +63,7 @@ dependency_graph::State UndoStack::execute(const Action& input_action, bool halt
 			}
 			catch(const std::exception& err) {
 				std::stringstream ss;
-				ss << "Exception while running '" << input_action.m_redo[counter].name <<"': " << err.what();
+				ss << "Exception while running '" << input_action.m_redo[counter].name << "': " << err.what();
 
 				if(haltOnError) {
 					// an exception was caught during the last command - undo all previous commands
@@ -89,7 +90,7 @@ dependency_graph::State UndoStack::execute(const Action& input_action, bool halt
 			}
 			catch(...) {
 				std::stringstream ss;
-				ss << "Unhandled exception while running '" << input_action.m_redo[counter].name <<"'.";
+				ss << "Unhandled exception while running '" << input_action.m_redo[counter].name << "'.";
 
 				if(haltOnError) {
 					// an exception was caught during the last command - undo all previous commands
@@ -136,7 +137,8 @@ void UndoStack::undo() {
 
 	// execute the last undo queue item
 	if(!m_undoStack.empty()) {
-		for(std::vector<UndoStack::Action::Data>::const_reverse_iterator it = m_undoStack.back().m_undo.rbegin(); it != m_undoStack.back().m_undo.rend(); ++it)
+		for(std::vector<UndoStack::Action::Data>::const_reverse_iterator it = m_undoStack.back().m_undo.rbegin();
+		    it != m_undoStack.back().m_undo.rend(); ++it)
 			it->fn();
 
 		// and move it to the redo stack
@@ -158,7 +160,8 @@ void UndoStack::redo() {
 
 	// execute the last redo queue item
 	if(!m_redoStack.empty()) {
-		for(std::vector<Action::Data>::const_iterator it = m_redoStack.back().m_redo.begin(); it != m_redoStack.back().m_redo.end(); ++it)
+		for(std::vector<Action::Data>::const_iterator it = m_redoStack.back().m_redo.begin();
+		    it != m_redoStack.back().m_redo.end(); ++it)
 			it->fn();
 
 		// and move it to the undo stack
@@ -188,11 +191,11 @@ void UndoStack::clear() {
 	m_redoStack.clear();
 }
 
-std::ostream& operator << (std::ostream& out, const UndoStack::Action& action) {
+std::ostream& operator<<(std::ostream& out, const UndoStack::Action& action) {
 	for(auto& a : action.m_undo)
 		out << a.name << std::endl;
 
 	return out;
 }
 
-}
+}  // namespace possumwood

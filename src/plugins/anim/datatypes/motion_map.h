@@ -1,54 +1,54 @@
 #pragma once
 
 #include "animation.h"
-#include "metric.h"
 #include "filter.h"
+#include "metric.h"
 
 namespace anim {
 
 class MotionMap {
-	public:
-		MotionMap();
-		MotionMap(const anim::Animation& a, const ::anim::metric::Base& metric);
-		MotionMap(const anim::Animation& ax, const anim::Animation& ay, const ::anim::metric::Base& metric);
+  public:
+	MotionMap();
+	MotionMap(const anim::Animation& a, const ::anim::metric::Base& metric);
+	MotionMap(const anim::Animation& ax, const anim::Animation& ay, const ::anim::metric::Base& metric);
 
-		std::size_t width() const;
-		std::size_t height() const;
+	std::size_t width() const;
+	std::size_t height() const;
 
-		float operator()(std::size_t x, std::size_t y) const;
+	float operator()(std::size_t x, std::size_t y) const;
 
-		float max() const;
-		float min() const;
+	float max() const;
+	float min() const;
 
-		void filter(filter::Base& filter);
+	void filter(filter::Base& filter);
 
-		void computeLocalMinima(std::size_t count, std::size_t cleanNeighbourhood = 0);
-		const std::vector<std::pair<std::size_t, std::size_t>>& localMinima() const;
+	void computeLocalMinima(std::size_t count, std::size_t cleanNeighbourhood = 0);
+	const std::vector<std::pair<std::size_t, std::size_t>>& localMinima() const;
 
-		bool operator ==(const MotionMap& mmap) const;
-		bool operator !=(const MotionMap& mmap) const;
+	bool operator==(const MotionMap& mmap) const;
+	bool operator!=(const MotionMap& mmap) const;
 
-	protected:
-	private:
-		std::size_t m_width;
-		std::vector<float> m_data;
+  protected:
+  private:
+	std::size_t m_width;
+	std::vector<float> m_data;
 
-		float m_min, m_max;
+	float m_min, m_max;
 
-		std::vector<std::pair<std::size_t, std::size_t>> m_minima;
+	std::vector<std::pair<std::size_t, std::size_t>> m_minima;
 };
 
-std::ostream& operator <<(std::ostream& out, const MotionMap& mmap);
+std::ostream& operator<<(std::ostream& out, const MotionMap& mmap);
 
-}
+}  // namespace anim
 
 namespace possumwood {
 
-template<>
+template <>
 struct Traits<anim::MotionMap> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0, 0, 0}};
 	}
 };
 
-}
+}  // namespace possumwood

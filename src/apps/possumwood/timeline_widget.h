@@ -1,11 +1,9 @@
 #pragma once
 
-#include <chrono>
-
-#include <boost/signals2.hpp>
-
-#include <QtGui/QPaintEvent>
 #include <QtCore/QTimer>
+#include <QtGui/QPaintEvent>
+#include <boost/signals2.hpp>
+#include <chrono>
 
 #include "timeline.h"
 
@@ -15,26 +13,26 @@
 class TimelineWidget : public QWidget {
 	Q_OBJECT
 
-	public:
-		TimelineWidget(QWidget* parent = NULL);
-		virtual ~TimelineWidget();
+  public:
+	TimelineWidget(QWidget* parent = NULL);
+	virtual ~TimelineWidget();
 
-		QAction* playAction();
+	QAction* playAction();
 
-	protected:
-		virtual void paintEvent(QPaintEvent* event) override;
+  protected:
+	virtual void paintEvent(QPaintEvent* event) override;
 
-	private slots:
-		void onPlayAction();
-		void onTimer();
+  private slots:
+	void onPlayAction();
+	void onTimer();
 
-	private:
-		Timeline* m_timeline;
+  private:
+	Timeline* m_timeline;
 
-		QAction *m_playAction, *m_frameFwdAction, *m_frameBwdAction;
-		QTimer* m_playbackTimer;
+	QAction *m_playAction, *m_frameFwdAction, *m_frameBwdAction;
+	QTimer* m_playbackTimer;
 
-		std::vector<boost::signals2::connection> m_connections;
+	std::vector<boost::signals2::connection> m_connections;
 
-		std::chrono::time_point<std::chrono::system_clock> m_currentTime;
+	std::chrono::time_point<std::chrono::system_clock> m_currentTime;
 };

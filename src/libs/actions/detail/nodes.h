@@ -1,9 +1,9 @@
 #pragma once
 
-#include <boost/optional.hpp>
-
 #include <dependency_graph/network.h>
 #include <dependency_graph/selection.h>
+
+#include <boost/optional.hpp>
 
 #include "../node_data.h"
 #include "../undo_stack.h"

@@ -1,6 +1,6 @@
-#include <memory>
-
 #include <possumwood_sdk/node_implementation.h>
+
+#include <memory>
 
 #include "frame.h"
 #include "maths/io/vec2.h"
@@ -30,4 +30,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/metadata", init);
 
-}
+}  // namespace

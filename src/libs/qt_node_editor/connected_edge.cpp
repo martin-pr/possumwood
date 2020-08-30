@@ -1,21 +1,18 @@
 #include "connected_edge.h"
 
+#include <QGraphicsScene>
+#include <QPainter>
+#include <QPainterPathStroker>
+#include <QStyleOptionGraphicsItem>
 #include <cassert>
 #include <iostream>
-
-#include <QPainter>
-#include <QGraphicsScene>
-#include <QStyleOptionGraphicsItem>
-#include <QPainterPathStroker>
 
 #include "port.h"
 
 namespace node_editor {
 
-ConnectedEdge::ConnectedEdge(Port& p1, Port& p2) :
-	Edge(p1.connectionPoint(), p2.connectionPoint()),
-	m_p1(&p1), m_p2(&p2) {
-
+ConnectedEdge::ConnectedEdge(Port& p1, Port& p2)
+    : Edge(p1.connectionPoint(), p2.connectionPoint()), m_p1(&p1), m_p2(&p2) {
 	setFlags(ItemIsSelectable);
 
 	assert(p1.portType() == Port::Type::kOutput);
@@ -72,4 +69,4 @@ Port& ConnectedEdge::toPort() {
 	return *m_p2;
 }
 
-}
+}  // namespace node_editor

@@ -1,14 +1,14 @@
-#include <boost/test/unit_test.hpp>
-
 #include <dependency_graph/graph.h>
+#include <dependency_graph/metadata_register.h>
 #include <dependency_graph/node.h>
+
+#include <boost/test/unit_test.hpp>
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/datablock.inl>
+#include <dependency_graph/metadata.inl>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/port.inl>
-#include <dependency_graph/datablock.inl>
-#include <dependency_graph/metadata_register.h>
 #include <dependency_graph/values.inl>
-#include <dependency_graph/attr.inl>
-#include <dependency_graph/metadata.inl>
 
 #include "common.h"
 
@@ -16,15 +16,15 @@ using namespace dependency_graph;
 
 namespace std {
 
-static std::ostream& operator << (std::ostream& out, const std::type_index& t) {
+static std::ostream& operator<<(std::ostream& out, const std::type_index& t) {
 	out << dependency_graph::unmangledTypeId(t);
 
 	return out;
 }
 
-}
+}  // namespace std
 
-template<typename T>
+template <typename T>
 const dependency_graph::MetadataHandle& typedInput() {
 	static std::unique_ptr<MetadataHandle> s_handle;
 
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(void_input_ports) {
 	BOOST_CHECK(not add1.port(2).isConnected());
 	BOOST_CHECK(not g.connections().connectedFrom(void1.port(0)));
 
-	 // + test that its type returns back to "void" after disconnect
+	// + test that its type returns back to "void" after disconnect
 	BOOST_REQUIRE_EQUAL(void1.port(0).type(), typeid(void));
 	BOOST_REQUIRE_EQUAL(void1.port(0).category(), dependency_graph::Attr::kInput);
 
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(void_output_ports) {
 	BOOST_CHECK(not add1.port(0).isConnected());
 	BOOST_CHECK(g.connections().connectedTo(void1.port(0)).empty());
 
-	 // + test that its type returns back to "void" after disconnect
+	// + test that its type returns back to "void" after disconnect
 	BOOST_REQUIRE_EQUAL(void1.port(0).type(), typeid(void));
 	BOOST_REQUIRE_EQUAL(void1.port(0).category(), dependency_graph::Attr::kOutput);
 

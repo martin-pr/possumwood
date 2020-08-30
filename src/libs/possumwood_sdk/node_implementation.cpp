@@ -4,8 +4,8 @@
 
 namespace possumwood {
 
-NodeImplementation::NodeImplementation(const std::string& nodeName,
-                                       std::function<void(Metadata&)> init) : m_meta(std::unique_ptr<Metadata>(new Metadata(nodeName))) {
+NodeImplementation::NodeImplementation(const std::string& nodeName, std::function<void(Metadata&)> init)
+    : m_meta(std::unique_ptr<Metadata>(new Metadata(nodeName))) {
 	std::unique_ptr<Metadata> meta(new Metadata(nodeName));
 
 	init(*meta);
@@ -19,4 +19,4 @@ NodeImplementation::~NodeImplementation() {
 	dependency_graph::MetadataRegister::singleton().remove(m_meta);
 }
 
-}
+}  // namespace possumwood

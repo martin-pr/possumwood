@@ -1,7 +1,7 @@
 #include <possumwood_sdk/node_implementation.h>
 
-#include "datatypes/skinned_mesh.h"
 #include "datatypes/joint_mapping_editor_data.h"
+#include "datatypes/skinned_mesh.h"
 
 namespace {
 
@@ -49,14 +49,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	data.set(a_outMeshes, std::shared_ptr<const std::vector<anim::SkinnedMesh>>(result.release()));
 
 	return dependency_graph::State();
-
 }
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_skeleton, "skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_inMeshes, "in_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inMeshes, "in_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(),
+	                  possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_editorData, "mapping");
-	meta.addAttribute(a_outMeshes, "out_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outMeshes, "out_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(),
+	                  possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_skeleton, a_outMeshes);
 	meta.addInfluence(a_inMeshes, a_outMeshes);
@@ -67,4 +68,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/mesh/skin_remap", init);
 
-}
+}  // namespace

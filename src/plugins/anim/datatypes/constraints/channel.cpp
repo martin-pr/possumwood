@@ -2,7 +2,8 @@
 
 #include <cassert>
 
-namespace anim { namespace constraints {
+namespace anim {
+namespace constraints {
 
 Channel::Channel(Constraints* parent) : m_parent(parent) {
 }
@@ -34,12 +35,13 @@ const Frames& Channel::frames() const {
 	return m_frames;
 }
 
-bool Channel::operator == (const Channel& c) const {
+bool Channel::operator==(const Channel& c) const {
 	return m_values == c.m_values;
 }
 
-bool Channel::operator != (const Channel& c) const {
+bool Channel::operator!=(const Channel& c) const {
 	return m_values != c.m_values;
 }
 
-} }
+}  // namespace constraints
+}  // namespace anim

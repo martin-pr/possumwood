@@ -2,7 +2,7 @@
 
 namespace lightfields {
 
-std::istream& operator >> (std::istream& in, Block& block) {
+std::istream& operator>>(std::istream& in, Block& block) {
 	// read the header
 	block.id = '\0';
 	block.name.clear();
@@ -23,7 +23,7 @@ std::istream& operator >> (std::istream& in, Block& block) {
 
 	// read the big endian length
 	std::size_t length = 0;
-	for(std::size_t a=0;a<4;++a)
+	for(std::size_t a = 0; a < 4; ++a)
 		length = (length << 8) + (unsigned char)in.get();
 
 	if(block.id != 'P') {
@@ -36,7 +36,7 @@ std::istream& operator >> (std::istream& in, Block& block) {
 		}
 
 		// and read the data block
-		block.data = std::unique_ptr<unsigned char[]>(new unsigned char[length+1]);
+		block.data = std::unique_ptr<unsigned char[]>(new unsigned char[length + 1]);
 		in.read((char*)block.data.get(), length);
 		block.data[length] = '\0';
 
@@ -48,4 +48,4 @@ std::istream& operator >> (std::istream& in, Block& block) {
 	return in;
 }
 
-}
+}  // namespace lightfields

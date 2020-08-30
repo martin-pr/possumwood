@@ -1,8 +1,7 @@
 #pragma once
 
-#include "property.h"
-
 #include "properties.h"
+#include "property.h"
 #include "property_item.inl"
 
 namespace possumwood {
@@ -30,19 +29,18 @@ Property<T>::Property(Properties* parent, std::size_t index, const T& defaultVal
 
 template <typename T>
 std::unique_ptr<PropertyBase> Property<T>::clone(Properties* parent) const {
-	return std::unique_ptr<PropertyBase>(
-	    new Property<T>(parent, index(), m_defaultValue));
+	return std::unique_ptr<PropertyBase>(new Property<T>(parent, index(), m_defaultValue));
 }
 
-template<typename T>
+template <typename T>
 std::unique_ptr<PropertyItem::ValueBase> Property<T>::makeValue() const {
 	return std::unique_ptr<PropertyItem::ValueBase>(new PropertyItem::Value<T>(m_defaultValue));
 }
 
-template<typename T>
+template <typename T>
 bool Property<T>::isEqual(const PropertyBase& p) const {
 	const Property<T>* prop = dynamic_cast<const Property<T>*>(&p);
 	return prop != nullptr && m_defaultValue == prop->m_defaultValue;
 }
 
-}
+}  // namespace possumwood

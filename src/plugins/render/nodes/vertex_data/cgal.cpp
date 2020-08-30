@@ -1,15 +1,12 @@
-#include "cgal/datatypes/meshes.h"
+#include <GL/glew.h>
+#include <GL/glu.h>
+#include <ImathVec.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <boost/algorithm/string/join.hpp>
 
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
-
-#include <GL/glew.h>
-#include <GL/glu.h>
-
-#include <ImathVec.h>
-
+#include "cgal/datatypes/meshes.h"
 #include "datatypes/vertex_data.inl"
 
 namespace possumwood {
@@ -29,25 +26,21 @@ struct VBOTraits<std::vector<T>> {
 		return 1;
 	};
 };
-}
+}  // namespace possumwood
 
 namespace {
 
-void addVerticesVBO(possumwood::VertexData& vd, const possumwood::Meshes& meshes,
-                    std::size_t triangleCount) {
+void addVerticesVBO(possumwood::VertexData& vd, const possumwood::Meshes& meshes, std::size_t triangleCount) {
 	vd.addVBO<possumwood::CGALPolyhedron::Point_3>(
 	    "position", triangleCount * 3, possumwood::VertexData::kStatic,
 	    [meshes, triangleCount](
-	        possumwood::Buffer<typename possumwood::VBOTraits<
-	            possumwood::CGALPolyhedron::Point_3>::element>& buffer,
+	        possumwood::Buffer<typename possumwood::VBOTraits<possumwood::CGALPolyhedron::Point_3>::element>& buffer,
 	        const possumwood::ViewportState& vs) {
-
 		    // TODO: use index buffer instead
 		    std::size_t index = 0;
 
 		    for(const auto& m : meshes) {
-			    for(auto fit = m.polyhedron().facets_begin();
-			        fit != m.polyhedron().facets_end(); ++fit)
+			    for(auto fit = m.polyhedron().facets_begin(); fit != m.polyhedron().facets_end(); ++fit)
 				    if(fit->facet_degree() > 2) {
 					    auto vit = fit->facet_begin();
 
@@ -70,7 +63,7 @@ void addVerticesVBO(possumwood::VertexData& vd, const possumwood::Meshes& meshes
 		    }
 
 		    assert(index == triangleCount * 3);
-		});
+	    });
 }
 
 template <typename T>
@@ -79,14 +72,12 @@ const T& identity(const T& val) {
 }
 
 template <typename T, typename EXTRACT = std::function<T(const T&)>>
-void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
-                    const std::string& propertyName, std::size_t triangleCount,
-                    const possumwood::Meshes& mesh, EXTRACT extract = identity<T>) {
+void addPerPointVBO(possumwood::VertexData& vd, const std::string& name, const std::string& propertyName,
+                    std::size_t triangleCount, const possumwood::Meshes& mesh, EXTRACT extract = identity<T>) {
 	vd.addVBO<T>(
 	    name, triangleCount * 3, possumwood::VertexData::kStatic,
-	    [mesh, propertyName, extract](
-	        possumwood::Buffer<typename possumwood::VBOTraits<T>::element>& buffer,
-	        const possumwood::ViewportState& vs) {
+	    [mesh, propertyName, extract](possumwood::Buffer<typename possumwood::VBOTraits<T>::element>& buffer,
+	                                  const possumwood::ViewportState& vs) {
 		    std::size_t index = 0;
 
 		    for(auto& m : mesh) {
@@ -94,22 +85,18 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 			    if(m.vertexProperties().hasProperty(propertyName)) {
 				    auto& vertProp = m.vertexProperties().property<T>(propertyName);
 
-				    for(auto fit = m.polyhedron().facets_begin();
-				        fit != m.polyhedron().facets_end(); ++fit) {
+				    for(auto fit = m.polyhedron().facets_begin(); fit != m.polyhedron().facets_end(); ++fit) {
 					    if(fit->facet_degree() > 2) {
 						    auto it = fit->facet_begin();
 
-						    const auto& val1 =
-						        extract(vertProp.get(it->vertex()->property_key()));
+						    const auto& val1 = extract(vertProp.get(it->vertex()->property_key()));
 						    ++it;
 
-						    const auto& val2 =
-						        extract(vertProp.get(it->vertex()->property_key()));
+						    const auto& val2 = extract(vertProp.get(it->vertex()->property_key()));
 						    ++it;
 
 						    for(unsigned ctr = 2; ctr < fit->facet_degree(); ++ctr) {
-							    const auto& val =
-							        extract(vertProp.get(it->vertex()->property_key()));
+							    const auto& val = extract(vertProp.get(it->vertex()->property_key()));
 
 							    buffer.element(index++) = val1;
 							    buffer.element(index++) = val2;
@@ -125,8 +112,7 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 			    else if(m.faceProperties().hasProperty(propertyName)) {
 				    auto& faceProp = m.faceProperties().property<T>(propertyName);
 
-				    for(auto fit = m.polyhedron().facets_begin();
-				        fit != m.polyhedron().facets_end(); ++fit) {
+				    for(auto fit = m.polyhedron().facets_begin(); fit != m.polyhedron().facets_end(); ++fit) {
 					    if(fit->facet_degree() > 2) {
 						    auto n = extract(faceProp.get(fit->property_key()));
 
@@ -137,12 +123,11 @@ void addPerPointVBO(possumwood::VertexData& vd, const std::string& name,
 				    }
 			    }
 			    else
-				    throw std::runtime_error("Property " + propertyName +
-				                             " not found as vertex or face property.");
+				    throw std::runtime_error("Property " + propertyName + " not found as vertex or face property.");
 		    }
 
 		    assert(index == buffer.vertexCount());
-		});
+	    });
 }
 
 struct VBOName {
@@ -169,8 +154,7 @@ VBOName CGALType(const std::string& t) {
 			auto bracketPos = t.find("[");
 			assert(bracketPos != std::string::npos);
 
-			result.arraySize = std::stoi(result.type.substr(
-			    bracketPos + 1, result.type.length() - bracketPos - 2));
+			result.arraySize = std::stoi(result.type.substr(bracketPos + 1, result.type.length() - bracketPos - 2));
 			result.type = result.type.substr(0, bracketPos);
 		}
 	}
@@ -178,8 +162,8 @@ VBOName CGALType(const std::string& t) {
 	return result;
 }
 
-using possumwood::Meshes;
 using possumwood::CGALPolyhedron;
+using possumwood::Meshes;
 
 dependency_graph::OutAttr<possumwood::VertexData> a_vd;
 dependency_graph::InAttr<Meshes> a_mesh;
@@ -196,8 +180,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	//   there has to be a better way to do this, come on
 	std::size_t triangleCount = 0;
 	for(auto& m : mesh)
-		for(auto it = m.polyhedron().facets_begin(); it != m.polyhedron().facets_end();
-		    ++it)
+		for(auto it = m.polyhedron().facets_begin(); it != m.polyhedron().facets_end(); ++it)
 			if(it->facet_degree() > 2)
 				triangleCount += (it->facet_degree() - 2);
 
@@ -229,37 +212,28 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				if(name.recognized && name.arraySize > 0) {
 					// yep, the types are hardcoded for now, sorry :(
 					if(name.type == "vec3" && name.arraySize == 1)
-						addPerPointVBO<std::array<float, 3>>(vd, name.name, pc.first,
-						                                     triangleCount, mesh);
+						addPerPointVBO<std::array<float, 3>>(vd, name.name, pc.first, triangleCount, mesh);
 
 					else if(name.type == "float" && name.arraySize == 1)
-						addPerPointVBO<float>(vd, name.name, pc.first, triangleCount,
-						                      mesh);
+						addPerPointVBO<float>(vd, name.name, pc.first, triangleCount, mesh);
 
 					else if(name.type == "int" && name.arraySize == 1)
-						addPerPointVBO<int>(vd, name.name, pc.first, triangleCount,
-						                    mesh);
+						addPerPointVBO<int>(vd, name.name, pc.first, triangleCount, mesh);
 
 					else if(name.type == "float")
 						for(std::size_t i = 0; i < name.arraySize; ++i) {
-							auto fn = [i](const std::vector<float>& v) -> float {
-								return v[i];
-							};
+							auto fn = [i](const std::vector<float>& v) -> float { return v[i]; };
 
-							addPerPointVBO<std::vector<float>>(
-							    vd, name.name + "[" + std::to_string(i) + "]", pc.first,
-							    triangleCount, mesh, fn);
+							addPerPointVBO<std::vector<float>>(vd, name.name + "[" + std::to_string(i) + "]", pc.first,
+							                                   triangleCount, mesh, fn);
 						}
 
 					else if(name.type == "int")
 						for(std::size_t i = 0; i < name.arraySize; ++i) {
-							auto fn = [i](const std::vector<int>& v) -> int {
-								return v[i];
-							};
+							auto fn = [i](const std::vector<int>& v) -> int { return v[i]; };
 
-							addPerPointVBO<std::vector<int>>(
-							    vd, name.name + "[" + std::to_string(i) + "]", pc.first,
-							    triangleCount, mesh, fn);
+							addPerPointVBO<std::vector<int>>(vd, name.name + "[" + std::to_string(i) + "]", pc.first,
+							                                 triangleCount, mesh, fn);
 						}
 
 					else
@@ -269,8 +243,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					ignoredProperties.insert(pc.first);
 			}
 			else
-				inconsistentProperties.insert(pc.first + "(" + std::to_string(pc.second) +
-				                              "/" + std::to_string(mesh.size()) + ")");
+				inconsistentProperties.insert(pc.first + "(" + std::to_string(pc.second) + "/" +
+				                              std::to_string(mesh.size()) + ")");
 
 		if(!inconsistentProperties.empty())
 			result.addWarning(
@@ -298,4 +272,4 @@ void init(possumwood::Metadata& meta) {
 }
 
 possumwood::NodeImplementation s_impl("render/vertex_data/cgal", init);
-}
+}  // namespace

@@ -1,15 +1,15 @@
 #include "tree_widget.h"
 
-#include <QHBoxLayout>
-
 #include <dependency_graph/network.h>
 #include <dependency_graph/node.h>
+
+#include <QHBoxLayout>
 
 #include "adaptor.h"
 
 TreeWidget::TreeWidget(QWidget* parent, Adaptor* adaptor) : QWidget(parent), m_adaptor(adaptor) {
 	QHBoxLayout* layout = new QHBoxLayout(this);
-	layout->setContentsMargins(0,0,0,0);
+	layout->setContentsMargins(0, 0, 0, 0);
 
 	m_tree = new QTreeWidget();
 	m_tree->headerItem()->setHidden(true);
@@ -24,13 +24,10 @@ TreeWidget::TreeWidget(QWidget* parent, Adaptor* adaptor) : QWidget(parent), m_a
 
 	m_items.left.insert(std::make_pair(m_adaptor->graph().index(), root));
 
-	m_signals.push_back(m_adaptor->graph().onAddNode(
-		[this](dependency_graph::NodeBase& node) { onAddNode(node); }
-	));
+	m_signals.push_back(m_adaptor->graph().onAddNode([this](dependency_graph::NodeBase& node) { onAddNode(node); }));
 
-	m_signals.push_back(m_adaptor->graph().onRemoveNode(
-		[this](dependency_graph::NodeBase& node) { onRemoveNode(node); }
-	));
+	m_signals.push_back(
+	    m_adaptor->graph().onRemoveNode([this](dependency_graph::NodeBase& node) { onRemoveNode(node); }));
 
 	connect(adaptor, &Adaptor::currentNetworkChanged, this, &TreeWidget::onCurrentNetworkChanged);
 	connect(m_tree, &QTreeWidget::itemSelectionChanged, this, &TreeWidget::onCurrentSelectionChanged);

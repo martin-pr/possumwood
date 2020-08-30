@@ -1,12 +1,11 @@
 #pragma once
 
-#include <string>
-#include <set>
+#include <actions/io/json.h>
+#include <dependency_graph/data_traits.h>
 
 #include <boost/filesystem/path.hpp>
-
-#include <dependency_graph/data_traits.h>
-#include <actions/io/json.h>
+#include <set>
+#include <string>
 
 #include "actions/io.h"
 #include "actions/traits.h"
@@ -18,7 +17,7 @@ class Enum {
 	Enum(std::initializer_list<std::string> options = std::initializer_list<std::string>(), int defaultValue = 0);
 	Enum(std::initializer_list<std::pair<std::string, int>> options, int defaultValue = 0);
 
-	template<typename ITER>
+	template <typename ITER>
 	Enum(ITER begin, ITER end, int defaultValue = 0);
 
 	const std::string& value() const;
@@ -50,18 +49,18 @@ struct Traits<Enum> {
 	}
 };
 
-std::ostream& operator << (std::ostream& out, const Enum& e);
+std::ostream& operator<<(std::ostream& out, const Enum& e);
 
 ////////
 
-template<typename ITER>
+template <typename ITER>
 Enum::Enum(ITER begin, ITER end, int defaultValue) {
 	assert(begin != end);
-	assert(defaultValue < end-begin);
+	assert(defaultValue < end - begin);
 
 	for(auto iter = begin; iter != end; ++iter)
 		m_options.push_back(*iter);
 	m_value = *(begin + defaultValue);
 }
 
-}
+}  // namespace possumwood

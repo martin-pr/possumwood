@@ -4,7 +4,9 @@
 
 #include "../app.h"
 
-namespace possumwood { namespace actions { namespace detail {
+namespace possumwood {
+namespace actions {
+namespace detail {
 
 dependency_graph::NodeBase& findNode(const dependency_graph::UniqueId& id) {
 	if(id == possumwood::AppCore::instance().graph().index())
@@ -17,4 +19,6 @@ dependency_graph::NodeBase& findNode(const dependency_graph::UniqueId& id) {
 	return *it;
 }
 
-} } }
+}  // namespace detail
+}  // namespace actions
+}  // namespace possumwood

@@ -1,10 +1,9 @@
 #pragma once
 
-#include <boost/noncopyable.hpp>
-
 #include <ImathMatrix.h>
-
 #include <possumwood_sdk/gl_renderable.h>
+
+#include <boost/noncopyable.hpp>
 
 namespace possumwood {
 
@@ -14,4 +13,4 @@ class Grid : public possumwood::GLRenderable {
   public:
 	Grid();
 };
-}
+}  // namespace possumwood

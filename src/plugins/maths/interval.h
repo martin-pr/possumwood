@@ -3,46 +3,44 @@
 #include "actions/io.h"
 #include "actions/traits.h"
 
-namespace possumwood { namespace maths {
+namespace possumwood {
+namespace maths {
 
 class Interval {
-	public:
-		enum Type {
-			kLinear = 0,
-			kLog = 1
-		};
+  public:
+	enum Type { kLinear = 0, kLog = 1 };
 
-		Interval();
+	Interval();
 
-		float value() const;
-		void setValue(float val);
+	float value() const;
+	void setValue(float val);
 
-		operator float() const;
-		Interval& operator = (float val);
+	operator float() const;
+	Interval& operator=(float val);
 
-		void setMin(float min);
-		float min() const;
+	void setMin(float min);
+	float min() const;
 
-		void setMax(float max);
-		float max() const;
+	void setMax(float max);
+	float max() const;
 
-		void setType(Type t);
-		Type type() const;
+	void setType(Type t);
+	Type type() const;
 
-		void setInProgressUpdates(bool val);
-		bool inProgressUpdates() const;
+	void setInProgressUpdates(bool val);
+	bool inProgressUpdates() const;
 
-	private:
-		float m_min, m_max, m_value;
-		Type m_type;
-		bool m_inProgressUpdates;
+  private:
+	float m_min, m_max, m_value;
+	Type m_type;
+	bool m_inProgressUpdates;
 };
 
-std::ostream& operator << (std::ostream& out, const Interval& f);
+std::ostream& operator<<(std::ostream& out, const Interval& f);
 
-}
+}  // namespace maths
 
-template<>
+template <>
 struct Traits<maths::Interval> {
 	static IO<maths::Interval> io;
 
@@ -51,6 +49,4 @@ struct Traits<maths::Interval> {
 	}
 };
 
-}
-
-
+}  // namespace possumwood

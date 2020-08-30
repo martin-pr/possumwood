@@ -1,27 +1,26 @@
-#include <regex>
+#include "cgal.h"
 
 #include <possumwood_sdk/node_implementation.h>
 
+#include <regex>
+
+#include "builder.h"
+#include "datatypes/meshes.h"
 #include "datatypes/skeleton.h"
 #include "datatypes/skinned_mesh.h"
-#include "datatypes/meshes.h"
-#include "cgal.h"
-#include "builder.h"
 
 namespace {
 
-using possumwood::Meshes;
 using possumwood::CGALPolyhedron;
+using possumwood::Meshes;
 
-dependency_graph::InAttr<std::shared_ptr<const std::vector<anim::SkinnedMesh>>>
-    a_inMeshes;
+dependency_graph::InAttr<std::shared_ptr<const std::vector<anim::SkinnedMesh>>> a_inMeshes;
 
 dependency_graph::InAttr<unsigned> a_skinningCount;
 dependency_graph::OutAttr<Meshes> a_outMeshes;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	std::shared_ptr<const std::vector<anim::SkinnedMesh>> meshes =
-	    data.get(a_inMeshes);
+	std::shared_ptr<const std::vector<anim::SkinnedMesh>> meshes = data.get(a_inMeshes);
 
 	Meshes result;
 
@@ -35,13 +34,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			{
 				possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(vertices), typeof(m.polygons())>
-			    	builder(vertices, m.polygons());
+				    builder(vertices, m.polygons());
 				out.polyhedron().delegate(builder);
 			}
 
 			// make a vector property for skinning
-			const std::string skinWeightsPropName = "float[" + std::to_string(data.get(a_skinningCount)) + "]:skinningWeights";
-			const std::string skinIndicesPropName = "int[" + std::to_string(data.get(a_skinningCount)) + "]:skinningIndices";
+			const std::string skinWeightsPropName =
+			    "float[" + std::to_string(data.get(a_skinningCount)) + "]:skinningWeights";
+			const std::string skinIndicesPropName =
+			    "int[" + std::to_string(data.get(a_skinningCount)) + "]:skinningIndices";
 
 			auto& skinWeightsProp = out.vertexProperties().addProperty(skinWeightsPropName, std::vector<float>());
 			auto& skinIndicesProp = out.vertexProperties().addProperty(skinIndicesPropName, std::vector<int>());
@@ -88,4 +89,4 @@ void init(possumwood::Metadata& meta) {
 }
 
 possumwood::NodeImplementation s_impl("anim/mesh/to_cgal", init);
-}
+}  // namespace

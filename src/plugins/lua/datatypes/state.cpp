@@ -1,10 +1,11 @@
 #include "state.h"
 
-#include "context.h"
-
 #include <lualib.h>
 
-namespace possumwood { namespace lua {
+#include "context.h"
+
+namespace possumwood {
+namespace lua {
 
 State::State(const Context& con) {
 	// create a new raw state from Lua
@@ -29,7 +30,7 @@ State::State(State&& s) : m_state(s.m_state) {
 	s.m_state = nullptr;
 }
 
-State& State::operator = (State&& s) {
+State& State::operator=(State&& s) {
 	m_state = s.m_state;
 	s.m_state = nullptr;
 
@@ -54,10 +55,11 @@ State::operator const lua_State*() const {
 	return m_state;
 }
 
-std::ostream& operator << (std::ostream& out, const State& st) {
+std::ostream& operator<<(std::ostream& out, const State& st) {
 	out << "(state)";
 
 	return out;
 }
 
-}}
+}  // namespace lua
+}  // namespace possumwood

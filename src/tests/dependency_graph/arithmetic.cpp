@@ -1,16 +1,15 @@
-#include <boost/test/unit_test.hpp>
-
-#include <set>
-
 #include <dependency_graph/graph.h>
+#include <dependency_graph/node.h>
+
+#include <boost/test/unit_test.hpp>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata.inl>
-#include <dependency_graph/node.h>
 #include <dependency_graph/node_base.inl>
-#include <dependency_graph/values.inl>
-#include <dependency_graph/port.inl>
 #include <dependency_graph/nodes.inl>
+#include <dependency_graph/port.inl>
+#include <dependency_graph/values.inl>
+#include <set>
 
 #include "common.h"
 
@@ -30,7 +29,6 @@ bool checkDirtyPorts(const NodeBase& n, const std::set<size_t>& dirtyPorts) {
 }
 
 BOOST_AUTO_TEST_CASE(arithmetic) {
-
 	//////////////////
 	// addition node
 
@@ -67,7 +65,8 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	// at the beginning before any evaluation, only non-connected inputs are not dirty
 	for(auto& n : g.nodes())
 		for(size_t pi = 0; pi < n.portCount(); ++pi)
-			BOOST_CHECK_EQUAL(n.port(pi).isDirty(), n.port(pi).category() == Attr::kOutput || g.connections().connectedFrom(n.port(pi)));
+			BOOST_CHECK_EQUAL(n.port(pi).isDirty(),
+			                  n.port(pi).category() == Attr::kOutput || g.connections().connectedFrom(n.port(pi)));
 
 	// check we can get a value from input ports, if they're not connected
 	BOOST_REQUIRE_EQUAL(add1.port(0).get<float>(), 0.0f);
@@ -81,10 +80,10 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	BOOST_CHECK_NO_THROW(mult1.port(0).set(4.0f));
 	BOOST_CHECK_NO_THROW(mult2.port(0).set(5.0f));
 
-	BOOST_REQUIRE(checkDirtyPorts(add1, {2})); // only output of the add node is dirty
-	BOOST_REQUIRE(checkDirtyPorts(mult1, {1, 2})); // first input and output of mult1 node are dirty
-	BOOST_REQUIRE(checkDirtyPorts(mult2, {1, 2})); // first input and output of mult2 node are dirty
-	BOOST_REQUIRE(checkDirtyPorts(add2, {0, 1, 2})); // all ports of the add2 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(add1, {2}));        // only output of the add node is dirty
+	BOOST_REQUIRE(checkDirtyPorts(mult1, {1, 2}));    // first input and output of mult1 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(mult2, {1, 2}));    // first input and output of mult2 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(add2, {0, 1, 2}));  // all ports of the add2 node are dirty
 
 	// evaluate the whole graph and test output
 	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 45.0f);
@@ -105,10 +104,10 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	// change 2 to 6
 	BOOST_CHECK_NO_THROW(add1.port(0).set(6.0f));
 
-	BOOST_REQUIRE(checkDirtyPorts(add1, {2})); // the output of the add node is dirty
-	BOOST_REQUIRE(checkDirtyPorts(mult1, {1, 2})); // first input and output of mult1 node are dirty
-	BOOST_REQUIRE(checkDirtyPorts(mult2, {1, 2})); // first input and output of mult2 node are dirty
-	BOOST_REQUIRE(checkDirtyPorts(add2, {0, 1, 2})); // all ports of the add2 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(add1, {2}));        // the output of the add node is dirty
+	BOOST_REQUIRE(checkDirtyPorts(mult1, {1, 2}));    // first input and output of mult1 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(mult2, {1, 2}));    // first input and output of mult2 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(add2, {0, 1, 2}));  // all ports of the add2 node are dirty
 
 	// compute (6 + 3) * 4 + (6 + 3) * 5 = 36 + 45 = 81
 	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 81.0f);
@@ -116,10 +115,10 @@ BOOST_AUTO_TEST_CASE(arithmetic) {
 	// change 4 to 7
 	BOOST_CHECK_NO_THROW(mult1.port(0).set(7.0f));
 
-	BOOST_REQUIRE(checkDirtyPorts(add1, {})); // add1 has not been affected by this change
-	BOOST_REQUIRE(checkDirtyPorts(mult1, {2})); // the output of mult1 is now dirty
-	BOOST_REQUIRE(checkDirtyPorts(mult2, {})); // mult2 has not been affected
-	BOOST_REQUIRE(checkDirtyPorts(add2, {0, 2})); // first input and output of the add2 node are dirty
+	BOOST_REQUIRE(checkDirtyPorts(add1, {}));      // add1 has not been affected by this change
+	BOOST_REQUIRE(checkDirtyPorts(mult1, {2}));    // the output of mult1 is now dirty
+	BOOST_REQUIRE(checkDirtyPorts(mult2, {}));     // mult2 has not been affected
+	BOOST_REQUIRE(checkDirtyPorts(add2, {0, 2}));  // first input and output of the add2 node are dirty
 
 	// compute (6 + 3) * 7 + (6 + 3) * 5 = 63 + 45 = 108
 	BOOST_CHECK_EQUAL(add2.port(2).get<float>(), 108.0f);

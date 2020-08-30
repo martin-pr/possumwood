@@ -10,7 +10,7 @@ Bitfield::Accessor::operator bool() const {
 	return m_parent->m_data[m_index] & (1 << m_offset);
 }
 
-Bitfield::Accessor& Bitfield::Accessor::operator = (bool val) {
+Bitfield::Accessor& Bitfield::Accessor::operator=(bool val) {
 	uint32_t new_value;
 	uint32_t old_value = m_parent->m_data[m_index];
 	do {
@@ -26,7 +26,8 @@ Bitfield::Accessor& Bitfield::Accessor::operator = (bool val) {
 	return *this;
 }
 
-Bitfield::Accessor::Accessor(Bitfield* parent, std::size_t index, std::size_t offset) : m_parent(parent), m_index(index), m_offset(offset) {
+Bitfield::Accessor::Accessor(Bitfield* parent, std::size_t index, std::size_t offset)
+    : m_parent(parent), m_index(index), m_offset(offset) {
 }
 
 //////
@@ -51,4 +52,4 @@ bool Bitfield::operator[](std::size_t index) const {
 	return m_data[index / 32] & (1 << (index % 32));
 }
 
-}
+}  // namespace lightfields

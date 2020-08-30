@@ -3,8 +3,8 @@
 #include <QTabWidget>
 
 class Toolbar : public QTabWidget {
-	public:
-		Toolbar();
+  public:
+	Toolbar();
 
-	private:
+  private:
 };

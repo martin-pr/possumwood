@@ -1,11 +1,11 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
-
 #include <GL/glew.h>
 #include <GL/glu.h>
 
-#include <render/datatypes/uniforms.inl>
+#include <possumwood_sdk/app.h>
 #include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/node_implementation.h>
+
+#include <render/datatypes/uniforms.inl>
 
 #include "frame.h"
 #include "tools.h"
@@ -17,7 +17,6 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_value;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::InAttr<possumwood::Uniforms> a_inUniforms;
 dependency_graph::OutAttr<possumwood::Uniforms> a_outUniforms;
-
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State result;
@@ -32,34 +31,23 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		interpolation = possumwood::Texture::kNearest;
 
 	if(mat.type() == CV_8UC1)
-		uniforms.addTexture(
-			data.get(a_name),
-			mat.data,
-			mat.cols,
-			mat.rows,
-			possumwood::Texture::Format(1, possumwood::Texture::kGray, interpolation) // tightly packed
+		uniforms.addTexture(data.get(a_name), mat.data, mat.cols, mat.rows,
+		                    possumwood::Texture::Format(1, possumwood::Texture::kGray, interpolation)  // tightly packed
 		);
 
 	else if(mat.type() == CV_8UC3)
-		uniforms.addTexture(
-			data.get(a_name),
-			mat.data,
-			mat.cols,
-			mat.rows,
-			possumwood::Texture::Format(1, possumwood::Texture::kBGR, interpolation) // tightly packed
+		uniforms.addTexture(data.get(a_name), mat.data, mat.cols, mat.rows,
+		                    possumwood::Texture::Format(1, possumwood::Texture::kBGR, interpolation)  // tightly packed
 		);
 
 	else if(mat.type() == CV_32FC3)
-		uniforms.addTexture(
-			data.get(a_name),
-			(float*)mat.data,
-			mat.cols,
-			mat.rows,
-			possumwood::Texture::Format(1, possumwood::Texture::kBGR, interpolation) // tightly packed
+		uniforms.addTexture(data.get(a_name), (float*)mat.data, mat.cols, mat.rows,
+		                    possumwood::Texture::Format(1, possumwood::Texture::kBGR, interpolation)  // tightly packed
 		);
 
 	else
-		throw std::runtime_error("Unsupported data type " + possumwood::opencv::type2str(mat.type()) + " - render/uniforms/opencv_texture needs extending to support this type!");
+		throw std::runtime_error("Unsupported data type " + possumwood::opencv::type2str(mat.type()) +
+		                         " - render/uniforms/opencv_texture needs extending to support this type!");
 
 	data.set(a_outUniforms, uniforms);
 
@@ -83,4 +71,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/uniforms/opencv_texture", init);
 
-}
+}  // namespace

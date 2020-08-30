@@ -10,7 +10,8 @@ void Stack::step() {
 		m_actions.erase(m_actions.begin());
 
 		std::vector<Action> newActions = current();
-		m_actions.insert(m_actions.begin(), std::make_move_iterator(newActions.begin()), std::make_move_iterator(newActions.end()));
+		m_actions.insert(m_actions.begin(), std::make_move_iterator(newActions.begin()),
+		                 std::make_move_iterator(newActions.end()));
 	}
 }
 

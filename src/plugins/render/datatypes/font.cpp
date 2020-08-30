@@ -1,19 +1,19 @@
 #include "font.h"
 
-#include <fstream>
-
 #include <actions/io/json.h>
+
+#include <fstream>
 
 namespace possumwood {
 
 bool Font::Glyph::operator==(const Glyph& g) const {
-	return x == g.x && y == g.y && width == g.width && height == g.height &&
-	       originX == g.originX && originY == g.originY && advance == g.advance;
+	return x == g.x && y == g.y && width == g.width && height == g.height && originX == g.originX &&
+	       originY == g.originY && advance == g.advance;
 }
 
 bool Font::Glyph::operator!=(const Glyph& g) const {
-	return x != g.x || y != g.y || width != g.width || height != g.height ||
-	       originX != g.originX || originY != g.originY || advance != g.advance;
+	return x != g.x || y != g.y || width != g.width || height != g.height || originX != g.originX ||
+	       originY != g.originY || advance != g.advance;
 }
 
 void Font::load(const boost::filesystem::path& filename) {
@@ -24,8 +24,7 @@ void Font::load(const boost::filesystem::path& filename) {
 		in >> json;
 	}
 
-	for(possumwood::io::json::const_iterator i = json["characters"].begin();
-	    i != json["characters"].end(); ++i) {
+	for(possumwood::io::json::const_iterator i = json["characters"].begin(); i != json["characters"].end(); ++i) {
 		assert(i.key().length() == 1);
 
 		Glyph g;
@@ -65,19 +64,17 @@ float Font::width() const {
 }
 
 bool Font::operator==(const Font& f) const {
-	return m_glyphs == f.m_glyphs && m_width == f.m_width && m_height == f.m_height &&
-	       m_size == f.m_size;
+	return m_glyphs == f.m_glyphs && m_width == f.m_width && m_height == f.m_height && m_size == f.m_size;
 }
 
 bool Font::operator!=(const Font& f) const {
-	return m_glyphs != f.m_glyphs || m_width != f.m_width || m_height != f.m_height ||
-	       m_size != f.m_size;
+	return m_glyphs != f.m_glyphs || m_width != f.m_width || m_height != f.m_height || m_size != f.m_size;
 }
 
-std::ostream& operator << (std::ostream& out, const Font& f) {
+std::ostream& operator<<(std::ostream& out, const Font& f) {
 	out << "(font)";
 
 	return out;
 }
 
-}
+}  // namespace possumwood

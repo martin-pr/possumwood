@@ -1,8 +1,8 @@
-#include <memory>
+#include "datatypes/program.h"
 
 #include <possumwood_sdk/node_implementation.h>
 
-#include "datatypes/program.h"
+#include <memory>
 
 namespace {
 
@@ -64,4 +64,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/program", init);
 
-}
+}  // namespace

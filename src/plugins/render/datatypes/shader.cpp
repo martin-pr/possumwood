@@ -49,7 +49,8 @@ struct Shader::Pimpl : public boost::noncopyable {
 Shader::Shader() {
 }
 
-Shader::Shader(GLenum shaderType, const std::string& source) : m_pimpl(new Pimpl()), m_source(source), m_shaderType(shaderType) {
+Shader::Shader(GLenum shaderType, const std::string& source)
+    : m_pimpl(new Pimpl()), m_source(source), m_shaderType(shaderType) {
 	assert(glCreateShader && "GLEW is probably not initialised");
 };
 
@@ -76,10 +77,10 @@ void Shader::compile() {
 		m_pimpl->compile(m_shaderType, m_source);
 }
 
-std::ostream& operator <<(std::ostream& out, const Shader& s) {
+std::ostream& operator<<(std::ostream& out, const Shader& s) {
 	out << "(shader " << s.id() << ")";
 
 	return out;
 }
 
-}
+}  // namespace possumwood

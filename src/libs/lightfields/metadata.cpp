@@ -17,7 +17,7 @@ const Json::Value& Metadata::privateMetadata() const {
 	return m_privateMeta;
 }
 
-std::ostream& operator << (std::ostream& out, const Metadata& meta) {
+std::ostream& operator<<(std::ostream& out, const Metadata& meta) {
 	out << "*** Lytro metadata: ***" << std::endl;
 	out << std::endl;
 
@@ -35,4 +35,4 @@ std::ostream& operator << (std::ostream& out, const Metadata& meta) {
 	return out;
 }
 
-}
+}  // namespace lightfields

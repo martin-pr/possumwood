@@ -1,5 +1,4 @@
 #include <possumwood_sdk/node_implementation.h>
-
 #include <tbb/parallel_for.h>
 
 #include "sequence.h"
@@ -25,7 +24,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		const int rows = in.rows();
 
 		tbb::parallel_for(0, rows, [&](int r) {
-			for(int c=0; c<cols; ++c) {
+			for(int c = 0; c < cols; ++c) {
 				auto it = in.begin();
 
 				std::size_t max_id = 0;
@@ -66,4 +65,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/max_index", init);
 
-}
+}  // namespace

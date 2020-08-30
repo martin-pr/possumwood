@@ -1,8 +1,8 @@
 #include <boost/test/unit_test.hpp>
-
 #include <dependency_graph/attr.inl>
-#include <dependency_graph/metadata.inl>
 #include <dependency_graph/datablock.inl>
+#include <dependency_graph/metadata.inl>
+
 #include "common.h"
 
 using namespace dependency_graph;
@@ -11,19 +11,19 @@ typedef std::vector<std::reference_wrapper<const Attr>> Influences;
 
 namespace std {
 
-bool operator ==(const reference_wrapper<const Attr>& i1, const reference_wrapper<const Attr>& i2) {
+bool operator==(const reference_wrapper<const Attr>& i1, const reference_wrapper<const Attr>& i2) {
 	return i1.get() == i2.get();
 }
 
-}
+}  // namespace std
 
 namespace std {
-	std::ostream& operator << (std::ostream& out, const Influences& attr) {
-		for(auto& a : attr)
-			out << a.get().name();
-		return out;
-	}
+std::ostream& operator<<(std::ostream& out, const Influences& attr) {
+	for(auto& a : attr)
+		out << a.get().name();
+	return out;
 }
+}  // namespace std
 
 BOOST_AUTO_TEST_CASE(metadata_influences) {
 	// construct the metadata

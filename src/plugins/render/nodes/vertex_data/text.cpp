@@ -1,12 +1,11 @@
+#include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/datatypes/filename.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <boost/filesystem.hpp>
 
-#include "datatypes/vertex_data.inl"
 #include "datatypes/font.h"
-
-#include <possumwood_sdk/datatypes/filename.h>
-#include <possumwood_sdk/datatypes/enum.h>
+#include "datatypes/vertex_data.inl"
 
 namespace {
 
@@ -24,7 +23,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// and render the text into a new VertexData instance
 	possumwood::VertexData vd(GL_TRIANGLES);
-	if(!data.get(a_text).empty()){
+	if(!data.get(a_text).empty()) {
 		// first, figure out the size of the text
 		float totalWidth = 0.0f;
 		for(auto& c : data.get(a_text)) {
@@ -87,24 +86,22 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		// and add them to the vertex data
 		vd.addVBO<Imath::V2f>("position", vertices.size(), possumwood::VertexData::kStatic,
-		[vertices](possumwood::Buffer<float>& buffer, const possumwood::ViewportState & viewport) {
-			std::size_t ctr = 0;
-			for(auto& v : vertices) {
-				buffer.element(ctr) = v;
-				++ctr;
-			}
-		}
-		                      );
+		                      [vertices](possumwood::Buffer<float>& buffer, const possumwood::ViewportState& viewport) {
+			                      std::size_t ctr = 0;
+			                      for(auto& v : vertices) {
+				                      buffer.element(ctr) = v;
+				                      ++ctr;
+			                      }
+		                      });
 
 		vd.addVBO<Imath::V2f>("uv", uvs.size(), possumwood::VertexData::kStatic,
-		[uvs](possumwood::Buffer<float>& buffer, const possumwood::ViewportState & viewport) {
-			std::size_t ctr = 0;
-			for(auto& v : uvs) {
-				buffer.element(ctr) = v;
-				++ctr;
-			}
-		}
-		                      );
+		                      [uvs](possumwood::Buffer<float>& buffer, const possumwood::ViewportState& viewport) {
+			                      std::size_t ctr = 0;
+			                      for(auto& v : uvs) {
+				                      buffer.element(ctr) = v;
+				                      ++ctr;
+			                      }
+		                      });
 	}
 
 	data.set(a_vd, std::move(vd));
@@ -119,17 +116,11 @@ void init(possumwood::Metadata& meta) {
 
 	meta.addAttribute(
 	    a_horizAlign, "horiz_align",
-	    possumwood::Enum({std::make_pair("Center", 1),
-	                      std::make_pair("Left", 2),
-	                      std::make_pair("Right", 3)
-	                     }));
+	    possumwood::Enum({std::make_pair("Center", 1), std::make_pair("Left", 2), std::make_pair("Right", 3)}));
 
 	meta.addAttribute(
 	    a_vertAlign, "vert_align",
-	    possumwood::Enum({std::make_pair("Center", 1),
-	                      std::make_pair("Top", 2),
-	                      std::make_pair("Bottom", 3)
-	                     }));
+	    possumwood::Enum({std::make_pair("Center", 1), std::make_pair("Top", 2), std::make_pair("Bottom", 3)}));
 
 	meta.addInfluence(a_font, a_vd);
 	meta.addInfluence(a_text, a_vd);
@@ -141,4 +132,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/vertex_data/text", init);
 
-}
+}  // namespace

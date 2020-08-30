@@ -1,5 +1,5 @@
-#include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/app.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include "frame.h"
 
@@ -8,7 +8,6 @@ namespace {
 dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame;
 dependency_graph::InAttr<float> a_mean, a_stddev;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
-
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result = (*data.get(a_inFrame)).clone();
@@ -35,4 +34,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/random/normal", init);
 
-}
+}  // namespace

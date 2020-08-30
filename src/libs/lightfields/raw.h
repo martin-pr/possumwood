@@ -1,37 +1,37 @@
 #pragma once
 
-#include <vector>
+#include <json/value.h>
+
 #include <iostream>
 #include <memory>
-
-#include <json/value.h>
+#include <vector>
 
 namespace lightfields {
 
 class Metadata;
 
 class Raw {
-	public:
-		Raw();
-		~Raw();
+  public:
+	Raw();
+	~Raw();
 
-		const Metadata& metadata() const;
+	const Metadata& metadata() const;
 
-		const unsigned char* image() const;
+	const unsigned char* image() const;
 
-	private:
-		struct Pimpl;
+  private:
+	struct Pimpl;
 
-		// only used for file reading
-		static Json::Value& header(Pimpl& p);
-		static Json::Value& meta(Pimpl& p);
-		static Json::Value& privateMeta(Pimpl& p);
+	// only used for file reading
+	static Json::Value& header(Pimpl& p);
+	static Json::Value& meta(Pimpl& p);
+	static Json::Value& privateMeta(Pimpl& p);
 
-		std::shared_ptr<const Pimpl> m_pimpl;
+	std::shared_ptr<const Pimpl> m_pimpl;
 
-	friend std::istream& operator >> (std::istream& in, Raw& data);
+	friend std::istream& operator>>(std::istream& in, Raw& data);
 };
 
-std::istream& operator >> (std::istream& in, Raw& data);
+std::istream& operator>>(std::istream& in, Raw& data);
 
-}
+}  // namespace lightfields

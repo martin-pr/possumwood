@@ -1,9 +1,8 @@
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <actions/traits.h>
-#include <possumwood_sdk/datatypes/enum.h>
 
 #include "frame.h"
 #include "tools.h"
@@ -22,7 +21,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const cv::Mat& in2 = *data.get(a_in2);
 
 	if(in1.type() != in2.type())
-		throw std::runtime_error("Arrange only works on images of the same type (" + possumwood::opencv::type2str(in1.type()) + " vs " + possumwood::opencv::type2str(in2.type()) + ")");
+		throw std::runtime_error("Arrange only works on images of the same type (" +
+		                         possumwood::opencv::type2str(in1.type()) + " vs " +
+		                         possumwood::opencv::type2str(in2.type()) + ")");
 
 	const unsigned sep = data.get(a_separation);
 
@@ -69,4 +70,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/concat", init);
 
-}
+}  // namespace

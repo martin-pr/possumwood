@@ -1,37 +1,34 @@
 #include "config_dialog.h"
 
-#include <map>
-#include <cctype>
-
-#include <boost/algorithm/string/replace.hpp>
-
-#include <QFormLayout>
-#include <QVBoxLayout>
-#include <QDoubleSpinBox>
-#include <QSpinBox>
-#include <QLineEdit>
-#include <QGroupBox>
 #include <QDialogButtonBox>
-
+#include <QDoubleSpinBox>
+#include <QFormLayout>
+#include <QGroupBox>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QVBoxLayout>
+#include <boost/algorithm/string/replace.hpp>
+#include <cctype>
+#include <map>
 #include <possumwood_sdk/config.inl>
 
 namespace {
-	std::string toLabel(const std::string& text) {
-		std::string result = text;
-		boost::replace_all(result, "_", " ");
+std::string toLabel(const std::string& text) {
+	std::string result = text;
+	boost::replace_all(result, "_", " ");
 
-		bool upper = true;
-		for(auto& c : result)
-			if(c == ' ')
-				upper = true;
-			else if(upper) {
-				c = std::toupper(c);
-				upper = false;
-			}
+	bool upper = true;
+	for(auto& c : result)
+		if(c == ' ')
+			upper = true;
+		else if(upper) {
+			c = std::toupper(c);
+			upper = false;
+		}
 
-		return result;
-	}
+	return result;
 }
+}  // namespace
 
 ConfigDialog::ConfigDialog(QWidget* parent, possumwood::Config& config) {
 	QVBoxLayout* mainLayout = new QVBoxLayout(this);
@@ -65,9 +62,7 @@ ConfigDialog::ConfigDialog(QWidget* parent, possumwood::Config& config) {
 			layout->addRow(toLabel(i.name()).c_str(), spinbox);
 
 			std::string name = i.name();
-			m_acceptValueFunctors.push_back([spinbox, &config, name]() {
-				config[name] = (float)spinbox->value();
-			});
+			m_acceptValueFunctors.push_back([spinbox, &config, name]() { config[name] = (float)spinbox->value(); });
 		}
 		else if(i.is<int>()) {
 			QSpinBox* spinbox = new QSpinBox();
@@ -77,9 +72,7 @@ ConfigDialog::ConfigDialog(QWidget* parent, possumwood::Config& config) {
 			layout->addRow(toLabel(i.name()).c_str(), spinbox);
 
 			std::string name = i.name();
-			m_acceptValueFunctors.push_back([spinbox, &config, name]() {
-				config[name] = (int)spinbox->value();
-			});
+			m_acceptValueFunctors.push_back([spinbox, &config, name]() { config[name] = (int)spinbox->value(); });
 		}
 		else if(i.is<std::string>()) {
 			QLineEdit* edit = new QLineEdit();
@@ -89,9 +82,7 @@ ConfigDialog::ConfigDialog(QWidget* parent, possumwood::Config& config) {
 			layout->addRow(toLabel(i.name()).c_str(), edit);
 
 			std::string name = i.name();
-			m_acceptValueFunctors.push_back([edit, &config, name]() {
-				config[name] = edit->text().toStdString();
-			});
+			m_acceptValueFunctors.push_back([edit, &config, name]() { config[name] = edit->text().toStdString(); });
 		}
 		else
 			assert(false);

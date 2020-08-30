@@ -27,4 +27,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("maths/mult", init);
 
-}
+}  // namespace

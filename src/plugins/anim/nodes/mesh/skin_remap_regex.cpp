@@ -1,9 +1,9 @@
-#include <regex>
-
 #include <possumwood_sdk/node_implementation.h>
 
-#include "datatypes/skinned_mesh.h"
+#include <regex>
+
 #include "datatypes/skeleton.h"
+#include "datatypes/skinned_mesh.h"
 
 namespace {
 
@@ -23,7 +23,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// assemble the bone map
 	std::map<unsigned, unsigned> mapping;
 	unsigned mappedCount = 0;
-	for(std::size_t i=0;i<skeleton.size();++i) {
+	for(std::size_t i = 0; i < skeleton.size(); ++i) {
 		// try to match the regex, and perform replacement
 		const std::string result = std::regex_replace(skeleton[i].name(), regex, format);
 
@@ -31,14 +31,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if(result != skeleton[i].name()) {
 			// try to find a match for the replacement result
 			int targetIndex = -1;
-			for(std::size_t j=0;j<skeleton.size();++j)
+			for(std::size_t j = 0; j < skeleton.size(); ++j)
 				if(skeleton[j].name() == result) {
 					if(targetIndex == -1)
 						targetIndex = j;
 					else {
 						std::stringstream err;
 						err << "Bone " << skeleton[i].name() << " matched simultaneously with "
-							<< skeleton[targetIndex].name() << " and " << skeleton[j].name() << std::endl;
+						    << skeleton[targetIndex].name() << " and " << skeleton[j].name() << std::endl;
 
 						state.addWarning(err.str());
 					}
@@ -48,7 +48,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			if(targetIndex < 0) {
 				std::stringstream err;
 				err << "Bone " << skeleton[i].name() << " matched the search criteria, but its replacement result "
-					<< result << " was not found in the skeleton hierarchy";
+				    << result << " was not found in the skeleton hierarchy";
 
 				state.addWarning(err.str());
 			}
@@ -95,10 +95,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_skeleton, "skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_inMeshes, "in_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inMeshes, "in_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(),
+	                  possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_regex, "regex", std::string("(.*)"));
 	meta.addAttribute(a_replacement, "replacement", std::string("$1"));
-	meta.addAttribute(a_outMeshes, "out_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outMeshes, "out_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(),
+	                  possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_skeleton, a_outMeshes);
 	meta.addInfluence(a_inMeshes, a_outMeshes);
@@ -110,4 +112,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/mesh/skin_remap_regex", init);
 
-}
+}  // namespace

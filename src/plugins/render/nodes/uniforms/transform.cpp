@@ -1,15 +1,12 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
-
 #include <GL/glew.h>
 #include <GL/glu.h>
-
-#include <OpenEXR/ImathVec.h>
 #include <OpenEXR/ImathEuler.h>
-
-#include "maths/io/vec3.h"
+#include <OpenEXR/ImathVec.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/uniforms.inl"
+#include "maths/io/vec3.h"
 
 namespace {
 
@@ -28,24 +25,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const Imath::Vec3<float> sc = data.get(a_scale);
 
 	Imath::Matrix44<float> m1, m2, m3;
-	m1 =
-	    Imath::Euler<float>(Imath::Vec3<float>(rot.x * M_PI / 180.0, rot.y * M_PI / 180.0,
-	                                           rot.z * M_PI / 180.0))
-	        .toMatrix44();
+	m1 = Imath::Euler<float>(Imath::Vec3<float>(rot.x * M_PI / 180.0, rot.y * M_PI / 180.0, rot.z * M_PI / 180.0))
+	         .toMatrix44();
 	m2.setScale(sc);
 	m3.setTranslation(tr);
 
 	const Imath::Matrix44<float> matrix = m1 * m2 * m3;
 
 	uniforms.addUniform<Imath::Matrix44<float>>(
-		data.get(a_name),
-		1,
-		possumwood::Uniforms::kPerFrame,
-		[matrix](Imath::Matrix44<float>* data, std::size_t size, const possumwood::ViewportState& vs) {
-			assert(size == 1);
-			*data = matrix;
-		}
-	);
+	    data.get(a_name), 1, possumwood::Uniforms::kPerFrame,
+	    [matrix](Imath::Matrix44<float>* data, std::size_t size, const possumwood::ViewportState& vs) {
+		    assert(size == 1);
+		    *data = matrix;
+	    });
 
 	data.set(a_outUniforms, uniforms);
 
@@ -71,4 +63,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/uniforms/transform", init);
 
-}
+}  // namespace

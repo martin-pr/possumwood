@@ -6,51 +6,51 @@
 namespace possumwood {
 
 class NodeData {
-	public:
-		struct Point {
-			float x = 0.0f, y = 0.0f;
+  public:
+	struct Point {
+		float x = 0.0f, y = 0.0f;
 
-			bool operator == (const Point& p) const {
-				return p.x == x && p.y == y;
-			}
-
-			bool operator != (const Point& p) const {
-				return p.x != x || p.y != y;
-			}
-
-			Point operator + (const Point& p) const {
-				return Point{x + p.x, y + p.y};
-			}
-		};
-
-		NodeData(const Point& p = Point{0, 0}) : m_position(p) {
+		bool operator==(const Point& p) const {
+			return p.x == x && p.y == y;
 		}
 
-		const Point& position() const {
-			return m_position;
+		bool operator!=(const Point& p) const {
+			return p.x != x || p.y != y;
 		}
 
-		void setPosition(const Point& p) {
-			m_position = p;
+		Point operator+(const Point& p) const {
+			return Point{x + p.x, y + p.y};
 		}
+	};
 
-		bool operator ==(const NodeData& d) const {
-			return m_position == d.m_position;
-		}
+	NodeData(const Point& p = Point{0, 0}) : m_position(p) {
+	}
 
-		bool operator !=(const NodeData& d) const {
-			return m_position != d.m_position;
-		}
+	const Point& position() const {
+		return m_position;
+	}
 
-	private:
-		Point m_position;
+	void setPosition(const Point& p) {
+		m_position = p;
+	}
+
+	bool operator==(const NodeData& d) const {
+		return m_position == d.m_position;
+	}
+
+	bool operator!=(const NodeData& d) const {
+		return m_position != d.m_position;
+	}
+
+  private:
+	Point m_position;
 };
 
-template<>
+template <>
 struct Traits<NodeData> {
 	static IO<NodeData> io;
 };
 
-std::ostream& operator << (std::ostream& out, const NodeData& d);
+std::ostream& operator<<(std::ostream& out, const NodeData& d);
 
-}
+}  // namespace possumwood

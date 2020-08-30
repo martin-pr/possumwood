@@ -1,17 +1,13 @@
-#include <fstream>
-#include <iostream>
-
 #include <GL/glew.h>
 #include <GL/glut.h>
-
-#include <boost/format.hpp>
-
 #include <OpenImageIO/imageio.h>
-
 #include <dependency_graph/static_initialisation.h>
-
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/viewport_state.h>
+
+#include <boost/format.hpp>
+#include <fstream>
+#include <iostream>
 #include <possumwood_sdk/config.inl>
 
 #include "common.h"

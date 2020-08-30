@@ -1,12 +1,13 @@
 #pragma once
 
-#include <string>
 #include <functional>
+#include <string>
 #include <vector>
 
 #include <boost/noncopyable.hpp>
 
 #include <GL/glew.h>
+
 #include <GL/gl.h>
 
 #include <QPixmap>
@@ -26,13 +27,16 @@ class Uniforms {
 	Uniforms();
 
 	template <typename T>
-	void addUniform(const std::string& name, std::size_t size,
-	                const UpdateType& updateType, std::function<void(T*, std::size_t, const ViewportState&)> updateFunctor);
+	void addUniform(const std::string& name, std::size_t size, const UpdateType& updateType,
+	                std::function<void(T*, std::size_t, const ViewportState&)> updateFunctor);
 
-	void addTexture(const std::string& name, const unsigned char* data, std::size_t width, std::size_t height, const Texture::Format& format = Texture::Format());
-	void addTexture(const std::string& name, const float* data, std::size_t width, std::size_t height, const Texture::Format& format = Texture::Format());
+	void addTexture(const std::string& name, const unsigned char* data, std::size_t width, std::size_t height,
+	                const Texture::Format& format = Texture::Format());
+	void addTexture(const std::string& name, const float* data, std::size_t width, std::size_t height,
+	                const Texture::Format& format = Texture::Format());
 
-	void addTextureArray(const std::string& name, std::vector<const unsigned char*> data, std::size_t width, std::size_t height, const Texture::Format& format = Texture::Format());
+	void addTextureArray(const std::string& name, std::vector<const unsigned char*> data, std::size_t width,
+	                     std::size_t height, const Texture::Format& format = Texture::Format());
 
 	dependency_graph::State use(GLuint programId, const ViewportState&) const;
 
@@ -46,37 +50,39 @@ class Uniforms {
 	/// returns the names of all uniforms that have been registered (todo: change to iterators)
 	std::set<std::string> names() const;
 
-	private:
-		struct DataBase {
-			virtual ~DataBase() {};
-			virtual std::unique_ptr<DataBase> clone() const = 0;
-		};
+  private:
+	struct DataBase {
+		virtual ~DataBase(){};
+		virtual std::unique_ptr<DataBase> clone() const = 0;
+	};
 
-		template<typename T>
-		struct Data : public DataBase {
-			virtual std::unique_ptr<DataBase> clone() const {
-				return std::unique_ptr<DataBase>(new Data<T>(*this));
-			}
+	template <typename T>
+	struct Data : public DataBase {
+		virtual std::unique_ptr<DataBase> clone() const {
+			return std::unique_ptr<DataBase>(new Data<T>(*this));
+		}
 
-			std::vector<T> data;
-		};
+		std::vector<T> data;
+	};
 
-		struct UniformHolder {
-			UniformHolder() {};
-			UniformHolder(UniformHolder&&) = default;
+	struct UniformHolder {
+		UniformHolder(){};
+		UniformHolder(UniformHolder&&) = default;
 
-			UniformHolder(const UniformHolder& h) : name(h.name), glslType(h.glslType), updateType(h.updateType), updateFunctor(h.updateFunctor), useFunctor(h.useFunctor) {
-				data = h.data->clone();
-			}
+		UniformHolder(const UniformHolder& h)
+		    : name(h.name), glslType(h.glslType), updateType(h.updateType), updateFunctor(h.updateFunctor),
+		      useFunctor(h.useFunctor) {
+			data = h.data->clone();
+		}
 
-			std::string name, glslType;
-			UpdateType updateType;
-			std::unique_ptr<DataBase> data;
-			mutable bool initialised = false; // ugly :(
+		std::string name, glslType;
+		UpdateType updateType;
+		std::unique_ptr<DataBase> data;
+		mutable bool initialised = false;  // ugly :(
 
-			std::function<void(DataBase&, const ViewportState&)> updateFunctor;
-			std::function<dependency_graph::State(GLuint, const std::string&, const DataBase&)> useFunctor;
-		};
+		std::function<void(DataBase&, const ViewportState&)> updateFunctor;
+		std::function<dependency_graph::State(GLuint, const std::string&, const DataBase&)> useFunctor;
+	};
 
 	std::vector<std::shared_ptr<const UniformHolder>> m_uniforms;
 
@@ -89,10 +95,11 @@ class Uniforms {
 
 	mutable float m_currentTime;
 
-	friend std::ostream& operator << (std::ostream& out, const Uniforms& uniforms);;
+	friend std::ostream& operator<<(std::ostream& out, const Uniforms& uniforms);
+	;
 };
 
-std::ostream& operator << (std::ostream& out, const Uniforms& uniforms);
+std::ostream& operator<<(std::ostream& out, const Uniforms& uniforms);
 
 template <>
 struct Traits<Uniforms> {
@@ -100,4 +107,4 @@ struct Traits<Uniforms> {
 		return std::array<float, 3>{{1, 0.8, 1}};
 	}
 };
-}
+}  // namespace possumwood

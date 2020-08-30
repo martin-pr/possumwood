@@ -1,7 +1,7 @@
 #include "meshes_ui.h"
 
-#include <QHeaderView>
 #include <QHBoxLayout>
+#include <QHeaderView>
 #include <QSizePolicy>
 
 MeshesUI::MeshesUI() {
@@ -14,8 +14,7 @@ MeshesUI::MeshesUI() {
 
 	m_showDetailsButton = new QPushButton("Show details...");
 	layout->addWidget(m_showDetailsButton, 0);
-	QObject::connect(m_showDetailsButton, &QPushButton::pressed,
-	                 [this]() { m_detailsDialog->show(); });
+	QObject::connect(m_showDetailsButton, &QPushButton::pressed, [this]() { m_detailsDialog->show(); });
 
 	m_detailsDialog = new QDialog(m_widget);
 	m_detailsDialog->hide();
@@ -52,8 +51,7 @@ void MeshesUI::set(const possumwood::Meshes& value) {
 
 	m_detailsWidget->horizontalHeader()->setStretchLastSection(false);
 	for(unsigned a = 0; a < 7; ++a)
-		m_detailsWidget->horizontalHeader()->setSectionResizeMode(
-		    a, QHeaderView::ResizeToContents);
+		m_detailsWidget->horizontalHeader()->setSectionResizeMode(a, QHeaderView::ResizeToContents);
 
 	m_detailsWidget->setRowCount(value.size());
 
@@ -61,15 +59,12 @@ void MeshesUI::set(const possumwood::Meshes& value) {
 	for(auto& m : value) {
 		m_detailsWidget->setItem(counter, 0, new QTableWidgetItem(m.name().c_str()));
 
-		m_detailsWidget->setItem(
-		    counter, 1,
-		    new QTableWidgetItem(std::to_string(m.polyhedron().size_of_facets()).c_str()));
-		m_detailsWidget->setItem(
-		    counter, 2,
-		    new QTableWidgetItem(std::to_string(m.polyhedron().size_of_vertices()).c_str()));
-		m_detailsWidget->setItem(
-		    counter, 3,
-		    new QTableWidgetItem(std::to_string(m.polyhedron().size_of_halfedges()).c_str()));
+		m_detailsWidget->setItem(counter, 1,
+		                         new QTableWidgetItem(std::to_string(m.polyhedron().size_of_facets()).c_str()));
+		m_detailsWidget->setItem(counter, 2,
+		                         new QTableWidgetItem(std::to_string(m.polyhedron().size_of_vertices()).c_str()));
+		m_detailsWidget->setItem(counter, 3,
+		                         new QTableWidgetItem(std::to_string(m.polyhedron().size_of_halfedges()).c_str()));
 
 		auto hepv = m.halfedgeProperties().properties();
 		const std::string hep = boost::algorithm::join(hepv, " ");
@@ -88,8 +83,7 @@ void MeshesUI::set(const possumwood::Meshes& value) {
 
 	for(int a = 0; a < m_detailsWidget->columnCount(); ++a)
 		for(int b = 0; b < m_detailsWidget->rowCount(); ++b)
-			m_detailsWidget->item(b, a)->setFlags(Qt::ItemIsSelectable |
-			                                      Qt::ItemIsEnabled);
+			m_detailsWidget->item(b, a)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
 	if(value.empty())
 		m_meshCountLabel->setText("(empty)");

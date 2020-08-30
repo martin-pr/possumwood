@@ -1,14 +1,14 @@
-#include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
+#include "builder.h"
 #include "datatypes/meshes.h"
 #include "maths/io/vec3.h"
-#include "builder.h"
 
 namespace {
 
-using possumwood::Meshes;
 using possumwood::CGALPolyhedron;
+using possumwood::Meshes;
 
 dependency_graph::InAttr<Imath::V3f> a_v0, a_v1, a_v2, a_v3;
 dependency_graph::OutAttr<Meshes> a_mesh;
@@ -30,7 +30,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	auto& mesh = result.addMesh("tetrahedron");
 
 	{
-		possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(vertices), typeof(faces)> builder(vertices, faces);
+		possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(vertices), typeof(faces)> builder(
+		    vertices, faces);
 		mesh.polyhedron().delegate(builder);
 	}
 
@@ -56,4 +57,4 @@ void init(possumwood::Metadata& meta) {
 }
 
 possumwood::NodeImplementation s_impl("cgal/tetrahedron", init);
-}
+}  // namespace

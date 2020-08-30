@@ -1,18 +1,17 @@
-#include <dependency_graph/rtti.h>
-#include <dependency_graph/data.inl>
+#include "io.h"
 
 #include <actions/io.h>
 #include <actions/node_data.h>
+#include <dependency_graph/rtti.h>
 
-#include "io.h"
+#include <dependency_graph/data.inl>
 
-namespace dependency_graph { namespace io {
+namespace dependency_graph {
+namespace io {
 
 struct SaveableRegistration {
 	SaveableRegistration() {
-		setIsSaveableCallback([](const Data&) {
-			return true;
-		});
+		setIsSaveableCallback([](const Data&) { return true; });
 	}
 
 	~SaveableRegistration() {
@@ -22,9 +21,11 @@ struct SaveableRegistration {
 
 static SaveableRegistration s_saveableRegistration;
 
-} }
+}  // namespace io
+}  // namespace dependency_graph
 
-namespace possumwood { namespace io {
+namespace possumwood {
+namespace io {
 
 void fromJson(const json& j, dependency_graph::Data& data) {
 	if(data.type() == "float") {
@@ -58,4 +59,5 @@ bool isSaveable(const dependency_graph::Data& data) {
 	return true;
 }
 
-} }
+}  // namespace io
+}  // namespace possumwood

@@ -1,7 +1,7 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <opencv2/opencv.hpp>
-
 #include <actions/traits.h>
+#include <possumwood_sdk/node_implementation.h>
+
+#include <opencv2/opencv.hpp>
 
 #include "frame.h"
 
@@ -35,4 +35,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/filter/filter2d", init);
 
-}
+}  // namespace

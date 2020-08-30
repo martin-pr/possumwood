@@ -1,13 +1,11 @@
 #pragma once
 
-#include <functional>
-#include <memory>
-
-#include <boost/filesystem/path.hpp>
+#include <dependency_graph/metadata_register.h>
 
 #include <QMenu>
-
-#include <dependency_graph/metadata_register.h>
+#include <boost/filesystem/path.hpp>
+#include <functional>
+#include <memory>
 
 #include "adaptor.h"
 

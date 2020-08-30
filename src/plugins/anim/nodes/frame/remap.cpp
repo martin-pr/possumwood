@@ -1,7 +1,7 @@
 #include <possumwood_sdk/node_implementation.h>
 
-#include "datatypes/skeleton.h"
 #include "datatypes/joint_mapping_editor_data.h"
+#include "datatypes/skeleton.h"
 
 namespace {
 
@@ -13,7 +13,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// update a_mapping, if needed
 	if(data.get(a_mapping).sourceSkeleton() != data.get(a_sourceSkeleton) ||
 	   data.get(a_mapping).targetSkeleton() != data.get(a_targetSkeleton)) {
-
 		anim::JointMappingEditorData editorData = data.get(a_mapping);
 		editorData.setSourceSkeleton(data.get(a_sourceSkeleton));
 		editorData.setTargetSkeleton(data.get(a_targetSkeleton));
@@ -28,8 +27,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	if(!inFrame.empty() && !target.empty() && !source.empty()) {
 		if(!inFrame.isCompatibleWith(source))
-			throw std::runtime_error(
-					  "Source base skeleton and Frame have to be compatible for mapping to work.");
+			throw std::runtime_error("Source base skeleton and Frame have to be compatible for mapping to work.");
 
 		anim::Skeleton output = target;
 		const anim::JointMappingEditorData& mapping = data.get(a_mapping);
@@ -54,9 +52,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				j.tr() = j.parent().tr() * j.tr();
 
 			auto mapIt = mapping.findTarget(j.index());
-			if(mapIt != mapping.end() && mapIt->first >= 0 && mapIt->first < (int)source.size() &&
-			   mapIt->second >= 0 && mapIt->second < (int)target.size()) {
-
+			if(mapIt != mapping.end() && mapIt->first >= 0 && mapIt->first < (int)source.size() && mapIt->second >= 0 &&
+			   mapIt->second < (int)target.size()) {
 				assert((int)j.index() == mapIt->second);
 
 				auto sourceJoint = source[mapIt->first];
@@ -69,7 +66,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		}
 
 		// back to local space
-		for(unsigned bi = output.size()-1; bi > 0; --bi) {
+		for(unsigned bi = output.size() - 1; bi > 0; --bi) {
 			auto& jnt = output[bi];
 			assert(jnt.hasParent());
 
@@ -103,4 +100,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/frame/remap", init);
 
-}
+}  // namespace

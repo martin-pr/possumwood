@@ -1,13 +1,11 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
-
 #include <tbb/parallel_for.h>
 
 #include <opencv2/opencv.hpp>
 
-#include <actions/traits.h>
-
-#include "maths/io/vec2.h"
 #include "frame.h"
+#include "maths/io/vec2.h"
 #include "tools.h"
 
 namespace {
@@ -24,7 +22,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	const cv::Mat input = *data.get(a_in);
 	if(input.type() != CV_32FC3)
-		throw std::runtime_error("Only 32-bit 3 channel float format supported on input, " + possumwood::opencv::type2str(input.type()) + " found instead!");
+		throw std::runtime_error("Only 32-bit 3 channel float format supported on input, " +
+		                         possumwood::opencv::type2str(input.type()) + " found instead!");
 
 	const int width = data.get(a_size)[0];
 	const int height = data.get(a_size)[1];
@@ -41,19 +40,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const int tile_height = input.rows / mosaic;
 
 	const bool circular_filter = data.get(a_circularFilter);
-	const int circular_threshold = (mosaic/2) * (mosaic/2);
+	const int circular_threshold = (mosaic / 2) * (mosaic / 2);
 
 	tbb::parallel_for(0, input.rows, [&](int y) {
-		for(int x=0;x<input.cols;++x) {
+		for(int x = 0; x < input.cols; ++x) {
 			const int xi = x / tile_width - mosaic / 2;
 			const int yi = y / tile_height - mosaic / 2;
 
-			if(xi*xi + yi*yi <= circular_threshold || !circular_filter) {
+			if(xi * xi + yi * yi <= circular_threshold || !circular_filter) {
 				float xi = x % tile_width;
 				float yi = y % tile_height;
 
-				xi += (float)(x/tile_width - mosaic/2) * offset;
-				yi += (float)(y/tile_height - mosaic/2) * offset;
+				xi += (float)(x / tile_width - mosaic / 2) * offset;
+				yi += (float)(y / tile_height - mosaic / 2) * offset;
 
 				xi = xi / (float)(tile_width) * (float)width;
 				yi = yi / (float)(tile_height) * (float)height;
@@ -67,7 +66,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 					const float* value = input.ptr<float>(y, x);
 
-					for(int a=0;a<3;++a) {
+					for(int a = 0; a < 3; ++a) {
 						color[a] += value[a];
 						n[a] += 1;
 					}
@@ -77,10 +76,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	});
 
 	tbb::parallel_for(0, mat.rows, [&](int y) {
-		for(int x=0;x<mat.cols;++x)
-			for(int a=0;a<3;++a)
-				if(norm.ptr<int16_t>(y,x)[a] > 0)
-					mat.ptr<float>(y,x)[a] /= (float)norm.ptr<int16_t>(y,x)[a];
+		for(int x = 0; x < mat.cols; ++x)
+			for(int a = 0; a < 3; ++a)
+				if(norm.ptr<int16_t>(y, x)[a] > 0)
+					mat.ptr<float>(y, x)[a] /= (float)norm.ptr<int16_t>(y, x)[a];
 	});
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
@@ -91,7 +90,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(1000,1000));
+	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(1000, 1000));
 	meta.addAttribute(a_mosaic, "mosaic", 9u);
 	meta.addAttribute(a_offset, "offset", 3.0f);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
@@ -115,4 +114,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/lightfields/mosaic_superres", init);
 
-}
+}  // namespace

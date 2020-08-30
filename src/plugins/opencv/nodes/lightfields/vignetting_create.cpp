@@ -1,13 +1,11 @@
+#include <actions/traits.h>
+#include <lightfields/pattern.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
 
-#include <actions/traits.h>
-
-#include <lightfields/pattern.h>
-
-#include "lightfield_vignetting.h"
 #include "frame.h"
+#include "lightfield_vignetting.h"
 #include "lightfields.h"
 
 namespace {
@@ -36,7 +34,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_pattern, "pattern", lightfields::Pattern(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_subdivLevel, "subdiv_level", 32u);
-	meta.addAttribute(a_vignetting, "vignetting", possumwood::opencv::LightfieldVignetting(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_vignetting, "vignetting", possumwood::opencv::LightfieldVignetting(),
+	                  possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_pattern, a_vignetting);
 	meta.addInfluence(a_in, a_vignetting);
@@ -45,7 +44,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/lightfields/vignetting_create", init);
 
-}
+}  // namespace

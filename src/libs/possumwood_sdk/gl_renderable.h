@@ -1,12 +1,11 @@
 #pragma once
 
-#include <vector>
-#include <map>
-
-#include <boost/noncopyable.hpp>
-
 #include <ImathMatrix.h>
 #include <ImathVec.h>
+
+#include <boost/noncopyable.hpp>
+#include <map>
+#include <vector>
 
 namespace possumwood {
 
@@ -19,8 +18,7 @@ class GLRenderable : public boost::noncopyable {
 	static const std::string& defaultVertexShader();
 	static const std::string& defaultFragmentShader();
 
-	GLRenderable(unsigned drawType,
-	             const std::string& vertexShaderSrc = defaultVertexShader(),
+	GLRenderable(unsigned drawType, const std::string& vertexShaderSrc = defaultVertexShader(),
 	             const std::string& fragmentShaderSrc = defaultFragmentShader());
 	virtual ~GLRenderable();
 
@@ -75,4 +73,4 @@ class GLRenderable : public boost::noncopyable {
 
 	friend class VBO;
 };
-}
+}  // namespace possumwood

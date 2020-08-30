@@ -1,7 +1,6 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
-
 #include <GL/glut.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/animation.h"
 #include "datatypes/skeleton.h"
@@ -46,4 +45,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/frame/from_animation", init);
 
-}
+}  // namespace

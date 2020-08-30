@@ -1,6 +1,7 @@
 #include "exif.h"
 
-namespace possumwood { namespace opencv {
+namespace possumwood {
+namespace opencv {
 
 Exif::Exif() : m_exposure(0.0f), m_f(0.0f), m_iso(0.0f) {
 }
@@ -24,18 +25,19 @@ float Exif::iso() const {
 	return m_iso;
 }
 
-bool Exif::operator == (const Exif& e) const {
+bool Exif::operator==(const Exif& e) const {
 	return m_exposure == e.m_exposure && m_f == e.m_f && m_iso == e.m_iso;
 }
 
-bool Exif::operator != (const Exif& e) const {
+bool Exif::operator!=(const Exif& e) const {
 	return m_exposure != e.m_exposure || m_f != e.m_f || m_iso != e.m_iso;
 }
 
-std::ostream& operator << (std::ostream& out, const Exif& f) {
+std::ostream& operator<<(std::ostream& out, const Exif& f) {
 	out << "exposure=" << f.exposure() << "  F=" << f.f() << "  iso=" << f.iso();
 
 	return out;
 }
 
-} }
+}  // namespace opencv
+}  // namespace possumwood

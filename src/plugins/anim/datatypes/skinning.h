@@ -6,13 +6,13 @@ namespace anim {
 
 class Skinning {
   public:
-  	struct Weight {
-  		Weight(std::size_t b, float w) : bone(b), weight(w) {
-  		}
+	struct Weight {
+		Weight(std::size_t b, float w) : bone(b), weight(w) {
+		}
 
-  		std::size_t bone;
-  		float weight;
-  	};
+		std::size_t bone;
+		float weight;
+	};
 
 	void addWeight(std::size_t bone, float weight);
 
@@ -33,4 +33,4 @@ class Skinning {
   private:
 	std::vector<Weight> m_weights;
 };
-}
+}  // namespace anim

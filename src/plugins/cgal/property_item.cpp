@@ -10,7 +10,7 @@ PropertyItem::PropertyItem(const PropertyItem& i) {
 		m_values.push_back(elem->clone());
 }
 
-PropertyItem& PropertyItem::operator = (const PropertyItem& i) {
+PropertyItem& PropertyItem::operator=(const PropertyItem& i) {
 	m_values.clear();
 	for(auto& elem : i.m_values)
 		m_values.push_back(elem->clone());
@@ -27,7 +27,7 @@ void PropertyItem::removeValue(std::size_t index) {
 	m_values.erase(m_values.begin() + index);
 }
 
-bool PropertyItem::operator == (const PropertyItem& i) const {
+bool PropertyItem::operator==(const PropertyItem& i) const {
 	if(m_values.size() != i.m_values.size())
 		return false;
 
@@ -45,7 +45,7 @@ bool PropertyItem::operator == (const PropertyItem& i) const {
 	return true;
 }
 
-bool PropertyItem::operator != (const PropertyItem& i) const {
+bool PropertyItem::operator!=(const PropertyItem& i) const {
 	if(m_values.size() != i.m_values.size())
 		return true;
 
@@ -69,12 +69,12 @@ PropertyItem::ValueBase::ValueBase() {
 PropertyItem::ValueBase::~ValueBase() {
 }
 
-bool PropertyItem::ValueBase::operator == (const ValueBase& v) const {
+bool PropertyItem::ValueBase::operator==(const ValueBase& v) const {
 	return isEqual(v);
 }
 
-bool PropertyItem::ValueBase::operator != (const ValueBase& v) const {
+bool PropertyItem::ValueBase::operator!=(const ValueBase& v) const {
 	return !isEqual(v);
 }
 
-}
+}  // namespace possumwood

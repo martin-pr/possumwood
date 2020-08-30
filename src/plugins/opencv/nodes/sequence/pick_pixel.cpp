@@ -1,5 +1,4 @@
 #include <possumwood_sdk/node_implementation.h>
-
 #include <tbb/parallel_for.h>
 
 #include "sequence.h"
@@ -15,19 +14,33 @@ void copyPixel(int row, int col, const cv::Mat& src, cv::Mat& dest) {
 	assert(row >= 0 && row < dest.rows && col >= 0 && col < dest.cols);
 	assert(src.type() == dest.type());
 
-	for(int c=0; c<src.channels(); ++c)
+	for(int c = 0; c < src.channels(); ++c)
 		switch(src.depth()) {
-			case CV_8U: dest.ptr<uint8_t>(row, col)[c] = src.ptr<uint8_t>(row, col)[c]; break;
-			case CV_8S: dest.ptr<int8_t>(row, col)[c] = src.ptr<int8_t>(row, col)[c]; break;
-			case CV_16U: dest.ptr<uint16_t>(row, col)[c] = src.ptr<uint16_t>(row, col)[c]; break;
-			case CV_16S: dest.ptr<int16_t>(row, col)[c] = src.ptr<int16_t>(row, col)[c]; break;
-			case CV_32S: dest.ptr<int32_t>(row, col)[c] = src.ptr<int32_t>(row, col)[c]; break;
-			case CV_32F: dest.ptr<float>(row, col)[c] = src.ptr<float>(row, col)[c]; break;
-			case CV_64F: dest.ptr<double>(row, col)[c] = src.ptr<double>(row, col)[c]; break;
-			default: throw std::runtime_error("Unknown type for pixel copy.");
+			case CV_8U:
+				dest.ptr<uint8_t>(row, col)[c] = src.ptr<uint8_t>(row, col)[c];
+				break;
+			case CV_8S:
+				dest.ptr<int8_t>(row, col)[c] = src.ptr<int8_t>(row, col)[c];
+				break;
+			case CV_16U:
+				dest.ptr<uint16_t>(row, col)[c] = src.ptr<uint16_t>(row, col)[c];
+				break;
+			case CV_16S:
+				dest.ptr<int16_t>(row, col)[c] = src.ptr<int16_t>(row, col)[c];
+				break;
+			case CV_32S:
+				dest.ptr<int32_t>(row, col)[c] = src.ptr<int32_t>(row, col)[c];
+				break;
+			case CV_32F:
+				dest.ptr<float>(row, col)[c] = src.ptr<float>(row, col)[c];
+				break;
+			case CV_64F:
+				dest.ptr<double>(row, col)[c] = src.ptr<double>(row, col)[c];
+				break;
+			default:
+				throw std::runtime_error("Unknown type for pixel copy.");
 		}
 };
-
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& seq = data.get(a_seq);
@@ -44,7 +57,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat out = cv::Mat::zeros(index.rows, index.cols, seq.type());
 
 	tbb::parallel_for(0, index.rows, [&](int r) {
-		for(int c=0; c<index.cols; ++c) {
+		for(int c = 0; c < index.cols; ++c) {
 			const unsigned char i = index.at<unsigned char>(r, c);
 
 			if(i >= seq.size())
@@ -72,4 +85,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/pick_pixel", init);
 
-}
+}  // namespace

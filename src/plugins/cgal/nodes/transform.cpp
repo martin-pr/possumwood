@@ -1,16 +1,15 @@
+#include <OpenEXR/ImathEuler.h>
+#include <OpenEXR/ImathVec.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include <OpenEXR/ImathVec.h>
-#include <OpenEXR/ImathEuler.h>
-
-#include "maths/io/vec3.h"
-#include "datatypes/meshes.h"
 #include "cgal.h"
+#include "datatypes/meshes.h"
+#include "maths/io/vec3.h"
 
 namespace {
 
-using possumwood::Meshes;
 using possumwood::CGALPolyhedron;
+using possumwood::Meshes;
 
 dependency_graph::InAttr<Meshes> a_inMesh;
 dependency_graph::InAttr<Imath::Vec3<float>> a_translation, a_rotation, a_scale;
@@ -22,10 +21,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const Imath::Vec3<float> sc = data.get(a_scale);
 
 	Imath::Matrix44<float> m1, m2, m3;
-	m1 =
-	    Imath::Euler<float>(Imath::Vec3<float>(rot.x * M_PI / 180.0, rot.y * M_PI / 180.0,
-	                                           rot.z * M_PI / 180.0))
-	        .toMatrix44();
+	m1 = Imath::Euler<float>(Imath::Vec3<float>(rot.x * M_PI / 180.0, rot.y * M_PI / 180.0, rot.z * M_PI / 180.0))
+	         .toMatrix44();
 	m2.setScale(sc);
 	m3.setTranslation(tr);
 
@@ -33,9 +30,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	Meshes result = data.get(a_inMesh);
 	for(auto& mesh : result) {
-		for(auto it = mesh.polyhedron().vertices_begin();
-		    it != mesh.polyhedron().vertices_end(); ++it) {
-			possumwood::CGALPolyhedron::Point& pt = it->point();;
+		for(auto it = mesh.polyhedron().vertices_begin(); it != mesh.polyhedron().vertices_end(); ++it) {
+			possumwood::CGALPolyhedron::Point& pt = it->point();
+			;
 
 			Imath::Vec3<float> p(pt[0], pt[1], pt[2]);
 			p *= matrix;
@@ -65,4 +62,4 @@ void init(possumwood::Metadata& meta) {
 }
 
 possumwood::NodeImplementation s_impl("cgal/transform", init);
-}
+}  // namespace

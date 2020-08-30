@@ -1,6 +1,6 @@
-#include <boost/test/unit_test.hpp>
-
 #include <dependency_graph/graph.h>
+
+#include <boost/test/unit_test.hpp>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
 
@@ -22,7 +22,7 @@ namespace dependency_graph {
 // 	return out;
 // }
 
-}
+}  // namespace dependency_graph
 
 bool testIterations(Nodes::const_iterator i1, Nodes::const_iterator i2, std::size_t count) {
 	std::size_t result = 0;
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(graph_instantiation) {
 	// remove one node (mult_1)
 
 	BOOST_REQUIRE_NO_THROW(g.nodes().erase(g.nodes().find(ids[1])));
-	ids.erase(ids.begin()+1);
+	ids.erase(ids.begin() + 1);
 
 	BOOST_REQUIRE(not g.empty());
 	BOOST_REQUIRE(not g.nodes().empty());

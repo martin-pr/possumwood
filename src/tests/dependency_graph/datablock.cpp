@@ -1,27 +1,27 @@
 #include <boost/test/unit_test.hpp>
-
-#include "common.h"
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata.inl>
+
+#include "common.h"
 
 namespace dependency_graph {
 
 // a dummy Node implementation - this is what a node will use
 class Node {
-	public:
-		template<typename T>
-		static void setInput(const InAttr<T>& attr, Datablock& data, typename std::remove_reference<T>::type&& value) {
-			data.set(attr.offset(), std::move(value));
-		}
+  public:
+	template <typename T>
+	static void setInput(const InAttr<T>& attr, Datablock& data, typename std::remove_reference<T>::type&& value) {
+		data.set(attr.offset(), std::move(value));
+	}
 
-		template<typename T>
-		static const T& getOutput(const OutAttr<T>& attr, const Datablock& data) {
-			return data.get<T>(attr.offset());
-		}
+	template <typename T>
+	static const T& getOutput(const OutAttr<T>& attr, const Datablock& data) {
+		return data.get<T>(attr.offset());
+	}
 };
 
-}
+}  // namespace dependency_graph
 
 using namespace dependency_graph;
 
@@ -51,7 +51,6 @@ BOOST_AUTO_TEST_CASE(datablock_read_and_write) {
 
 	std::unique_ptr<MetadataHandle> meta = std::unique_ptr<MetadataHandle>(new MetadataHandle(std::move(ptr)));
 
-
 	// check that the TestStructs work as expected
 	{
 		TestStruct t1;
@@ -62,7 +61,6 @@ BOOST_AUTO_TEST_CASE(datablock_read_and_write) {
 		BOOST_REQUIRE_EQUAL(t1, t2);
 	}
 
-
 	// get and set a few values
 	Datablock data(*meta);
 
@@ -71,7 +69,6 @@ BOOST_AUTO_TEST_CASE(datablock_read_and_write) {
 		BOOST_CHECK(data.get<float>(in1.offset()) != 33.0f);
 		BOOST_REQUIRE_NO_THROW(Node::setInput(in1, data, 33.0f));
 		BOOST_CHECK_EQUAL(data.get<float>(in1.offset()), 33.0f);
-
 
 		BOOST_CHECK(Node::getOutput(out1, data) != 22.0f);
 		BOOST_REQUIRE_NO_THROW(data.set(out1.offset(), 22.0f));

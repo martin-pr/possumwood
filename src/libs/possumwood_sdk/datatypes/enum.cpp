@@ -15,7 +15,8 @@ Enum::Enum(std::initializer_list<std::string> options, int defaultValue) {
 		m_value = m_options[0];
 }
 
-Enum::Enum(std::initializer_list<std::pair<std::string, int>> options, int defaultValue) : m_options(options.begin(), options.end()) {
+Enum::Enum(std::initializer_list<std::pair<std::string, int>> options, int defaultValue)
+    : m_options(options.begin(), options.end()) {
 	if(!m_options.empty()) {
 		m_value = m_options[0];
 
@@ -37,7 +38,8 @@ int Enum::intValue() const {
 }
 
 void Enum::setValue(const std::string& value) {
-	auto it = std::find_if(m_options.begin(), m_options.end(), [&value](const std::pair<std::string, int>& val) {return val.first == value;});
+	auto it = std::find_if(m_options.begin(), m_options.end(),
+	                       [&value](const std::pair<std::string, int>& val) { return val.first == value; });
 	if(it == m_options.end())
 		throw std::runtime_error("Enum value " + value + " not found!");
 	m_value = *it;
@@ -71,7 +73,7 @@ void Enum::toJson(::possumwood::io::json& json) const {
 	json = value();
 }
 
-std::ostream& operator << (std::ostream& out, const Enum& e) {
+std::ostream& operator<<(std::ostream& out, const Enum& e) {
 	out << e.value();
 	return out;
 }
@@ -87,7 +89,7 @@ void toJson(::possumwood::io::json& json, const Enum& value) {
 void fromJson(const ::possumwood::io::json& json, Enum& value) {
 	value.setValue(json.get<std::string>());
 }
-}
+}  // namespace
 
 IO<Enum> Traits<Enum>::io(&toJson, &fromJson);
-}
+}  // namespace possumwood

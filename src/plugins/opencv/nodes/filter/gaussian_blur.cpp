@@ -1,9 +1,8 @@
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
 
 #include "frame.h"
 
@@ -53,7 +52,10 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_sigmaX, "sigma_x", 7.0f);
 	meta.addAttribute(a_sigmaY, "sigma_y", 0.0f);
-	meta.addAttribute(a_borderType, "border", possumwood::Enum({ "BORDER_DEFAULT", "BORDER_CONSTANT", "BORDER_REPLICATE", "BORDER_REFLECT", "BORDER_WRAP", "BORDER_REFLECT_101", "BORDER_TRANSPARENT", "BORDER_REFLECT101", "BORDER_ISOLATED" }));
+	meta.addAttribute(
+	    a_borderType, "border",
+	    possumwood::Enum({"BORDER_DEFAULT", "BORDER_CONSTANT", "BORDER_REPLICATE", "BORDER_REFLECT", "BORDER_WRAP",
+	                      "BORDER_REFLECT_101", "BORDER_TRANSPARENT", "BORDER_REFLECT101", "BORDER_ISOLATED"}));
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
@@ -66,4 +68,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/filter/gaussian_blur", init);
 
-}
+}  // namespace

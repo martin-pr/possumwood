@@ -1,11 +1,10 @@
 #include "filesystem.h"
 
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem.hpp>
 #include <fstream>
 #include <iostream>
 #include <regex>
-
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem.hpp>
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)

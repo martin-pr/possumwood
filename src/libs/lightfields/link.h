@@ -3,53 +3,52 @@
 namespace lightfields {
 
 class Link {
-	public:
-		class Direction {
-			public:
-				int capacity() const;
+  public:
+	class Direction {
+	  public:
+		int capacity() const;
 
-				void addFlow(const int& f);
-				int flow() const;
+		void addFlow(const int& f);
+		int flow() const;
 
-				int residualCapacity() const;
+		int residualCapacity() const;
 
-				void setCapacity(int forward, int backward);
-
-			private:
-				Direction(Link* parent, bool forward);
-
-				Direction(const Direction&) = delete;
-				Direction& operator = (const Direction&) = delete;
-
-				Link* m_parent;
-				bool m_forward;
-
-				friend class Link;
-		};
-
-		// represents an Link with two directions of flow
-		Link(int capacity);
-		Link(int forwardCapacity, int backwardCapacity);
-
-		Link(const Link& e);
-		Link& operator = (const Link&);
-
-		void setCapacity(int c);
 		void setCapacity(int forward, int backward);
 
-		Direction& forward();
-		const Direction& forward() const;
+	  private:
+		Direction(Link* parent, bool forward);
 
-		Direction& backward();
-		const Direction& backward() const;
+		Direction(const Direction&) = delete;
+		Direction& operator=(const Direction&) = delete;
 
-	private:
-		friend class Direction;
+		Link* m_parent;
+		bool m_forward;
 
-		Direction m_forward, m_backward;
+		friend class Link;
+	};
 
-		int m_forwardCapacity, m_backwardCapacity, m_flow;
+	// represents an Link with two directions of flow
+	Link(int capacity);
+	Link(int forwardCapacity, int backwardCapacity);
+
+	Link(const Link& e);
+	Link& operator=(const Link&);
+
+	void setCapacity(int c);
+	void setCapacity(int forward, int backward);
+
+	Direction& forward();
+	const Direction& forward() const;
+
+	Direction& backward();
+	const Direction& backward() const;
+
+  private:
+	friend class Direction;
+
+	Direction m_forward, m_backward;
+
+	int m_forwardCapacity, m_backwardCapacity, m_flow;
 };
 
-
-}
+}  // namespace lightfields

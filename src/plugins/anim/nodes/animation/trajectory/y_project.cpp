@@ -1,13 +1,12 @@
+#include <possumwood_sdk/app.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include <utility>
 #include <random>
+#include <utility>
 
-#include <possumwood_sdk/app.h>
-
-#include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
 #include "datatypes/motion_graph.h"
+#include "datatypes/skeleton.h"
 #include "ui/motion_map.h"
 
 namespace {
@@ -34,7 +33,7 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 
 			// copy the animation
 			for(auto& f : inAnim) {
-				for(std::size_t bi=0; bi<f.size(); ++bi)
+				for(std::size_t bi = 0; bi < f.size(); ++bi)
 					frame[bi + createdNewTrajectoryBone].tr() = f[bi].tr();
 
 				// and set the trajectory bone to be the original trajectory
@@ -43,11 +42,11 @@ dependency_graph::State compute(dependency_graph::Values& values) {
 				root.translation.y = 0.0f;
 				// and with only rotation around Y axis
 				{
-					Imath::V3f rotated = Imath::V3f(1,0,0) * root.rotation;
+					Imath::V3f rotated = Imath::V3f(1, 0, 0) * root.rotation;
 					rotated.y = 0;
 					rotated.normalize();
 
-					root.rotation.setRotation(Imath::V3f(1,0,0), rotated);
+					root.rotation.setRotation(Imath::V3f(1, 0, 0), rotated);
 				}
 
 				frame[0].tr() = root;
@@ -79,4 +78,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/animation/trajectory/y_project", init);
 
-}
+}  // namespace

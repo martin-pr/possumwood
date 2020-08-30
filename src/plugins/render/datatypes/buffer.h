@@ -1,16 +1,15 @@
 #pragma once
 
-#include <vector>
-#include <iostream>
-
 #include <boost/noncopyable.hpp>
+#include <iostream>
+#include <vector>
 //#include <boost/align/aligned_allocator.hpp>
 
 namespace possumwood {
 
 class BufferBase : public boost::noncopyable {
-public:
-	virtual ~BufferBase() {};
+  public:
+	virtual ~BufferBase(){};
 
 	virtual void print() const = 0;
 };
@@ -18,7 +17,7 @@ public:
 /// A simple non-copyable raw-data container for OpenGL buffers.
 template <typename T>
 class BufferTemplated : public BufferBase {
-	typedef std::vector<T /*, boost::alignment::aligned_allocator<T, 64>*/ > vector_t;
+	typedef std::vector<T /*, boost::alignment::aligned_allocator<T, 64>*/> vector_t;
 
   public:
 	BufferTemplated(std::size_t width, std::size_t vertexCount);
@@ -54,9 +53,7 @@ class BufferTemplated : public BufferBase {
 		}
 
 	  private:
-		Element(typename vector_t::iterator begin,
-		        typename vector_t::iterator end)
-		    : m_begin(begin), m_end(end) {
+		Element(typename vector_t::iterator begin, typename vector_t::iterator end) : m_begin(begin), m_end(end) {
 		}
 
 		typename vector_t::iterator m_begin, m_end;
@@ -74,7 +71,7 @@ class BufferTemplated : public BufferBase {
 	}
 
 	virtual void print() const override {
-		for(std::size_t a=0;a<m_data.size(); ++a) {
+		for(std::size_t a = 0; a < m_data.size(); ++a) {
 			if(a % m_width == 0)
 				std::cout << std::endl;
 			std::cout << m_data[a] << " ";
@@ -109,4 +106,4 @@ class Buffer<int> : public BufferTemplated<int> {
   public:
 	Buffer(std::size_t width, std::size_t vertexCount) : BufferTemplated(width, vertexCount){};
 };
-}
+}  // namespace possumwood

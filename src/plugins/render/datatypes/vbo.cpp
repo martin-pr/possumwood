@@ -41,4 +41,4 @@ void VBOBase::use(GLint attribLocation) const {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-}
+}  // namespace possumwood

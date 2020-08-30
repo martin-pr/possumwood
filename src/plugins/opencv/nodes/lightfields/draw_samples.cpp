@@ -1,15 +1,13 @@
+#include <actions/traits.h>
+#include <lightfields/samples.h>
 #include <possumwood_sdk/node_implementation.h>
-
-#include <opencv2/opencv.hpp>
 #include <tbb/parallel_for.h>
 
-#include <actions/traits.h>
-
-#include <lightfields/samples.h>
+#include <opencv2/opencv.hpp>
 
 #include "frame.h"
-#include "tools.h"
 #include "lightfields.h"
+#include "tools.h"
 
 namespace {
 
@@ -24,9 +22,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	tbb::parallel_for(0, mat.rows, [&](int y) {
 		for(auto it = samples.begin(y); it != samples.end(y); ++it) {
 			float* color = mat.ptr<float>(it->source[1], it->source[0]);
-			float current = it->uv[0]*it->uv[0] + it->uv[1]*it->uv[1];
+			float current = it->uv[0] * it->uv[0] + it->uv[1] * it->uv[1];
 			if(current <= 1.0f)
-				color[0] = (1.0f-current);
+				color[0] = (1.0f - current);
 			else
 				color[0] = 0.0f;
 		}
@@ -46,7 +44,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/lightfields/draw_samples", init);
 
-}
+}  // namespace

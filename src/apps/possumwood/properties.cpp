@@ -1,14 +1,12 @@
 #include "properties.h"
 
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
+#include <actions/actions.h>
 
 #include <QHeaderView>
-
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/port.inl>
-
-#include <actions/actions.h>
 
 #include "generic_property.h"
 
@@ -102,9 +100,7 @@ Properties::PropertyHolder::PropertyHolder(dependency_graph::Port& port) {
 	possumwood::properties::property_base* prop = ui.get();
 
 	// change of port value
-	graphValueConnection = port.valueCallback([prop, &port]() {
-		prop->valueFromPort(port);
-	});
+	graphValueConnection = port.valueCallback([prop, &port]() { prop->valueFromPort(port); });
 
 	// change of port flags
 	std::function<void()> updateFlags = [prop, &port]() {
@@ -136,7 +132,8 @@ Properties::PropertyHolder::PropertyHolder(dependency_graph::Port& port) {
 	uiValueConnection = ui->valueCallback([prop, &port]() {
 		// value changes only for non-disabled input port UIs
 		// (avoid Qt's value changed callbacks when not necessary)
-		if((prop->flags() & possumwood::properties::property_base::kInput) && !(prop->flags() & possumwood::properties::property_base::kDisabled))
+		if((prop->flags() & possumwood::properties::property_base::kInput) &&
+		   !(prop->flags() & possumwood::properties::property_base::kDisabled))
 			prop->valueToPort(port);
 	});
 
@@ -162,5 +159,4 @@ Properties::PropertyHolder::~PropertyHolder() {
 	graphValueConnection.disconnect();
 	uiValueConnection.disconnect();
 	flagsConnection.disconnect();
-
 }

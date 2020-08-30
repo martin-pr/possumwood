@@ -1,8 +1,8 @@
 #pragma once
 
-#include "property_item.h"
-
 #include <cassert>
+
+#include "property_item.h"
 
 namespace possumwood {
 
@@ -56,4 +56,4 @@ bool PropertyItem::Value<T>::isEqual(const ValueBase& v) const {
 	const PropertyItem::Value<T>* ptr = dynamic_cast<const PropertyItem::Value<T>*>(&v);
 	return ptr && m_value == ptr->m_value;
 }
-}
+}  // namespace possumwood

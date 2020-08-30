@@ -1,9 +1,7 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/datatypes/filename.h>
-
-#include <tbb/parallel_for.h>
-
 #include <actions/traits.h>
+#include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
+#include <tbb/parallel_for.h>
 
 #include "frame.h"
 #include "image_loading.h"
@@ -29,9 +27,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-		"Image files (*.png *.jpg *.jpe *.jpeg *.exr *.tif *.tiff)",
-	}));
+	meta.addAttribute(a_filename, "filename",
+	                  possumwood::Filename({
+	                      "Image files (*.png *.jpg *.jpe *.jpeg *.exr *.tif *.tiff)",
+	                  }));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_exif, "exif", possumwood::opencv::Exif(), possumwood::AttrFlags::kVertical);
 
@@ -43,4 +42,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/capture/image", init);
 
-}
+}  // namespace

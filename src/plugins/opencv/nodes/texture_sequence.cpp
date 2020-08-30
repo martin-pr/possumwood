@@ -1,11 +1,10 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
-
 #include <GL/glew.h>
 #include <GL/glu.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <render/datatypes/uniforms.inl>
-#include <possumwood_sdk/datatypes/enum.h>
 
 #include "sequence.h"
 #include "tools.h"
@@ -17,7 +16,6 @@ dependency_graph::InAttr<possumwood::opencv::Sequence> a_value;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::InAttr<possumwood::Uniforms> a_inUniforms;
 dependency_graph::OutAttr<possumwood::Uniforms> a_outUniforms;
-
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State result;
@@ -37,35 +35,30 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		if(value.type() == CV_8UC1)
 			uniforms.addTextureArray(
-				data.get(a_name),
-				frames,
-				value.cols(),
-				value.rows(),
-				possumwood::Texture::Format(1, possumwood::Texture::kGray, interpolation) // tightly packed
+			    data.get(a_name), frames, value.cols(), value.rows(),
+			    possumwood::Texture::Format(1, possumwood::Texture::kGray, interpolation)  // tightly packed
 			);
 		else if(value.type() == CV_8UC3)
 			uniforms.addTextureArray(
-				data.get(a_name),
-				frames,
-				value.cols(),
-				value.rows(),
-				possumwood::Texture::Format(1, possumwood::Texture::kBGR, interpolation) // tightly packed
+			    data.get(a_name), frames, value.cols(), value.rows(),
+			    possumwood::Texture::Format(1, possumwood::Texture::kBGR, interpolation)  // tightly packed
 			);
 		else {
 			std::stringstream ss;
-			ss << "Unsupported channel count (" << value.channels() << ") - texture sequence only supports 1 or 3 unsigned 8bit int channels.";
+			ss << "Unsupported channel count (" << value.channels()
+			   << ") - texture sequence only supports 1 or 3 unsigned 8bit int channels.";
 			throw std::runtime_error(ss.str());
 		}
 
 		const unsigned count = value.size();
-		uniforms.addUniform<unsigned>(data.get(a_name) + "_count", 1, possumwood::Uniforms::kPerFrame, [count](unsigned* value, std::size_t, const possumwood::ViewportState&) {
-			*value = count;
-		});
-
+		uniforms.addUniform<unsigned>(
+		    data.get(a_name) + "_count", 1, possumwood::Uniforms::kPerFrame,
+		    [count](unsigned* value, std::size_t, const possumwood::ViewportState&) { *value = count; });
 	}
 
 	else
-		throw std::runtime_error("Unsupported data type " + possumwood::opencv::type2str(value.type()) + " - render/uniforms/opencv_texture needs extending to support this type!");
+		throw std::runtime_error("Unsupported data type " + possumwood::opencv::type2str(value.type()) +
+		                         " - render/uniforms/opencv_texture needs extending to support this type!");
 
 	data.set(a_outUniforms, uniforms);
 
@@ -89,4 +82,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/uniforms/opencv_texture_sequence", init);
 
-}
+}  // namespace

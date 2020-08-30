@@ -1,14 +1,10 @@
+#include <actions/traits.h>
+#include <lightfields/lenslet_graph.h>
+#include <lightfields/pattern.h>
+#include <lightfields/samples.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <actions/traits.h>
-
-#include <lightfields/lenslet_graph.h>
-#include <lightfields/pattern.h>
-
-#include <lightfields/pattern.h>
-#include <lightfields/samples.h>
 
 #include "frame.h"
 #include "lightfields.h"
@@ -16,7 +12,7 @@
 namespace {
 
 struct Vec2Compare {
-	bool operator() (const cv::Vec2f& v1, const cv::Vec2f& v2) const {
+	bool operator()(const cv::Vec2f& v1, const cv::Vec2f& v2) const {
 		if(v1[0] != v2[0])
 			return v1[0] < v2[0];
 		return v1[1] < v2[1];
@@ -24,8 +20,8 @@ struct Vec2Compare {
 };
 
 struct Vec4Compare {
-	bool operator() (const cv::Vec4f& v1, const cv::Vec4f& v2) const {
-		for(int a=0;a<3;++a)
+	bool operator()(const cv::Vec4f& v1, const cv::Vec4f& v2) const {
+		for(int a = 0; a < 3; ++a)
 			if(v1[a] != v2[a])
 				return v1[a] < v2[a];
 		return v1[3] < v2[3];
@@ -45,18 +41,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const std::size_t border = data.get(a_border);
 	if(border < 1)
 		throw std::runtime_error("Border value needs to be non-zero");
-	if(std::size_t(input.rows) < 2*border+1 || std::size_t(input.cols) < 2*border+1)
+	if(std::size_t(input.rows) < 2 * border + 1 || std::size_t(input.cols) < 2 * border + 1)
 		throw std::runtime_error("Border value too large for the size of the input image");
 
 	// make a lenslet data structure
 	lightfields::LensletGraph lenslets(Imath::V2i(input.cols, input.rows), border);
 	// feed all the local minima into it, except the ones too close to the border
-	for(std::size_t y=1; y<std::size_t(input.rows) - 1; ++y)
-		for(std::size_t x=1; x<std::size_t(input.cols) - 1; ++x) {
+	for(std::size_t y = 1; y < std::size_t(input.rows) - 1; ++y)
+		for(std::size_t x = 1; x < std::size_t(input.cols) - 1; ++x) {
 			const unsigned char current = input.at<unsigned char>(y, x);
 			bool isMaximum = true;
-			for(std::size_t a=0;a<9;++a)
-				if(a != 4 && input.at<unsigned char>(y + a/3 - 1, x + a%3 - 1) >= current)
+			for(std::size_t a = 0; a < 9; ++a)
+				if(a != 4 && input.at<unsigned char>(y + a / 3 - 1, x + a % 3 - 1) >= current)
 					isMaximum = false;
 
 			if(isMaximum)
@@ -96,4 +92,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/lightfields/detect_pattern", init);
 
-}
+}  // namespace

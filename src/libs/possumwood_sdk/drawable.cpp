@@ -50,7 +50,10 @@ void Drawable::doDraw(const ViewportState& viewport) {
 
 //////////
 
-DrawableFunctor::DrawableFunctor(dependency_graph::Values&& vals, std::function<dependency_graph::State(const dependency_graph::Values&, const ViewportState&)> draw) : Drawable(std::move(vals)), m_draw(draw) {
+DrawableFunctor::DrawableFunctor(
+    dependency_graph::Values&& vals,
+    std::function<dependency_graph::State(const dependency_graph::Values&, const ViewportState&)> draw)
+    : Drawable(std::move(vals)), m_draw(draw) {
 }
 
 dependency_graph::State DrawableFunctor::draw() {
@@ -60,4 +63,4 @@ dependency_graph::State DrawableFunctor::draw() {
 	return dependency_graph::State();
 }
 
-}
+}  // namespace possumwood

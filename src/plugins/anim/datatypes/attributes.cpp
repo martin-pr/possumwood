@@ -11,13 +11,13 @@ Attributes::Attributes(const Attributes& a) : m_attributes(a.m_attributes) {
 Attributes::Attributes(Attributes&& a) : m_attributes(std::move(a.m_attributes)) {
 }
 
-Attributes& Attributes::operator = (const Attributes& a) {
+Attributes& Attributes::operator=(const Attributes& a) {
 	m_attributes = a.m_attributes;
 
 	return *this;
 }
 
-Attributes& Attributes::operator = (Attributes&& a) {
+Attributes& Attributes::operator=(Attributes&& a) {
 	m_attributes = std::move(a.m_attributes);
 
 	return *this;
@@ -50,11 +50,11 @@ Attributes::iterator Attributes::end() {
 	return m_attributes.end();
 }
 
-std::ostream& operator << (std::ostream& out, const Attributes& attrs) {
+std::ostream& operator<<(std::ostream& out, const Attributes& attrs) {
 	for(auto& p : attrs)
 		out << p.first << " - " << p.second.toString() << std::endl;
 
 	return out;
 }
 
-}
+}  // namespace anim

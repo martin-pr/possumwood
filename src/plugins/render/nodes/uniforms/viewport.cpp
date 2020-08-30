@@ -1,9 +1,7 @@
-#include <possumwood_sdk/node_implementation.h>
-
 #include <GL/glew.h>
 #include <GL/glu.h>
-
 #include <ImathMatrix.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/uniforms.inl"
 #include "uniforms.h"
@@ -36,4 +34,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/uniforms/viewport", init);
 
-}
+}  // namespace

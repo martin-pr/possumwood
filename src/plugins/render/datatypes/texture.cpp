@@ -7,56 +7,63 @@ namespace possumwood {
 
 namespace {
 
-template<typename T>
+template <typename T>
 struct TextureTraits;
 
-void applySingleTexture(GLint internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type, const void * data) {
+void applySingleTexture(GLint internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type,
+                        const void* data) {
 	glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, format, type, data);
 }
 
-template<typename T>
-void applyArrayTexture(GLint internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type, const std::vector<const T*>& data) {
-	for(std::size_t i=0; i<data.size(); ++i)
-		glTexSubImage3D(GL_TEXTURE_2D_ARRAY,
-			0,
-			0, 0, i,
-			width, height, 1,
-			format, type,
-			data[i]);
+template <typename T>
+void applyArrayTexture(GLint internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type,
+                       const std::vector<const T*>& data) {
+	for(std::size_t i = 0; i < data.size(); ++i)
+		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, format, type, data[i]);
 }
 
-template<>
+template <>
 struct TextureTraits<const unsigned char*> {
-	static void init(GLint internalformat, GLsizei width, GLsizei height, const unsigned char* data) { /* noop */ };
-	static constexpr GLint GLType() { return GL_UNSIGNED_BYTE; };
-	static constexpr GLint BindType() { return GL_TEXTURE_2D; };
-	static constexpr auto apply = applySingleTexture;
-};
-
-template<>
-struct TextureTraits<const float*> {
-	static void init(GLint internalformat, GLsizei width, GLsizei height, const float* data) { /* noop */ };
-	static constexpr GLint GLType() { return GL_FLOAT; };
-	static constexpr GLint BindType() { return GL_TEXTURE_2D; };
-	static constexpr auto apply = applySingleTexture;
-};
-
-template<>
-struct TextureTraits<std::vector<const unsigned char*>> {
-	static void init(GLint internalformat, GLsizei width, GLsizei height, const std::vector<const unsigned char*>& data) {
-		glTexStorage3D(GL_TEXTURE_2D_ARRAY,
-			1, // no mipmaps, for now
-			internalformat,
-			width, height,
-			data.size()
-		);
+	static void init(GLint internalformat, GLsizei width, GLsizei height, const unsigned char* data){/* noop */};
+	static constexpr GLint GLType() {
+		return GL_UNSIGNED_BYTE;
 	};
-	static constexpr GLint GLType() { return GL_UNSIGNED_BYTE; };
-	static constexpr GLint BindType() { return GL_TEXTURE_2D_ARRAY; };
+	static constexpr GLint BindType() {
+		return GL_TEXTURE_2D;
+	};
+	static constexpr auto apply = applySingleTexture;
+};
+
+template <>
+struct TextureTraits<const float*> {
+	static void init(GLint internalformat, GLsizei width, GLsizei height, const float* data){/* noop */};
+	static constexpr GLint GLType() {
+		return GL_FLOAT;
+	};
+	static constexpr GLint BindType() {
+		return GL_TEXTURE_2D;
+	};
+	static constexpr auto apply = applySingleTexture;
+};
+
+template <>
+struct TextureTraits<std::vector<const unsigned char*>> {
+	static void init(GLint internalformat, GLsizei width, GLsizei height,
+	                 const std::vector<const unsigned char*>& data) {
+		glTexStorage3D(GL_TEXTURE_2D_ARRAY,
+		               1,  // no mipmaps, for now
+		               internalformat, width, height, data.size());
+	};
+	static constexpr GLint GLType() {
+		return GL_UNSIGNED_BYTE;
+	};
+	static constexpr GLint BindType() {
+		return GL_TEXTURE_2D_ARRAY;
+	};
 	static constexpr auto apply = applyArrayTexture<unsigned char>;
 };
 
-template<typename T_PTR>
+template <typename T_PTR>
 std::string makeTexture(GLuint id, T_PTR data, std::size_t width, std::size_t height, const Texture::Format& format) {
 	std::string error;
 
@@ -97,7 +104,7 @@ std::string makeTexture(GLuint id, T_PTR data, std::size_t width, std::size_t he
 	return error;
 }
 
-}
+}  // namespace
 
 Texture::Texture(const unsigned char* data, std::size_t width, std::size_t height, const Format& format) : m_id(0) {
 	glGenTextures(1, &m_id);
@@ -123,7 +130,8 @@ Texture::Texture(const float* data, std::size_t width, std::size_t height, const
 	}
 }
 
-Texture::Texture(const std::vector<const unsigned char*>& data, std::size_t width, std::size_t height, const Format& format) {
+Texture::Texture(const std::vector<const unsigned char*>& data, std::size_t width, std::size_t height,
+                 const Format& format) {
 	glGenTextures(1, &m_id);
 
 	const std::string err = makeTexture(m_id, data, width, height, format);
@@ -147,10 +155,10 @@ GLuint Texture::id() const {
 
 void Texture::use(GLint attribLocation, GLenum textureUnit) const {
 	if(m_id != 0) {
-		glUniform1i(attribLocation, textureUnit-GL_TEXTURE0);
+		glUniform1i(attribLocation, textureUnit - GL_TEXTURE0);
 		glActiveTexture(textureUnit);
 		glBindTexture(m_bindType, m_id);
 	}
 }
 
-}
+}  // namespace possumwood

@@ -1,15 +1,14 @@
 #include "render_context.h"
 
+#include <GLFW/glfw3.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/gl.h>
+#include <possumwood_sdk/metadata.h>
+
+#include <chrono>
 #include <stdexcept>
 #include <string>
-#include <chrono>
 #include <thread>
-
-#include <GLFW/glfw3.h>
-
-#include <possumwood_sdk/gl.h>
-#include <possumwood_sdk/app.h>
-#include <possumwood_sdk/metadata.h>
 
 #include "stack.h"
 
@@ -37,7 +36,8 @@ void ensureGLEWInitialised() {
 	if(!s_initialised) {
 		auto glewErr = glewInit();
 		if(glewErr != GLEW_OK)
-			throw std::runtime_error(std::string("Error initialising GLEW - ") + (const char*)(glewGetErrorString(glewErr)));
+			throw std::runtime_error(std::string("Error initialising GLEW - ") +
+			                         (const char*)(glewGetErrorString(glewErr)));
 
 		s_initialised = true;
 	}
@@ -49,28 +49,28 @@ void ensureGLEWInitialised() {
 
 std::pair<unsigned, unsigned> findGLVersion() {
 #if GL_VERSION_6_0
-	return std::make_pair(6,0);
+	return std::make_pair(6, 0);
 #elif GL_VERSION_4_7
-	return std::make_pair(4,7);
+	return std::make_pair(4, 7);
 #elif GL_VERSION_4_6
-	return std::make_pair(4,6);
+	return std::make_pair(4, 6);
 #elif GL_VERSION_4_5
-	return std::make_pair(4,5);
+	return std::make_pair(4, 5);
 #elif GL_VERSION_4_4
-	return std::make_pair(4,4);
+	return std::make_pair(4, 4);
 #elif GL_VERSION_4_3
-	return std::make_pair(4,3);
+	return std::make_pair(4, 3);
 #elif GL_VERSION_4_2
-	return std::make_pair(4,2);
+	return std::make_pair(4, 2);
 #elif GL_VERSION_4_1
-	return std::make_pair(4,1);
+	return std::make_pair(4, 1);
 #elif GL_VERSION_4_0
-	return std::make_pair(4,0);
+	return std::make_pair(4, 0);
 #endif
-	return std::make_pair(0,0);
+	return std::make_pair(0, 0);
 }
 
-}
+}  // namespace
 
 RenderContext::RenderContext(const possumwood::ViewportState& viewport) : m_window(nullptr) {
 	ensureGLFWInitialised();
@@ -89,14 +89,14 @@ RenderContext::RenderContext(const possumwood::ViewportState& viewport) : m_wind
 
 	glfwMakeContextCurrent(m_window);
 
-	std::cout << "OpenGL version supported by this platform is "
-	          << glGetString(GL_VERSION) << std::endl;
+	std::cout << "OpenGL version supported by this platform is " << glGetString(GL_VERSION) << std::endl;
 
 	ensureGLEWInitialised();
 }
 
 RenderContext::~RenderContext() {
-	// silly GLUT - https://sourceforge.net/p/freeglut/mailman/freeglut-developer/thread/BANLkTin7n06HnopO5qSiUgUBrN3skAWDyA@mail.gmail.com/
+	// silly GLUT -
+	// https://sourceforge.net/p/freeglut/mailman/freeglut-developer/thread/BANLkTin7n06HnopO5qSiUgUBrN3skAWDyA@mail.gmail.com/
 	ensureGLFWInitialised();
 
 	glfwDestroyWindow(m_window);
@@ -109,7 +109,7 @@ void draw(const possumwood::ViewportState& viewport) {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	glViewport(0,0,viewport.width(), viewport.height());
+	glViewport(0, 0, viewport.width(), viewport.height());
 
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -123,15 +123,15 @@ void draw(const possumwood::ViewportState& viewport) {
 
 			throw std::runtime_error(ss.str());
 		}
-
 	});
 
 	glFlush();
 }
 
-}
+}  // namespace
 
-Action RenderContext::render(const possumwood::ViewportState& viewport, std::function<void(std::vector<GLubyte>&)> callback) {
+Action RenderContext::render(const possumwood::ViewportState& viewport,
+                             std::function<void(std::vector<GLubyte>&)> callback) {
 	return Action([this, viewport, callback]() {
 		std::vector<Action> actions;
 
@@ -147,9 +147,7 @@ Action RenderContext::render(const possumwood::ViewportState& viewport, std::fun
 		}));
 
 		// do nothing for one iteration
-		actions.push_back(Action([]() {
-			return std::vector<Action>();
-		}));
+		actions.push_back(Action([]() { return std::vector<Action>(); }));
 
 		// rendering
 		actions.push_back(Action([viewport]() {
@@ -191,8 +189,8 @@ void RenderContext::run(Stack& stack) {
 	while(!stack.isFinished()) {
 		stack.step();
 
-        glfwSwapBuffers(m_window);
-        glfwPollEvents();
+		glfwSwapBuffers(m_window);
+		glfwPollEvents();
 
 		// a little delay to allow GLFW to run its "idle" loop
 		std::this_thread::sleep_for(10ms);

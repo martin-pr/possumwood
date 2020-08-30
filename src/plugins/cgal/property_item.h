@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 namespace possumwood {
 
@@ -17,11 +17,11 @@ class PropertyItem {
 
 		virtual std::unique_ptr<ValueBase> clone() const = 0;
 
-		bool operator == (const ValueBase& v) const;
-		bool operator != (const ValueBase& v) const;
+		bool operator==(const ValueBase& v) const;
+		bool operator!=(const ValueBase& v) const;
 
 	  protected:
-	  	virtual bool isEqual(const ValueBase& v) const = 0;
+		virtual bool isEqual(const ValueBase& v) const = 0;
 
 		ValueBase();
 	};
@@ -46,7 +46,7 @@ class PropertyItem {
 
 	PropertyItem();
 	PropertyItem(const PropertyItem& i);
-	PropertyItem& operator = (const PropertyItem& i);
+	PropertyItem& operator=(const PropertyItem& i);
 
 	template <typename T>
 	const T& get(std::size_t index) const;
@@ -61,10 +61,10 @@ class PropertyItem {
 
 	void removeValue(std::size_t index);
 
-	bool operator == (const PropertyItem& i) const;
-	bool operator != (const PropertyItem& i) const;
+	bool operator==(const PropertyItem& i) const;
+	bool operator!=(const PropertyItem& i) const;
 
   private:
 	std::vector<std::unique_ptr<ValueBase>> m_values;
 };
-}
+}  // namespace possumwood

@@ -1,11 +1,10 @@
 #include "rtti.h"
 
-#include <map>
-
 #include <cxxabi.h>
 
-#include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
+#include <map>
 
 namespace dependency_graph {
 
@@ -21,14 +20,14 @@ struct UnmanglingBuffer {
 };
 
 UnmanglingBuffer::UnmanglingBuffer(size_t length) : m_length(length) {
-	m_buffer = (char*)calloc(length,1);
+	m_buffer = (char*)calloc(length, 1);
 }
 
 UnmanglingBuffer::~UnmanglingBuffer() {
 	free(m_buffer);
 };
 
-}
+}  // namespace
 
 ////
 
@@ -51,7 +50,7 @@ const std::string unmangledName(const char* name) {
 
 	// not found
 	// lock this method - can possibly be called from multiple threads at the same time
-	boost::unique_lock< boost::shared_mutex > lock(m);
+	boost::unique_lock<boost::shared_mutex> lock(m);
 
 	static UnmanglingBuffer buffer(2048);
 	int status = 0;
@@ -72,5 +71,4 @@ const std::string unmangledName(const char* name) {
 	return value;
 }
 
-
-}
+}  // namespace dependency_graph

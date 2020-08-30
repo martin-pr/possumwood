@@ -1,18 +1,15 @@
+#include <actions/traits.h>
+#include <lightfields/samples.h>
+#include <maths/io/vec2.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
-
-#include <opencv2/opencv.hpp>
 #include <tbb/parallel_for.h>
 
-#include <actions/traits.h>
-#include <possumwood_sdk/datatypes/enum.h>
-
-#include <maths/io/vec2.h>
-
-#include <lightfields/samples.h>
+#include <opencv2/opencv.hpp>
 
 #include "frame.h"
-#include "tools.h"
 #include "lightfields.h"
+#include "tools.h"
 
 namespace {
 
@@ -64,8 +61,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const Imath::V2f uRange = data.get(a_uRange);
 	const Imath::V2f vRange = data.get(a_vRange);
 
-	for(int y=0;y<samples.sensorSize().y;++y) {
-	// tbb::parallel_for(0, samples.sensorSize().y, [&](int y) {
+	for(int y = 0; y < samples.sensorSize().y; ++y) {
+		// tbb::parallel_for(0, samples.sensorSize().y, [&](int y) {
 		auto begin = samples.begin(y);
 		auto end = samples.end(y);
 
@@ -77,7 +74,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			sample.xy[1] /= samples.sensorSize()[1];
 
 			// handwired lenslet ranges
-			bool inRange = ((sample.uv[0]*sample.uv[0] + sample.uv[1]*sample.uv[1]) <= 1.0f);
+			bool inRange = ((sample.uv[0] * sample.uv[0] + sample.uv[1] * sample.uv[1]) <= 1.0f);
 
 			// and individual sample ranges
 			inRange &= normalize(sample.xy[0], xRange);
@@ -90,32 +87,32 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				int xcoord, ycoord;
 
 				if(dimx <= 1)
-					xcoord = std::min((int)floor(sample.xy[dimx] * (float)result.cols), result.cols-1);
+					xcoord = std::min((int)floor(sample.xy[dimx] * (float)result.cols), result.cols - 1);
 				else
-					xcoord = std::min((int)floor(sample.uv[dimx-2] * (float)result.cols), result.cols-1);
+					xcoord = std::min((int)floor(sample.uv[dimx - 2] * (float)result.cols), result.cols - 1);
 
 				if(dimy <= 1)
-					ycoord = std::min((int)floor(sample.xy[dimy] * (float)result.rows), result.rows-1);
+					ycoord = std::min((int)floor(sample.xy[dimy] * (float)result.rows), result.rows - 1);
 				else
-					ycoord = std::min((int)floor(sample.uv[dimy-2] * (float)result.rows), result.rows-1);
+					ycoord = std::min((int)floor(sample.uv[dimy - 2] * (float)result.rows), result.rows - 1);
 
 				assert(xcoord >= 0 && xcoord < result.cols);
 				assert(ycoord >= 0 && ycoord < result.rows);
 
 				// bayern pattern (hardcoded)
-				const int bayern = sample.source[0]%2 + y%2;
+				const int bayern = sample.source[0] % 2 + y % 2;
 
 				// and the integration
 				result.ptr<float>(ycoord, xcoord)[bayern] += in.at<float>(y, sample.source[0]);
 				norm.ptr<uint16_t>(ycoord, xcoord)[bayern] += 1;
 			}
 		}
-	// });
+		// });
 	}
 
 	tbb::parallel_for(0, result.rows, [&](int y) {
-		for(int x=0; x<result.cols; ++x)
-			for(int channel=0; channel<3; ++channel)
+		for(int x = 0; x < result.cols; ++x)
+			for(int channel = 0; channel < 3; ++channel)
 				if(norm.ptr<uint16_t>(y, x)[channel] > 0)
 					result.ptr<float>(y, x)[channel] /= norm.ptr<uint16_t>(y, x)[channel];
 	});
@@ -154,4 +151,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/lightfields/epi", init);
 
-}
+}  // namespace

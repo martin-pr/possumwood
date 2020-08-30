@@ -1,6 +1,6 @@
-#include <possumwood_sdk/node_implementation.h>
-
 #include "../interval.h"
+
+#include <possumwood_sdk/node_implementation.h>
 
 namespace {
 
@@ -25,4 +25,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("maths/interval", init);
 
-}
+}  // namespace

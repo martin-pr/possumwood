@@ -17,7 +17,7 @@ struct Attr::AttrData {
 };
 
 Attr::Attr(const std::string& name, Category cat, const Data& d, unsigned flags)
-	: m_data(new AttrData{name, unsigned(-1), cat, flags, d}) {
+    : m_data(new AttrData{name, unsigned(-1), cat, flags, d}) {
 }
 
 Attr::~Attr() {
@@ -36,13 +36,7 @@ const unsigned& Attr::offset() const {
 }
 
 void Attr::setOffset(unsigned o) {
-	std::unique_ptr<AttrData> newData(new AttrData{
-		m_data->name,
-		o,
-		m_data->category,
-		m_data->flags,
-		m_data->data
-	});
+	std::unique_ptr<AttrData> newData(new AttrData{m_data->name, o, m_data->category, m_data->flags, m_data->data});
 
 	m_data = std::shared_ptr<const AttrData>(newData.release());
 }
@@ -64,16 +58,14 @@ bool Attr::isValid() const {
 }
 
 bool Attr::operator==(const Attr& a) const {
-	return name() == a.name() && category() == a.category() && offset() == a.offset() &&
-	       type() == a.type();
+	return name() == a.name() && category() == a.category() && offset() == a.offset() && type() == a.type();
 }
 
 bool Attr::operator!=(const Attr& a) const {
-	return name() != a.name() || category() != a.category() || offset() != a.offset() ||
-	       type() != a.type();
+	return name() != a.name() || category() != a.category() || offset() != a.offset() || type() != a.type();
 }
 
-std::ostream& operator << (std::ostream& out, const Attr& attr) {
+std::ostream& operator<<(std::ostream& out, const Attr& attr) {
 	out << attr.name() << " (";
 	if(attr.category() == Attr::kInput)
 		out << "input, ";
@@ -86,8 +78,7 @@ std::ostream& operator << (std::ostream& out, const Attr& attr) {
 
 /////////
 
-TypedAttr<void>::TypedAttr(const std::string& name, Category cat, unsigned flags) :
-	Attr(name, cat, Data(), flags) {
+TypedAttr<void>::TypedAttr(const std::string& name, Category cat, unsigned flags) : Attr(name, cat, Data(), flags) {
 }
 
 InAttr<void>::InAttr() : TypedAttr<void>("", Attr::kInput, 0) {
@@ -102,4 +93,4 @@ OutAttr<void>::OutAttr() : TypedAttr<void>("", Attr::kOutput, 0) {
 OutAttr<void>::OutAttr(const std::string& name, unsigned flags) : TypedAttr<void>(name, Attr::kOutput, flags) {
 }
 
-}
+}  // namespace dependency_graph

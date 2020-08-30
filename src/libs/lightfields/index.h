@@ -11,15 +11,15 @@ struct Index {
 	V2i pos;
 	unsigned n_layer;
 
-	bool operator == (const Index& i) const {
+	bool operator==(const Index& i) const {
 		return pos == i.pos && n_layer == i.n_layer;
 	}
 
-	bool operator != (const Index& i) const {
+	bool operator!=(const Index& i) const {
 		return pos != i.pos || n_layer != i.n_layer;
 	}
 
-	bool operator < (const Index& i) const {
+	bool operator<(const Index& i) const {
 		if(n_layer != i.n_layer)
 			return n_layer < i.n_layer;
 
@@ -37,9 +37,9 @@ struct Index {
 	}
 };
 
-inline std::ostream& operator << (std::ostream& out, const Index& i) {
+inline std::ostream& operator<<(std::ostream& out, const Index& i) {
 	out << "pos = (" << i.pos.x << ", " << i.pos.y << "), layer = " << i.n_layer;
 	return out;
 }
 
-}
+}  // namespace lightfields

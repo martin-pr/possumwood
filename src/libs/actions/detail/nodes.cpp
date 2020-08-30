@@ -1,11 +1,11 @@
 #include "nodes.h"
 
 #include <dependency_graph/network.h>
+
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes_iterator.inl>
 
 #include "../app.h"
-
 #include "connections.h"
 #include "metadata.h"
 #include "tools.h"

@@ -1,14 +1,12 @@
+#include <ImathMatrixAlgo.h>
+#include <actions/io.h>
+#include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
+
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <unordered_map>
-
-#include <boost/lexical_cast.hpp>
-#include <boost/filesystem.hpp>
-
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/datatypes/filename.h>
-#include <actions/io.h>
-
-#include <ImathMatrixAlgo.h>
 
 #include "datatypes/animation.h"
 #include "tokenizer.h"
@@ -16,86 +14,88 @@
 namespace {
 
 class AmcTokenizer : public anim::Tokenizer {
-	private:
-		State start, filename_start, filename_separator, filename, comment, hash;
+  private:
+	State start, filename_start, filename_separator, filename, comment, hash;
 
-	public:
-		AmcTokenizer(std::istream& in) : anim::Tokenizer(in), start(this), filename_start(this), filename_separator(this), filename(this), comment(this), hash(this) {
-			// start parsing in "start" state
-			start.setActive();
+  public:
+	AmcTokenizer(std::istream& in)
+	    : anim::Tokenizer(in), start(this), filename_start(this), filename_separator(this), filename(this),
+	      comment(this), hash(this) {
+		// start parsing in "start" state
+		start.setActive();
 
-			start = [this](char c) {
-				// don't read any space-like characters
-				if(std::isspace(c)) {
-					emit();
-					reject();
-				}
-
-				// hashbangs and comments start with #
-				else if(c == '#') {
-					emit();
-					reject();
-
-					hash.setActive();
-				}
-
-				// anything else is an acceptable character
-				else
-					accept(c);
-			};
-
-			hash = [this](char c) {
-				// decide if this is a hashbang (accepted as a keyword) or a comment
-				if(c == '!') {
-					accept("#!");
-					filename_start.setActive();
-				}
-				else
-					comment.setActive();
-			};
-
-			comment = [this](char c) {
-				// endline character ends comments
-				if(c == '\n')
-					start.setActive();
-
-				// reject everything
+		start = [this](char c) {
+			// don't read any space-like characters
+			if(std::isspace(c)) {
+				emit();
 				reject();
-			};
+			}
 
-			filename_start = [this](char c) {
-				// don't read any space-like characters
-				if(std::isspace(c))
-					filename_separator.setActive();
+			// hashbangs and comments start with #
+			else if(c == '#') {
+				emit();
+				reject();
 
-				// anything else is an acceptable character
-				else
-					accept(c);
-			};
+				hash.setActive();
+			}
 
-			filename_separator = [this](char c) {
-				if(std::isspace(c)) {
-					emit();
-					reject();
-				}
-				else
-					filename.setActive();
-			};
+			// anything else is an acceptable character
+			else
+				accept(c);
+		};
 
-			filename = [this](char c) {
-				// endline character ends filename
-				if(c == '\n') {
-					emit();
-					reject();
+		hash = [this](char c) {
+			// decide if this is a hashbang (accepted as a keyword) or a comment
+			if(c == '!') {
+				accept("#!");
+				filename_start.setActive();
+			}
+			else
+				comment.setActive();
+		};
 
-					start.setActive();
-				}
+		comment = [this](char c) {
+			// endline character ends comments
+			if(c == '\n')
+				start.setActive();
 
-				// else anything can be part of a filename, including spaces
-				else
-					accept(c);
-			};
-		}
+			// reject everything
+			reject();
+		};
+
+		filename_start = [this](char c) {
+			// don't read any space-like characters
+			if(std::isspace(c))
+				filename_separator.setActive();
+
+			// anything else is an acceptable character
+			else
+				accept(c);
+		};
+
+		filename_separator = [this](char c) {
+			if(std::isspace(c)) {
+				emit();
+				reject();
+			}
+			else
+				filename.setActive();
+		};
+
+		filename = [this](char c) {
+			// endline character ends filename
+			if(c == '\n') {
+				emit();
+				reject();
+
+				start.setActive();
+			}
+
+			// else anything can be part of a filename, including spaces
+			else
+				accept(c);
+		};
+	}
 };
 
 ////
@@ -125,8 +125,8 @@ Imath::Quatf makeRotation(float value, const std::string& key) {
 	return q;
 }
 
-void readFrame(anim::Tokenizer& tokenizer, anim::Skeleton& skel, const std::unordered_map<std::string, unsigned>& jointIds) {
-
+void readFrame(anim::Tokenizer& tokenizer, anim::Skeleton& skel,
+               const std::unordered_map<std::string, unsigned>& jointIds) {
 	const anim::Skeleton orig = skel;
 
 	// reset all base transforms to identity first
@@ -186,13 +186,13 @@ std::unique_ptr<anim::Animation> doLoad(const boost::filesystem::path& filename,
 		// read the frame number, which has to match the counter
 		const unsigned currentFrame = boost::lexical_cast<unsigned>(tokenizer.current().value);
 		if(currentFrame != frameNo)
-			throw std::runtime_error("expecting frame #" + boost::lexical_cast<std::string>(frameNo) + " but found #" + tokenizer.current().value);
+			throw std::runtime_error("expecting frame #" + boost::lexical_cast<std::string>(frameNo) + " but found #" +
+			                         tokenizer.current().value);
 
 		// add a frame and read it
 		anim::Skeleton frame = skel;
 		readFrame(tokenizer, frame, jointIds);
 		result->addFrame(frame);
-
 
 		++frameNo;
 	}
@@ -225,9 +225,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-		"AMC files (*.amc)",
-	}));
+	meta.addAttribute(a_filename, "filename",
+	                  possumwood::Filename({
+	                      "AMC files (*.amc)",
+	                  }));
 	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_anim, "animation", anim::Animation(), possumwood::AttrFlags::kVertical);
 
@@ -239,4 +240,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/loaders/amc", init);
 
-}
+}  // namespace

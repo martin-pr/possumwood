@@ -1,13 +1,12 @@
+#include <possumwood_sdk/app.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include <utility>
 #include <random>
+#include <utility>
 
-#include <possumwood_sdk/app.h>
-
-#include "datatypes/skeleton.h"
 #include "datatypes/animation.h"
 #include "datatypes/motion_graph.h"
+#include "datatypes/skeleton.h"
 #include "ui/motion_map.h"
 
 namespace {
@@ -19,7 +18,9 @@ dependency_graph::InAttr<float> a_transitionProbability;
 
 dependency_graph::State compute(dependency_graph::Values& values) {
 	if(!values.get(a_mgraph).empty())
-		values.set(a_outAnim, values.get(a_mgraph).randomWalk(values.get(a_targetLength), values.get(a_transitionProbability), values.get(a_randomSeed)));
+		values.set(a_outAnim,
+		           values.get(a_mgraph).randomWalk(values.get(a_targetLength), values.get(a_transitionProbability),
+		                                           values.get(a_randomSeed)));
 	else
 		values.set(a_outAnim, anim::Animation());
 
@@ -46,4 +47,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/animation/motiongraph/random_walk", init);
 
-}
+}  // namespace

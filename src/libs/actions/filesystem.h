@@ -1,9 +1,8 @@
 #pragma once
 
+#include <boost/filesystem/path.hpp>
 #include <map>
 #include <string>
-
-#include <boost/filesystem/path.hpp>
 
 #include "filepath.h"
 

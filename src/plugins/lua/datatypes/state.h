@@ -1,45 +1,45 @@
 #pragma once
 
-#include <boost/noncopyable.hpp>
-
-#include <luabind/luabind.hpp>
-
 #include <actions/traits.h>
 
-namespace possumwood { namespace lua {
+#include <boost/noncopyable.hpp>
+#include <luabind/luabind.hpp>
+
+namespace possumwood {
+namespace lua {
 
 class Context;
 
 class State final : public boost::noncopyable {
-	public:
-		State();
-		State(const Context& con);
-		~State();
+  public:
+	State();
+	State(const Context& con);
+	~State();
 
-		State(const State&) = delete;
-		State& operator = (const State&) = delete;
+	State(const State&) = delete;
+	State& operator=(const State&) = delete;
 
-		State(State&&);
-		State& operator = (State&&);
+	State(State&&);
+	State& operator=(State&&);
 
-		luabind::object globals() const;
+	luabind::object globals() const;
 
-		operator lua_State*();
-		operator const lua_State*() const;
+	operator lua_State*();
+	operator const lua_State*() const;
 
-	private:
-		lua_State* m_state;
+  private:
+	lua_State* m_state;
 };
 
-std::ostream& operator << (std::ostream& out, const State& st);
+std::ostream& operator<<(std::ostream& out, const State& st);
 
-}
+}  // namespace lua
 
-template<>
+template <>
 struct Traits<lua::State> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0, 0, 1}};
 	}
 };
 
-}
+}  // namespace possumwood

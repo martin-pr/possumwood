@@ -2,7 +2,9 @@
 
 #include "tools.h"
 
-namespace possumwood { namespace actions { namespace detail {
+namespace possumwood {
+namespace actions {
+namespace detail {
 
 void doAddLink(const Link& l) {
 	dependency_graph::NodeBase& fromNode = detail::findNode(l.fromNode);
@@ -36,33 +38,24 @@ possumwood::UndoStack::Action linkAction(const Link& l) {
 	std::stringstream ss;
 	ss << "Linking " << l.fromNode << "/" << l.fromPort << " and " << l.toNode << "/" << l.toPort;
 
-	action.addCommand(
-		ss.str(),
-		std::bind(&doAddLink, l),
-		std::bind(&doRemoveLink,l)
-	);
+	action.addCommand(ss.str(), std::bind(&doAddLink, l), std::bind(&doRemoveLink, l));
 
 	return action;
 };
 
 possumwood::UndoStack::Action unlinkAction(const dependency_graph::Port& p) {
-	Link l{
-		p.node().index(), p.index(),
-		p.linkedTo().node().index(), p.linkedTo().index()
-	};
+	Link l{p.node().index(), p.index(), p.linkedTo().node().index(), p.linkedTo().index()};
 
 	std::stringstream ss;
 	ss << "Unlinking " << p.node().name() << "/" << p.name();
 
 	possumwood::UndoStack::Action action;
 
-	action.addCommand(
-		ss.str(),
-		std::bind(&doRemoveLink,l),
-		std::bind(&doAddLink, l)
-	);
+	action.addCommand(ss.str(), std::bind(&doRemoveLink, l), std::bind(&doAddLink, l));
 
 	return action;
 }
 
-} } }
+}  // namespace detail
+}  // namespace actions
+}  // namespace possumwood

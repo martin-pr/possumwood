@@ -1,14 +1,13 @@
-#include <boost/test/unit_test.hpp>
-
-#include <iostream>
-
 #include <dependency_graph/graph.h>
-#include <dependency_graph/node.h>
-#include <dependency_graph/nodes.inl>
-#include <dependency_graph/node_base.inl>
-#include <dependency_graph/port.inl>
-#include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata_register.h>
+#include <dependency_graph/node.h>
+
+#include <boost/test/unit_test.hpp>
+#include <dependency_graph/datablock.inl>
+#include <dependency_graph/node_base.inl>
+#include <dependency_graph/nodes.inl>
+#include <dependency_graph/port.inl>
+#include <iostream>
 
 #include "common.h"
 
@@ -16,7 +15,8 @@ using namespace dependency_graph;
 
 namespace {
 
-bool checkNodes(const Network& g, std::vector<NodeBase*> nodes, dependency_graph::Nodes::SearchType st = dependency_graph::Nodes::kThisNetwork) {
+bool checkNodes(const Network& g, std::vector<NodeBase*> nodes,
+                dependency_graph::Nodes::SearchType st = dependency_graph::Nodes::kThisNetwork) {
 	auto it1 = g.nodes().begin(st);
 	auto it2 = nodes.begin();
 
@@ -61,7 +61,7 @@ bool checkConnections(const Graph& g, const std::vector<std::pair<const Port*, c
 	return result && tmp.empty();
 }
 
-}
+}  // namespace
 
 BOOST_AUTO_TEST_CASE(network_connections) {
 	Graph g;
@@ -96,26 +96,20 @@ BOOST_AUTO_TEST_CASE(network_connections) {
 	// try to connect outside nested network
 	BOOST_CHECK_NO_THROW(na1.port(2).connect(na2.port(0)));
 
-	BOOST_CHECK(checkConnections(g, {{
-		std::make_pair(&na1.port(2), &na2.port(0))
-	}}));
+	BOOST_CHECK(checkConnections(g, {{std::make_pair(&na1.port(2), &na2.port(0))}}));
 
 	// try to connect inside nested network
 	BOOST_CHECK_NO_THROW(nb1.port(2).connect(nb2.port(0)));
 
-	BOOST_CHECK(checkConnections(g, {{
-		std::make_pair(&na1.port(2), &na2.port(0)),
-		std::make_pair(&nb1.port(2), &nb2.port(0))
-	}}));
+	BOOST_CHECK(checkConnections(
+	    g, {{std::make_pair(&na1.port(2), &na2.port(0)), std::make_pair(&nb1.port(2), &nb2.port(0))}}));
 
 	// try to connect between inside and outside network
 	BOOST_CHECK_THROW(na1.port(2).connect(nb2.port(1)), std::runtime_error);
 	BOOST_CHECK_THROW(nb1.port(2).connect(na2.port(1)), std::runtime_error);
 
-	BOOST_CHECK(checkConnections(g, {{
-		std::make_pair(&na1.port(2), &na2.port(0)),
-		std::make_pair(&nb1.port(2), &nb2.port(0))
-	}}));
+	BOOST_CHECK(checkConnections(
+	    g, {{std::make_pair(&na1.port(2), &na2.port(0)), std::make_pair(&nb1.port(2), &nb2.port(0))}}));
 }
 
 BOOST_AUTO_TEST_CASE(network_connections_2) {
@@ -152,24 +146,21 @@ BOOST_AUTO_TEST_CASE(network_connections_2) {
 
 	// check the nodes
 	BOOST_CHECK(checkNodes(g, {{&parentNetwork, &na1, &na2}}));
-	BOOST_CHECK(checkNodes(parentNetwork, {{ &network, &nb_parent }}));
+	BOOST_CHECK(checkNodes(parentNetwork, {{&network, &nb_parent}}));
 	BOOST_CHECK(checkNodes(network, {{&nb1, &nb2}}));
-	BOOST_CHECK(checkNodes(g, {{&parentNetwork, &network, &nb1, &nb2, &nb_parent, &na1, &na2}}, dependency_graph::Nodes::kRecursive));
+	BOOST_CHECK(checkNodes(g, {{&parentNetwork, &network, &nb1, &nb2, &nb_parent, &na1, &na2}},
+	                       dependency_graph::Nodes::kRecursive));
 
 	// try to connect outside nested network
 	BOOST_CHECK_NO_THROW(na1.port(2).connect(na2.port(0)));
 
-	BOOST_CHECK(checkConnections(g, {{
-		std::make_pair(&na1.port(2), &na2.port(0))
-	}}));
+	BOOST_CHECK(checkConnections(g, {{std::make_pair(&na1.port(2), &na2.port(0))}}));
 
 	// try to connect inside nested network
 	BOOST_CHECK_NO_THROW(nb1.port(2).connect(nb2.port(0)));
 
-	BOOST_CHECK(checkConnections(g, {{
-		std::make_pair(&na1.port(2), &na2.port(0)),
-		std::make_pair(&nb1.port(2), &nb2.port(0))
-	}}));
+	BOOST_CHECK(checkConnections(
+	    g, {{std::make_pair(&na1.port(2), &na2.port(0)), std::make_pair(&nb1.port(2), &nb2.port(0))}}));
 
 	// try to connect between inside and outside network
 	BOOST_CHECK_THROW(na1.port(2).connect(nb2.port(1)), std::runtime_error);
@@ -178,8 +169,6 @@ BOOST_AUTO_TEST_CASE(network_connections_2) {
 	BOOST_CHECK_THROW(nb_parent.port(2).connect(na2.port(1)), std::runtime_error);
 	BOOST_CHECK_THROW(nb_parent.port(2).connect(nb2.port(1)), std::runtime_error);
 
-	BOOST_CHECK(checkConnections(g, {{
-		std::make_pair(&na1.port(2), &na2.port(0)),
-		std::make_pair(&nb1.port(2), &nb2.port(0))
-	}}));
+	BOOST_CHECK(checkConnections(
+	    g, {{std::make_pair(&na1.port(2), &na2.port(0)), std::make_pair(&nb1.port(2), &nb2.port(0))}}));
 }

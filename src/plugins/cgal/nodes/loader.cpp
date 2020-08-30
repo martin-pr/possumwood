@@ -1,14 +1,15 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/datatypes/filename.h>
-
 #include <fstream>
+#include <sstream>
 
 #include <CGAL/IO/OBJ_reader.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
+#include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
+
+#include "builder.h"
 #include "datatypes/meshes.h"
 #include "meshes.h"
-#include "builder.h"
 
 namespace {
 
@@ -26,14 +27,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	bool result = CGAL::read_OBJ(file, points, faces);
 
 	if(!result)
-		throw std::runtime_error("Error reading file '" + filename.filename().string() +
-		                         "'");
+		throw std::runtime_error("Error reading file '" + filename.filename().string() + "'");
 
 	possumwood::Meshes meshes;
 	possumwood::Mesh& mesh = meshes.addMesh(data.get(a_name));
 
-	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(points), typeof(faces)>
-	    builder(points, faces);
+	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(points), typeof(faces)> builder(points,
+	                                                                                                       faces);
 	mesh.polyhedron().delegate(builder);
 
 	data.set(a_polyhedron, meshes);
@@ -42,9 +42,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-	                                              "OBJ files (*.obj)",
-	                                          }));
+	meta.addAttribute(a_filename, "filename",
+	                  possumwood::Filename({
+	                      "OBJ files (*.obj)",
+	                  }));
 	meta.addAttribute(a_name, "name", std::string("mesh"));
 	meta.addAttribute(a_polyhedron, "polyhedron", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 
@@ -55,4 +56,4 @@ void init(possumwood::Metadata& meta) {
 }
 
 possumwood::NodeImplementation s_impl("cgal/loader", init);
-}
+}  // namespace

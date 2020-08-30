@@ -1,22 +1,19 @@
-#include <fstream>
-#include <cctype>
-#include <iostream>
+#include <OpenEXR/ImathVec.h>
+#include <actions/io.h>
+#include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/regex.hpp>
+#include <cctype>
+#include <fstream>
+#include <iostream>
 
-#include <OpenEXR/ImathVec.h>
-
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/datatypes/filename.h>
-#include <actions/io.h>
-
-#include "datatypes/transform.h"
 #include "datatypes/attributes.h"
 #include "datatypes/skeleton.h"
-
+#include "datatypes/transform.h"
 #include "tokenizer.h"
 
 using std::cout;
@@ -25,57 +22,57 @@ using std::endl;
 namespace {
 
 class AsfTokenizer : public anim::Tokenizer {
-	private:
-		State start, keyword, comment;
+  private:
+	State start, keyword, comment;
 
-	public:
-		AsfTokenizer(std::istream& in) : Tokenizer(in), start(this), keyword(this), comment(this) {
-			// start parsing in "start" state
-			start.setActive();
+  public:
+	AsfTokenizer(std::istream& in) : Tokenizer(in), start(this), keyword(this), comment(this) {
+		// start parsing in "start" state
+		start.setActive();
 
-			start = [this](char c) {
-				// don't read any space-like characters
-				if(std::isspace(c))
-					reject();
-
-				// comments start with #
-				else if(c == '#')
-					comment.setActive();
-
-				// brackets are handled separately (no need for a state)
-				else if(c == '(' || c == ')') {
-					accept(c);
-					emit();
-				}
-
-				// everything else is a "keyword"
-				else
-					keyword.setActive();
-			};
-
-			comment = [this](char c) {
-				// endline character ends comment
-				if(c == '\n')
-					start.setActive();
-
-				// reject everything
+		start = [this](char c) {
+			// don't read any space-like characters
+			if(std::isspace(c))
 				reject();
-			};
 
-			keyword = [this](char c) {
-				// space or bracket characters end a keyword
-				if(std::isspace(c) || c == '(' || c == ')') {
-					emit();
-					start.setActive();
-				}
-				// otherwise just parse another character of the keyword
-				else
-					accept(c);
-			};
+			// comments start with #
+			else if(c == '#')
+				comment.setActive();
 
-			// read the first keyword into current
-			next();
-		}
+			// brackets are handled separately (no need for a state)
+			else if(c == '(' || c == ')') {
+				accept(c);
+				emit();
+			}
+
+			// everything else is a "keyword"
+			else
+				keyword.setActive();
+		};
+
+		comment = [this](char c) {
+			// endline character ends comment
+			if(c == '\n')
+				start.setActive();
+
+			// reject everything
+			reject();
+		};
+
+		keyword = [this](char c) {
+			// space or bracket characters end a keyword
+			if(std::isspace(c) || c == '(' || c == ')') {
+				emit();
+				start.setActive();
+			}
+			// otherwise just parse another character of the keyword
+			else
+				accept(c);
+		};
+
+		// read the first keyword into current
+		next();
+	}
 };
 
 ///////////////////
@@ -87,7 +84,6 @@ struct Joint {
 	int parent = -1;
 	anim::Attributes attrs;
 };
-
 
 void readUnits(anim::Tokenizer& tokenizer) {
 	tokenizer.next();
@@ -192,7 +188,7 @@ void readRoot(anim::Tokenizer& tokenizer, std::vector<Joint>& bones) {
 
 std::pair<Joint, unsigned> readJoint(anim::Tokenizer& tokenizer) {
 	// the result - Joint and its ID
-	std::pair<Joint, unsigned>	result;
+	std::pair<Joint, unsigned> result;
 	// initialise the DOF field in joint attributes (might end up empty)
 	std::vector<std::string>& dofs = result.first.attrs["dof"].as<std::vector<std::string>>();
 
@@ -340,9 +336,10 @@ void readKeyword(anim::Tokenizer& tokenizer, std::vector<Joint>& bones) {
 		readHierarchy(tokenizer, bones);
 
 	else
-		throw std::runtime_error("unknown token '" + token.value + "' on line " + boost::lexical_cast<std::string>(token.line));
+		throw std::runtime_error("unknown token '" + token.value + "' on line " +
+		                         boost::lexical_cast<std::string>(token.line));
 }
-}
+}  // namespace
 
 std::unique_ptr<anim::Skeleton> doLoad(const boost::filesystem::path& filename) {
 	// open the file
@@ -376,7 +373,8 @@ std::unique_ptr<anim::Skeleton> doLoad(const boost::filesystem::path& filename) 
 			assert(parentJoint >= 0);
 
 			// both the position and rotation are at this stage in *world space*
-			index = result->addChild((*result)[parentJoint], anim::Transform(j.axis.rotation, joints[j.parent].position), j.name);
+			index = result->addChild((*result)[parentJoint],
+			                         anim::Transform(j.axis.rotation, joints[j.parent].position), j.name);
 		}
 
 		(*result)[index].attributes() = j.attrs;
@@ -415,9 +413,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-		"ASF files (*.asf)",
-	}));
+	meta.addAttribute(a_filename, "filename",
+	                  possumwood::Filename({
+	                      "ASF files (*.asf)",
+	                  }));
 	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_skel);

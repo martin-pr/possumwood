@@ -1,7 +1,6 @@
-#include <possumwood_sdk/node_implementation.h>
-
-#include <OpenEXR/ImathVec.h>
 #include <OpenEXR/ImathEuler.h>
+#include <OpenEXR/ImathVec.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/animation.h"
 #include "maths/io/vec3.h"
@@ -22,11 +21,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(!anim.empty()) {
 		// assemble the transform
 		Imath::Matrix44<float> m1, m2, m3;
-		m1 = Imath::Euler<float>(Imath::Vec3<float>(
-			rot.y * M_PI / 180.0,
-			rot.x * M_PI / 180.0,
-			rot.z * M_PI / 180.0
-		)).toMatrix44();
+		m1 = Imath::Euler<float>(Imath::Vec3<float>(rot.y * M_PI / 180.0, rot.x * M_PI / 180.0, rot.z * M_PI / 180.0))
+		         .toMatrix44();
 		m2.setScale(sc);
 		m3.setTranslation(tr);
 
@@ -46,7 +42,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		data.set(a_outAnim, anim::Animation());
 
 	return dependency_graph::State();
-
 }
 
 void init(possumwood::Metadata& meta) {
@@ -66,4 +61,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/animation/transform", init);
 
-}
+}  // namespace

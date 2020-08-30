@@ -3,9 +3,6 @@
 #include <cassert>
 #include <stdexcept>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-
 #include "gl.h"
 
 namespace possumwood {
@@ -38,13 +35,11 @@ GLuint compileShader(GLenum shaderType, const std::string& source) {
 
 	return shaderId;
 }
-}
+}  // namespace
 
-GLRenderable::GLRenderable(GLenum drawType, const std::string& vertexShaderSrc,
-                           const std::string& fragmentShaderSrc)
-    : m_vao(0), m_vertexShader(0), m_fragmentShader(0), m_program(0),
-      m_vertexShaderSrc(vertexShaderSrc), m_fragmentShaderSrc(fragmentShaderSrc),
-      m_drawType(drawType) {
+GLRenderable::GLRenderable(GLenum drawType, const std::string& vertexShaderSrc, const std::string& fragmentShaderSrc)
+    : m_vao(0), m_vertexShader(0), m_fragmentShader(0), m_program(0), m_vertexShaderSrc(vertexShaderSrc),
+      m_fragmentShaderSrc(fragmentShaderSrc), m_drawType(drawType) {
 }
 
 GLRenderable::~GLRenderable() {
@@ -136,8 +131,7 @@ void GLRenderable::updateVBO(GLuint index, VBOData& data) {
 
 	// update the content
 	glBindBuffer(GL_ARRAY_BUFFER, data.VBOId);
-	glBufferData(GL_ARRAY_BUFFER, data.data.size() * 3 * sizeof(GLfloat), &data.data[0],
-	             GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, data.data.size() * 3 * sizeof(GLfloat), &data.data[0], GL_STATIC_DRAW);
 	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(index);
 
@@ -287,4 +281,4 @@ GLRenderable::VBO::~VBO() {
 
 	m_parent->m_vbos[m_name].needsUpdate = true;
 }
-}
+}  // namespace possumwood

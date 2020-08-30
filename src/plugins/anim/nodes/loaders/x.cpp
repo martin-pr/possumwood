@@ -1,19 +1,17 @@
+#include <ImathMatrixAlgo.h>
+#include <actions/io.h>
+#include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
+
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <map>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/filesystem.hpp>
-
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/datatypes/filename.h>
-#include <actions/io.h>
-
+#include "datatypes/skeleton.h"
 #include "datatypes/skinned_mesh.h"
 #include "datatypes/transform.h"
-#include "datatypes/skeleton.h"
 #include "tokenizer.h"
-
-#include <ImathMatrixAlgo.h>
 
 namespace openanim {
 
@@ -240,9 +238,8 @@ void readSkinWeights(anim::Tokenizer& tokenizer, anim::SkinnedMesh& result, std:
 	tokenizer.next();
 }
 
-std::unique_ptr<anim::SkinnedMesh> readMesh(anim::Tokenizer& tokenizer,
-                           const Imath::M44f& transform,
-                           std::map<std::string, unsigned>& boneIds) {
+std::unique_ptr<anim::SkinnedMesh> readMesh(anim::Tokenizer& tokenizer, const Imath::M44f& transform,
+                                            std::map<std::string, unsigned>& boneIds) {
 	assert(tokenizer.current() == "Mesh");
 	tokenizer >> "{";
 
@@ -316,7 +313,8 @@ std::unique_ptr<anim::SkinnedMesh> readMesh(anim::Tokenizer& tokenizer,
 			normTr[2][3] = 0.0f;
 			normTr[3][3] = 1.0f;
 			readNormals(tokenizer, *result, normTr);
-		} else if(tokenizer.current() == "SkinWeights")
+		}
+		else if(tokenizer.current() == "SkinWeights")
 			readSkinWeights(tokenizer, *result, boneIds);
 		else {
 			tokenizer >> "{";
@@ -336,10 +334,8 @@ struct Frame {
 	unsigned skinningUseCount = 0;
 };
 
-std::unique_ptr<Frame> readFrame(anim::Tokenizer& tokenizer,
-                                 std::vector<anim::SkinnedMesh>& models,
-                                 const Imath::M44f& transform,
-                                 std::map<std::string, unsigned>& boneIds);
+std::unique_ptr<Frame> readFrame(anim::Tokenizer& tokenizer, std::vector<anim::SkinnedMesh>& models,
+                                 const Imath::M44f& transform, std::map<std::string, unsigned>& boneIds);
 
 Imath::M44f readTransformation(anim::Tokenizer& tokenizer) {
 	assert(tokenizer.current() == "FrameTransformMatrix");
@@ -361,10 +357,8 @@ Imath::M44f readTransformation(anim::Tokenizer& tokenizer) {
 	return result;
 }
 
-std::unique_ptr<Frame> readFrameInternal(anim::Tokenizer& tokenizer,
-                                         std::vector<anim::SkinnedMesh>& models,
-                                         const Imath::M44f& transform,
-                                         const std::string& name,
+std::unique_ptr<Frame> readFrameInternal(anim::Tokenizer& tokenizer, std::vector<anim::SkinnedMesh>& models,
+                                         const Imath::M44f& transform, const std::string& name,
                                          std::map<std::string, unsigned>& boneIds) {
 	assert(tokenizer.current() == "{");
 
@@ -396,10 +390,8 @@ std::unique_ptr<Frame> readFrameInternal(anim::Tokenizer& tokenizer,
 	return result;
 }
 
-std::unique_ptr<Frame> readFrame(anim::Tokenizer& tokenizer,
-                                 std::vector<anim::SkinnedMesh>& models,
-                                 const Imath::M44f& transform,
-                                 std::map<std::string, unsigned>& boneIds) {
+std::unique_ptr<Frame> readFrame(anim::Tokenizer& tokenizer, std::vector<anim::SkinnedMesh>& models,
+                                 const Imath::M44f& transform, std::map<std::string, unsigned>& boneIds) {
 	assert(tokenizer.current() == "Frame");
 
 	// read the name
@@ -418,15 +410,14 @@ anim::Transform convertMatrix(const Imath::M44f& m) {
 	// the animation rig anyways)
 	return Imath::M44f(1, 0, 0, m[3][0], 0, 1, 0, m[3][1], 0, 0, 1, m[3][2], 0, 0, 0, 1);
 }
-}
+}  // namespace
 
 struct RigData {
 	std::vector<anim::SkinnedMesh> models;
 	anim::Skeleton skeleton;
 };
 
-std::unique_ptr<RigData>
-doLoad(const boost::filesystem::path& filename) {
+std::unique_ptr<RigData> doLoad(const boost::filesystem::path& filename) {
 	// instantiate the tokenizer
 	std::ifstream in(filename.string());
 	XTokenizer tokenizer(in);
@@ -518,7 +509,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		std::unique_ptr<RigData> x = doLoad(filename.filename());
 
 		data.set(a_skel, x->skeleton);
-		data.set(a_meshes, std::shared_ptr<const std::vector<anim::SkinnedMesh>>(new std::vector<anim::SkinnedMesh>(x->models)));
+		data.set(a_meshes,
+		         std::shared_ptr<const std::vector<anim::SkinnedMesh>>(new std::vector<anim::SkinnedMesh>(x->models)));
 	}
 	else {
 		data.set(a_skel, anim::Skeleton());
@@ -530,11 +522,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_filename, "filename", possumwood::Filename({
-		"X files (*.x)",
-	}));
+	meta.addAttribute(a_filename, "filename",
+	                  possumwood::Filename({
+	                      "X files (*.x)",
+	                  }));
 	meta.addAttribute(a_skel, "skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_meshes, "meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_meshes, "meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(),
+	                  possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_skel);
 	meta.addInfluence(a_filename, a_meshes);
@@ -544,4 +538,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/loaders/x", init);
 
-}
+}  // namespace openanim

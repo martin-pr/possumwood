@@ -85,7 +85,7 @@ std::size_t Properties::addSingleItem() {
 	for(auto& p : m_properties)
 		m_data.back().addValue(p.second->makeValue());
 
-	return m_data.size()-1;
+	return m_data.size() - 1;
 }
 
 void Properties::removeProperty(const std::string& name) {
@@ -98,10 +98,10 @@ void Properties::removeProperty(const std::string& name) {
 
 	for(auto& p : m_properties)
 		if(p.second->index() > removedID)
-			p.second->setIndex(p.second->index()-1);
+			p.second->setIndex(p.second->index() - 1);
 
 	for(auto& d : m_data)
 		d.removeValue(removedID);
 }
 
-}
+}  // namespace possumwood

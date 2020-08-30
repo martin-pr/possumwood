@@ -1,10 +1,9 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
 
 #include "frame.h"
 
@@ -29,7 +28,9 @@ int modeToEnum(const std::string& mode) {
 dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result;
 
-	(*data.get(a_inFrame)).clone().convertTo(result, modeToEnum(data.get(a_mode).value()), data.get(a_a), data.get(a_b));
+	(*data.get(a_inFrame))
+	    .clone()
+	    .convertTo(result, modeToEnum(data.get(a_mode).value()), data.get(a_a), data.get(a_b));
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
@@ -38,8 +39,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_mode, "mode",
-		possumwood::Enum({"CV_8U", "CV_16U", "CV_32F"}));
+	meta.addAttribute(a_mode, "mode", possumwood::Enum({"CV_8U", "CV_16U", "CV_32F"}));
 	meta.addAttribute(a_a, "a", 1.0f);
 	meta.addAttribute(a_b, "b", 0.0f);
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
@@ -54,4 +54,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/convert", init);
 
-}
+}  // namespace

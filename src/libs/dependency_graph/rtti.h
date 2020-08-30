@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <typeinfo>
 #include <typeindex>
+#include <typeinfo>
 
 namespace dependency_graph {
 
@@ -10,20 +10,20 @@ namespace dependency_graph {
 const std::string unmangledName(const char* name);
 
 /// This method uses internal GCC ways to decode the typeid.name values into the original name and re$
-template<class T>
+template <class T>
 const std::string unmangledTypeId() {
-        return unmangledName(typeid(T).name());
+	return unmangledName(typeid(T).name());
 }
 
 /// This method uses internal GCC ways to decode the typeid.name values into the original name and re$
-template<class T>
+template <class T>
 const std::string unmangledTypeId(const T&) {
-        return unmangledName(typeid(T).name());
+	return unmangledName(typeid(T).name());
 }
 
-template<>
+template <>
 inline const std::string unmangledTypeId<std::type_index>(const std::type_index& index) {
-        return unmangledName(index.name());
+	return unmangledName(index.name());
 }
 
-}
+}  // namespace dependency_graph

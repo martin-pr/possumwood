@@ -8,8 +8,8 @@ using std::endl;
 
 namespace anim {
 
-Skeleton::Joint::Joint(std::size_t id, const Transform& transform, Skeleton* skel) :
-	m_id(id), m_transformation(transform), m_skeleton(skel) {
+Skeleton::Joint::Joint(std::size_t id, const Transform& transform, Skeleton* skel)
+    : m_id(id), m_transformation(transform), m_skeleton(skel) {
 }
 
 const std::string& Skeleton::Joint::name() const {
@@ -82,11 +82,11 @@ const Attributes& Skeleton::Joint::attributes() const {
 	return m_skeleton->m_hierarchy->itemAttributes(m_id);
 }
 
-bool Skeleton::Joint::operator == (const Joint& j) const {
+bool Skeleton::Joint::operator==(const Joint& j) const {
 	return m_id == j.m_id && m_transformation == j.m_transformation;
 }
 
-bool Skeleton::Joint::operator != (const Joint& j) const {
+bool Skeleton::Joint::operator!=(const Joint& j) const {
 	return m_id != j.m_id || m_transformation != j.m_transformation;
 }
 
@@ -100,7 +100,7 @@ Skeleton::Skeleton(const Skeleton& h) : m_joints(h.m_joints), m_hierarchy(h.m_hi
 		j.m_skeleton = this;
 }
 
-Skeleton& Skeleton::operator = (const Skeleton& h) {
+Skeleton& Skeleton::operator=(const Skeleton& h) {
 	m_hierarchy = h.m_hierarchy;
 	m_joints = h.m_joints;
 
@@ -115,7 +115,7 @@ Skeleton::Skeleton(Skeleton&& h) : m_joints(std::move(h.m_joints)), m_hierarchy(
 		j.m_skeleton = this;
 }
 
-Skeleton& Skeleton::operator = (Skeleton&& h) {
+Skeleton& Skeleton::operator=(Skeleton&& h) {
 	m_joints = std::move(h.m_joints);
 	m_hierarchy = std::move(h.m_hierarchy);
 
@@ -217,13 +217,13 @@ void Skeleton::makeConsistentWith(Skeleton& s) {
 	m_hierarchy = s.m_hierarchy;
 }
 
-Skeleton Skeleton::operator *(const Imath::M44f& m) const {
+Skeleton Skeleton::operator*(const Imath::M44f& m) const {
 	Skeleton result = *this;
 	result *= m;
 	return result;
 }
 
-Skeleton& Skeleton::operator *=(Imath::M44f m) {
+Skeleton& Skeleton::operator*=(Imath::M44f m) {
 	if(m_joints.size() > 0) {
 		// root should be rotated, translated and scaled
 		m_joints[0].tr() *= m;
@@ -233,19 +233,19 @@ Skeleton& Skeleton::operator *=(Imath::M44f m) {
 		for(unsigned a = 0; a < 3; ++a)
 			sc[a] = std::sqrt(powf(m[0][a], 2) + powf(m[1][a], 2) + powf(m[2][a], 2));
 
-		for(auto it = m_joints.begin()+1; it != m_joints.end(); ++it)
-			for(unsigned a=0;a<3;++a)
+		for(auto it = m_joints.begin() + 1; it != m_joints.end(); ++it)
+			for(unsigned a = 0; a < 3; ++a)
 				it->tr().translation[a] *= sc[a];
 	}
 
 	return *this;
 }
 
-bool Skeleton::operator == (const Skeleton& skel) const {
+bool Skeleton::operator==(const Skeleton& skel) const {
 	return m_hierarchy == skel.m_hierarchy && m_joints == skel.m_joints;
 }
 
-bool Skeleton::operator != (const Skeleton& skel) const {
+bool Skeleton::operator!=(const Skeleton& skel) const {
 	return m_hierarchy != skel.m_hierarchy || m_joints != skel.m_joints;
 }
 
@@ -257,9 +257,9 @@ void printBone(std::ostream& out, const Skeleton& skel, unsigned index, const st
 	for(auto& chld : skel[index].children())
 		printBone(out, skel, chld.index(), prepend + "  ");
 }
-}
+}  // namespace
 
-std::ostream& operator << (std::ostream& out, const Skeleton& skel) {
+std::ostream& operator<<(std::ostream& out, const Skeleton& skel) {
 	if(!skel.empty())
 		printBone(out, skel, 0);
 
@@ -274,4 +274,4 @@ const Attributes& Skeleton::attributes() const {
 	return m_hierarchy->attributes();
 }
 
-}
+}  // namespace anim

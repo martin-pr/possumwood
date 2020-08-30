@@ -1,12 +1,11 @@
+#include "lua/module.h"
+
+#include <lua/datatypes/context.h>
+#include <lua/datatypes/state.h>
+#include <lualib.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include <lualib.h>
-
-#include <lua/datatypes/state.h>
-#include <lua/datatypes/context.h>
-
 #include "lua/opencv_image.h"
-#include "lua/module.h"
 
 namespace {
 
@@ -16,10 +15,7 @@ dependency_graph::OutAttr<possumwood::lua::Context> a_outContext;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::lua::Context context = data.get(a_inContext);
 
-	context.addModule(
-		"images",
-		possumwood::images::Module::init
-	);
+	context.addModule("images", possumwood::images::Module::init);
 
 	data.set(a_outContext, context);
 
@@ -37,4 +33,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl_opencv("lua/modules/images", init);
 
-}
+}  // namespace

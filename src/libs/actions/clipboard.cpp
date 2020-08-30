@@ -5,7 +5,7 @@
 namespace possumwood {
 
 namespace {
-	Clipboard* s_instance = nullptr;
+Clipboard* s_instance = nullptr;
 }
 
 /// Returns an instance of Clipboard. Should be explicitly instantiated as a derived class.
@@ -24,4 +24,4 @@ Clipboard::~Clipboard() {
 	s_instance = nullptr;
 }
 
-}
+}  // namespace possumwood

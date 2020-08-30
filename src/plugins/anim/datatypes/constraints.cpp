@@ -9,7 +9,8 @@ Constraints::Constraints(const anim::Animation& a) : m_anim(new anim::Animation(
 
 Constraints::Constraints(const Constraints& c) {
 	for(auto& val : c) {
-		std::pair<std::string, constraints::Channel> value = std::make_pair(std::string(val.first), constraints::Channel(this));
+		std::pair<std::string, constraints::Channel> value =
+		    std::make_pair(std::string(val.first), constraints::Channel(this));
 
 		std::map<std::string, constraints::Channel>::iterator it = m_channels.insert(value).first;
 		it->second = val.second;
@@ -18,11 +19,12 @@ Constraints::Constraints(const Constraints& c) {
 	m_anim = c.m_anim;
 }
 
-const Constraints& Constraints::operator = (const Constraints& c) {
+const Constraints& Constraints::operator=(const Constraints& c) {
 	m_channels.clear();
 
 	for(auto& val : c) {
-		std::map<std::string, constraints::Channel>::iterator it = m_channels.insert(std::make_pair(val.first, constraints::Channel(this))).first;
+		std::map<std::string, constraints::Channel>::iterator it =
+		    m_channels.insert(std::make_pair(val.first, constraints::Channel(this))).first;
 		it->second = val.second;
 	}
 
@@ -39,11 +41,11 @@ Constraints::const_iterator Constraints::end() const {
 	return m_channels.end();
 }
 
-bool Constraints::operator == (const Constraints& c) const {
+bool Constraints::operator==(const Constraints& c) const {
 	return m_channels == c.m_channels;
 }
 
-bool Constraints::operator != (const Constraints& c) const {
+bool Constraints::operator!=(const Constraints& c) const {
 	return m_channels != c.m_channels;
 }
 
@@ -66,13 +68,13 @@ anim::Transform average(const std::vector<constraints::Frame>& tr, std::size_t s
 	assert(start <= end);
 	assert(end < tr.size());
 
-	Imath::V3f translation(0,0,0);
-	Imath::Quatf rotation(0,0,0,0);
+	Imath::V3f translation(0, 0, 0);
+	Imath::Quatf rotation(0, 0, 0, 0);
 	float norm = 0.0f;
-	for(std::size_t i=start; i<=end; ++i) {
+	for(std::size_t i = start; i <= end; ++i) {
 		assert(tr[i].value() <= 1.0f);
 
-		const float weight = (1.0f-tr[i].value());
+		const float weight = (1.0f - tr[i].value());
 
 		norm += weight;
 
@@ -100,7 +102,7 @@ std::size_t findJointId(const std::string& name, const anim::Animation& anim) {
 	return jointId;
 }
 
-}
+}  // namespace
 
 void Constraints::process(const std::string& jointName, std::function<void(constraints::Frames& fr)> fn) {
 	if(m_anim == nullptr || m_anim->empty())
@@ -110,7 +112,8 @@ void Constraints::process(const std::string& jointName, std::function<void(const
 	const std::size_t jointId = findJointId(jointName, *m_anim);
 
 	// get the frames of the constraint
-	std::map<std::string, constraints::Channel>::iterator cit = m_channels.insert(std::make_pair(jointName, constraints::Channel(this))).first;
+	std::map<std::string, constraints::Channel>::iterator cit =
+	    m_channels.insert(std::make_pair(jointName, constraints::Channel(this))).first;
 	constraints::Channel& channel = cit->second;
 
 	// if empty, make a new array of world transforms
@@ -131,7 +134,7 @@ void Constraints::process(const std::string& jointName, std::function<void(const
 	std::size_t begin = std::numeric_limits<std::size_t>::max();
 	std::size_t end = 0;
 
-	for(std::size_t frameIndex=0; frameIndex < frames.size(); ++frameIndex) {
+	for(std::size_t frameIndex = 0; frameIndex < frames.size(); ++frameIndex) {
 		if(frames.m_frames[frameIndex].m_constraintValue < 1.0f) {
 			if(begin > end)
 				begin = frameIndex;
@@ -150,7 +153,7 @@ void Constraints::process(const std::string& jointName, std::function<void(const
 		channel.addConstraint(begin, end, average(frames.m_frames, begin, end));
 }
 
-std::ostream& operator <<(std::ostream& out, const Constraints& c) {
+std::ostream& operator<<(std::ostream& out, const Constraints& c) {
 	out << "Constraints:" << std::endl;
 
 	if(c.empty())
@@ -166,4 +169,4 @@ std::ostream& operator <<(std::ostream& out, const Constraints& c) {
 	return out;
 }
 
-}
+}  // namespace anim

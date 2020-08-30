@@ -6,11 +6,13 @@
 
 namespace dependency_graph {
 
-Port::Port(unsigned id, NodeBase* parent) : m_parent(parent), m_id(id),
-	m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput), m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
+Port::Port(unsigned id, NodeBase* parent)
+    : m_parent(parent), m_id(id), m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput),
+      m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
 }
 
-Port::Port(Port&& p) : m_parent(p.m_parent), m_id(p.m_id), m_dirty(p.m_dirty), m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
+Port::Port(Port&& p)
+    : m_parent(p.m_parent), m_id(p.m_id), m_dirty(p.m_dirty), m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
 	if(p.m_linkedFromPort)
 		p.m_linkedFromPort->unlink();
 	if(p.m_linkedToPort)
@@ -124,8 +126,7 @@ void Port::setData(const Data& val) {
 	assert(category() == Attr::kOutput || !isConnected());
 
 	// set the value in the data block
-	const bool valueWasSet = (m_parent->get(m_id).type() != val.type()) ||
-		(m_parent->get(m_id) != val);
+	const bool valueWasSet = (m_parent->get(m_id).type() != val.type()) || (m_parent->get(m_id) != val);
 	m_parent->set(m_id, val);
 
 	// explicitly setting a value makes it not dirty, but makes everything that
@@ -186,8 +187,8 @@ void Port::connect(Port& p) {
 
 			if(newAddedPorts.find(this) != newAddedPorts.end()) {
 				std::stringstream msg;
-				msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
-				    " would cause a cyclical dependency";
+				msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/"
+				    << p.name() << " would cause a cyclical dependency";
 
 				throw(std::runtime_error(msg.str()));
 			}
@@ -201,8 +202,9 @@ void Port::connect(Port& p) {
 		const unsigned voidCount = (type() == typeid(void)) + (p.type() == typeid(void));
 		if((type() != p.type() && (voidCount != 1)) || voidCount == 2) {
 			std::stringstream msg;
-			msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
-			    " does not connect the same datatype (" << unmangledTypeId(type()) << " vs " << unmangledTypeId(p.type()) << ")";
+			msg << "A connection between " << node().name() << "/" << name() << " and " << p.node().name() << "/"
+			    << p.name() << " does not connect the same datatype (" << unmangledTypeId(type()) << " vs "
+			    << unmangledTypeId(p.type()) << ")";
 
 			throw(std::runtime_error(msg.str()));
 		}
@@ -211,11 +213,11 @@ void Port::connect(Port& p) {
 	// test that both nodes are inside one network
 	assert(p.node().hasParentNetwork() && node().hasParentNetwork());
 	if(&p.node().network() != &node().network()) {
-			std::stringstream msg;
-			msg << "Ports " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
-			    " don't belong to nodes within the same network";
+		std::stringstream msg;
+		msg << "Ports " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name()
+		    << " don't belong to nodes within the same network";
 
-			throw(std::runtime_error(msg.str()));
+		throw(std::runtime_error(msg.str()));
 	}
 
 	// add the connection
@@ -224,8 +226,8 @@ void Port::connect(Port& p) {
 	}
 	catch(std::runtime_error& err) {
 		std::stringstream msg;
-		msg << "Ports " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() <<
-		    " - " << err.what();
+		msg << "Ports " << node().name() << "/" << name() << " and " << p.node().name() << "/" << p.name() << " - "
+		    << err.what();
 
 		throw(std::runtime_error(msg.str()));
 	}
@@ -282,7 +284,7 @@ void Port::disconnect(Port& p) {
 
 		// explicitly setting a value makes it not dirty, but makes everything that
 		//   depends on it dirty
-		p.m_parent->markAsDirty(p.m_id, true /* dependants only */ );
+		p.m_parent->markAsDirty(p.m_id, true /* dependants only */);
 	}
 
 	// disconnecting an untyped output port should reset the data, to keep the behaviour consistent
@@ -307,7 +309,7 @@ void Port::disconnect(Port& p) {
 bool Port::isConnected() const {
 	// return true if there are no connections leading to/from this input/output port
 	return static_cast<bool>(m_parent->network().connections().connectedFrom(*this)) ||
-		not m_parent->network().connections().connectedTo(*this).empty();
+	       not m_parent->network().connections().connectedTo(*this).empty();
 }
 
 void Port::linkTo(Port& targetPort) {
@@ -354,4 +356,4 @@ boost::signals2::connection Port::flagsCallback(const std::function<void()>& fn)
 	return m_flagsCallbacks.connect(fn);
 }
 
-}
+}  // namespace dependency_graph

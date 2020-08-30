@@ -1,24 +1,23 @@
 #include "actions.h"
 
-#include <functional>
-#include <set>
-
 #include <dependency_graph/attr_map.h>
 #include <dependency_graph/detail.h>
 #include <dependency_graph/metadata_register.h>
 #include <dependency_graph/network.h>
 #include <dependency_graph/values.h>
+
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
+#include <functional>
+#include <set>
 
+#include "app.h"
+#include "clipboard.h"
 #include "detail/connections.h"
 #include "detail/metadata.h"
 #include "detail/nodes.h"
 #include "detail/tools.h"
 #include "detail/values.h"
-
-#include "app.h"
-#include "clipboard.h"
 
 namespace possumwood {
 namespace actions {

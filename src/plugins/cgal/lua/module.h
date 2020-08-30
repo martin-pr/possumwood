@@ -1,6 +1,7 @@
 #pragma once
 
 #include <lua/datatypes/state.h>
+
 #include <string>
 
 namespace possumwood {
@@ -11,5 +12,5 @@ struct Module {
 	static void init(possumwood::lua::State& state);
 };
 
-}  // namespace images
+}  // namespace cgal
 }  // namespace possumwood

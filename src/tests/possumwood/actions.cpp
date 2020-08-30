@@ -1,14 +1,13 @@
-#include <boost/test/unit_test.hpp>
+#include <actions/actions.h>
+#include <dependency_graph/graph.h>
+#include <possumwood_sdk/app.h>
 
+#include <boost/test/unit_test.hpp>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/metadata.inl>
-#include <dependency_graph/graph.h>
+#include <dependency_graph/nodes_iterator.inl>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/values.inl>
-#include <dependency_graph/nodes_iterator.inl>
-
-#include <possumwood_sdk/app.h>
-#include <actions/actions.h>
 
 #include "common.h"
 
@@ -17,11 +16,11 @@ using namespace dependency_graph;
 namespace dependency_graph {
 
 /// a local implementation of the output operator, to make sure tests build
-static std::ostream& operator << (std::ostream& out, const dependency_graph::MetadataHandle& h) {
+static std::ostream& operator<<(std::ostream& out, const dependency_graph::MetadataHandle& h) {
 	return out;
 }
 
-}
+}  // namespace dependency_graph
 
 BOOST_AUTO_TEST_CASE(actions_single_node_instance) {
 	// make the app "singleton"
@@ -35,8 +34,7 @@ BOOST_AUTO_TEST_CASE(actions_single_node_instance) {
 
 	// now make a single node using an Action
 	BOOST_REQUIRE_NO_THROW(
-		possumwood::actions::createNode(app.graph(), additionNode(), "add_1", possumwood::NodeData())
-	);
+	    possumwood::actions::createNode(app.graph(), additionNode(), "add_1", possumwood::NodeData()));
 
 	// check the state of the graph
 	BOOST_REQUIRE_EQUAL(app.graph().nodes().size(), 1u);
@@ -81,9 +79,7 @@ BOOST_AUTO_TEST_CASE(actions_single_node_instance) {
 	/////////
 
 	// remove the node
-	BOOST_REQUIRE_NO_THROW(
-		possumwood::actions::removeNode(*app.graph().nodes().begin());
-	);
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::removeNode(*app.graph().nodes().begin()););
 
 	// check the state of the graph
 	BOOST_CHECK(app.graph().nodes().empty());
@@ -134,9 +130,7 @@ BOOST_AUTO_TEST_CASE(actions_single_node_value) {
 	BOOST_CHECK_EQUAL(node.port(2).get<float>(), 0.0f);
 
 	// now make a single node using an Action
-	BOOST_REQUIRE_NO_THROW(
-		possumwood::actions::setValue(node.port(0), 1.0f);
-	);
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::setValue(node.port(0), 1.0f););
 
 	// check the state of the graph
 	BOOST_CHECK_EQUAL(node.port(0).get<float>(), 1.0f);

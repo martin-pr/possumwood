@@ -13,9 +13,7 @@ void ViewportState::perspective(float fovyInDegrees, float znear, float zfar) {
 	m_zfar = zfar;
 }
 
-void ViewportState::lookAt(const Imath::V3f& eyePosition, const Imath::V3f& lookAt,
-                   const Imath::V3f& upVector) {
-
+void ViewportState::lookAt(const Imath::V3f& eyePosition, const Imath::V3f& lookAt, const Imath::V3f& upVector) {
 	m_eyePosition = eyePosition;
 	m_lookAt = lookAt;
 	m_upVector = upVector;
@@ -65,12 +63,7 @@ const Imath::M44f ViewportState::projection() const {
 	const float A = (m_zfar + m_znear) / (m_znear - m_zfar);
 	const float B = 2.0 * m_zfar * m_znear / (m_znear - m_zfar);
 
-	Imath::M44f projection = Imath::M44f(
-		f / aspectRatio, 0, 0, 0,
-		0, f, 0, 0,
-		0, 0, A, -1,
-		0, 0, B, 0
-	);
+	Imath::M44f projection = Imath::M44f(f / aspectRatio, 0, 0, 0, 0, f, 0, 0, 0, 0, A, -1, 0, 0, B, 0);
 
 	return projection;
 }
@@ -107,5 +100,4 @@ const Imath::M44f ViewportState::modelview() const {
 	return modelview;
 }
 
-
-}
+}  // namespace possumwood

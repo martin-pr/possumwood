@@ -1,10 +1,9 @@
 #pragma once
 
-#include <map>
+#include <actions/traits.h>
 
 #include <boost/filesystem/path.hpp>
-
-#include <actions/traits.h>
+#include <map>
 
 namespace possumwood {
 
@@ -14,8 +13,8 @@ class Font {
 	struct Glyph {
 		int x, y, width, height, originX, originY, advance;
 
-		bool operator ==(const Glyph& g) const;
-		bool operator !=(const Glyph& g) const;
+		bool operator==(const Glyph& g) const;
+		bool operator!=(const Glyph& g) const;
 	};
 
 	// loads the font definition from a file
@@ -36,13 +35,13 @@ class Font {
 	float m_width, m_height, m_size;
 };
 
-std::ostream& operator << (std::ostream& out, const Font& f);
+std::ostream& operator<<(std::ostream& out, const Font& f);
 
-template<>
+template <>
 struct Traits<Font> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0, 0.5, 0}};
 	}
 };
 
-}
+}  // namespace possumwood

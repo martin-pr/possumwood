@@ -1,21 +1,15 @@
 #include "string.h"
 
+#include <possumwood_sdk/app.h>
+
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-
-#include <possumwood_sdk/app.h>
 
 string_ui::string_ui() {
 	m_lineEdit = new QLineEdit();
 
-	m_lineEditConnection = QObject::connect(
-		m_lineEdit,
-		&QLineEdit::editingFinished,
-		[this]() -> void {
-			callValueChangedCallbacks();
-		}
-	);
-
+	m_lineEditConnection =
+	    QObject::connect(m_lineEdit, &QLineEdit::editingFinished, [this]() -> void { callValueChangedCallbacks(); });
 }
 
 string_ui::~string_ui() {

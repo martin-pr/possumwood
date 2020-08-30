@@ -1,20 +1,19 @@
 #include "generic_property.h"
 
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QStyle>
-#include <QDialog>
-#include <QMainWindow>
-#include <QTextEdit>
-#include <QDialogButtonBox>
 #include <QDesktopWidget>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QHBoxLayout>
+#include <QMainWindow>
+#include <QStyle>
+#include <QTextEdit>
+#include <QVBoxLayout>
 
 GenericProperty::GenericProperty() {
 	m_widget = new QWidget(NULL);
 
 	QHBoxLayout* layout = new QHBoxLayout(m_widget);
-	layout->setContentsMargins(0,0,0,0);
-
+	layout->setContentsMargins(0, 0, 0, 0);
 
 	m_label = new QLabel();
 	layout->addWidget(m_label, 1);
@@ -28,38 +27,33 @@ GenericProperty::GenericProperty() {
 	palette.setColor(QPalette::Text, palette.color(QPalette::Disabled, QPalette::Text));
 	m_label->setPalette(palette);
 
-
 	m_detailButton = new QToolButton();
 	m_detailButton->setIcon(m_detailButton->style()->standardIcon(QStyle::SP_MessageBoxInformation));
 	layout->addWidget(m_detailButton);
 
-	m_buttonConnection = QObject::connect(
-		m_detailButton,
-		&QToolButton::released,
-		[this]() -> void {
-			QDialog* dialog = new QDialog(possumwood::App::instance().mainWindow());
-			dialog->resize(QDesktopWidget().availableGeometry().size() * 0.7); // arbitrary "sensible" size of 70% of available space
+	m_buttonConnection = QObject::connect(m_detailButton, &QToolButton::released, [this]() -> void {
+		QDialog* dialog = new QDialog(possumwood::App::instance().mainWindow());
+		dialog->resize(QDesktopWidget().availableGeometry().size() *
+		               0.7);  // arbitrary "sensible" size of 70% of available space
 
-			QVBoxLayout* layout = new QVBoxLayout(dialog);
-			layout->setContentsMargins(0,0,0,0);
+		QVBoxLayout* layout = new QVBoxLayout(dialog);
+		layout->setContentsMargins(0, 0, 0, 0);
 
-			QTextEdit* view = new QTextEdit();
-			view->setReadOnly(true);
-			view->setText(m_value.c_str());
-			layout->addWidget(view, 1);
+		QTextEdit* view = new QTextEdit();
+		view->setReadOnly(true);
+		view->setText(m_value.c_str());
+		layout->addWidget(view, 1);
 
-			QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok);
-			layout->addWidget(buttons, 0);
+		QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok);
+		layout->addWidget(buttons, 0);
 
-			QDialog::connect(buttons, &QDialogButtonBox::accepted, [=]() {
-				dialog->accept();
-				dialog->deleteLater();
-			});
+		QDialog::connect(buttons, &QDialogButtonBox::accepted, [=]() {
+			dialog->accept();
+			dialog->deleteLater();
+		});
 
-			dialog->show();
-		}
-	);
-
+		dialog->show();
+	});
 }
 
 GenericProperty::~GenericProperty() {
@@ -74,7 +68,6 @@ void GenericProperty::valueToPort(dependency_graph::Port& port) const {
 }
 
 void GenericProperty::valueFromPort(dependency_graph::Port& port) {
-
 	std::stringstream ss;
 
 	try {

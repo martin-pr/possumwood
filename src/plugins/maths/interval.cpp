@@ -2,7 +2,8 @@
 
 #include <algorithm>
 
-namespace possumwood { namespace maths {
+namespace possumwood {
+namespace maths {
 
 namespace {
 
@@ -28,7 +29,7 @@ Interval::operator float() const {
 	return value();
 }
 
-Interval& Interval::operator = (float val) {
+Interval& Interval::operator=(float val) {
 	setValue(val);
 	return *this;
 }
@@ -84,12 +85,12 @@ bool Interval::inProgressUpdates() const {
 	return m_inProgressUpdates;
 }
 
-std::ostream& operator << (std::ostream& out, const Interval& f) {
+std::ostream& operator<<(std::ostream& out, const Interval& f) {
 	out << "min=" << f.min() << ", max=" << f.max() << ", value=" << f.value();
 	return out;
 }
 
-}
+}  // namespace maths
 
 //////////
 
@@ -126,8 +127,8 @@ void fromJson(const ::possumwood::io::json& json, maths::Interval& value) {
 	value.setValue(json["value"].get<float>());
 }
 
-}
+}  // namespace
 
 IO<maths::Interval> Traits<maths::Interval>::io(&toJson, &fromJson);
 
-}
+}  // namespace possumwood

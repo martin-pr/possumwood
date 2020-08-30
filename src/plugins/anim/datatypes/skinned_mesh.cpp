@@ -37,4 +37,4 @@ const Polygons& SkinnedMesh::polygons() const {
 	return m_polygons;
 }
 
-}
+}  // namespace anim

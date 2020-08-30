@@ -60,4 +60,4 @@ Skinning::iterator Skinning::begin() {
 Skinning::iterator Skinning::end() {
 	return m_weights.end();
 }
-}
+}  // namespace anim

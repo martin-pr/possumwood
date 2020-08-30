@@ -1,8 +1,7 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <actions/traits.h>
 
 #include "sequence.h"
 #include "tools.h"
@@ -17,12 +16,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	std::vector<possumwood::opencv::Sequence> result(4, possumwood::opencv::Sequence(in.size()));
 
-	for(std::size_t a=0; a<in.size(); ++a) {
+	for(std::size_t a = 0; a < in.size(); ++a) {
 		if(in[a]->rows > 0 && in[a]->cols > 0) {
 			std::vector<cv::Mat> mats(4);
 			cv::split(*in[a], mats);
 
-			for(std::size_t i=0; i<4; ++i) {
+			for(std::size_t i = 0; i < 4; ++i) {
 				*result[i][a] = mats[i];
 				result[i][a].meta() = in[a].meta();
 			}
@@ -54,4 +53,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/split", init);
 
-}
+}  // namespace

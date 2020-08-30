@@ -1,27 +1,23 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <GL/glew.h>
+#include <GL/glut.h>
+#include <OpenEXR/ImathMatrix.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
+#include <possumwood_sdk/node_implementation.h>
 
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QStyle>
+#include <QVBoxLayout>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
-#include <GL/glew.h>
-#include <GL/glut.h>
-
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QStyle>
-
-#include <OpenEXR/ImathMatrix.h>
-
 #include "datatypes/program.h"
+#include "datatypes/uniforms.inl"
 #include "datatypes/vbo.inl"
 #include "datatypes/vertex_data.inl"
-#include "datatypes/uniforms.inl"
-#include "uniforms.h"
-
 #include "default_shaders.h"
+#include "uniforms.h"
 
 namespace {
 
@@ -59,8 +55,7 @@ std::set<std::string> getUniforms(GLuint prog) {
 
 	GLint numUniforms = 0;
 	glGetProgramInterfaceiv(prog, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numUniforms);
-	const GLenum properties[4] = {GL_BLOCK_INDEX, GL_TYPE, GL_NAME_LENGTH,
-	                              GL_LOCATION};
+	const GLenum properties[4] = {GL_BLOCK_INDEX, GL_TYPE, GL_NAME_LENGTH, GL_LOCATION};
 
 	for(int unif = 0; unif < numUniforms; ++unif) {
 		GLint values[4];
@@ -104,9 +99,7 @@ std::set<std::string> getInputs(GLuint prog) {
 
 struct Drawable : public possumwood::Drawable {
 	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)), m_vao(0) {
-		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([](float t) {
-			refresh();
-		});
+		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([](float t) { refresh(); });
 	}
 
 	~Drawable() {
@@ -166,7 +159,8 @@ struct Drawable : public possumwood::Drawable {
 						undefinedUniforms.insert(u);
 
 				if(!undefinedUniforms.empty())
-					state.addWarning("These uniforms are used in the shader code, but are not defined: " + boost::algorithm::join(undefinedUniforms, ", "));
+					state.addWarning("These uniforms are used in the shader code, but are not defined: " +
+					                 boost::algorithm::join(undefinedUniforms, ", "));
 			}
 
 			GL_CHECK_ERR;
@@ -182,7 +176,8 @@ struct Drawable : public possumwood::Drawable {
 						undefinedInputs.insert(u);
 
 				if(!undefinedInputs.empty())
-					state.addWarning("These shader inputs are used in the shader code, but are not defined: " + boost::algorithm::join(undefinedInputs, ", "));
+					state.addWarning("These shader inputs are used in the shader code, but are not defined: " +
+					                 boost::algorithm::join(undefinedInputs, ", "));
 			}
 
 			GL_CHECK_ERR;
@@ -233,4 +228,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/draw", init);
 
-}
+}  // namespace

@@ -1,14 +1,16 @@
 #pragma once
 
-#include <boost/optional.hpp>
-
 #include <dependency_graph/network.h>
 #include <dependency_graph/selection.h>
 
-#include "../undo_stack.h"
-#include "../node_data.h"
+#include <boost/optional.hpp>
 
-namespace possumwood { namespace actions { namespace detail {
+#include "../node_data.h"
+#include "../undo_stack.h"
+
+namespace possumwood {
+namespace actions {
+namespace detail {
 
 struct Link {
 	dependency_graph::UniqueId fromNode;
@@ -20,4 +22,6 @@ struct Link {
 possumwood::UndoStack::Action linkAction(const Link& l);
 possumwood::UndoStack::Action unlinkAction(const dependency_graph::Port& p);
 
-} } }
+}  // namespace detail
+}  // namespace actions
+}  // namespace possumwood

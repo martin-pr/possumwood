@@ -1,15 +1,13 @@
+#include <actions/traits.h>
+#include <lightfields/pattern.h>
 #include <possumwood_sdk/node_implementation.h>
-
-#include <opencv2/opencv.hpp>
 #include <tbb/parallel_for.h>
 
-#include <actions/traits.h>
-
-#include <lightfields/pattern.h>
+#include <opencv2/opencv.hpp>
 
 #include "frame.h"
-#include "tools.h"
 #include "lightfields.h"
+#include "tools.h"
 
 namespace {
 
@@ -38,7 +36,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/lightfields/adjust_pattern", init);
 
-}
+}  // namespace

@@ -1,20 +1,20 @@
 #include "pattern.h"
 
-#include <cmath>
-
 #include <OpenEXR/ImathMatrix.h>
 
-#include "metadata.h"
+#include <cmath>
+
 #include "lenslet_graph.h"
+#include "metadata.h"
 
 namespace lightfields {
 
-Pattern::Pattern() : m_sensorResolution(0,0), m_lensPitch(0) {
+Pattern::Pattern() : m_sensorResolution(0, 0), m_lensPitch(0) {
 }
 
-Pattern::Pattern(float lensPitch, float pixelPitch, float rotation,
-	Imath::V2d scaleFactor, Imath::V3d sensorOffset, Imath::V2i sensorResolution) : m_sensorResolution(sensorResolution), m_lensPitch(lensPitch/pixelPitch)
-{
+Pattern::Pattern(float lensPitch, float pixelPitch, float rotation, Imath::V2d scaleFactor, Imath::V3d sensorOffset,
+                 Imath::V2i sensorResolution)
+    : m_sensorResolution(sensorResolution), m_lensPitch(lensPitch / pixelPitch) {
 	// put together lens transformation matrix
 	Imath::M33d scale, pattern, rotate, transform;
 	scale.makeIdentity();
@@ -35,8 +35,8 @@ Pattern::Pattern(float lensPitch, float pixelPitch, float rotation,
 	transform[2][0] = sensorOffset[0] / pixelPitch;
 	transform[2][1] = sensorOffset[1] / pixelPitch;
 
-	pattern[1][0] = -0.5 / sqrt(3.0/4.0);
-	pattern[1][1] = 1.0 / sqrt(3.0/4.0);
+	pattern[1][0] = -0.5 / sqrt(3.0 / 4.0);
+	pattern[1][1] = 1.0 / sqrt(3.0 / 4.0);
 
 	// we need both forward and backward projection
 	Imath::M33d tmp = rotate * transform * scale * pattern;
@@ -45,7 +45,8 @@ Pattern::Pattern(float lensPitch, float pixelPitch, float rotation,
 	m_trInv = Imath::M33f(tmp.inverse());
 }
 
-Pattern::Pattern(float lensPitch, const Imath::M33d& tr, Imath::V2i sensorResolution) : m_sensorResolution(sensorResolution), m_lensPitch(lensPitch), m_tr(tr) {
+Pattern::Pattern(float lensPitch, const Imath::M33d& tr, Imath::V2i sensorResolution)
+    : m_sensorResolution(sensorResolution), m_lensPitch(lensPitch), m_tr(tr) {
 	m_trInv = Imath::M33f(tr.inverse());
 }
 
@@ -108,40 +109,23 @@ Pattern::Sample Pattern::sample(const Imath::V2i& pixelPos) const {
 void Pattern::scale(float factor) {
 	Imath::M33d tmp = Imath::M33d(m_tr);
 
-	tmp =
-		Imath::M33d(
-			1, 0, 0,
-			0, 1, 0,
-			-m_sensorResolution[0]/2, -m_sensorResolution[1]/2, 1
-		)
-		*
-		Imath::M33d(
-			factor, 0, 0,
-			0, factor, 0,
-			0, 0, 1
-		)
-		*
-		Imath::M33d(
-			1, 0, 0,
-			0, 1, 0,
-			m_sensorResolution[0]/2, m_sensorResolution[1]/2, 1
-		)
-		*
-		tmp;
+	tmp = Imath::M33d(1, 0, 0, 0, 1, 0, -m_sensorResolution[0] / 2, -m_sensorResolution[1] / 2, 1) *
+	      Imath::M33d(factor, 0, 0, 0, factor, 0, 0, 0, 1) *
+	      Imath::M33d(1, 0, 0, 0, 1, 0, m_sensorResolution[0] / 2, m_sensorResolution[1] / 2, 1) * tmp;
 
 	m_tr = Imath::M33f(tmp);
 	m_trInv = Imath::M33f(tmp.inverse());
 }
 
-bool Pattern::operator == (const Pattern& p) const {
+bool Pattern::operator==(const Pattern& p) const {
 	return m_sensorResolution == p.m_sensorResolution && m_lensPitch == p.m_lensPitch && m_tr == p.m_tr;
 }
 
-bool Pattern::operator != (const Pattern& p) const {
+bool Pattern::operator!=(const Pattern& p) const {
 	return m_sensorResolution != p.m_sensorResolution || m_lensPitch != p.m_lensPitch || m_tr != p.m_tr;
 }
 
-std::ostream& operator << (std::ostream& out, const Pattern& p) {
+std::ostream& operator<<(std::ostream& out, const Pattern& p) {
 	out << "Pattern:" << std::endl;
 	out << "  sensor " << p.sensorResolution() << std::endl;
 	out << "  lens pitch " << p.m_lensPitch << std::endl;
@@ -154,35 +138,24 @@ std::ostream& operator << (std::ostream& out, const Pattern& p) {
 
 Pattern Pattern::fromMetadata(const Metadata& meta) {
 	return lightfields::Pattern(
-		meta.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
-		meta.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
-		meta.metadata()["devices"]["mla"]["rotation"].asDouble(),
-		Imath::V2f(
-			meta.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
-			meta.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()
-		),
-		Imath::V3f(
-			meta.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
-			meta.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
-			meta.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()
-		),
-		Imath::V2i(
-			meta.metadata()["image"]["width"].asInt(),
-			meta.metadata()["image"]["height"].asInt()
-		)
-	);
+	    meta.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
+	    meta.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
+	    meta.metadata()["devices"]["mla"]["rotation"].asDouble(),
+	    Imath::V2f(meta.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
+	               meta.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()),
+	    Imath::V3f(meta.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
+	               meta.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
+	               meta.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()),
+	    Imath::V2i(meta.metadata()["image"]["width"].asInt(), meta.metadata()["image"]["height"].asInt()));
 }
 
 Pattern Pattern::fromFit(const LensletGraph& lg) {
 	auto fitted = lg.fittedMatrix();
 
-	Imath::M33d fittedMatrix(
-		fitted(0, 0), fitted(0, 1), fitted(0, 2),
-		fitted(1, 0), fitted(1, 1), fitted(1, 2),
-		fitted(2, 0), fitted(2, 1), fitted(2, 2)
-	);
+	Imath::M33d fittedMatrix(fitted(0, 0), fitted(0, 1), fitted(0, 2), fitted(1, 0), fitted(1, 1), fitted(1, 2),
+	                         fitted(2, 0), fitted(2, 1), fitted(2, 2));
 
 	return lightfields::Pattern(lg.lensPitch(), fittedMatrix, lg.sensorResolution());
 }
 
-}
+}  // namespace lightfields

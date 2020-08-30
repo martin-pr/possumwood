@@ -1,19 +1,23 @@
 #include "link.h"
 
-#include <cassert>
 #include <algorithm>
+#include <cassert>
 
 namespace lightfields {
 
-Link::Link(int capacity) : m_forward(this, true), m_backward(this, false), m_forwardCapacity(capacity), m_backwardCapacity(capacity), m_flow(0) {
+Link::Link(int capacity)
+    : m_forward(this, true), m_backward(this, false), m_forwardCapacity(capacity), m_backwardCapacity(capacity),
+      m_flow(0) {
 }
 
-Link::Link(int forwardCapacity, int backwardCapacity) : m_forward(this, true), m_backward(this, false), m_forwardCapacity(forwardCapacity), m_backwardCapacity(backwardCapacity), m_flow(0) {
-
+Link::Link(int forwardCapacity, int backwardCapacity)
+    : m_forward(this, true), m_backward(this, false), m_forwardCapacity(forwardCapacity),
+      m_backwardCapacity(backwardCapacity), m_flow(0) {
 }
 
-
-Link::Link(const Link& e) : m_forward(this, true), m_backward(this, false), m_forwardCapacity(e.m_forwardCapacity), m_backwardCapacity(e.m_backwardCapacity), m_flow(e.m_flow) {
+Link::Link(const Link& e)
+    : m_forward(this, true), m_backward(this, false), m_forwardCapacity(e.m_forwardCapacity),
+      m_backwardCapacity(e.m_backwardCapacity), m_flow(e.m_flow) {
 }
 
 Link& Link::operator=(const Link& e) {
@@ -87,9 +91,11 @@ int Link::Direction::residualCapacity() const {
 	int result = 0;
 
 	if(m_forward)
-		result = (m_parent->m_forwardCapacity + m_parent->m_backwardCapacity) - (m_parent->m_flow + m_parent->m_backwardCapacity);
+		result = (m_parent->m_forwardCapacity + m_parent->m_backwardCapacity) -
+		         (m_parent->m_flow + m_parent->m_backwardCapacity);
 	else
-		result = (m_parent->m_forwardCapacity + m_parent->m_backwardCapacity) - (-m_parent->m_flow + m_parent->m_forwardCapacity);
+		result = (m_parent->m_forwardCapacity + m_parent->m_backwardCapacity) -
+		         (-m_parent->m_flow + m_parent->m_forwardCapacity);
 
 	assert(result >= 0);
 	assert(result <= m_parent->m_forwardCapacity + m_parent->m_backwardCapacity);
@@ -104,4 +110,4 @@ void Link::Direction::setCapacity(int forward, int backward) {
 		m_parent->setCapacity(backward, forward);
 }
 
-}
+}  // namespace lightfields

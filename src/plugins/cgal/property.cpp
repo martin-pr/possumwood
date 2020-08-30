@@ -2,8 +2,7 @@
 
 namespace possumwood {
 
-PropertyBase::PropertyBase(Properties* parent, std::size_t index)
-    : m_parent(parent), m_index(index) {
+PropertyBase::PropertyBase(Properties* parent, std::size_t index) : m_parent(parent), m_index(index) {
 }
 
 PropertyBase::~PropertyBase() {
@@ -32,4 +31,4 @@ bool PropertyBase::operator==(const PropertyBase& p) const {
 bool PropertyBase::operator!=(const PropertyBase& p) const {
 	return m_index != p.m_index || !isEqual(p);
 }
-}
+}  // namespace possumwood

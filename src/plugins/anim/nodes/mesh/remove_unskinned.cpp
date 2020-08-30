@@ -1,12 +1,11 @@
-#include <memory>
-
+#include <OpenEXR/ImathEuler.h>
+#include <OpenEXR/ImathVec.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include <OpenEXR/ImathVec.h>
-#include <OpenEXR/ImathEuler.h>
+#include <memory>
 
-#include "datatypes/skinned_mesh.h"
 #include "datatypes/skeleton.h"
+#include "datatypes/skinned_mesh.h"
 
 namespace {
 
@@ -14,7 +13,6 @@ dependency_graph::InAttr<std::shared_ptr<const std::vector<anim::SkinnedMesh>>> 
 dependency_graph::InAttr<anim::Skeleton> a_inSkel;
 dependency_graph::OutAttr<std::shared_ptr<const std::vector<anim::SkinnedMesh>>> a_outMeshes;
 dependency_graph::OutAttr<anim::Skeleton> a_outSkel;
-
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const auto& inSkel = data.get(a_inSkel);
@@ -36,7 +34,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		// from children to parents (backwards in the hierarchy), add recursively
 		//   the parents to the skinned bones set (even if parents themselves were
 		//   not skinned)
-		for(int boneIndex = inSkel.size()-1; boneIndex > 0; --boneIndex)
+		for(int boneIndex = inSkel.size() - 1; boneIndex > 0; --boneIndex)
 			if(skinnedBones.find(boneIndex) != skinnedBones.end())
 				skinnedBones.insert(inSkel[boneIndex].parent().index());
 
@@ -44,16 +42,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		anim::Skeleton outSkel;
 		outSkel.addRoot(inSkel[0].name(), inSkel[0].tr());
 
-		std::function<void(const anim::Skeleton::Joint& sourceJoint, std::size_t targetJointIndex, anim::Skeleton& target)> convert(
-			[&](const anim::Skeleton::Joint& sourceJoint, std::size_t targetJointIndex, anim::Skeleton& target) {
-				for(auto& c : sourceJoint.children()) {
-					if(skinnedBones.find(c.index()) != skinnedBones.end()) {
-						std::size_t bi = target.addChild(target[targetJointIndex], c.tr(), c.name());
-						convert(c, bi, target);
-					}
-				}
-			}
-		);
+		std::function<void(const anim::Skeleton::Joint& sourceJoint, std::size_t targetJointIndex,
+		                   anim::Skeleton& target)>
+		    convert(
+		        [&](const anim::Skeleton::Joint& sourceJoint, std::size_t targetJointIndex, anim::Skeleton& target) {
+			        for(auto& c : sourceJoint.children()) {
+				        if(skinnedBones.find(c.index()) != skinnedBones.end()) {
+					        std::size_t bi = target.addChild(target[targetJointIndex], c.tr(), c.name());
+					        convert(c, bi, target);
+				        }
+			        }
+		        });
 
 		convert(inSkel[0], 0, outSkel);
 
@@ -93,9 +92,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inSkel, "in_skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_inMeshes, "in_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inMeshes, "in_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(),
+	                  possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_outSkel, "out_skeleton", anim::Skeleton(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_outMeshes, "out_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outMeshes, "out_meshes", std::shared_ptr<const std::vector<anim::SkinnedMesh>>(),
+	                  possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inMeshes, a_outMeshes);
 	meta.addInfluence(a_inSkel, a_outMeshes);
@@ -107,4 +108,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("anim/mesh/remove_unskinned", init);
 
-}
+}  // namespace

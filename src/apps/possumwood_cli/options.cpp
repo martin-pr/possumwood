@@ -1,11 +1,10 @@
 #include "options.h"
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <iostream>
 
-#include <boost/algorithm/string/predicate.hpp>
-
 Options::Options(int argc, char* argv[]) {
-	for(int current=1; current<argc; ++current) {
+	for(int current = 1; current < argc; ++current) {
 		if(boost::starts_with(argv[current], "--"))
 			m_items.push_back(Item(argv[current]));
 

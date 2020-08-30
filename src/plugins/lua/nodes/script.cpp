@@ -1,18 +1,16 @@
-#include <memory>
-
+#include <lualib.h>
 #include <possumwood_sdk/node_implementation.h>
 #include <possumwood_sdk/source_editor.h>
 
+#include <QMenu>
 #include <QPainter>
 #include <QPushButton>
-#include <QMenu>
-
-#include <lualib.h>
-#include <luabind/luabind.hpp>
 #include <luabind/class_info.hpp>
+#include <luabind/luabind.hpp>
+#include <memory>
 
-#include "datatypes/state.h"
 #include "datatypes/context.h"
+#include "datatypes/state.h"
 
 namespace {
 
@@ -21,225 +19,231 @@ dependency_graph::InAttr<possumwood::lua::Context> a_context;
 dependency_graph::OutAttr<possumwood::lua::State> a_state;
 
 class Editor : public possumwood::SourceEditor {
-	public:
-		Editor() : SourceEditor(a_src), m_popup(nullptr) {
-			m_varsButton = new QPushButton("Globals");
-			buttonsLayout()->insertWidget(0, m_varsButton);
+  public:
+	Editor() : SourceEditor(a_src), m_popup(nullptr) {
+		m_varsButton = new QPushButton("Globals");
+		buttonsLayout()->insertWidget(0, m_varsButton);
 
-			connect(m_varsButton, &QPushButton::pressed, [this]() {
-				// lazily populate variable list on first click
-				if(m_popup == nullptr)
-					populateVariableList();
+		connect(m_varsButton, &QPushButton::pressed, [this]() {
+			// lazily populate variable list on first click
+			if(m_popup == nullptr)
+				populateVariableList();
 
-				// if the populating succeeded, show the menu
-				if(m_popup)
-					m_popup->popup(
-						m_varsButton->mapToGlobal(QPoint(0,-m_popup->sizeHint().height()))
-					);
-			});
-		}
+			// if the populating succeeded, show the menu
+			if(m_popup)
+				m_popup->popup(m_varsButton->mapToGlobal(QPoint(0, -m_popup->sizeHint().height())));
+		});
+	}
 
-	protected:
-		virtual void valueChanged(const dependency_graph::Attr& attr) override {
-			// update the menu on each change of the "state" attribute (i.e., evaluation)
-			if(attr == a_state && values().get(a_state) != nullptr) {
-				if(m_popup) {
-					m_popup->deleteLater();
-					m_popup = nullptr;
-				}
-			}
-
-			else
-				SourceEditor::valueChanged(attr);
-		}
-
-		std::string luaType(const luabind::object& o) {
-			int type = luabind::type(o);
-
-			switch(type) {
-				case LUA_TNONE: return "none";
-				case LUA_TNIL: return "nil";
-				case LUA_TBOOLEAN: return "bool";
-				case LUA_TLIGHTUSERDATA: return "light object";
-				case LUA_TNUMBER: return "number";
-				case LUA_TSTRING: return "string";
-				case LUA_TTABLE: return "table";
-				case LUA_TFUNCTION: return "function";
-				case LUA_TTHREAD: return "thread";
-				case LUA_TUSERDATA:
-					if(isClassInstance(o))
-						return "object";
-					else if(isClass(o))
-						return "class";
-					else
-						return "lua class";
-			}
-
-			return "unknown";
-		}
-
-		// sorting mechanism for new items
-		QAction* findPosition(QMenu* menu, const QString& name) {
-			QList<QAction*> actions = menu->actions();
-
-			// find the item
-			auto it = std::lower_bound(actions.begin(), actions.end(), name, [](QAction* a, const QString& n) {
-				if(a != nullptr)
-					return a->text().mid(0, a->text().indexOf('\t')) < n;
-				return true;
-			});
-
-			// return the value if valid, null otherwise
-			if(it != actions.end())
-				return *it;
-			return nullptr;
-		}
-
-		// add one item to the menu
-		// TODO: extend to add values as well
-		void addItem(QMenu* menu, const luabind::object& o, const std::string& name, std::string instanceText) {
-			if(luabind::type(o) == LUA_TFUNCTION)
-				instanceText += "()";
-
-			QAction* newAction = new QAction(QString::fromStdString(name + "\t" + luaType(o)), nullptr);
-			newAction->setData(QString::fromStdString(instanceText));
-
-			menu->insertAction(findPosition(menu, name.c_str()), newAction);
-		}
-
-		// add a submenu to the popup
-		QMenu* addMenu(QMenu* menu, const luabind::object& o, const std::string& name) {
-			QMenu* newMenu = new QMenu(QString::fromStdString(name + "\t" + luaType(o)));
-
-			menu->insertMenu(findPosition(menu, name.c_str()), newMenu);
-
-			return newMenu;
-		}
-
-		void parseClass(QMenu* menu, const luabind::object& o, const std::string& prepend, int recurse) {
-			o.push(o.interpreter());
-			luabind::detail::object_rep* obj = luabind::detail::get_instance(o.interpreter(), -1);
-			if(obj && obj->crep()) {
-				obj->crep()->get_table(o.interpreter());
-				luabind::object ooo(luabind::from_stack(o.interpreter(), -1));
-
-				if(recurse > 0)
-					parseGlobals(menu, ooo, prepend, recurse-1);
-
-				lua_settop(o.interpreter(), 0);
+  protected:
+	virtual void valueChanged(const dependency_graph::Attr& attr) override {
+		// update the menu on each change of the "state" attribute (i.e., evaluation)
+		if(attr == a_state && values().get(a_state) != nullptr) {
+			if(m_popup) {
+				m_popup->deleteLater();
+				m_popup = nullptr;
 			}
 		}
 
-		bool isClass(const luabind::object& o) {
-			if(o.is_valid()) {
-				auto meta = luabind::getmetatable(o);
+		else
+			SourceEditor::valueChanged(attr);
+	}
 
-				if(meta.is_valid() && luabind::type(meta) == LUA_TTABLE) {
-					for(luabind::iterator j(meta); j != luabind::iterator(); ++j) {
-						auto key = luabind::object_cast_nothrow<std::string>(j.key());
-						if(key && *key == "__luabind_classrep")
-							return true;
-					}
-				}
-			}
+	std::string luaType(const luabind::object& o) {
+		int type = luabind::type(o);
 
-			return false;
+		switch(type) {
+			case LUA_TNONE:
+				return "none";
+			case LUA_TNIL:
+				return "nil";
+			case LUA_TBOOLEAN:
+				return "bool";
+			case LUA_TLIGHTUSERDATA:
+				return "light object";
+			case LUA_TNUMBER:
+				return "number";
+			case LUA_TSTRING:
+				return "string";
+			case LUA_TTABLE:
+				return "table";
+			case LUA_TFUNCTION:
+				return "function";
+			case LUA_TTHREAD:
+				return "thread";
+			case LUA_TUSERDATA:
+				if(isClassInstance(o))
+					return "object";
+				else if(isClass(o))
+					return "class";
+				else
+					return "lua class";
 		}
 
-		bool isClassInstance(const luabind::object& o) {
+		return "unknown";
+	}
+
+	// sorting mechanism for new items
+	QAction* findPosition(QMenu* menu, const QString& name) {
+		QList<QAction*> actions = menu->actions();
+
+		// find the item
+		auto it = std::lower_bound(actions.begin(), actions.end(), name, [](QAction* a, const QString& n) {
+			if(a != nullptr)
+				return a->text().mid(0, a->text().indexOf('\t')) < n;
+			return true;
+		});
+
+		// return the value if valid, null otherwise
+		if(it != actions.end())
+			return *it;
+		return nullptr;
+	}
+
+	// add one item to the menu
+	// TODO: extend to add values as well
+	void addItem(QMenu* menu, const luabind::object& o, const std::string& name, std::string instanceText) {
+		if(luabind::type(o) == LUA_TFUNCTION)
+			instanceText += "()";
+
+		QAction* newAction = new QAction(QString::fromStdString(name + "\t" + luaType(o)), nullptr);
+		newAction->setData(QString::fromStdString(instanceText));
+
+		menu->insertAction(findPosition(menu, name.c_str()), newAction);
+	}
+
+	// add a submenu to the popup
+	QMenu* addMenu(QMenu* menu, const luabind::object& o, const std::string& name) {
+		QMenu* newMenu = new QMenu(QString::fromStdString(name + "\t" + luaType(o)));
+
+		menu->insertMenu(findPosition(menu, name.c_str()), newMenu);
+
+		return newMenu;
+	}
+
+	void parseClass(QMenu* menu, const luabind::object& o, const std::string& prepend, int recurse) {
+		o.push(o.interpreter());
+		luabind::detail::object_rep* obj = luabind::detail::get_instance(o.interpreter(), -1);
+		if(obj && obj->crep()) {
+			obj->crep()->get_table(o.interpreter());
+			luabind::object ooo(luabind::from_stack(o.interpreter(), -1));
+
+			if(recurse > 0)
+				parseGlobals(menu, ooo, prepend, recurse - 1);
+
+			lua_settop(o.interpreter(), 0);
+		}
+	}
+
+	bool isClass(const luabind::object& o) {
+		if(o.is_valid()) {
 			auto meta = luabind::getmetatable(o);
 
-			if(luabind::type(meta) == LUA_TTABLE) {
+			if(meta.is_valid() && luabind::type(meta) == LUA_TTABLE) {
 				for(luabind::iterator j(meta); j != luabind::iterator(); ++j) {
 					auto key = luabind::object_cast_nothrow<std::string>(j.key());
-					if(key && *key == "__luabind_class")
+					if(key && *key == "__luabind_classrep")
 						return true;
 				}
 			}
-
-			return false;
 		}
 
-		// parses the metadata table
-		void parseMeta(QMenu* menu, const luabind::object& o, const std::string& prepend, int recurse) {
-			if(o.is_valid()) {
-				assert(!isClass(o));
+		return false;
+	}
 
-				// adds all members for this instance
-				if(isClassInstance(o))
-					parseClass(menu, o, prepend, recurse-1);
+	bool isClassInstance(const luabind::object& o) {
+		auto meta = luabind::getmetatable(o);
 
-				// just descends recursively
-				else {
-					auto meta = luabind::getmetatable(o);
-
-					if(meta.is_valid() && luabind::type(meta) == LUA_TTABLE)
-						parseGlobals(menu, meta, prepend, recurse-1);
-				}
+		if(luabind::type(meta) == LUA_TTABLE) {
+			for(luabind::iterator j(meta); j != luabind::iterator(); ++j) {
+				auto key = luabind::object_cast_nothrow<std::string>(j.key());
+				if(key && *key == "__luabind_class")
+					return true;
 			}
 		}
 
-		// parse a table and add its content to the menu - first explicitly on globals, then recurse
-		void parseGlobals(QMenu* menu, const luabind::object& o, const std::string& prepend = "", int recurse = 10) {
-			assert(o.is_valid());
-			assert(luabind::type(o) == LUA_TTABLE);
+		return false;
+	}
 
-			// iterate over the items of this table
-			for(luabind::iterator j(o), end; j != end; ++j) {
-				luabind::object obj = *j;
+	// parses the metadata table
+	void parseMeta(QMenu* menu, const luabind::object& o, const std::string& prepend, int recurse) {
+		if(o.is_valid()) {
+			assert(!isClass(o));
 
-				if(obj.is_valid()) {
-					// try to obtain a key as a string - this might be a number of an array, so treat that appropriately
-					auto key = luabind::object_cast_nothrow<std::string>(j.key());
-					if(key) {
-						// the current object is a table - add a submenu and proceed recursively
-						if(luabind::type(obj) == LUA_TTABLE) {
-							QMenu* m = addMenu(menu, obj, *key);
+			// adds all members for this instance
+			if(isClassInstance(o))
+				parseClass(menu, o, prepend, recurse - 1);
 
-							if(recurse > 0)
-								parseGlobals(m, obj, prepend + *key + ".", recurse - 1);
-						}
+			// just descends recursively
+			else {
+				auto meta = luabind::getmetatable(o);
 
-						// a luabind class - only show it as a single item
-						else if(luabind::type(obj) == LUA_TUSERDATA && isClass(obj))
-							addItem(menu, obj, *key, prepend + *key + ":");
+				if(meta.is_valid() && luabind::type(meta) == LUA_TTABLE)
+					parseGlobals(menu, meta, prepend, recurse - 1);
+			}
+		}
+	}
 
-						// a userdata object - either an inbuilt class or a luabind instance
-						else if(luabind::type(obj) == LUA_TUSERDATA) {
-							if(recurse > 0) {
-								QMenu* m = addMenu(menu, obj, *key);
-								parseMeta(m, obj, prepend + *key + ":", recurse - 1);
-							}
-						}
+	// parse a table and add its content to the menu - first explicitly on globals, then recurse
+	void parseGlobals(QMenu* menu, const luabind::object& o, const std::string& prepend = "", int recurse = 10) {
+		assert(o.is_valid());
+		assert(luabind::type(o) == LUA_TTABLE);
 
-						// functions, numbers, strings ... just add them to the menu
-						else
-							addItem(menu, obj, *key, prepend + *key);
+		// iterate over the items of this table
+		for(luabind::iterator j(o), end; j != end; ++j) {
+			luabind::object obj = *j;
+
+			if(obj.is_valid()) {
+				// try to obtain a key as a string - this might be a number of an array, so treat that appropriately
+				auto key = luabind::object_cast_nothrow<std::string>(j.key());
+				if(key) {
+					// the current object is a table - add a submenu and proceed recursively
+					if(luabind::type(obj) == LUA_TTABLE) {
+						QMenu* m = addMenu(menu, obj, *key);
+
+						if(recurse > 0)
+							parseGlobals(m, obj, prepend + *key + ".", recurse - 1);
 					}
+
+					// a luabind class - only show it as a single item
+					else if(luabind::type(obj) == LUA_TUSERDATA && isClass(obj))
+						addItem(menu, obj, *key, prepend + *key + ":");
+
+					// a userdata object - either an inbuilt class or a luabind instance
+					else if(luabind::type(obj) == LUA_TUSERDATA) {
+						if(recurse > 0) {
+							QMenu* m = addMenu(menu, obj, *key);
+							parseMeta(m, obj, prepend + *key + ":", recurse - 1);
+						}
+					}
+
+					// functions, numbers, strings ... just add them to the menu
+					else
+						addItem(menu, obj, *key, prepend + *key);
 				}
 			}
 		}
+	}
 
-		void populateVariableList() {
-			if(m_popup)
-				m_popup->deleteLater();
+	void populateVariableList() {
+		if(m_popup)
+			m_popup->deleteLater();
 
-			m_popup = new QMenu(m_varsButton);
+		m_popup = new QMenu(m_varsButton);
 
-			m_popup->connect(m_popup, &QMenu::triggered, [this](QAction* action) {
-				editorWidget()->insertPlainText(action->data().toString());
-			});
+		m_popup->connect(m_popup, &QMenu::triggered,
+		                 [this](QAction* action) { editorWidget()->insertPlainText(action->data().toString()); });
 
-			// parse the global variables of the state from the output (includes injected vars and modules)
-			const possumwood::lua::State& state = values().get(a_state);
-			if(state)
-				parseGlobals(m_popup, state.globals());
-		}
+		// parse the global variables of the state from the output (includes injected vars and modules)
+		const possumwood::lua::State& state = values().get(a_state);
+		if(state)
+			parseGlobals(m_popup, state.globals());
+	}
 
-	private:
-		QPushButton* m_varsButton;
+  private:
+	QPushButton* m_varsButton;
 
-		QMenu* m_popup;
+	QMenu* m_popup;
 };
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -291,4 +295,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("lua/script", init);
 
-}
+}  // namespace

@@ -1,27 +1,26 @@
-#include <boost/test/unit_test.hpp>
+#include <actions/actions.h>
+#include <actions/app.h>
+#include <dependency_graph/graph.h>
+#include <dependency_graph/metadata_register.h>
 
+#include <boost/test/unit_test.hpp>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/metadata.inl>
-#include <dependency_graph/graph.h>
+#include <dependency_graph/nodes_iterator.inl>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/values.inl>
-#include <dependency_graph/metadata_register.h>
-#include <dependency_graph/nodes_iterator.inl>
-
-#include <actions/app.h>
-#include <actions/actions.h>
 
 #include "common.h"
 
 using namespace dependency_graph;
 
 namespace std {
-	static std::ostream& operator << (std::ostream& out, const std::type_info& t) {
-		out << dependency_graph::unmangledName(t.name());
+static std::ostream& operator<<(std::ostream& out, const std::type_info& t) {
+	out << dependency_graph::unmangledName(t.name());
 
-		return out;
-	}
+	return out;
 }
+}  // namespace std
 
 BOOST_AUTO_TEST_CASE(simple_subnet) {
 	// make the app "singleton"
@@ -32,13 +31,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 
 	// create a subnetwork in the graph, via actions
 	UniqueId netId;
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-		app.graph(),
-		*networkFactoryIterator,
-		"network",
-		possumwood::NodeData(),
-		netId
-	));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), *networkFactoryIterator, "network",
+	                                                       possumwood::NodeData(), netId));
 
 	auto netIt = app.graph().nodes().find(netId);
 	BOOST_REQUIRE(netIt != app.graph().nodes().end());
@@ -56,13 +50,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 
 	// create a tiny subnetwork
 	UniqueId inId;
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-		network,
-		*inputFactoryIterator,
-		"network_input",
-		possumwood::NodeData(),
-		inId
-	));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(network, *inputFactoryIterator, "network_input", possumwood::NodeData(), inId));
 
 	auto inIt = network.nodes().find(inId);
 	BOOST_REQUIRE(inIt != network.nodes().end());
@@ -72,26 +61,16 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_REQUIRE(outputFactoryIterator != MetadataRegister::singleton().end());
 
 	UniqueId outId;
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-		network,
-		*outputFactoryIterator,
-		"network_output",
-		possumwood::NodeData(),
-		outId
-	));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(network, *outputFactoryIterator, "network_output",
+	                                                       possumwood::NodeData(), outId));
 
 	auto outIt = network.nodes().find(outId);
 	BOOST_REQUIRE(outIt != network.nodes().end());
 	dependency_graph::NodeBase& output = *outIt;
 
 	UniqueId midId;
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-		network,
-		passThroughNode(),
-		"passthru",
-		possumwood::NodeData(),
-		midId
-	));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(network, passThroughNode(), "passthru", possumwood::NodeData(), midId));
 
 	auto midIt = network.nodes().find(midId);
 	BOOST_REQUIRE(midIt != network.nodes().end());
@@ -119,7 +98,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 
 	// the new port should be of "float" type
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
 
 	// undo it
@@ -145,7 +125,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
 
 	/////
@@ -162,11 +143,13 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().portCount(), 2u);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(1).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(1).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(1).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(1).category(), Attr::kOutput);
 
 	// undo it
@@ -181,7 +164,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
 
 	// redo it
@@ -196,11 +180,13 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().portCount(), 2u);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(1).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(1).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(1).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(1).category(), Attr::kOutput);
 
 	//////
@@ -217,7 +203,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
 
 	// undo it
@@ -232,11 +219,13 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().portCount(), 2u);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(1).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(1).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(1).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(1).category(), Attr::kOutput);
 
 	// redo it
@@ -251,7 +240,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
 
 	//////
@@ -279,7 +269,8 @@ BOOST_AUTO_TEST_CASE(simple_subnet) {
 	BOOST_CHECK_EQUAL(input.network().portCount(), 1u);
 
 	BOOST_CHECK_EQUAL(input.network().metadata()->attr(0).type(), typeid(float));
-	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()), dependency_graph::unmangledTypeId<float>());
+	BOOST_CHECK_EQUAL(dependency_graph::unmangledTypeId(input.network().port(0).type()),
+	                  dependency_graph::unmangledTypeId<float>());
 	BOOST_CHECK_EQUAL(input.network().port(0).category(), Attr::kInput);
 
 	// redo it
@@ -311,39 +302,24 @@ BOOST_AUTO_TEST_CASE(input_output_root) {
 
 	// create a tiny subnetwork
 	UniqueId inId;
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-		app.graph(),
-		*inputFactoryIterator,
-		"network_input",
-		possumwood::NodeData(),
-		inId
-	));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), *inputFactoryIterator, "network_input",
+	                                                       possumwood::NodeData(), inId));
 
 	auto inIt = app.graph().nodes().find(inId);
 	BOOST_REQUIRE(inIt != app.graph().nodes().end());
 	dependency_graph::NodeBase& input = *inIt;
 
 	UniqueId outId;
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-		app.graph(),
-		*outputFactoryIterator,
-		"network_output",
-		possumwood::NodeData(),
-		outId
-	));
+	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(app.graph(), *outputFactoryIterator, "network_output",
+	                                                       possumwood::NodeData(), outId));
 
 	auto outIt = app.graph().nodes().find(outId);
 	BOOST_REQUIRE(outIt != app.graph().nodes().end());
 	dependency_graph::NodeBase& output = *outIt;
 
 	UniqueId midId;
-	BOOST_REQUIRE_NO_THROW(possumwood::actions::createNode(
-		app.graph(),
-		passThroughNode(),
-		"passthru",
-		possumwood::NodeData(),
-		midId
-	));
+	BOOST_REQUIRE_NO_THROW(
+	    possumwood::actions::createNode(app.graph(), passThroughNode(), "passthru", possumwood::NodeData(), midId));
 
 	auto midIt = app.graph().nodes().find(midId);
 	BOOST_REQUIRE(midIt != app.graph().nodes().end());

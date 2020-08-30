@@ -1,37 +1,32 @@
-#include <iostream>
-#include <string>
-#include <stdexcept>
-
-#include <boost/program_options.hpp>
-#include <boost/filesystem.hpp>
-
-#include <Eigen/Core>
-
-#include <QApplication>
-#include <QMainWindow>
-#include <QMenu>
-#include <QAction>
-#include <QKeyEvent>
-#include <QHBoxLayout>
-
 #include <dependency_graph/graph.h>
-#include <dependency_graph/node_base.inl>
-#include <dependency_graph/datablock.inl>
-#include <dependency_graph/metadata.inl>
-#include <dependency_graph/attr.inl>
-
-#include <qt_node_editor/node.h>
-#include <qt_node_editor/connected_edge.h>
-#include <qt_node_editor/graph_widget.h>
-
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
+#include <qt_node_editor/connected_edge.h>
+#include <qt_node_editor/graph_widget.h>
+#include <qt_node_editor/node.h>
+
+#include <Eigen/Core>
+#include <QAction>
+#include <QApplication>
+#include <QHBoxLayout>
+#include <QKeyEvent>
+#include <QMainWindow>
+#include <QMenu>
+#include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
+#include <dependency_graph/attr.inl>
+#include <dependency_graph/datablock.inl>
+#include <dependency_graph/metadata.inl>
+#include <dependency_graph/node_base.inl>
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
 #include "adaptor.h"
-#include "main_window.h"
-#include "gl_init.h"
 #include "common.h"
 #include "error_dialog.h"
+#include "gl_init.h"
+#include "main_window.h"
 
 namespace po = boost::program_options;
 
@@ -42,10 +37,7 @@ using std::flush;
 int main(int argc, char* argv[]) {
 	// // Declare the supported options.
 	po::options_description desc("Allowed options");
-	desc.add_options()
-		("help", "produce help message")
-		("scene", po::value<std::string>(), "open a scene file")
-	;
+	desc.add_options()("help", "produce help message")("scene", po::value<std::string>(), "open a scene file");
 
 	// process the options
 	po::variables_map vm;
@@ -73,9 +65,9 @@ int main(int argc, char* argv[]) {
 			format.setVersion(6, 0);
 			format.setProfile(QSurfaceFormat::CoreProfile);
 
-			#ifndef NDEBUG
+#ifndef NDEBUG
 			format.setOption(QSurfaceFormat::DebugContext);
-			#endif
+#endif
 
 			format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
 
@@ -87,11 +79,11 @@ int main(int argc, char* argv[]) {
 
 		GL_CHECK_ERR;
 
-		// nice scaling on High DPI displays is support in Qt 5.6+
-		#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
-			QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-			QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-		#endif
+// nice scaling on High DPI displays is support in Qt 5.6+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+		QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+		QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
 
 		GL_CHECK_ERR;
 
@@ -107,8 +99,7 @@ int main(int argc, char* argv[]) {
 
 		GL_CHECK_ERR;
 
-		std::cout << "OpenGL version supported by this platform is "
-		          << glGetString(GL_VERSION) << std::endl;
+		std::cout << "OpenGL version supported by this platform is " << glGetString(GL_VERSION) << std::endl;
 
 		GL_CHECK_ERR;
 

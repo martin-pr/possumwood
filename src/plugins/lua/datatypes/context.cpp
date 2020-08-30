@@ -1,6 +1,7 @@
 #include "context.h"
 
-namespace possumwood { namespace lua {
+namespace possumwood {
+namespace lua {
 
 Context::Context() {
 }
@@ -8,7 +9,7 @@ Context::Context() {
 Context::~Context() {
 }
 
-bool Context::operator == (const Context& c) const {
+bool Context::operator==(const Context& c) const {
 	if(c.m_variables.size() != m_variables.size() || c.m_modules.size() != m_modules.size())
 		return false;
 
@@ -41,7 +42,7 @@ bool Context::operator == (const Context& c) const {
 	return true;
 }
 
-bool Context::operator != (const Context& c) const {
+bool Context::operator!=(const Context& c) const {
 	if(c.m_variables.size() != m_variables.size() || c.m_modules.size() != m_modules.size())
 		return true;
 
@@ -87,17 +88,13 @@ boost::iterator_range<Context::const_var_iterator> Context::variables() const {
 }
 
 boost::iterator_range<Context::const_module_iterator> Context::modules() const {
-	auto fn = [](const std::pair<std::string, std::function<void(State&)>>& val) -> std::string {
-		return val.first;
-	};
+	auto fn = [](const std::pair<std::string, std::function<void(State&)>>& val) -> std::string { return val.first; };
 
-	return boost::make_iterator_range(
-		boost::make_transform_iterator(m_modules.begin(), fn),
-		boost::make_transform_iterator(m_modules.end(), fn)
-	);
+	return boost::make_iterator_range(boost::make_transform_iterator(m_modules.begin(), fn),
+	                                  boost::make_transform_iterator(m_modules.end(), fn));
 }
 
-std::ostream& operator << (std::ostream& out, const Context& st) {
+std::ostream& operator<<(std::ostream& out, const Context& st) {
 	out << "Variables: ";
 	for(auto& v : st.variables())
 		out << v.name() << "=" << v.str() << " ";
@@ -111,4 +108,5 @@ std::ostream& operator << (std::ostream& out, const Context& st) {
 	return out;
 }
 
-}}
+}  // namespace lua
+}  // namespace possumwood

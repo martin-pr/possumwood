@@ -8,11 +8,10 @@ SubsetSelection::Options::Options() : m_parent(NULL) {
 SubsetSelection::Options::Options(SubsetSelection* parent) : m_parent(parent) {
 }
 
-SubsetSelection::Options::Options(const Options &o) : m_options(o.m_options), m_parent(NULL) {
-
+SubsetSelection::Options::Options(const Options& o) : m_options(o.m_options), m_parent(NULL) {
 }
 
-SubsetSelection::Options& SubsetSelection::Options::operator =(const Options& o) {
+SubsetSelection::Options& SubsetSelection::Options::operator=(const Options& o) {
 	m_options = o.m_options;
 
 	if(m_parent)
@@ -43,8 +42,7 @@ SubsetSelection::Options::const_iterator SubsetSelection::Options::end() const {
 	return m_options.end();
 }
 
-SubsetSelection::Options::const_iterator SubsetSelection::Options::find(const std::string& val)
-const {
+SubsetSelection::Options::const_iterator SubsetSelection::Options::find(const std::string& val) const {
 	return m_options.find(val);
 }
 
@@ -56,28 +54,23 @@ bool SubsetSelection::Options::empty() const {
 	return m_options.empty();
 }
 
-bool SubsetSelection::Options::operator ==(const Options& o) const {
+bool SubsetSelection::Options::operator==(const Options& o) const {
 	return m_options == o.m_options;
 }
 
-bool SubsetSelection::Options::operator !=(const Options& o) const {
+bool SubsetSelection::Options::operator!=(const Options& o) const {
 	return m_options != o.m_options;
 }
 
 ///
 
 SubsetSelection::const_iterator::const_iterator() {
-
 }
 
-SubsetSelection::const_iterator::const_iterator(Options::const_iterator optIt,
-                                                Options::const_iterator optEnd,
+SubsetSelection::const_iterator::const_iterator(Options::const_iterator optIt, Options::const_iterator optEnd,
                                                 std::map<std::string, bool>::const_iterator selIt,
-                                                std::map<std::string,
-                                                         bool>::const_iterator selEnd) : m_optIt(
-		optIt), m_optEnd(optEnd), m_selIt(selIt), m_selEnd(
-		selEnd) {
-
+                                                std::map<std::string, bool>::const_iterator selEnd)
+    : m_optIt(optIt), m_optEnd(optEnd), m_selIt(selIt), m_selEnd(selEnd) {
 }
 
 void SubsetSelection::const_iterator::increment() {
@@ -105,13 +98,12 @@ const std::pair<const std::string, bool>& SubsetSelection::const_iterator::deref
 SubsetSelection::SubsetSelection() : m_options(this) {
 }
 
-SubsetSelection::SubsetSelection(const SubsetSelection& ss) : m_options(this), m_selection(
-		ss.m_selection) {
+SubsetSelection::SubsetSelection(const SubsetSelection& ss) : m_options(this), m_selection(ss.m_selection) {
 	// use assignment operator - does not change the "parent"
 	m_options = ss.m_options;
 }
 
-SubsetSelection& SubsetSelection::operator =(const SubsetSelection& s) {
+SubsetSelection& SubsetSelection::operator=(const SubsetSelection& s) {
 	m_selection = s.m_selection;
 	m_options = s.m_options;
 
@@ -130,8 +122,7 @@ SubsetSelection::const_iterator SubsetSelection::begin() const {
 	if(m_options.empty())
 		return end();
 
-	return const_iterator(m_options.begin(), m_options.end(),
-	                      m_selection.lower_bound(*m_options.begin()),
+	return const_iterator(m_options.begin(), m_options.end(), m_selection.lower_bound(*m_options.begin()),
 	                      m_selection.end());
 }
 
@@ -162,11 +153,11 @@ void SubsetSelection::clear() {
 	m_selection.clear();
 }
 
-bool SubsetSelection::operator ==(const SubsetSelection& ss) const {
+bool SubsetSelection::operator==(const SubsetSelection& ss) const {
 	return m_selection == ss.m_selection && m_options == ss.m_options;
 }
 
-bool SubsetSelection::operator !=(const SubsetSelection& ss) const {
+bool SubsetSelection::operator!=(const SubsetSelection& ss) const {
 	return m_selection != ss.m_selection || m_options != ss.m_options;
 }
 
@@ -179,12 +170,12 @@ void SubsetSelection::updateOptions() {
 	}
 }
 
-std::ostream& operator << (std::ostream& out, const SubsetSelection& ss) {
+std::ostream& operator<<(std::ostream& out, const SubsetSelection& ss) {
 	out << "(subset selection)";
 	return out;
 }
 
-}
+}  // namespace anim
 
 namespace possumwood {
 
@@ -201,9 +192,8 @@ void fromJson(const ::possumwood::io::json& json, anim::SubsetSelection& value) 
 		value.select(i.get<std::string>());
 }
 
-}
+}  // namespace
 
-possumwood::IO<anim::SubsetSelection> Traits<anim::SubsetSelection>::io(
-	&toJson, &fromJson);
+possumwood::IO<anim::SubsetSelection> Traits<anim::SubsetSelection>::io(&toJson, &fromJson);
 
-};
+};  // namespace possumwood

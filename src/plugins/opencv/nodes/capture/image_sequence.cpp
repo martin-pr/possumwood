@@ -1,9 +1,7 @@
+#include <actions/traits.h>
 #include <possumwood_sdk/datatypes/filenames.h>
 #include <possumwood_sdk/node_implementation.h>
-
 #include <tbb/parallel_for.h>
-
-#include <actions/traits.h>
 
 #include "image_loading.h"
 #include "sequence.h"

@@ -1,12 +1,12 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
+#include <GL/glew.h>
+
+#include <GL/gl.h>
 
 #include <OpenEXR/ImathVec.h>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-
+#include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl_renderable.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include "io/vec3.h"
 
@@ -31,8 +31,7 @@ class Cube : public possumwood::Drawable {
   public:
 	Cube(dependency_graph::Values&& vals)
 	    : possumwood::Drawable(std::move(vals)),
-	      m_renderable(GL_LINES, possumwood::GLRenderable::defaultVertexShader(),
-	                   fragmentShaderSource()) {
+	      m_renderable(GL_LINES, possumwood::GLRenderable::defaultVertexShader(), fragmentShaderSource()) {
 		// just feed the vertex data of a unit cube into the VBO
 		auto vbo = m_renderable.updateVertexData();
 
@@ -72,9 +71,7 @@ class Cube : public possumwood::Drawable {
 		const Imath::Vec3<float> pos = values().get(a_pos);
 		const Imath::Vec3<float> size = values().get(a_size);
 
-		modelview = Imath::M44f(size.x, 0, 0, 0, 0, size.y, 0, 0, 0, 0, size.z, 0, pos.x,
-		                        pos.y, pos.z, 1) *
-		            modelview;
+		modelview = Imath::M44f(size.x, 0, 0, 0, 0, size.y, 0, 0, 0, 0, size.z, 0, pos.x, pos.y, pos.z, 1) * modelview;
 
 		m_renderable.draw(viewport().projection(), modelview);
 
@@ -93,4 +90,4 @@ void init(possumwood::Metadata& meta) {
 }
 
 possumwood::NodeImplementation s_impl("maths/cube", init);
-}
+}  // namespace

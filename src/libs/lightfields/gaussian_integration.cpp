@@ -4,7 +4,8 @@
 
 #include "samples.h"
 
-namespace lightfields { namespace gaussian {
+namespace lightfields {
+namespace gaussian {
 
 namespace {
 
@@ -24,9 +25,10 @@ void add3channel(float* color, float* n, int colorIndex, const float* value, flo
 	n[2] += gauss;
 }
 
-}
+}  // namespace
 
-IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& data, float _sigma, float offset) {
+IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, const cv::Mat& data,
+                            float _sigma, float offset) {
 	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
 
 	// SOMEHOW, THE RESULT OF DETAIL IS NOT SMOOTH, AND IT DEFINITELY SHOULD BE
@@ -46,7 +48,7 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	cv::Mat norm = cv::Mat::zeros(height, width, CV_32FC3);
 
 	const float sigma = _sigma * (float)width / (float)data.cols;
-	const float sigma2 = 2.0f*sigma*sigma;
+	const float sigma2 = 2.0f * sigma * sigma;
 
 	const float x_scale = (float)width / (float)samples.sensorSize()[0];
 	const float y_scale = (float)height / (float)samples.sensorSize()[1];
@@ -57,18 +59,18 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 			const float target_x = (it->xy[0] + offset * it->uv[0]) * x_scale;
 			const float target_y = (it->xy[1] + offset * it->uv[1]) * y_scale;
 
-			int xFrom = std::max((int)floor(target_x - 3.0f*sigma), 0);
-			int xTo = std::min((int)ceil(target_x + 3.0f*sigma + 1.0f), (int)width);
-			int yFrom = std::max((int)floor(target_y - 3.0f*sigma), 0);
-			int yTo = std::min((int)ceil(target_y + 3.0f*sigma + 1.0f), (int)height);
+			int xFrom = std::max((int)floor(target_x - 3.0f * sigma), 0);
+			int xTo = std::min((int)ceil(target_x + 3.0f * sigma + 1.0f), (int)width);
+			int yFrom = std::max((int)floor(target_y - 3.0f * sigma), 0);
+			int yTo = std::min((int)ceil(target_y + 3.0f * sigma + 1.0f), (int)height);
 
-			for(int yt=yFrom; yt<yTo; ++yt) {
-				for(int xt=xFrom; xt<xTo; ++xt) {
-					const float xf = (float)xt - target_x; // because pow() is expensive?
+			for(int yt = yFrom; yt < yTo; ++yt) {
+				for(int xt = xFrom; xt < xTo; ++xt) {
+					const float xf = (float)xt - target_x;  // because pow() is expensive?
 					const float yf = (float)yt - target_y;
 
-					const float dist2 = xf*xf + yf*yf;
-					const float gauss = std::exp(-dist2/sigma2);
+					const float dist2 = xf * xf + yf * yf;
+					const float gauss = std::exp(-dist2 / sigma2);
 
 					float* color = mat.ptr<float>(yt, xt);
 					float* n = norm.ptr<float>(yt, xt);
@@ -81,16 +83,17 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	});
 
 	tbb::parallel_for(0, mat.rows, [&](int y) {
-		for(int x=0;x<mat.cols;++x)
-			for(int a=0;a<3;++a)
-				if(norm.ptr<float>(y,x)[a] > 0.0f)
-					mat.ptr<float>(y,x)[a] /= norm.ptr<float>(y,x)[a];
+		for(int x = 0; x < mat.cols; ++x)
+			for(int a = 0; a < 3; ++a)
+				if(norm.ptr<float>(y, x)[a] > 0.0f)
+					mat.ptr<float>(y, x)[a] /= norm.ptr<float>(y, x)[a];
 	});
 
-	return IntegrationResult { mat, norm };
+	return IntegrationResult{mat, norm};
 }
 
-cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data, const IntegrationResult& integration, float _sigma, float offset) {
+cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data, const IntegrationResult& integration,
+                       float _sigma, float offset) {
 	if(data.type() != CV_32FC1 && data.type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input.");
 
@@ -101,7 +104,7 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data,
 	cv::Mat weights = cv::Mat::zeros(height, width, CV_32FC1);
 
 	const float sigma = _sigma * (float)width / (float)data.cols;
-	const float sigma2 = 2.0f*sigma*sigma;
+	const float sigma2 = 2.0f * sigma * sigma;
 
 	const float x_scale = (float)width / (float)samples.sensorSize()[0];
 	const float y_scale = (float)height / (float)samples.sensorSize()[1];
@@ -115,18 +118,18 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data,
 			const float target_x = (it->xy[0] + offset * it->uv[0]) * x_scale;
 			const float target_y = (it->xy[1] + offset * it->uv[1]) * y_scale;
 
-			int xFrom = std::max((int)floor(target_x - 3.0f*sigma), 0);
-			int xTo = std::min((int)ceil(target_x + 3.0f*sigma + 1.0f), (int)width);
-			int yFrom = std::max((int)floor(target_y - 3.0f*sigma), 0);
-			int yTo = std::min((int)ceil(target_y + 3.0f*sigma + 1.0f), (int)height);
+			int xFrom = std::max((int)floor(target_x - 3.0f * sigma), 0);
+			int xTo = std::min((int)ceil(target_x + 3.0f * sigma + 1.0f), (int)width);
+			int yFrom = std::max((int)floor(target_y - 3.0f * sigma), 0);
+			int yTo = std::min((int)ceil(target_y + 3.0f * sigma + 1.0f), (int)height);
 
-			for(int yt=yFrom; yt<yTo; ++yt) {
-				for(int xt=xFrom; xt<xTo; ++xt) {
-					const float xf = (float)xt - target_x; // because pow() is expensive?
+			for(int yt = yFrom; yt < yTo; ++yt) {
+				for(int xt = xFrom; xt < xTo; ++xt) {
+					const float xf = (float)xt - target_x;  // because pow() is expensive?
 					const float yf = (float)yt - target_y;
 
-					const float dist2 = xf*xf + yf*yf;
-					const float gauss = std::exp(-dist2/sigma2);
+					const float dist2 = xf * xf + yf * yf;
+					const float gauss = std::exp(-dist2 / sigma2);
 
 					float* target = corresp.ptr<float>(yt, xt);
 					float* weight = weights.ptr<float>(yt, xt);
@@ -135,22 +138,21 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data,
 					const float* ave = integration.average.ptr<float>(yt, xt);
 
 					// weighted variance of the samples.
-					// The algorithm to do this is a bit dubious - acc to wikipedia and stack overflow, weighted variance computation
-					// is much more complex than this simple weighting. This might be the reason for the "random peaks" in the confidence
-					// value. Ref: // https://www.itl.nist.gov/div898/software/dataplot/refman2/ch2/weighvar.pdf
+					// The algorithm to do this is a bit dubious - acc to wikipedia and stack overflow, weighted
+					// variance computation is much more complex than this simple weighting. This might be the reason
+					// for the "random peaks" in the confidence value. Ref: //
+					// https://www.itl.nist.gov/div898/software/dataplot/refman2/ch2/weighvar.pdf
 					if(data.channels() == 3)
-						for(int c=0; c<3; ++c) {
-							const float tmp = value[c] - ave[c]; // because pow() is expensive?!
-							*target += tmp*tmp * gauss;
+						for(int c = 0; c < 3; ++c) {
+							const float tmp = value[c] - ave[c];  // because pow() is expensive?!
+							*target += tmp * tmp * gauss;
 							*weight += gauss;
 						}
 					else {
 						const float tmp = *value - ave[it->color];
-						*target += tmp*tmp * gauss;
+						*target += tmp * tmp * gauss;
 						*weight += gauss;
 					}
-
-
 				}
 			}
 		}
@@ -158,7 +160,7 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data,
 
 	// normalization of the confidence values by the sum of weights
 	tbb::parallel_for(0u, height, [&](int y) {
-		for(unsigned x=0; x<width; ++x) {
+		for(unsigned x = 0; x < width; ++x) {
 			float& val = corresp.at<float>(y, x);
 			float& w = weights.at<float>(y, x);
 
@@ -170,4 +172,5 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& data,
 	return corresp;
 }
 
-} }
+}  // namespace gaussian
+}  // namespace lightfields

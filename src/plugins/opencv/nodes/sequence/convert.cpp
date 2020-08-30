@@ -1,12 +1,10 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/datatypes/filename.h>
-
-#include <opencv2/opencv.hpp>
-
+#include <possumwood_sdk/node_implementation.h>
 #include <tbb/parallel_for.h>
 
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
+#include <opencv2/opencv.hpp>
 
 #include "sequence.h"
 
@@ -46,8 +44,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inSeq, "in_sequence");
-	meta.addAttribute(a_mode, "mode",
-		possumwood::Enum({"CV_8U", "CV_16U", "CV_32F"}));
+	meta.addAttribute(a_mode, "mode", possumwood::Enum({"CV_8U", "CV_16U", "CV_32F"}));
 	meta.addAttribute(a_a, "a", 1.0f);
 	meta.addAttribute(a_b, "b", 0.0f);
 	meta.addAttribute(a_outSeq, "out_sequence");
@@ -62,4 +59,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/convert", init);
 
-}
+}  // namespace

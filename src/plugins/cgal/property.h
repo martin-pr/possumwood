@@ -1,11 +1,10 @@
 #pragma once
 
+#include <boost/noncopyable.hpp>
 #include <memory>
 
-#include <boost/noncopyable.hpp>
-
-#include "property_key.h"
 #include "property_item.h"
+#include "property_key.h"
 
 namespace possumwood {
 
@@ -15,8 +14,8 @@ class PropertyBase {
   public:
 	virtual ~PropertyBase();
 
-	bool operator == (const PropertyBase& p) const;
-	bool operator != (const PropertyBase& p) const;
+	bool operator==(const PropertyBase& p) const;
+	bool operator!=(const PropertyBase& p) const;
 
   protected:
 	PropertyBase(Properties* parent, std::size_t index);
@@ -58,4 +57,4 @@ class Property : public PropertyBase {
 
 	friend class Properties;
 };
-}
+}  // namespace possumwood

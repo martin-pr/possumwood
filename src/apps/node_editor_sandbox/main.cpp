@@ -1,20 +1,17 @@
-#include <iostream>
-#include <string>
-#include <stdexcept>
-
-#include <boost/program_options.hpp>
-
 #include <GL/freeglut.h>
+#include <qt_node_editor/connected_edge.h>
+#include <qt_node_editor/graph_widget.h>
+#include <qt_node_editor/node.h>
 
+#include <QtGui/QKeyEvent>
+#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QAction>
-#include <QtGui/QKeyEvent>
-
-#include <qt_node_editor/node.h>
-#include <qt_node_editor/connected_edge.h>
-#include <qt_node_editor/graph_widget.h>
+#include <boost/program_options.hpp>
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
 namespace po = boost::program_options;
 
@@ -28,13 +25,7 @@ namespace {
 
 QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 	QAction* result = new QAction(title, parent);
-	QObject::connect(
-		result,
-		&QAction::triggered,
-		[fn](bool) {
-			fn();
-		}
-	);
+	QObject::connect(result, &QAction::triggered, [fn](bool) { fn(); });
 
 	return result;
 }
@@ -51,14 +42,12 @@ QColor randomColor() {
 	return colors[rand() % colors.size()];
 }
 
-}
+}  // namespace
 
 int main(int argc, char* argv[]) {
 	// // Declare the supported options.
 	po::options_description desc("Allowed options");
-	desc.add_options()
-	("help", "produce help message")
-	;
+	desc.add_options()("help", "produce help message");
 
 	// process the options
 	po::variables_map vm;
@@ -99,43 +88,52 @@ int main(int argc, char* argv[]) {
 
 	graph->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-	graph->addAction(makeAction("Add single input node", [&]() {
-		QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-		Node& n = scene.addNode(makeUniqueNodeName(), pos);
-		n.addPort(Node::PortDefinition("input", Port::Type::kInput, randomColor()));
-	}, NULL));
+	graph->addAction(makeAction(
+	    "Add single input node",
+	    [&]() {
+		    QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
+		    Node& n = scene.addNode(makeUniqueNodeName(), pos);
+		    n.addPort(Node::PortDefinition("input", Port::Type::kInput, randomColor()));
+	    },
+	    NULL));
 
-	graph->addAction(makeAction("Add single output node", [&]() {
-		QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
-		Node& n = scene.addNode(makeUniqueNodeName(), pos);
-		n.addPort(Node::PortDefinition("output", Port::Type::kOutput, randomColor()));
-	}, NULL));
+	graph->addAction(makeAction(
+	    "Add single output node",
+	    [&]() {
+		    QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
+		    Node& n = scene.addNode(makeUniqueNodeName(), pos);
+		    n.addPort(Node::PortDefinition("output", Port::Type::kOutput, randomColor()));
+	    },
+	    NULL));
 
-	graph->addAction(makeAction("Add random more complex node", [&]() {
-		QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
+	graph->addAction(makeAction(
+	    "Add random more complex node",
+	    [&]() {
+		    QPointF pos = graph->mapToScene(graph->mapFromGlobal(QCursor::pos()));
 
-		Node& node = scene.addNode(makeUniqueNodeName(), pos);
+		    Node& node = scene.addNode(makeUniqueNodeName(), pos);
 
-		const unsigned portCount = rand() % 8 + 1;
-		for(unsigned p = 0; p < portCount; ++p) {
-			std::stringstream name;
+		    const unsigned portCount = rand() % 8 + 1;
+		    for(unsigned p = 0; p < portCount; ++p) {
+			    std::stringstream name;
 
-			unsigned len = rand() % 8 + 2;
-			for(unsigned a=0;a<len;++a)
-				name << char('a' + rand() % ('z' - 'a' + 1));
-			name << "_" << p;
+			    unsigned len = rand() % 8 + 2;
+			    for(unsigned a = 0; a < len; ++a)
+				    name << char('a' + rand() % ('z' - 'a' + 1));
+			    name << "_" << p;
 
-			Port::Type type = Port::Type::kInput;
-			if(rand() % 2)
-				type = Port::Type::kOutput;
+			    Port::Type type = Port::Type::kInput;
+			    if(rand() % 2)
+				    type = Port::Type::kOutput;
 
-			Port::Orientation ori = Port::Orientation::kHorizontal;
-			if(rand() % 4 == 0)
-				ori = Port::Orientation::kVertical;
+			    Port::Orientation ori = Port::Orientation::kHorizontal;
+			    if(rand() % 4 == 0)
+				    ori = Port::Orientation::kVertical;
 
-			node.addPort(Node::PortDefinition(name.str().c_str(), type, randomColor(), ori));
-		}
-	}, NULL));
+			    node.addPort(Node::PortDefinition(name.str().c_str(), type, randomColor(), ori));
+		    }
+	    },
+	    NULL));
 
 	QAction* separator = new QAction(graph);
 	separator->setSeparator(true);
@@ -144,33 +142,29 @@ int main(int argc, char* argv[]) {
 	QAction* deleteAction = new QAction("Delete selected items", graph);
 	deleteAction->setShortcut(QKeySequence::Delete);
 	graph->addAction(deleteAction);
-	QObject::connect(
-		deleteAction,
-		&QAction::triggered,
-		[&scene]() {
-			{
-				unsigned ei = 0;
-				while(ei < scene.edgeCount()) {
-					ConnectedEdge& e = scene.edge(ei);
-					if(e.isSelected())
-						scene.disconnect(e);
-					else
-						++ei;
-				}
-			}
-
-			{
-				unsigned ni = 0;
-				while(ni < scene.nodeCount()) {
-					Node& n = scene.node(ni);
-					if(n.isSelected())
-						scene.removeNode(n);
-					else
-						++ni;
-				}
+	QObject::connect(deleteAction, &QAction::triggered, [&scene]() {
+		{
+			unsigned ei = 0;
+			while(ei < scene.edgeCount()) {
+				ConnectedEdge& e = scene.edge(ei);
+				if(e.isSelected())
+					scene.disconnect(e);
+				else
+					++ei;
 			}
 		}
-	);
+
+		{
+			unsigned ni = 0;
+			while(ni < scene.nodeCount()) {
+				Node& n = scene.node(ni);
+				if(n.isSelected())
+					scene.removeNode(n);
+				else
+					++ni;
+			}
+		}
+	});
 
 	QObject::connect(&scene, &node_editor::GraphScene::doubleClicked, [](Node* n) {
 		if(!n)

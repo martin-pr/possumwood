@@ -1,18 +1,16 @@
 #pragma once
 
-#include "vbo.h"
-
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
-#include "glsl_traits.h"
 #include "buffer.inl"
+#include "glsl_traits.h"
+#include "vbo.h"
 
 namespace possumwood {
 
 template <typename T>
-VBO<T>::VBO(std::size_t vertexCount)
-    : m_vertexCount(vertexCount) {
+VBO<T>::VBO(std::size_t vertexCount) : m_vertexCount(vertexCount) {
 }
 
 template <typename T>
@@ -68,10 +66,10 @@ struct VBOType<int> {
 		return GL_INT;
 	}
 };
-}
+}  // namespace
 
 template <typename T>
 GLenum VBO<T>::type() const {
 	return VBOType<typename VBOTraits<T>::element>::type();
 }
-}
+}  // namespace possumwood

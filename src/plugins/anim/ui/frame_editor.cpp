@@ -1,11 +1,11 @@
 #include "frame_editor.h"
 
+#include <ImathEuler.h>
+
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QHeaderView>
 #include <QLineEdit>
-
-#include <ImathEuler.h>
 
 FrameEditor::FrameEditor() : m_widget(new QTreeWidget()), m_signalsBlocked(false) {
 	m_widget->setRootIsDecorated(false);

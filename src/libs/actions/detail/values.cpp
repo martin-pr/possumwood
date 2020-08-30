@@ -4,18 +4,21 @@
 
 #include "../app.h"
 
-namespace possumwood { namespace actions { namespace detail {
+namespace possumwood {
+namespace actions {
+namespace detail {
 
 namespace {
 
-void doSetValueFromJson(const dependency_graph::UniqueId& nodeId, const std::string& portName, const possumwood::io::json& value, std::shared_ptr<dependency_graph::Data> original) {
+void doSetValueFromJson(const dependency_graph::UniqueId& nodeId, const std::string& portName,
+                        const possumwood::io::json& value, std::shared_ptr<dependency_graph::Data> original) {
 	// get the node
 	auto nodeIt = AppCore::instance().graph().nodes().find(nodeId, dependency_graph::Nodes::kRecursive);
 	assert(nodeIt != AppCore::instance().graph().nodes().end());
 
 	// get the port
 	int portId = -1;
-	for(std::size_t pi=0; pi<nodeIt->portCount(); ++pi)
+	for(std::size_t pi = 0; pi < nodeIt->portCount(); ++pi)
 		if(nodeIt->port(pi).name() == portName) {
 			portId = pi;
 			break;
@@ -38,10 +41,12 @@ void doSetValueFromJson(const dependency_graph::UniqueId& nodeId, const std::str
 		nodeIt->port(portId).setData(data);
 	}
 	else
-		std::cerr << "Found unused property '" << portName << "' of node type '" << nodeIt->metadata()->type() << "' while loading a file. Ignoring its value." << std::endl;
+		std::cerr << "Found unused property '" << portName << "' of node type '" << nodeIt->metadata()->type()
+		          << "' while loading a file. Ignoring its value." << std::endl;
 }
 
-void doSetValue(const dependency_graph::UniqueId& nodeId, unsigned portId, std::shared_ptr<const dependency_graph::Data> value, std::shared_ptr<dependency_graph::Data> original) {
+void doSetValue(const dependency_graph::UniqueId& nodeId, unsigned portId,
+                std::shared_ptr<const dependency_graph::Data> value, std::shared_ptr<dependency_graph::Data> original) {
 	auto it = AppCore::instance().graph().nodes().find(nodeId, dependency_graph::Nodes::kRecursive);
 	assert(it != AppCore::instance().graph().nodes().end());
 
@@ -55,7 +60,8 @@ void doSetValue(const dependency_graph::UniqueId& nodeId, unsigned portId, std::
 	}
 }
 
-void doResetValue(const dependency_graph::UniqueId& nodeId, unsigned portId, std::shared_ptr<dependency_graph::Data> value) {
+void doResetValue(const dependency_graph::UniqueId& nodeId, unsigned portId,
+                  std::shared_ptr<dependency_graph::Data> value) {
 	assert(value != nullptr);
 	if(!value->empty()) {
 		auto it = AppCore::instance().graph().nodes().find(nodeId, dependency_graph::Nodes::kRecursive);
@@ -66,7 +72,8 @@ void doResetValue(const dependency_graph::UniqueId& nodeId, unsigned portId, std
 	}
 }
 
-void doResetValueFromJson(const dependency_graph::UniqueId& nodeId, const std::string& portName, std::shared_ptr<dependency_graph::Data> value) {
+void doResetValueFromJson(const dependency_graph::UniqueId& nodeId, const std::string& portName,
+                          std::shared_ptr<dependency_graph::Data> value) {
 	assert(value != nullptr);
 	if(!value->empty()) {
 		auto nodeIt = AppCore::instance().graph().nodes().find(nodeId, dependency_graph::Nodes::kRecursive);
@@ -74,7 +81,7 @@ void doResetValueFromJson(const dependency_graph::UniqueId& nodeId, const std::s
 
 		// get the port
 		int portId = -1;
-		for(std::size_t pi=0; pi<nodeIt->portCount(); ++pi)
+		for(std::size_t pi = 0; pi < nodeIt->portCount(); ++pi)
 			if(nodeIt->port(pi).name() == portName) {
 				portId = pi;
 				break;
@@ -86,13 +93,14 @@ void doResetValueFromJson(const dependency_graph::UniqueId& nodeId, const std::s
 	}
 }
 
-}
+}  // namespace
 
 possumwood::UndoStack::Action setValueAction(dependency_graph::Port& port, const dependency_graph::Data& value) {
 	return setValueAction(port.node().index(), port.index(), value);
 }
 
-possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& nodeId, std::size_t portId, const dependency_graph::Data& value) {
+possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& nodeId, std::size_t portId,
+                                             const dependency_graph::Data& value) {
 	UndoStack::Action action;
 
 	std::shared_ptr<dependency_graph::Data> original(new dependency_graph::Data());
@@ -102,15 +110,14 @@ possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& n
 	ss << "Setting value of " << nodeId << "/" << portId << " to " << *target;
 
 	action.addCommand(
-		ss.str(),
-		[nodeId, portId, target, original]() { doSetValue(nodeId, portId, target, original); },
-		[nodeId, portId, original]() { doResetValue(nodeId, portId, original); }
-	);
+	    ss.str(), [nodeId, portId, target, original]() { doSetValue(nodeId, portId, target, original); },
+	    [nodeId, portId, original]() { doResetValue(nodeId, portId, original); });
 
 	return action;
 }
 
-possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& nodeId, const std::string& portName, const possumwood::io::json& value) {
+possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& nodeId, const std::string& portName,
+                                             const possumwood::io::json& value) {
 	UndoStack::Action action;
 
 	std::shared_ptr<dependency_graph::Data> original(new dependency_graph::Data());
@@ -118,13 +125,12 @@ possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& n
 	std::stringstream ss;
 	ss << "Setting value of " << nodeId << "/" << portName << " to " << value << " from JSON";
 
-	action.addCommand(
-		ss.str(),
-		std::bind(&doSetValueFromJson, nodeId, portName, value, original),
-		std::bind(&doResetValueFromJson, nodeId, portName, original)
-	);
+	action.addCommand(ss.str(), std::bind(&doSetValueFromJson, nodeId, portName, value, original),
+	                  std::bind(&doResetValueFromJson, nodeId, portName, original));
 
 	return action;
 }
 
-} } }
+}  // namespace detail
+}  // namespace actions
+}  // namespace possumwood

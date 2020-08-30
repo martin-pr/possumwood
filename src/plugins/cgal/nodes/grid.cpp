@@ -18,11 +18,9 @@ dependency_graph::OutAttr<Meshes> a_mesh;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	std::vector<Imath::V3f> vertices;
 	for(unsigned y = 0; y <= data.get(a_ySubd); ++y) {
-		const float yf = data.get(a_origin).y +
-		                 (float)y / (float)(data.get(a_ySubd)) * data.get(a_ySize);
+		const float yf = data.get(a_origin).y + (float)y / (float)(data.get(a_ySubd)) * data.get(a_ySize);
 		for(unsigned x = 0; x <= data.get(a_xSubd); ++x) {
-			const float xf = data.get(a_origin).x +
-			                 (float)x / (float)(data.get(a_xSubd)) * data.get(a_xSize);
+			const float xf = data.get(a_origin).x + (float)x / (float)(data.get(a_xSubd)) * data.get(a_xSize);
 
 			vertices.push_back(Imath::V3f(xf, yf, data.get(a_origin).z));
 		}
@@ -33,8 +31,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(unsigned x = 0; x < data.get(a_xSubd); ++x) {
 			const std::array<std::size_t, 4> arr{
 			    {x + y * (data.get(a_xSubd) + 1), (x + 1) + y * (data.get(a_xSubd) + 1),
-			     (x + 1) + (y + 1) * (data.get(a_xSubd) + 1),
-			     x + (y + 1) * (data.get(a_xSubd) + 1)}};
+			     (x + 1) + (y + 1) * (data.get(a_xSubd) + 1), x + (y + 1) * (data.get(a_xSubd) + 1)}};
 
 			faces.push_back(arr);
 		}
@@ -43,9 +40,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	auto& mesh = result.addMesh("grid");
 
 	{
-		possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(vertices),
-		                        typeof(faces)>
-		    builder(vertices, faces);
+		possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(vertices), typeof(faces)> builder(
+		    vertices, faces);
 		mesh.polyhedron().delegate(builder);
 	}
 

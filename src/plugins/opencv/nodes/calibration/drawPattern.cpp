@@ -1,13 +1,12 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <actions/traits.h>
+#include <maths/io/vec3.h>
 #include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
 
-#include <actions/traits.h>
-#include <maths/io/vec3.h>
-
-#include "frame.h"
 #include "calibration_pattern.h"
+#include "frame.h"
 #include "tools.h"
 
 namespace {
@@ -30,7 +29,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_calibrationPattern, "pattern", possumwood::opencv::CalibrationPattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_calibrationPattern, "pattern", possumwood::opencv::CalibrationPattern(),
+	                  possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_inFrame, a_outFrame);
@@ -41,4 +41,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/calibration/draw_pattern", init);
 
-}
+}  // namespace

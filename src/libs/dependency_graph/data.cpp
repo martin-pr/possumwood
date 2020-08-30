@@ -10,7 +10,7 @@ Data::Data(const Data& d) {
 	assert(std::string(d.typeinfo().name()) == std::string(typeinfo().name()));
 }
 
-Data& Data::operator = (const Data& d) {
+Data& Data::operator=(const Data& d) {
 	// it should be possible to:
 	// 1. assign values between the same types
 	// 2. assign a value to a null (void) data - connecting void ports
@@ -20,12 +20,12 @@ Data& Data::operator = (const Data& d) {
 	return *this;
 }
 
-bool Data::operator == (const Data& d) const {
+bool Data::operator==(const Data& d) const {
 	assert(m_data != nullptr && d.m_data != nullptr);
 	return m_data->isEqual(*d.m_data);
 }
 
-bool Data::operator != (const Data& d) const {
+bool Data::operator!=(const Data& d) const {
 	assert(m_data != nullptr && d.m_data != nullptr);
 	return !m_data->isEqual(*d.m_data);
 }
@@ -63,10 +63,10 @@ bool Data::empty() const {
 	return m_data == nullptr;
 }
 
-std::ostream& operator << (std::ostream& out, const Data& bd) {
+std::ostream& operator<<(std::ostream& out, const Data& bd) {
 	out << bd.toString();
 
 	return out;
 }
 
-}
+}  // namespace dependency_graph

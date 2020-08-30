@@ -13,4 +13,4 @@ const possumwood::FragmentShader& defaultFragmentShader();
 const std::string& defaultGeometryShaderSrc();
 const possumwood::GeometryShader& defaultGeometryShader();
 
-}
+}  // namespace possumwood

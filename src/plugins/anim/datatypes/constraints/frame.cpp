@@ -1,6 +1,7 @@
 #include "frame.h"
 
-namespace anim { namespace constraints {
+namespace anim {
+namespace constraints {
 
 Frame::Frame(const anim::Transform& tr, float value) : m_tr(tr), m_constraintValue(value) {
 }
@@ -17,4 +18,5 @@ void Frame::setValue(const float& value) {
 	m_constraintValue = value;
 }
 
-} }
+}  // namespace constraints
+}  // namespace anim

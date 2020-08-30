@@ -3,10 +3,11 @@
 #include <possumwood_sdk/node_implementation.h>
 
 #include "lua/datatypes/context.h"
-#include "lua/datatypes/variable.inl"
 #include "lua/datatypes/state.h"
+#include "lua/datatypes/variable.inl"
 
-namespace possumwood { namespace lua {
+namespace possumwood {
+namespace lua {
 
 struct NullModule {
 	static std::string name() {
@@ -18,7 +19,7 @@ struct NullModule {
 	}
 };
 
-template<typename T, typename HOLDER = T, typename MODULE = NullModule>
+template <typename T, typename HOLDER = T, typename MODULE = NullModule>
 struct Inject {
 	dependency_graph::InAttr<std::string> a_name;
 	dependency_graph::InAttr<T> a_value;
@@ -46,7 +47,8 @@ struct Inject {
 		meta.addAttribute(a_value, "value", T());
 		meta.addAttribute(a_inContext, "in_context", ::possumwood::lua::Context(), ::possumwood::AttrFlags::kVertical);
 
-		meta.addAttribute(a_outContext, "out_context", ::possumwood::lua::Context(), ::possumwood::AttrFlags::kVertical);
+		meta.addAttribute(a_outContext, "out_context", ::possumwood::lua::Context(),
+		                  ::possumwood::AttrFlags::kVertical);
 
 		meta.addInfluence(a_name, a_outContext);
 		meta.addInfluence(a_value, a_outContext);
@@ -56,4 +58,5 @@ struct Inject {
 	}
 };
 
-} }
+}  // namespace lua
+}  // namespace possumwood

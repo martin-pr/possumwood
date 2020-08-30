@@ -7,7 +7,7 @@ namespace lightfields {
 namespace {
 
 struct Vec2Compare {
-	bool operator() (const cv::Vec2f& v1, const cv::Vec2f& v2) const {
+	bool operator()(const cv::Vec2f& v1, const cv::Vec2f& v2) const {
 		if(v1[0] != v2[0])
 			return v1[0] < v2[0];
 		return v1[1] < v2[1];
@@ -20,7 +20,8 @@ struct Lenslet {
 
 	void addNeighbour(std::size_t index) {
 		if(neighbourCount >= 6)
-			throw std::runtime_error("Lenslets should be organized in a hexagonal grid, which does not seem to be the case!");
+			throw std::runtime_error(
+			    "Lenslets should be organized in a hexagonal grid, which does not seem to be the case!");
 
 		neighbours[neighbourCount] = index;
 		++neighbourCount;
@@ -32,7 +33,7 @@ struct Lenslet {
 	cv::Vec2i id;
 };
 
-}
+}  // namespace
 
 /////////////
 
@@ -88,7 +89,7 @@ cv::Vec2i offset(const cv::Vec2f& l1, const cv::Vec2f& l2) {
 	return cv::Vec2i(1, 0);
 }
 
-}
+}  // namespace
 
 void LensletGraph::fit() {
 	assert(!m_pimpl->fitted);
@@ -110,9 +111,10 @@ void LensletGraph::fit() {
 		for(auto eit = srcEdgeList.begin(); eit != srcEdgeList.end(); ++eit) {
 			auto& e = *eit;
 
-			if(e[0] > m_pimpl->exclusionBorder && e[0] < m_pimpl->sensorSize[0] - m_pimpl->exclusionBorder && e[1] > m_pimpl->exclusionBorder && e[1] < m_pimpl->sensorSize[1] - m_pimpl->exclusionBorder &&
-				e[2] > m_pimpl->exclusionBorder && e[2] < m_pimpl->sensorSize[0] - m_pimpl->exclusionBorder && e[3] > m_pimpl->exclusionBorder && e[3] < m_pimpl->sensorSize[1] - m_pimpl->exclusionBorder) {
-
+			if(e[0] > m_pimpl->exclusionBorder && e[0] < m_pimpl->sensorSize[0] - m_pimpl->exclusionBorder &&
+			   e[1] > m_pimpl->exclusionBorder && e[1] < m_pimpl->sensorSize[1] - m_pimpl->exclusionBorder &&
+			   e[2] > m_pimpl->exclusionBorder && e[2] < m_pimpl->sensorSize[0] - m_pimpl->exclusionBorder &&
+			   e[3] > m_pimpl->exclusionBorder && e[3] < m_pimpl->sensorSize[1] - m_pimpl->exclusionBorder) {
 				auto it1 = index.find(cv::Point2f(e[0], e[1]));
 				auto it2 = index.find(cv::Point2f(e[2], e[3]));
 				assert(it1 != index.end() && it2 != index.end());
@@ -136,7 +138,7 @@ void LensletGraph::fit() {
 
 			// initialise the edges (to-be-processed) list
 			std::vector<std::pair<std::size_t, std::size_t>> edges;
-			for(std::size_t n=0; n<it->neighbourCount; ++n)
+			for(std::size_t n = 0; n < it->neighbourCount; ++n)
 				edges.push_back(std::make_pair(it - m_pimpl->lenslets.begin(), it->neighbours[n]));
 
 			while(!edges.empty()) {
@@ -164,7 +166,7 @@ void LensletGraph::fit() {
 					target.id[1] = source.id[1] + off[1];
 
 					// recursively continue around all edges of the target
-					for(std::size_t n=0; n<target.neighbourCount; ++n)
+					for(std::size_t n = 0; n < target.neighbourCount; ++n)
 						edges.push_back(std::make_pair(edge.second, target.neighbours[n]));
 				}
 			}
@@ -186,12 +188,12 @@ void LensletGraph::fit() {
 		if(l.id[0] > INT_MIN)
 			++lensletCount;
 
-	Eigen::MatrixXd A(2*lensletCount, 6);
-	Eigen::VectorXd b(2*lensletCount);
+	Eigen::MatrixXd A(2 * lensletCount, 6);
+	Eigen::VectorXd b(2 * lensletCount);
 	lensletCount = 0;
 	for(auto& l : m_pimpl->lenslets)
 		if(l.id[0] > INT_MIN) {
-			std::size_t rowId = lensletCount*2;
+			std::size_t rowId = lensletCount * 2;
 
 			A(rowId, 0) = l.center[0];
 			A(rowId, 1) = l.center[1];
@@ -220,11 +222,7 @@ void LensletGraph::fit() {
 	assert(x.size() == 6);
 
 	m_pimpl->fitted = true;
-	m_pimpl->fittedMatrix = cv::Matx<double, 3, 3>(
-		x[0], x[2], 0,
-		x[1], x[3], 0,
-		x[4], x[5], 1
-	);
+	m_pimpl->fittedMatrix = cv::Matx<double, 3, 3>(x[0], x[2], 0, x[1], x[3], 0, x[4], x[5], 1);
 }
 
 double LensletGraph::lensPitch() const {
@@ -269,7 +267,7 @@ void LensletGraph::drawEdges(cv::Mat& target) const {
 	assert(target.type() == CV_8UC1);
 
 	for(auto& l1 : m_pimpl->lenslets) {
-		for(unsigned char n=0;n<l1.neighbourCount;++n) {
+		for(unsigned char n = 0; n < l1.neighbourCount; ++n) {
 			auto& l2 = m_pimpl->lenslets[l1.neighbours[n]];
 
 			const float a = atan((l2.center[1] - l1.center[1]) / (l2.center[0] - l1.center[0])) / M_PI * 2.0;
@@ -280,7 +278,8 @@ void LensletGraph::drawEdges(cv::Mat& target) const {
 			if(a > 0.33)
 				color = 255;
 
-			cv::line(target, cv::Point2i(l1.center[0], l1.center[1]), cv::Point2i(l2.center[0], l2.center[1]), cv::Scalar(color));
+			cv::line(target, cv::Point2i(l1.center[0], l1.center[1]), cv::Point2i(l2.center[0], l2.center[1]),
+			         cv::Scalar(color));
 		}
 	}
 }
@@ -293,4 +292,4 @@ void LensletGraph::drawFit(cv::Mat& target) const {
 		cv::circle(target, cv::Point(l.center[0], l.center[1]), 2, (l.id[0] + 2560) % 256, 2);
 }
 
-}
+}  // namespace lightfields

@@ -24,7 +24,7 @@ bool starts_with(const std::string& str, const std::string& prefix) {
 	return true;
 }
 
-}
+}  // namespace
 
 Description::Description(const std::string& md) : m_markDown(md) {
 }
@@ -67,7 +67,7 @@ std::string Description::html() const {
 			std::size_t start = 0;
 			std::size_t bracket_counter = 0;
 
-			for(std::size_t i=0; i<line.length(); ++i) {
+			for(std::size_t i = 0; i < line.length(); ++i) {
 				switch(state) {
 					case 0:
 						if(line[i] == '[') {
@@ -105,7 +105,8 @@ std::string Description::html() const {
 						break;
 
 					case 4:
-						line = line.substr(0, start) + "<a href=\"" + link + "\">" + link_text + "</a>" + line.substr(i);
+						line =
+						    line.substr(0, start) + "<a href=\"" + link + "\">" + link_text + "</a>" + line.substr(i);
 						i = 0;
 						state = 0;
 						link = "";
@@ -117,7 +118,7 @@ std::string Description::html() const {
 
 		{
 			int state = 1;
-			for(std::size_t i=0; i<line.length(); ++i) {
+			for(std::size_t i = 0; i < line.length(); ++i) {
 				switch(state) {
 					case 0:
 						if(line[i] == ' ' || line[i] == '\r' || line[i] == '\n' || line[i] == '\t')
@@ -125,23 +126,23 @@ std::string Description::html() const {
 						break;
 					case 1:
 						if(line[i] == '`') {
-							line = line.substr(0, i) + "<code>" + line.substr(i+1);
+							line = line.substr(0, i) + "<code>" + line.substr(i + 1);
 							state = 1;
 						}
 						if(line[i] == '*') {
-							line = line.substr(0, i) + "<b>" + line.substr(i+1);
+							line = line.substr(0, i) + "<b>" + line.substr(i + 1);
 							state = 3;
 						}
 						break;
 					case 2:
 						if(line[i] == '`') {
-							line = line.substr(0, i) + "</code>" + line.substr(i+1);
+							line = line.substr(0, i) + "</code>" + line.substr(i + 1);
 							state = 0;
 						}
 						break;
 					case 3:
 						if(line[i] == '*') {
-							line = line.substr(0, i) + "</b>" + line.substr(i+1);
+							line = line.substr(0, i) + "</b>" + line.substr(i + 1);
 							state = 0;
 						}
 						break;
@@ -156,7 +157,6 @@ std::string Description::html() const {
 }
 
 std::string Description::serialize() const {
-
 	// std::stringstream ss;
 
 	// for(auto c : m_markDown) {
@@ -204,4 +204,4 @@ void Description::deserialize(const std::string& s) {
 	m_markDown = s;
 }
 
-}
+}  // namespace possumwood

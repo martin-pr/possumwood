@@ -1,10 +1,9 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/datatypes/filename.h>
-
-#include <opencv2/opencv.hpp>
-
 #include <actions/traits.h>
 #include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
+
+#include <opencv2/opencv.hpp>
 
 #include "sequence.h"
 
@@ -15,15 +14,9 @@ dependency_graph::InAttr<float> a_offset;
 dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSequence;
 
-enum Modes {
-	kInt,
-	kFloat
-};
+enum Modes { kInt, kFloat };
 
-static const std::vector<std::pair<std::string, int>> s_modes {
-	{"Nearest pixel", kInt},
-	{"Subpixel", kFloat}
-};
+static const std::vector<std::pair<std::string, int>> s_modes{{"Nearest pixel", kInt}, {"Subpixel", kFloat}};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::opencv::Sequence seq = data.get(a_inSequence).clone();
@@ -35,7 +28,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if(offset < 0.0f)
 			start = -offset * float(seq.size() - 1);
 
-		for(std::size_t i=0; i<seq.size(); ++i) {
+		for(std::size_t i = 0; i < seq.size(); ++i) {
 			const float current = start + i * offset;
 			cv::Mat& f = *seq[i];
 
@@ -45,10 +38,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			else {
 				const float width = (float)f.cols - std::ceil(offset * float(seq.size() - 1));
 
-				cv::getRectSubPix(f,
-					cv::Size(int(width), f.rows),
-					cv::Point2f(current + width / 2.0f, (float)f.rows / 2.0f),
-					f);
+				cv::getRectSubPix(f, cv::Size(int(width), f.rows),
+				                  cv::Point2f(current + width / 2.0f, (float)f.rows / 2.0f), f);
 			}
 		}
 	}
@@ -73,4 +64,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/sequence/offset", init);
 
-}
+}  // namespace

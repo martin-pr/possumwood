@@ -8,7 +8,7 @@ Values::Values(NodeBase& n) : m_node(&n) {
 Values::Values(Values&& vals) : m_node(vals.m_node) {
 }
 
-Values& Values::operator =(Values&& vals) {
+Values& Values::operator=(Values&& vals) {
 	m_node = vals.m_node;
 
 	return *this;
@@ -22,4 +22,4 @@ const Data& Values::data(std::size_t index) const {
 	return m_node->port(index).getData();
 }
 
-}
+}  // namespace dependency_graph

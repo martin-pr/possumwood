@@ -1,9 +1,8 @@
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
 
 #include "frame.h"
 
@@ -52,7 +51,9 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inFrame, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_threshold, "threshold", 127.0f);
 	meta.addAttribute(a_maxVal, "max_val", 255.0f);
-	meta.addAttribute(a_type, "type", possumwood::Enum({"THRESH_BINARY", "THRESH_BINARY_INV", "THRESH_TRUNC", "THRESH_TOZERO", "THRESH_TOZERO_INV", "THRESH_MASK"}));
+	meta.addAttribute(a_type, "type",
+	                  possumwood::Enum({"THRESH_BINARY", "THRESH_BINARY_INV", "THRESH_TRUNC", "THRESH_TOZERO",
+	                                    "THRESH_TOZERO_INV", "THRESH_MASK"}));
 	meta.addAttribute(a_otsu, "use_otsu", false);
 	meta.addAttribute(a_triangle, "use_triangle", false);
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
@@ -69,4 +70,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/filter/threshold", init);
 
-}
+}  // namespace

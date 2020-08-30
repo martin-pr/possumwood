@@ -8,4 +8,4 @@ struct EdmondsKarp {
 	static void solve(Graph& grid);
 };
 
-}
+}  // namespace lightfields

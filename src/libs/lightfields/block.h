@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
 #include <iostream>
 #include <memory>
+#include <string>
 
 namespace lightfields {
 
@@ -13,6 +13,6 @@ struct Block {
 	std::unique_ptr<unsigned char[]> data;
 };
 
-std::istream& operator >> (std::istream& in, Block& block);
+std::istream& operator>>(std::istream& in, Block& block);
 
-}
+}  // namespace lightfields

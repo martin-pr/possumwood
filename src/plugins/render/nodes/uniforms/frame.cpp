@@ -1,14 +1,12 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/app.h>
-
 #include <GL/glew.h>
 #include <GL/glu.h>
-
 #include <ImathMatrix.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/node_implementation.h>
 
-#include "possumwood_sdk/datatypes/enum.h"
-#include "datatypes/uniforms.inl"
 #include "anim/datatypes/skeleton.h"
+#include "datatypes/uniforms.inl"
+#include "possumwood_sdk/datatypes/enum.h"
 
 namespace {
 
@@ -44,7 +42,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				b.tr() = b.parent().tr() * b.tr();
 
 		// and compute skinning transforms into frame
-		for(unsigned b=0;b<frame.size();++b)
+		for(unsigned b = 0; b < frame.size(); ++b)
 			frame[b].tr() = frame[b].tr() * base[b].tr().inverse();
 	}
 
@@ -55,19 +53,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				b.tr() = b.parent().tr() * b.tr();
 	}
 
-	for(unsigned a=0;a<frame.size();++a)
+	for(unsigned a = 0; a < frame.size(); ++a)
 		matrices[a] = frame[a].tr().toMatrix44();
 
 	uniforms.addUniform<Imath::M44f>(
-		"frame",
-		frame.size(),
-		possumwood::Uniforms::kPerFrame,
-		[matrices](Imath::M44f* data, std::size_t size, const possumwood::ViewportState& vs) {
-			for(std::size_t i=0;i<matrices.size();++i)
-				/// OpenGL matrices are transposed (?!)
-				data[i] = matrices[i].transposed();
-		}
-	);
+	    "frame", frame.size(), possumwood::Uniforms::kPerFrame,
+	    [matrices](Imath::M44f* data, std::size_t size, const possumwood::ViewportState& vs) {
+		    for(std::size_t i = 0; i < matrices.size(); ++i)
+			    /// OpenGL matrices are transposed (?!)
+			    data[i] = matrices[i].transposed();
+	    });
 
 	data.set(a_outUniforms, uniforms);
 
@@ -77,8 +72,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_frame, "frame");
 	meta.addAttribute(a_base, "base_pose");
-	meta.addAttribute(a_mode, "mode",
-	                  possumwood::Enum({"World-space", "Skinning"}));
+	meta.addAttribute(a_mode, "mode", possumwood::Enum({"World-space", "Skinning"}));
 	meta.addAttribute(a_inUniforms, "in_uniforms", possumwood::Uniforms(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_outUniforms, "out_uniforms", possumwood::Uniforms(), possumwood::AttrFlags::kVertical);
 
@@ -92,4 +86,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("render/uniforms/anim_frame", init);
 
-}
+}  // namespace

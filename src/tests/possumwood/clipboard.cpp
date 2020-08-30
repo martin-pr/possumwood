@@ -1,16 +1,13 @@
-#include <boost/test/unit_test.hpp>
-
-#include <vector>
-
+#include <actions/actions.h>
 #include <dependency_graph/graph.h>
 #include <dependency_graph/rtti.h>
-#include <dependency_graph/nodes_iterator.inl>
-#include <dependency_graph/node_base.inl>
-#include <dependency_graph/port.inl>
-
-#include <actions/actions.h>
-
 #include <possumwood_sdk/app.h>
+
+#include <boost/test/unit_test.hpp>
+#include <dependency_graph/node_base.inl>
+#include <dependency_graph/nodes_iterator.inl>
+#include <dependency_graph/port.inl>
+#include <vector>
 
 #include "common.h"
 
@@ -31,10 +28,9 @@ dependency_graph::Nodes::const_iterator findNode(const dependency_graph::Network
 	return result;
 }
 
-}
+}  // namespace
 
 BOOST_AUTO_TEST_CASE(clipboard) {
-
 	std::vector<::possumwood::io::json> data;
 	std::vector<std::function<void(const dependency_graph::Network&)>> tests;
 
@@ -42,49 +38,29 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	// a simple network of nodes
 	data.push_back("{\"connections\":[],\"nodes\":{}}"_json);
 
-	data.back()["nodes"]["addition_0"] = possumwood::io::json {
-		{"name", "add"},
-		{"type", "addition"},
-		{"ports", {
-			{"input_1", 2.0},
-			{"input_2", 4.0}
-		}},
-		{"blind_data", {
-			{"type", unmangledTypeId<possumwood::NodeData>()},
-			{"value", "test blind data"}
-		}}
-	};
+	data.back()["nodes"]["addition_0"] = possumwood::io::json{
+	    {"name", "add"},
+	    {"type", "addition"},
+	    {"ports", {{"input_1", 2.0}, {"input_2", 4.0}}},
+	    {"blind_data", {{"type", unmangledTypeId<possumwood::NodeData>()}, {"value", "test blind data"}}}};
 
-	data.back()["nodes"]["multiplication_0"] = possumwood::io::json {
-		{"name", "mult_0"},
-		{"type", "multiplication"},
-		{"ports", {
-			{"input_2", 5.0}
-		}},
-		{"blind_data", {
-			{"type", unmangledTypeId<possumwood::NodeData>()},
-			{"value", "test blind data"}
-		}}
-	};
+	data.back()["nodes"]["multiplication_0"] = possumwood::io::json{
+	    {"name", "mult_0"},
+	    {"type", "multiplication"},
+	    {"ports", {{"input_2", 5.0}}},
+	    {"blind_data", {{"type", unmangledTypeId<possumwood::NodeData>()}, {"value", "test blind data"}}}};
 
-	data.back()["nodes"]["multiplication_1"] = possumwood::io::json {
-		{"name", "mult_1"},
-		{"type", "multiplication"},
-		{"ports", {
-			{"input_1", 0.0},
-			{"input_2", 0.0}
-		}},
-		{"blind_data", {
-			{"type", unmangledTypeId<possumwood::NodeData>()},
-			{"value", "test blind data"}
-		}}
-	};
+	data.back()["nodes"]["multiplication_1"] = possumwood::io::json{
+	    {"name", "mult_1"},
+	    {"type", "multiplication"},
+	    {"ports", {{"input_1", 0.0}, {"input_2", 0.0}}},
+	    {"blind_data", {{"type", unmangledTypeId<possumwood::NodeData>()}, {"value", "test blind data"}}}};
 
-	data.back()["connections"] = possumwood::io::json {{
-		{"out_node", "addition_0"},
-		{"out_port", "output"},
-		{"in_node", "multiplication_0"},
-		{"in_port", "input_1"},
+	data.back()["connections"] = possumwood::io::json{{
+	    {"out_node", "addition_0"},
+	    {"out_port", "output"},
+	    {"in_node", "multiplication_0"},
+	    {"in_port", "input_1"},
 	}};
 
 	tests.push_back([&](const dependency_graph::Network& net) {
@@ -109,17 +85,13 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	///////////////
 	// previous network as a subnetwork (with no inputs or outputs)
 	data.push_back(possumwood::io::json());
-	data.back()["nodes"]["network_0"] = json {
-		{"name", "test_network"},
-		{"type", "network"},
-		// {"ports", {}},
-		{"blind_data", {
-			{"type", unmangledTypeId<possumwood::NodeData>()},
-			{"value", "test blind data"}
-		}},
-		{"nodes", data[0]["nodes"]},
-		{"connections", data[0]["connections"]}
-	};
+	data.back()["nodes"]["network_0"] =
+	    json{{"name", "test_network"},
+	         {"type", "network"},
+	         // {"ports", {}},
+	         {"blind_data", {{"type", unmangledTypeId<possumwood::NodeData>()}, {"value", "test blind data"}}},
+	         {"nodes", data[0]["nodes"]},
+	         {"connections", data[0]["connections"]}};
 	data.back()["connections"] = "[]"_json;
 
 	tests.push_back([&](const dependency_graph::Network& net) {
@@ -151,29 +123,20 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	// previous network as a subnetwork (with inputs and outputs, but not connected)
 	//   -> contains unconnected void ports
 	data.push_back(data.back());
-	data.back()["nodes"]["network_0"]["nodes"]["input_0"] = json {
-		{"name", "input_1"},
-		{"type", "input"},
-		{"blind_data", {
-			{"type", unmangledTypeId<possumwood::NodeData>()},
-			{"value", "test blind data"}
-		}},
+	data.back()["nodes"]["network_0"]["nodes"]["input_0"] = json{
+	    {"name", "input_1"},
+	    {"type", "input"},
+	    {"blind_data", {{"type", unmangledTypeId<possumwood::NodeData>()}, {"value", "test blind data"}}},
 	};
-	data.back()["nodes"]["network_0"]["nodes"]["input_1"] = json {
-		{"name", "input_2"},
-		{"type", "input"},
-		{"blind_data", {
-			{"type", unmangledTypeId<possumwood::NodeData>()},
-			{"value", "test blind data"}
-		}},
+	data.back()["nodes"]["network_0"]["nodes"]["input_1"] = json{
+	    {"name", "input_2"},
+	    {"type", "input"},
+	    {"blind_data", {{"type", unmangledTypeId<possumwood::NodeData>()}, {"value", "test blind data"}}},
 	};
-	data.back()["nodes"]["network_0"]["nodes"]["output_0"] = json {
-		{"name", "output_1"},
-		{"type", "output"},
-		{"blind_data", {
-			{"type", unmangledTypeId<possumwood::NodeData>()},
-			{"value", "test blind data"}
-		}},
+	data.back()["nodes"]["network_0"]["nodes"]["output_0"] = json{
+	    {"name", "output_1"},
+	    {"type", "output"},
+	    {"blind_data", {{"type", unmangledTypeId<possumwood::NodeData>()}, {"value", "test blind data"}}},
 	};
 
 	tests.push_back([&](const dependency_graph::Network&) {
@@ -185,39 +148,38 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	data.push_back(data.back());
 
 	// add network port connections
-	data.back()["nodes"]["network_0"]["connections"] = json {
-		{
-			{"out_node", "addition_0"},
-			{"out_port", "output"},
-			{"in_node", "output_0"},
-			{"in_port", "data"},
-		},
-		{
-			{"out_node", "addition_0"},
-			{"out_port", "output"},
-			{"in_node", "multiplication_0"},
-			{"in_port", "input_1"},
-		},
-		{
-			{"out_node", "input_0"},
-			{"out_port", "data"},
-			{"in_node", "addition_0"},
-			{"in_port", "input_1"},
-		},
-		{
-			{"out_node", "input_1"},
-			{"out_port", "data"},
-			{"in_node", "addition_0"},
-			{"in_port", "input_2"},
-		}
-	};
+	data.back()["nodes"]["network_0"]["connections"] = json{{
+	                                                            {"out_node", "addition_0"},
+	                                                            {"out_port", "output"},
+	                                                            {"in_node", "output_0"},
+	                                                            {"in_port", "data"},
+	                                                        },
+	                                                        {
+	                                                            {"out_node", "addition_0"},
+	                                                            {"out_port", "output"},
+	                                                            {"in_node", "multiplication_0"},
+	                                                            {"in_port", "input_1"},
+	                                                        },
+	                                                        {
+	                                                            {"out_node", "input_0"},
+	                                                            {"out_port", "data"},
+	                                                            {"in_node", "addition_0"},
+	                                                            {"in_port", "input_1"},
+	                                                        },
+	                                                        {
+	                                                            {"out_node", "input_1"},
+	                                                            {"out_port", "data"},
+	                                                            {"in_node", "addition_0"},
+	                                                            {"in_port", "input_2"},
+	                                                        }};
 
 	// connected ports will no longer be explicitly listed in addition_0 ports
-	data.back()["nodes"]["network_0"]["nodes"]["addition_0"].erase(data.back()["nodes"]["network_0"]["nodes"]["addition_0"].find("ports"));
+	data.back()["nodes"]["network_0"]["nodes"]["addition_0"].erase(
+	    data.back()["nodes"]["network_0"]["nodes"]["addition_0"].find("ports"));
 	// but they will be exposed out on the network
-	data.back()["nodes"]["network_0"]["ports"] = json {
-		{"input_1", 7},
-		{"input_2", 8},
+	data.back()["nodes"]["network_0"]["ports"] = json{
+	    {"input_1", 7},
+	    {"input_2", 8},
 	};
 
 	tests.push_back([&](const dependency_graph::Network& net) {

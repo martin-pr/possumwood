@@ -1,14 +1,13 @@
-#include <possumwood_sdk/node_implementation.h>
-#include <possumwood_sdk/datatypes/filename.h>
-
-#include <opencv2/opencv.hpp>
-
 #include <actions/traits.h>
 #include <maths/io/vec3.h>
 #include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
-#include "frame.h"
+#include <opencv2/opencv.hpp>
+
 #include "calibration_pattern.h"
+#include "frame.h"
 
 namespace {
 
@@ -39,10 +38,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(type == possumwood::opencv::CalibrationPattern::kAsymmetricCirclesGrid) {
 		for(unsigned r = 0; r < data.get(a_sizeHeight); ++r)
 			for(unsigned c = 0; c < data.get(a_sizeWidth); ++c) {
-				float* ptr = pattern.ptr<float>(r*data.get(a_sizeWidth) + c, 0);
+				float* ptr = pattern.ptr<float>(r * data.get(a_sizeWidth) + c, 0);
 
-				*(ptr) = (2*c + r % 2)*squareSize;
-				*(ptr+1) = r*squareSize;
+				*(ptr) = (2 * c + r % 2) * squareSize;
+				*(ptr + 1) = r * squareSize;
 			}
 	}
 
@@ -50,24 +49,22 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	else {
 		for(unsigned r = 0; r < data.get(a_sizeHeight); ++r)
 			for(unsigned c = 0; c < data.get(a_sizeWidth); ++c) {
-				float* ptr = pattern.ptr<float>(r*data.get(a_sizeWidth) + c, 0);
+				float* ptr = pattern.ptr<float>(r * data.get(a_sizeWidth) + c, 0);
 
-				*(ptr) = c*squareSize;
-				*(ptr+1) = r*squareSize;
+				*(ptr) = c * squareSize;
+				*(ptr + 1) = r * squareSize;
 			}
 	}
 
 	data.set(a_pattern, possumwood::opencv::CalibrationPattern(
-		pattern, cv::Size(data.get(a_sizeWidth), data.get(a_sizeHeight)), false,
-		type
-	));
+	                        pattern, cv::Size(data.get(a_sizeWidth), data.get(a_sizeHeight)), false, type));
 
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_type, "type",
-		possumwood::Enum({"Symmetric circles grid", "Asymmetric circles grid", "Chessboard"}));
+	                  possumwood::Enum({"Symmetric circles grid", "Asymmetric circles grid", "Chessboard"}));
 	meta.addAttribute(a_sizeWidth, "size/width", 4u);
 	meta.addAttribute(a_sizeHeight, "size/height", 11u);
 	meta.addAttribute(a_squareSize, "square_size", 30.0f);
@@ -83,4 +80,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/calibration/create_pattern", init);
 
-}
+}  // namespace

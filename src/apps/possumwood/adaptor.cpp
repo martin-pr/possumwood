@@ -1,11 +1,15 @@
 #include "adaptor.h"
 
-#include <array>
-#include <cassert>
-#include <functional>
-#include <map>
+#include <possumwood_sdk/gl.h>
 
-#include <GL/gl.h>
+#include <actions/actions.h>
+#include <actions/node_data.h>
+#include <dependency_graph/network.h>
+#include <dependency_graph/unique_id.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/colours.h>
+#include <possumwood_sdk/metadata.h>
+#include <qt_node_editor/connected_edge.h>
 
 #include <QApplication>
 #include <QClipboard>
@@ -13,20 +17,12 @@
 #include <QSplitter>
 #include <QStyle>
 #include <QVBoxLayout>
-
-#include <dependency_graph/network.h>
-#include <dependency_graph/unique_id.h>
+#include <array>
+#include <cassert>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
-
-#include <possumwood_sdk/app.h>
-#include <possumwood_sdk/colours.h>
-#include <possumwood_sdk/gl.h>
-#include <possumwood_sdk/metadata.h>
-#include <qt_node_editor/connected_edge.h>
-
-#include <actions/actions.h>
-#include <actions/node_data.h>
+#include <functional>
+#include <map>
 
 Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetwork(NULL), m_sizeHint(400, 400) {
 	// register callbacks

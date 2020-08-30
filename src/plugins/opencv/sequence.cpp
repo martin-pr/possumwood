@@ -2,7 +2,8 @@
 
 #include "tools.h"
 
-namespace possumwood { namespace opencv {
+namespace possumwood {
+namespace opencv {
 
 Sequence::Sequence(std::size_t size) : m_sequence(size) {
 }
@@ -19,8 +20,9 @@ Sequence Sequence::clone() const {
 Sequence::Item& Sequence::add(const cv::Mat& frame, const Item::Meta& meta) {
 	// check for consistency
 	if(!m_sequence.empty())
-		if(frame.rows != m_sequence.front()->rows || frame.cols != m_sequence.front()->cols || frame.type() != m_sequence.front()->type())
-			throw std::runtime_error("Adding an inconsistent frame to a sequence!"); // TODO: more details
+		if(frame.rows != m_sequence.front()->rows || frame.cols != m_sequence.front()->cols ||
+		   frame.type() != m_sequence.front()->type())
+			throw std::runtime_error("Adding an inconsistent frame to a sequence!");  // TODO: more details
 
 	m_sequence.push_back(Item(frame, meta));
 	return m_sequence.back();
@@ -28,7 +30,8 @@ Sequence::Item& Sequence::add(const cv::Mat& frame, const Item::Meta& meta) {
 
 bool Sequence::isValid() const {
 	for(auto& f : m_sequence)
-		if(f->rows != m_sequence.front()->rows || f->cols != m_sequence.front()->cols || f->type() != m_sequence.front()->type())
+		if(f->rows != m_sequence.front()->rows || f->cols != m_sequence.front()->cols ||
+		   f->type() != m_sequence.front()->type())
 			return false;
 	return true;
 }
@@ -104,11 +107,11 @@ const Sequence::Item& Sequence::operator[](std::size_t index) const {
 	return m_sequence[index];
 }
 
-bool Sequence::operator == (const Sequence& f) const {
+bool Sequence::operator==(const Sequence& f) const {
 	return m_sequence == f.m_sequence;
 }
 
-bool Sequence::operator != (const Sequence& f) const {
+bool Sequence::operator!=(const Sequence& f) const {
 	return m_sequence != f.m_sequence;
 }
 
@@ -128,11 +131,11 @@ const Sequence::Item::Meta& Sequence::Item::meta() const {
 	return m_meta;
 }
 
-bool Sequence::Item::operator == (const Item& i) const {
+bool Sequence::Item::operator==(const Item& i) const {
 	return m_mat.ptr() == i->ptr();
 }
 
-bool Sequence::Item::operator != (const Item& i) const {
+bool Sequence::Item::operator!=(const Item& i) const {
 	return m_mat.ptr() != i->ptr();
 }
 
@@ -170,13 +173,15 @@ Sequence::Item::Meta Sequence::Item::Meta::merge(const Meta& m1, const Meta& m2)
 
 /////////////
 
-std::ostream& operator << (std::ostream& out, const Sequence& seq) {
+std::ostream& operator<<(std::ostream& out, const Sequence& seq) {
 	if(seq.empty())
 		out << "Empty sequence" << std::endl;
 	else if(seq.size() == 1)
-		out << "A sequence with 1 frame, " << opencv::type2str((*seq[0]).type()) << ", " << (*seq[0]).cols << "x" << (*seq[0]).rows << std::endl;
+		out << "A sequence with 1 frame, " << opencv::type2str((*seq[0]).type()) << ", " << (*seq[0]).cols << "x"
+		    << (*seq[0]).rows << std::endl;
 	else
-		out << "A sequence of " << seq.size() << " frames, " << opencv::type2str((*seq[0]).type()) << ", " << (*seq[0]).cols << "x" << (*seq[0]).rows << std::endl;
+		out << "A sequence of " << seq.size() << " frames, " << opencv::type2str((*seq[0]).type()) << ", "
+		    << (*seq[0]).cols << "x" << (*seq[0]).rows << std::endl;
 
 	unsigned ctr = 0;
 	for(auto& f : seq) {
@@ -195,4 +200,5 @@ std::ostream& operator << (std::ostream& out, const Sequence& seq) {
 	return out;
 }
 
-} }
+}  // namespace opencv
+}  // namespace possumwood

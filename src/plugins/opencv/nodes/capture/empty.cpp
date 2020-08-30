@@ -1,13 +1,12 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
 
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
-
-#include "maths/io/vec2.h"
 #include "frame.h"
+#include "maths/io/vec2.h"
 
 namespace {
 
@@ -87,12 +86,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_mode, "mode",
-		possumwood::Enum({
-			"CV_8UC1", "CV_8UC2", "CV_8UC3", "CV_8UC4", "CV_8SC1", "CV_8SC2", "CV_8SC3", "CV_8SC4", "CV_16UC1", "CV_16UC2",
-			"CV_16UC3", "CV_16UC4", "CV_16SC1", "CV_16SC2", "CV_16SC3", "CV_16SC4", "CV_32SC1", "CV_32SC2", "CV_32SC3",
-			"CV_32SC4", "CV_32FC1", "CV_32FC2", "CV_32FC3", "CV_32FC4", "CV_64FC1", "CV_64FC2", "CV_64FC3", "CV_64FC4"
-		}));
+	meta.addAttribute(
+	    a_mode, "mode",
+	    possumwood::Enum({"CV_8UC1",  "CV_8UC2",  "CV_8UC3",  "CV_8UC4",  "CV_8SC1",  "CV_8SC2",  "CV_8SC3",
+	                      "CV_8SC4",  "CV_16UC1", "CV_16UC2", "CV_16UC3", "CV_16UC4", "CV_16SC1", "CV_16SC2",
+	                      "CV_16SC3", "CV_16SC4", "CV_32SC1", "CV_32SC2", "CV_32SC3", "CV_32SC4", "CV_32FC1",
+	                      "CV_32FC2", "CV_32FC3", "CV_32FC4", "CV_64FC1", "CV_64FC2", "CV_64FC3", "CV_64FC4"}));
 	meta.addAttribute(a_size, "size");
 	meta.addAttribute(a_color, "color");
 	meta.addAttribute(a_outFrame, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
@@ -106,4 +105,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/capture/empty", init);
 
-}
+}  // namespace

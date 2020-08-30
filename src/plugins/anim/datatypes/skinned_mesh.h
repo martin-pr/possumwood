@@ -1,19 +1,19 @@
 #pragma once
 
+#include <actions/traits.h>
+
 #include <array>
 #include <memory>
 
-#include <actions/traits.h>
-
-#include "skinned_vertices.h"
 #include "polygons.h"
+#include "skinned_vertices.h"
 
 namespace anim {
 
 /// A slightly sloppy version of skinned mesh data representation
 class SkinnedMesh {
   public:
-  	SkinnedMesh();
+	SkinnedMesh();
 
 	const std::string& name() const;
 	void setName(const std::string& name);
@@ -34,15 +34,15 @@ class SkinnedMesh {
 	std::vector<Imath::V3f> m_normals;
 	Polygons m_polygons;
 };
-}
+}  // namespace anim
 
 namespace possumwood {
 
-template<>
+template <>
 struct Traits<std::shared_ptr<const std::vector<anim::SkinnedMesh>>> {
 	static constexpr std::array<float, 3> colour() {
 		return std::array<float, 3>{{0, 0.5, 0.5}};
 	}
 };
 
-}
+}  // namespace possumwood

@@ -11,7 +11,5 @@
 namespace {
 
 possumwood::NodeImplementation s_impl(
-    "lua/extract/mesh",
-    possumwood::lua::Extract<possumwood::Meshes,
-                             possumwood::cgal::PolyhedronWrapper>::init);
+    "lua/extract/mesh", possumwood::lua::Extract<possumwood::Meshes, possumwood::cgal::PolyhedronWrapper>::init);
 }

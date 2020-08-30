@@ -1,18 +1,15 @@
-#include <possumwood_sdk/node_implementation.h>
-
-#include <thread>
-#include <mutex>
-
-#include <tbb/parallel_for.h>
-
-#include <opencv2/opencv.hpp>
-
 #include <actions/traits.h>
 #include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/node_implementation.h>
+#include <tbb/parallel_for.h>
 
-#include "maths/io/vec2.h"
+#include <mutex>
+#include <opencv2/opencv.hpp>
+#include <thread>
+
 #include "frame.h"
 #include "lightfield_vignetting.h"
+#include "maths/io/vec2.h"
 #include "tools.h"
 
 namespace {
@@ -38,8 +35,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				float xf = (float)x / (float)(width) * (float)elements;
 				float yf = (float)y / (float)(height) * (float)elements;
 
-				float uf = ((floor(xf) + 0.5) / (float)(elements) - 0.5) * 2.0;
-				float vf = ((floor(yf) + 0.5) / (float)(elements) - 0.5) * 2.0;
+				float uf = ((floor(xf) + 0.5) / (float)(elements)-0.5) * 2.0;
+				float vf = ((floor(yf) + 0.5) / (float)(elements)-0.5) * 2.0;
 
 				xf = std::fmod(xf, 1.0f);
 				yf = std::fmod(yf, 1.0f);
@@ -75,11 +72,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_vignetting, "vignetting", possumwood::opencv::LightfieldVignetting(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_vignetting, "vignetting", possumwood::opencv::LightfieldVignetting(),
+	                  possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(300u, 300u));
 	meta.addAttribute(a_elements, "elements", 5u);
-	meta.addAttribute(a_mode, "mode",
-		possumwood::Enum({"XY-UV", "UV-XY"}));
+	meta.addAttribute(a_mode, "mode", possumwood::Enum({"XY-UV", "UV-XY"}));
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_vignetting, a_out);
@@ -90,9 +87,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/lightfields/vignetting_mosaic", init);
 
-}
-
-
+}  // namespace

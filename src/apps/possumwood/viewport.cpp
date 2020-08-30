@@ -1,19 +1,18 @@
 #include "viewport.h"
 
-#include <cassert>
-#include <iostream>
-#include <cmath>
-
-#include <QtGui/QMouseEvent>
-
 #include <possumwood_sdk/gl.h>
 
-#include "gl_init.h"
+#include <QtGui/QMouseEvent>
+#include <cassert>
+#include <cmath>
+#include <iostream>
+
 #include "gl_debug.h"
+#include "gl_init.h"
 
 Viewport::Viewport(QWidget* parent)
-    : QOpenGLWidget(parent), m_sceneDistance(10), m_sceneRotationX(30),
-      m_sceneRotationY(30), m_origin(0, 0, 0), m_mouseX(0), m_mouseY(0) {
+    : QOpenGLWidget(parent), m_sceneDistance(10), m_sceneRotationX(30), m_sceneRotationY(30), m_origin(0, 0, 0),
+      m_mouseX(0), m_mouseY(0) {
 	setMouseTracking(true);
 
 	setFocusPolicy(Qt::ClickFocus);
@@ -60,13 +59,13 @@ Imath::V3f eyePosition(float sceneRotX, float sceneRotY, float sceneDist) {
 	return eye;
 }
 
-}
+}  // namespace
 
 void Viewport::paintGL() {
-	// in debug mode, create a scoped "debug" object, turning on OpenGL debugging
-	#ifndef NDEBUG
+// in debug mode, create a scoped "debug" object, turning on OpenGL debugging
+#ifndef NDEBUG
 	GlDebug scoped_gl_debug;
-	#endif
+#endif
 
 	GL_CHECK_ERR;
 
@@ -75,12 +74,10 @@ void Viewport::paintGL() {
 	// update the matrices
 	m_viewportState.resize(width(), height());
 
-	m_viewportState.perspective(45, m_sceneDistance * 0.1f,
-	                std::max(m_sceneDistance * 2.0f, 1000.0f));
+	m_viewportState.perspective(45, m_sceneDistance * 0.1f, std::max(m_sceneDistance * 2.0f, 1000.0f));
 
-	m_viewportState.lookAt(
-	    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance) + m_origin,
-	    m_origin, Imath::V3f(0, 1, 0));
+	m_viewportState.lookAt(eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance) + m_origin, m_origin,
+	                       Imath::V3f(0, 1, 0));
 
 	// record the time difference between frames, to determine current FPS
 	const boost::posix_time::ptime t(boost::posix_time::microsec_clock::universal_time());
@@ -118,8 +115,7 @@ void Viewport::mouseMoveEvent(QMouseEvent* event) {
 	}
 
 	if(event->buttons() & Qt::MiddleButton) {
-		const Imath::V3f eye =
-		    eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance);
+		const Imath::V3f eye = eyePosition(m_sceneRotationX, m_sceneRotationY, m_sceneDistance);
 
 		const float dx = -(float)(event->x() - m_mouseX) / (float)(width());
 		const float dy = (float)(event->y() - m_mouseY) / (float)(height());

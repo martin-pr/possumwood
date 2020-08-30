@@ -1,11 +1,11 @@
 #pragma once
 
-#include <string>
-#include <set>
-#include <vector>
+#include <cassert>
 #include <map>
 #include <memory>
-#include <cassert>
+#include <set>
+#include <string>
+#include <vector>
 
 #include "property.h"
 #include "property_item.h"
@@ -41,7 +41,7 @@ class Properties {
 
   protected:
   private:
-  	std::size_t addSingleItem();
+	std::size_t addSingleItem();
 
 	std::map<std::string, std::unique_ptr<PropertyBase>> m_properties;
 
@@ -82,6 +82,6 @@ const Property<T>& Properties::property(const std::string& name) const {
 	return dynamic_cast<const Property<T>&>(*it->second);
 }
 
-}
+}  // namespace possumwood
 
 #include "property.inl"

@@ -1,11 +1,9 @@
+#include <actions/traits.h>
+#include <lightfields/pattern.h>
+#include <lightfields/samples.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
-
-#include <actions/traits.h>
-
-#include <lightfields/pattern.h>
-#include <lightfields/samples.h>
 
 #include "lightfields.h"
 
@@ -43,7 +41,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-
 possumwood::NodeImplementation s_impl("opencv/lightfields/samples_refocus", init);
 
-}
+}  // namespace

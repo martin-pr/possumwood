@@ -32,11 +32,11 @@ void MetadataRegister::add(const MetadataHandle& handle) {
 		m_handles.insert(handle);
 	else {
 		std::stringstream ss;
-		ss << "Node type " << handle->type() << " already registered! Loading a plugin twice would lead to problems. Let's not.";
+		ss << "Node type " << handle->type()
+		   << " already registered! Loading a plugin twice would lead to problems. Let's not.";
 
 		throw std::runtime_error(ss.str().c_str());
 	}
-
 }
 
 void MetadataRegister::remove(const MetadataHandle& handle) {
@@ -57,4 +57,4 @@ MetadataRegister::const_iterator MetadataRegister::end() const {
 	return m_handles.end();
 }
 
-}
+}  // namespace dependency_graph

@@ -1,9 +1,8 @@
 #pragma once
 
-#include <string>
-
 #include <QGraphicsRectItem>
 #include <QGraphicsTextItem>
+#include <string>
 
 #include "port.h"
 

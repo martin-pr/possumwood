@@ -1,13 +1,12 @@
-#include <possumwood_sdk/node_implementation.h>
+#include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/datatypes/filename.h>
+#include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
 
-#include <possumwood_sdk/datatypes/enum.h>
-#include <actions/traits.h>
-
-#include "frame.h"
 #include "calibration_pattern.h"
+#include "frame.h"
 
 namespace {
 
@@ -34,9 +33,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		if(data.get(a_fastCheck))
 			flags |= cv::CALIB_CB_FAST_CHECK;
 
-		success = cv::findChessboardCorners(*data.get(a_frame),
-			inPattern.size(), result, flags
-		);
+		success = cv::findChessboardCorners(*data.get(a_frame), inPattern.size(), result, flags);
 	}
 
 	// circle patterns, symmetric or asymmetric
@@ -50,16 +47,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		else
 			flags |= cv::CALIB_CB_SYMMETRIC_GRID;
 
-		success = cv::findCirclesGrid(*data.get(a_frame),
-			inPattern.size(), result, flags
-		);
+		success = cv::findCirclesGrid(*data.get(a_frame), inPattern.size(), result, flags);
 	}
 
 	dependency_graph::State status;
 	if(!success)
 		status.addWarning("Pattern not found in the input image!");
 
-	const possumwood::opencv::CalibrationPattern grid(result, inPattern.size(), success, inPattern.type(), data.get(a_frame).size());
+	const possumwood::opencv::CalibrationPattern grid(result, inPattern.size(), success, inPattern.type(),
+	                                                  data.get(a_frame).size());
 	data.set(a_outPattern, grid);
 
 	return status;
@@ -67,13 +63,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_inPattern, "in_pattern", possumwood::opencv::CalibrationPattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inPattern, "in_pattern", possumwood::opencv::CalibrationPattern(),
+	                  possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_clustering, "circles_grid/clustering");
 	meta.addAttribute(a_adaptiveThreshold, "chessboard/adaptive_threshold");
 	meta.addAttribute(a_normalizeImage, "chessboard/normalize_image");
 	meta.addAttribute(a_filterQuads, "chessboard/filter_quads");
 	meta.addAttribute(a_fastCheck, "chessboard/fast_check");
-	meta.addAttribute(a_outPattern, "out_pattern", possumwood::opencv::CalibrationPattern(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outPattern, "out_pattern", possumwood::opencv::CalibrationPattern(),
+	                  possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_frame, a_outPattern);
 	meta.addInfluence(a_inPattern, a_outPattern);
@@ -88,4 +86,4 @@ void init(possumwood::Metadata& meta) {
 
 possumwood::NodeImplementation s_impl("opencv/calibration/find_pattern", init);
 
-}
+}  // namespace

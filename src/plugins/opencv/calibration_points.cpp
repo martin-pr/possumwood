@@ -1,6 +1,7 @@
 #include "calibration_points.h"
 
-namespace possumwood { namespace opencv {
+namespace possumwood {
+namespace opencv {
 
 void CalibrationPoints::Layer::add(const cv::Vec3f& objectPoint, const cv::Vec2f& cameraPoint) {
 	m_objectPoints.push_back(objectPoint);
@@ -35,18 +36,20 @@ std::size_t CalibrationPoints::size() const {
 	return m_cameraPoints.size();
 }
 
-bool CalibrationPoints::operator == (const CalibrationPoints& f) const {
+bool CalibrationPoints::operator==(const CalibrationPoints& f) const {
 	return m_objectPoints == f.m_objectPoints && m_cameraPoints == f.m_cameraPoints && m_imageSize == f.m_imageSize;
 }
 
-bool CalibrationPoints::operator != (const CalibrationPoints& f) const {
+bool CalibrationPoints::operator!=(const CalibrationPoints& f) const {
 	return m_objectPoints != f.m_objectPoints || m_cameraPoints != f.m_cameraPoints || m_imageSize != f.m_imageSize;
 }
 
-std::ostream& operator << (std::ostream& out, const CalibrationPoints& f) {
-	out << "(" << f.size() << " calibration point set(s), image size=" << f.imageSize().width << "x" << f.imageSize().height << ")" << std::endl;
+std::ostream& operator<<(std::ostream& out, const CalibrationPoints& f) {
+	out << "(" << f.size() << " calibration point set(s), image size=" << f.imageSize().width << "x"
+	    << f.imageSize().height << ")" << std::endl;
 
 	return out;
 }
 
-} }
+}  // namespace opencv
+}  // namespace possumwood

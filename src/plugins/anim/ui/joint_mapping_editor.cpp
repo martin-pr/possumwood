@@ -1,9 +1,9 @@
 #include "joint_mapping_editor.h"
 
+#include <ImathEuler.h>
+
 #include <QComboBox>
 #include <QHeaderView>
-
-#include <ImathEuler.h>
 
 JointMappingEditor::JointMappingEditor() : m_widget(new QTreeWidget()), m_signalsBlocked(false) {
 	m_widget->setRootIsDecorated(false);
@@ -36,7 +36,7 @@ void JointMappingEditor::get(anim::JointMappingEditorData& value) const {
 		assert(cb2 != NULL);
 
 		if((cb1->currentIndex() > 0) || cb2->currentIndex() > 0)
-			value.add(cb1->currentIndex()-1, cb2->currentIndex()-1);
+			value.add(cb1->currentIndex() - 1, cb2->currentIndex() - 1);
 	}
 
 	m_signalsBlocked = signalsBlockedOrig;

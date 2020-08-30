@@ -1,21 +1,19 @@
+#include <GL/glew.h>
 #include <gl_debug.h>
 
 #include <iostream>
 
-#include <GL/glew.h>
-
 namespace {
 
 #ifndef NDEBUG
-void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
-                                GLsizei length, const GLchar* message, const void* userParam) {
+void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
+                                const GLchar* message, const void* userParam) {
 	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-	        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), type, severity,
-	        message);
+	        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), type, severity, message);
 }
 #endif
 
-}
+}  // namespace
 
 GlDebug::GlDebug() {
 #ifndef NDEBUG

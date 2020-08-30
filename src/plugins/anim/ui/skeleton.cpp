@@ -1,7 +1,7 @@
 #include "skeleton.h"
 
-#include <QHeaderView>
 #include <QHBoxLayout>
+#include <QHeaderView>
 #include <QSizePolicy>
 
 Skeleton::Skeleton() {
@@ -53,7 +53,7 @@ void transfer(const anim::Skeleton::Joint& jnt, QTreeWidgetItem* item) {
 	for(auto& j : jnt.children())
 		transfer(j, item->child(index++));
 }
-}
+}  // namespace
 
 void Skeleton::set(const anim::Skeleton& value) {
 	if(value.empty())

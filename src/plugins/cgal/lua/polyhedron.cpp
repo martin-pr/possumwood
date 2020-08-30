@@ -22,8 +22,7 @@ void PolyhedronWrapper::addFace(const Face& f) {
 
 	for(auto& vertex : f.m_vertices) {
 		if(vertex >= m_points.size())
-			throw std::runtime_error(
-			    "Error building a polyhedron - vertex index out of bounds");
+			throw std::runtime_error("Error building a polyhedron - vertex index out of bounds");
 		m_faces.back().push_back(vertex);
 	}
 }
@@ -32,9 +31,8 @@ PolyhedronWrapper::operator Meshes() const {
 	Meshes result;
 	Mesh& mesh = result.addMesh(m_name);
 
-	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(m_points),
-	                        typeof(m_faces)>
-	    builder(m_points, m_faces);
+	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(m_points), typeof(m_faces)> builder(m_points,
+	                                                                                                           m_faces);
 	mesh.polyhedron().delegate(builder);
 
 	return result;
