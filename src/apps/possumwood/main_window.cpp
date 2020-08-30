@@ -1,69 +1,57 @@
 #include "main_window.h"
 
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/join.hpp>
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/filesystem.hpp>
-
-#include <QMenuBar>
-#include <QAction>
-#include <QMessageBox>
-#include <QFileDialog>
-#include <QDockWidget>
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QVBoxLayout>
-#include <QToolBar>
-#include <QLabel>
-#include <QInputDialog>
-#include <QDialogButtonBox>
-#include <QScreen>
-#include <QTextBrowser>
-
-#include <dependency_graph/values.inl>
-#include <dependency_graph/metadata_register.h>
-
-#include <qt_node_editor/connected_edge.h>
-
-#include <possumwood_sdk/metadata.inl>
-#include <possumwood_sdk/app.h>
-#include <possumwood_sdk/gl.h>
-
 #include <actions/actions.h>
 #include <actions/node_data.h>
+#include <dependency_graph/metadata_register.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/gl.h>
+#include <qt_node_editor/connected_edge.h>
+
+#include <QAction>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QDialogButtonBox>
+#include <QDockWidget>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QLabel>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QScreen>
+#include <QTextBrowser>
+#include <QToolBar>
+#include <QVBoxLayout>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/filesystem.hpp>
+#include <dependency_graph/values.inl>
+#include <possumwood_sdk/metadata.inl>
 
 #include "adaptor.h"
 #include "config_dialog.h"
-#include "grid.h"
-#include "toolbar.h"
 #include "error_dialog.h"
-
-namespace {
-
-QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
-	QAction* result = new QAction(title, parent);
-	QObject::connect(result, &QAction::triggered, [fn](bool) { fn(); });
-	return result;
-}
-
-}
+#include "grid.h"
+#include "node_menu.h"
+#include "searchable_menu.h"
+#include "toolbar.h"
 
 class MainWindow::TabFilter : public QObject {
-	public:
-		TabFilter(MainWindow* win) : QObject(win), m_win(win) {
-		}
+  public:
+	TabFilter(MainWindow* win) : QObject(win), m_win(win) {
+	}
 
-		bool eventFilter(QObject *o, QEvent *e) {
-			QKeyEvent* key = dynamic_cast<QKeyEvent*>(e);
-			if(key && key->key() == Qt::Key_Tab && m_win->m_adaptor->graphWidget()->underMouse())
-				m_win->m_adaptor->graphWidget()->setFocus(Qt::ShortcutFocusReason);
+	bool eventFilter(QObject* o, QEvent* e) {
+		QKeyEvent* key = dynamic_cast<QKeyEvent*>(e);
+		if(key && key->key() == Qt::Key_Tab && m_win->m_adaptor->graphWidget()->underMouse())
+			m_win->m_adaptor->graphWidget()->setFocus(Qt::ShortcutFocusReason);
 
-			return false;
-		}
+		return false;
+	}
 
-	private:
-		MainWindow* m_win;
+  private:
+	MainWindow* m_win;
 };
 
 MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
@@ -111,108 +99,24 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 	connect(m_adaptor, &Adaptor::selectionChanged, this, &MainWindow::selectionChanged);
 
 	// connect status signal
-	m_adaptor->graph().onStateChanged([this](const dependency_graph::NodeBase& node) {
-		updateStatusBar();
-	});
+	m_adaptor->graph().onStateChanged([this](const dependency_graph::NodeBase& node) { updateStatusBar(); });
 
 	// create the context click menu
 	m_adaptor->graphWidget()->setContextMenuPolicy(Qt::CustomContextMenu);
 
 	{
+		// create the context menu to be popped (parented to graph widget, where it will
+		// appear)
 		QMenu* contextMenu = new QMenu(m_adaptor->graphWidget());
 
 		{
-			m_newNodeMenu = new SearchableMenu("Create\tTab");
-			m_newNodeMenu->setIcon(QIcon(":icons/edit-add.png"));
-			contextMenu->addMenu(m_newNodeMenu);
+			NodeMenu builder(m_adaptor);
+			builder.addFromNodeRegister(dependency_graph::MetadataRegister::singleton());
+			builder.addFromDirectory(possumwood::Filepath::fromString("$NODES").toPath());
+			std::unique_ptr<QMenu> newNodeMenu = builder.build();
 
-			{
-				QAction* newNodeAction = new QAction("Create node", m_adaptor->graphWidget());
-				newNodeAction->setShortcut(Qt::Key_Tab);
-				newNodeAction->setShortcutContext(Qt::WidgetShortcut);
-				m_adaptor->graphWidget()->addAction(newNodeAction);
-
-				connect(newNodeAction, &QAction::triggered, [this]() {
-					if(m_adaptor->graphWidget()->underMouse()) {
-						m_newNodeMenu->move(QCursor::pos());
-						m_newNodeMenu->popup(QCursor::pos());
-					}
-				});
-			}
-
-			// first, create all "folders"
-			std::map<std::string, QMenu*> groups;
-			for(auto& m : dependency_graph::MetadataRegister::singleton()) {
-				std::vector<std::string> pieces;
-				boost::split(pieces, m.metadata().type(), boost::algorithm::is_any_of("/"));
-				assert(pieces.size() >= 1);
-
-				for(unsigned a = 1; a < pieces.size(); ++a) {
-					const std::string current = boost::join(std::make_pair(pieces.begin(), pieces.begin() + a), "/");
-
-					if(groups.find(current) == groups.end()) {
-						QMenu* menu = new QMenu(pieces[a - 1].c_str());
-						menu->setIcon(QIcon(":icons/package.png"));
-
-						groups.insert(std::make_pair(current, menu));
-					}
-				}
-			}
-
-			// then create all items
-			std::map<std::string, QAction*> items;
-			for(auto& m : dependency_graph::MetadataRegister::singleton()) {
-				std::string itemName = m.metadata().type();
-
-				auto it = m.metadata().type().rfind('/');
-				if(it != std::string::npos)
-					itemName = m.metadata().type().substr(it + 1);
-
-				QAction* addNode = makeAction(
-					itemName.c_str(),
-					[&m, itemName, this]() {
-						auto qp = m_adaptor->graphWidget()->mapToScene(m_adaptor->graphWidget()->mapFromGlobal(m_newNodeMenu->pos()));
-						const possumwood::NodeData::Point p {(float)qp.x(), (float)qp.y()};
-
-						possumwood::actions::createNode(m_adaptor->currentNetwork(), m, itemName, p);
-					},
-					m_adaptor);
-				addNode->setIcon(QIcon(":icons/add-node.png"));
-
-				items.insert(std::make_pair(m.metadata().type(), addNode));
-			}
-
-			// then, assemble the menu
-			for(auto& m : groups) {
-				auto it = m.first.rfind('/');
-				if(it != std::string::npos) {
-					assert(it > 0);
-					std::string parentName = m.first.substr(0, it);
-
-					auto menu = groups.find(parentName);
-					assert(menu != groups.end());
-					menu->second->addMenu(m.second);
-				}
-			}
-
-			for(auto& i : items) {
-				auto it = i.first.rfind('/');
-				if(it != std::string::npos) {
-					std::string parentName = i.first.substr(0, it);
-
-					auto menu = groups.find(parentName);
-					assert(menu != groups.end());
-					menu->second->addAction(i.second);
-				}
-			}
-
-			// finally, populate the m_newNodeMenu
-			for(auto& m : groups)
-				if(m.first.find('/') == std::string::npos)
-					m_newNodeMenu->addMenu(m.second);
-			for(auto& i : items)
-				if(i.first.find('/') == std::string::npos)
-					m_newNodeMenu->addAction(i.second);
+			newNodeMenu->setIcon(QIcon(":icons/edit-add.png"));
+			contextMenu->addMenu(newNodeMenu.release());
 		}
 
 		QAction* separator = new QAction(m_adaptor);
@@ -240,7 +144,8 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 
 		QAction* renameNodeAction = new QAction(QIcon(":icons/rename.png"), "&Rename node...", this);
 		connect(renameNodeAction, &QAction::triggered, [currentNode, this](bool) {
-			QString name = QInputDialog::getText(this, "Rename...", "Node name:", QLineEdit::Normal, (*currentNode)->name());
+			QString name =
+			    QInputDialog::getText(this, "Rename...", "Node name:", QLineEdit::Normal, (*currentNode)->name());
 
 			if(name != (*currentNode)->name()) {
 				dependency_graph::NodeBase& depNode = *(m_adaptor->index()[*currentNode].graphNode);
@@ -268,12 +173,13 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 
 		connect(m_adaptor->graphWidget(), &node_editor::GraphWidget::customContextMenuRequested, [=](QPoint pos) {
 			contextMenu->move(m_adaptor->graphWidget()->mapToGlobal(pos));  // to make sure pos() is right, which is
-															 // used for placing the new node
+			                                                                // used for placing the new node
 
 			// node-specific menu
 			node_editor::Node* node = nullptr;
 			{
-				QGraphicsItem* item = m_adaptor->scene().itemAt(m_adaptor->graphWidget()->transform().inverted().map(pos) , QTransform());
+				QGraphicsItem* item =
+				    m_adaptor->scene().itemAt(m_adaptor->graphWidget()->transform().inverted().map(pos), QTransform());
 				while(item != nullptr && node == nullptr) {
 					node = dynamic_cast<node_editor::Node*>(item);
 
@@ -325,9 +231,9 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 	QAction* openAct = new QAction(QIcon(":icons/fileopen.png"), "&Open...", this);
 	openAct->setShortcuts(QKeySequence::Open);
 	connect(openAct, &QAction::triggered, [this](bool) {
-		QString filename =
-			QFileDialog::getOpenFileName(this, tr("Open File"), possumwood::App::instance().filename().string().c_str(),
-										 tr("Possumwood files (*.psw)"));
+		QString filename = QFileDialog::getOpenFileName(
+		    this, tr("Open File"), possumwood::App::instance().filename().toPath().string().c_str(),
+		    tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty())
 			loadFile(filename.toStdString());
@@ -348,23 +254,23 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error saving file...",
-									  "Error saving " +
-										  QString(possumwood::App::instance().filename().string().c_str()) + ":\n" +
-										  err.what());
+				                      "Error saving " +
+				                          QString(possumwood::App::instance().filename().toString().c_str()) + ":\n" +
+				                          err.what());
 			}
 			catch(...) {
 				QMessageBox::critical(this, "Error saving file...",
-									  "Error saving " +
-										  QString(possumwood::App::instance().filename().string().c_str()) +
-										  ":\nUnhandled exception thrown during saving.");
+				                      "Error saving " +
+				                          QString(possumwood::App::instance().filename().toString().c_str()) +
+				                          ":\nUnhandled exception thrown during saving.");
 			}
 		}
 	});
 
 	connect(saveAsAct, &QAction::triggered, [this](bool) {
-		QString filename =
-			QFileDialog::getSaveFileName(this, tr("Save File"), possumwood::App::instance().filename().string().c_str(),
-										 tr("Possumwood files (*.psw)"));
+		QString filename = QFileDialog::getSaveFileName(
+		    this, tr("Save File"), possumwood::App::instance().filename().toPath().string().c_str(),
+		    tr("Possumwood files (*.psw)"));
 
 		if(!filename.isEmpty()) {
 			try {
@@ -372,19 +278,19 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 				if(!path.has_extension())
 					path.replace_extension(".psw");
 
-				possumwood::App::instance().saveFile(path);
+				possumwood::App::instance().saveFile(possumwood::Filepath::fromPath(path));
 			}
 			catch(std::exception& err) {
 				QMessageBox::critical(this, "Error saving file...",
-									  "Error saving " +
-										  QString(possumwood::App::instance().filename().string().c_str()) + ":\n" +
-										  err.what());
+				                      "Error saving " +
+				                          QString(possumwood::App::instance().filename().toString().c_str()) + ":\n" +
+				                          err.what());
 			}
 			catch(...) {
 				QMessageBox::critical(this, "Error saving file...",
-									  "Error saving " +
-										  QString(possumwood::App::instance().filename().string().c_str()) +
-										  ":\nUnhandled exception thrown during saving.");
+				                      "Error saving " +
+				                          QString(possumwood::App::instance().filename().toString().c_str()) +
+				                          ":\nUnhandled exception thrown during saving.");
 			}
 		}
 	});
@@ -404,10 +310,10 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 	QWidget* menuWidget = new QWidget();
 
 	QHBoxLayout* topLayout = new QHBoxLayout(menuWidget);
-	topLayout->setContentsMargins(0,0,0,0);
+	topLayout->setContentsMargins(0, 0, 0, 0);
 
 	QVBoxLayout* menuLayout = new QVBoxLayout();
-	menuLayout->setContentsMargins(0,0,0,0);
+	menuLayout->setContentsMargins(0, 0, 0, 0);
 	menuLayout->setSpacing(0);
 	topLayout->addLayout(menuLayout, 0);
 
@@ -505,7 +411,8 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 	m_statusBar->addPermanentWidget(m_statusDetail, 0);
 
 	m_statusDialog = new QDialog(this);
-	m_statusDialog->resize(qApp->primaryScreen()->size().width() * 3 / 4, qApp->primaryScreen()->size().height() * 3 / 4);
+	m_statusDialog->resize(qApp->primaryScreen()->size().width() * 3 / 4,
+	                       qApp->primaryScreen()->size().height() * 3 / 4);
 	QVBoxLayout* diaLayout = new QVBoxLayout(m_statusDialog);
 	// diaLayout->setContentsMargins(0, 0, 0, 0);
 	m_statusContent = new QTextBrowser();
@@ -581,7 +488,7 @@ void MainWindow::updateStatusBar() {
 	infos = boost::trim_copy(infos);
 
 	if(!errors.empty()) {
-		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-error").pixmap(QSize(16,16)));
+		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-error").pixmap(QSize(16, 16)));
 		m_statusContent->setText(errors.c_str());
 
 		auto lineend = errors.find('\n');
@@ -592,7 +499,7 @@ void MainWindow::updateStatusBar() {
 		m_statusDetail->setVisible(lineend != std::string::npos);
 	}
 	else if(!warnings.empty()) {
-		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(QSize(16,16)));
+		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(QSize(16, 16)));
 		m_statusContent->setText(warnings.c_str());
 
 		auto lineend = warnings.find('\n');
@@ -603,7 +510,7 @@ void MainWindow::updateStatusBar() {
 		m_statusDetail->setVisible(lineend != std::string::npos);
 	}
 	else if(!infos.empty()) {
-		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-information").pixmap(QSize(16,16)));
+		m_statusIcon->setPixmap(QIcon::fromTheme("dialog-information").pixmap(QSize(16, 16)));
 		m_statusContent->setText(infos.c_str());
 
 		auto lineend = infos.find('\n');
@@ -633,7 +540,8 @@ void MainWindow::selectionChanged(const dependency_graph::Selection& selection) 
 
 		unsigned editorCounter = 0;
 		for(auto& n : selection.nodes()) {
-			const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
+			const possumwood::Metadata* meta =
+			    dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
 			if(meta != nullptr && meta->hasEditor())
 				++editorCounter;
 		}
@@ -653,7 +561,7 @@ void MainWindow::selectionChanged(const dependency_graph::Selection& selection) 
 
 			connect(edit, &QPushButton::pressed, [this, tb]() {
 				QDialog* editorDialog = new QDialog(this);
-				editorDialog->setMinimumSize(QSize(width()/2, height()/2));
+				editorDialog->setMinimumSize(QSize(width() / 2, height() / 2));
 
 				QVBoxLayout* layout = new QVBoxLayout(editorDialog);
 
@@ -671,7 +579,8 @@ void MainWindow::selectionChanged(const dependency_graph::Selection& selection) 
 
 				int result = editorDialog->exec();
 				if(result == QDialog::Accepted) {
-					possumwood::App::instance().sceneDescription().setMarkdown(editor->document()->toPlainText().toStdString());
+					possumwood::App::instance().sceneDescription().setMarkdown(
+					    editor->document()->toPlainText().toStdString());
 					tb->setHtml(possumwood::App::instance().sceneDescription().html().c_str());
 				}
 
@@ -688,7 +597,8 @@ void MainWindow::selectionChanged(const dependency_graph::Selection& selection) 
 		}
 		else {
 			for(auto& n : selection.nodes()) {
-				const possumwood::Metadata* meta = dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
+				const possumwood::Metadata* meta =
+				    dynamic_cast<const possumwood::Metadata*>(&n.get().metadata().metadata());
 				if(meta != nullptr && meta->hasEditor()) {
 					m_editor = meta->createEditor(n).release();
 					m_editorDock->setWidget(m_editor);
@@ -703,7 +613,8 @@ void MainWindow::selectionChanged(const dependency_graph::Selection& selection) 
 
 void MainWindow::loadFile(const boost::filesystem::path& filename, bool updateFilename) {
 	m_properties->show({});
-	const dependency_graph::State state = possumwood::App::instance().loadFile(filename, updateFilename);
+	const dependency_graph::State state =
+	    possumwood::App::instance().loadFile(possumwood::Filepath::fromPath(filename), updateFilename);
 
 	m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
 	selectionChanged(dependency_graph::Selection());

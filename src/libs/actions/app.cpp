@@ -4,7 +4,7 @@ namespace possumwood {
 
 AppCore* AppCore::s_instance = NULL;
 
-AppCore::AppCore() {
+AppCore::AppCore(std::shared_ptr<IFilesystem> filesystem) : m_filesystem(filesystem) {
 	assert(s_instance == nullptr);
 	s_instance = this;
 }
@@ -27,4 +27,8 @@ UndoStack& AppCore::undoStack() {
 	return m_undoStack;
 }
 
+IFilesystem& AppCore::filesystem() {
+	return *m_filesystem;
 }
+
+}  // namespace possumwood

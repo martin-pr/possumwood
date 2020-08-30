@@ -3,24 +3,25 @@
 #include <functional>
 #include <set>
 
-#include <dependency_graph/node_base.inl>
-#include <dependency_graph/nodes.inl>
 #include <dependency_graph/attr_map.h>
-#include <dependency_graph/values.h>
 #include <dependency_graph/detail.h>
 #include <dependency_graph/metadata_register.h>
 #include <dependency_graph/network.h>
+#include <dependency_graph/values.h>
+#include <dependency_graph/node_base.inl>
+#include <dependency_graph/nodes.inl>
 
-#include "detail/tools.h"
-#include "detail/nodes.h"
 #include "detail/connections.h"
 #include "detail/metadata.h"
+#include "detail/nodes.h"
+#include "detail/tools.h"
 #include "detail/values.h"
 
 #include "app.h"
 #include "clipboard.h"
 
-namespace possumwood { namespace actions {
+namespace possumwood {
+namespace actions {
 
 namespace {
 
@@ -29,11 +30,12 @@ void doSetBlindData(const dependency_graph::UniqueId& node, const possumwood::No
 	n.setBlindData(blindData);
 }
 
-} // anonymous namespace
+}  // anonymous namespace
 
 /////////////////////////////////////////////////////////////////////
 
-void createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta, const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id) {
+void createNode(dependency_graph::Network& current, const dependency_graph::MetadataHandle& meta,
+                const std::string& name, const possumwood::NodeData& _data, const dependency_graph::UniqueId& id) {
 	auto action = detail::createNodeAction(current, meta, name, dependency_graph::Data(_data), id);
 
 	possumwood::AppCore::instance().undoStack().execute(action);
@@ -78,12 +80,12 @@ void cut(const dependency_graph::Selection& selection) {
 
 namespace {
 
-template<typename T>
+template <typename T>
 const T& dereference(const std::reference_wrapper<T>& n) {
 	return n.get();
 }
 
-template<typename T>
+template <typename T>
 const T& dereference(const T& n) {
 	return n;
 }
@@ -94,7 +96,7 @@ possumwood::io::json writeNode(const dependency_graph::NodeBase& n) {
 	j["name"] = n.name();
 	j["type"] = n.metadata()->type();
 
-	for(size_t pi=0; pi<n.portCount(); ++pi) {
+	for(size_t pi = 0; pi < n.portCount(); ++pi) {
 		const dependency_graph::Port& p = n.port(pi);
 
 		// only serialize unconnected inputs
@@ -114,12 +116,13 @@ possumwood::io::json writeNode(const dependency_graph::NodeBase& n) {
 	return j;
 }
 
-
-possumwood::io::json writeNetwork(const ::dependency_graph::Network& net, const dependency_graph::Selection& selection = dependency_graph::Selection());
+possumwood::io::json writeNetwork(const ::dependency_graph::Network& net,
+                                  const dependency_graph::Selection& selection = dependency_graph::Selection());
 
 /// a wrapper of node writing, with CONTAINER either a Nodes instance or a Selection
-template<typename CONTAINER>
-void writeNodes(possumwood::io::json& j, const CONTAINER& nodes, std::map<std::string, unsigned>& uniqueIds, std::map<const ::dependency_graph::NodeBase*, std::string>& nodeIds) {
+template <typename CONTAINER>
+void writeNodes(possumwood::io::json& j, const CONTAINER& nodes, std::map<std::string, unsigned>& uniqueIds,
+                std::map<const ::dependency_graph::NodeBase*, std::string>& nodeIds) {
 	for(auto& ni : nodes) {
 		const dependency_graph::NodeBase& n = dereference(ni);
 
@@ -127,7 +130,7 @@ void writeNodes(possumwood::io::json& j, const CONTAINER& nodes, std::map<std::s
 		std::string name = n.metadata()->type();
 		auto slash = name.rfind('/');
 		if(slash != std::string::npos)
-			name = name.substr(slash+1);
+			name = name.substr(slash + 1);
 		name += "_" + std::to_string(uniqueIds[name]++);
 
 		// and use this to save the node
@@ -147,35 +150,43 @@ void writeNodes(possumwood::io::json& j, const CONTAINER& nodes, std::map<std::s
 possumwood::io::json writeNetwork(const dependency_graph::Network& net, const dependency_graph::Selection& selection) {
 	possumwood::io::json j;
 
-	std::map<std::string, unsigned> uniqueIds;
-	std::map<const ::dependency_graph::NodeBase*, std::string> nodeIds;
+	// no source set - serialized into the file
+	if(net.source().empty()) {
+		std::map<std::string, unsigned> uniqueIds;
+		std::map<const ::dependency_graph::NodeBase*, std::string> nodeIds;
 
-	j["nodes"] = "{}"_json;
-	if(selection.empty())
-		writeNodes(j["nodes"], net.nodes(), uniqueIds, nodeIds);
-	else
-		writeNodes(j["nodes"], selection.nodes(), uniqueIds, nodeIds);
+		j["nodes"] = "{}"_json;
+		if(selection.empty())
+			writeNodes(j["nodes"], net.nodes(), uniqueIds, nodeIds);
+		else
+			writeNodes(j["nodes"], selection.nodes(), uniqueIds, nodeIds);
 
-	j["connections"] = "[]"_json;
-	for(auto& c : net.connections()) {
-		auto itOut = nodeIds.find(&c.first.node());
-		auto itIn = nodeIds.find(&c.second.node());
-		if(itOut != nodeIds.end() && itIn != nodeIds.end()) {
-			j["connections"].push_back("{}"_json);
+		j["connections"] = "[]"_json;
+		for(auto& c : net.connections()) {
+			auto itOut = nodeIds.find(&c.first.node());
+			auto itIn = nodeIds.find(&c.second.node());
+			if(itOut != nodeIds.end() && itIn != nodeIds.end()) {
+				j["connections"].push_back("{}"_json);
 
-			auto& connection = j["connections"].back();
+				auto& connection = j["connections"].back();
 
-			connection["out_node"] = itOut->second;
-			connection["out_port"] = c.first.name();
-			connection["in_node"] = itIn->second;
-			connection["in_port"] = c.second.name();
+				connection["out_node"] = itOut->second;
+				connection["out_port"] = c.first.name();
+				connection["in_node"] = itIn->second;
+				connection["in_port"] = c.second.name();
+			}
 		}
+	}
+
+	// source set - write just the filename to load from, not the content
+	else {
+		j["source"] = net.source().string();
 	}
 
 	return j;
 }
 
-}
+}  // namespace
 
 possumwood::io::json toJson(const dependency_graph::Selection& selection) {
 	dependency_graph::Network* net = &possumwood::AppCore::instance().graph();
@@ -199,89 +210,121 @@ void copy(const dependency_graph::Selection& selection) {
 }
 
 namespace {
-	dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action, const dependency_graph::UniqueId& targetIndex, const possumwood::io::json& source, std::set<dependency_graph::UniqueId>* ids = nullptr) {
-		dependency_graph::State state;
 
-		// indices of newly loaded nodes
-		std::map<std::string, dependency_graph::UniqueId> nodeIds;
+enum PasteFlags { kNone = 0, kRoot = 1 };
 
-		// add all the nodes to the parent network
-		//  - each node has a unique ID (unique between all graphs), store that
-		if(source.find("nodes") != source.end()) {
-			for(possumwood::io::json::const_iterator ni = source["nodes"].begin(); ni != source["nodes"].end(); ++ni) {
-				const possumwood::io::json& n = ni.value();
+dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action,
+                                     const dependency_graph::UniqueId& targetIndex, const possumwood::io::json& _source,
+                                     PasteFlags flags, std::set<dependency_graph::UniqueId>* ids = nullptr) {
+	dependency_graph::State state;
+	possumwood::io::json tmp;
 
-				// extract the blind data via factory mechanism
-				dependency_graph::Data blindData;
-				if(n.find("blind_data") != n.end() && !n["blind_data"].is_null()) {
-					blindData = dependency_graph::Data::create(n["blind_data"]["type"].get<std::string>());
-					assert(!blindData.empty());
-					assert(dependency_graph::io::isSaveable(blindData));
-					io::fromJson(n["blind_data"]["value"], blindData);
-				}
+	// pasted network should actually be loaded from a file
+	const possumwood::io::json* source = nullptr;
+	if(_source.find("source") != _source.end()) {
+		auto stream = AppCore::instance().filesystem().read(
+		    possumwood::Filepath::fromString(_source["source"].get<std::string>()));
+		(*stream) >> tmp;
 
-				// find the metadata instance
-				auto metaIt = dependency_graph::MetadataRegister::singleton().find(n["type"].get<std::string>());
-				if(metaIt == dependency_graph::MetadataRegister::singleton().end())
-					state.addError("Unregistered node type '" + n["type"].get<std::string>() + "' found in the setup - maybe a missing plugin? Skipping the creation of unregistered node type.");
-
-				else {
-					// generate a new unique index for the node
-					assert(nodeIds.find(ni.key()) == nodeIds.end());
-					const dependency_graph::UniqueId nodeId;
-					nodeIds.insert(std::make_pair(ni.key(), nodeId));
-
-					if(ids)
-						ids->insert(nodeId);
-
-					// add the action to create the node itself
-					action.append(detail::createNodeAction(targetIndex, *metaIt, n["name"].get<std::string>(),
-						blindData, nodeId));
-
-					// recurse to add nested networks
-					//   -> this will also construct the internals of the network, and instantiate
-					//      its inputs and outputs
-					if(n["type"] == "network")
-						state.append(pasteNetwork(action, nodeId, n));
-
-					// and another action to set all port values based on the json content
-					//   -> as the node doesn't exist yet, we can't interpret the types
-					if(n.find("ports") != n.end())
-						for(possumwood::io::json::const_iterator pi = n["ports"].begin(); pi != n["ports"].end(); ++pi)
-							action.append(detail::setValueAction(nodeId, pi.key(), pi.value()));
-				}
-			}
-		}
-
-		// add all connections, based on "unique" IDs
-		if(source.find("connections") != source.end()) {
-			for(auto& c : source["connections"]) {
-				auto id1 = nodeIds.find(c["out_node"].get<std::string>());
-				auto port1 = c["out_port"].get<std::string>();
-
-				auto id2 = nodeIds.find(c["in_node"].get<std::string>());
-				auto port2 = c["in_port"].get<std::string>();
-
-				if(id1 == nodeIds.end())
-					state.addError("Connection from a non-existing node '" + c["out_node"].get<std::string>() + "' cannot be added!");
-
-				if(id2 == nodeIds.end())
-					state.addError("Connection to a non-existing node '" + c["in_node"].get<std::string>() + "' cannot be added!");
-
-				if(id1 != nodeIds.end() && id2 != nodeIds.end())
-					action.append(detail::connectAction(id1->second, port1, id2->second, port2));
-			}
-		}
-
-		return state;
+		source = &tmp;
 	}
+	// should be loaded from the json directly
+	else {
+		source = &_source;
+	}
+
+	// indices of newly loaded nodes
+	std::map<std::string, dependency_graph::UniqueId> nodeIds;
+
+	// add all the nodes to the parent network
+	//  - each node has a unique ID (unique between all graphs), store that
+	if(source->find("nodes") != source->end()) {
+		for(possumwood::io::json::const_iterator ni = (*source)["nodes"].begin(); ni != (*source)["nodes"].end();
+		    ++ni) {
+			const possumwood::io::json& n = ni.value();
+
+			// extract the blind data via factory mechanism
+			dependency_graph::Data blindData;
+			if(n.find("blind_data") != n.end() && !n["blind_data"].is_null()) {
+				blindData = dependency_graph::Data::create(n["blind_data"]["type"].get<std::string>());
+				assert(!blindData.empty());
+				assert(dependency_graph::io::isSaveable(blindData));
+				io::fromJson(n["blind_data"]["value"], blindData);
+			}
+
+			// find the metadata instance
+			auto metaIt = dependency_graph::MetadataRegister::singleton().find(n["type"].get<std::string>());
+			if(metaIt == dependency_graph::MetadataRegister::singleton().end())
+				state.addError(
+				    "Unregistered node type '" + n["type"].get<std::string>() +
+				    "' found in the setup - maybe a missing plugin? Skipping the creation of unregistered node type.");
+
+			else {
+				// generate a new unique index for the node
+				assert(nodeIds.find(ni.key()) == nodeIds.end());
+				const dependency_graph::UniqueId nodeId;
+				nodeIds.insert(std::make_pair(ni.key(), nodeId));
+
+				if(ids)
+					ids->insert(nodeId);
+
+				// add the action to create the node itself
+				action.append(
+				    detail::createNodeAction(targetIndex, *metaIt, n["name"].get<std::string>(), blindData, nodeId));
+
+				// recurse to add nested networks
+				//   -> this will also construct the internals of the network, and instantiate
+				//      its inputs and outputs
+				if(n["type"] == "network")
+					state.append(pasteNetwork(action, nodeId, n, kNone));
+
+				// and another action to set all port values based on the json content
+				//   -> as the node doesn't exist yet, we can't interpret the types
+				if(n.find("ports") != n.end())
+					for(possumwood::io::json::const_iterator pi = n["ports"].begin(); pi != n["ports"].end(); ++pi)
+						action.append(detail::setValueAction(nodeId, pi.key(), pi.value()));
+			}
+		}
+	}
+
+	// add all connections, based on "unique" IDs
+	if(source->find("connections") != source->end()) {
+		for(auto& c : (*source)["connections"]) {
+			auto id1 = nodeIds.find(c["out_node"].get<std::string>());
+			auto port1 = c["out_port"].get<std::string>();
+
+			auto id2 = nodeIds.find(c["in_node"].get<std::string>());
+			auto port2 = c["in_port"].get<std::string>();
+
+			if(id1 == nodeIds.end())
+				state.addError("Connection from a non-existing node '" + c["out_node"].get<std::string>() +
+				               "' cannot be added!");
+
+			if(id2 == nodeIds.end())
+				state.addError("Connection to a non-existing node '" + c["in_node"].get<std::string>() +
+				               "' cannot be added!");
+
+			if(id1 != nodeIds.end() && id2 != nodeIds.end())
+				action.append(detail::connectAction(id1->second, port1, id2->second, port2));
+		}
+	}
+
+	// and add the "source" if any, with a compressed filepath
+	if(_source.find("source") != _source.end() && !(flags & kRoot)) {
+		action.append(detail::setSourceAction(
+		    targetIndex, possumwood::Filepath::fromString(_source["source"].get<std::string>()).toString()));
+	}
+
+	return state;
 }
+}  // namespace
 
 void paste(dependency_graph::Network& current, dependency_graph::Selection& selection) {
 	paste(current, selection, Clipboard::instance().clipboardContent());
 }
 
-dependency_graph::State paste(dependency_graph::Network& current, dependency_graph::Selection& selection, const std::string& content, bool haltOnError) {
+dependency_graph::State paste(dependency_graph::Network& current, dependency_graph::Selection& selection,
+                              const std::string& content, bool haltOnError) {
 	dependency_graph::State state;
 
 	try {
@@ -292,16 +335,17 @@ dependency_graph::State paste(dependency_graph::Network& current, dependency_gra
 		state = fromJson(current, selection, json, haltOnError);
 	}
 	catch(std::exception& e) {
-		// do nothing
-		#ifndef NDEBUG
+// do nothing
+#ifndef NDEBUG
 		std::cout << e.what() << std::endl;
-		#endif
+#endif
 	}
 
 	return state;
 }
 
-dependency_graph::State fromJson(dependency_graph::Network& current, dependency_graph::Selection& selection, const possumwood::io::json& json, bool haltOnError) {
+dependency_graph::State fromJson(dependency_graph::Network& current, dependency_graph::Selection& selection,
+                                 const possumwood::io::json& json, bool haltOnError) {
 	dependency_graph::State state;
 
 	possumwood::UndoStack::Action action;
@@ -309,7 +353,7 @@ dependency_graph::State fromJson(dependency_graph::Network& current, dependency_
 	std::set<dependency_graph::UniqueId> pastedNodeIds;
 
 	// paste the network extracted from the JSON
-	state.append(pasteNetwork(action, current.index(), json, &pastedNodeIds));
+	state.append(pasteNetwork(action, current.index(), json, kRoot, &pastedNodeIds));
 
 	// execute the action (will actually make the nodes and connections)
 	state.append(possumwood::AppCore::instance().undoStack().execute(action, haltOnError));
@@ -331,11 +375,8 @@ void move(const std::map<dependency_graph::NodeBase*, possumwood::NodeData::Poin
 			possumwood::NodeData data = originalData;
 			data.setPosition(n.second);
 
-			action.addCommand(
-				"Move " + n.first->name(),
-				std::bind(&doSetBlindData, n.first->index(), data),
-				std::bind(&doSetBlindData, n.first->index(), n.first->blindData<possumwood::NodeData>())
-			);
+			action.addCommand("Move " + n.first->name(), std::bind(&doSetBlindData, n.first->index(), data),
+			                  std::bind(&doSetBlindData, n.first->index(), n.first->blindData<possumwood::NodeData>()));
 		}
 	}
 
@@ -360,4 +401,34 @@ void renameNode(dependency_graph::NodeBase& node, const std::string& name) {
 	AppCore::instance().undoStack().execute(action);
 }
 
-} }
+dependency_graph::State importNetwork(dependency_graph::Network& current, dependency_graph::Selection& selection,
+                                      const possumwood::Filepath& filepath, const std::string& name,
+                                      const dependency_graph::Data& blindData) {
+	dependency_graph::State state;
+
+	possumwood::UndoStack::Action action;
+
+	possumwood::io::json tmp;
+	tmp["source"] = filepath.toString();
+
+	const dependency_graph::UniqueId networkId;
+
+	auto metaIt = dependency_graph::MetadataRegister::singleton().find("network");
+
+	action.append(detail::createNodeAction(current.index(), *metaIt, name, blindData, networkId));
+
+	// paste the network extracted from the JSON
+	std::set<dependency_graph::UniqueId> pastedNodeIds;
+	state.append(pasteNetwork(action, networkId, tmp, kNone, &pastedNodeIds));
+
+	// execute the action (will actually make the nodes and connections)
+	state.append(possumwood::AppCore::instance().undoStack().execute(action, false));
+
+	// and make the selection based on added nodes
+	selection.addNode(detail::findNode(networkId));
+
+	return state;
+}
+
+}  // namespace actions
+}  // namespace possumwood

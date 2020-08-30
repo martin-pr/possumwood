@@ -1,20 +1,20 @@
 #include "toolbar.h"
 
-#include <regex>
 #include <fstream>
-#include <streambuf>
+#include <regex>
 #include <sstream>
+#include <streambuf>
 
 #include <boost/filesystem.hpp>
 
 #include <QToolBar>
 #include <QToolButton>
 
-#include <possumwood_sdk/app.h>
 #include <actions/actions.h>
+#include <possumwood_sdk/app.h>
 
-#include "main_window.h"
 #include "error_dialog.h"
+#include "main_window.h"
 
 namespace {
 
@@ -22,10 +22,10 @@ struct Setup {
 	std::string name, description;
 };
 
-}
+}  // namespace
 
 Toolbar::Toolbar() {
-	const boost::filesystem::path path = possumwood::App::instance().expandPath("$TOOLBARS");
+	const boost::filesystem::path path = possumwood::Filepath::fromString("$TOOLBARS").toPath();
 
 	if(boost::filesystem::exists(path)) {
 		std::map<boost::filesystem::path, std::string> paths;
@@ -34,7 +34,7 @@ Toolbar::Toolbar() {
 
 			std::string dir = entry.path().filename().string();
 			if(std::regex_match(dir, regex))
-				dir = dir.substr(dir.find('_')+1);
+				dir = dir.substr(dir.find('_') + 1);
 
 			paths[entry.path().filename()] = dir;
 		}
@@ -51,13 +51,14 @@ Toolbar::Toolbar() {
 			addTab(tb, toolbarIt.second.c_str());
 
 			std::map<boost::filesystem::path, Setup> setups;
-			for(auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(path / toolbarIt.first), {}))
+			for(auto& entry :
+			    boost::make_iterator_range(boost::filesystem::directory_iterator(path / toolbarIt.first), {}))
 				if(entry.path().extension() == ".psw") {
 					static const std::regex regex("^[0-9]+_.*");
 
 					std::string name = entry.path().filename().stem().string();
 					if(std::regex_match(name, regex))
-						name = name.substr(name.find('_')+1);
+						name = name.substr(name.find('_') + 1);
 					std::replace(name.begin(), name.end(), '_', '\n');
 
 					setups[entry.path().filename()].name = name;
@@ -68,7 +69,8 @@ Toolbar::Toolbar() {
 						file >> json;
 
 						if(!json["description"].is_null())
-							setups[entry.path().filename()].description = possumwood::Description(json["description"].get<std::string>()).html();
+							setups[entry.path().filename()].description =
+							    possumwood::Description(json["description"].get<std::string>()).html();
 					}
 				}
 
@@ -123,11 +125,12 @@ Toolbar::Toolbar() {
 						// otherwise paste the setup into the existing scene
 						else {
 							std::ifstream file(setupPath.string());
-							std::string setup = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-
+							std::string setup =
+							    std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 
 							dependency_graph::Selection selection;
-							state = possumwood::actions::paste(mw->adaptor().currentNetwork(), selection, setup, false /* don't halt on error */);
+							state = possumwood::actions::paste(mw->adaptor().currentNetwork(), selection, setup,
+							                                   false /* don't halt on error */);
 							mw->adaptor().setSelection(selection);
 						}
 					}
@@ -147,6 +150,4 @@ Toolbar::Toolbar() {
 			}
 		}
 	}
-
-
 }

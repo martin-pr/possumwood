@@ -14,7 +14,6 @@
 #include "properties.h"
 #include "viewport.h"
 #include "timeline_widget.h"
-#include "searchable_menu.h"
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -50,8 +49,6 @@ class MainWindow : public QMainWindow {
 
 		QDialog* m_statusDialog;
 		QTextBrowser* m_statusContent;
-
-		SearchableMenu* m_newNodeMenu;
 
 		QDockWidget* m_editorDock;
 
