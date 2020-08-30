@@ -21,9 +21,7 @@ QAction* makeAction(QString title, std::function<void()> fn, QWidget* parent) {
 
 }  // namespace
 
-NodeMenu::NodeMenu(Adaptor* a) : m_adaptor(a) {
-	m_newNodeMenu = std::unique_ptr<QMenu>(new SearchableMenu("Create\tTab"));
-
+NodeMenu::NodeMenu(Adaptor* a) : m_adaptor(a), m_newNodeMenu(new SearchableMenu("Create\tTab")) {
 	// raw ptr for binding
 	auto newNodeMenuPtr = m_newNodeMenu.get();
 	Adaptor* adaptor = m_adaptor;
