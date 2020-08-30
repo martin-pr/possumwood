@@ -13,6 +13,12 @@
             "out_port": "vertex_data"
         },
         {
+            "in_node": "cgal_0",
+            "in_port": "in_context",
+            "out_node": "float_0",
+            "out_port": "out_context"
+        },
+        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
@@ -41,15 +47,9 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "in_context",
-            "out_node": "float_0",
-            "out_port": "out_context"
         }
     ],
-    "description": "",
+    "description": "## Lua mesh generation\n\nA simple setup demonstrating a way to generate a new mesh in Lua using simple mesh bindings, and display the result using OpenGL. The main functionality is contained within the script node, which functions in the environment constructed by its inputs, and produces a state with new values on its output. The mesh extract node then extracts a mesh from the state and feeds it into CGAL mesh display node.\n\n",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -95,7 +95,7 @@
             "name": "NUMBER_OF_FACES",
             "ports": {
                 "name": "edge_count",
-                "value": 120.0
+                "value": 6.0
             },
             "type": "lua/inject/float"
         },
@@ -172,6 +172,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAGAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAE0PwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAE0AAAAJgBAAADAAAAAQAAAjgAAATQ/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACKAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACngAAAqcAAACqAQAAAwAAA4oAAATQAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAP0AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAfAAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACIgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACnQAAAqAAAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
