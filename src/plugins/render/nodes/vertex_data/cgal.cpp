@@ -44,20 +44,17 @@ void addVerticesVBO(possumwood::VertexData& vd, const possumwood::Meshes& meshes
 				    if(fit->facet_degree() > 2) {
 					    auto vit = fit->facet_begin();
 
-					    const auto& p1 = vit->vertex()->point();
-					    ++vit;
-
-					    const auto& p2 = vit->vertex()->point();
+					    const auto& p = vit->vertex()->point();
 					    ++vit;
 
 					    for(std::size_t v = 2; v < fit->facet_degree(); ++v) {
-						    const auto& p = vit->vertex()->point();
+						    const auto& p1 = vit->vertex()->point();
+						    ++vit;
+						    const auto& p2 = vit->vertex()->point();
 
+						    buffer.element(index++) = p;
 						    buffer.element(index++) = p1;
 						    buffer.element(index++) = p2;
-						    buffer.element(index++) = p;
-
-						    ++vit;
 					    }
 				    }
 		    }

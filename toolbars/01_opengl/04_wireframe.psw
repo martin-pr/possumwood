@@ -13,32 +13,49 @@
             "out_port": "shader"
         },
         {
-            "in_node": "vertex_data_0",
-            "in_port": "generic_mesh",
-            "out_node": "loader_0",
-            "out_port": "generic_polymesh"
-        },
-        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
             "out_port": "program"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "vertex_data_0",
-            "out_port": "vertex_data"
-        },
-        {
             "in_node": "program_0",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
         }
     ],
     "description": "### Wireframe using a geometry shader\n\nWireframe mode is one of the rendering modes of OpenGL. A similar but more controllable effect can be achieved by processing a model using a geometry shader, which allows to convert primitives to a different number of primitives of the same or different type.\n\nThis setup shows how to emit a line for each polygon edge of the input geometry using a program in `geometry_shader`. It also shows how to adjust the line width to screen resolution, maintaining the width independent to view parameters.",
     "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -148.953659057617,
+                    "y": 477.746307373047
+                }
+            },
+            "name": "cgal",
+            "type": "render/vertex_data/cgal"
+        },
         "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -82,15 +99,30 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 46.0,
-                    "y": 503.0
+                    "x": -158.510147094727,
+                    "y": 168.642395019531
                 }
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/fsu_models/teapot.obj"
+                "filename": "$EXAMPLES/stanford_models/bunny.obj",
+                "name": "mesh"
             },
-            "type": "polymesh/loader"
+            "type": "cgal/loader"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -194.056549072266,
+                    "y": 310.725921630859
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
         },
         "program_0": {
             "blind_data": {
@@ -103,17 +135,6 @@
             "name": "program",
             "type": "render/program"
         },
-        "vertex_data_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 272.0,
-                    "y": 467.0
-                }
-            },
-            "name": "vertex_data",
-            "type": "polymesh/vertex_data"
-        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -124,7 +145,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nout vec3 norm;\n \nin vec3 P;\nin vec3 N;\n\nvoid main() {\n\tnorm = N;\n   \tgl_Position = vec4(P, 1);\n} "
+                "source": "#version 130 \n\nout vec3 norm;\n \nin vec3 position;\nin vec3 normals;\n\nvoid main() {\n\tnorm = normals;\n   \tgl_Position = vec4(position, 1);\n} "
             },
             "type": "render/vertex_shader"
         }
@@ -134,6 +155,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAACcAAAABkAAAaqAAACTwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIJAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAbAAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAABrAAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAdQAAA2wAAACqAQAAAwAAA8UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIJAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAbAAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABcAAAA80AAACuAQAAAwAABkUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

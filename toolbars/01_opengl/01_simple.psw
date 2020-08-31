@@ -1,16 +1,28 @@
 {
     "connections": [
         {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
             "out_port": "shader"
         },
         {
-            "in_node": "vertex_data_0",
-            "in_port": "generic_mesh",
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
             "out_node": "loader_0",
-            "out_port": "generic_polymesh"
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
         },
         {
             "in_node": "draw_0",
@@ -19,20 +31,31 @@
             "out_port": "program"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "vertex_data_0",
-            "out_port": "vertex_data"
-        },
-        {
             "in_node": "program_0",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
         }
     ],
     "description": "### A simple OpenGL demo\n\nA simple demo showing how to load an `.obj` file (positions, normals and topology) and display it using OpenGL. \n\nNamed vertex attributes _p_ and _n_ are loaded from an `.obj` file, and passed through to an OpenGL vertex/fragment shader setup. In later demos, this setup is wrapped-up in a subnetwork.\n",
     "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -105.377593994141,
+                    "y": 689.278076171875
+                }
+            },
+            "name": "cgal",
+            "type": "render/vertex_data/cgal"
+        },
         "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -62,15 +85,30 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 46.0,
-                    "y": 503.0
+                    "x": -116.891960144043,
+                    "y": 103.87223815918
                 }
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/fsu_models/teapot.obj"
+                "filename": "$EXAMPLES/stanford_models/bunny.obj",
+                "name": "mesh"
             },
-            "type": "polymesh/loader"
+            "type": "cgal/loader"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -148.990707397461,
+                    "y": 519.671630859375
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-face normals"
+            },
+            "type": "cgal/normals_generator"
         },
         "program_0": {
             "blind_data": {
@@ -83,16 +121,33 @@
             "name": "program",
             "type": "render/program"
         },
-        "vertex_data_0": {
+        "transform_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 272.0,
-                    "y": 467.0
+                    "x": -110.89826965332,
+                    "y": 273.138702392578
                 }
             },
-            "name": "vertex_data",
-            "type": "polymesh/vertex_data"
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 100.0,
+                    "y": 100.0,
+                    "z": 100.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/transform"
         },
         "vertex_shader_0": {
             "blind_data": {
@@ -104,7 +159,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nout vec3 normal;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P.x * 0.1, P.y * 0.1, P.z * 0.1, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(N.x, N.y, N.z, 1)).xyz;\n} \n"
+                "source": "#version 130 \n\nout vec3 normal;\n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(position * 0.1, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(normals, 1)).xyz;\n} \n"
             },
             "type": "render/vertex_shader"
         }
@@ -114,6 +169,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAACcAAAABkAAAaqAAACNQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABOwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABsQAAAb0AAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB+gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACdQAAAsgAAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

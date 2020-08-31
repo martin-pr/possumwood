@@ -7,32 +7,43 @@
             "out_port": "shader"
         },
         {
-            "in_node": "vertex_data_0",
-            "in_port": "generic_mesh",
-            "out_node": "loader_0",
-            "out_port": "generic_polymesh"
-        },
-        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
             "out_port": "program"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "vertex_data_0",
-            "out_port": "vertex_data"
-        },
-        {
             "in_node": "program_0",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
         }
     ],
     "description": "### Automatic normals\n\nWhen an mesh file doesn't include explicit normals, it is relatively easy to use a fragment shader to \"autogenerate\" normals using screen-space derivatives `dFdx()` and `dFdy()`. This demo shows how to do that in Possumwood - just have a look at `fragment_shared` source.",
     "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -129.781356811523,
+                    "y": 463.392761230469
+                }
+            },
+            "name": "cgal",
+            "type": "render/vertex_data/cgal"
+        },
         "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -62,15 +73,16 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 46.0,
-                    "y": 503.0
+                    "x": -129.781356811523,
+                    "y": 284.785491943359
                 }
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/fsu_models/teapot.obj"
+                "filename": "$EXAMPLES/stanford_models/bunny.obj",
+                "name": "mesh"
             },
-            "type": "polymesh/loader"
+            "type": "cgal/loader"
         },
         "program_0": {
             "blind_data": {
@@ -83,17 +95,6 @@
             "name": "program",
             "type": "render/program"
         },
-        "vertex_data_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 272.0,
-                    "y": 467.0
-                }
-            },
-            "name": "vertex_data",
-            "type": "polymesh/vertex_data"
-        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -104,7 +105,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nout vec3 vertexPosition;       // vertex position for the fragment shader \n \nin vec3 P;              // position attr from the vbo \n\nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P.x, P.y, P.z, 1);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                "source": "#version 130 \n\nout vec3 vertexPosition;       // vertex position for the fragment shader \n \nin vec3 position;              // position attr from the vbo \n\nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(position.xyz, 1);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
             },
             "type": "render/vertex_shader"
         }
@@ -114,6 +115,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAAYAAAAQ6AAADnAAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABfQAAAmQAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABbgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB6QAAA1QAAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
 }

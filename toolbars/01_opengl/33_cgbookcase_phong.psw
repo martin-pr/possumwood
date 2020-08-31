@@ -49,18 +49,6 @@
             "out_port": "frame"
         },
         {
-            "in_node": "vertex_data_0",
-            "in_port": "generic_mesh",
-            "out_node": "loader_0",
-            "out_port": "generic_polymesh"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
             "in_node": "viewport_0",
             "in_port": "in_uniforms",
             "out_node": "opencv_texture_0",
@@ -79,16 +67,16 @@
             "out_port": "out_uniforms"
         },
         {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
             "in_node": "float_2",
             "in_port": "value",
             "out_node": "time_0",
             "out_port": "time"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "vertex_data_0",
-            "out_port": "vertex_data"
         },
         {
             "in_node": "program_0",
@@ -101,10 +89,33 @@
             "in_port": "uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
         }
     ],
     "description": "### Normal mapping\n\n[Normal mapping](https://en.wikipedia.org/wiki/Normal_mapping) is a simple method for adding texture-based geometry details to a coarse model. It uses a texture to represent normal perturbation that would result from a significantly more detail in the surface mesh, without having to represent that detail explicitly in the underlying geometry.  In games, this technique is often used to represent a complex model with all its detail, without having to explicitly store a heavy geometry.\n\nThis simple demo demonstrates a combination of normal mapping implemented in a fragment shader, together with [displacement mapping](https://en.wikipedia.org/wiki/Displacement_mapping) implemented as a geometry shader. The lighting is implemented as a simple single light-source [Phong reflection model](https://en.wikipedia.org/wiki/Phong_reflection_model).\n\n<sub>Blinn, James F. [\"Simulation of wrinkled surfaces.\"](https://dl.acm.org/citation.cfm?id=507101) ACM SIGGRAPH computer graphics. Vol. 12. No. 3. ACM, 1978.</sub>\n<sub>Mikkelsen, Morten. [\"Simulation of wrinkled surfaces revisited.\"](http://image.diku.dk/projects/media/morten.mikkelsen.08.pdf) (2008).</sub>",
     "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 3.88170456886292,
+                    "y": 891.399353027344
+                }
+            },
+            "name": "cgal",
+            "type": "render/vertex_data/cgal"
+        },
         "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -234,15 +245,16 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -13.0048398971558,
-                    "y": 684.229125976562
+                    "x": -2.27716708183289,
+                    "y": 718.950988769531
                 }
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/sphere_hires.obj"
+                "filename": "$EXAMPLES/sphere_hires.obj",
+                "name": "mesh"
             },
-            "type": "polymesh/loader"
+            "type": "cgal/loader"
         },
         "opencv_texture_0": {
             "blind_data": {
@@ -311,17 +323,6 @@
             "name": "time",
             "type": "time"
         },
-        "vertex_data_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 212.995162963867,
-                    "y": 648.229125976562
-                }
-            },
-            "name": "vertex_data",
-            "type": "polymesh/vertex_data"
-        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -353,6 +354,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABkAAAQ6AAACWQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAcgAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABawAAAnYAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAcgAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABVAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABzwAAA24AAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
