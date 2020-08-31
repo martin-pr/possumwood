@@ -1,6 +1,12 @@
 {
     "connections": [
         {
+            "in_node": "draw_2",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
@@ -31,10 +37,16 @@
             "out_port": "shader"
         },
         {
-            "in_node": "vertex_data_0",
-            "in_port": "generic_mesh",
+            "in_node": "cgal_0",
+            "in_port": "mesh",
             "out_node": "loader_0",
-            "out_port": "generic_polymesh"
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
         },
         {
             "in_node": "draw_0",
@@ -55,24 +67,6 @@
             "out_port": "program"
         },
         {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "vertex_data_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "vertex_data_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "draw_2",
-            "in_port": "vertex_data",
-            "out_node": "vertex_data_0",
-            "out_port": "vertex_data"
-        },
-        {
             "in_node": "program_0",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
@@ -89,16 +83,56 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_2",
             "out_port": "shader"
+        },
+        {
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "cgal_1",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_1",
+            "out_port": "vertex_data"
         }
     ],
     "description": "### Mesh subdivision in a geometry shader\n\nWhile modern GPUs contain a bespoke functionality for subdivision, this simple demo shows how a similar (if limited) effect can be achieved using a simple geometry shader.\n\nThis demo implements a simple interpolative sudvision scheme with normal-based displacement. All subdivision computation is done in a geometry shader, with additional vertices and topology emitted by calling a recusive function. This approach is just a toy example, as it is strictly limited by the capabilities of individual GPUs - in practical applications, bespoke tesselation shaders perform much better.",
     "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 168.979095458984,
+                    "y": -240.581359863281
+                }
+            },
+            "name": "cgal",
+            "type": "render/vertex_data/cgal"
+        },
+        "cgal_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -124.274154663086,
+                    "y": 531.094360351562
+                }
+            },
+            "name": "cgal",
+            "type": "render/vertex_data/cgal"
+        },
         "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1151.29699707031,
-                    "y": 637.014587402344
+                    "x": 1212.8857421875,
+                    "y": 507.678314208984
                 }
             },
             "name": "draw",
@@ -119,8 +153,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 743.688720703125,
-                    "y": -445.646331787109
+                    "x": 593.822875976562,
+                    "y": -416.904937744141
                 }
             },
             "name": "draw",
@@ -130,8 +164,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 783.162719726562,
-                    "y": 569.787231445312
+                    "x": 675.144897460938,
+                    "y": 463.065155029297
                 }
             },
             "name": "fragment_shader",
@@ -144,8 +178,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 673.428833007812,
-                    "y": 38.7777709960938
+                    "x": 531.282409667969,
+                    "y": 25.8553714752197
                 }
             },
             "name": "fragment_shader",
@@ -158,13 +192,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 353.851898193359,
-                    "y": -491.967956542969
+                    "x": 203.986038208008,
+                    "y": -463.2265625
                 }
             },
             "name": "fragment_shader",
             "ports": {
-                "source": "#version 130 \n \nout vec4 color; \n \nin vec3 position; \n \nvoid main() { \n\tvec3 dx = dFdx(position); \n\tvec3 dy = dFdy(position); \n \n\tvec3 norm = normalize(cross(dx, dy));\n\n\tfloat val = abs(norm.z);\n\tcolor = vec4(val, val, val, 1); \n} \n"
+                "source": "#version 130 \n \nout vec4 color; \n \nin vec3 pos; \n \nvoid main() { \n\tvec3 dx = dFdx(pos); \n\tvec3 dy = dFdy(pos); \n \n\tvec3 norm = normalize(cross(dx, dy));\n\n\tfloat val = abs(norm.z);\n\tcolor = vec4(val, val, val, 1); \n} \n"
             },
             "type": "render/fragment_shader"
         },
@@ -172,13 +206,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 789.844482421875,
-                    "y": 447.225677490234
+                    "x": 681.82666015625,
+                    "y": 340.503601074219
                 }
             },
             "name": "geometry_shader",
             "ports": {
-                "source": "#version 440\n\nlayout(triangles) in;\nlayout(triangle_strip, max_vertices = 3*4*4) out;\n\nuniform mat4 iProjection;\n\nin vec3 position[];\nin vec3 normal[];\n\nout vec3 vertexPosition;\nout vec3 vertexNormal;\n\nvoid emitVertex(vec3 p, vec3 n) {\n\tvertexNormal = n;\n\tvertexPosition = p;\n\tgl_Position = iProjection * vec4(vertexPosition, 1.0);\n\n\tEmitVertex();\n}\n\nvoid emitTriangle(vec3 p1, vec3 n1, vec3 p2, vec3 n2, vec3 p3, vec3 n3) {\n\temitVertex(p1, n2);\n\temitVertex(p2, n2);\n\temitVertex(p3, n3);\n\t\n\tEndPrimitive();\n}\n\nvec3 midPos(vec3 p1, vec3 n1, vec3 p2, vec3 n2) {\n\tvec3 nmid = normalize(n1 + n2);\n\n\treturn (p1 + p2) / 2.0 + nmid * (1.0 - dot(n1, nmid)) * length(p1-p2) / 2;\n}\n\nvoid subdivTriangle1(vec3 p1, vec3 n1, vec3 p2, vec3 n2, vec3 p3, vec3 n3) {\n\tvec3 nmid1 = normalize(n1 + n2);\n\tvec3 nmid2 = normalize(n2 + n3);\n\tvec3 nmid3 = normalize(n3 + n1);\n\n\tvec3 pmid1 = midPos(p1, n1, p2, n2);\n\tvec3 pmid2 = midPos(p2, n2, p3, n3);\n\tvec3 pmid3 = midPos(p3, n3, p1, n1);\n\n\temitTriangle(p1, n1, pmid1, nmid1, pmid3, nmid3);\n\temitTriangle(p2, n2, pmid2, nmid2, pmid1, nmid1);\n\temitTriangle(p3, n3, pmid3, nmid3, pmid2, nmid2);\n\temitTriangle(pmid1, nmid1, pmid2, nmid2, pmid3, nmid3);\n}\n\nvoid subdivTriangle2(vec3 p1, vec3 n1, vec3 p2, vec3 n2, vec3 p3, vec3 n3) {\n\tvec3 nmid1 = normalize(n1 + n2);\n\tvec3 nmid2 = normalize(n2 + n3);\n\tvec3 nmid3 = normalize(n3 + n1);\n\n\tvec3 pmid1 = midPos(p1, n1, p2, n2);\n\tvec3 pmid2 = midPos(p2, n2, p3, n3);\n\tvec3 pmid3 = midPos(p3, n3, p1, n1);\n\n\tsubdivTriangle1(p1, n1, pmid1, nmid1, pmid3, nmid3);\n\tsubdivTriangle1(p2, n2, pmid2, nmid2, pmid1, nmid1);\n\tsubdivTriangle1(p3, n3, pmid3, nmid3, pmid2, nmid2);\n\tsubdivTriangle1(pmid1, nmid1, pmid2, nmid2, pmid3, nmid3);\n}\n\nvoid main() {\n\tsubdivTriangle2(position[0], normal[0], position[1], normal[1], position[2], normal[2]);\n} \n"
+                "source": "#version 440\n\nlayout(triangles) in;\nlayout(triangle_strip, max_vertices = 3*4*4) out;\n\nuniform mat4 iProjection;\n\nin vec3 pos[];\nin vec3 normal[];\n\nout vec3 vertexPosition;\nout vec3 vertexNormal;\n\nvoid emitVertex(vec3 p, vec3 n) {\n\tvertexNormal = n;\n\tvertexPosition = p;\n\tgl_Position = iProjection * vec4(vertexPosition, 1.0);\n\n\tEmitVertex();\n}\n\nvoid emitTriangle(vec3 p1, vec3 n1, vec3 p2, vec3 n2, vec3 p3, vec3 n3) {\n\temitVertex(p1, n2);\n\temitVertex(p2, n2);\n\temitVertex(p3, n3);\n\t\n\tEndPrimitive();\n}\n\nvec3 midPos(vec3 p1, vec3 n1, vec3 p2, vec3 n2) {\n\tvec3 nmid = normalize(n1 + n2);\n\n\treturn (p1 + p2) / 2.0 + nmid * (1.0 - dot(n1, nmid)) * length(p1-p2) / 2;\n}\n\nvoid subdivTriangle1(vec3 p1, vec3 n1, vec3 p2, vec3 n2, vec3 p3, vec3 n3) {\n\tvec3 nmid1 = normalize(n1 + n2);\n\tvec3 nmid2 = normalize(n2 + n3);\n\tvec3 nmid3 = normalize(n3 + n1);\n\n\tvec3 pmid1 = midPos(p1, n1, p2, n2);\n\tvec3 pmid2 = midPos(p2, n2, p3, n3);\n\tvec3 pmid3 = midPos(p3, n3, p1, n1);\n\n\temitTriangle(p1, n1, pmid1, nmid1, pmid3, nmid3);\n\temitTriangle(p2, n2, pmid2, nmid2, pmid1, nmid1);\n\temitTriangle(p3, n3, pmid3, nmid3, pmid2, nmid2);\n\temitTriangle(pmid1, nmid1, pmid2, nmid2, pmid3, nmid3);\n}\n\nvoid subdivTriangle2(vec3 p1, vec3 n1, vec3 p2, vec3 n2, vec3 p3, vec3 n3) {\n\tvec3 nmid1 = normalize(n1 + n2);\n\tvec3 nmid2 = normalize(n2 + n3);\n\tvec3 nmid3 = normalize(n3 + n1);\n\n\tvec3 pmid1 = midPos(p1, n1, p2, n2);\n\tvec3 pmid2 = midPos(p2, n2, p3, n3);\n\tvec3 pmid3 = midPos(p3, n3, p1, n1);\n\n\tsubdivTriangle1(p1, n1, pmid1, nmid1, pmid3, nmid3);\n\tsubdivTriangle1(p2, n2, pmid2, nmid2, pmid1, nmid1);\n\tsubdivTriangle1(p3, n3, pmid3, nmid3, pmid2, nmid2);\n\tsubdivTriangle1(pmid1, nmid1, pmid2, nmid2, pmid3, nmid3);\n}\n\nvoid main() {\n\tsubdivTriangle2(pos[0], normal[0], pos[1], normal[1], pos[2], normal[2]);\n} \n"
             },
             "type": "render/geometry_shader"
         },
@@ -186,13 +220,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 680.110595703125,
-                    "y": -83.7838439941406
+                    "x": 537.964172363281,
+                    "y": -96.7062454223633
                 }
             },
             "name": "geometry_shader",
             "ports": {
-                "source": "#version 440\n\nlayout(triangles) in;\nlayout(triangle_strip, max_vertices = 3*4*4) out;\n\nuniform mat4 iProjection;\n\nin vec3 position[];\nin vec3 normal[];\n\nout vec3 vertexPosition;\nout vec3 vertexNormal;\n\nvoid emitVertex(vec3 p, vec3 n) {\n\tvertexNormal = n;\n\tvertexPosition = p;\n\tgl_Position = iProjection * vec4(vertexPosition, 1.0);\n\n\tEmitVertex();\n}\n\nvoid emitTriangle(vec3 p1, vec3 n1, vec3 p2, vec3 n2, vec3 p3, vec3 n3) {\n\temitVertex(p1, n2);\n\temitVertex(p2, n2);\n\temitVertex(p3, n3);\n\t\n\tEndPrimitive();\n}\n\nvec3 midPos(vec3 p1, vec3 n1, vec3 p2, vec3 n2) {\n\tvec3 nmid = normalize(n1 + n2);\n\n\treturn (p1 + p2) / 2.0 + nmid * (1.0 - dot(n1, nmid)) * length(p1-p2) / 2;\n}\n\nvoid subdivTriangle1(vec3 p1, vec3 n1, vec3 p2, vec3 n2, vec3 p3, vec3 n3) {\n\tvec3 nmid1 = normalize(n1 + n2);\n\tvec3 nmid2 = normalize(n2 + n3);\n\tvec3 nmid3 = normalize(n3 + n1);\n\n\tvec3 pmid1 = midPos(p1, n1, p2, n2);\n\tvec3 pmid2 = midPos(p2, n2, p3, n3);\n\tvec3 pmid3 = midPos(p3, n3, p1, n1);\n\n\temitTriangle(p1, n1, pmid1, nmid1, pmid3, nmid3);\n\temitTriangle(p2, n2, pmid2, nmid2, pmid1, nmid1);\n\temitTriangle(p3, n3, pmid3, nmid3, pmid2, nmid2);\n\temitTriangle(pmid1, nmid1, pmid2, nmid2, pmid3, nmid3);\n}\n\nvoid main() {\n\tsubdivTriangle1(position[0], normal[0], position[1], normal[1], position[2], normal[2]);\n} \n"
+                "source": "#version 440\n\nlayout(triangles) in;\nlayout(triangle_strip, max_vertices = 3*4*4) out;\n\nuniform mat4 iProjection;\n\nin vec3 pos[];\nin vec3 normal[];\n\nout vec3 vertexPosition;\nout vec3 vertexNormal;\n\nvoid emitVertex(vec3 p, vec3 n) {\n\tvertexNormal = n;\n\tvertexPosition = p;\n\tgl_Position = iProjection * vec4(vertexPosition, 1.0);\n\n\tEmitVertex();\n}\n\nvoid emitTriangle(vec3 p1, vec3 n1, vec3 p2, vec3 n2, vec3 p3, vec3 n3) {\n\temitVertex(p1, n2);\n\temitVertex(p2, n2);\n\temitVertex(p3, n3);\n\t\n\tEndPrimitive();\n}\n\nvec3 midPos(vec3 p1, vec3 n1, vec3 p2, vec3 n2) {\n\tvec3 nmid = normalize(n1 + n2);\n\n\treturn (p1 + p2) / 2.0 + nmid * (1.0 - dot(n1, nmid)) * length(p1-p2) / 2;\n}\n\nvoid subdivTriangle1(vec3 p1, vec3 n1, vec3 p2, vec3 n2, vec3 p3, vec3 n3) {\n\tvec3 nmid1 = normalize(n1 + n2);\n\tvec3 nmid2 = normalize(n2 + n3);\n\tvec3 nmid3 = normalize(n3 + n1);\n\n\tvec3 pmid1 = midPos(p1, n1, p2, n2);\n\tvec3 pmid2 = midPos(p2, n2, p3, n3);\n\tvec3 pmid3 = midPos(p3, n3, p1, n1);\n\n\temitTriangle(p1, n1, pmid1, nmid1, pmid3, nmid3);\n\temitTriangle(p2, n2, pmid2, nmid2, pmid1, nmid1);\n\temitTriangle(p3, n3, pmid3, nmid3, pmid2, nmid2);\n\temitTriangle(pmid1, nmid1, pmid2, nmid2, pmid3, nmid3);\n}\n\nvoid main() {\n\tsubdivTriangle1(pos[0], normal[0], pos[1], normal[1], pos[2], normal[2]);\n} \n"
             },
             "type": "render/geometry_shader"
         },
@@ -200,22 +234,37 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 53.8275833129883,
-                    "y": 649.114929199219
+                    "x": -125.906707763672,
+                    "y": -454.152252197266
                 }
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/tetrahedron.obj"
+                "filename": "$EXAMPLES/tetrahedron.obj",
+                "name": "mesh"
             },
-            "type": "polymesh/loader"
+            "type": "cgal/loader"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -169.649124145508,
+                    "y": -25.128568649292
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
         },
         "program_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 971.235046386719,
-                    "y": 449.038177490234
+                    "x": 1032.82373046875,
+                    "y": 319.701904296875
                 }
             },
             "name": "program",
@@ -236,35 +285,24 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 552.361083984375,
-                    "y": -542.134094238281
+                    "x": 402.495239257812,
+                    "y": -513.392700195312
                 }
             },
             "name": "program",
             "type": "render/program"
         },
-        "vertex_data_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 274.609191894531,
-                    "y": 631.379272460938
-                }
-            },
-            "name": "vertex_data",
-            "type": "polymesh/vertex_data"
-        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 843.188232421875,
-                    "y": 321.038177490234
+                    "x": 735.17041015625,
+                    "y": 214.31608581543
                 }
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nvec3 offset = vec3(2,0,0);\n\nout vec3 normal;\nout vec3 position;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(P) + offset, 1);\n\n\tnormal = (iModelViewNormal * vec4(N.x, N.y, N.z, 1)).xyz;\n\tposition = (iModelView * pos4).xyz;\n} \n"
+                "source": "#version 130 \n\nvec3 offset = vec3(2,0,0);\n\nout vec3 normal;\nout vec3 pos;\n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(position) + offset, 1);\n\n\tnormal = (iModelViewNormal * vec4(normals.xyz, 1)).xyz;\n\tpos = (iModelView * pos4).xyz;\n} \n"
             },
             "type": "render/vertex_shader"
         },
@@ -272,13 +310,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 733.454345703125,
-                    "y": -209.971343994141
+                    "x": 591.307922363281,
+                    "y": -222.893737792969
                 }
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nvec3 offset = vec3(0,0,0);\n\nout vec3 normal;\nout vec3 position;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(P) + offset, 1);\n\n\tnormal = (iModelViewNormal * vec4(N.x, N.y, N.z, 1)).xyz;\n\tposition = (iModelView * pos4).xyz;\n} \n"
+                "source": "#version 130 \n\nvec3 offset = vec3(0,0,0);\n\nout vec3 normal;\nout vec3 pos;\n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(position) + offset, 1);\n\n\tnormal = (iModelViewNormal * vec4(normals.x, normals.y, normals.z, 1)).xyz;\n\tpos = (iModelView * pos4).xyz;\n} \n"
             },
             "type": "render/vertex_shader"
         },
@@ -286,13 +324,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 385.176239013672,
-                    "y": -594.602111816406
+                    "x": 235.31037902832,
+                    "y": -565.860717773438
                 }
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nvec3 offset = vec3(-2,0,0);\n\nout vec3 normal;\nout vec3 position;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(P) + offset, 1);\n\n\tnormal = (iModelViewNormal * vec4(N.x, N.y, N.z, 1)).xyz;\n\tposition = (iModelView * pos4).xyz;\n\tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                "source": "#version 130 \n\nvec3 offset = vec3(-2,0,0);\n\nout vec3 pos;\n \nin vec3 position;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(position) + offset, 1);\n\n\tpos = (iModelView * pos4).xyz;\n\tgl_Position = iProjection * iModelView * pos4;\n} \n"
             },
             "type": "render/vertex_shader"
         }
@@ -302,6 +340,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQT////0AAAABwAAAc1AAAEDwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHsAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAk0AAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABawAAAnYAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQiAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAcIAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABVAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABzwAAA24AAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

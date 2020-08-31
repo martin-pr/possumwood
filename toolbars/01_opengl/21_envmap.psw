@@ -7,10 +7,22 @@
             "out_port": "frame"
         },
         {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        },
+        {
             "in_node": "network_0",
             "in_port": "polymesh",
-            "out_node": "loader_0",
-            "out_port": "generic_polymesh"
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
         }
     ],
     "description": "### Reflection mapping\n\n[Reflection mapping](https://en.wikipedia.org/wiki/Reflection_mapping) is a simple image-based lighting technique for simulating purely reflective materials. It only behaves correcty for convex shapes, but even with this strict limitation, it has [been long established](http://www.pauldebevec.com/ReflectionMapping/) as a simple method for reflective surfaces in computer graphics.\n\nThis demo combines a skybox with a \"purely reflective\" material.\n\n\n\n",
@@ -19,8 +31,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 337.510223388672,
-                    "y": 183.603546142578
+                    "x": 427.747314453125,
+                    "y": 164.539367675781
                 }
             },
             "name": "load",
@@ -33,15 +45,16 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 54.8770980834961,
-                    "y": 290.422271728516
+                    "x": 231.289764404297,
+                    "y": -202.50309753418
                 }
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/fsu_models/teapot.obj"
+                "filename": "$EXAMPLES/stanford_models/bunny.obj",
+                "name": "mesh"
             },
-            "type": "polymesh/loader"
+            "type": "cgal/loader"
         },
         "network_0": {
             "blind_data": {
@@ -71,8 +84,8 @@
                     "out_port": "shader"
                 },
                 {
-                    "in_node": "vertex_data_0",
-                    "in_port": "generic_mesh",
+                    "in_node": "cgal_0",
+                    "in_port": "mesh",
                     "out_node": "input_0",
                     "out_port": "data"
                 },
@@ -81,18 +94,6 @@
                     "in_port": "frame",
                     "out_node": "input_1",
                     "out_port": "data"
-                },
-                {
-                    "in_node": "draw_0",
-                    "in_port": "program",
-                    "out_node": "program_0",
-                    "out_port": "program"
-                },
-                {
-                    "in_node": "draw_1",
-                    "in_port": "program",
-                    "out_node": "program_1",
-                    "out_port": "program"
                 },
                 {
                     "in_node": "draw_0",
@@ -107,10 +108,16 @@
                     "out_port": "out_uniforms"
                 },
                 {
+                    "in_node": "draw_0",
+                    "in_port": "program",
+                    "out_node": "program_0",
+                    "out_port": "program"
+                },
+                {
                     "in_node": "draw_1",
-                    "in_port": "vertex_data",
-                    "out_node": "vertex_data_0",
-                    "out_port": "vertex_data"
+                    "in_port": "program",
+                    "out_node": "program_1",
+                    "out_port": "program"
                 },
                 {
                     "in_node": "program_0",
@@ -129,6 +136,12 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
+                },
+                {
+                    "in_node": "draw_1",
+                    "in_port": "vertex_data",
+                    "out_node": "cgal_0",
+                    "out_port": "vertex_data"
                 }
             ],
             "name": "envmap",
@@ -143,6 +156,17 @@
                     },
                     "name": "background",
                     "type": "render/vertex_data/background"
+                },
+                "cgal_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 329.251495361328,
+                            "y": 886.701843261719
+                        }
+                    },
+                    "name": "cgal",
+                    "type": "render/vertex_data/cgal"
                 },
                 "draw_0": {
                     "blind_data": {
@@ -184,13 +208,13 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 190.986389160156,
-                            "y": 626.079345703125
+                            "x": 163.025604248047,
+                            "y": 636.246887207031
                         }
                     },
                     "name": "fragment_shader",
                     "ports": {
-                        "source": "#version 130\n\nuniform sampler2D background;\n\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n\nin vec3 position;\nin vec3 normal; \n\nout vec4 color;\n\nvoid main() {\n\tmat4 mvInv = transpose(iModelViewNormal);\n\n\tvec3 dir = position - (mvInv * vec4(0,0,0,1)).xyz;\n\tdir = normalize(dir);\n\n\tvec3 reflection = dir - 2*dot(normal, dir)*normal;\n\n\tfloat lng = acos(reflection.y) / 3.1415;\n\tfloat lat = atan(reflection.x, -reflection.z) / 3.1415 / 2.0;\n\n\tcolor = texture(\tbackground, vec2(lat, lng));\n}\n"
+                        "source": "#version 130\n\nuniform sampler2D background;\n\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n\nin vec3 pos;\nin vec3 normal; \n\nout vec4 color;\n\nvoid main() {\n\tmat4 mvInv = transpose(iModelViewNormal);\n\n\tvec3 dir = pos - (mvInv * vec4(0,0,0,1)).xyz;\n\tdir = normalize(dir);\n\n\tvec3 reflection = dir - 2*dot(normal, dir)*normal;\n\n\tfloat lng = acos(reflection.y) / 3.1415;\n\tfloat lat = atan(reflection.x, -reflection.z) / 3.1415 / 2.0;\n\n\tcolor = texture(\tbackground, vec2(lat, lng));\n}\n"
                     },
                     "type": "render/fragment_shader"
                 },
@@ -253,17 +277,6 @@
                     "name": "program",
                     "type": "render/program"
                 },
-                "vertex_data_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": 382.220764160156,
-                            "y": 737.110595703125
-                        }
-                    },
-                    "name": "vertex_data",
-                    "type": "polymesh/vertex_data"
-                },
                 "vertex_shader_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
@@ -282,13 +295,13 @@
                     "blind_data": {
                         "type": "possumwood::NodeData",
                         "value": {
-                            "x": 204.937637329102,
-                            "y": 497.887573242188
+                            "x": 176.976852416992,
+                            "y": 499.158508300781
                         }
                     },
                     "name": "vertex_shader",
                     "ports": {
-                        "source": "#version 130 \n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \nout vec3 position;\nout vec3 normal;\n\nvoid main() {\n\tposition = P;\n\tnormal = N;\n\n\tvec4 pos4 = vec4(P.x, P.y, P.z, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                        "source": "#version 130 \n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \nout vec3 pos;\nout vec3 normal;\n\nvoid main() {\n\tpos = position;\n\tnormal = normals;\n\n\tvec4 pos4 = vec4(position.xyz, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
                     },
                     "type": "render/vertex_shader"
                 },
@@ -305,6 +318,48 @@
                 }
             },
             "type": "network"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 205.870849609375,
+                    "y": 158.445236206055
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 232.560684204102,
+                    "y": -55.0735015869141
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 10.0,
+                    "y": 10.0,
+                    "z": 10.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/transform"
         }
     },
     "scene_config": {
@@ -312,6 +367,6 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAACcAAAABkAAAaqAAACTwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABawAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB4QAAAgAAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB+gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACdQAAAsgAAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
