@@ -1,0 +1,209 @@
+{
+    "connections": [
+        {
+            "in_node": "script_0",
+            "in_port": "context",
+            "out_node": "cgal_0",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_1",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "in_context",
+            "out_node": "float_0",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "mesh_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "poly_to_nef_0",
+            "in_port": "mesh",
+            "out_node": "mesh_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "mesh_0",
+            "in_port": "state",
+            "out_node": "script_0",
+            "out_port": "state"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
+        }
+    ],
+    "description": "",
+    "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -265.548187255859,
+                    "y": 654.753967285156
+                }
+            },
+            "name": "cgal",
+            "type": "lua/modules/cgal"
+        },
+        "cgal_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 237.111282348633,
+                    "y": 1107.30139160156
+                }
+            },
+            "name": "display",
+            "type": "render/vertex_data/cgal"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 441.251892089844,
+                    "y": 880.857788085938
+                }
+            },
+            "name": "draw",
+            "type": "render/draw"
+        },
+        "float_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -299.332458496094,
+                    "y": 460.613220214844
+                }
+            },
+            "name": "NUMBER_OF_FACES",
+            "ports": {
+                "name": "edge_count",
+                "value": 20.0
+            },
+            "type": "lua/inject/float"
+        },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -114.380744934082,
+                    "y": 657.153991699219
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec4 frag_position;\n\nout vec4 color; \n \nvoid main() { \n\t// compute fake normal by cross product of surface derivatives\n\tvec3 norm = cross(dFdx(frag_position).xyz, dFdy(frag_position).xyz);\n\tnorm = normalize(norm);\n \n\tcolor = vec4(norm.z, norm.z, norm.z, 1); \n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 393.0,
+                    "y": 132.0
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "$EXAMPLES/stanford_models/bunny.obj",
+                "name": "mesh"
+            },
+            "type": "cgal/loader"
+        },
+        "mesh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -96.5482025146484,
+                    "y": 817.753967285156
+                }
+            },
+            "name": "mesh",
+            "ports": {
+                "name": "mesh"
+            },
+            "type": "lua/extract/mesh"
+        },
+        "poly_to_nef_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 27.7881202697754,
+                    "y": 1220.57458496094
+                }
+            },
+            "name": "poly_to_nef",
+            "type": "cgal/csg/poly_to_nef"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 112.619346618652,
+                    "y": 589.314880371094
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "script_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -250.548202514648,
+                    "y": 801.753967285156
+                }
+            },
+            "name": "script",
+            "ports": {
+                "source": "-- edge_count = 12\n\n-------------\n\nmesh = cgal.mesh(\"mesh\")\n\nfor i=0,edge_count-1 do\n  param = i/edge_count*3.141592*2\n  mesh:addPoint(math.cos(param), 0, math.sin(param))\n  mesh:addPoint(math.cos(param), 1, math.sin(param))\nend\n\nfor i=0,edge_count-1 do\n  face = cgal.face()\n\n  face:addVertex((i*2)%(edge_count*2))\n  face:addVertex((i*2+2)%(edge_count*2))\n  face:addVertex((i*2+3)%(edge_count*2))\n  face:addVertex((i*2+1)%(edge_count*2))\n\n  mesh:addFace(face)\nend\n\nfor i=1,edge_count-2 do\n  face = cgal.face()\n  face:addVertex(0)\n  face:addVertex((i*2+2)%(edge_count*2))\n  face:addVertex((i*2))\n  mesh:addFace(face)\nend\n\nfor i=1,edge_count-2 do\n  face = cgal.face()\n  face:addVertex(1)\n  face:addVertex((i*2+1)%(edge_count*2))\n  face:addVertex((i*2+3)%(edge_count*2))\n\n  mesh:addFace(face)\nend\n"
+            },
+            "type": "lua/script"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -83.0703582763672,
+                    "y": 529.303405761719
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nout vec4 frag_position;        // fragment position for fake normal computation\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nvoid main() {\n\tfrag_position = iModelView * vec4(position, 1.0);\n   \tgl_Position = iProjection * frag_position;\n} \n"
+            },
+            "type": "render/vertex_shader"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQjAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAgoAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACuAQAAAwAAA9EAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
