@@ -1,9 +1,10 @@
-#include <possumwood_sdk/node_implementation.h>
-
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
+#include <possumwood_sdk/datatypes/enum.h>
+#include <possumwood_sdk/node_implementation.h>
+
 #include "datatypes/meshes.h"
-#include "possumwood_sdk/datatypes/enum.h"
+#include "errors.h"
 
 namespace {
 
@@ -108,6 +109,8 @@ void put(PROPERTY& prop, const ITERATOR& target, const FakeKernel::Vector_3& nor
 }  // namespace
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	possumwood::ScopedOutputRedirect redirect;
+
 	const possumwood::Enum mode = data.get(a_mode);
 
 	const std::string attr_name = "vec3:" + data.get(a_attr);
@@ -119,7 +122,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			auto& editableMesh = mesh.edit();
 
 			// remove face normals, if they exist
-			if(editableMesh.faceProperties().hasProperty(attr_name))
+			if(editableMesh.faceProperties().hasProperty(a ttr_name))
 				editableMesh.faceProperties().removeProperty(attr_name);
 
 			auto& normals = editableMesh.vertexProperties().addProperty(attr_name, std::array<float, 3>{{0, 0, 0}});
@@ -147,7 +150,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	data.set(a_outMesh, result);
 
-	return dependency_graph::State();
+	return redirect.state();
 }
 
 void init(possumwood::Metadata& meta) {

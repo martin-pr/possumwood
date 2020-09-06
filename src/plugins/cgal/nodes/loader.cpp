@@ -9,6 +9,7 @@
 
 #include "builder.h"
 #include "datatypes/meshes.h"
+#include "errors.h"
 #include "meshes.h"
 #include "obj.h"
 
@@ -19,6 +20,8 @@ dependency_graph::InAttr<std::string> a_name;
 dependency_graph::OutAttr<possumwood::Meshes> a_polyhedron;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	possumwood::ScopedOutputRedirect redirect;
+
 	const possumwood::Filename filename = data.get(a_filename);
 
 	std::vector<possumwood::CGALKernel::Point_3> points;
@@ -29,7 +32,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	data.set(a_polyhedron, meshes);
 
-	return dependency_graph::State();
+	return redirect.state();
 }
 
 void init(possumwood::Metadata& meta) {
