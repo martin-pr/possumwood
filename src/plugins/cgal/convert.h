@@ -1,6 +1,37 @@
 #pragma once
 
+#include <unordered_map>
+
+#include "cgal.h"
+
 namespace possumwood {
+
+template <typename DEST>
+struct CGALConversion {
+	template <typename SRC>
+	static DEST conv(const SRC& s) {
+		return static_cast<DEST>(s);
+	}
+};
+
+template <>
+struct CGALConversion<float> {
+	template <typename T>
+	static float conv(const CGAL::Lazy_exact_nt<T>& s) {
+		const T tmp = s.exact();
+		return tmp.template convert_to<float>();
+	}
+};
+
+template <typename DEST_KERN>
+struct CGALConversion<CGAL::Point_3<DEST_KERN>> {
+	template <typename SRC_KERN>
+	static CGAL::Point_3<DEST_KERN> conv(const CGAL::Point_3<SRC_KERN>& s) {
+		return CGAL::Point_3<DEST_KERN>(CGALConversion<typename DEST_KERN::FT>::conv(s.x()),
+		                                CGALConversion<typename DEST_KERN::FT>::conv(s.y()),
+		                                CGALConversion<typename DEST_KERN::FT>::conv(s.z()));
+	}
+};
 
 template <class SourcePolyhedron, class TargetPolyhedron>
 class ConvertPolyhedron : public CGAL::Modifier_base<typename TargetPolyhedron::HalfedgeDS> {
@@ -25,8 +56,7 @@ class ConvertPolyhedron : public CGAL::Modifier_base<typename TargetPolyhedron::
 			std::size_t id = v2i.size();
 			v2i[v] = id;
 
-			const auto& p = v->point();
-			builder.add_vertex(typename TargetKernel::Point_3(p.x(), p.y(), p.z()));
+			builder.add_vertex(CGALConversion<typename TargetKernel::Point_3>::conv(v->point()));
 		}
 
 		// and finally need to create the faces array

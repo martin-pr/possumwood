@@ -25,16 +25,16 @@
             "out_port": "shader"
         },
         {
-            "in_node": "cgal_1",
+            "in_node": "poly_to_nef_0",
             "in_port": "mesh",
             "out_node": "mesh_0",
             "out_port": "out"
         },
         {
-            "in_node": "poly_to_nef_0",
-            "in_port": "mesh",
-            "out_node": "mesh_0",
-            "out_port": "out"
+            "in_node": "nef_to_poly_0",
+            "in_port": "nef",
+            "out_node": "poly_to_nef_0",
+            "out_port": "nef"
         },
         {
             "in_node": "draw_0",
@@ -53,6 +53,12 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "nef_to_poly_0",
+            "out_port": "mesh"
         }
     ],
     "description": "",
@@ -72,8 +78,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 237.111282348633,
-                    "y": 1107.30139160156
+                    "x": 145.603271484375,
+                    "y": 1230.5830078125
                 }
             },
             "name": "display",
@@ -148,12 +154,23 @@
             },
             "type": "lua/extract/mesh"
         },
+        "nef_to_poly_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 0.839181423187256,
+                    "y": 1105.37231445312
+                }
+            },
+            "name": "nef_to_poly",
+            "type": "cgal/csg/nef_to_poly"
+        },
         "poly_to_nef_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 27.7881202697754,
-                    "y": 1220.57458496094
+                    "x": 2.36922597885132,
+                    "y": 981.637023925781
                 }
             },
             "name": "poly_to_nef",
@@ -205,5 +222,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQjAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAgoAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACuAQAAAwAAA9EAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAP+AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAeYAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
