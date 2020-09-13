@@ -1,6 +1,9 @@
 #pragma once
 
+#include <gmpxx.h>
 #include <unordered_map>
+
+#include <boost/multiprecision/number.hpp>
 
 #include "cgal.h"
 
@@ -14,12 +17,23 @@ struct CGALConversion {
 	}
 };
 
+// Conversion to float - different versions of CGAL define the exact kernel usind different types.
+// This attempts to address all valid options.
 template <>
 struct CGALConversion<float> {
+	template <typename T, typename U>
+	static float conv(const __gmp_expr<T, U>& num) {
+		return num.get_d();
+	}
+
 	template <typename T>
-	static float conv(const CGAL::Lazy_exact_nt<T>& s) {
-		const T tmp = s.exact();
-		return tmp.template convert_to<float>();
+	static float conv(const boost::multiprecision::number<T>& num) {
+		return num.template convert_to<float>();
+	}
+
+	template <typename T>
+	static float conv(const CGAL::Lazy_exact_nt<T>& num) {
+		return conv(num.exact());
 	}
 };
 
