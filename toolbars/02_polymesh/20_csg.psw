@@ -43,6 +43,12 @@
             "out_port": "nef"
         },
         {
+            "in_node": "union_0",
+            "in_port": "nef_2",
+            "out_node": "poly_to_nef_0",
+            "out_port": "nef"
+        },
+        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
@@ -55,8 +61,8 @@
             "out_port": "state"
         },
         {
-            "in_node": "nef_to_poly_0",
-            "in_port": "nef",
+            "in_node": "union_0",
+            "in_port": "nef_1",
             "out_node": "transform_0",
             "out_port": "out_mesh"
         },
@@ -65,6 +71,12 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "nef_to_poly_0",
+            "in_port": "nef",
+            "out_node": "union_0",
+            "out_port": "nef"
         }
     ],
     "description": "",
@@ -84,8 +96,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 144.332336425781,
-                    "y": 1446.6435546875
+                    "x": 93.6015777587891,
+                    "y": 1658.10656738281
                 }
             },
             "name": "display",
@@ -164,8 +176,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -0.431763082742691,
-                    "y": 1321.43286132812
+                    "x": 28.9027824401855,
+                    "y": 1518.52514648438
                 }
             },
             "name": "nef_to_poly",
@@ -211,8 +223,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 10.5031824111938,
-                    "y": 1117.15515136719
+                    "x": -98.3035202026367,
+                    "y": 1113.04919433594
                 }
             },
             "name": "transform",
@@ -228,12 +240,23 @@
                     "z": 1.0
                 },
                 "translation": {
-                    "x": 3.0,
+                    "x": 1.0,
                     "y": 0.0,
                     "z": 0.0
                 }
             },
             "type": "cgal/csg/transform"
+        },
+        "union_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 3.24742531776428,
+                    "y": 1353.80541992188
+                }
+            },
+            "name": "union",
+            "type": "cgal/csg/union"
         },
         "vertex_shader_0": {
             "blind_data": {
@@ -256,5 +279,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAP+AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAy4AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACuAQAAAwAAAtIAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAANaAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAooAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
