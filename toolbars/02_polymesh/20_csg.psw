@@ -13,6 +13,12 @@
             "out_port": "vertex_data"
         },
         {
+            "in_node": "transform_2",
+            "in_port": "in_mesh",
+            "out_node": "difference_0",
+            "out_port": "nef"
+        },
+        {
             "in_node": "cgal_0",
             "in_port": "in_context",
             "out_node": "float_0",
@@ -23,6 +29,12 @@
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_mesh",
+            "out_node": "intersection_0",
+            "out_port": "nef"
         },
         {
             "in_node": "poly_to_nef_0",
@@ -49,6 +61,18 @@
             "out_port": "nef"
         },
         {
+            "in_node": "intersection_0",
+            "in_port": "nef_2",
+            "out_node": "poly_to_nef_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "difference_0",
+            "in_port": "nef_2",
+            "out_node": "poly_to_nef_0",
+            "out_port": "nef"
+        },
+        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
@@ -67,15 +91,51 @@
             "out_port": "out_mesh"
         },
         {
+            "in_node": "intersection_0",
+            "in_port": "nef_1",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "difference_0",
+            "in_port": "nef_1",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "union_1",
+            "in_port": "nef_1",
+            "out_node": "union_0",
+            "out_port": "nef"
+        },
+        {
             "in_node": "program_0",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
         },
         {
+            "in_node": "union_1",
+            "in_port": "nef_2",
+            "out_node": "transform_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "union_2",
+            "in_port": "nef_1",
+            "out_node": "union_1",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "union_2",
+            "in_port": "nef_2",
+            "out_node": "transform_2",
+            "out_port": "out_mesh"
+        },
+        {
             "in_node": "nef_to_poly_0",
             "in_port": "nef",
-            "out_node": "union_0",
+            "out_node": "union_2",
             "out_port": "nef"
         }
     ],
@@ -96,19 +156,30 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 93.6015777587891,
-                    "y": 1658.10656738281
+                    "x": 407.706787109375,
+                    "y": 2275.1826171875
                 }
             },
             "name": "display",
             "type": "render/vertex_data/cgal"
         },
+        "difference_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 315.074981689453,
+                    "y": 1355.05712890625
+                }
+            },
+            "name": "difference",
+            "type": "cgal/csg/difference"
+        },
         "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 441.251892089844,
-                    "y": 880.857788085938
+                    "x": 858.002136230469,
+                    "y": 2042.83129882812
                 }
             },
             "name": "draw",
@@ -133,8 +204,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -114.380744934082,
-                    "y": 657.153991699219
+                    "x": 423.493927001953,
+                    "y": 2057.2705078125
                 }
             },
             "name": "fragment_shader",
@@ -143,20 +214,16 @@
             },
             "type": "render/fragment_shader"
         },
-        "loader_0": {
+        "intersection_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 393.0,
-                    "y": 132.0
+                    "x": 156.951522827148,
+                    "y": 1351.3095703125
                 }
             },
-            "name": "loader",
-            "ports": {
-                "filename": "$EXAMPLES/stanford_models/bunny.obj",
-                "name": "mesh"
-            },
-            "type": "cgal/loader"
+            "name": "intersection",
+            "type": "cgal/csg/intersection"
         },
         "mesh_0": {
             "blind_data": {
@@ -176,8 +243,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 28.9027824401855,
-                    "y": 1518.52514648438
+                    "x": 248.466064453125,
+                    "y": 2140.60131835938
                 }
             },
             "name": "nef_to_poly",
@@ -198,8 +265,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 112.619346618652,
-                    "y": 589.314880371094
+                    "x": 650.494018554688,
+                    "y": 1989.43139648438
                 }
             },
             "name": "program",
@@ -247,6 +314,62 @@
             },
             "type": "cgal/csg/transform"
         },
+        "transform_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 152.157211303711,
+                    "y": 1507.216796875
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 3.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/csg/transform"
+        },
+        "transform_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 343.082183837891,
+                    "y": 1505.16381835938
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 6.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/csg/transform"
+        },
         "union_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -258,12 +381,34 @@
             "name": "union",
             "type": "cgal/csg/union"
         },
+        "union_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 50.4654312133789,
+                    "y": 1743.8671875
+                }
+            },
+            "name": "union",
+            "type": "cgal/csg/union"
+        },
+        "union_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 222.913803100586,
+                    "y": 1945.05700683594
+                }
+            },
+            "name": "union",
+            "type": "cgal/csg/union"
+        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -83.0703582763672,
-                    "y": 529.303405761719
+                    "x": 454.804321289062,
+                    "y": 1929.419921875
                 }
             },
             "name": "vertex_shader",
