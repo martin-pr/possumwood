@@ -31,8 +31,14 @@
             "out_port": "out"
         },
         {
-            "in_node": "nef_to_poly_0",
-            "in_port": "nef",
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "nef_to_poly_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
             "out_node": "poly_to_nef_0",
             "out_port": "nef"
         },
@@ -49,16 +55,16 @@
             "out_port": "state"
         },
         {
+            "in_node": "nef_to_poly_0",
+            "in_port": "nef",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
             "in_node": "program_0",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
-        },
-        {
-            "in_node": "cgal_1",
-            "in_port": "mesh",
-            "out_node": "nef_to_poly_0",
-            "out_port": "mesh"
         }
     ],
     "description": "",
@@ -78,8 +84,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 145.603271484375,
-                    "y": 1230.5830078125
+                    "x": 144.332336425781,
+                    "y": 1446.6435546875
                 }
             },
             "name": "display",
@@ -158,8 +164,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 0.839181423187256,
-                    "y": 1105.37231445312
+                    "x": -0.431763082742691,
+                    "y": 1321.43286132812
                 }
             },
             "name": "nef_to_poly",
@@ -201,6 +207,34 @@
             },
             "type": "lua/script"
         },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 10.5031824111938,
+                    "y": 1117.15515136719
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 45.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 3.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/csg/transform"
+        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -222,5 +256,5 @@
         "start_time": 0.0
     },
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAP+AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAeYAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAP+AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAy4AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACuAQAAAwAAAtIAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
