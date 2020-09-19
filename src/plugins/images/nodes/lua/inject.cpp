@@ -16,7 +16,9 @@ namespace images {
 
 namespace {
 
-possumwood::lua::Inject<possumwood::opencv::Frame, possumwood::images::OpencvMatWrapper, Module> s_injector;
+possumwood::lua::
+    Inject<possumwood::opencv::Frame, possumwood::images::OpencvMatWrapper, Module, possumwood::AttrFlags::kVertical>
+        s_injector;
 
 possumwood::NodeImplementation s_impl("lua/inject/image", [](possumwood::Metadata& meta) { s_injector.init(meta); });
 

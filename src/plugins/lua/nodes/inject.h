@@ -19,7 +19,7 @@ struct NullModule {
 	}
 };
 
-template <typename T, typename HOLDER = T, typename MODULE = NullModule>
+template <typename T, typename HOLDER = T, typename MODULE = NullModule, AttrFlags FLAGS = AttrFlags(0)>
 struct Inject {
 	dependency_graph::InAttr<std::string> a_name;
 	dependency_graph::InAttr<T> a_value;
@@ -44,7 +44,7 @@ struct Inject {
 
 	void init(::possumwood::Metadata& meta) {
 		meta.addAttribute(a_name, "name", std::string("constant"));
-		meta.addAttribute(a_value, "value", T());
+		meta.addAttribute(a_value, "value", T(), FLAGS);
 		meta.addAttribute(a_inContext, "in_context", ::possumwood::lua::Context(), ::possumwood::AttrFlags::kVertical);
 
 		meta.addAttribute(a_outContext, "out_context", ::possumwood::lua::Context(),

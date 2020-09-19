@@ -10,8 +10,9 @@
 
 namespace {
 
-possumwood::NodeImplementation s_impl(
-    "lua/extract/image",
-    possumwood::lua::Extract<possumwood::opencv::Frame, possumwood::images::OpencvMatWrapper>::init);
+possumwood::NodeImplementation s_impl("lua/extract/image",
+                                      possumwood::lua::Extract<possumwood::opencv::Frame,
+                                                               possumwood::images::OpencvMatWrapper,
+                                                               possumwood::AttrFlags::kVertical>::init);
 
 }

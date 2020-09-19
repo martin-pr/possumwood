@@ -8,7 +8,7 @@
 namespace possumwood {
 namespace lua {
 
-template <typename T, typename HOLDER = T>
+template <typename T, typename HOLDER = T, AttrFlags FLAGS = AttrFlags(0)>
 struct Extract {
 	struct Params {
 		dependency_graph::InAttr<std::string> a_name;
@@ -27,8 +27,7 @@ struct Extract {
 			T value = T(luabind::object_cast<HOLDER>(state.globals()[data.get(params.a_name)]));
 			// and push it to the output
 			data.set(params.a_out, value);
-		}
-		catch(const luabind::error& err) {
+		} catch(const luabind::error& err) {
 			throw std::runtime_error(lua_tostring(err.state(), -1));
 		}
 
@@ -41,7 +40,7 @@ struct Extract {
 		meta.addAttribute(s_params.a_name, "name", std::string("variable"));
 		meta.addAttribute(s_params.a_state, "state", std::move(possumwood::lua::State()));
 
-		meta.addAttribute(s_params.a_out, "out");
+		meta.addAttribute(s_params.a_out, "out", T(), FLAGS);
 
 		meta.addInfluence(s_params.a_name, s_params.a_out);
 		meta.addInfluence(s_params.a_state, s_params.a_out);
