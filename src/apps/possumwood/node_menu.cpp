@@ -98,7 +98,7 @@ void NodeMenu::addFromDirectory(const boost::filesystem::path& startPath) {
 
 				dependency_graph::State state = possumwood::actions::importNetwork(
 				    adaptor->currentNetwork(), selection, possumwood::Filepath::fromString("$NODES/" + path.string()),
-				    "whats_this", dependency_graph::Data(possumwood::NodeData(p)));
+				    path.stem().string(), dependency_graph::Data(possumwood::NodeData(p)));
 			});
 		}
 
