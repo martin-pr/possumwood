@@ -54,9 +54,9 @@ BOOST_AUTO_TEST_CASE(network_from_file) {
 	// three nodes, a connection, blind data
 	const json subnetwork({
 	    {"nodes",
-	     {{"input_0", {{"name", "this_is_an_input"}, {"type", "input"}, {"blind_data", nullptr}}},
-	      {"pass_through_0", {{"name", "pass_through"}, {"type", "pass_through"}, {"blind_data", nullptr}}},
-	      {"output_0", {{"name", "this_is_an_output"}, {"type", "output"}, {"blind_data", nullptr}}}}},
+	     {{"input_0", {{"name", "this_is_an_input"}, {"type", "input"}}},
+	      {"pass_through_0", {{"name", "pass_through"}, {"type", "pass_through"}}},
+	      {"output_0", {{"name", "this_is_an_output"}, {"type", "output"}}}}},
 	    {"connections",
 	     {{{"in_node", "pass_through_0"}, {"in_port", "input"}, {"out_node", "input_0"}, {"out_port", "data"}},
 	      {{"in_node", "output_0"}, {"in_port", "data"}, {"out_node", "pass_through_0"}, {"out_port", "output"}}}},
@@ -81,7 +81,6 @@ BOOST_AUTO_TEST_CASE(network_from_file) {
 		                                      {{"network_0",
 		                                        {{"name", "network"},
 		                                         {"type", "network"},
-		                                         {"blind_data", nullptr},
 		                                         {"nodes", subnetwork["nodes"]},
 		                                         {"connections", subnetwork["connections"]},
 		                                         {"ports", {{"this_is_an_input", 0.0}}}}}}},
@@ -109,7 +108,6 @@ BOOST_AUTO_TEST_CASE(network_from_file) {
 		                                      {{"network_0",
 		                                        {{"name", "network"},
 		                                         {"type", "network"},
-		                                         {"blind_data", nullptr},
 		                                         {"source", "subnetwork_only.psw"},
 		                                         {"ports", {{"this_is_an_input", 0.0}}}}}}},
 		                                     {"connections", std::vector<std::string>()}}));

@@ -104,9 +104,7 @@ possumwood::io::json writeNode(const dependency_graph::NodeBase& n) {
 				io::toJson(j["ports"][p.name()], n.datablock().data(pi));
 	}
 
-	if(not n.hasBlindData())
-		j["blind_data"] = nullptr;
-	else {
+	if(n.hasBlindData()) {
 		assert(dependency_graph::io::isSaveable(n.blindData()));
 		io::toJson(j["blind_data"]["value"], n.blindData());
 		j["blind_data"]["type"] = n.blindDataType();
