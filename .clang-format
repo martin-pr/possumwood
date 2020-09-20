@@ -17,4 +17,7 @@ Standard: Cpp11
 TabWidth: '4'
 UseTab: ForIndentation
 
+BraceWrapping:
+  BeforeElse: true
+  BeforeCatch: true
 ...

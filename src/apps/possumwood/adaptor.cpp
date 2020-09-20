@@ -141,17 +141,19 @@ Adaptor::Adaptor(dependency_graph::Graph* graph) : m_graph(graph), m_currentNetw
 	        [this](const node_editor::GraphScene::Selection& selection) {
 		        // convert the selection to the dependency graph selection
 		        dependency_graph::Selection out;
-		        {
-			        for(auto& n : selection.nodes)
-				        out.addNode(*m_index[n].graphNode);
 
-			        for(auto& c : selection.connections) {
-				        out.addConnection(m_index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
-				                          m_index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index()));
-			        }
+				for(auto& n : selection.nodes)
+					out.addNode(*m_index[n].graphNode);
 
-			        emit selectionChanged(out);
-		        }
+				for(auto& c : selection.connections) {
+					out.addConnection(m_index[&(c->fromPort().parentNode())].graphNode->port(c->fromPort().index()),
+										m_index[&(c->toPort().parentNode())].graphNode->port(c->toPort().index()));
+				}
+
+				if(out.empty())
+					out.addNode(*m_currentNetwork);
+
+		        emit selectionChanged(out);
 	        });
 
 	// setup copy+paste action
@@ -427,7 +429,7 @@ void Adaptor::onStateChanged(const dependency_graph::NodeBase& node) {
 }
 
 void Adaptor::onMetadataChanged(dependency_graph::NodeBase& node) {
-	if(&node.network() == m_currentNetwork) {
+	if(node.hasParentNetwork() && (&node.network() == m_currentNetwork)) {
 #ifndef NDEBUG
 		auto& n = m_index[node.index()];
 
@@ -480,7 +482,7 @@ dependency_graph::Selection Adaptor::selection() const {
 	return result;
 }
 
-void Adaptor::setSelection(const dependency_graph::Selection& selection) {
+void Adaptor::assignSelection(const dependency_graph::Selection& selection) {
 	for(auto& n : m_index)
 		if(n.second.editorNode != nullptr)
 			n.second.editorNode->setSelected(selection.nodes().find(std::ref(*n.second.graphNode)) !=
@@ -498,6 +500,20 @@ void Adaptor::setSelection(const dependency_graph::Selection& selection) {
 	}
 
 	emit selectionChanged(selection);
+}
+
+void Adaptor::setSelection(const dependency_graph::Selection& _selection) {
+	auto selection = _selection;
+
+	// nothing to be selected - select the parent network instead to display its properties
+	if(selection.empty())
+		selection.addNode(*m_currentNetwork);
+
+	assignSelection(selection);
+}
+
+void Adaptor::clearSelection() {
+	assignSelection({});
 }
 
 node_editor::GraphScene& Adaptor::scene() {
@@ -596,6 +612,9 @@ void Adaptor::setCurrentNetwork(dependency_graph::Network& n, bool recordHistory
 
 	// emit a signal for external use
 	emit currentNetworkChanged(n);
+
+	// and select nothing - will reset whatever is needed to use this new network
+	setSelection({});
 }
 
 dependency_graph::Network& Adaptor::currentNetwork() {

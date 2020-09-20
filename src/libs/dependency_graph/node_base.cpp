@@ -98,7 +98,7 @@ void NodeBase::markAsDirty(size_t portIndex, bool dependantsOnly) {
 			for(std::size_t i : metadata()->influences(p.index()))
 				markAsDirty(i);
 		}
-		else {
+		else if(hasParentNetwork()) {
 			// all inputs connected to this output are marked dirty
 			for(Port& o : network().connections().connectedTo(port(portIndex)))
 				o.node().markAsDirty(o.index());

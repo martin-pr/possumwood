@@ -17,7 +17,8 @@ namespace detail {
 
 namespace {
 
-void doSetMetadata(const dependency_graph::UniqueId& node, const dependency_graph::MetadataHandle& meta,
+void doSetMetadata(const dependency_graph::UniqueId& node,
+                   const dependency_graph::MetadataHandle& meta,
                    const dependency_graph::Datablock& datablock) {
 	dependency_graph::NodeBase& n = detail::findNode(node);
 	n.setMetadata(meta);
@@ -34,8 +35,6 @@ struct ConnectionItem {
 
 possumwood::UndoStack::Action changeMetadataAction(dependency_graph::NodeBase& node,
                                                    const dependency_graph::MetadataHandle& handle) {
-	assert(node.hasParentNetwork());
-
 	possumwood::UndoStack::Action action;
 
 	// first, store all connections that relate to the node that is to be changed
@@ -44,17 +43,21 @@ possumwood::UndoStack::Action changeMetadataAction(dependency_graph::NodeBase& n
 	for(std::size_t pi = 0; pi < node.portCount(); ++pi) {
 		const dependency_graph::Port& port = node.port(pi);
 		if(port.category() == dependency_graph::Attr::kOutput) {
-			auto conns = node.network().connections().connectedTo(port);
+			if(node.hasParentNetwork()) {
+				auto conns = node.network().connections().connectedTo(port);
 
-			for(auto& c : conns)
-				outConnections.push_back(ConnectionItem{c.get().node().index(), pi, c.get().index()});
+				for(auto& c : conns)
+					outConnections.push_back(ConnectionItem{c.get().node().index(), pi, c.get().index()});
+			}
 		}
 		else {
 			assert(port.category() == dependency_graph::Attr::kInput);
 
-			auto conn = node.network().connections().connectedFrom(port);
-			if(conn)
-				inConnections.push_back(ConnectionItem{conn->node().index(), pi, conn->index()});
+			if(node.hasParentNetwork()) {
+				auto conn = node.network().connections().connectedFrom(port);
+				if(conn)
+					inConnections.push_back(ConnectionItem{conn->node().index(), pi, conn->index()});
+			}
 		}
 	}
 
@@ -175,18 +178,16 @@ void buildNetwork(dependency_graph::Network& network) {
 			action.append(detail::unlinkAction(n.port(0)));
 
 	// change metadata of the node, using an action (unless root - root handling to be addressed at some point)
-	if(network.hasParentNetwork()) {
-		dependency_graph::MetadataHandle handle(std::move(meta));
-		action.append(changeMetadataAction(network, handle));
+	dependency_graph::MetadataHandle handle(std::move(meta));
+	action.append(changeMetadataAction(network, handle));
 
-		// transfer all the values
-		for(std::size_t pi = 0; pi < values.size(); ++pi)
-			action.append(detail::setValueAction(network.index(), pi, values[pi]));
+	// transfer all the values
+	for(std::size_t pi = 0; pi < values.size(); ++pi)
+		action.append(detail::setValueAction(network.index(), pi, values[pi]));
 
-		// link all what needs to be linked
-		for(auto& l : links)
-			action.append(linkAction(l));
-	}
+	// link all what needs to be linked
+	for(auto& l : links)
+		action.append(linkAction(l));
 
 	possumwood::UndoStack tmpStack;
 	tmpStack.execute(action);

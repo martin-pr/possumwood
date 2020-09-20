@@ -341,7 +341,5 @@ BOOST_AUTO_TEST_CASE(input_output_root) {
 	BOOST_CHECK_EQUAL(app.undoStack().redoActionCount(), 0u);
 
 	// after connecting, the graph should have an input and an output
-	// BOOST_CHECK_EQUAL(app.graph().portCount(), 2u);
-	// NOT IMPLEMENTED - for now, root doesn't have ports
-	BOOST_CHECK_EQUAL(app.graph().portCount(), 0u);
+	BOOST_CHECK_EQUAL(app.graph().portCount(), 2u);
 }

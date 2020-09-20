@@ -20,6 +20,8 @@ class Selection {
 		bool operator<(const Connection& c) const;
 	};
 
+	Selection() = default;
+
 	void addNode(NodeBase& n);
 	void addConnection(Port& from, Port& to);
 
