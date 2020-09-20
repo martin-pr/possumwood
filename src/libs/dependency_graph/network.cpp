@@ -41,6 +41,9 @@ void Network::clear() {
 
 	// clear nodes
 	m_nodes.clear();
+
+	// and reset the metadata
+	setMetadata(defaultMetadata());
 }
 
 Nodes& Network::nodes() {

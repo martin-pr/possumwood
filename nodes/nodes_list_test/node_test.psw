@@ -1,8 +1,15 @@
 {
+    "blind_data": null,
     "connections": [
         {
             "in_node": "output_0",
             "in_port": "data",
+            "out_node": "add_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "input",
             "out_node": "add_0",
             "out_port": "out"
         },
@@ -14,6 +21,7 @@
         }
     ],
     "description": "",
+    "name": "network",
     "nodes": {
         "add_0": {
             "blind_data": {
@@ -40,6 +48,69 @@
             "name": "input",
             "type": "input"
         },
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 710.740783691406,
+                    "y": 331.382232666016
+                }
+            },
+            "connections": [
+                {
+                    "in_node": "output_0",
+                    "in_port": "data",
+                    "out_node": "add_0",
+                    "out_port": "out"
+                },
+                {
+                    "in_node": "add_0",
+                    "in_port": "a",
+                    "out_node": "input_0",
+                    "out_port": "data"
+                }
+            ],
+            "name": "network",
+            "nodes": {
+                "add_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 413.0,
+                            "y": 495.0
+                        }
+                    },
+                    "name": "add",
+                    "ports": {
+                        "b": 2.0
+                    },
+                    "type": "maths/add"
+                },
+                "input_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 272.0,
+                            "y": 467.0
+                        }
+                    },
+                    "name": "input",
+                    "type": "input"
+                },
+                "output_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 566.0,
+                            "y": 576.0
+                        }
+                    },
+                    "name": "output",
+                    "type": "output"
+                }
+            },
+            "type": "network"
+        },
         "output_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -52,11 +123,15 @@
             "type": "output"
         }
     },
+    "ports": {
+        "input": 8.0
+    },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHwAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAEwPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwAAAAJwBAAADAAAAAQAAAagAAATA/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmAAAAqIAAACuAQAAAwAABBoAAATAAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

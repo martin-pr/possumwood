@@ -15,13 +15,21 @@ void doSetValueFromJson(const dependency_graph::UniqueId& nodeId,
                         const possumwood::io::json& value,
                         std::shared_ptr<dependency_graph::Data> original) {
 	// get the node
-	auto nodeIt = AppCore::instance().graph().nodes().find(nodeId, dependency_graph::Nodes::kRecursive);
-	assert(nodeIt != AppCore::instance().graph().nodes().end());
+	dependency_graph::NodeBase* node = nullptr;
+	if(nodeId == AppCore::instance().graph().index())
+		node = &AppCore::instance().graph();
+	else {
+		auto nodeIt = AppCore::instance().graph().nodes().find(nodeId, dependency_graph::Nodes::kRecursive);
+		assert(nodeIt != AppCore::instance().graph().nodes().end());
+
+		node = &(*nodeIt);
+	}
+	assert(node != nullptr);
 
 	// get the port
 	int portId = -1;
-	for(std::size_t pi = 0; pi < nodeIt->portCount(); ++pi)
-		if(nodeIt->port(pi).name() == portName) {
+	for(std::size_t pi = 0; pi < node->portCount(); ++pi)
+		if(node->port(pi).name() == portName) {
 			portId = pi;
 			break;
 		}
@@ -30,7 +38,7 @@ void doSetValueFromJson(const dependency_graph::UniqueId& nodeId,
 		// store the original value
 		assert(original != nullptr);
 		if(original->empty())
-			*original = nodeIt->port(portId).getData();
+			*original = node->port(portId).getData();
 		assert(!original->empty());
 
 		// parse the new value
@@ -40,10 +48,10 @@ void doSetValueFromJson(const dependency_graph::UniqueId& nodeId,
 		io::fromJson(value, data);
 
 		// and set the new data
-		nodeIt->port(portId).setData(data);
+		node->port(portId).setData(data);
 	}
 	else
-		std::cerr << "Found unused property '" << portName << "' of node type '" << nodeIt->metadata()->type()
+		std::cerr << "Found unused property '" << portName << "' of node type '" << node->metadata()->type()
 		          << "' while loading a file. Ignoring its value." << std::endl;
 }
 
