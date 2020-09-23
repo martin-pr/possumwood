@@ -52,19 +52,22 @@ BOOST_AUTO_TEST_CASE(network_from_file) {
 	passThroughNode();
 
 	// three nodes, a connection, blind data
-	const json subnetwork({
-	    {"nodes",
-	     {{"input_0", {{"name", "this_is_an_input"}, {"type", "input"}}},
-	      {"pass_through_0", {{"name", "pass_through"}, {"type", "pass_through"}}},
-	      {"output_0", {{"name", "this_is_an_output"}, {"type", "output"}}}}},
-	    {"connections",
-	     {{{"in_node", "pass_through_0"}, {"in_port", "input"}, {"out_node", "input_0"}, {"out_port", "data"}},
-	      {{"in_node", "output_0"}, {"in_port", "data"}, {"out_node", "pass_through_0"}, {"out_port", "output"}}}},
-	});
+	json subnetwork(
+	    {{"nodes",
+	      {{"input_0", {{"name", "this_is_an_input"}, {"type", "input"}}},
+	       {"pass_through_0", {{"name", "pass_through"}, {"type", "pass_through"}}},
+	       {"output_0", {{"name", "this_is_an_output"}, {"type", "output"}}}}},
+	     {"connections",
+	      {{{"in_node", "pass_through_0"}, {"in_port", "input"}, {"out_node", "input_0"}, {"out_port", "data"}},
+	       {{"in_node", "output_0"}, {"in_port", "data"}, {"out_node", "pass_through_0"}, {"out_port", "output"}}}},
+	     {"name", "network"},
+	     {"type", "network"}});
+	subnetwork["ports"]["this_is_an_input"] = 8.0f;
 
 	(*filesystem->write(possumwood::Filepath::fromString("subnetwork_only.psw"))) << subnetwork;
 
 	BOOST_REQUIRE_NO_THROW(state = app.loadFile(possumwood::Filepath::fromString("subnetwork_only.psw")));
+
 	BOOST_REQUIRE(!state.errored());
 
 	// lets make sure this loads and saves correctly
@@ -84,12 +87,13 @@ BOOST_AUTO_TEST_CASE(network_from_file) {
 		                                         {"nodes", subnetwork["nodes"]},
 		                                         {"connections", subnetwork["connections"]},
 		                                         {"ports", {{"this_is_an_input", 0.0}}}}}}},
-		                                     {"connections", std::vector<std::string>()}}));
+		                                     {"connections", std::vector<std::string>()},
+		                                     {"name", "network"},
+		                                     {"type", "network"}}));
 
 		(*filesystem->write(possumwood::Filepath::fromString("setup_with_subnetwork.psw"))) << setup;
 
 		BOOST_REQUIRE_NO_THROW(state = app.loadFile(possumwood::Filepath::fromString("setup_with_subnetwork.psw")));
-		std::cout << state << std::endl;
 		BOOST_REQUIRE(!state.errored());
 
 		// lets make sure this loads and saves correctly
@@ -109,8 +113,10 @@ BOOST_AUTO_TEST_CASE(network_from_file) {
 		                                        {{"name", "network"},
 		                                         {"type", "network"},
 		                                         {"source", "subnetwork_only.psw"},
-		                                         {"ports", {{"this_is_an_input", 0.0}}}}}}},
-		                                     {"connections", std::vector<std::string>()}}));
+		                                         {"ports", {{"this_is_an_input", 8.0}}}}}}},
+		                                     {"connections", std::vector<std::string>()},
+		                                     {"name", "network"},
+		                                     {"type", "network"}}));
 
 		(*filesystem->write(possumwood::Filepath::fromString("setup_without_subnetwork.psw"))) << setup;
 
@@ -129,9 +135,9 @@ BOOST_AUTO_TEST_CASE(network_from_file) {
 	auto& net = findNode("network").as<dependency_graph::Network>();
 	BOOST_CHECK_EQUAL(net.portCount(), 2u);
 	BOOST_CHECK_EQUAL(net.port(0).name(), "this_is_an_input");
-	BOOST_CHECK_EQUAL(net.port(0).get<float>(), 0.0f);
+	BOOST_CHECK_EQUAL(net.port(0).get<float>(), 8.0f);
 	BOOST_CHECK_EQUAL(net.port(1).name(), "this_is_an_output");
-	BOOST_CHECK_EQUAL(net.port(1).get<float>(), 0.0f);
+	BOOST_CHECK_EQUAL(net.port(1).get<float>(), 8.0f);
 
 	// test that the eval still works
 	BOOST_CHECK_NO_THROW(net.port(0).set(5.0f));

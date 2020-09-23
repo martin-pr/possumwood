@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 
 	//////////////
 	// a simple network of nodes
-	data.push_back("{\"connections\":[],\"nodes\":{}}"_json);
+	data.push_back("{\"connections\":[],\"nodes\":{}, \"name\": \"network\", \"type\": \"network\"}"_json);
 
 	data.back()["nodes"]["addition_0"] = possumwood::io::json{
 	    {"name", "add"},
@@ -93,31 +93,33 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 	         {"nodes", data[0]["nodes"]},
 	         {"connections", data[0]["connections"]}};
 	data.back()["connections"] = "[]"_json;
+	data.back()["name"] = "network";
+	data.back()["type"] = "network";
 
-	tests.push_back([&](const dependency_graph::Network& net) {
-		auto s = findNode(net, "test_network");
-		BOOST_REQUIRE(s != net.nodes().end());
+	  tests.push_back([&](const dependency_graph::Network& net) {
+		  auto s = findNode(net, "test_network");
+		  BOOST_REQUIRE(s != net.nodes().end());
 
-		BOOST_REQUIRE(s->is<dependency_graph::Network>());
-		auto& subnet = s->as<dependency_graph::Network>();
+		  BOOST_REQUIRE(s->is<dependency_graph::Network>());
+		  auto& subnet = s->as<dependency_graph::Network>();
 
-		auto m0 = findNode(subnet, "mult_0");
-		BOOST_REQUIRE(m0 != subnet.nodes().end());
+		  auto m0 = findNode(subnet, "mult_0");
+		  BOOST_REQUIRE(m0 != subnet.nodes().end());
 
-		auto m1 = findNode(subnet, "mult_1");
-		BOOST_REQUIRE(m1 != subnet.nodes().end());
+		  auto m1 = findNode(subnet, "mult_1");
+		  BOOST_REQUIRE(m1 != subnet.nodes().end());
 
-		auto a0 = findNode(subnet, "add");
-		BOOST_REQUIRE(a0 != subnet.nodes().end());
+		  auto a0 = findNode(subnet, "add");
+		  BOOST_REQUIRE(a0 != subnet.nodes().end());
 
-		BOOST_CHECK_EQUAL(a0->port(0).get<float>(), 2.0f);
-		BOOST_CHECK_EQUAL(a0->port(1).get<float>(), 4.0f);
-		BOOST_CHECK_EQUAL(a0->port(2).get<float>(), 6.0f);
+		  BOOST_CHECK_EQUAL(a0->port(0).get<float>(), 2.0f);
+		  BOOST_CHECK_EQUAL(a0->port(1).get<float>(), 4.0f);
+		  BOOST_CHECK_EQUAL(a0->port(2).get<float>(), 6.0f);
 
-		BOOST_CHECK_EQUAL(m0->port(0).get<float>(), 6.0f);
-		BOOST_CHECK_EQUAL(m0->port(1).get<float>(), 5.0f);
-		BOOST_CHECK_EQUAL(m0->port(2).get<float>(), 30.0f);
-	});
+		  BOOST_CHECK_EQUAL(m0->port(0).get<float>(), 6.0f);
+		  BOOST_CHECK_EQUAL(m0->port(1).get<float>(), 5.0f);
+		  BOOST_CHECK_EQUAL(m0->port(2).get<float>(), 30.0f);
+	  });
 
 	///////////////
 	// previous network as a subnetwork (with inputs and outputs, but not connected)

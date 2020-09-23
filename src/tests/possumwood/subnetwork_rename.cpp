@@ -52,34 +52,29 @@ BOOST_AUTO_TEST_CASE(network_in_out_rename) {
 
 	// three nodes, a connection, blind data
 	{
-		const json result(
-		    {{
-		         "nodes",
-		         {{"network_0",
-		           {
-		               {"name", "test_network"},
-		               {"type", "network"},
-		               {"nodes",
-		                {{"input_0", {{"name", "this_is_an_input"}, {"type", "input"}}},
-		                 {"pass_through_0",
-		                  {{"name", "pass_through"}, {"type", "pass_through"}}},
-		                 {"output_0", {{"name", "this_is_an_output"}, {"type", "output"}}}}},
-		               {"connections",
-		                {{{"in_node", "pass_through_0"},
-		                  {"in_port", "input"},
-		                  {"out_node", "input_0"},
-		                  {"out_port", "data"}},
-		                 {{"in_node", "output_0"},
-		                  {"in_port", "data"},
-		                  {"out_node", "pass_through_0"},
-		                  {"out_port", "output"}}}},
-		               {"ports",
-		                {
-		                    {"this_is_an_input", 5.0},
-		                }},
-		           }}},
-		     },
-		     {"connections", "[]"_json}});
+		const json result({{
+		                       "nodes",
+		                       {{"network_0",
+		                         {{"name", "test_network"},
+		                          {"type", "network"},
+		                          {"nodes",
+		                           {{"input_0", {{"name", "this_is_an_input"}, {"type", "input"}}},
+		                            {"pass_through_0", {{"name", "pass_through"}, {"type", "pass_through"}}},
+		                            {"output_0", {{"name", "this_is_an_output"}, {"type", "output"}}}}},
+		                          {"connections",
+		                           {{{"in_node", "pass_through_0"},
+		                             {"in_port", "input"},
+		                             {"out_node", "input_0"},
+		                             {"out_port", "data"}},
+		                            {{"in_node", "output_0"},
+		                             {"in_port", "data"},
+		                             {"out_node", "pass_through_0"},
+		                             {"out_port", "output"}}}},
+		                          {"ports", std::map<std::string, float>({{"this_is_an_input", 5.0f}})}}}},
+		                   },
+		                   {"connections", "[]"_json},
+		                   {"name", "network"},
+		                   {"type", "network"}});
 
 		(*filesystem->write(possumwood::Filepath::fromString("network_in_out_rename.psw"))) << result;
 
