@@ -109,7 +109,7 @@ Properties::PropertyHolder::PropertyHolder(dependency_graph::Port& port) {
 
 		if(port.category() == dependency_graph::Attr::kInput) {
 			flags |= possumwood::properties::property_base::kInput;
-			if(port.node().network().connections().connectedFrom(port))
+			if(port.node().hasParentNetwork() && port.node().network().connections().connectedFrom(port))
 				flags |= possumwood::properties::property_base::kDisabled;
 		}
 
@@ -123,7 +123,7 @@ Properties::PropertyHolder::PropertyHolder(dependency_graph::Port& port) {
 		prop->setFlags(flags);
 
 		// immediate refresh when a port is dirty (pulls on the port)
-		if(port.isDirty())
+		if(port.isDirty() && port.type() != typeid(void))
 			prop->valueFromPort(port);
 	};
 

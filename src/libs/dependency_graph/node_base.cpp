@@ -98,7 +98,7 @@ void NodeBase::markAsDirty(size_t portIndex, bool dependantsOnly) {
 			for(std::size_t i : metadata()->influences(p.index()))
 				markAsDirty(i);
 		}
-		else {
+		else if(hasParentNetwork()) {
 			// all inputs connected to this output are marked dirty
 			for(Port& o : network().connections().connectedTo(port(portIndex)))
 				o.node().markAsDirty(o.index());
@@ -134,7 +134,14 @@ void NodeBase::setMetadata(const MetadataHandle& handle) {
 	}
 
 	// fire the callback
-	graph().metadataChanged(*this);
+	if(hasParentNetwork())
+		graph().metadataChanged(*this);
+	else {
+		// on destruction, the graph() call and its dynamic cast might fail, lets work around it
+		Graph* g = dynamic_cast<Graph*>(this);
+		if(g != nullptr)
+			g->metadataChanged(*this);
+	}
 
 	// mark everything as dirty
 	for(std::size_t p = 0; p < m_ports.size(); ++p)

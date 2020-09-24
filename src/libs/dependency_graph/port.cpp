@@ -7,8 +7,11 @@
 namespace dependency_graph {
 
 Port::Port(unsigned id, NodeBase* parent)
-    : m_parent(parent), m_id(id), m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput),
-      m_linkedToPort(nullptr), m_linkedFromPort(nullptr) {
+    : m_parent(parent),
+      m_id(id),
+      m_dirty(parent->metadata()->attr(id).category() == Attr::kOutput),
+      m_linkedToPort(nullptr),
+      m_linkedFromPort(nullptr) {
 }
 
 Port::Port(Port&& p)
@@ -308,8 +311,8 @@ void Port::disconnect(Port& p) {
 
 bool Port::isConnected() const {
 	// return true if there are no connections leading to/from this input/output port
-	return static_cast<bool>(m_parent->network().connections().connectedFrom(*this)) ||
-	       not m_parent->network().connections().connectedTo(*this).empty();
+	return m_parent->hasParentNetwork() && (static_cast<bool>(m_parent->network().connections().connectedFrom(*this)) ||
+	                                        not m_parent->network().connections().connectedTo(*this).empty());
 }
 
 void Port::linkTo(Port& targetPort) {

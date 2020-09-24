@@ -43,6 +43,7 @@ class Adaptor : public QWidget {
 	/// returns current selection
 	dependency_graph::Selection selection() const;
 	void setSelection(const dependency_graph::Selection& selection);
+	void clearSelection();
 
 	void setSizeHint(const QSize& sh);
 	virtual QSize sizeHint() const override;
@@ -78,6 +79,8 @@ class Adaptor : public QWidget {
 	void onMetadataChanged(dependency_graph::NodeBase& node);
 
 	static bool isReadOnly(const dependency_graph::Network&);
+
+	void assignSelection(const dependency_graph::Selection& sel);
 
 	dependency_graph::Graph* m_graph;
 	dependency_graph::Network* m_currentNetwork;

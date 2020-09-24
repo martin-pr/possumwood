@@ -430,7 +430,7 @@ MainWindow::MainWindow() : QMainWindow(), m_editor(nullptr) {
 
 MainWindow::~MainWindow() {
 	// first, clear selection to avoid destruction order problems
-	m_adaptor->setSelection(dependency_graph::Selection());
+	m_adaptor->clearSelection();
 
 	// then clear the graph
 	possumwood::App::instance().graph().clear();
@@ -618,7 +618,10 @@ void MainWindow::loadFile(const boost::filesystem::path& filename, bool updateFi
 	    possumwood::App::instance().loadFile(possumwood::Filepath::fromPath(filename), updateFilename);
 
 	m_adaptor->setCurrentNetwork(possumwood::App::instance().graph());
-	selectionChanged(dependency_graph::Selection());
+
+	dependency_graph::Selection selection;
+	selection.addNode(possumwood::App::instance().graph());
+	selectionChanged(selection);
 
 	if(state.errored()) {
 		std::stringstream ss;
