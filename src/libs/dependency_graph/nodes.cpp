@@ -33,8 +33,11 @@ bool isCompatible(const dependency_graph::Metadata& m1, const dependency_graph::
 Nodes::Nodes(Network* parent) : m_parent(parent) {
 }
 
-NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, const Data& blindData,
-                     boost::optional<const dependency_graph::Datablock&> datablock, const UniqueId& id) {
+NodeBase& Nodes::add(const MetadataHandle& type,
+                     const std::string& name,
+                     const Data& blindData,
+                     boost::optional<const dependency_graph::Datablock&> datablock,
+                     const UniqueId& id) {
 	std::unique_ptr<dependency_graph::NodeBase> node = type->createNode(name, *m_parent, id);
 	assert(isCompatible(node->metadata().metadata(), type.metadata()));
 
@@ -56,6 +59,12 @@ NodeBase& Nodes::add(const MetadataHandle& type, const std::string& name, const 
 Nodes::iterator Nodes::erase(const iterator& i) {
 	i->disconnectAll();
 
+	// if network, make sure it is cleared first, so metadata are empty before being removed
+	if(i->is<Network>())
+		i->as<Network>().clear();
+
+	// call the callback before actually destroying the node, to make sure its data are
+	//   still accessible in the callbacks
 	m_parent->graph().nodeRemoved(*i);
 	m_parent->graph().dirtyChanged();
 

@@ -119,33 +119,35 @@ void NodeBase::setMetadata(const MetadataHandle& handle) {
 		if(p.isConnected())
 			throw std::runtime_error("Can only change metadata for nodes without connections.");
 
-	// set the new metadata
-	m_metadata = handle;
+	if(m_metadata != handle) {
+		// set the new metadata
+		m_metadata = handle;
 
-	// create new datablock - this will initialise all values to default.
-	// Setting the actual values should be done in Actions.
-	m_data = Datablock(handle);
+		// create new datablock - this will initialise all values to default.
+		// Setting the actual values should be done in Actions.
+		m_data = Datablock(handle);
 
-	// redo the ports based on the new metadata
-	m_ports.clear();
-	for(std::size_t a = 0; a < handle->attributeCount(); ++a) {
-		auto& meta = handle->attr(a);
-		m_ports.push_back(Port(meta.offset(), this));
+		// redo the ports based on the new metadata
+		m_ports.clear();
+		for(std::size_t a = 0; a < handle->attributeCount(); ++a) {
+			auto& meta = handle->attr(a);
+			m_ports.push_back(Port(meta.offset(), this));
+		}
+
+		// fire the callback
+		if(hasParentNetwork())
+			graph().metadataChanged(*this);
+		else {
+			// on destruction, the graph() call and its dynamic cast might fail, lets work around it
+			Graph* g = dynamic_cast<Graph*>(this);
+			if(g != nullptr)
+				g->metadataChanged(*this);
+		}
+
+		// mark everything as dirty
+		for(std::size_t p = 0; p < m_ports.size(); ++p)
+			markAsDirty(p);
 	}
-
-	// fire the callback
-	if(hasParentNetwork())
-		graph().metadataChanged(*this);
-	else {
-		// on destruction, the graph() call and its dynamic cast might fail, lets work around it
-		Graph* g = dynamic_cast<Graph*>(this);
-		if(g != nullptr)
-			g->metadataChanged(*this);
-	}
-
-	// mark everything as dirty
-	for(std::size_t p = 0; p < m_ports.size(); ++p)
-		markAsDirty(p);
 }
 
 const Datablock& NodeBase::datablock() const {
