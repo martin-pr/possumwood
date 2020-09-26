@@ -13,6 +13,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 
 #include "datatypes/program.h"
+#include "datatypes/setup.h"
 #include "datatypes/uniforms.inl"
 #include "datatypes/vbo.inl"
 #include "datatypes/vertex_data.inl"
@@ -24,6 +25,7 @@ namespace {
 dependency_graph::InAttr<possumwood::Program> a_program;
 dependency_graph::InAttr<possumwood::VertexData> a_vertexData;
 dependency_graph::InAttr<possumwood::Uniforms> a_uniforms;
+dependency_graph::InAttr<possumwood::GLSetup> a_setup;
 
 const possumwood::Uniforms& defaultUniforms() {
 	static possumwood::Uniforms s_uniforms;
@@ -115,6 +117,8 @@ struct Drawable : public possumwood::Drawable {
 		const possumwood::VertexData& vertexData = values().get(a_vertexData);
 		possumwood::Uniforms uniforms = values().get(a_uniforms);
 
+		auto originalState = values().get(a_setup).apply();
+
 		program.link();
 
 		GL_CHECK_ERR;
@@ -203,11 +207,6 @@ struct Drawable : public possumwood::Drawable {
 			glBindVertexArray(0);
 
 			GL_CHECK_ERR;
-
-			// and undo the params
-			// glPopAttrib();
-
-			GL_CHECK_ERR;
 		}
 
 		return state;
@@ -222,6 +221,7 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_program, "program");
 	meta.addAttribute(a_vertexData, "vertex_data");
 	meta.addAttribute(a_uniforms, "uniforms", defaultUniforms(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_setup, "setup");
 
 	meta.setDrawable<Drawable>();
 }
