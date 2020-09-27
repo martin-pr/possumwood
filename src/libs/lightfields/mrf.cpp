@@ -69,8 +69,13 @@ std::pair<int, int> MRF::range() const {
 
 namespace {
 
-float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inputsWeight, float flatnessWeight,
-              float smoothnessWeight, const Neighbours& neighbours) {
+float evalICM(const MRF& source,
+              const cv::Mat& state,
+              const V2i& pos,
+              float inputsWeight,
+              float flatnessWeight,
+              float smoothnessWeight,
+              const Neighbours& neighbours) {
 	// first find the min and max candidates
 	MinMax minmax(source[pos].value);
 	minmax.add(state.at<unsigned char>(pos.y, pos.x));
@@ -116,8 +121,12 @@ float evalICM(const MRF& source, const cv::Mat& state, const V2i& pos, float inp
 
 }  // namespace
 
-cv::Mat MRF::solveICM(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight,
-                      std::size_t iterationLimit, const Neighbours& neighbourhood) {
+cv::Mat MRF::solveICM(const MRF& source,
+                      float inputsWeight,
+                      float flatnessWeight,
+                      float smoothnessWeight,
+                      std::size_t iterationLimit,
+                      const Neighbours& neighbourhood) {
 	cv::Mat state = cv::Mat::zeros(source.size().y, source.size().x, CV_8UC1);
 
 	cv::Mat result = cv::Mat::zeros(source.size().y, source.size().x, CV_8UC1);
@@ -143,8 +152,12 @@ cv::Mat MRF::solveICM(const MRF& source, float inputsWeight, float flatnessWeigh
 
 ///////////////////////
 
-cv::Mat MRF::solvePropagation(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight,
-                              std::size_t iterationLimit, const Neighbours& neighbourhood) {
+cv::Mat MRF::solvePropagation(const MRF& source,
+                              float inputsWeight,
+                              float flatnessWeight,
+                              float smoothnessWeight,
+                              std::size_t iterationLimit,
+                              const Neighbours& neighbourhood) {
 	// find the range of values
 	const std::pair<int, int> minmax = source.range();
 
@@ -211,8 +224,12 @@ int randomOffset(int max) {
 
 }  // namespace
 
-cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeight, float smoothnessWeight,
-                      std::size_t iterationLimit, const Neighbours& neighbourhood) {
+cv::Mat MRF::solvePDF(const MRF& source,
+                      float inputsWeight,
+                      float flatnessWeight,
+                      float smoothnessWeight,
+                      std::size_t iterationLimit,
+                      const Neighbours& neighbourhood) {
 	const float totalWeight = inputsWeight + flatnessWeight + smoothnessWeight;
 	if(totalWeight > 1.0f)
 		throw std::runtime_error("Weights should sum to less than 1.0");
@@ -273,9 +290,9 @@ cv::Mat MRF::solvePDF(const MRF& source, float inputsWeight, float flatnessWeigh
 								    // weight = arr[a].second;
 							    }
 						    }
-						    flatness =
-						        flatness /* * PDFGaussian::fromConfidence(0, weight / weightMax) */;  // THIS DOESN"T
-						                                                                              // WORK!!!!
+						    // flatness =
+						    //     flatness /* * PDFGaussian::fromConfidence(0, weight / weightMax) */;  // THIS DOESN"T
+						    // WORK!!!!
 					    }
 
 					    PDFGaussian smoothness = PDFGaussian::fromConfidence(0, 0);

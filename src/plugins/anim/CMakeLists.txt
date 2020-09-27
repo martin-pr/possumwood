@@ -7,6 +7,10 @@ include_directories(./ ../cgal)
 
 #####
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+add_definitions(-Wno-error=ignored-optimization-argument) # not supported by clang
+endif()
+
 file(GLOB sources *.cpp datatypes/*.cpp datatypes/*/*.cpp ui/*.cpp)
 file(GLOB_RECURSE headers *.h)
 

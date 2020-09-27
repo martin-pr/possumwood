@@ -5,6 +5,10 @@ set(LIBS ${LIBS} Qt5::Widgets Qt5::OpenGL)
 
 include_directories(./)
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+add_definitions(-Wno-error=ignored-optimization-argument) # not supported by clang
+endif()
+
 #####
 
 file(GLOB sources *.cpp datatypes/*.cpp ui/*.cpp)
