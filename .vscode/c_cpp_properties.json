@@ -8,7 +8,8 @@
                 "/usr/include/x86_64-linux-gnu/qt5",
                 "/usr/include/OpenEXR",
                 "/usr/include/x86_64-linux-gnu/qt5/QtCore",
-                "${workspaceFolder}/src/libs"
+                "${workspaceFolder}/src/libs",
+                "${workspaceFolder}/src/plugins/cgal"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",

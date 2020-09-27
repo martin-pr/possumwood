@@ -30,9 +30,12 @@ struct VBOTraits<std::vector<T>> {
 
 namespace {
 
-void addVerticesVBO(possumwood::VertexData& vd, const possumwood::Meshes& meshes, std::size_t triangleCount) {
+void addVerticesVBO(possumwood::VertexData& vd,
+                    const std::string& name,
+                    const possumwood::Meshes& meshes,
+                    std::size_t triangleCount) {
 	vd.addVBO<possumwood::CGALPolyhedron::Point_3>(
-	    "position", triangleCount * 3, possumwood::VertexData::kStatic,
+	    name, triangleCount * 3, possumwood::VertexData::kStatic,
 	    [meshes, triangleCount](
 	        possumwood::Buffer<typename possumwood::VBOTraits<possumwood::CGALPolyhedron::Point_3>::element>& buffer,
 	        const possumwood::ViewportState& vs) {
@@ -69,8 +72,12 @@ const T& identity(const T& val) {
 }
 
 template <typename T, typename EXTRACT = std::function<T(const T&)>>
-void addPerPointVBO(possumwood::VertexData& vd, const std::string& name, const std::string& propertyName,
-                    std::size_t triangleCount, const possumwood::Meshes& mesh, EXTRACT extract = identity<T>) {
+void addPerPointVBO(possumwood::VertexData& vd,
+                    const std::string& name,
+                    const std::string& propertyName,
+                    std::size_t triangleCount,
+                    const possumwood::Meshes& mesh,
+                    EXTRACT extract = identity<T>) {
 	vd.addVBO<T>(
 	    name, triangleCount * 3, possumwood::VertexData::kStatic,
 	    [mesh, propertyName, extract](possumwood::Buffer<typename possumwood::VBOTraits<T>::element>& buffer,
@@ -164,6 +171,7 @@ using possumwood::Meshes;
 
 dependency_graph::OutAttr<possumwood::VertexData> a_vd;
 dependency_graph::InAttr<Meshes> a_mesh;
+dependency_graph::InAttr<std::string> a_pointsName;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State result;
@@ -184,7 +192,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// and build the buffers
 	if(triangleCount > 0) {
 		// transfer the position data
-		addVerticesVBO(vd, mesh, triangleCount);
+		addVerticesVBO(vd, data.get(a_pointsName), mesh, triangleCount);
 
 		// count the properties - only properties consistent between all meshes can be
 		// transfered. We don't care about the type of the properties, though - face or
@@ -260,10 +268,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_vd, "vertex_data");
 	meta.addAttribute(a_mesh, "mesh", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_pointsName, "p_attr_name", std::string("P"));
+	meta.addAttribute(a_vd, "vertex_data");
 
 	meta.addInfluence(a_mesh, a_vd);
+	meta.addInfluence(a_pointsName, a_vd);
 
 	meta.setCompute(&compute);
 }

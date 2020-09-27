@@ -1,16 +1,17 @@
 #pragma once
 
-#include <dependency_graph/node.h>
+#include <functional>
+#include <memory>
+#include <string>
 
 #include <boost/noncopyable.hpp>
+
+#include <dependency_graph/node.h>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/datablock.inl>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/port.inl>
 #include <dependency_graph/values.inl>
-#include <functional>
-#include <memory>
-#include <string>
 
 #include "metadata.inl"
 
