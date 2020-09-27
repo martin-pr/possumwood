@@ -73,17 +73,17 @@ void FrameEditor::set(const anim::FrameEditorData& value) {
 		QDoubleSpinBox* rx = new QDoubleSpinBox();
 		m_widget->setItemWidget(item, 1, rx);
 		rx->setRange(-360, 360);
-		QObject::connect(rx, &QDoubleSpinBox::editingFinished, [this, rx]() { valueUpdatedSignal(); });
+		QObject::connect(rx, &QDoubleSpinBox::editingFinished, [this]() { valueUpdatedSignal(); });
 
 		QDoubleSpinBox* ry = new QDoubleSpinBox();
 		m_widget->setItemWidget(item, 2, ry);
 		ry->setRange(-360, 360);
-		QObject::connect(ry, &QDoubleSpinBox::editingFinished, [this, ry]() { valueUpdatedSignal(); });
+		QObject::connect(ry, &QDoubleSpinBox::editingFinished, [this]() { valueUpdatedSignal(); });
 
 		QDoubleSpinBox* rz = new QDoubleSpinBox();
 		m_widget->setItemWidget(item, 3, rz);
 		rz->setRange(-360, 360);
-		QObject::connect(rz, &QDoubleSpinBox::editingFinished, [this, rz]() { valueUpdatedSignal(); });
+		QObject::connect(rz, &QDoubleSpinBox::editingFinished, [this]() { valueUpdatedSignal(); });
 	}
 	while(value.size() + 1 < (unsigned)m_widget->topLevelItemCount())
 		delete m_widget->takeTopLevelItem(m_widget->topLevelItemCount() - 1);

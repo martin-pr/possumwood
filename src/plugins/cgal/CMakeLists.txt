@@ -5,6 +5,10 @@ set(LIBS ${LIBS} Qt5::Widgets Qt5::OpenGL)
 
 add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+add_definitions(-Wno-error=ignored-optimization-argument) # not supported by clang
+endif()
+
 # Find CGAL
 find_package(CGAL REQUIRED)
 set(LIBS ${LIBS} CGAL::CGAL)

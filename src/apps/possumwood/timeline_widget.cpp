@@ -30,7 +30,7 @@ TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTim
 	m_connections.push_back(possumwood::App::instance().onTimeChanged([this](float t) { m_timeline->setValue(t); }));
 
 	// response to time changed by clicking in the timeline widget
-	connect(m_timeline, &Timeline::valueChanged, [this](float t) { possumwood::App::instance().setTime(t); });
+	connect(m_timeline, &Timeline::valueChanged, [](float t) { possumwood::App::instance().setTime(t); });
 
 	// assemble the context menu
 	setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -44,7 +44,7 @@ TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTim
 	m_frameFwdAction = new QAction(QIcon(":icons/player_fwd.png"), "One frame forward", this);
 	m_frameFwdAction->setShortcut(Qt::Key_Right);
 	m_frameFwdAction->setShortcutContext(Qt::ApplicationShortcut);
-	connect(m_frameFwdAction, &QAction::triggered, [this]() {
+	connect(m_frameFwdAction, &QAction::triggered, []() {
 		auto& app = possumwood::App::instance();
 
 		float t = app.time() + 1.0f / app.sceneConfig()["fps"].as<float>();
@@ -57,7 +57,7 @@ TimelineWidget::TimelineWidget(QWidget* parent) : QWidget(parent), m_playbackTim
 	m_frameBwdAction = new QAction(QIcon(":icons/player_rew.png"), "One frame backward", this);
 	m_frameBwdAction->setShortcut(Qt::Key_Left);
 	m_frameBwdAction->setShortcutContext(Qt::ApplicationShortcut);
-	connect(m_frameBwdAction, &QAction::triggered, [this]() {
+	connect(m_frameBwdAction, &QAction::triggered, []() {
 		auto& app = possumwood::App::instance();
 
 		float t = app.time() - 1.0f / app.sceneConfig()["fps"].as<float>();

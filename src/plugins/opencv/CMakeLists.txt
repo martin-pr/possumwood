@@ -1,3 +1,7 @@
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+add_definitions(-Wno-error=ignored-optimization-argument) # not supported by clang
+endif()
+
 # Find Qt
 SET(QT_USE_QTOPENGL TRUE)
 FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Gui OpenGL Widgets)

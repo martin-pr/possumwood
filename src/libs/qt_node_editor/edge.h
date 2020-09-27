@@ -20,7 +20,7 @@ class Edge : public QGraphicsItem {
 	void setPen(QPen pen);
 	const QPen& pen() const;
 
-	virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+	virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
 
   protected:
 	void setPoints(QPointF origin, QPointF target);

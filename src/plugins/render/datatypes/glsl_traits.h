@@ -164,7 +164,7 @@ struct GLSLTraits<std::vector<Imath::Matrix44<T>>> {
 		return "mat4";
 	};
 	static void applyUniform(GLint attr, std::size_t size, const Imath::Matrix44<T>* val) {
-		GLSLTraits<T>::applyUniformArrayMat4(attr, val.size(), val);
+		GLSLTraits<T>::applyUniformArrayMat4(attr, size, val);
 	};
 };
 

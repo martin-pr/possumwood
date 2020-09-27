@@ -83,7 +83,7 @@ struct Max {
 	}
 };
 
-template <template <class> typename FN>
+template <template <class> class FN>
 cv::Mat process(const cv::Mat& in) {
 	if(in.type() == CV_8UC1)
 		return FN<uint8_t>::eval(in);
