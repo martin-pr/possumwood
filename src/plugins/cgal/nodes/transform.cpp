@@ -29,7 +29,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const Imath::Matrix44<float> matrix = m1 * m2 * m3;
 
 	Meshes result = data.get(a_inMesh);
-	for(auto& mesh : result) {
+	for(auto& mesh_ : result) {
+		auto& mesh = mesh_.edit();
 		for(auto it = mesh.polyhedron().vertices_begin(); it != mesh.polyhedron().vertices_end(); ++it) {
 			possumwood::CGALPolyhedron::Point& pt = it->point();
 			;

@@ -30,7 +30,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			for(auto& v : m.vertices())
 				vertices.push_back(possumwood::CGALKernel::Point_3(v.pos().x, v.pos().y, v.pos().z));
 
-			possumwood::Mesh& out = result.addMesh(m.name());
+			possumwood::Mesh::MeshData& out = result.addMesh(m.name());
 
 			{
 				possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(vertices), typeof(m.polygons())>

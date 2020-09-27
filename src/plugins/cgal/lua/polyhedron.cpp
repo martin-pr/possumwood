@@ -29,7 +29,7 @@ void PolyhedronWrapper::addFace(const Face& f) {
 
 PolyhedronWrapper::operator Meshes() const {
 	Meshes result;
-	Mesh& mesh = result.addMesh(m_name);
+	Mesh::MeshData& mesh = result.addMesh(m_name);
 
 	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(m_points), typeof(m_faces)> builder(m_points,
 	                                                                                                           m_faces);

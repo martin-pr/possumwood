@@ -18,7 +18,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	Meshes result = data.get(a_inMesh);
 
 	for(auto& mesh : result)
-		CGAL::Polygon_mesh_processing::stitch_borders(mesh.polyhedron());
+		CGAL::Polygon_mesh_processing::stitch_borders(mesh.edit().polyhedron());
 
 	data.set(a_outMesh, result);
 

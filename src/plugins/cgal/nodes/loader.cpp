@@ -30,7 +30,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		throw std::runtime_error("Error reading file '" + filename.filename().string() + "'");
 
 	possumwood::Meshes meshes;
-	possumwood::Mesh& mesh = meshes.addMesh(data.get(a_name));
+	possumwood::Mesh::MeshData& mesh = meshes.addMesh(data.get(a_name));
 
 	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(points), typeof(faces)> builder(points,
 	                                                                                                       faces);

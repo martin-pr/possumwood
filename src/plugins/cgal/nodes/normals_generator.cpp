@@ -116,26 +116,32 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	for(auto& mesh : result) {
 		// request for vertex normals
 		if(mode.value() == "Per-vertex normals") {
-			// remove face normals, if they exist
-			if(mesh.faceProperties().hasProperty(attr_name))
-				mesh.faceProperties().removeProperty(attr_name);
+			auto& editableMesh = mesh.edit();
 
-			auto& normals = mesh.vertexProperties().addProperty(attr_name, std::array<float, 3>{{0, 0, 0}});
+			// remove face normals, if they exist
+			if(editableMesh.faceProperties().hasProperty(attr_name))
+				editableMesh.faceProperties().removeProperty(attr_name);
+
+			auto& normals = editableMesh.vertexProperties().addProperty(attr_name, std::array<float, 3>{{0, 0, 0}});
 
 			CGAL::Polygon_mesh_processing::compute_vertex_normals(
-			    mesh.polyhedron(), normals, CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
+			    editableMesh.polyhedron(), normals,
+			    CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
 		}
 
 		// request for face normals
 		else if(mode.value() == "Per-face normals") {
-			// remove vertex normals, if they exist
-			if(mesh.vertexProperties().hasProperty(attr_name))
-				mesh.vertexProperties().removeProperty(attr_name);
+			auto& editableMesh = mesh.edit();
 
-			auto& normals = mesh.faceProperties().addProperty(attr_name, std::array<float, 3>{{0, 0, 0}});
+			// remove vertex normals, if they exist
+			if(editableMesh.vertexProperties().hasProperty(attr_name))
+				editableMesh.vertexProperties().removeProperty(attr_name);
+
+			auto& normals = editableMesh.faceProperties().addProperty(attr_name, std::array<float, 3>{{0, 0, 0}});
 
 			CGAL::Polygon_mesh_processing::compute_face_normals(
-			    mesh.polyhedron(), normals, CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
+			    editableMesh.polyhedron(), normals,
+			    CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
 		}
 	}
 
