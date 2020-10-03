@@ -10,14 +10,6 @@ branches:
   except:
     - gh-pages
 
-# Environment variables
-env:
-  global:
-    - GH_REPO_NAME: possumwood
-    - DOXYFILE: $TRAVIS_BUILD_DIR/Doxyfile
-    - GH_REPO_REF: github.com/martin-pr/possumwood.git
-    - COMPILER: g++-5
-
 # Install dependencies
 addons:
   apt:
@@ -49,15 +41,31 @@ addons:
       - libeigen3-dev
       - libjemalloc-dev
 
-# Run build
-script:
-  - export CXX=g++-5
-  - export CC=gcc-5
-  - cd $TRAVIS_BUILD_DIR
-  - ./tools/build-debug -j 4
-  - ./tools/run-tests
+env:
+  global:
+    - GH_REPO_NAME: possumwood
+    - GH_REPO_REF: github.com/martin-pr/possumwood.git
 
-# Generate and deploy documentation
-after_success:
-  - cd $TRAVIS_BUILD_DIR
-  - ./tools/build-docs
+stages:
+- name: build
+- name: docs
+  if: branch = master
+
+jobs:
+  include:
+  - stage: build
+    env:
+    - CXX: g++-5
+    - CC: gcc-5
+    - COMPILER: g++-5
+    script:
+    - cd $TRAVIS_BUILD_DIR
+    - ./tools/build-debug -j 4
+    - ./tools/run-tests
+
+  - stage: docs
+    env:
+    - DOXYFILE: $TRAVIS_BUILD_DIR/Doxyfile
+    script:
+    - cd $TRAVIS_BUILD_DIR
+    - ./tools/build-docs
