@@ -13,16 +13,10 @@
             "out_port": "shader"
         },
         {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "loader_0",
-            "out_port": "polyhedron"
-        },
-        {
             "in_node": "cgal_0",
             "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
         },
         {
             "in_node": "draw_0",
@@ -35,15 +29,10 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
-        },
-        {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "transform_0",
-            "out_port": "out_mesh"
         }
     ],
     "description": "### A simple OpenGL demo\n\nA simple demo showing how to load an `.obj` file (positions, normals and topology) and display it using OpenGL. \n\nNamed vertex attributes _p_ and _n_ are loaded from an `.obj` file, and passed through to an OpenGL vertex/fragment shader setup. In later demos, this setup is wrapped-up in a subnetwork.\n",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -54,6 +43,9 @@
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -65,6 +57,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "fragment_shader_0": {
@@ -85,30 +82,16 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -116.891960144043,
-                    "y": 103.87223815918
+                    "x": -94.0149536132812,
+                    "y": 303.410552978516
                 }
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/stanford_models/bunny.obj",
+                "filename": "$EXAMPLES/stanford_models/armadillo.obj",
                 "name": "mesh"
             },
             "type": "cgal/loader"
-        },
-        "normals_generator_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -148.990707397461,
-                    "y": 519.671630859375
-                }
-            },
-            "name": "normals_generator",
-            "ports": {
-                "mode": "Per-face normals"
-            },
-            "type": "cgal/normals_generator"
         },
         "program_0": {
             "blind_data": {
@@ -121,34 +104,6 @@
             "name": "program",
             "type": "render/program"
         },
-        "transform_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -110.89826965332,
-                    "y": 273.138702392578
-                }
-            },
-            "name": "transform",
-            "ports": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 100.0,
-                    "y": 100.0,
-                    "z": 100.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            },
-            "type": "cgal/transform"
-        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -159,7 +114,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nout vec3 normal;\n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(position * 0.1, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(normals, 1)).xyz;\n} \n"
+                "source": "#version 130 \n\nout vec3 normal;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P * 0.1, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(N, 1)).xyz;\n} \n"
             },
             "type": "render/vertex_shader"
         }
@@ -169,6 +124,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
+    "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB+gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACdQAAAsgAAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAl8AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB+gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACdQAAAsgAAACuAQAAAwAABQ4AAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

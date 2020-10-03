@@ -107,86 +107,108 @@ std::istream& operator>>(std::istream& in, FaceIndex& f) {
 	return in;
 }
 
-Mesh makeMesh(const std::vector<std::array<float, 3>>& v,
-              const std::vector<std::array<float, 3>>& n,
-              const std::vector<std::array<float, 2>>& uv,
-              const std::vector<Face>& f,
-              std::size_t indexCount) {
-	Mesh result("obj");
+Mesh makeMesh(const std::string& name, const std::vector<std::array<float, 3>>& v, const std::vector<Face>& f) {
+	Mesh result(name);
 	Mesh::MeshData& mesh = result.edit();
 
 	// build the base polymesh
 	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(v), FaceAdaptor> builder(v, FaceAdaptor(&f));
 	mesh.polyhedron().delegate(builder);
 
-	// // normals handle
-	// GenericPolymesh::Indices::Handle normalsHandle;
-	// if(!n.empty())
-	// 	normalsHandle = result.indices().handles().add<std::array<float, 3>>("N", std::array<float, 3>{{0, 0, 0}});
-
-	// // uv handle
-	// GenericPolymesh::Indices::Handle uvHandle;
-	// if(!uv.empty())
-	// 	uvHandle = result.indices().handles().add<std::array<float, 2>>("uv", std::array<float, 2>{{0, 0}});
-
-	// // copy the polygon data
-	// {
-	// 	std::vector<std::size_t> indices;
-	// 	std::vector<std::size_t> normals;
-	// 	std::vector<std::size_t> uvs;
-
-	// 	// only one per-polygon attribute - object ID
-	// 	GenericPolymesh::Polygons::Handle objId = result.polygons().handles().add<int>("objectId", 0);
-
-	// 	for(auto& face : f) {
-	// 		indices.clear();
-	// 		normals.clear();
-	// 		uvs.clear();
-
-	// 		for(auto& i : face.indices) {
-	// 			assert(i.v > 0);
-	// 			indices.push_back(i.v - 1);
-
-	// 			if(i.vn > 0)
-	// 				normals.push_back(i.vn - 1);
-
-	// 			if(i.vt > 0)
-	// 				uvs.push_back(i.vt - 1);
-	// 		}
-
-	// 		auto fi = result.polygons().add(indices.begin(), indices.end());
-	// 		fi->set(objId, (int)face.objectId);
-
-	// 		auto fBegin = fi->begin();
-	// 		auto fEnd = fi->end();
-
-	// 		if(!normals.empty()) {
-	// 			assert(normals.size() == fi->size());
-
-	// 			auto ni = normals.begin();
-	// 			auto fn = fBegin;
-
-	// 			for(; fn != fEnd; ++fn, ++ni)
-	// 				fn->set(normalsHandle, n[*ni]);
-	// 		}
-
-	// 		if(!uvs.empty()) {
-	// 			assert(uvs.size() == fi->size());
-
-	// 			auto uvi = uvs.begin();
-	// 			auto fn = fBegin;
-
-	// 			for(; fn != fEnd; ++fn, ++uvi)
-	// 				fn->set(uvHandle, uv[*uvi]);
-	// 		}
-	// 	}
-	// }
-
 	return result;
 }
+
+void addNormals(Mesh& mesh,
+                const std::string& attrName,
+                const std::vector<std::array<float, 3>>& n,
+                const std::vector<Face>& f) {
+	auto& editableMesh = mesh.edit();
+
+	auto& normals = editableMesh.halfedgeProperties().addProperty(attrName, std::array<float, 3>{{0, 0, 0}});
+
+	auto face = f.begin();
+	for(auto fit = editableMesh.polyhedron().facets_begin(); fit != editableMesh.polyhedron().facets_end(); ++fit) {
+		assert(fit->facet_degree() == face->indices.size());
+
+		auto hit = fit->facet_begin();
+		for(std::size_t hi = 0; hi < fit->facet_degree(); ++hi) {
+			normals.set(hit->property_key(), n[face->indices[hi].vn - 1]);
+
+			++hit;
+		}
+
+		++face;
+	}
+}
+
+// // normals handle
+// GenericPolymesh::Indices::Handle normalsHandle;
+// if(!n.empty())
+// 	normalsHandle = result.indices().handles().add<std::array<float, 3>>("N", std::array<float, 3>{{0, 0, 0}});
+
+// // uv handle
+// GenericPolymesh::Indices::Handle uvHandle;
+// if(!uv.empty())
+// 	uvHandle = result.indices().handles().add<std::array<float, 2>>("uv", std::array<float, 2>{{0, 0}});
+
+// // copy the polygon data
+// {
+// 	std::vector<std::size_t> indices;
+// 	std::vector<std::size_t> normals;
+// 	std::vector<std::size_t> uvs;
+
+// 	// only one per-polygon attribute - object ID
+// 	GenericPolymesh::Polygons::Handle objId = result.polygons().handles().add<int>("objectId", 0);
+
+// 	for(auto& face : f) {
+// 		indices.clear();
+// 		normals.clear();
+// 		uvs.clear();
+
+// 		for(auto& i : face.indices) {
+// 			assert(i.v > 0);
+// 			indices.push_back(i.v - 1);
+
+// 			if(i.vn > 0)
+// 				normals.push_back(i.vn - 1);
+
+// 			if(i.vt > 0)
+// 				uvs.push_back(i.vt - 1);
+// 		}
+
+// 		auto fi = result.polygons().add(indices.begin(), indices.end());
+// 		fi->set(objId, (int)face.objectId);
+
+// 		auto fBegin = fi->begin();
+// 		auto fEnd = fi->end();
+
+// 		if(!normals.empty()) {
+// 			assert(normals.size() == fi->size());
+
+// 			auto ni = normals.begin();
+// 			auto fn = fBegin;
+
+// 			for(; fn != fEnd; ++fn, ++ni)
+// 				fn->set(normalsHandle, n[*ni]);
+// 		}
+
+// 		if(!uvs.empty()) {
+// 			assert(uvs.size() == fi->size());
+
+// 			auto uvi = uvs.begin();
+// 			auto fn = fBegin;
+
+// 			for(; fn != fEnd; ++fn, ++uvi)
+// 				fn->set(uvHandle, uv[*uvi]);
+// 		}
+// 	}
+// }
+
+// return result;
+
 }  // namespace
 
-Mesh loadObj(boost::filesystem::path path, const std::string& name) {
+Mesh loadObj(boost::filesystem::path path, const std::string& name, const std::string& normalsAttr) {
 	if(!boost::filesystem::exists(path))
 		throw std::runtime_error("File " + path.string() + " doesn't exist");
 
@@ -198,8 +220,6 @@ Mesh loadObj(boost::filesystem::path path, const std::string& name) {
 	std::size_t normalOrigin = 0;
 	std::size_t uvOrigin = 0;
 	std::size_t objectId = 0;
-
-	std::size_t indexCount = 0;
 
 	std::ifstream file(path.string());
 
@@ -266,15 +286,17 @@ Mesh loadObj(boost::filesystem::path path, const std::string& name) {
 				}
 
 				assert(f.indices.size() >= 3);
-				indexCount += f.indices.size();
 
 				faces.push_back(f);
 			}
 		}
 	}
 
-	auto mesh = makeMesh(vertices, normals, uvs, faces, indexCount);
-	mesh.setName(name);
+	auto mesh = makeMesh(name, vertices, faces);
+
+	if(!normals.empty())
+		addNormals(mesh, "vec3:" + normalsAttr, normals, faces);
+
 	return mesh;
 }
 

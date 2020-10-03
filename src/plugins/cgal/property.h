@@ -14,6 +14,8 @@ class PropertyBase {
   public:
 	virtual ~PropertyBase();
 
+	std::size_t index() const;
+
 	bool operator==(const PropertyBase& p) const;
 	bool operator!=(const PropertyBase& p) const;
 
@@ -26,7 +28,6 @@ class PropertyBase {
 	virtual std::unique_ptr<PropertyBase> clone(Properties* parent) const = 0;
 	virtual std::unique_ptr<PropertyItem::ValueBase> makeValue() const = 0;
 
-	std::size_t index() const;
 	void setIndex(std::size_t i);
 
 	virtual bool isEqual(const PropertyBase& p) const = 0;
@@ -43,6 +44,7 @@ class Property : public PropertyBase {
   public:
 	const T& get(const PropertyKey& key) const;
 	void set(PropertyKey& key, const T& value);
+	void set(const PropertyKey& key, const T& value);
 
   protected:
 	Property(Properties* parent, std::size_t index, const T& defaultValue);

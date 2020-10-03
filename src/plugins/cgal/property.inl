@@ -17,8 +17,14 @@ template <typename T>
 void Property<T>::set(PropertyKey& key, const T& value) {
 	if(key.isDefault())
 		key.m_index = parent().addSingleItem();
-	assert(!key.isDefault());
 
+	assert(!key.isDefault());
+	parent().m_data[key.m_index].set(index(), value);
+}
+
+template <typename T>
+void Property<T>::set(const PropertyKey& key, const T& value) {
+	assert(!key.isDefault());
 	parent().m_data[key.m_index].set(index(), value);
 }
 

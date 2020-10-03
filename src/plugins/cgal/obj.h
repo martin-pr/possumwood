@@ -6,6 +6,6 @@
 
 namespace possumwood {
 
-Mesh loadObj(boost::filesystem::path path, const std::string& name);
+Mesh loadObj(boost::filesystem::path path, const std::string& name, const std::string& normalsAttr = "N");
 
 }
