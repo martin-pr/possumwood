@@ -10,6 +10,7 @@ namespace possumwood {
 class Meshes {
   public:
 	Mesh::MeshData& addMesh(const std::string& name);
+	void addMesh(const Mesh& mesh);
 
 	typedef std::vector<Mesh>::const_iterator const_iterator;
 	const_iterator begin() const;

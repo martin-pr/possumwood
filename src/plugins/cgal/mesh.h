@@ -30,6 +30,8 @@ class Mesh {
 		friend class Mesh;
 	};
 
+	Mesh(const std::string& name);
+
 	/// Returns a non-const reference to the underlying data, allowing them to be edited.
 	/// If this Mesh instance doesn't have a unique data instance, the underlying data will be duplicated wholesale.
 	MeshData& edit();
@@ -46,8 +48,6 @@ class Mesh {
 	bool operator!=(const Mesh& i) const;
 
   private:
-	Mesh(const std::string& name);
-
 	std::string m_name;
 
 	std::shared_ptr<MeshData> m_data;

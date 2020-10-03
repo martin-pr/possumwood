@@ -10,6 +10,7 @@
 #include "builder.h"
 #include "datatypes/meshes.h"
 #include "meshes.h"
+#include "obj.h"
 
 namespace {
 
@@ -23,18 +24,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::vector<possumwood::CGALKernel::Point_3> points;
 	std::vector<std::vector<std::size_t>> faces;
 
-	std::ifstream file(filename.filename().string().c_str());
-	bool result = CGAL::read_OBJ(file, points, faces);
-
-	if(!result)
-		throw std::runtime_error("Error reading file '" + filename.filename().string() + "'");
-
 	possumwood::Meshes meshes;
-	possumwood::Mesh::MeshData& mesh = meshes.addMesh(data.get(a_name));
-
-	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(points), typeof(faces)> builder(points,
-	                                                                                                       faces);
-	mesh.polyhedron().delegate(builder);
+	meshes.addMesh(possumwood::loadObj(filename.filename(), data.get(a_name)));
 
 	data.set(a_polyhedron, meshes);
 

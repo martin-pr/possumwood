@@ -18,10 +18,10 @@ class CGALBuilder : public CGAL::Modifier_base<HDS> {
 		for(auto& v : *m_points)
 			B.add_vertex(typename HDS::Traits::Point_3(v[0], v[1], v[2]));
 
-		for(auto& f : *m_faces) {
+		for(const auto& f : *m_faces) {
 			B.begin_facet();
 
-			for(auto& i : f)
+			for(const auto& i : f)
 				B.add_vertex_to_facet(i);
 
 			B.end_facet();
