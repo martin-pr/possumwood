@@ -78,60 +78,82 @@ void addPerPointVBO(possumwood::VertexData& vd,
                     std::size_t triangleCount,
                     const possumwood::Meshes& mesh,
                     EXTRACT extract = identity<T>) {
-	vd.addVBO<T>(
-	    name, triangleCount * 3, possumwood::VertexData::kStatic,
-	    [mesh, propertyName, extract](possumwood::Buffer<typename possumwood::VBOTraits<T>::element>& buffer,
-	                                  const possumwood::ViewportState& vs) {
-		    std::size_t index = 0;
+	vd.addVBO<T>(name, triangleCount * 3, possumwood::VertexData::kStatic,
+	             [mesh, propertyName, extract](possumwood::Buffer<typename possumwood::VBOTraits<T>::element>& buffer,
+	                                           const possumwood::ViewportState& vs) {
+		             std::size_t index = 0;
 
-		    for(auto& m : mesh) {
-			    // vertex props, handled by polygon-triangle
-			    if(m.vertexProperties().hasProperty(propertyName)) {
-				    auto& vertProp = m.vertexProperties().property<T>(propertyName);
+		             for(auto& m : mesh) {
+			             // vertex props, handled by polygon-triangle
+			             if(m.vertexProperties().hasProperty(propertyName)) {
+				             auto& vertProp = m.vertexProperties().property<T>(propertyName);
 
-				    for(auto fit = m.polyhedron().facets_begin(); fit != m.polyhedron().facets_end(); ++fit) {
-					    if(fit->facet_degree() > 2) {
-						    auto it = fit->facet_begin();
+				             for(auto fit = m.polyhedron().facets_begin(); fit != m.polyhedron().facets_end(); ++fit) {
+					             if(fit->facet_degree() > 2) {
+						             auto it = fit->facet_begin();
 
-						    const auto& val1 = extract(vertProp.get(it->vertex()->property_key()));
-						    ++it;
+						             const auto& val0 = extract(vertProp.get(it->vertex()->property_key()));
+						             ++it;
 
-						    const auto& val2 = extract(vertProp.get(it->vertex()->property_key()));
-						    ++it;
+						             for(unsigned ctr = 2; ctr < fit->facet_degree(); ++ctr) {
+							             const auto& val1 = extract(vertProp.get(it->vertex()->property_key()));
+							             ++it;
+							             const auto& val2 = extract(vertProp.get(it->vertex()->property_key()));
 
-						    for(unsigned ctr = 2; ctr < fit->facet_degree(); ++ctr) {
-							    const auto& val = extract(vertProp.get(it->vertex()->property_key()));
+							             buffer.element(index++) = val0;
+							             buffer.element(index++) = val1;
+							             buffer.element(index++) = val2;
+						             }
+					             }
+				             }
+			             }
 
-							    buffer.element(index++) = val1;
-							    buffer.element(index++) = val2;
-							    buffer.element(index++) = val;
+			             // face props, constant for all triangles of a face
+			             else if(m.faceProperties().hasProperty(propertyName)) {
+				             auto& faceProp = m.faceProperties().property<T>(propertyName);
 
-							    ++it;
-						    }
-					    }
-				    }
-			    }
+				             for(auto fit = m.polyhedron().facets_begin(); fit != m.polyhedron().facets_end(); ++fit) {
+					             if(fit->facet_degree() > 2) {
+						             auto n = extract(faceProp.get(fit->property_key()));
 
-			    // face props, constant for all triangles of a face
-			    else if(m.faceProperties().hasProperty(propertyName)) {
-				    auto& faceProp = m.faceProperties().property<T>(propertyName);
+						             for(unsigned i = 2; i < fit->facet_degree(); ++i)
+							             for(unsigned a = 0; a < 3; ++a)
+								             buffer.element(index++) = n;
+					             }
+				             }
+			             }
 
-				    for(auto fit = m.polyhedron().facets_begin(); fit != m.polyhedron().facets_end(); ++fit) {
-					    if(fit->facet_degree() > 2) {
-						    auto n = extract(faceProp.get(fit->property_key()));
+			             // halfedge props
+			             else if(m.halfedgeProperties().hasProperty(propertyName)) {
+				             auto& heProp = m.halfedgeProperties().property<T>(propertyName);
 
-						    for(unsigned i = 2; i < fit->facet_degree(); ++i)
-							    for(unsigned a = 0; a < 3; ++a)
-								    buffer.element(index++) = n;
-					    }
-				    }
-			    }
-			    else
-				    throw std::runtime_error("Property " + propertyName + " not found as vertex or face property.");
-		    }
+				             for(auto fit = m.polyhedron().facets_begin(); fit != m.polyhedron().facets_end(); ++fit) {
+					             if(fit->facet_degree() > 2) {
+						             auto it = fit->facet_begin();
 
-		    assert(index == buffer.vertexCount());
-	    });
+						             const auto& val0 = extract(heProp.get(it->property_key()));
+						             ++it;
+
+						             for(unsigned ctr = 2; ctr < fit->facet_degree(); ++ctr) {
+							             const auto& val1 = extract(heProp.get(it->property_key()));
+							             ++it;
+							             const auto& val2 = extract(heProp.get(it->property_key()));
+
+							             buffer.element(index++) = val0;
+							             buffer.element(index++) = val1;
+							             buffer.element(index++) = val2;
+						             }
+					             }
+				             }
+			             }
+
+			             else
+				             throw std::runtime_error("Property " + propertyName +
+				                                      " not found as halfedge, vertex or face property.");
+		             }
+
+		             assert(index == buffer.vertexCount());
+	             });
 }
 
 struct VBOName {
@@ -206,6 +228,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			auto facePropList = m.faceProperties().properties();
 			for(auto& fp : facePropList)
 				++propertyCounters[fp];
+
+			auto halfedgePropList = m.halfedgeProperties().properties();
+			for(auto& hp : halfedgePropList)
+				++propertyCounters[hp];
 		}
 
 		// and transfer all properties that are common to all meshes
@@ -244,7 +270,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					else
 						ignoredProperties.insert(pc.first);
 				}
-				else if(pc.second < mesh.size())
+				else
 					ignoredProperties.insert(pc.first);
 			}
 			else
