@@ -141,74 +141,35 @@ void addNormals(Mesh& mesh,
 	}
 }
 
-// // normals handle
-// GenericPolymesh::Indices::Handle normalsHandle;
-// if(!n.empty())
-// 	normalsHandle = result.indices().handles().add<std::array<float, 3>>("N", std::array<float, 3>{{0, 0, 0}});
+void addUVs(Mesh& mesh,
+            const std::string& attrName,
+            const std::vector<std::array<float, 2>>& uv,
+            const std::vector<Face>& f) {
+	auto& editableMesh = mesh.edit();
 
-// // uv handle
-// GenericPolymesh::Indices::Handle uvHandle;
-// if(!uv.empty())
-// 	uvHandle = result.indices().handles().add<std::array<float, 2>>("uv", std::array<float, 2>{{0, 0}});
+	auto& uvs = editableMesh.halfedgeProperties().addProperty(attrName, std::array<float, 2>{{0, 0}});
 
-// // copy the polygon data
-// {
-// 	std::vector<std::size_t> indices;
-// 	std::vector<std::size_t> normals;
-// 	std::vector<std::size_t> uvs;
+	auto face = f.begin();
+	for(auto fit = editableMesh.polyhedron().facets_begin(); fit != editableMesh.polyhedron().facets_end(); ++fit) {
+		assert(fit->facet_degree() == face->indices.size());
 
-// 	// only one per-polygon attribute - object ID
-// 	GenericPolymesh::Polygons::Handle objId = result.polygons().handles().add<int>("objectId", 0);
+		auto hit = fit->facet_begin();
+		for(std::size_t hi = 0; hi < fit->facet_degree(); ++hi) {
+			uvs.set(hit->property_key(), uv[face->indices[hi].vt - 1]);
 
-// 	for(auto& face : f) {
-// 		indices.clear();
-// 		normals.clear();
-// 		uvs.clear();
+			++hit;
+		}
 
-// 		for(auto& i : face.indices) {
-// 			assert(i.v > 0);
-// 			indices.push_back(i.v - 1);
-
-// 			if(i.vn > 0)
-// 				normals.push_back(i.vn - 1);
-
-// 			if(i.vt > 0)
-// 				uvs.push_back(i.vt - 1);
-// 		}
-
-// 		auto fi = result.polygons().add(indices.begin(), indices.end());
-// 		fi->set(objId, (int)face.objectId);
-
-// 		auto fBegin = fi->begin();
-// 		auto fEnd = fi->end();
-
-// 		if(!normals.empty()) {
-// 			assert(normals.size() == fi->size());
-
-// 			auto ni = normals.begin();
-// 			auto fn = fBegin;
-
-// 			for(; fn != fEnd; ++fn, ++ni)
-// 				fn->set(normalsHandle, n[*ni]);
-// 		}
-
-// 		if(!uvs.empty()) {
-// 			assert(uvs.size() == fi->size());
-
-// 			auto uvi = uvs.begin();
-// 			auto fn = fBegin;
-
-// 			for(; fn != fEnd; ++fn, ++uvi)
-// 				fn->set(uvHandle, uv[*uvi]);
-// 		}
-// 	}
-// }
-
-// return result;
+		++face;
+	}
+}
 
 }  // namespace
 
-Mesh loadObj(boost::filesystem::path path, const std::string& name, const std::string& normalsAttr) {
+Mesh loadObj(boost::filesystem::path path,
+             const std::string& name,
+             const std::string& normalsAttr,
+             const std::string& uvsAttr) {
 	if(!boost::filesystem::exists(path))
 		throw std::runtime_error("File " + path.string() + " doesn't exist");
 
@@ -296,6 +257,9 @@ Mesh loadObj(boost::filesystem::path path, const std::string& name, const std::s
 
 	if(!normals.empty())
 		addNormals(mesh, "vec3:" + normalsAttr, normals, faces);
+
+	if(!uvs.empty())
+		addUVs(mesh, "vec2:" + uvsAttr, uvs, faces);
 
 	return mesh;
 }

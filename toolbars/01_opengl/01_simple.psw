@@ -38,8 +38,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -105.377593994141,
-                    "y": 689.278076171875
+                    "x": -121.801246643066,
+                    "y": 459.346923828125
                 }
             },
             "name": "cgal",
@@ -68,13 +68,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 71.0,
-                    "y": 313.0
+                    "x": 44.3115615844727,
+                    "y": 319.158874511719
                 }
             },
             "name": "fragment_shader",
             "ports": {
-                "source": "#version 130 \n \nout vec4 color; \n \nin vec3 normal; \n \nvoid main() { \n\tvec3 norm = normalize(normal);\n\n\tfloat val = abs(norm.z);\n\tcolor = vec4(val, val, val, 1); \n} \n"
+                "source": "#version 130 \n \nout vec4 color; \n \nin vec3 normal; \nin vec2 texcoord;\n \nvoid main() { \n\tvec3 norm = normalize(normal);\n\n\tfloat val = abs(norm.z);\n\tcolor = vec4(\n      val * texcoord.x / 100.0, \n      val * texcoord.y / 100.0, \n      val - (texcoord.x + texcoord.y) / 100.0, \n      1); \n} \n"
             },
             "type": "render/fragment_shader"
         },
@@ -82,13 +82,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -94.0149536132812,
-                    "y": 303.410552978516
+                    "x": -118.650428771973,
+                    "y": 297.251678466797
                 }
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/stanford_models/armadillo.obj",
+                "filename": "$EXAMPLES/fsu_models/alfa147.obj",
                 "name": "mesh"
             },
             "type": "cgal/loader"
@@ -108,13 +108,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 86.0,
-                    "y": 201.0
+                    "x": 59.3115615844727,
+                    "y": 207.158874511719
                 }
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nout vec3 normal;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P * 0.1, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(N, 1)).xyz;\n} \n"
+                "source": "#version 130 \n\nout vec3 normal;\nout vec2 texcoord;\n \nin vec3 P;\nin vec3 N;\nin vec2 uv;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P * 0.1, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(N, 1)).xyz;\n\ttexcoord = uv;\n} \n"
             },
             "type": "render/vertex_shader"
         }

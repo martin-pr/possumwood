@@ -245,6 +245,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					if(name.type == "vec3" && name.arraySize == 1)
 						addPerPointVBO<std::array<float, 3>>(vd, name.name, pc.first, triangleCount, mesh);
 
+					else if(name.type == "vec2" && name.arraySize == 1)
+						addPerPointVBO<std::array<float, 2>>(vd, name.name, pc.first, triangleCount, mesh);
+
 					else if(name.type == "float" && name.arraySize == 1)
 						addPerPointVBO<float>(vd, name.name, pc.first, triangleCount, mesh);
 
