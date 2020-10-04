@@ -34,7 +34,7 @@ class FaceAdaptor {
 		}
 
 	  public:
-		Vertices(const Face* face) : m_face(face) {
+		explicit Vertices(const Face* face) : m_face(face) {
 			assert(face != nullptr);
 		}
 
@@ -59,7 +59,7 @@ class FaceAdaptor {
 	}
 
   public:
-	FaceAdaptor(const std::vector<Face>* faces) : m_faces(faces) {
+	explicit FaceAdaptor(const std::vector<Face>* faces) : m_faces(faces) {
 	}
 
 	typedef boost::
@@ -118,13 +118,14 @@ Mesh makeMesh(const std::string& name, const std::vector<std::array<float, 3>>& 
 	return result;
 }
 
-void addNormals(Mesh& mesh,
-                const std::string& attrName,
-                const std::vector<std::array<float, 3>>& n,
-                const std::vector<Face>& f) {
-	auto& editableMesh = mesh.edit();
-
-	auto& normals = editableMesh.halfedgeProperties().addProperty(attrName, std::array<float, 3>{{0, 0, 0}});
+template <typename T>
+void addHalfedgeProperty(Mesh::MeshData& editableMesh,
+                         const std::string& attrName,
+                         const T& defaultValue,
+                         const std::vector<T>& data,
+                         const std::vector<Face>& f,
+                         std::function<std::size_t(const FaceIndex& fi)> extractIndex) {
+	auto& property = editableMesh.halfedgeProperties().addProperty(attrName, defaultValue);
 
 	auto face = f.begin();
 	for(auto fit = editableMesh.polyhedron().facets_begin(); fit != editableMesh.polyhedron().facets_end(); ++fit) {
@@ -132,7 +133,7 @@ void addNormals(Mesh& mesh,
 
 		auto hit = fit->facet_begin();
 		for(std::size_t hi = 0; hi < fit->facet_degree(); ++hi) {
-			normals.set(hit->property_key(), n[face->indices[hi].vn - 1]);
+			property.set(hit->property_key(), data[extractIndex(face->indices[hi])]);
 
 			++hit;
 		}
@@ -141,27 +142,20 @@ void addNormals(Mesh& mesh,
 	}
 }
 
+void addNormals(Mesh& mesh,
+                const std::string& attrName,
+                const std::vector<std::array<float, 3>>& n,
+                const std::vector<Face>& f) {
+	addHalfedgeProperty(mesh.edit(), attrName, std::array<float, 3>{{0, 0, 0}}, n, f,
+	                    [](const FaceIndex& fi) { return fi.vn - 1; });
+}
+
 void addUVs(Mesh& mesh,
             const std::string& attrName,
             const std::vector<std::array<float, 2>>& uv,
             const std::vector<Face>& f) {
-	auto& editableMesh = mesh.edit();
-
-	auto& uvs = editableMesh.halfedgeProperties().addProperty(attrName, std::array<float, 2>{{0, 0}});
-
-	auto face = f.begin();
-	for(auto fit = editableMesh.polyhedron().facets_begin(); fit != editableMesh.polyhedron().facets_end(); ++fit) {
-		assert(fit->facet_degree() == face->indices.size());
-
-		auto hit = fit->facet_begin();
-		for(std::size_t hi = 0; hi < fit->facet_degree(); ++hi) {
-			uvs.set(hit->property_key(), uv[face->indices[hi].vt - 1]);
-
-			++hit;
-		}
-
-		++face;
-	}
+	addHalfedgeProperty(mesh.edit(), attrName, std::array<float, 2>{{0, 0}}, uv, f,
+	                    [](const FaceIndex& fi) { return fi.vt - 1; });
 }
 
 }  // namespace

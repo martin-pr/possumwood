@@ -29,7 +29,7 @@ struct FakeKernel {
 		Vector_3(const std::array<float, 3>& arr) : data(arr) {
 		}
 
-		Vector_3(CGAL::Null_vector) : data{{0, 0, 0}} {
+		Vector_3(const CGAL::Null_vector) : data{{0, 0, 0}} {
 		}
 
 		float& operator[](std::size_t index) {

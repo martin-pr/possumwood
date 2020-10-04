@@ -100,7 +100,7 @@ std::set<std::string> getInputs(GLuint prog) {
 }
 
 struct Drawable : public possumwood::Drawable {
-	Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)), m_vao(0) {
+	explicit Drawable(dependency_graph::Values&& vals) : possumwood::Drawable(std::move(vals)), m_vao(0) {
 		m_timeChangedConnection = possumwood::App::instance().onTimeChanged([](float t) { refresh(); });
 	}
 
@@ -117,6 +117,7 @@ struct Drawable : public possumwood::Drawable {
 		const possumwood::VertexData& vertexData = values().get(a_vertexData);
 		possumwood::Uniforms uniforms = values().get(a_uniforms);
 
+		/// RAII scoped holder, to guarantee state restoration when it goes out of scope
 		auto originalState = values().get(a_setup).apply();
 
 		program.link();

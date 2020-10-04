@@ -11,6 +11,16 @@ namespace {
 using possumwood::CGALPolyhedron;
 using possumwood::Meshes;
 
+void transformNormals(possumwood::Property<std::array<float, 3>>& prop, const Imath::Matrix44<float>& normalMatrix) {
+	for(auto& v : prop) {
+		Imath::Vec4<float> p(v[0], v[1], v[2], 0.0f);
+		p *= normalMatrix;
+		v[0] = p.x;
+		v[1] = p.y;
+		v[2] = p.z;
+	}
+}
+
 dependency_graph::InAttr<Meshes> a_inMesh;
 dependency_graph::InAttr<Imath::Vec3<float>> a_translation, a_rotation, a_scale;
 dependency_graph::InAttr<bool> a_vec3AsNormal;
@@ -44,37 +54,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		if(data.get(a_vec3AsNormal)) {
 			for(auto& prop : mesh.faceProperties())
-				if(prop.type() == typeid(std::array<float, 3>)) {
-					for(auto& v : mesh.faceProperties().property<std::array<float, 3>>(prop.name())) {
-						Imath::Vec4<float> p(v[0], v[1], v[2], 0.0f);
-						p *= normalMatrix;
-						v[0] = p.x;
-						v[1] = p.y;
-						v[2] = p.z;
-					}
-				}
+				if(prop.type() == typeid(std::array<float, 3>))
+					transformNormals(mesh.faceProperties().property<std::array<float, 3>>(prop.name()), normalMatrix);
 
 			for(auto& prop : mesh.halfedgeProperties())
-				if(prop.type() == typeid(std::array<float, 3>)) {
-					for(auto& v : mesh.halfedgeProperties().property<std::array<float, 3>>(prop.name())) {
-						Imath::Vec4<float> p(v[0], v[1], v[2], 0.0f);
-						p *= normalMatrix;
-						v[0] = p.x;
-						v[1] = p.y;
-						v[2] = p.z;
-					}
-				}
+				if(prop.type() == typeid(std::array<float, 3>))
+					transformNormals(mesh.halfedgeProperties().property<std::array<float, 3>>(prop.name()),
+					                 normalMatrix);
 
 			for(auto& prop : mesh.vertexProperties())
-				if(prop.type() == typeid(std::array<float, 3>)) {
-					for(auto& v : mesh.vertexProperties().property<std::array<float, 3>>(prop.name())) {
-						Imath::Vec4<float> p(v[0], v[1], v[2], 0.0f);
-						p *= normalMatrix;
-						v[0] = p.x;
-						v[1] = p.y;
-						v[2] = p.z;
-					}
-				}
+				if(prop.type() == typeid(std::array<float, 3>))
+					transformNormals(mesh.vertexProperties().property<std::array<float, 3>>(prop.name()), normalMatrix);
 		}
 	}
 
