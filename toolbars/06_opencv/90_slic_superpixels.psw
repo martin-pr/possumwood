@@ -43,7 +43,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "laplacian_smoothness_0",
+            "in_node": "laplacian_0",
             "in_port": "in_frame",
             "out_node": "convert_1",
             "out_port": "out_frame"
@@ -55,27 +55,15 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "split_0",
-            "in_port": "in",
-            "out_node": "image_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "color_0",
+            "in_node": "color_1",
             "in_port": "in_frame",
-            "out_node": "image_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "concat_1",
-            "in_port": "in_frame_1",
             "out_node": "image_0",
             "out_port": "frame"
         },
         {
             "in_node": "abs_0",
             "in_port": "in_frame",
-            "out_node": "laplacian_smoothness_0",
+            "out_node": "laplacian_0",
             "out_port": "out_frame"
         },
         {
@@ -119,9 +107,28 @@
             "in_port": "in_frame_1",
             "out_node": "split_0",
             "out_port": "out_3"
+        },
+        {
+            "in_node": "color_0",
+            "in_port": "in_frame",
+            "out_node": "color_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "split_0",
+            "in_port": "in",
+            "out_node": "color_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_1",
+            "in_port": "in_frame_1",
+            "out_node": "color_1",
+            "out_port": "out_frame"
         }
     ],
     "description": "### SLIC Superpixels\n\nSuperpixel algorithms derive meaningful atomic primitives from dense grid images. Many computer vision algorithms can work with such regions, reducing both computational complexity and ambiguity.\n\nSLIC (Simple Linear Iterative Clustering) is a simple adaptation of k-means clustering that generates superpixels via iterative linear averaging and simple non-linear grouping.\n\n<sub>Achanta, Radhakrishna, et al. [\"SLIC superpixels compared to state-of-the-art superpixel methods.\"](https://infoscience.epfl.ch/record/149300/files/SLIC_Superpixels_TR_2.pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.</sub>",
+    "name": "network",
     "nodes": {
         "abs_0": {
             "blind_data": {
@@ -159,6 +166,20 @@
             "name": "color",
             "ports": {
                 "mode": "BGR2Lab"
+            },
+            "type": "opencv/color"
+        },
+        "color_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 278.249176025391,
+                    "y": 233.998184204102
+                }
+            },
+            "name": "color",
+            "ports": {
+                "mode": "GRAY2BGR"
             },
             "type": "opencv/color"
         },
@@ -258,17 +279,17 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 290.420837402344,
-                    "y": 247.906967163086
+                    "x": 285.202453613281,
+                    "y": 75.7000579833984
                 }
             },
             "name": "image",
             "ports": {
-                "filename": "$EXAMPLES/cae.wisc.edu_images/cameraman.png"
+                "filename": "$EXAMPLES/cae.wisc.edu_images/cameraman.tif"
             },
             "type": "opencv/capture/image"
         },
-        "laplacian_smoothness_0": {
+        "laplacian_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -417,6 +438,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "fragment_shader_0": {
@@ -560,7 +586,7 @@
             "ports": {
                 "filter": "connected components, final step",
                 "iterations": 10,
-                "spatial_bias": 50.0,
+                "spatial_bias": 20.0,
                 "target_pixel_count": 350
             },
             "type": "opencv/superpixels/slic"
@@ -582,6 +608,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACnAAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJAAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABiAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB/gAAAeMAAACqAQAAAwAAA5YAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJAAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAC3wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADWgAAAeMAAACuAQAAAwAABhYAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

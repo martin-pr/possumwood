@@ -32,6 +32,7 @@
         }
     ],
     "description": "### OBJ file loading\n\nThis simple demo shows how to load an object from .obj file, and display it in the viewport.\n\nThe display code is contained in a subnetwork (double click the blue node to \"enter\" it), and is based on a trivial implementation of a vertex and fragment OpenGL shader.",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -42,6 +43,9 @@
                 }
             },
             "name": "display",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -53,6 +57,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "fragment_shader_0": {
@@ -105,7 +114,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nout vec4 frag_position;        // fragment position for fake normal computation\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nvoid main() {\n\tfrag_position = iModelView * vec4(position, 1.0);\n   \tgl_Position = iProjection * frag_position;\n} \n"
+                "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \nout vec4 frag_position;        // fragment position for fake normal computation\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nvoid main() {\n\tfrag_position = iModelView * vec4(P, 1.0);\n   \tgl_Position = iProjection * frag_position;\n} \n"
             },
             "type": "render/vertex_shader"
         }
@@ -115,6 +124,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABkAAAQ6AAACJAAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA8wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABaQAAAgUAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADOAAAAgUAAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
 }

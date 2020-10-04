@@ -9,16 +9,12 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
-
-// #include
-// <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
-// #include
-// <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
 
 #include "cgal.h"
 #include "datatypes/meshes.h"
-#include "possumwood_sdk/datatypes/enum.h"
+#include "errors.h"
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 using namespace std::placeholders;
@@ -34,7 +30,8 @@ dependency_graph::InAttr<possumwood::Enum> a_stopCondition, a_cost, a_placement;
 dependency_graph::OutAttr<Meshes> a_outMesh;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	;
+	possumwood::ScopedOutputRedirect outputRedirect;
+
 	const float stopCondition = data.get(a_stopParam);
 	const unsigned algorithmId =
 	    data.get(a_stopCondition).intValue() + data.get(a_cost).intValue() + data.get(a_placement).intValue();
@@ -45,7 +42,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		// this is just horrible - need to find a better way
 		switch(algorithmId) {
 			case 111:
-				SMS::edge_collapse(mesh.polyhedron(),
+				SMS::edge_collapse(mesh.edit().polyhedron(),
 				                   SMS::Count_stop_predicate<possumwood::CGALPolyhedron>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::Edge_length_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::Midpoint_placement<possumwood::CGALPolyhedron>())
@@ -54,7 +51,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 112:
-				SMS::edge_collapse(mesh.polyhedron(),
+				SMS::edge_collapse(mesh.edit().polyhedron(),
 				                   SMS::Count_ratio_stop_predicate<possumwood::CGALPolyhedron>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::Edge_length_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::Midpoint_placement<possumwood::CGALPolyhedron>())
@@ -63,7 +60,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 113:
-				SMS::edge_collapse(mesh.polyhedron(), SMS::Edge_length_stop_predicate<float>(stopCondition),
+				SMS::edge_collapse(mesh.edit().polyhedron(), SMS::Edge_length_stop_predicate<float>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::Edge_length_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::Midpoint_placement<possumwood::CGALPolyhedron>())
 				                       .vertex_index_map(get(CGAL::vertex_external_index, mesh.polyhedron()))
@@ -71,7 +68,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 121:
-				SMS::edge_collapse(mesh.polyhedron(),
+				SMS::edge_collapse(mesh.edit().polyhedron(),
 				                   SMS::Count_stop_predicate<possumwood::CGALPolyhedron>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::LindstromTurk_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::Midpoint_placement<possumwood::CGALPolyhedron>())
@@ -80,7 +77,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 122:
-				SMS::edge_collapse(mesh.polyhedron(),
+				SMS::edge_collapse(mesh.edit().polyhedron(),
 				                   SMS::Count_ratio_stop_predicate<possumwood::CGALPolyhedron>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::LindstromTurk_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::Midpoint_placement<possumwood::CGALPolyhedron>())
@@ -89,7 +86,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 123:
-				SMS::edge_collapse(mesh.polyhedron(), SMS::Edge_length_stop_predicate<float>(stopCondition),
+				SMS::edge_collapse(mesh.edit().polyhedron(), SMS::Edge_length_stop_predicate<float>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::LindstromTurk_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::Midpoint_placement<possumwood::CGALPolyhedron>())
 				                       .vertex_index_map(get(CGAL::vertex_external_index, mesh.polyhedron()))
@@ -97,7 +94,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 211:
-				SMS::edge_collapse(mesh.polyhedron(),
+				SMS::edge_collapse(mesh.edit().polyhedron(),
 				                   SMS::Count_stop_predicate<possumwood::CGALPolyhedron>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::Edge_length_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::LindstromTurk_placement<possumwood::CGALPolyhedron>())
@@ -106,7 +103,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 212:
-				SMS::edge_collapse(mesh.polyhedron(),
+				SMS::edge_collapse(mesh.edit().polyhedron(),
 				                   SMS::Count_ratio_stop_predicate<possumwood::CGALPolyhedron>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::Edge_length_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::LindstromTurk_placement<possumwood::CGALPolyhedron>())
@@ -115,7 +112,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 213:
-				SMS::edge_collapse(mesh.polyhedron(), SMS::Edge_length_stop_predicate<float>(stopCondition),
+				SMS::edge_collapse(mesh.edit().polyhedron(), SMS::Edge_length_stop_predicate<float>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::Edge_length_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::LindstromTurk_placement<possumwood::CGALPolyhedron>())
 				                       .vertex_index_map(get(CGAL::vertex_external_index, mesh.polyhedron()))
@@ -123,7 +120,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 221:
-				SMS::edge_collapse(mesh.polyhedron(),
+				SMS::edge_collapse(mesh.edit().polyhedron(),
 				                   SMS::Count_stop_predicate<possumwood::CGALPolyhedron>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::LindstromTurk_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::LindstromTurk_placement<possumwood::CGALPolyhedron>())
@@ -132,7 +129,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 222:
-				SMS::edge_collapse(mesh.polyhedron(),
+				SMS::edge_collapse(mesh.edit().polyhedron(),
 				                   SMS::Count_ratio_stop_predicate<possumwood::CGALPolyhedron>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::LindstromTurk_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::LindstromTurk_placement<possumwood::CGALPolyhedron>())
@@ -141,7 +138,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				break;
 
 			case 223:
-				SMS::edge_collapse(mesh.polyhedron(), SMS::Edge_length_stop_predicate<float>(stopCondition),
+				SMS::edge_collapse(mesh.edit().polyhedron(), SMS::Edge_length_stop_predicate<float>(stopCondition),
 				                   CGAL::parameters::get_cost(SMS::LindstromTurk_cost<possumwood::CGALPolyhedron>())
 				                       .get_placement(SMS::LindstromTurk_placement<possumwood::CGALPolyhedron>())
 				                       .vertex_index_map(get(CGAL::vertex_external_index, mesh.polyhedron()))
@@ -154,7 +151,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	data.set(a_outMesh, result);
 
-	return dependency_graph::State();
+	return outputRedirect.state();
 }
 
 void init(possumwood::Metadata& meta) {

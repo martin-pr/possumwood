@@ -20,6 +20,7 @@
         }
     ],
     "description": "### Phong shading\n\n[Phong shading](https://en.wikipedia.org/wiki/Phong_shading) computes lighting of a surface by interpolating per-pixel surface normal. Compared to Gourand shading, this method leads to smoother and more realistic surface looks better describing the shape of the object, and significantly more accurate high-frequency components computation (i.e., specular component in the [Phong lighting model](https://en.wikipedia.org/wiki/Phong_reflection_model)).\n\nThis demo implements [Phong shading](https://en.wikipedia.org/wiki/Phong_shading) with a [Phong reflection model](https://en.wikipedia.org/wiki/Phong_reflection_model) and a single point light source. The setup is wrapped in a subnetwork - just double-click the blue node to \"enter\" it.",
+    "name": "network",
     "nodes": {
         "loader_0": {
             "blind_data": {
@@ -189,6 +190,9 @@
                         }
                     },
                     "name": "cgal",
+                    "ports": {
+                        "p_attr_name": "P"
+                    },
                     "type": "render/vertex_data/cgal"
                 },
                 "cgal_1": {
@@ -200,6 +204,9 @@
                         }
                     },
                     "name": "cgal",
+                    "ports": {
+                        "p_attr_name": "P"
+                    },
                     "type": "render/vertex_data/cgal"
                 },
                 "draw_0": {
@@ -211,6 +218,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "draw_1": {
@@ -222,6 +234,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -432,7 +449,7 @@
                     },
                     "name": "vertex_shader",
                     "ports": {
-                        "source": "#version 140\n\nout vec3 fragPos;\nout vec3 fragNorm;\n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n\nuniform mat4 transform;\n\nvoid main() {\n\t// pass through vertex position and normal, in world space\n\tfragPos = (transform * vec4(position, 1)).xyz;\n\tfragNorm = normals;\n\n\t// perspective projection for rasterisation\n\tgl_Position = iProjection * iModelView * vec4(fragPos, 1);\n} \n"
+                        "source": "#version 140\n\nout vec3 fragPos;\nout vec3 fragNorm;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n\nuniform mat4 transform;\n\nvoid main() {\n\t// pass through vertex position and normal, in world space\n\tfragPos = (transform * vec4(P, 1)).xyz;\n\tfragNorm = N;\n\n\t// perspective projection for rasterisation\n\tgl_Position = iProjection * iModelView * vec4(fragPos, 1);\n} \n"
                     },
                     "type": "render/vertex_shader"
                 },
@@ -446,7 +463,7 @@
                     },
                     "name": "vertex_shader",
                     "ports": {
-                        "source": "#version 130 \n\nin vec3 position;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\n\nuniform float time;\n \nvoid main() {\n\tvec3 light_pos = vec3(sin(time * 3.14 / 2), 0, cos(time * 3.14 / 2)) * 20.0;\n\n\tvec4 pos4 = vec4(position + light_pos, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                        "source": "#version 130 \n\nin vec3 P;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\n\nuniform float time;\n \nvoid main() {\n\tvec3 light_pos = vec3(sin(time * 3.14 / 2), 0, cos(time * 3.14 / 2)) * 20.0;\n\n\tvec4 pos4 = vec4(P + light_pos, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
                     },
                     "type": "render/vertex_shader"
                 },
@@ -468,7 +485,7 @@
                     "y": 0.0,
                     "z": 0.0
                 },
-                "material/shininess": 5.0,
+                "material/shininess": 50.0,
                 "transform/rotate": {
                     "x": 0.0,
                     "y": 0.0,
@@ -497,6 +514,7 @@
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-vertex normals"
             },
             "type": "cgal/normals_generator"
@@ -505,7 +523,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 320.636322021484,
+                    "x": 297.636322021484,
                     "y": 141.479583740234
                 }
             },
@@ -517,15 +535,16 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
                 },
                 "translation": {
                     "x": 0.0,
-                    "y": -0.0700000002980232,
+                    "y": 0.0,
                     "z": 0.0
-                }
+                },
+                "vec3_as_normals": true
             },
             "type": "cgal/transform"
         }
@@ -535,6 +554,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
+    "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ+AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAqAAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABzAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACRwAAAvYAAACuAQAAAwAABOAAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

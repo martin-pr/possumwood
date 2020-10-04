@@ -1,6 +1,12 @@
 {
     "connections": [
         {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
             "in_node": "viewport_0",
             "in_port": "in_uniforms",
             "out_node": "float_0",
@@ -11,6 +17,18 @@
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
         },
         {
             "in_node": "draw_0",
@@ -25,6 +43,12 @@
             "out_port": "time"
         },
         {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
             "in_node": "program_0",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
@@ -35,33 +59,10 @@
             "in_port": "uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "loader_0",
-            "out_port": "polyhedron"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "transform_0",
-            "out_port": "out_mesh"
         }
     ],
     "description": "### Turntable demo\n\nA simple shader setup passing a time value (i.e., the timeline value) as a uniform into the shader (together with viewport parameters). This value is then converted in the `vertex_shader` to a transformation matrix used to rotate a model.",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -72,6 +73,9 @@
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -83,6 +87,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "float_0": {
@@ -138,6 +147,7 @@
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-vertex normals"
             },
             "type": "cgal/normals_generator"
@@ -188,7 +198,8 @@
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
-                }
+                },
+                "vec3_as_normals": true
             },
             "type": "cgal/transform"
         },
@@ -202,7 +213,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 430 \n \nin vec3 position;              // position attr from the vbo \nin vec3 normals;               // normal attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal; // normal modelview matrix \nuniform float time;            // time uniform input\n \nout vec3 vertexPosition;       // vertex position for the fragment shader \nout vec3 vertexNormal;         // vertex position for the fragment shader \n \nvoid main() {\n\tfloat t = time / 2.5 * 3.1415;\n\n\tmat4 tr = mat4(\n\t\tsin(t), 0, cos(t), 0,\n\t\t0, 1, 0, 0,\n\t\t-cos(t), 0, sin(t), 0,\n\t\t0, 0, 0, 1\n\t);\n\n\tvec4 pos4 = vec4(position * 0.1, 1);\n\tvec4 norm4 = vec4(normals, 0);\n\n\tvertexPosition = (iModelView * tr * pos4).xyz;\n\tvertexNormal = (iModelViewNormal * tr * norm4).xyz;\n\n   \tgl_Position = iProjection * iModelView * tr * pos4;\n} \n"
+                "source": "#version 430 \n \nin vec3 P;                     // position attr from the vbo \nin vec3 N;                     // normal attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal; // normal modelview matrix \nuniform float time;            // time uniform input\n \nout vec3 vertexPosition;       // vertex position for the fragment shader \nout vec3 vertexNormal;         // vertex position for the fragment shader \n \nvoid main() {\n\tfloat t = time / 2.5 * 3.1415;\n\n\tmat4 tr = mat4(\n\t\tsin(t), 0, cos(t), 0,\n\t\t0, 1, 0, 0,\n\t\t-cos(t), 0, sin(t), 0,\n\t\t0, 0, 0, 1\n\t);\n\n\tvec4 pos4 = vec4(P * 0.1, 1);\n\tvec4 norm4 = vec4(N, 0);\n\n\tvertexPosition = (iModelView * tr * pos4).xyz;\n\tvertexNormal = (iModelViewNormal * tr * norm4).xyz;\n\n   \tgl_Position = iProjection * iModelView * tr * pos4;\n} \n"
             },
             "type": "render/vertex_shader"
         },
@@ -223,6 +234,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKNAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAcgAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABGwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABlgAAA6cAAACuAQAAAwAABakAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -2,9 +2,13 @@
 
 namespace possumwood {
 
-Mesh& Meshes::addMesh(const std::string& name) {
+Mesh::MeshData& Meshes::addMesh(const std::string& name) {
 	m_data.push_back(Mesh(name));
-	return m_data.back();
+	return m_data.back().edit();
+}
+
+void Meshes::addMesh(const Mesh& mesh) {
+	m_data.push_back(mesh);
 }
 
 Meshes::const_iterator Meshes::begin() const {

@@ -128,6 +128,7 @@
         }
     ],
     "description": "### CGAL mesh decimation\n\nMesh simplification (decimation) is a common operation in mesh processing - it aims to reduce the mesh complexity without removing its details, reducing the memory footprint without compromising the quality of the resulting model.\n\nThis demo shows how to use [CGAL's implementation of mesh decimation](https://doc.cgal.org/latest/Surface_mesh_simplification/index.html) in Possumwood, allowing to experiment with its various parameters.",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -138,6 +139,9 @@
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "cgal_1": {
@@ -149,6 +153,9 @@
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "cgal_2": {
@@ -160,6 +167,9 @@
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -171,6 +181,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "draw_1": {
@@ -182,6 +197,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "draw_2": {
@@ -193,6 +213,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "fragment_shader_0": {
@@ -234,6 +259,7 @@
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-face normals"
             },
             "type": "cgal/normals_generator"
@@ -248,6 +274,7 @@
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-face normals"
             },
             "type": "cgal/normals_generator"
@@ -262,6 +289,7 @@
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-face normals"
             },
             "type": "cgal/normals_generator"
@@ -335,7 +363,8 @@
                     "x": -0.200000002980232,
                     "y": 0.0,
                     "z": 0.0
-                }
+                },
+                "vec3_as_normals": true
             },
             "type": "cgal/transform"
         },
@@ -363,7 +392,8 @@
                     "x": 0.200000002980232,
                     "y": 0.0,
                     "z": 0.0
-                }
+                },
+                "vec3_as_normals": true
             },
             "type": "cgal/transform"
         },
@@ -372,12 +402,12 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 567.662475585938,
-                    "y": 444.523345947266
+                    "y": 446.576293945312
                 }
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nin vec3 normals;               // normal attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal; // modelview normal matrix \n \nout vec3 vertexPosition;       // vertex position for the fragment shader \nout vec3 vertexNormal;\n \nvoid main() {\n\tvec4 pos4 = vec4(position.x, position.y, position.z, 1);\n\tvec4 norm4 = vec4(normals.x, normals.y, normals.z, 0);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n\tvertexNormal = (iModelViewNormal * norm4).xyz;\n\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \nin vec3 N;                     // normal attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal; // modelview normal matrix \n \nout vec3 vertexPosition;       // vertex position for the fragment shader \nout vec3 vertexNormal;\n \nvoid main() {\n\tvec4 pos4 = vec4(P, 1);\n\tvec4 norm4 = vec4(N, 0);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n\tvertexNormal = (iModelViewNormal * norm4).xyz;\n\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
             },
             "type": "render/vertex_shader"
         },
@@ -398,6 +428,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABkAAAQ6AAACWQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKPAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAaoAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABjQAAAHYBAAAD/AAAAgMAAAHeAAAAqgD////6AAAAAAEAAAAC+wAAAAwAZQBkAGkAdABvAHIBAAAAAP////8AAACwAQAAA/sAAAAGAGwAbwBnAQAABh0AAAFjAAAAAAAAAAAAAANFAAADbAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKPAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAaoAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABjQAAAHYBAAAD/AAAAggAAAM1AAAArgD////6AAAAAAEAAAAC+wAAAAwAZQBkAGkAdABvAHIBAAAAAP////8AAADHAQAAA/sAAAAGAGwAbwBnAQAABh0AAAFjAAAAAAAAAAAAAAXFAAAEwwAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

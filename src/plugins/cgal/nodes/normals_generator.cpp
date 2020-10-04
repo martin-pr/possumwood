@@ -1,8 +1,10 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/meshes.h"
-#include "possumwood_sdk/datatypes/enum.h"
+#include "errors.h"
 
 namespace {
 
@@ -11,6 +13,7 @@ using possumwood::Meshes;
 
 dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::InAttr<Meshes> a_inMeshes;
+dependency_graph::InAttr<std::string> a_attr;
 dependency_graph::OutAttr<Meshes> a_outMesh;
 
 namespace {
@@ -26,7 +29,7 @@ struct FakeKernel {
 		Vector_3(const std::array<float, 3>& arr) : data(arr) {
 		}
 
-		Vector_3(CGAL::Null_vector) : data{{0, 0, 0}} {
+		Vector_3(const CGAL::Null_vector) : data{{0, 0, 0}} {
 		}
 
 		float& operator[](std::size_t index) {
@@ -37,7 +40,7 @@ struct FakeKernel {
 			return data[index];
 		}
 
-		operator const std::array<float, 3>&() const {
+		operator const std::array<float, 3> &() const {
 			return data;
 		}
 
@@ -101,52 +104,64 @@ struct FakeKernel {
 
 template <typename PROPERTY, typename ITERATOR>
 void put(PROPERTY& prop, const ITERATOR& target, const FakeKernel::Vector_3& norm) {
-	prop.set(target->property_key(), norm);
+	prop.get().set(target->property_key(), norm);
 }
+
 }  // namespace
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	possumwood::ScopedOutputRedirect redirect;
+
 	const possumwood::Enum mode = data.get(a_mode);
+	const std::string attr_name = data.get(a_attr);
 
 	Meshes result = data.get(a_inMeshes);
 	for(auto& mesh : result) {
 		// request for vertex normals
 		if(mode.value() == "Per-vertex normals") {
-			// remove face normals, if they exist
-			if(mesh.faceProperties().hasProperty("vec3:normals"))
-				mesh.faceProperties().removeProperty("vec3:normals");
+			auto& editableMesh = mesh.edit();
 
-			auto& normals = mesh.vertexProperties().addProperty("vec3:normals", std::array<float, 3>{{0, 0, 0}});
+			// remove face normals, if they exist
+			if(editableMesh.faceProperties().hasProperty(attr_name))
+				editableMesh.faceProperties().removeProperty(attr_name);
+
+			auto& normals = editableMesh.vertexProperties().addProperty(attr_name, std::array<float, 3>{{0, 0, 0}});
 
 			CGAL::Polygon_mesh_processing::compute_vertex_normals(
-			    mesh.polyhedron(), normals, CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
+			    editableMesh.polyhedron(), std::ref(normals),
+			    CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
 		}
 
 		// request for face normals
 		else if(mode.value() == "Per-face normals") {
-			// remove vertex normals, if they exist
-			if(mesh.vertexProperties().hasProperty("vec3:normals"))
-				mesh.vertexProperties().removeProperty("vec3:normals");
+			auto& editableMesh = mesh.edit();
 
-			auto& normals = mesh.faceProperties().addProperty("vec3:normals", std::array<float, 3>{{0, 0, 0}});
+			// remove vertex normals, if they exist
+			if(editableMesh.vertexProperties().hasProperty(attr_name))
+				editableMesh.vertexProperties().removeProperty(attr_name);
+
+			auto& normals = editableMesh.faceProperties().addProperty(attr_name, std::array<float, 3>{{0, 0, 0}});
 
 			CGAL::Polygon_mesh_processing::compute_face_normals(
-			    mesh.polyhedron(), normals, CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
+			    editableMesh.polyhedron(), std::ref(normals),
+			    CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
 		}
 	}
 
 	data.set(a_outMesh, result);
 
-	return dependency_graph::State();
+	return redirect.state();
 }
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_mode, "mode", possumwood::Enum({"Per-face normals", "Per-vertex normals"}));
 	meta.addAttribute(a_inMeshes, "input", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_attr, "attr_name", std::string("N"));
 	meta.addAttribute(a_outMesh, "output", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_mode, a_outMesh);
 	meta.addInfluence(a_inMeshes, a_outMesh);
+	meta.addInfluence(a_attr, a_outMesh);
 
 	meta.setCompute(compute);
 }

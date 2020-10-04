@@ -1,8 +1,10 @@
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/meshes.h"
-#include "possumwood_sdk/datatypes/enum.h"
+#include "errors.h"
 
 namespace {
 
@@ -15,14 +17,16 @@ dependency_graph::InAttr<Meshes> a_inMesh;
 dependency_graph::OutAttr<Meshes> a_outMesh;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	possumwood::ScopedOutputRedirect redirect;
+
 	Meshes result = data.get(a_inMesh);
 
 	for(auto& mesh : result)
-		CGAL::Polygon_mesh_processing::stitch_borders(mesh.polyhedron());
+		CGAL::Polygon_mesh_processing::stitch_borders(mesh.edit().polyhedron());
 
 	data.set(a_outMesh, result);
 
-	return dependency_graph::State();
+	return redirect.state();
 }
 
 void init(possumwood::Metadata& meta) {

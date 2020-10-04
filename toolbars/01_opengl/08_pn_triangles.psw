@@ -1,6 +1,12 @@
 {
     "connections": [
         {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
@@ -13,6 +19,12 @@
             "out_port": "shader"
         },
         {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        },
+        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
@@ -23,37 +35,23 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
-        },
-        {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "loader_0",
-            "out_port": "polyhedron"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
         }
     ],
     "description": "### PN Triangles in a geometry shader\n\nCurved PN Triangles is a simple geometry subdivision scheme, replacing all triangles with a bezier patch directly on the GPU. The shape interpolation uses a cubic spline, and normals are interpolated using a quadratic spline to maintain continuity.\n\nThis implementation uses a geometry shader for emitting additional polygons.\n\n<sub>Vlachos, Alex, et al. [\"Curved PN triangles.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.4338&rep=rep1&type=pdf) Proceedings of the 2001 symposium on Interactive 3D graphics. ACM, 2001.</sub>",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -224.87663269043,
-                    "y": 500.661346435547
+                    "x": -143.991577148438,
+                    "y": 430.213073730469
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -65,6 +63,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "fragment_shader_0": {
@@ -99,8 +102,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -224.87663269043,
-                    "y": 153.711654663086
+                    "x": -143.991577148438,
+                    "y": 257.263488769531
                 }
             },
             "name": "loader",
@@ -109,20 +112,6 @@
                 "name": "mesh"
             },
             "type": "cgal/loader"
-        },
-        "normals_generator_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -265.935760498047,
-                    "y": 313.84228515625
-                }
-            },
-            "name": "normals_generator",
-            "ports": {
-                "mode": "Per-vertex normals"
-            },
-            "type": "cgal/normals_generator"
         },
         "program_0": {
             "blind_data": {
@@ -145,7 +134,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nout vec3 normal;\nout vec3 pos;\n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \nvoid main() {\n\tnormal = (iModelViewNormal * vec4(normals.xyz, 0)).xyz;\n\tpos = (iModelView * vec4(position.xyz, 1)).xyz;\n} \n"
+                "source": "#version 130 \n\nout vec3 normal;\nout vec3 pos;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \nvoid main() {\n\tnormal = (iModelViewNormal * vec4(N.xyz, 0)).xyz;\n\tpos = (iModelView * vec4(P.xyz, 1)).xyz;\n} \n"
             },
             "type": "render/vertex_shader"
         }
@@ -155,6 +144,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJdAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAkcAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACggAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAC/QAAAkAAAACuAQAAAwAABVoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJdAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAkcAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACgwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAC/gAAAj8AAACuAQAAAwAABVoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

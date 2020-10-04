@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cassert>
 #include <map>
 #include <memory>
@@ -7,8 +8,9 @@
 #include <string>
 #include <vector>
 
+#include <boost/iterator/indirect_iterator.hpp>
+
 #include "property.h"
-#include "property_item.h"
 
 namespace possumwood {
 
@@ -23,6 +25,11 @@ class Properties {
 	Properties(const Properties& p);
 	Properties& operator=(const Properties& p);
 
+	typedef boost::indirect_iterator<std::vector<std::unique_ptr<PropertyBase>>::const_iterator> const_iterator;
+	const_iterator begin() const;
+	const_iterator end() const;
+	const_iterator find(const std::string& name) const;
+
 	template <typename T>
 	Property<T>& addProperty(const std::string& name, const T& defaultValue);
 	bool hasProperty(const std::string& name) const;
@@ -34,8 +41,6 @@ class Properties {
 	template <typename T>
 	const Property<T>& property(const std::string& name) const;
 
-	std::set<std::string> properties() const;
-
 	bool operator==(const Properties& p) const;
 	bool operator!=(const Properties& p) const;
 
@@ -43,9 +48,7 @@ class Properties {
   private:
 	std::size_t addSingleItem();
 
-	std::map<std::string, std::unique_ptr<PropertyBase>> m_properties;
-
-	std::vector<PropertyItem> m_data;
+	std::vector<std::unique_ptr<PropertyBase>> m_properties;
 
 	template <typename T>
 	friend class Property;
@@ -53,33 +56,34 @@ class Properties {
 
 template <typename T>
 Property<T>& Properties::addProperty(const std::string& name, const T& defaultValue) {
-	assert(m_properties.find(name) == m_properties.end() && "property naming has to be unique");
+	assert(find(name) == end() && "property naming has to be unique");
 
 	// add a new Property instance
-	std::unique_ptr<PropertyBase> ptr(new Property<T>(this, m_properties.size(), defaultValue));
-	auto it = m_properties.insert(std::make_pair(name, std::move(ptr))).first;
+	std::unique_ptr<PropertyBase> ptr(new Property<T>(name, defaultValue));
+	m_properties.push_back(std::move(ptr));
 
-	// and update all the data items to include this new property
-	for(auto& i : m_data)
-		i.addValue(defaultValue);
+	std::sort(m_properties.begin(), m_properties.end(),
+	          [](const std::unique_ptr<PropertyBase>& v1, const std::unique_ptr<PropertyBase>& v2) {
+		          return v1->name() < v2->name();
+	          });
 
-	return dynamic_cast<Property<T>&>(*it->second);
+	return property<T>(name);
 }
 
 template <typename T>
 Property<T>& Properties::property(const std::string& name) {
-	auto it = m_properties.find(name);
-	assert(it != m_properties.end());
+	auto it = find(name);
+	assert(it != end());
 
-	return dynamic_cast<Property<T>&>(*it->second);
+	return dynamic_cast<Property<T>&>(*it);
 }
 
 template <typename T>
 const Property<T>& Properties::property(const std::string& name) const {
-	auto it = m_properties.find(name);
-	assert(it != m_properties.end());
+	auto it = find(name);
+	assert(it != end());
 
-	return dynamic_cast<const Property<T>&>(*it->second);
+	return dynamic_cast<const Property<T>&>(*it);
 }
 
 }  // namespace possumwood

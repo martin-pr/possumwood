@@ -1,6 +1,12 @@
 {
     "connections": [
         {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
@@ -13,6 +19,18 @@
             "out_port": "shader"
         },
         {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
@@ -23,27 +41,10 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
-        },
-        {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "loader_0",
-            "out_port": "polyhedron"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
         }
     ],
     "description": "### Wireframe using a geometry shader\n\nWireframe mode is one of the rendering modes of OpenGL. A similar but more controllable effect can be achieved by processing a model using a geometry shader, which allows to convert primitives to a different number of primitives of the same or different type.\n\nThis setup shows how to emit a line for each polygon edge of the input geometry using a program in `geometry_shader`. It also shows how to adjust the line width to screen resolution, maintaining the width independent to view parameters.",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -54,6 +55,9 @@
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -65,6 +69,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "fragment_shader_0": {
@@ -91,7 +100,7 @@
             },
             "name": "geometry_shader",
             "ports": {
-                "source": "#version 150\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\nuniform vec2 iResolution;\n\nlayout(triangles) in;\nlayout(triangle_strip, max_vertices = 12) out;\n\nin vec3 norm[];\n\nout vec3 vertexNormal;\n\nfloat LINE_WIDTH = 5; // now in pixels, resolution independent!\n\nvoid doEmitVertex(vec4 p, vec3 n, vec2 edge) {\n\t// a common normal\n\tvertexNormal = (iModelViewNormal * vec4(n, 0)).xyz;\n\n\t// edges of the line, emitted as 2 vertices\n\tgl_Position = p + vec4(edge, 0, 0); \n\tEmitVertex(); \n\tgl_Position = p - vec4(edge, 0, 0); \n\tEmitVertex(); \n}\n\nvoid doEmitLine(vec3 p1, vec3 n1, vec3 p2, vec3 n2) {\n\t// normalize p1\n\tvec4 np1 = iProjection * iModelView * vec4(p1, 1);\n\tnp1 = np1 / np1.w;\n\n\t// normalize p2\n\tvec4 np2 = iProjection * iModelView * vec4(p2, 1);\n\tnp2 = np2 / np2.w;\n\n\t// perpendicular \"edge\" vector\n\tvec2 edge = (np2-np1).xy;\n\tedge = normalize(vec2(edge.y, -edge.x));\n\n\t// adjust for screen resolution\n\tedge.x = edge.x / iResolution.x * LINE_WIDTH / 2.0;\n\tedge.y = edge.y / iResolution.y * LINE_WIDTH / 2.0;\n\n\t// emit the line vertices\n\tdoEmitVertex(np1, n1, edge);\n\tdoEmitVertex(np2, n2, edge);\n}\n\nvoid main() { \n\tfor(int i = 0; i < gl_in.length(); i++) { \n\t\t// each \"line\" is emitted as a triangle strip\n\t\tdoEmitLine(\n\t\t\tgl_in[i].gl_Position.xyz,\n\t\t\tnorm[i],\n\t\t\tgl_in[(i+1) % gl_in.length()].gl_Position.xyz,\n\t\t\tnorm[(i+1) % gl_in.length()]\n\t\t);\n\n\t\tEndPrimitive(); \n\t} \n} "
+                "source": "#version 150\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\nuniform vec2 iResolution;\n\nlayout(triangles) in;\nlayout(triangle_strip, max_vertices = 12) out;\n\nin vec3 norm[];\n\nout vec3 vertexNormal;\n\nfloat LINE_WIDTH = 5; // now in pixels, resolution independent!\n\nvoid doEmitVertex(vec4 p, vec3 n, vec2 edge) {\n\t// a common normal\n\tvertexNormal = (iModelViewNormal * vec4(n, 0)).xyz;\n\n\t// edges of the line, emitted as 2 vertices\n\tgl_Position = p - vec4(edge, 0, 0); \n\tEmitVertex(); \n\tgl_Position = p + vec4(edge, 0, 0); \n\tEmitVertex(); \n}\n\nvoid doEmitLine(vec3 p1, vec3 n1, vec3 p2, vec3 n2) {\n\t// normalize p1\n\tvec4 np1 = iProjection * iModelView * vec4(p1, 1);\n\tnp1 = np1 / np1.w;\n\n\t// normalize p2\n\tvec4 np2 = iProjection * iModelView * vec4(p2, 1);\n\tnp2 = np2 / np2.w;\n\n\t// perpendicular \"edge\" vector\n\tvec2 edge = (np2-np1).xy;\n\tedge = normalize(vec2(edge.y, -edge.x));\n\n\t// adjust for screen resolution\n\tedge.x = edge.x / iResolution.x * LINE_WIDTH / 2.0;\n\tedge.y = edge.y / iResolution.y * LINE_WIDTH / 2.0;\n\n\t// emit the line vertices\n\tdoEmitVertex(np1, n1, edge);\n\tdoEmitVertex(np2, n2, edge);\n}\n\nvoid main() { \n\tfor(int i = 0; i < gl_in.length(); i++) { \n\t\t// each \"line\" is emitted as a triangle strip\n\t\tdoEmitLine(\n\t\t\tgl_in[i].gl_Position.xyz,\n\t\t\tnorm[i],\n\t\t\tgl_in[(i+1) % gl_in.length()].gl_Position.xyz,\n\t\t\tnorm[(i+1) % gl_in.length()]\n\t\t);\n\n\t\tEndPrimitive(); \n\t} \n} "
             },
             "type": "render/geometry_shader"
         },
@@ -120,6 +129,7 @@
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-vertex normals"
             },
             "type": "cgal/normals_generator"
@@ -145,7 +155,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nout vec3 norm;\n \nin vec3 position;\nin vec3 normals;\n\nvoid main() {\n\tnorm = normals;\n   \tgl_Position = vec4(position, 1);\n} "
+                "source": "#version 130 \n\nout vec3 norm;\n \nin vec3 P;\nin vec3 N;\n\nvoid main() {\n\tnorm = N;\n   \tgl_Position = vec4(P, 1);\n} "
             },
             "type": "render/vertex_shader"
         }
@@ -155,6 +165,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIJAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAbAAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABcAAAA80AAACuAQAAAwAABkUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIJAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAbAAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABGwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABlgAAA6cAAACuAQAAAwAABkUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

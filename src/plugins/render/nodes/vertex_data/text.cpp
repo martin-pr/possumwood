@@ -66,20 +66,20 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			Imath::V2f uv4((float)(g.x + g.width) / font.width(), (float)(g.y + g.height) / font.height());
 
 			vertices.push_back(p1 / font.size());
-			vertices.push_back(p2 / font.size());
 			vertices.push_back(p3 / font.size());
+			vertices.push_back(p2 / font.size());
 
 			vertices.push_back(p1 / font.size());
-			vertices.push_back(p3 / font.size());
 			vertices.push_back(p4 / font.size());
+			vertices.push_back(p3 / font.size());
 
 			uvs.push_back(uv1);
+			uvs.push_back(uv3);
 			uvs.push_back(uv2);
-			uvs.push_back(uv3);
 
 			uvs.push_back(uv1);
-			uvs.push_back(uv3);
 			uvs.push_back(uv4);
+			uvs.push_back(uv3);
 
 			currentPos += (float)g.advance / font.size();
 		}
