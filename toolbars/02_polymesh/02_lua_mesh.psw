@@ -13,12 +13,6 @@
             "out_port": "vertex_data"
         },
         {
-            "in_node": "cgal_0",
-            "in_port": "in_context",
-            "out_node": "float_0",
-            "out_port": "out_context"
-        },
-        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
@@ -47,9 +41,22 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "unsigned_0",
+            "in_port": "value",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "in_context",
+            "out_node": "unsigned_0",
+            "out_port": "out_context"
         }
     ],
     "description": "## Lua mesh generation\n\nA simple setup demonstrating a way to generate a new mesh in Lua using simple mesh bindings, and display the result using OpenGL. The main functionality is contained within the script node, which functions in the environment constructed by its inputs, and produces a state with new values on its output. The mesh extract node then extracts a mesh from the state and feeds it into CGAL mesh display node.\n\n",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -71,6 +78,9 @@
                 }
             },
             "name": "display",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -82,22 +92,12 @@
                 }
             },
             "name": "draw",
-            "type": "render/draw"
-        },
-        "float_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 248.215728759766,
-                    "y": 216.859252929688
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
                 }
             },
-            "name": "NUMBER_OF_FACES",
-            "ports": {
-                "name": "edge_count",
-                "value": 6.0
-            },
-            "type": "lua/inject/float"
+            "type": "render/draw"
         },
         "fragment_shader_0": {
             "blind_data": {
@@ -112,6 +112,17 @@
                 "source": "#version 130 \n \nin vec4 frag_position;\n\nout vec4 color; \n \nvoid main() { \n\t// compute fake normal by cross product of surface derivatives\n\tvec3 norm = cross(dFdx(frag_position).xyz, dFdy(frag_position).xyz);\n\tnorm = normalize(norm);\n \n\tcolor = vec4(norm.z, norm.z, norm.z, 1); \n} \n"
             },
             "type": "render/fragment_shader"
+        },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -2.67549276351929,
+                    "y": 246.878219604492
+                }
+            },
+            "name": "number_of_faces",
+            "type": "input"
         },
         "mesh_0": {
             "blind_data": {
@@ -148,9 +159,23 @@
             },
             "name": "script",
             "ports": {
-                "source": "-- edge_count = 12\n\n-------------\n\nmesh = cgal.mesh(\"mesh\")\n\nfor i=0,edge_count do\n  param = i/edge_count*3.1415*2\n  mesh:addPoint(math.cos(param), 0, math.sin(param))\n  mesh:addPoint(math.cos(param), 1, math.sin(param))\nend\n\nfor i=0,edge_count-1 do\n  face = cgal.face()\n\n  face:addVertex((i*2))\n  face:addVertex((i*2+3))\n  face:addVertex((i*2+1))\n  face:addVertex((i*2+2))\n\n  mesh:addFace(face)\nend\n\nfor i=1,edge_count-1 do\n  face = cgal.face()\n  face:addVertex(0)\n  face:addVertex((i*2))\n  face:addVertex((i*2+2))\n  mesh:addFace(face)\nend\n\nfor i=1,edge_count-1 do\n  face = cgal.face()\n  face:addVertex(1)\n  face:addVertex((i*2+1))\n  face:addVertex((i*2+3))\n  mesh:addFace(face)\nend\n"
+                "source": "height = 1\ndiameter = 1\n\ntop = height\nbottom = 0\n\nif(center) then\n  bottom = -top / 2\n  top = top / 2;\nend\n\nradius = diameter / 2\n\nmesh = cgal.mesh(\"mesh\")\n\nfor i=0,subdivision-1 do\n  param = i/subdivision*3.141592*2\n  mesh:addPoint(math.cos(param) * radius, bottom, math.sin(param) * radius)\n  mesh:addPoint(math.cos(param) * radius, top, math.sin(param) * radius)\nend\n\nfor i=0,subdivision-1 do\n  face = cgal.face()\n\n  face:addVertex((i*2)%(subdivision*2))\n  face:addVertex((i*2+1)%(subdivision*2))\n  face:addVertex((i*2+3)%(subdivision*2))\n  face:addVertex((i*2+2)%(subdivision*2))\n\n  mesh:addFace(face)\nend\n\nfor i=1,subdivision-2 do\n  face = cgal.face()\n  face:addVertex(0)\n  face:addVertex((i*2))\n  face:addVertex((i*2+2)%(subdivision*2))\n  mesh:addFace(face)\nend\n\nfor i=1,subdivision-2 do\n  face = cgal.face()\n  face:addVertex(1)\n  face:addVertex((i*2+3)%(subdivision*2))\n  face:addVertex((i*2+1)%(subdivision*2))\n\n  mesh:addFace(face)\nend\n"
             },
             "type": "lua/script"
+        },
+        "unsigned_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 289.693786621094,
+                    "y": 203.26513671875
+                }
+            },
+            "name": "unsigned",
+            "ports": {
+                "name": "subdivision"
+            },
+            "type": "lua/inject/unsigned"
         },
         "vertex_shader_0": {
             "blind_data": {
@@ -162,16 +187,20 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nout vec4 frag_position;        // fragment position for fake normal computation\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nvoid main() {\n\tfrag_position = iModelView * vec4(position, 1.0);\n   \tgl_Position = iProjection * frag_position;\n} \n"
+                "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \nout vec4 frag_position;        // fragment position for fake normal computation\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nvoid main() {\n\tfrag_position = iModelView * vec4(P, 1.0);\n   \tgl_Position = iProjection * frag_position;\n} \n"
             },
             "type": "render/vertex_shader"
         }
+    },
+    "ports": {
+        "number_of_faces": 12
     },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
+    "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAP0AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAfAAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACIgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACnQAAAqAAAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAP0AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAfAAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACIwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACngAAAp8AAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

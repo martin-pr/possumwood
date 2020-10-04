@@ -1,10 +1,22 @@
 {
     "connections": [
         {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
         },
         {
             "in_node": "draw_0",
@@ -17,21 +29,10 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "loader_0",
-            "out_port": "polyhedron"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
         }
     ],
     "description": "### Automatic normals\n\nWhen an mesh file doesn't include explicit normals, it is relatively easy to use a fragment shader to \"autogenerate\" normals using screen-space derivatives `dFdx()` and `dFdy()`. This demo shows how to do that in Possumwood - just have a look at `fragment_shared` source.",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -42,6 +43,9 @@
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -53,14 +57,19 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "fragment_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 71.0,
-                    "y": 313.0
+                    "x": 41.9245948791504,
+                    "y": 330.768310546875
                 }
             },
             "name": "fragment_shader",
@@ -99,13 +108,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 86.0,
-                    "y": 201.0
+                    "x": 52.0786933898926,
+                    "y": 204.230606079102
                 }
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nout vec3 vertexPosition;       // vertex position for the fragment shader \n \nin vec3 position;              // position attr from the vbo \n\nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(position.xyz, 1);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                "source": "#version 130 \n\nout vec3 vertexPosition;       // vertex position for the fragment shader \n \nin vec3 P;              // position attr from the vbo \n\nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P.xyz, 1);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
             },
             "type": "render/vertex_shader"
         }
@@ -115,6 +124,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABbgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB6QAAA1QAAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABbwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB6gAAA1MAAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
 }

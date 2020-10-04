@@ -73,16 +73,28 @@
             "out_port": "frame"
         },
         {
-            "in_node": "transform_0",
+            "in_node": "remove_property_0",
             "in_port": "in_mesh",
             "out_node": "loader_0",
             "out_port": "polyhedron"
         },
         {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
+            "in_node": "float_0",
+            "in_port": "in_uniforms",
+            "out_node": "opencv_texture_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_1",
+            "in_port": "in_uniforms",
+            "out_node": "opencv_texture_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_2",
+            "in_port": "in_uniforms",
+            "out_node": "opencv_texture_2",
+            "out_port": "out_uniforms"
         },
         {
             "in_node": "draw_0",
@@ -107,24 +119,6 @@
             "in_port": "program",
             "out_node": "program_1",
             "out_port": "program"
-        },
-        {
-            "in_node": "float_0",
-            "in_port": "in_uniforms",
-            "out_node": "opencv_texture_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "float_1",
-            "in_port": "in_uniforms",
-            "out_node": "opencv_texture_1",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "float_2",
-            "in_port": "in_uniforms",
-            "out_node": "opencv_texture_2",
-            "out_port": "out_uniforms"
         },
         {
             "in_node": "normals_generator_0",
@@ -161,9 +155,22 @@
             "in_port": "in_uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "remove_property_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
         }
     ],
     "description": "### Material capture shader\n\n[MatCap or LitSphere](https://www.clicktorelease.com/code/spherical-environment-mapping/) is a simple technique for representing the properties of both the material and the environment light in a single texture. By \"baking in\" the two dimensions of BRDF representing incoming light, MatCap determines the final colour solely by using the difference vector between the view ray and the surface normal.\n\nThis  simple approach can yield surprisingly realistic results, and has been used in [games](https://wiki.unity3d.com/index.php/MatCap), [scultping software](https://pixologic.com/zbrush/downloadcenter/library/) and for capturing and representing artistic styles.\n\n<sub>Sloan, Peter-Pike J., et al. [\"The lit sphere: A model for capturing NPR shading from art.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.445.6888&rep=rep1&type=pdf) Graphics interface. Vol. 2001. 2001.</sub>",
+    "name": "network",
     "nodes": {
         "background_0": {
             "blind_data": {
@@ -185,6 +192,9 @@
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -196,6 +206,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "draw_1": {
@@ -207,6 +222,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "draw_2": {
@@ -218,6 +238,11 @@
                 }
             },
             "name": "ground_v2",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "draw_3": {
@@ -229,6 +254,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "float_0": {
@@ -350,8 +380,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 133.555358886719,
-                    "y": -235.26091003418
+                    "x": 140.555358886719,
+                    "y": -455.872314453125
                 }
             },
             "name": "loader",
@@ -365,12 +395,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 98.6627960205078,
-                    "y": 144.985321044922
+                    "x": 83.3064651489258,
+                    "y": 103.174697875977
                 }
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-vertex normals"
             },
             "type": "cgal/normals_generator"
@@ -442,12 +473,26 @@
             "name": "program",
             "type": "render/program"
         },
+        "remove_property_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 110.025749206543,
+                    "y": -316.499237060547
+                }
+            },
+            "name": "remove_property",
+            "ports": {
+                "name": "N"
+            },
+            "type": "cgal/remove_property"
+        },
         "transform_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 130.467620849609,
-                    "y": -64.5292739868164
+                    "x": 118.578262329102,
+                    "y": -149.299667358398
                 }
             },
             "name": "transform",
@@ -466,7 +511,8 @@
                     "x": 0.0,
                     "y": 2.70000004768372,
                     "z": 0.0
-                }
+                },
+                "vec3_as_normals": true
             },
             "type": "cgal/transform"
         },
@@ -480,7 +526,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130\n\nin vec3 position;              // position attr from the openmesh vbo\nin vec3 normals;                // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(position.x + iOffset, position.y, position.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normals, 0)).xyz;\n}"
+                "source": "#version 130\n\nin vec3 P;              // position attr from the openmesh vbo\nin vec3 N;                // normal attr from the openmesh vbo\n\nuniform mat4 iProjection;      // projection matrix\nuniform mat4 iModelView;       // modelview matrix\nuniform mat4 iModelViewNormal; // modelview matrix\n\nuniform float iOffset;         // offset in world space\n\nout vec3 vertexNormal;         // output to the fragment shader\n\nvoid main() {\n\tgl_Position = \n\t\tiProjection * iModelView * vec4(P.x + iOffset, P.y, P.z, 1); \n\n\tvertexNormal = (iModelView * vec4(normalize(N), 0)).xyz;\n}"
             },
             "type": "render/vertex_shader"
         },
@@ -515,6 +561,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABcAAAd/AAAEHwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAkEAAANs/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACOgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACsAAAATEAAACqAQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAALpAAADbAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJUAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAkEAAATD/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABjgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACCQAAAzQAAACuAQAAA/sAAAAGAGwAbwBnAAAAAsEAAAFAAAAAAAAAAAAAAAVpAAAEwwAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

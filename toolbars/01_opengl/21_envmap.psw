@@ -7,25 +7,26 @@
             "out_port": "frame"
         },
         {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
+            "in_node": "normals_generator_0",
+            "in_port": "input",
             "out_node": "loader_0",
             "out_port": "polyhedron"
         },
         {
             "in_node": "network_0",
             "in_port": "polymesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
             "out_node": "transform_0",
             "out_port": "out_mesh"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
         }
     ],
     "description": "### Reflection mapping\n\n[Reflection mapping](https://en.wikipedia.org/wiki/Reflection_mapping) is a simple image-based lighting technique for simulating purely reflective materials. It only behaves correcty for convex shapes, but even with this strict limitation, it has [been long established](http://www.pauldebevec.com/ReflectionMapping/) as a simple method for reflective surfaces in computer graphics.\n\nThis demo combines a skybox with a \"purely reflective\" material.\n\n\n\n",
+    "name": "network",
     "nodes": {
         "image_0": {
             "blind_data": {
@@ -45,8 +46,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 231.289764404297,
-                    "y": -202.50309753418
+                    "x": 223.213256835938,
+                    "y": -267.115112304688
                 }
             },
             "name": "loader",
@@ -69,6 +70,12 @@
                     "in_node": "draw_0",
                     "in_port": "vertex_data",
                     "out_node": "background_0",
+                    "out_port": "vertex_data"
+                },
+                {
+                    "in_node": "draw_1",
+                    "in_port": "vertex_data",
+                    "out_node": "cgal_0",
                     "out_port": "vertex_data"
                 },
                 {
@@ -136,12 +143,6 @@
                     "in_port": "uniforms",
                     "out_node": "viewport_0",
                     "out_port": "out_uniforms"
-                },
-                {
-                    "in_node": "draw_1",
-                    "in_port": "vertex_data",
-                    "out_node": "cgal_0",
-                    "out_port": "vertex_data"
                 }
             ],
             "name": "envmap",
@@ -166,6 +167,9 @@
                         }
                     },
                     "name": "cgal",
+                    "ports": {
+                        "p_attr_name": "P"
+                    },
                     "type": "render/vertex_data/cgal"
                 },
                 "draw_0": {
@@ -177,6 +181,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "draw_1": {
@@ -188,6 +197,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "fragment_shader_0": {
@@ -301,7 +315,7 @@
                     },
                     "name": "vertex_shader",
                     "ports": {
-                        "source": "#version 130 \n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \nout vec3 pos;\nout vec3 normal;\n\nvoid main() {\n\tpos = position;\n\tnormal = normals;\n\n\tvec4 pos4 = vec4(position.xyz, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                        "source": "#version 130 \n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \nout vec3 pos;\nout vec3 normal;\n\nvoid main() {\n\tpos = P;\n\tnormal = N;\n\n\tvec4 pos4 = vec4(P, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
                     },
                     "type": "render/vertex_shader"
                 },
@@ -323,12 +337,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 205.870849609375,
-                    "y": 158.445236206055
+                    "x": 210.311386108398,
+                    "y": -87.0424423217773
                 }
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-vertex normals"
             },
             "type": "cgal/normals_generator"
@@ -337,8 +352,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 232.560684204102,
-                    "y": -55.0735015869141
+                    "x": 251.944290161133,
+                    "y": 99.9953002929688
                 }
             },
             "name": "transform",
@@ -357,7 +372,8 @@
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
-                }
+                },
+                "vec3_as_normals": false
             },
             "type": "cgal/transform"
         }
@@ -367,6 +383,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB+gAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACdQAAAsgAAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

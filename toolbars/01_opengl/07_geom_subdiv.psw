@@ -1,6 +1,18 @@
 {
     "connections": [
         {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
             "in_node": "draw_2",
             "in_port": "vertex_data",
             "out_node": "cgal_0",
@@ -43,12 +55,6 @@
             "out_port": "polyhedron"
         },
         {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "loader_0",
-            "out_port": "polyhedron"
-        },
-        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
@@ -83,48 +89,23 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_2",
             "out_port": "shader"
-        },
-        {
-            "in_node": "cgal_1",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "cgal_1",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_1",
-            "out_port": "vertex_data"
         }
     ],
     "description": "### Mesh subdivision in a geometry shader\n\nWhile modern GPUs contain a bespoke functionality for subdivision, this simple demo shows how a similar (if limited) effect can be achieved using a simple geometry shader.\n\nThis demo implements a simple interpolative sudvision scheme with normal-based displacement. All subdivision computation is done in a geometry shader, with additional vertices and topology emitted by calling a recusive function. This approach is just a toy example, as it is strictly limited by the capabilities of individual GPUs - in practical applications, bespoke tesselation shaders perform much better.",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 168.979095458984,
-                    "y": -240.581359863281
+                    "x": -146.856689453125,
+                    "y": 438.711273193359
                 }
             },
             "name": "cgal",
-            "type": "render/vertex_data/cgal"
-        },
-        "cgal_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -124.274154663086,
-                    "y": 531.094360351562
-                }
+            "ports": {
+                "p_attr_name": "P"
             },
-            "name": "cgal",
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -136,6 +117,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "draw_1": {
@@ -147,6 +133,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "draw_2": {
@@ -158,6 +149,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "fragment_shader_0": {
@@ -234,8 +230,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -125.906707763672,
-                    "y": -454.152252197266
+                    "x": -146.7802734375,
+                    "y": 265.985626220703
                 }
             },
             "name": "loader",
@@ -244,20 +240,6 @@
                 "name": "mesh"
             },
             "type": "cgal/loader"
-        },
-        "normals_generator_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -169.649124145508,
-                    "y": -25.128568649292
-                }
-            },
-            "name": "normals_generator",
-            "ports": {
-                "mode": "Per-vertex normals"
-            },
-            "type": "cgal/normals_generator"
         },
         "program_0": {
             "blind_data": {
@@ -302,7 +284,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nvec3 offset = vec3(2,0,0);\n\nout vec3 normal;\nout vec3 pos;\n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(position) + offset, 1);\n\n\tnormal = (iModelViewNormal * vec4(normals.xyz, 1)).xyz;\n\tpos = (iModelView * pos4).xyz;\n} \n"
+                "source": "#version 130 \n\nvec3 offset = vec3(2,0,0);\n\nout vec3 normal;\nout vec3 pos;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(P) + offset, 1);\n\n\tnormal = (iModelViewNormal * vec4(N.xyz, 1)).xyz;\n\tpos = (iModelView * pos4).xyz;\n} \n"
             },
             "type": "render/vertex_shader"
         },
@@ -316,7 +298,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nvec3 offset = vec3(0,0,0);\n\nout vec3 normal;\nout vec3 pos;\n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(position) + offset, 1);\n\n\tnormal = (iModelViewNormal * vec4(normals.x, normals.y, normals.z, 1)).xyz;\n\tpos = (iModelView * pos4).xyz;\n} \n"
+                "source": "#version 130 \n\nvec3 offset = vec3(0,0,0);\n\nout vec3 normal;\nout vec3 pos;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(P) + offset, 1);\n\n\tnormal = (iModelViewNormal * vec4(N.xyz, 1)).xyz;\n\tpos = (iModelView * pos4).xyz;\n} \n"
             },
             "type": "render/vertex_shader"
         },
@@ -330,7 +312,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nvec3 offset = vec3(-2,0,0);\n\nout vec3 pos;\n \nin vec3 position;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(position) + offset, 1);\n\n\tpos = (iModelView * pos4).xyz;\n\tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                "source": "#version 130 \n\nvec3 offset = vec3(-2,0,0);\n\nout vec3 pos;\n \nin vec3 P;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(vec3(P) + offset, 1);\n\n\tpos = (iModelView * pos4).xyz;\n\tgl_Position = iProjection * iModelView * pos4;\n} \n"
             },
             "type": "render/vertex_shader"
         }
@@ -340,6 +322,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
+    "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQiAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAcIAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABVAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABzwAAA24AAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

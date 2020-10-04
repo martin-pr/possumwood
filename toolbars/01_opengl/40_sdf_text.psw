@@ -25,10 +25,16 @@
             "out_port": "shader"
         },
         {
-            "in_node": "opencv_texture_0",
-            "in_port": "frame",
+            "in_node": "color_0",
+            "in_port": "in_frame",
             "out_node": "image_0",
             "out_port": "frame"
+        },
+        {
+            "in_node": "viewport_0",
+            "in_port": "in_uniforms",
+            "out_node": "opencv_texture_0",
+            "out_port": "out_uniforms"
         },
         {
             "in_node": "draw_0",
@@ -85,14 +91,29 @@
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "viewport_0",
-            "in_port": "in_uniforms",
-            "out_node": "opencv_texture_0",
-            "out_port": "out_uniforms"
+            "in_node": "opencv_texture_0",
+            "in_port": "frame",
+            "out_node": "color_0",
+            "out_port": "out_frame"
         }
     ],
     "description": "### SDF-based text rendering\n\nRendering text in OpenGL is usually implemented using a simple texture. However, such text \"pixelates\" when viewed up-close. [A simple method to improve on its appearance](https://github.com/libgdx/libgdx/wiki/Distance-field-fonts) uses a [Signed distance function](https://en.wikipedia.org/wiki/Signed_distance_function) to represent letter boundaries - by exploiting the interpolation abilities of GPU hardware, it is possible to represent a text boundary with significantly more precision by using the directional information represented in SDF texture differential.\n\nThis demo shows a simple implementation of this technique.\n\n<sub>Green, Chris. [\"Improved alpha-tested magnification for vector textures and special effects.\"](https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf) ACM SIGGRAPH 2007 courses. ACM, 2007.</sub>",
+    "name": "network",
     "nodes": {
+        "color_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 494.728851318359,
+                    "y": -405.834167480469
+                }
+            },
+            "name": "color",
+            "ports": {
+                "mode": "GRAY2BGR"
+            },
+            "type": "opencv/color"
+        },
         "draw_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -102,6 +123,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "draw_1": {
@@ -113,6 +139,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "font_0": {
@@ -167,7 +198,7 @@
             },
             "name": "fragment_shader",
             "ports": {
-                "source": "#version 130 \n \nout vec4 color; \n \nin vec2 vertexUV;\n\nuniform sampler2D font;\n\nvoid main() {\n\tfloat sample = texture(font, vertexUV).x;\n\n\tif(sample > 0.1) {\n\t\t//color = vec4(vec3(1), 0);\n\t\tcolor = vec4(vec3(sample), 0);\n\t}\n\telse\n\t\tdiscard;\n} \n"
+                "source": "#version 130 \n \nout vec4 color; \n \nin vec2 vertexUV;\n\nuniform sampler2D font;\n\nvoid main() {\n\tfloat sample = texture(font, vertexUV).x;\n\n\tif(sample > 0.1)\n\t\tcolor = vec4(vec3(sample), 0);\n\telse\n\t\tdiscard;\n} \n"
             },
             "type": "render/fragment_shader"
         },
@@ -175,13 +206,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 498.718627929688,
-                    "y": -413.030731201172
+                    "x": 487.718627929688,
+                    "y": -541.03076171875
                 }
             },
             "name": "load",
             "ports": {
-                "filename": "$EXAMPLES/fonts/opensans_64.pgm"
+                "filename": "$EXAMPLES/fonts/opensans_64.png"
             },
             "type": "opencv/capture/image"
         },
@@ -328,6 +359,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABkAAAQ6AAACWQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAcgAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA9QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABawAAAnYAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAcgAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACTAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACxwAAAnYAAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

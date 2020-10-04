@@ -68,6 +68,7 @@
         }
     ],
     "description": "### CGAL normals generation\n\nTo display a polygonal mesh on a GPU, the model needs to contain surface-normal information for shading. While this information can be auto-generated, an explicitly represented normal can improve surface properties like smoothness or shape details.\n\nThis simple demo shows [two methods of computing normals](https://doc.cgal.org/latest/Polygon_mesh_processing/index.html#PMPNormalComp) using the [CGAL library](https://www.cgal.org).",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -78,6 +79,9 @@
                 }
             },
             "name": "display",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "cgal_1": {
@@ -89,6 +93,9 @@
                 }
             },
             "name": "display",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -100,6 +107,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "draw_1": {
@@ -111,6 +123,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "fragment_shader_0": {
@@ -167,6 +184,7 @@
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-vertex normals"
             },
             "type": "cgal/normals_generator"
@@ -181,6 +199,7 @@
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-face normals"
             },
             "type": "cgal/normals_generator"
@@ -220,7 +239,8 @@
                     "x": 0.200000002980232,
                     "y": 0.0,
                     "z": 0.0
-                }
+                },
+                "vec3_as_normals": true
             },
             "type": "cgal/transform"
         },
@@ -234,7 +254,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nin vec3 normals;              // normals attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal; // modelview matrix for normals\n \nout vec3 vertexNormal;         // vertex normal for the fragment shader \n \nvoid main() {\n\tvertexNormal = (iModelViewNormal * vec4(normals, 0.0)).xyz;\n   \tgl_Position = iProjection * iModelView * vec4(position, 1.0);\n} \n"
+                "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \nin vec3 N;                     // normals attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal; // modelview matrix for normals\n \nout vec3 vertexNormal;         // vertex normal for the fragment shader \n \nvoid main() {\n\tvertexNormal = (iModelViewNormal * vec4(N, 0.0)).xyz;\n   \tgl_Position = iProjection * iModelView * vec4(P, 1.0);\n} \n"
             },
             "type": "render/vertex_shader"
         }
@@ -244,6 +264,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAABcAAAd/AAAEHwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABbAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB4gAAAYwAAACqAQAAA/sAAAAGAGwAbwBnAQAAAjoAAAGPAAAAAAAAAAAAAAIJAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADNgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADsQAAAYwAAACuAQAAA/sAAAAGAGwAbwBnAQAAAjoAAAGPAAAAAAAAAAAAAAVeAAAEwwAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

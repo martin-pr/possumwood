@@ -1,6 +1,18 @@
 {
     "connections": [
         {
+            "in_node": "draw_1",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_1",
+            "out_port": "vertex_data"
+        },
+        {
             "in_node": "viewport_0",
             "in_port": "in_uniforms",
             "out_node": "float_0",
@@ -19,6 +31,24 @@
             "out_port": "shader"
         },
         {
+            "in_node": "transform_1",
+            "in_port": "in_mesh",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "loader_1",
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
+        },
+        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
@@ -35,6 +65,18 @@
             "in_port": "value",
             "out_node": "time_0",
             "out_port": "time"
+        },
+        {
+            "in_node": "cgal_1",
+            "in_port": "mesh",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "transform_1",
+            "out_port": "out_mesh"
         },
         {
             "in_node": "program_0",
@@ -59,51 +101,10 @@
             "in_port": "uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "transform_1",
-            "in_port": "in_mesh",
-            "out_node": "loader_0",
-            "out_port": "polyhedron"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_1",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "normals_generator_0",
-            "in_port": "input",
-            "out_node": "loader_1",
-            "out_port": "polyhedron"
-        },
-        {
-            "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "cgal_1",
-            "in_port": "mesh",
-            "out_node": "transform_0",
-            "out_port": "out_mesh"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "transform_1",
-            "out_port": "out_mesh"
         }
     ],
     "description": "### Gourand shading\n\n[Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shading) is one of the simplest method of polygonal mesh shading. It computes colour by linearly interpolating vertex colours in screen space, making it cheap but less physically accurate than Phong or physics-based shading methods.\n\nThis demo combines [Gourand shading](https://en.wikipedia.org/wiki/Gouraud_shading) with [Phong reflection](https://en.wikipedia.org/wiki/Phong_reflection_model) model, reproducing an old \"fixed-pipeline\" shading model of OpenGL.",
+    "name": "network",
     "nodes": {
         "cgal_0": {
             "blind_data": {
@@ -114,6 +115,9 @@
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "cgal_1": {
@@ -125,6 +129,9 @@
                 }
             },
             "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
             "type": "render/vertex_data/cgal"
         },
         "draw_0": {
@@ -136,6 +143,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "draw_1": {
@@ -147,6 +159,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "float_0": {
@@ -231,6 +248,7 @@
             },
             "name": "normals_generator",
             "ports": {
+                "attr_name": "N",
                 "mode": "Per-vertex normals"
             },
             "type": "cgal/normals_generator"
@@ -292,7 +310,8 @@
                     "x": 0.0,
                     "y": -7.0,
                     "z": 0.0
-                }
+                },
+                "vec3_as_normals": true
             },
             "type": "cgal/transform"
         },
@@ -320,7 +339,8 @@
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
-                }
+                },
+                "vec3_as_normals": true
             },
             "type": "cgal/transform"
         },
@@ -334,7 +354,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 140\n\nout vec3 colour;\n \nin vec3 position;\nin vec3 normals;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n\nuniform float time; \n\n// constant \"colour\" of the surface\nvec3 diffuse_color = vec3(1, 0, 0);\n// \"shininess\" parameter\nfloat alpha = 20.0;\n\nvoid main() {\n\t// light position, as a circular trajectory\n\tvec3 light_pos = vec3(sin(time * 3.14 / 5), 0, cos(time * 3.14 / 5)) * 20.0;\n\t// surface position (scaling down the teapot)\n\tvec3 surface_pos = position * 0.1;\n\n\t// light direction from the surface\n\tvec3 light_vector = normalize(light_pos - surface_pos);\n\t// surface normal (as read from the input file)\n\tvec3 normal = normalize(normals);\n\n\t// lambertial term\n\tcolour = vec3(max(0.0, dot(light_vector, normal))) * diffuse_color;\n\n\t// reflection vector\n\tvec3 reflection = 2.0*dot(light_vector, normal)*normal - light_vector;\n\t// camera position, as the inverse of the scene transformation\n\tvec3 campos = vec3(inverse(iModelView) * vec4(0,0,0,1));\n\t// view vector, determined from the modelview matrix and surface position\n\tvec3 view = normalize(campos + surface_pos);\n\t\n\t// phong reflective term\n\tcolour += pow(max(0.0, dot(reflection, view)), alpha);\n\n\t// perspective projection for rasterisation\n   \tgl_Position = iProjection * iModelView * vec4(surface_pos, 1);\n} \n"
+                "source": "#version 140\n\nout vec3 colour;\n \nin vec3 P;\nin vec3 N;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n\nuniform float time; \n\n// constant \"colour\" of the surface\nvec3 diffuse_color = vec3(1, 0, 0);\n// \"shininess\" parameter\nfloat alpha = 20.0;\n\nvoid main() {\n\t// light position, as a circular trajectory\n\tvec3 light_pos = vec3(sin(time * 3.14 / 5), 0, cos(time * 3.14 / 5)) * 20.0;\n\t// surface position (scaling down the teapot)\n\tvec3 surface_pos = P * 0.1;\n\n\t// light direction from the surface\n\tvec3 light_vector = normalize(light_pos - surface_pos);\n\t// surface normal (as read from the input file)\n\tvec3 normal = normalize(N);\n\n\t// lambertial term\n\tcolour = vec3(max(0.0, dot(light_vector, normal))) * diffuse_color;\n\n\t// reflection vector\n\tvec3 reflection = 2.0*dot(light_vector, normal)*normal - light_vector;\n\t// camera position, as the inverse of the scene transformation\n\tvec3 campos = vec3(inverse(iModelView) * vec4(0,0,0,1));\n\t// view vector, determined from the modelview matrix and surface position\n\tvec3 view = normalize(campos + surface_pos);\n\t\n\t// phong reflective term\n\tcolour += pow(max(0.0, dot(reflection, view)), alpha);\n\n\t// perspective projection for rasterisation\n   \tgl_Position = iProjection * iModelView * vec4(surface_pos, 1);\n} \n"
             },
             "type": "render/vertex_shader"
         },
@@ -348,7 +368,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nin vec3 position;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\n\nuniform float time;\n \nvoid main() {\n\tvec3 light_pos = vec3(sin(time * 3.14 / 5), 0, cos(time * 3.14 / 5)) * 5.0;\n\n\tvec4 pos4 = vec4(position + light_pos, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                "source": "#version 130 \n\nin vec3 P;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\n\nuniform float time;\n \nvoid main() {\n\tvec3 light_pos = vec3(sin(time * 3.14 / 5), 0, cos(time * 3.14 / 5)) * 5.0;\n\n\tvec4 pos4 = vec4(P + light_pos, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
             },
             "type": "render/vertex_shader"
         },
@@ -369,6 +389,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAS3AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAiIAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB8wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACbgAAAs8AAACuAQAAAwAAAyUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB8wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACbgAAAs8AAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

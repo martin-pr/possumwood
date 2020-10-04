@@ -13,19 +13,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "mean_0",
-            "in_port": "in",
-            "out_node": "image_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "concat_0",
-            "in_port": "in_frame_1",
-            "out_node": "image_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "color_0",
+            "in_node": "color_1",
             "in_port": "in_frame",
             "out_node": "image_0",
             "out_port": "frame"
@@ -41,9 +29,28 @@
             "in_port": "superpixels",
             "out_node": "slic_0",
             "out_port": "superpixels"
+        },
+        {
+            "in_node": "color_0",
+            "in_port": "in_frame",
+            "out_node": "color_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "mean_0",
+            "in_port": "in",
+            "out_node": "color_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "color_1",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Superpixel Mean\n\nSuperpixel algorithms derive meaningful atomic primitives from dense grid images, which can then be used as inputs to other computer vision algorithms.\n\nOne of the simplest such algorithm is mean, averaging the values in a superpixel, leading to a \"mosaic-like\" look. \n\n<sub>Achanta, Radhakrishna, et al. [\"SLIC superpixels compared to state-of-the-art superpixel methods.\"](https://infoscience.epfl.ch/record/149300/files/SLIC_Superpixels_TR_2.pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2274-2282.</sub>",
+    "name": "network",
     "nodes": {
         "color_0": {
             "blind_data": {
@@ -56,6 +63,20 @@
             "name": "color",
             "ports": {
                 "mode": "BGR2Lab"
+            },
+            "type": "opencv/color"
+        },
+        "color_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 148.035308837891,
+                    "y": 284.430877685547
+                }
+            },
+            "name": "color",
+            "ports": {
+                "mode": "GRAY2BGR"
             },
             "type": "opencv/color"
         },
@@ -78,13 +99,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 148.766784667969,
-                    "y": 301.283843994141
+                    "x": 160.766799926758,
+                    "y": 147.283706665039
                 }
             },
             "name": "image",
             "ports": {
-                "filename": "$EXAMPLES/cae.wisc.edu_images/cameraman.png"
+                "filename": "$EXAMPLES/cae.wisc.edu_images/cameraman.tif"
             },
             "type": "opencv/capture/image"
         },
@@ -97,6 +118,9 @@
                 }
             },
             "name": "mean",
+            "ports": {
+                "mode": "mean"
+            },
             "type": "opencv/superpixels/mean"
         },
         "network_0": {
@@ -209,6 +233,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "fragment_shader_0": {
@@ -363,6 +392,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACnAAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJCAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB2wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACUQAAAZAAAACqAQAAAwAAA5QAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJCAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADMgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADrQAAAZAAAACuAQAAAwAABhQAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
