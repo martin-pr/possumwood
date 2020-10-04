@@ -48,6 +48,9 @@ class Property : public PropertyBase {
   protected:
 	Property(const std::string& name, const T& defaultValue);
 
+	Property(const Property&) = default;
+	Property& operator=(const Property&) = default;
+
 	virtual std::unique_ptr<PropertyBase> clone() const override;
 
 	virtual bool isEqual(const PropertyBase& p) const override;

@@ -36,7 +36,9 @@ Property<T>::Property(const std::string& name, const T& defaultValue)
 
 template <typename T>
 std::unique_ptr<PropertyBase> Property<T>::clone() const {
-	return std::unique_ptr<PropertyBase>(new Property<T>(name(), m_defaultValue));
+	std::unique_ptr<Property<T>> result(new Property<T>(name(), m_defaultValue));
+	result->m_data = m_data;
+	return std::unique_ptr<PropertyBase>(result.release());
 }
 
 template <typename T>

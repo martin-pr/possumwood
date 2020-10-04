@@ -104,8 +104,9 @@ struct FakeKernel {
 
 template <typename PROPERTY, typename ITERATOR>
 void put(PROPERTY& prop, const ITERATOR& target, const FakeKernel::Vector_3& norm) {
-	prop.set(target->property_key(), norm);
+	prop.get().set(target->property_key(), norm);
 }
+
 }  // namespace
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -127,7 +128,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			auto& normals = editableMesh.vertexProperties().addProperty(attr_name, std::array<float, 3>{{0, 0, 0}});
 
 			CGAL::Polygon_mesh_processing::compute_vertex_normals(
-			    editableMesh.polyhedron(), normals,
+			    editableMesh.polyhedron(), std::ref(normals),
 			    CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
 		}
 
@@ -142,7 +143,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			auto& normals = editableMesh.faceProperties().addProperty(attr_name, std::array<float, 3>{{0, 0, 0}});
 
 			CGAL::Polygon_mesh_processing::compute_face_normals(
-			    editableMesh.polyhedron(), normals,
+			    editableMesh.polyhedron(), std::ref(normals),
 			    CGAL::Polygon_mesh_processing::parameters::geom_traits(FakeKernel()));
 		}
 	}
