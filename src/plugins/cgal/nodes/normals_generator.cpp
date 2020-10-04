@@ -122,7 +122,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			auto& editableMesh = mesh.edit();
 
 			// remove face normals, if they exist
-			if(editableMesh.faceProperties().hasProperty(a ttr_name))
+			if(editableMesh.faceProperties().hasProperty(attr_name))
 				editableMesh.faceProperties().removeProperty(attr_name);
 
 			auto& normals = editableMesh.vertexProperties().addProperty(attr_name, std::array<float, 3>{{0, 0, 0}});

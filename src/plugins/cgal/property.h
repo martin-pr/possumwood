@@ -1,9 +1,10 @@
 #pragma once
 
-#include <boost/noncopyable.hpp>
 #include <memory>
+#include <typeindex>
 
-#include "property_item.h"
+#include <boost/noncopyable.hpp>
+
 #include "property_key.h"
 
 namespace possumwood {
@@ -14,27 +15,25 @@ class PropertyBase {
   public:
 	virtual ~PropertyBase();
 
-	std::size_t index() const;
+	const std::string& name() const;
+	const std::type_index& type() const;
 
 	bool operator==(const PropertyBase& p) const;
 	bool operator!=(const PropertyBase& p) const;
 
   protected:
-	PropertyBase(Properties* parent, std::size_t index);
+	PropertyBase(const std::string& name, const std::type_index type);
 
-	Properties& parent();
-	const Properties& parent() const;
-
-	virtual std::unique_ptr<PropertyBase> clone(Properties* parent) const = 0;
-	virtual std::unique_ptr<PropertyItem::ValueBase> makeValue() const = 0;
-
-	void setIndex(std::size_t i);
+	virtual std::unique_ptr<PropertyBase> clone() const = 0;
 
 	virtual bool isEqual(const PropertyBase& p) const = 0;
 
+	PropertyBase(const PropertyBase&) = default;
+	PropertyBase& operator=(const PropertyBase&) = default;
+
   private:
-	Properties* m_parent;
-	std::size_t m_index;
+	std::string m_name;
+	std::type_index m_type;
 
 	friend class Properties;
 };
@@ -47,15 +46,15 @@ class Property : public PropertyBase {
 	void set(const PropertyKey& key, const T& value);
 
   protected:
-	Property(Properties* parent, std::size_t index, const T& defaultValue);
+	Property(const std::string& name, const T& defaultValue);
 
-	virtual std::unique_ptr<PropertyBase> clone(Properties* parent) const override;
-	virtual std::unique_ptr<PropertyItem::ValueBase> makeValue() const override;
+	virtual std::unique_ptr<PropertyBase> clone() const override;
 
 	virtual bool isEqual(const PropertyBase& p) const override;
 
   private:
 	T m_defaultValue;
+	std::vector<T> m_data;
 
 	friend class Properties;
 };

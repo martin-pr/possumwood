@@ -221,17 +221,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		// vertex are both fine
 		std::map<std::string, std::size_t> propertyCounters;
 		for(auto& m : mesh) {
-			auto vertPropList = m.vertexProperties().properties();
+			auto vertPropList = m.vertexProperties();
 			for(auto& vp : vertPropList)
-				++propertyCounters[vp];
+				++propertyCounters[vp.name()];
 
-			auto facePropList = m.faceProperties().properties();
+			auto facePropList = m.faceProperties();
 			for(auto& fp : facePropList)
-				++propertyCounters[fp];
+				++propertyCounters[fp.name()];
 
-			auto halfedgePropList = m.halfedgeProperties().properties();
+			auto halfedgePropList = m.halfedgeProperties();
 			for(auto& hp : halfedgePropList)
-				++propertyCounters[hp];
+				++propertyCounters[hp.name()];
 		}
 
 		// and transfer all properties that are common to all meshes

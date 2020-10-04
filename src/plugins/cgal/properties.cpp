@@ -7,40 +7,40 @@ Properties::Properties() {
 
 Properties::Properties(const Properties& p) {
 	for(auto& prop : p.m_properties) {
-		std::unique_ptr<PropertyBase> property = prop.second->clone(this);
-		m_properties.insert(std::make_pair(prop.first, std::move(property)));
+		std::unique_ptr<PropertyBase> property = prop->clone();
+		m_properties.push_back(std::move(property));
 	}
+}
 
-	for(auto& d : p.m_data)
-		m_data.push_back(d);
+Properties::const_iterator Properties::begin() const {
+	return boost::make_indirect_iterator(m_properties.begin());
+}
+
+Properties::const_iterator Properties::end() const {
+	return boost::make_indirect_iterator(m_properties.end());
+}
+
+Properties::const_iterator Properties::find(const std::string& name) const {
+	auto it = std::find_if(m_properties.begin(), m_properties.end(),
+	                       [name](const std::unique_ptr<PropertyBase>& val) { return val->name() == name; });
+
+	return boost::make_indirect_iterator(it);
 }
 
 Properties& Properties::operator=(const Properties& p) {
 	m_properties.clear();
 
 	for(auto& prop : p.m_properties) {
-		std::unique_ptr<PropertyBase> property = prop.second->clone(this);
-		m_properties.insert(std::make_pair(prop.first, std::move(property)));
+		std::unique_ptr<PropertyBase> property = prop->clone();
+		m_properties.push_back(std::move(property));
 	}
-
-	m_data.clear();
-
-	for(auto& d : p.m_data)
-		m_data.push_back(d);
 
 	return *this;
 }
 
 bool Properties::hasProperty(const std::string& name) const {
-	auto it = m_properties.find(name);
-	return it != m_properties.end();
-}
-
-std::set<std::string> Properties::properties() const {
-	std::set<std::string> result;
-	for(auto& p : m_properties)
-		result.insert(p.first);
-	return result;
+	auto it = find(name);
+	return it != end();
 }
 
 bool Properties::operator==(const Properties& p) const {
@@ -51,7 +51,7 @@ bool Properties::operator==(const Properties& p) const {
 	auto it2 = p.m_properties.begin();
 
 	while(it1 != m_properties.end()) {
-		if(it1->first != it2->first || *it1->second != *it2->second)
+		if(*it1 != *it2)
 			return false;
 
 		++it1;
@@ -69,7 +69,7 @@ bool Properties::operator!=(const Properties& p) const {
 	auto it2 = p.m_properties.begin();
 
 	while(it1 != m_properties.end()) {
-		if(it1->first != it2->first || *it1->second != *it2->second)
+		if(*it1 != *it2)
 			return true;
 
 		++it1;
@@ -79,29 +79,10 @@ bool Properties::operator!=(const Properties& p) const {
 	return false;
 }
 
-std::size_t Properties::addSingleItem() {
-	m_data.push_back(PropertyItem());
-
-	for(auto& p : m_properties)
-		m_data.back().addValue(p.second->makeValue());
-
-	return m_data.size() - 1;
-}
-
 void Properties::removeProperty(const std::string& name) {
-	auto it = m_properties.find(name);
-	assert(it != m_properties.end());
-
-	const std::size_t removedID = it->second->index();
-
+	auto it = std::find_if(m_properties.begin(), m_properties.end(),
+	                       [name](const std::unique_ptr<PropertyBase>& val) { return val->name() == name; });
 	m_properties.erase(it);
-
-	for(auto& p : m_properties)
-		if(p.second->index() > removedID)
-			p.second->setIndex(p.second->index() - 1);
-
-	for(auto& d : m_data)
-		d.removeValue(removedID);
 }
 
 }  // namespace possumwood
