@@ -112,8 +112,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::ScopedOutputRedirect redirect;
 
 	const possumwood::Enum mode = data.get(a_mode);
-
-	const std::string attr_name = "vec3:" + data.get(a_attr);
+	const std::string attr_name = data.get(a_attr);
 
 	Meshes result = data.get(a_inMeshes);
 	for(auto& mesh : result) {

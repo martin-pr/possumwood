@@ -156,44 +156,23 @@ void addPerPointVBO(possumwood::VertexData& vd,
 	             });
 }
 
-struct VBOName {
-	VBOName() : arraySize(0), recognized(false) {
-	}
-
-	std::string name, type;
-	std::size_t arraySize;
-	bool recognized;
-};
-
-VBOName CGALType(const std::string& t) {
-	VBOName result;
-
-	auto colonPos = t.find(":");
-	if(colonPos != std::string::npos) {
-		result.type = t.substr(0, colonPos);
-		result.name = t.substr(colonPos + 1);
-		result.arraySize = 1;
-		result.recognized = true;
-
-		assert(colonPos > 0);
-		if(result.type.back() == ']') {
-			auto bracketPos = t.find("[");
-			assert(bracketPos != std::string::npos);
-
-			result.arraySize = std::stoi(result.type.substr(bracketPos + 1, result.type.length() - bracketPos - 2));
-			result.type = result.type.substr(0, bracketPos);
-		}
-	}
-
-	return result;
-}
-
 using possumwood::CGALPolyhedron;
 using possumwood::Meshes;
 
 dependency_graph::OutAttr<possumwood::VertexData> a_vd;
 dependency_graph::InAttr<Meshes> a_mesh;
 dependency_graph::InAttr<std::string> a_pointsName;
+
+struct PropertyKey {
+	std::string name;
+	std::type_index type;
+
+	bool operator<(const PropertyKey& pk) const {
+		if(name != pk.name)
+			return name < pk.name;
+		return type < pk.type;
+	}
+};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	dependency_graph::State result;
@@ -219,65 +198,59 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		// count the properties - only properties consistent between all meshes can be
 		// transfered. We don't care about the type of the properties, though - face or
 		// vertex are both fine
-		std::map<std::string, std::size_t> propertyCounters;
+		std::map<PropertyKey, std::size_t> propertyCounters;
 		for(auto& m : mesh) {
 			auto vertPropList = m.vertexProperties();
 			for(auto& vp : vertPropList)
-				++propertyCounters[vp.name()];
+				++propertyCounters[PropertyKey{vp.name(), vp.type()}];
 
 			auto facePropList = m.faceProperties();
 			for(auto& fp : facePropList)
-				++propertyCounters[fp.name()];
+				++propertyCounters[PropertyKey{fp.name(), fp.type()}];
 
 			auto halfedgePropList = m.halfedgeProperties();
 			for(auto& hp : halfedgePropList)
-				++propertyCounters[hp.name()];
+				++propertyCounters[PropertyKey{hp.name(), hp.type()}];
 		}
 
 		// and transfer all properties that are common to all meshes
 		std::set<std::string> ignoredProperties, inconsistentProperties;
 		for(auto& pc : propertyCounters)
 			if(pc.second == mesh.size()) {
-				// analyse the type
-				VBOName name = CGALType(pc.first);
-				if(name.recognized && name.arraySize > 0) {
-					// yep, the types are hardcoded for now, sorry :(
-					if(name.type == "vec3" && name.arraySize == 1)
-						addPerPointVBO<std::array<float, 3>>(vd, name.name, pc.first, triangleCount, mesh);
+				// yep, hardcoded for now, sorry :(
+				if(pc.first.type == typeid(std::array<float, 3>))
+					addPerPointVBO<std::array<float, 3>>(vd, pc.first.name, pc.first.name, triangleCount, mesh);
 
-					else if(name.type == "vec2" && name.arraySize == 1)
-						addPerPointVBO<std::array<float, 2>>(vd, name.name, pc.first, triangleCount, mesh);
+				else if(pc.first.type == typeid(std::array<float, 2>))
+					addPerPointVBO<std::array<float, 2>>(vd, pc.first.name, pc.first.name, triangleCount, mesh);
 
-					else if(name.type == "float" && name.arraySize == 1)
-						addPerPointVBO<float>(vd, name.name, pc.first, triangleCount, mesh);
+				else if(pc.first.type == typeid(float))
+					addPerPointVBO<float>(vd, pc.first.name, pc.first.name, triangleCount, mesh);
 
-					else if(name.type == "int" && name.arraySize == 1)
-						addPerPointVBO<int>(vd, name.name, pc.first, triangleCount, mesh);
+				else if(pc.first.type == typeid(int))
+					addPerPointVBO<int>(vd, pc.first.name, pc.first.name, triangleCount, mesh);
 
-					else if(name.type == "float")
-						for(std::size_t i = 0; i < name.arraySize; ++i) {
-							auto fn = [i](const std::vector<float>& v) -> float { return v[i]; };
+				// else if(name.type == "float")
+				// 	for(std::size_t i = 0; i < name.arraySize; ++i) {
+				// 		auto fn = [i](const std::vector<float>& v) -> float { return v[i]; };
 
-							addPerPointVBO<std::vector<float>>(vd, name.name + "[" + std::to_string(i) + "]", pc.first,
-							                                   triangleCount, mesh, fn);
-						}
+				// 		addPerPointVBO<std::vector<float>>(vd, name.name + "[" + std::to_string(i) + "]", pc.first,
+				// 		                                   triangleCount, mesh, fn);
+				// 	}
 
-					else if(name.type == "int")
-						for(std::size_t i = 0; i < name.arraySize; ++i) {
-							auto fn = [i](const std::vector<int>& v) -> int { return v[i]; };
+				// else if(name.type == "int")
+				// 	for(std::size_t i = 0; i < name.arraySize; ++i) {
+				// 		auto fn = [i](const std::vector<int>& v) -> int { return v[i]; };
 
-							addPerPointVBO<std::vector<int>>(vd, name.name + "[" + std::to_string(i) + "]", pc.first,
-							                                 triangleCount, mesh, fn);
-						}
+				// 		addPerPointVBO<std::vector<int>>(vd, name.name + "[" + std::to_string(i) + "]", pc.first,
+				// 		                                 triangleCount, mesh, fn);
+				// 	}
 
-					else
-						ignoredProperties.insert(pc.first);
-				}
 				else
-					ignoredProperties.insert(pc.first);
+					ignoredProperties.insert(pc.first.name);
 			}
 			else
-				inconsistentProperties.insert(pc.first + "(" + std::to_string(pc.second) + "/" +
+				inconsistentProperties.insert(pc.first.name + "(" + std::to_string(pc.second) + "/" +
 				                              std::to_string(mesh.size()) + ")");
 
 		if(!inconsistentProperties.empty())

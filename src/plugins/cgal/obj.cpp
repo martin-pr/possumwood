@@ -256,10 +256,10 @@ Mesh loadObj(boost::filesystem::path path,
 	auto mesh = makeMesh(name, vertices, faces);
 
 	if(!normals.empty())
-		addNormals(mesh, "vec3:" + normalsAttr, normals, faces);
+		addNormals(mesh, normalsAttr, normals, faces);
 
 	if(!uvs.empty())
-		addUVs(mesh, "vec2:" + uvsAttr, uvs, faces);
+		addUVs(mesh, uvsAttr, uvs, faces);
 
 	return mesh;
 }
