@@ -45,6 +45,10 @@ class Property : public PropertyBase {
 	void set(PropertyKey& key, const T& value);
 	void set(const PropertyKey& key, const T& value);
 
+	typedef typename std::vector<T>::iterator iterator;
+	iterator begin();
+	iterator end();
+
   protected:
 	Property(const std::string& name, const T& defaultValue);
 

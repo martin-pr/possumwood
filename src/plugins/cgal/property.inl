@@ -60,4 +60,14 @@ bool Property<T>::isEqual(const PropertyBase& p) const {
 	return true;
 }
 
+template <typename T>
+typename Property<T>::iterator Property<T>::begin() {
+	return m_data.begin();
+}
+
+template <typename T>
+typename Property<T>::iterator Property<T>::end() {
+	return m_data.end();
+}
+
 }  // namespace possumwood

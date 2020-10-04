@@ -13,8 +13,8 @@
             "out_port": "shader"
         },
         {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
             "out_node": "loader_0",
             "out_port": "polyhedron"
         },
@@ -29,6 +29,12 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
         }
     ],
     "description": "### A simple OpenGL demo\n\nA simple demo showing how to load an `.obj` file (positions, normals and topology) and display it using OpenGL. \n\nNamed vertex attributes _p_ and _n_ are loaded from an `.obj` file, and passed through to an OpenGL vertex/fragment shader setup. In later demos, this setup is wrapped-up in a subnetwork.\n",
@@ -82,8 +88,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -118.650428771973,
-                    "y": 297.251678466797
+                    "x": -133.021118164062,
+                    "y": 67.3205337524414
                 }
             },
             "name": "loader",
@@ -104,6 +110,35 @@
             "name": "program",
             "type": "render/program"
         },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -141.142242431641,
+                    "y": 229.81770324707
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": -90.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        },
         "vertex_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -114,7 +149,7 @@
             },
             "name": "vertex_shader",
             "ports": {
-                "source": "#version 130 \n\nout vec3 normal;\nout vec2 texcoord;\n \nin vec3 P;\nin vec3 N;\nin vec2 uv;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P * 0.1, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(N, 1)).xyz;\n\ttexcoord = uv;\n} \n"
+                "source": "#version 130 \n\nout vec3 normal;\nout vec2 texcoord;\n \nin vec3 P;\nin vec3 N;\nin vec2 uv;\n\nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 iModelViewNormal;\n \n \nvoid main() {\n\tvec4 pos4 = vec4(P, 1);\n   \tgl_Position = iProjection * iModelView * pos4;\n\n\tnormal = (iModelViewNormal * vec4(N, 1)).xyz;\n\ttexcoord = uv;\n} \n"
             },
             "type": "render/vertex_shader"
         }
