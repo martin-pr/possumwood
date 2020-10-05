@@ -40,7 +40,7 @@ class VBOBase : public boost::noncopyable {
 /// encapsulation of a single vertex data buffer.
 /// Type T can be either float or int; WIDTH describes the number of elements per array item
 template <typename T>
-class VBO : public VBOBase {
+class VBO final : public VBOBase {
   public:
 	VBO(std::size_t vertexCount);
 
