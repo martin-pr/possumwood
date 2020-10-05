@@ -8,7 +8,9 @@ Possumwood is built on top of a simple graph-evaluation engine and a Qt-based no
 
 **Possumwood is a sandbox, not a production tool.** As a sandbox, it is quite open to radical changes and redesign, and for the time being it does not guarantee any form of backwards compatibility.
 
-[![Build Status](https://travis-ci.org/martin-pr/possumwood.svg?branch=master)](https://travis-ci.org/martin-pr/possumwood) [![Snap Status](https://build.snapcraft.io/badge/martin-pr/possumwood.svg)](https://build.snapcraft.io/user/martin-pr/possumwood) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/85803e0b79d64c749038696d4e4512ad)](https://www.codacy.com/app/martin.prazak/possumwood?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=martin-pr/possumwood&amp;utm_campaign=Badge_Grade)
+**Possumwood is currently in active development, and does not pretend to be feature complete.** It is not by any means meant to be a production tool, at least not yet. Any help is appreciated!
+
+[![Build Status](https://travis-ci.org/martin-pr/possumwood.svg?branch=master)](https://travis-ci.org/martin-pr/possumwood) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/85803e0b79d64c749038696d4e4512ad)](https://www.codacy.com/app/martin.prazak/possumwood?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=martin-pr/possumwood&amp;utm_campaign=Badge_Grade)
 
 ## Table of contents
 - [Synopsis](#synopsis)
