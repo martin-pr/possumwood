@@ -1,0 +1,136 @@
+{
+    "connections": [
+        {
+            "in_node": "network_0",
+            "in_port": "height",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "diameter",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "subdivision",
+            "out_node": "input_2",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "center",
+            "out_node": "input_3",
+            "out_port": "data"
+        },
+        {
+            "in_node": "output_0",
+            "in_port": "data",
+            "out_node": "poly_to_nef_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "poly_to_nef_0",
+            "in_port": "mesh",
+            "out_node": "network_0",
+            "out_port": "mesh"
+        }
+    ],
+    "description": "",
+    "name": "network",
+    "nodes": {
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -299.494964599609,
+                    "y": 668.636657714844
+                }
+            },
+            "name": "height",
+            "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -287.206512451172,
+                    "y": 751.505554199219
+                }
+            },
+            "name": "diameter",
+            "type": "input"
+        },
+        "input_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -308.34521484375,
+                    "y": 826.9541015625
+                }
+            },
+            "name": "subdivision",
+            "type": "input"
+        },
+        "input_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -291.489166259766,
+                    "y": 909.935119628906
+                }
+            },
+            "name": "center",
+            "type": "input"
+        },
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -102.647277832031,
+                    "y": 751.02294921875
+                }
+            },
+            "name": "cylinder",
+            "source": "$NODES/cgal/primitives/cylinder.psw",
+            "type": "network"
+        },
+        "output_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 20.2673969268799,
+                    "y": 1099.51416015625
+                }
+            },
+            "name": "nef",
+            "type": "output"
+        },
+        "poly_to_nef_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -102.331802368164,
+                    "y": 975.478149414062
+                }
+            },
+            "name": "poly_to_nef",
+            "type": "cgal/csg/poly_to_nef"
+        }
+    },
+    "ports": {
+        "center": false,
+        "diameter": 1.0,
+        "height": 1.0,
+        "subdivision": 32
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALYAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAikAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

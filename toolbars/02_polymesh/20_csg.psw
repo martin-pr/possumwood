@@ -1,34 +1,10 @@
 {
     "connections": [
         {
-            "in_node": "script_0",
-            "in_port": "context",
-            "out_node": "cgal_0",
-            "out_port": "out_context"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_1",
-            "out_port": "vertex_data"
-        },
-        {
             "in_node": "transform_2",
             "in_port": "in_mesh",
             "out_node": "difference_0",
             "out_port": "nef"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "in_context",
-            "out_node": "float_0",
-            "out_port": "out_context"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
         },
         {
             "in_node": "transform_1",
@@ -37,52 +13,28 @@
             "out_port": "nef"
         },
         {
-            "in_node": "poly_to_nef_0",
-            "in_port": "mesh",
-            "out_node": "mesh_0",
-            "out_port": "out"
-        },
-        {
-            "in_node": "cgal_1",
-            "in_port": "mesh",
-            "out_node": "nef_to_poly_0",
-            "out_port": "mesh"
-        },
-        {
             "in_node": "transform_0",
             "in_port": "in_mesh",
-            "out_node": "poly_to_nef_0",
+            "out_node": "network_0",
             "out_port": "nef"
         },
         {
             "in_node": "union_0",
             "in_port": "nef_2",
-            "out_node": "poly_to_nef_0",
+            "out_node": "network_0",
             "out_port": "nef"
         },
         {
             "in_node": "intersection_0",
             "in_port": "nef_2",
-            "out_node": "poly_to_nef_0",
+            "out_node": "network_0",
             "out_port": "nef"
         },
         {
             "in_node": "difference_0",
             "in_port": "nef_2",
-            "out_node": "poly_to_nef_0",
+            "out_node": "network_0",
             "out_port": "nef"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "mesh_0",
-            "in_port": "state",
-            "out_node": "script_0",
-            "out_port": "state"
         },
         {
             "in_node": "union_0",
@@ -101,18 +53,6 @@
             "in_port": "nef_1",
             "out_node": "transform_0",
             "out_port": "out_mesh"
-        },
-        {
-            "in_node": "union_1",
-            "in_port": "nef_1",
-            "out_node": "union_0",
-            "out_port": "nef"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
         },
         {
             "in_node": "union_1",
@@ -122,47 +62,50 @@
         },
         {
             "in_node": "union_2",
-            "in_port": "nef_1",
-            "out_node": "union_1",
-            "out_port": "nef"
-        },
-        {
-            "in_node": "union_2",
             "in_port": "nef_2",
             "out_node": "transform_2",
             "out_port": "out_mesh"
         },
         {
-            "in_node": "nef_to_poly_0",
-            "in_port": "nef",
+            "in_node": "union_1",
+            "in_port": "nef_1",
+            "out_node": "union_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "union_2",
+            "in_port": "nef_1",
+            "out_node": "union_1",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "network_1",
+            "in_port": "input",
             "out_node": "union_2",
             "out_port": "nef"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "diameter",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "subdivision",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "height",
+            "out_node": "input_2",
+            "out_port": "data"
         }
     ],
     "description": "",
+    "name": "network",
     "nodes": {
-        "cgal_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -265.548187255859,
-                    "y": 654.753967285156
-                }
-            },
-            "name": "cgal",
-            "type": "lua/modules/cgal"
-        },
-        "cgal_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 407.706787109375,
-                    "y": 2275.1826171875
-                }
-            },
-            "name": "display",
-            "type": "render/vertex_data/cgal"
-        },
         "difference_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -172,47 +115,40 @@
                 }
             },
             "name": "difference",
-            "type": "cgal/csg/difference"
+            "type": "cgal/csg/operations/difference"
         },
-        "draw_0": {
+        "input_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 858.002136230469,
-                    "y": 2042.83129882812
+                    "x": -24.7976703643799,
+                    "y": 752.905334472656
                 }
             },
-            "name": "draw",
-            "type": "render/draw"
+            "name": "diameter",
+            "type": "input"
         },
-        "float_0": {
+        "input_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -299.332458496094,
-                    "y": 460.613220214844
+                    "x": -24.7976760864258,
+                    "y": 829.875549316406
                 }
             },
-            "name": "NUMBER_OF_FACES",
-            "ports": {
-                "name": "edge_count",
-                "value": 20.0
-            },
-            "type": "lua/inject/float"
+            "name": "subdivision",
+            "type": "input"
         },
-        "fragment_shader_0": {
+        "input_2": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 423.493927001953,
-                    "y": 2057.2705078125
+                    "x": -6.68891716003418,
+                    "y": 675.180725097656
                 }
             },
-            "name": "fragment_shader",
-            "ports": {
-                "source": "#version 130 \n \nin vec4 frag_position;\n\nout vec4 color; \n \nvoid main() { \n\t// compute fake normal by cross product of surface derivatives\n\tvec3 norm = cross(dFdx(frag_position).xyz, dFdy(frag_position).xyz);\n\tnorm = normalize(norm);\n \n\tcolor = vec4(norm.z, norm.z, norm.z, 1); \n} \n"
-            },
-            "type": "render/fragment_shader"
+            "name": "height",
+            "type": "input"
         },
         "intersection_0": {
             "blind_data": {
@@ -223,68 +159,34 @@
                 }
             },
             "name": "intersection",
-            "type": "cgal/csg/intersection"
+            "type": "cgal/csg/operations/intersection"
         },
-        "mesh_0": {
+        "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -96.5482025146484,
-                    "y": 817.753967285156
+                    "x": 137.517364501953,
+                    "y": 751.805236816406
                 }
             },
-            "name": "mesh",
+            "name": "cylinder",
             "ports": {
-                "name": "mesh"
+                "center": false
             },
-            "type": "lua/extract/mesh"
+            "source": "$NODES/cgal/csg/primitives/cylinder.psw",
+            "type": "network"
         },
-        "nef_to_poly_0": {
+        "network_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 248.466064453125,
-                    "y": 2140.60131835938
+                    "x": 253.592056274414,
+                    "y": 2095.79174804688
                 }
             },
-            "name": "nef_to_poly",
-            "type": "cgal/csg/nef_to_poly"
-        },
-        "poly_to_nef_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 2.36922597885132,
-                    "y": 981.637023925781
-                }
-            },
-            "name": "poly_to_nef",
-            "type": "cgal/csg/poly_to_nef"
-        },
-        "program_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 650.494018554688,
-                    "y": 1989.43139648438
-                }
-            },
-            "name": "program",
-            "type": "render/program"
-        },
-        "script_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -250.548202514648,
-                    "y": 801.753967285156
-                }
-            },
-            "name": "script",
-            "ports": {
-                "source": "-- edge_count = 12\n\n-------------\n\nmesh = cgal.mesh(\"mesh\")\n\nfor i=0,edge_count-1 do\n  param = i/edge_count*3.141592*2\n  mesh:addPoint(math.cos(param), 0, math.sin(param))\n  mesh:addPoint(math.cos(param), 1, math.sin(param))\nend\n\nfor i=0,edge_count-1 do\n  face = cgal.face()\n\n  face:addVertex((i*2)%(edge_count*2))\n  face:addVertex((i*2+2)%(edge_count*2))\n  face:addVertex((i*2+3)%(edge_count*2))\n  face:addVertex((i*2+1)%(edge_count*2))\n\n  mesh:addFace(face)\nend\n\nfor i=1,edge_count-2 do\n  face = cgal.face()\n  face:addVertex(0)\n  face:addVertex((i*2+2)%(edge_count*2))\n  face:addVertex((i*2))\n  mesh:addFace(face)\nend\n\nfor i=1,edge_count-2 do\n  face = cgal.face()\n  face:addVertex(1)\n  face:addVertex((i*2+1)%(edge_count*2))\n  face:addVertex((i*2+3)%(edge_count*2))\n\n  mesh:addFace(face)\nend\n"
-            },
-            "type": "lua/script"
+            "name": "draw",
+            "source": "$NODES/cgal/csg/draw.psw",
+            "type": "network"
         },
         "transform_0": {
             "blind_data": {
@@ -379,7 +281,7 @@
                 }
             },
             "name": "union",
-            "type": "cgal/csg/union"
+            "type": "cgal/csg/operations/union"
         },
         "union_1": {
             "blind_data": {
@@ -390,7 +292,7 @@
                 }
             },
             "name": "union",
-            "type": "cgal/csg/union"
+            "type": "cgal/csg/operations/union"
         },
         "union_2": {
             "blind_data": {
@@ -401,28 +303,20 @@
                 }
             },
             "name": "union",
-            "type": "cgal/csg/union"
-        },
-        "vertex_shader_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 454.804321289062,
-                    "y": 1929.419921875
-                }
-            },
-            "name": "vertex_shader",
-            "ports": {
-                "source": "#version 130 \n \nin vec3 position;              // position attr from the vbo \nout vec4 frag_position;        // fragment position for fake normal computation\n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nvoid main() {\n\tfrag_position = iModelView * vec4(position, 1.0);\n   \tgl_Position = iProjection * frag_position;\n} \n"
-            },
-            "type": "render/vertex_shader"
+            "type": "cgal/csg/operations/union"
         }
+    },
+    "ports": {
+        "diameter": 2.0,
+        "height": 1.0,
+        "subdivision": 32
     },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAANaAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAooAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGeAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAooAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAoEAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
