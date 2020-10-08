@@ -1,0 +1,200 @@
+{
+    "connections": [
+        {
+            "in_node": "unsigned_1",
+            "in_port": "in_context",
+            "out_node": "cgal_0",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "script_0",
+            "in_port": "context",
+            "out_node": "float_0",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "value",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "unsigned_0",
+            "in_port": "value",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "unsigned_1",
+            "in_port": "value",
+            "out_node": "input_2",
+            "out_port": "data"
+        },
+        {
+            "in_node": "output_0",
+            "in_port": "data",
+            "out_node": "mesh_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "mesh_0",
+            "in_port": "state",
+            "out_node": "script_0",
+            "out_port": "state"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "in_context",
+            "out_node": "unsigned_0",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "unsigned_0",
+            "in_port": "in_context",
+            "out_node": "unsigned_1",
+            "out_port": "out_context"
+        }
+    ],
+    "description": "",
+    "name": "network",
+    "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -270.228179931641,
+                    "y": 173.11604309082
+                }
+            },
+            "name": "cgal",
+            "type": "lua/modules/cgal"
+        },
+        "float_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -266.699676513672,
+                    "y": 634.888916015625
+                }
+            },
+            "name": "diameter",
+            "ports": {
+                "name": "diameter"
+            },
+            "type": "lua/inject/float"
+        },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -432.429595947266,
+                    "y": 677.16552734375
+                }
+            },
+            "name": "diameter",
+            "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -453.568298339844,
+                    "y": 531.322143554688
+                }
+            },
+            "name": "v_subdivision",
+            "type": "input"
+        },
+        "input_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -477.524963378906,
+                    "y": 323.697814941406
+                }
+            },
+            "name": "h_subdivision",
+            "type": "input"
+        },
+        "mesh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -96.5482025146484,
+                    "y": 817.753967285156
+                }
+            },
+            "name": "mesh",
+            "ports": {
+                "name": "mesh"
+            },
+            "type": "lua/extract/mesh"
+        },
+        "output_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -2.54187297821045,
+                    "y": 943.996398925781
+                }
+            },
+            "name": "mesh",
+            "type": "output"
+        },
+        "script_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -252.876541137695,
+                    "y": 801.753967285156
+                }
+            },
+            "name": "script",
+            "ports": {
+                "source": "PI = 3.141592\n\nradius = diameter / 2\n\nmesh = cgal.mesh(\"mesh\")\n\nfor j=0,v_subdivision-2 do\n  h = -math.cos((j+1) / (v_subdivision) * PI) * radius\n  r = math.sin((j+1)/(v_subdivision)*PI) * radius\n  for i=0,h_subdivision-1 do\n    param = i/h_subdivision*PI*2\n\tmesh:addPoint(math.cos(param) * r, h, math.sin(param) * r)\n  end\nend\n\nfor i=0,h_subdivision-1 do\n  for j=0,v_subdivision-3 do\n    face = cgal.face()\n    face:addVertex((i+1)%(h_subdivision)+j*h_subdivision)\n    face:addVertex(i+j*h_subdivision)\n    face:addVertex(i+(j+1)*h_subdivision)\n    face:addVertex((i+1)%(h_subdivision)+(j+1)*h_subdivision)\n    mesh:addFace(face)\n  end\nend\n\ntop = mesh:addPoint(0, -radius, 0)\nfor i=0,h_subdivision-1 do\n\tface = cgal.face()\n\tface:addVertex(top)\n\tface:addVertex(i)\n\tface:addVertex((i+1) % h_subdivision)\n\tmesh:addFace(face)\nend\n\nbottom = mesh:addPoint(0, radius, 0)\nfor i=0,h_subdivision-1 do\n\tface = cgal.face()\n\tface:addVertex(bottom)\n\tface:addVertex((i+1) % h_subdivision + h_subdivision*(v_subdivision-2))\n\tface:addVertex(i + h_subdivision*(v_subdivision-2))\n\tmesh:addFace(face)\nend\n"
+            },
+            "type": "lua/script"
+        },
+        "unsigned_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -274.828552246094,
+                    "y": 466.451965332031
+                }
+            },
+            "name": "v_subdivision",
+            "ports": {
+                "name": "v_subdivision"
+            },
+            "type": "lua/inject/unsigned"
+        },
+        "unsigned_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -271.201599121094,
+                    "y": 293.665130615234
+                }
+            },
+            "name": "h_subdivision",
+            "ports": {
+                "name": "h_subdivision"
+            },
+            "type": "lua/inject/unsigned"
+        }
+    },
+    "ports": {
+        "diameter": 1.0,
+        "h_subdivision": 32,
+        "v_subdivision": 16
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIzAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAgYAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA6QAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABXwAAAg8AAACtAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

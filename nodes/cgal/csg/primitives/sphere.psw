@@ -1,0 +1,135 @@
+{
+    "connections": [
+        {
+            "in_node": "network_0",
+            "in_port": "diameter",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "v_subdivision",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "h_subdivision",
+            "out_node": "input_2",
+            "out_port": "data"
+        },
+        {
+            "in_node": "triangulate_faces_0",
+            "in_port": "input",
+            "out_node": "network_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "output_0",
+            "in_port": "data",
+            "out_node": "poly_to_nef_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "poly_to_nef_0",
+            "in_port": "mesh",
+            "out_node": "triangulate_faces_0",
+            "out_port": "output"
+        }
+    ],
+    "description": "",
+    "name": "network",
+    "nodes": {
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -283.190368652344,
+                    "y": 542.666259765625
+                }
+            },
+            "name": "diameter",
+            "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -304.329071044922,
+                    "y": 618.114807128906
+                }
+            },
+            "name": "v_subdivision",
+            "type": "input"
+        },
+        "input_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -287.473022460938,
+                    "y": 701.095825195312
+                }
+            },
+            "name": "h_subdivision",
+            "type": "input"
+        },
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -101.309226989746,
+                    "y": 604.898254394531
+                }
+            },
+            "name": "sphere",
+            "source": "$NODES/cgal/primitives/sphere.psw",
+            "type": "network"
+        },
+        "output_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 20.2673969268799,
+                    "y": 1099.51416015625
+                }
+            },
+            "name": "nef",
+            "type": "output"
+        },
+        "poly_to_nef_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -102.331802368164,
+                    "y": 976.891052246094
+                }
+            },
+            "name": "poly_to_nef",
+            "type": "cgal/csg/poly_to_nef"
+        },
+        "triangulate_faces_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -112.926261901855,
+                    "y": 820.076965332031
+                }
+            },
+            "name": "triangulate_faces",
+            "type": "cgal/topology/triangulate_faces"
+        }
+    },
+    "ports": {
+        "diameter": 1.0,
+        "h_subdivision": 16,
+        "v_subdivision": 8
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
