@@ -26,7 +26,7 @@ struct StaticInitialisation::Pimpl {
 	Pimpl(const Pimpl&) = delete;
 	Pimpl& operator=(const Pimpl&) = delete;
 
-	std::map<std::string, std::function<Data()>> factories;
+	std::map<std::string, std::weak_ptr<const std::function<Data()>>> factories;
 };
 
 namespace {
@@ -57,8 +57,15 @@ StaticInitialisation::StaticInitialisation() {
 StaticInitialisation::~StaticInitialisation() {
 }
 
-void StaticInitialisation::registerDataFactory(const std::string& type, std::function<Data()> fn) {
-	instance().factories.insert(std::make_pair(type, fn));
+FactoryHandle StaticInitialisation::registerDataFactory(const std::string& type, std::function<Data()> fn) {
+	auto it = instance().factories.find(type);
+	if(it != instance().factories.end())
+		return FactoryHandle(it->second.lock());
+
+	std::shared_ptr<const std::function<Data()>> ptr(new std::function<Data()>(fn));
+	instance().factories.insert(std::make_pair(type, ptr));
+
+	return FactoryHandle(ptr);
 }
 
 Data StaticInitialisation::create(const std::string& type) {
@@ -71,7 +78,7 @@ Data StaticInitialisation::create(const std::string& type) {
 		throw std::runtime_error(err.str());
 	}
 
-	return it->second();
+	return it->second.lock()->operator()();
 }
 
 }  // namespace dependency_graph

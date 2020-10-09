@@ -67,7 +67,11 @@ Data makeData<void>() {
 
 template <typename T>
 Data::Factory<T>::Factory() {
-	StaticInitialisation::registerDataFactory(unmangledTypeId<T>(), []() { return makeData<T>(); });
+	m_factoryHandle = StaticInitialisation::registerDataFactory(unmangledTypeId<T>(), []() { return makeData<T>(); });
+}
+
+template <typename T>
+Data::Factory<T>::~Factory() {
 }
 
 ////////////

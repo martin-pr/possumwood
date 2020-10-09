@@ -5,10 +5,9 @@
 #include <memory>
 
 #include "data.h"
+#include "factory_handle.h"
 
 namespace dependency_graph {
-
-class Data;
 
 /// An explicit static data holder, to allow for explicit control over static data destruction order.
 /// This is not a well encapsulated class, but as it is quite internal and not part of the main API, I am leaving it
@@ -18,7 +17,7 @@ class StaticInitialisation {
 	StaticInitialisation();
 	~StaticInitialisation();
 
-	static void registerDataFactory(const std::string& type, std::function<Data()> fn);
+	static FactoryHandle registerDataFactory(const std::string& type, std::function<Data()> fn);
 
 	static Data create(const std::string& type);
 
