@@ -7,6 +7,12 @@
             "out_port": "nef"
         },
         {
+            "in_node": "network_1",
+            "in_port": "diameter",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
             "in_node": "transform_1",
             "in_port": "in_mesh",
             "out_node": "intersection_0",
@@ -15,25 +21,25 @@
         {
             "in_node": "transform_0",
             "in_port": "in_mesh",
-            "out_node": "network_0",
+            "out_node": "network_1",
             "out_port": "nef"
         },
         {
             "in_node": "union_0",
             "in_port": "nef_2",
-            "out_node": "network_0",
+            "out_node": "network_1",
             "out_port": "nef"
         },
         {
             "in_node": "intersection_0",
             "in_port": "nef_2",
-            "out_node": "network_0",
+            "out_node": "network_1",
             "out_port": "nef"
         },
         {
             "in_node": "difference_0",
             "in_port": "nef_2",
-            "out_node": "network_0",
+            "out_node": "network_1",
             "out_port": "nef"
         },
         {
@@ -79,31 +85,13 @@
             "out_port": "nef"
         },
         {
-            "in_node": "network_1",
+            "in_node": "network_0",
             "in_port": "input",
             "out_node": "union_2",
             "out_port": "nef"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "diameter",
-            "out_node": "input_0",
-            "out_port": "data"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "subdivision",
-            "out_node": "input_1",
-            "out_port": "data"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "height",
-            "out_node": "input_2",
-            "out_port": "data"
         }
     ],
-    "description": "",
+    "description": "### CSG in CGAL\n\nCGAL implements CSG (Constructive Solid Geometry) through [Nef Polyhedra](https://doc.cgal.org/latest/Nef_3/index.html), a boundary-representation datastructure that is closed under Boolean set of operations.\n\nThis demo shows how a simple CSG setup can be created in Possumwood. A subnetwork is used to generate a sphere through Lua scripting, and convert it to a Nef polyhedron. This is then used as an input to CSG Boolean operations, result of which is displayed using a conversion to standard CGAL Polyhedron and an OpenGL setup in a subnetwork.",
     "name": "network",
     "nodes": {
         "difference_0": {
@@ -121,33 +109,11 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -24.7976703643799,
-                    "y": 752.905334472656
+                    "x": -6.79766845703125,
+                    "y": 739.905334472656
                 }
             },
             "name": "diameter",
-            "type": "input"
-        },
-        "input_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -24.7976760864258,
-                    "y": 829.875549316406
-                }
-            },
-            "name": "subdivision",
-            "type": "input"
-        },
-        "input_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": -6.68891716003418,
-                    "y": 675.180725097656
-                }
-            },
-            "name": "height",
             "type": "input"
         },
         "intersection_0": {
@@ -165,27 +131,43 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 137.517364501953,
-                    "y": 751.805236816406
+                    "x": 251.976745605469,
+                    "y": 2090.94580078125
                 }
             },
-            "name": "cylinder",
-            "ports": {
-                "center": false
-            },
-            "source": "$NODES/cgal/csg/primitives/cylinder.psw",
+            "name": "draw",
+            "source": "$NODES/cgal/csg/draw.psw",
             "type": "network"
         },
         "network_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 253.592056274414,
-                    "y": 2095.79174804688
+                    "x": 176.68212890625,
+                    "y": 780.473815917969
                 }
             },
-            "name": "draw",
-            "source": "$NODES/cgal/csg/draw.psw",
+            "name": "sphere",
+            "ports": {
+                "h_subdivision": 33,
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "v_subdivision": 16
+            },
+            "source": "$NODES/cgal/csg/primitives/sphere.psw",
             "type": "network"
         },
         "transform_0": {
@@ -199,7 +181,7 @@
             "name": "transform",
             "ports": {
                 "rotation": {
-                    "x": 45.0,
+                    "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
                 },
@@ -237,7 +219,7 @@
                     "z": 1.0
                 },
                 "translation": {
-                    "x": 3.0,
+                    "x": 2.5,
                     "y": 0.0,
                     "z": 0.0
                 }
@@ -265,7 +247,7 @@
                     "z": 1.0
                 },
                 "translation": {
-                    "x": 6.0,
+                    "x": 4.0,
                     "y": 0.0,
                     "z": 0.0
                 }
@@ -307,9 +289,7 @@
         }
     },
     "ports": {
-        "diameter": 2.0,
-        "height": 1.0,
-        "subdivision": 32
+        "diameter": 2.0
     },
     "scene_config": {
         "end_time": 5.0,
@@ -317,6 +297,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGeAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAooAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAoEAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAOsAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAjgAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

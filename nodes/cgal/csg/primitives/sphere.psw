@@ -19,8 +19,8 @@
             "out_port": "data"
         },
         {
-            "in_node": "triangulate_faces_0",
-            "in_port": "input",
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
             "out_node": "network_0",
             "out_port": "mesh"
         },
@@ -35,6 +35,30 @@
             "in_port": "mesh",
             "out_node": "triangulate_faces_0",
             "out_port": "output"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "rotation",
+            "out_node": "input_3",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "scale",
+            "out_node": "input_4",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "translation",
+            "out_node": "input_5",
+            "out_port": "data"
+        },
+        {
+            "in_node": "triangulate_faces_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
         }
     ],
     "description": "",
@@ -73,6 +97,39 @@
             "name": "h_subdivision",
             "type": "input"
         },
+        "input_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -304.226440429688,
+                    "y": 859.212707519531
+                }
+            },
+            "name": "rotation",
+            "type": "input"
+        },
+        "input_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -296.117584228516,
+                    "y": 946.788146972656
+                }
+            },
+            "name": "scale",
+            "type": "input"
+        },
+        "input_5": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -309.091766357422,
+                    "y": 770.015380859375
+                }
+            },
+            "name": "translation",
+            "type": "input"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -89,8 +146,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 20.2673969268799,
-                    "y": 1099.51416015625
+                    "x": 13.6889553070068,
+                    "y": 1318.24731445312
                 }
             },
             "name": "nef",
@@ -100,19 +157,33 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -102.331802368164,
-                    "y": 976.891052246094
+                    "x": -108.91024017334,
+                    "y": 1195.62426757812
                 }
             },
             "name": "poly_to_nef",
             "type": "cgal/csg/poly_to_nef"
         },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -104.703353881836,
+                    "y": 785.981811523438
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        },
         "triangulate_faces_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -112.926261901855,
-                    "y": 820.076965332031
+                    "x": -119.504699707031,
+                    "y": 1038.81018066406
                 }
             },
             "name": "triangulate_faces",
@@ -122,6 +193,21 @@
     "ports": {
         "diameter": 1.0,
         "h_subdivision": 16,
+        "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        },
+        "translation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
         "v_subdivision": 8
     },
     "scene_config": {

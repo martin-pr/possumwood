@@ -19,6 +19,12 @@
             "out_port": "data"
         },
         {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "network_0",
+            "out_port": "mesh"
+        },
+        {
             "in_node": "output_0",
             "in_port": "data",
             "out_node": "poly_to_nef_0",
@@ -27,8 +33,26 @@
         {
             "in_node": "poly_to_nef_0",
             "in_port": "mesh",
-            "out_node": "network_0",
-            "out_port": "mesh"
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "translation",
+            "out_node": "input_3",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "rotation",
+            "out_node": "input_4",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "scale",
+            "out_node": "input_5",
+            "out_port": "data"
         }
     ],
     "description": "",
@@ -67,6 +91,39 @@
             "name": "subdivision",
             "type": "input"
         },
+        "input_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -312.381011962891,
+                    "y": 935.275939941406
+                }
+            },
+            "name": "translation",
+            "type": "input"
+        },
+        "input_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -307.515686035156,
+                    "y": 1024.47326660156
+                }
+            },
+            "name": "rotation",
+            "type": "input"
+        },
+        "input_5": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -299.406829833984,
+                    "y": 1112.04870605469
+                }
+            },
+            "name": "scale",
+            "type": "input"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -83,8 +140,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 20.2673969268799,
-                    "y": 1099.51416015625
+                    "x": 23.5109329223633,
+                    "y": 1337.9140625
                 }
             },
             "name": "nef",
@@ -94,18 +151,47 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -102.331802368164,
-                    "y": 975.478149414062
+                    "x": -99.088264465332,
+                    "y": 1213.87805175781
                 }
             },
             "name": "poly_to_nef",
             "type": "cgal/csg/poly_to_nef"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -111.281791687012,
+                    "y": 969.333068847656
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
         }
     },
     "ports": {
         "diameter": 1.0,
         "height": 1.0,
-        "subdivision": 32
+        "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        },
+        "subdivision": 32,
+        "translation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
     },
     "scene_config": {
         "end_time": 5.0,
