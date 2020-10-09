@@ -37,16 +37,7 @@ const std::type_info& Data::typeinfo() const {
 }
 
 Data Data::create(const std::string& type) {
-	auto it = StaticInitialisation::dataFactories().find(type);
-
-	if(it == StaticInitialisation::dataFactories().end()) {
-		std::stringstream err;
-		err << "Error instantiating type '" << type << "' - no registered factory found (plugin not loaded?)";
-
-		throw std::runtime_error(err.str());
-	}
-
-	return it->second();
+	return StaticInitialisation::create(type);
 }
 
 std::string Data::type() const {

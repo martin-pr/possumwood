@@ -4,6 +4,8 @@
 #include <map>
 #include <memory>
 
+#include "data.h"
+
 namespace dependency_graph {
 
 class Data;
@@ -17,7 +19,8 @@ class StaticInitialisation {
 	~StaticInitialisation();
 
 	static void registerDataFactory(const std::string& type, std::function<Data()> fn);
-	static const std::map<std::string, std::function<Data()>>& dataFactories();
+
+	static Data create(const std::string& type);
 
 	/// Private implementation structure
 	struct Pimpl;

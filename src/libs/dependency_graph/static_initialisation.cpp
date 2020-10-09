@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <sstream>
 #include <string>
 
 namespace dependency_graph {
@@ -60,8 +61,17 @@ void StaticInitialisation::registerDataFactory(const std::string& type, std::fun
 	instance().factories.insert(std::make_pair(type, fn));
 }
 
-const std::map<std::string, std::function<Data()>>& StaticInitialisation::dataFactories() {
-	return instance().factories;
+Data StaticInitialisation::create(const std::string& type) {
+	auto it = instance().factories.find(type);
+
+	if(it == instance().factories.end()) {
+		std::stringstream err;
+		err << "Error instantiating type '" << type << "' - no registered factory found (plugin not loaded?)";
+
+		throw std::runtime_error(err.str());
+	}
+
+	return it->second();
 }
 
 }  // namespace dependency_graph
