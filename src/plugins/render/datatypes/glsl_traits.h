@@ -7,8 +7,8 @@
 
 #include <GL/gl.h>
 
-#include <ImathMatrix.h>
-#include <ImathVec.h>
+#include <OpenEXR/ImathMatrix.h>
+#include <OpenEXR/ImathVec.h>
 
 namespace possumwood {
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ImathMatrix.h>
+#include <OpenEXR/ImathMatrix.h>
 #include <possumwood_sdk/gl_renderable.h>
 
 #include <boost/noncopyable.hpp>

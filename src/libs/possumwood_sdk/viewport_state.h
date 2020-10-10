@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ImathMatrix.h>
+#include <OpenEXR/ImathMatrix.h>
 
 namespace possumwood {
 

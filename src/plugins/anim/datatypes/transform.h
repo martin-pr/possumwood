@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ImathQuat.h>
-#include <ImathVec.h>
+#include <OpenEXR/ImathQuat.h>
+#include <OpenEXR/ImathVec.h>
 
 #include <iostream>
 

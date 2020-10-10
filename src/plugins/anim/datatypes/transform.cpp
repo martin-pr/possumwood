@@ -1,6 +1,6 @@
 #include "transform.h"
 
-#include <ImathMatrixAlgo.h>
+#include <OpenEXR/ImathMatrixAlgo.h>
 
 #include <cmath>
 

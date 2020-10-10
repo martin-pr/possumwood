@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include <GL/glu.h>
-#include <ImathVec.h>
+#include <OpenEXR/ImathVec.h>
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/node_implementation.h>
 

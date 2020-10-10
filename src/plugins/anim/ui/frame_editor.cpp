@@ -1,6 +1,6 @@
 #include "frame_editor.h"
 
-#include <ImathEuler.h>
+#include <OpenEXR/ImathEuler.h>
 
 #include <QComboBox>
 #include <QDoubleSpinBox>

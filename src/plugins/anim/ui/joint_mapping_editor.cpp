@@ -1,6 +1,6 @@
 #include "joint_mapping_editor.h"
 
-#include <ImathEuler.h>
+#include <OpenEXR/ImathEuler.h>
 
 #include <QComboBox>
 #include <QHeaderView>

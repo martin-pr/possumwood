@@ -1,4 +1,4 @@
-#include <ImathEuler.h>
+#include <OpenEXR/ImathEuler.h>
 #include <anim/datatypes/transform.h>
 
 #include <boost/test/unit_test.hpp>

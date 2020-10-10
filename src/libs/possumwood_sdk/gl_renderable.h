@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ImathMatrix.h>
-#include <ImathVec.h>
+#include <OpenEXR/ImathMatrix.h>
+#include <OpenEXR/ImathVec.h>
 
 #include <boost/noncopyable.hpp>
 #include <map>

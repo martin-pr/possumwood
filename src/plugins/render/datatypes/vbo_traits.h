@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ImathVec.h>
+#include <OpenEXR/ImathVec.h>
 
 #include <array>
 

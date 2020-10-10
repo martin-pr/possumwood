@@ -1,4 +1,4 @@
-#include <ImathMatrixAlgo.h>
+#include <OpenEXR/ImathMatrixAlgo.h>
 #include <actions/io.h>
 #include <possumwood_sdk/datatypes/filename.h>
 #include <possumwood_sdk/node_implementation.h>
