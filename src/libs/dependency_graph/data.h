@@ -9,6 +9,7 @@
 #include <type_traits>
 
 #include "data_traits.h"
+#include "factory_handle.h"
 
 namespace dependency_graph {
 
@@ -52,6 +53,9 @@ class Data {
 	template <typename T>
 	struct Factory {
 		Factory();
+		~Factory();
+
+		FactoryHandle m_factoryHandle;
 	};
 
 	struct Holder {

@@ -2,66 +2,48 @@
 
 #include <algorithm>
 #include <cassert>
+#include <sstream>
 #include <string>
 
 namespace dependency_graph {
 
 namespace {
-StaticInitialisation::Pimpl* s_currentInstance = nullptr;
-}
 
-/// Private implementation - only one instance can exist at any point
-struct StaticInitialisation::Pimpl {
-	Pimpl() {
-		assert(s_currentInstance == nullptr);
-		s_currentInstance = this;
-	}
-
-	~Pimpl() {
-		assert(s_currentInstance == this);
-		s_currentInstance = nullptr;
-	}
-
-	Pimpl(const Pimpl&) = delete;
-	Pimpl& operator=(const Pimpl&) = delete;
-
-	std::map<std::string, std::function<Data()>> factories;
-};
-
-namespace {
-/// static Pimpl instance, if the Static initialisation class is not used explicitly - automagically created
-std::unique_ptr<StaticInitialisation::Pimpl> s_pimpl;
+typedef std::map<std::string, std::weak_ptr<const std::function<Data()>>> Factories;
 
 /// returns a valid instance - either explicitly created, or implicit
-StaticInitialisation::Pimpl& instance() {
-	if(s_currentInstance != nullptr)
-		return *s_currentInstance;
+Factories& factories() {
+	static std::unique_ptr<Factories> s_factories;
+	if(s_factories == nullptr)
+		s_factories = std::unique_ptr<Factories>(new Factories());
 
-	s_pimpl = std::unique_ptr<StaticInitialisation::Pimpl>(new StaticInitialisation::Pimpl());
-	assert(s_pimpl.get() == s_currentInstance);
-
-	return *s_currentInstance;
+	return *s_factories;
 };
+
 }  // namespace
 
-StaticInitialisation::StaticInitialisation() {
-	if(s_pimpl.get() != nullptr)
-		m_pimpl = std::move(s_pimpl);
-	else
-		m_pimpl = std::unique_ptr<Pimpl>(new Pimpl());
+FactoryHandle StaticInitialisation::registerDataFactory(const std::string& type, std::function<Data()> fn) {
+	auto it = factories().find(type);
+	if(it != factories().end())
+		return FactoryHandle(it->second.lock());
 
-	assert(m_pimpl.get() == s_currentInstance);
+	std::shared_ptr<const std::function<Data()>> ptr(new std::function<Data()>(fn));
+	factories().insert(std::make_pair(type, ptr));
+
+	return FactoryHandle(ptr);
 }
 
-StaticInitialisation::~StaticInitialisation() {
-}
+Data StaticInitialisation::create(const std::string& type) {
+	auto it = factories().find(type);
 
-void StaticInitialisation::registerDataFactory(const std::string& type, std::function<Data()> fn) {
-	instance().factories.insert(std::make_pair(type, fn));
-}
+	if(it == factories().end()) {
+		std::stringstream err;
+		err << "Error instantiating type '" << type << "' - no registered factory found (plugin not loaded?)";
 
-const std::map<std::string, std::function<Data()>>& StaticInitialisation::dataFactories() {
-	return instance().factories;
+		throw std::runtime_error(err.str());
+	}
+
+	return it->second.lock()->operator()();
 }
 
 }  // namespace dependency_graph
