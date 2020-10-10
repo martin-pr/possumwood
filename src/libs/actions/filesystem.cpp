@@ -50,20 +50,23 @@ Filesystem::Filesystem() {
 	// resolving paths from possumwood.conf
 
 	boost::filesystem::path conf_path;
+	std::vector<boost::filesystem::path> inspected_paths;
 
 	// conf path can be explicitly defined during the build (at which point we just use it)
 #ifdef POSSUMWOOD_CONF_PATH
-	conf_path = boost::filesystem::path(TOSTRING(POSSUMWOOD_CONF_PATH));
+	    conf_path = boost::filesystem::path(TOSTRING(POSSUMWOOD_CONF_PATH));
 
 	conf_path = expandEnvvars(conf_path);
+	inspected_paths.push_back(conf_path);
 
-	// however, if that path doesn't exist (for development only)
-	if(!boost::filesystem::exists(conf_path)) {
+	    // however, if that path doesn't exist (for development only)
+	    if(!boost::filesystem::exists(conf_path)) {
 #endif
 
 		// find the config file in the current or parent directories
 		conf_path = boost::filesystem::path(boost::filesystem::current_path());
 		while(!conf_path.empty()) {
+			inspected_paths.push_back(conf_path);
 			if(boost::filesystem::exists(conf_path / "possumwood.conf")) {
 				conf_path = conf_path / "possumwood.conf";
 				break;
@@ -122,8 +125,11 @@ Filesystem::Filesystem() {
 			}
 		}
 	}
-	else
-		std::cout << "Warning: configuration file 'possumwood.conf' not found!" << std::endl;
+	else {
+		std::cout << "Warning: configuration file 'possumwood.conf' not found! Inspected paths (" << inspected_paths.size() << "):" << std::endl;
+		for(auto& p : inspected_paths)
+			std::cout << "  - " << p << std::endl;
+	}
 }
 
 boost::filesystem::path Filesystem::expandPath(const Filepath& path) const {
