@@ -74,6 +74,7 @@ std::unique_ptr<std::istream> FilesystemMock::read(const Filepath& path) {
 }
 
 std::unique_ptr<std::ostream> FilesystemMock::write(const Filepath& path) {
+	m_content[path].clear();
 	return std::unique_ptr<std::ostream>(new boost::iostreams::stream<Sink>(m_content[path]));
 }
 

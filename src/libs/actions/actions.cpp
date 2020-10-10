@@ -102,8 +102,8 @@ possumwood::io::json writeNode(const dependency_graph::NodeBase& n) {
 		const dependency_graph::Port& p = n.port(pi);
 
 		// only serialize unconnected inputs
-		if(p.category() == dependency_graph::Attr::kInput && ((n.hasParentNetwork() &&
-		   !n.network().connections().connectedFrom(p)) || !n.hasParentNetwork()))
+		if(p.category() == dependency_graph::Attr::kInput &&
+		   ((n.hasParentNetwork() && !n.network().connections().connectedFrom(p)) || !n.hasParentNetwork()))
 			if(!n.datablock().isNull(pi) && dependency_graph::io::isSaveable(n.datablock().data(pi)))
 				io::toJson(j["ports"][p.name()], n.datablock().data(pi));
 	}
@@ -321,17 +321,23 @@ dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action,
 		}
 	}
 
+	// and add the "source" if any, with a compressed filepath
+	if(_source.find("source") != _source.end() && !(flags & kRoot)) {
+		action.append(detail::setSourceAction(
+		    targetIndex, possumwood::Filepath::fromString(_source["source"].get<std::string>()).toString()));
+	}
+
 	// and another action to set all port values based on the json content
 	//   -> as the network doesn't exist yet, we can't interpret the types
 	if(source->find("ports") != source->end())
 		for(possumwood::io::json::const_iterator pi = (*source)["ports"].begin(); pi != (*source)["ports"].end(); ++pi)
 			action.append(detail::setValueAction(targetIndex, pi.key(), pi.value()));
 
-	// and add the "source" if any, with a compressed filepath
-	if(_source.find("source") != _source.end() && !(flags & kRoot)) {
-		action.append(detail::setSourceAction(
-		    targetIndex, possumwood::Filepath::fromString(_source["source"].get<std::string>()).toString()));
-	}
+	// finally, overwrite any of the ports in the original source with new values that might be present in the
+	// referencing file
+	if(_source.find("ports") != _source.end())
+		for(possumwood::io::json::const_iterator pi = _source["ports"].begin(); pi != _source["ports"].end(); ++pi)
+			action.append(detail::setValueAction(targetIndex, pi.key(), pi.value()));
 
 	return state;
 }

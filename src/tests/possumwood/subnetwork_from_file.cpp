@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(network_from_file) {
 	       {{"in_node", "output_0"}, {"in_port", "data"}, {"out_node", "pass_through_0"}, {"out_port", "output"}}}},
 	     {"name", "network"},
 	     {"type", "network"}});
-	subnetwork["ports"]["this_is_an_input"] = 8.0f;
+	subnetwork["ports"]["this_is_an_input"] = 88.0f;
 
 	(*filesystem->write(possumwood::Filepath::fromString("subnetwork_only.psw"))) << subnetwork;
 
@@ -106,30 +106,27 @@ BOOST_AUTO_TEST_CASE(network_from_file) {
 	//////////////
 	// make a copy of that setup and try to set the source attribute - represents a network coming
 	// from another file
-	{
-		json setup;
-		BOOST_REQUIRE_NO_THROW(setup = json({{"nodes",
-		                                      {{"network_0",
-		                                        {{"name", "network"},
-		                                         {"type", "network"},
-		                                         {"source", "subnetwork_only.psw"},
-		                                         {"ports", {{"this_is_an_input", 8.0}}}}}}},
-		                                     {"connections", std::vector<std::string>()},
-		                                     {"name", "network"},
-		                                     {"type", "network"}}));
+	json setup;
+	BOOST_REQUIRE_NO_THROW(setup = json({{"nodes",
+	                                      {{"network_0",
+	                                        {{"name", "network"},
+	                                         {"type", "network"},
+	                                         {"source", "subnetwork_only.psw"},
+	                                         {"ports", {{"this_is_an_input", 8.0}}}}}}},
+	                                     {"connections", std::vector<std::string>()},
+	                                     {"name", "network"},
+	                                     {"type", "network"}}));
 
-		(*filesystem->write(possumwood::Filepath::fromString("setup_without_subnetwork.psw"))) << setup;
+	(*filesystem->write(possumwood::Filepath::fromString("setup_without_subnetwork.psw"))) << setup;
 
-		BOOST_REQUIRE_NO_THROW(state = app.loadFile(possumwood::Filepath::fromString("setup_without_subnetwork.psw")));
-		BOOST_REQUIRE(!state.errored());
+	BOOST_REQUIRE_NO_THROW(state = app.loadFile(possumwood::Filepath::fromString("setup_without_subnetwork.psw")));
+	BOOST_REQUIRE(!state.errored());
 
-		// lets make sure this loads and saves correctly
-		BOOST_REQUIRE_NO_THROW(
-		    app.saveFile(possumwood::Filepath::fromString("setup_without_subnetwork_too.psw"), false));
-		BOOST_CHECK_EQUAL(readJson(*filesystem, "setup_without_subnetwork_too.psw"), setup);
+	// lets make sure this loads and saves correctly
+	BOOST_REQUIRE_NO_THROW(app.saveFile(possumwood::Filepath::fromString("setup_without_subnetwork_too.psw"), false));
+	BOOST_CHECK_EQUAL(readJson(*filesystem, "setup_without_subnetwork_too.psw"), setup);
 
-		BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("setup_without_subnetwork_too.psw")));
-	}
+	BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("setup_without_subnetwork_too.psw")));
 
 	// check that we can set values on the network
 	auto& net = findNode("network").as<dependency_graph::Network>();
@@ -143,4 +140,18 @@ BOOST_AUTO_TEST_CASE(network_from_file) {
 	BOOST_CHECK_NO_THROW(net.port(0).set(5.0f));
 	BOOST_CHECK_EQUAL(net.port(0).get<float>(), 5.0f);
 	BOOST_CHECK_EQUAL(net.port(1).get<float>(), 5.0f);
+
+	// lets make sure this loads and saves correctly
+	setup["nodes"]["network_0"]["ports"]["this_is_an_input"] = 5.0f;
+
+	BOOST_REQUIRE_NO_THROW(
+	    app.saveFile(possumwood::Filepath::fromString("setup_without_subnetwork_changed.psw"), false));
+	BOOST_CHECK_EQUAL(readJson(*filesystem, "setup_without_subnetwork_changed.psw"), setup);
+
+	// one last cycle - overwriting a file should not be a problem either
+	BOOST_REQUIRE_NO_THROW(app.loadFile(possumwood::Filepath::fromString("setup_without_subnetwork.psw")));
+	BOOST_REQUIRE_NO_THROW(
+	    app.saveFile(possumwood::Filepath::fromString("setup_without_subnetwork_changed.psw"), false));
+	setup["nodes"]["network_0"]["ports"]["this_is_an_input"] = 8.0f;
+	BOOST_CHECK_EQUAL(readJson(*filesystem, "setup_without_subnetwork_changed.psw"), setup);
 }
