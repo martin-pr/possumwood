@@ -59,27 +59,31 @@ class FaceAdaptor {
 	}
 
   public:
-	explicit FaceAdaptor(const std::vector<Face>* faces) : m_faces(faces) {
+	explicit FaceAdaptor(const std::vector<Face>* faces) : m_faces(faces->data()), m_size(faces->size()) {
+		assert(faces != nullptr);
+		assert((m_faces == nullptr && m_size == 0) || (m_faces != nullptr && m_size > 0));
 	}
 
-	typedef boost::
-	    transform_iterator<std::function<Vertices(const Face&)>, std::vector<Face>::const_iterator, Vertices, Vertices>
-	        const_iterator;
+	typedef boost::transform_iterator<std::function<Vertices(const Face&)>, const Face*, Vertices, Vertices>
+	    const_iterator;
 
 	const_iterator begin() const {
-		return const_iterator(m_faces->begin(), convert);
+		assert(m_faces != nullptr);
+		return const_iterator(m_faces, convert);
 	}
 
 	const_iterator end() const {
-		return const_iterator(m_faces->end(), convert);
+		assert(m_faces != nullptr);
+		return const_iterator(m_faces + m_size, convert);
 	}
 
 	std::size_t size() const {
-		return m_faces->size();
+		return m_size;
 	}
 
   private:
-	const std::vector<Face>* m_faces;
+	const Face* m_faces;
+	std::size_t m_size;
 };
 
 std::istream& operator>>(std::istream& in, FaceIndex& f) {
