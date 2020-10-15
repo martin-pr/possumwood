@@ -1,0 +1,86 @@
+{
+    "connections": [
+        {
+            "in_node": "draw_0",
+            "in_port": "vertex_data",
+            "out_node": "cgal_0",
+            "out_port": "vertex_data"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "nef_to_poly_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "nef_to_poly_0",
+            "in_port": "nef",
+            "out_node": "input_0",
+            "out_port": "data"
+        }
+    ],
+    "description": "(empty description)",
+    "name": "network",
+    "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -65.2648162841797,
+                    "y": 865.778991699219
+                }
+            },
+            "name": "cgal",
+            "ports": {
+                "p_attr_name": "P"
+            },
+            "type": "render/vertex_data/cgal"
+        },
+        "draw_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 105.648765563965,
+                    "y": 861.792053222656
+                }
+            },
+            "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
+            "type": "render/draw"
+        },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -124.646255493164,
+                    "y": 621.324462890625
+                }
+            },
+            "name": "input",
+            "type": "input"
+        },
+        "nef_to_poly_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -64.8595581054688,
+                    "y": 739.040710449219
+                }
+            },
+            "name": "nef_to_poly",
+            "type": "cgal/csg/nef_to_poly"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALYAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAikAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

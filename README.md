@@ -410,7 +410,7 @@ This demo shows a simple implementation of this technique.
 
 #### OBJ file loading
 
-This simple demo shows how to load an object from `.obj` file, and display it in the viewport.
+This simple demo shows how to load an object from .obj file, and display it in the viewport.
 
 The display code is contained in a subnetwork (double click the blue node to "enter" it), and is based on a trivial implementation of a vertex and fragment OpenGL shader.
 </td> 
@@ -477,6 +477,26 @@ This demo shows how to use [CGAL's implementation of mesh decimation](https://do
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 <img src="toolbars/02_polymesh/10_cgal_decimation_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/20_csg.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### CSG in CGAL
+
+CGAL implements CSG (Constructive Solid Geometry) through [Nef Polyhedra](https://doc.cgal.org/latest/Nef_3/index.html), a boundary-representation datastructure that is closed under Boolean set of operations.
+
+This demo shows how a simple CSG setup can be created in Possumwood. A subnetwork is used to generate a sphere through Lua scripting, and convert it to a Nef polyhedron. This is then used as an input to CSG Boolean operations, result of which is displayed using a conversion to standard CGAL Polyhedron and an OpenGL setup in a subnetwork.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/20_csg_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -2415,6 +2435,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 

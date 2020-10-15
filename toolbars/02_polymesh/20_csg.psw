@@ -1,0 +1,302 @@
+{
+    "connections": [
+        {
+            "in_node": "transform_2",
+            "in_port": "in_mesh",
+            "out_node": "difference_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "network_1",
+            "in_port": "diameter",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_mesh",
+            "out_node": "intersection_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "network_1",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "union_0",
+            "in_port": "nef_2",
+            "out_node": "network_1",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "intersection_0",
+            "in_port": "nef_2",
+            "out_node": "network_1",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "difference_0",
+            "in_port": "nef_2",
+            "out_node": "network_1",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "union_0",
+            "in_port": "nef_1",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "intersection_0",
+            "in_port": "nef_1",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "difference_0",
+            "in_port": "nef_1",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "union_1",
+            "in_port": "nef_2",
+            "out_node": "transform_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "union_2",
+            "in_port": "nef_2",
+            "out_node": "transform_2",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "union_1",
+            "in_port": "nef_1",
+            "out_node": "union_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "union_2",
+            "in_port": "nef_1",
+            "out_node": "union_1",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "input",
+            "out_node": "union_2",
+            "out_port": "nef"
+        }
+    ],
+    "description": "### CSG in CGAL\n\nCGAL implements CSG (Constructive Solid Geometry) through [Nef Polyhedra](https://doc.cgal.org/latest/Nef_3/index.html), a boundary-representation datastructure that is closed under Boolean set of operations.\n\nThis demo shows how a simple CSG setup can be created in Possumwood. A subnetwork is used to generate a sphere through Lua scripting, and convert it to a Nef polyhedron. This is then used as an input to CSG Boolean operations, result of which is displayed using a conversion to standard CGAL Polyhedron and an OpenGL setup in a subnetwork.",
+    "name": "network",
+    "nodes": {
+        "difference_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 315.074981689453,
+                    "y": 1355.05712890625
+                }
+            },
+            "name": "difference",
+            "type": "cgal/csg/operations/difference"
+        },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -6.79766845703125,
+                    "y": 739.905334472656
+                }
+            },
+            "name": "diameter",
+            "type": "input"
+        },
+        "intersection_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 156.951522827148,
+                    "y": 1351.3095703125
+                }
+            },
+            "name": "intersection",
+            "type": "cgal/csg/operations/intersection"
+        },
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 251.976745605469,
+                    "y": 2090.94580078125
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/csg/draw.psw",
+            "type": "network"
+        },
+        "network_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 176.68212890625,
+                    "y": 780.473815917969
+                }
+            },
+            "name": "sphere",
+            "ports": {
+                "h_subdivision": 33,
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "v_subdivision": 16
+            },
+            "source": "$NODES/cgal/csg/primitives/sphere.psw",
+            "type": "network"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -98.3035202026367,
+                    "y": 1113.04919433594
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/csg/transform"
+        },
+        "transform_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 152.157211303711,
+                    "y": 1507.216796875
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 2.5,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/csg/transform"
+        },
+        "transform_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 343.082183837891,
+                    "y": 1505.16381835938
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 4.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/csg/transform"
+        },
+        "union_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 3.24742531776428,
+                    "y": 1353.80541992188
+                }
+            },
+            "name": "union",
+            "type": "cgal/csg/operations/union"
+        },
+        "union_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 50.4654312133789,
+                    "y": 1743.8671875
+                }
+            },
+            "name": "union",
+            "type": "cgal/csg/operations/union"
+        },
+        "union_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 222.913803100586,
+                    "y": 1945.05700683594
+                }
+            },
+            "name": "union",
+            "type": "cgal/csg/operations/union"
+        }
+    },
+    "ports": {
+        "diameter": 2.0
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAOsAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAjgAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

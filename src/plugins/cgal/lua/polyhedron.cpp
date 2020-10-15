@@ -1,6 +1,7 @@
 #include "polyhedron.h"
 
 #include "builder.h"
+#include "errors.h"
 
 namespace possumwood {
 namespace cgal {
@@ -31,9 +32,28 @@ PolyhedronWrapper::operator Meshes() const {
 	Meshes result;
 	Mesh::MeshData& mesh = result.addMesh(m_name);
 
-	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(m_points), typeof(m_faces)> builder(m_points,
-	                                                                                                           m_faces);
-	mesh.polyhedron().delegate(builder);
+	{
+		ScopedOutputRedirect redirect;
+		dependency_graph::State state;
+
+		try {
+			possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(m_points), typeof(m_faces)>
+				builder(m_points, m_faces);
+			mesh.polyhedron().delegate(builder);
+		}
+		catch(std::exception& exc) {
+			state.addError(exc.what());
+		}
+
+		state.append(redirect.state());
+
+		if(state.errored()) {
+			std::stringstream err;
+			err << state;
+
+			throw std::runtime_error(err.str());
+		}
+	}
 
 	return result;
 }
