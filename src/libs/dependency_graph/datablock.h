@@ -17,14 +17,6 @@ class Datablock {
   public:
 	Datablock(const MetadataHandle& meta);
 
-	template <typename T>
-	const T& get(size_t index) const;
-
-	template <typename T>
-	void set(size_t index, T value);
-
-	void set(size_t index, const Port& port);
-
 	void reset(size_t index);
 
 	const Data& data(size_t index) const;

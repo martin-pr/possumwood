@@ -40,19 +40,6 @@ bool Datablock::isNull(std::size_t index) const {
 	return m_data[index].typeinfo() == typeid(void);
 }
 
-void Datablock::set(size_t index, const Port& port) {
-	assert(m_data.size() > index);
-
-	// void instances handling - make a new instance if needed
-	if(m_data[index].typeinfo() == typeid(void))
-		m_data[index] = port.node().datablock().m_data[port.index()];
-	assert(m_data[index].typeinfo() != typeid(void));
-
-	// and assign the value
-	assert(m_data[index].type() == dependency_graph::unmangledTypeId(port.type()));
-	m_data[index] = port.node().datablock().m_data[port.index()];
-}
-
 void Datablock::reset(size_t index) {
 	assert(m_data.size() > index);
 	m_data[index] = m_meta.metadata().attr(index).createData();

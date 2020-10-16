@@ -1,6 +1,6 @@
+#include <dependency_graph/datablock.h>
 #include <boost/test/unit_test.hpp>
 #include <dependency_graph/attr.inl>
-#include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata.inl>
 
 #include "common.h"
@@ -12,12 +12,12 @@ class Node {
   public:
 	template <typename T>
 	static void setInput(const InAttr<T>& attr, Datablock& data, typename std::remove_reference<T>::type&& value) {
-		data.set(attr.offset(), std::move(value));
+		data.setData(attr.offset(), Data(std::move(value)));
 	}
 
 	template <typename T>
 	static const T& getOutput(const OutAttr<T>& attr, const Datablock& data) {
-		return data.get<T>(attr.offset());
+		return data.data(attr.offset()).template get<T>();
 	}
 };
 
@@ -66,12 +66,12 @@ BOOST_AUTO_TEST_CASE(datablock_read_and_write) {
 
 	// PODs
 	{
-		BOOST_CHECK(data.get<float>(in1.offset()) != 33.0f);
+		BOOST_CHECK(data.data(in1.offset()).get<float>() != 33.0f);
 		BOOST_REQUIRE_NO_THROW(Node::setInput(in1, data, 33.0f));
-		BOOST_CHECK_EQUAL(data.get<float>(in1.offset()), 33.0f);
+		BOOST_CHECK_EQUAL(data.data(in1.offset()).get<float>(), 33.0f);
 
 		BOOST_CHECK(Node::getOutput(out1, data) != 22.0f);
-		BOOST_REQUIRE_NO_THROW(data.set(out1.offset(), 22.0f));
+		BOOST_REQUIRE_NO_THROW(data.setData(out1.offset(), Data(22.0f)));
 		BOOST_CHECK_EQUAL(Node::getOutput(out1, data), 22.0f);
 	}
 
@@ -80,15 +80,15 @@ BOOST_AUTO_TEST_CASE(datablock_read_and_write) {
 		TestStruct test1;
 		const unsigned val1 = test1.id;
 
-		BOOST_CHECK(data.get<TestStruct>(in2.offset()).id != val1);
+		BOOST_CHECK(data.data(in2.offset()).get<TestStruct>().id != val1);
 		BOOST_REQUIRE_NO_THROW(Node::setInput(in2, data, std::move(test1)));
-		BOOST_CHECK_EQUAL(data.get<TestStruct>(in2.offset()).id, val1);
+		BOOST_CHECK_EQUAL(data.data(in2.offset()).get<TestStruct>().id, val1);
 
 		TestStruct test2;
 		const unsigned val2 = test2.id;
 
 		BOOST_CHECK(Node::getOutput(out2, data).id != val2);
-		BOOST_REQUIRE_NO_THROW(data.set(out2.offset(), std::move(test2)));
+		BOOST_REQUIRE_NO_THROW(data.setData(out2.offset(), Data(std::move(test2))));
 		BOOST_CHECK_EQUAL(Node::getOutput(out2, data).id, val2);
 	}
 
@@ -97,15 +97,15 @@ BOOST_AUTO_TEST_CASE(datablock_read_and_write) {
 		NoncopyableStruct test1;
 		const unsigned val1 = test1.id;
 
-		BOOST_CHECK(data.get<NoncopyableStruct>(in3.offset()).id != val1);
+		BOOST_CHECK(data.data(in3.offset()).get<NoncopyableStruct>().id != val1);
 		BOOST_REQUIRE_NO_THROW(Node::setInput(in3, data, std::move(test1)));
-		BOOST_CHECK_EQUAL(data.get<NoncopyableStruct>(in3.offset()).id, val1);
+		BOOST_CHECK_EQUAL(data.data(in3.offset()).get<NoncopyableStruct>().id, val1);
 
 		NoncopyableStruct test2;
 		const unsigned val2 = test2.id;
 
 		BOOST_CHECK(Node::getOutput(out3, data).id != val2);
-		BOOST_REQUIRE_NO_THROW(data.set(out3.offset(), std::move(test2)));
+		BOOST_REQUIRE_NO_THROW(data.setData(out3.offset(), Data(std::move(test2))));
 		BOOST_CHECK_EQUAL(Node::getOutput(out3, data).id, val2);
 	}
 }

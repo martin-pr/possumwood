@@ -4,7 +4,6 @@
 
 #include <boost/test/unit_test.hpp>
 #include <dependency_graph/attr.inl>
-#include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata.inl>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/port.inl>

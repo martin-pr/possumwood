@@ -1,7 +1,5 @@
 #include <boost/test/unit_test.hpp>
 #include <dependency_graph/attr.inl>
-#include <dependency_graph/datablock.inl>
-#include <dependency_graph/metadata.inl>
 
 #include "common.h"
 

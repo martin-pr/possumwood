@@ -1,7 +1,6 @@
 #include <dependency_graph/graph.h>
 
 #include <boost/test/unit_test.hpp>
-#include <dependency_graph/datablock.inl>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/port.inl>

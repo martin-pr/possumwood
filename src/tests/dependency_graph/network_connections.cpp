@@ -3,7 +3,6 @@
 #include <dependency_graph/node.h>
 
 #include <boost/test/unit_test.hpp>
-#include <dependency_graph/datablock.inl>
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
 #include <dependency_graph/port.inl>
@@ -15,7 +14,8 @@ using namespace dependency_graph;
 
 namespace {
 
-bool checkNodes(const Network& g, std::vector<NodeBase*> nodes,
+bool checkNodes(const Network& g,
+                std::vector<NodeBase*> nodes,
                 dependency_graph::Nodes::SearchType st = dependency_graph::Nodes::kThisNetwork) {
 	auto it1 = g.nodes().begin(st);
 	auto it2 = nodes.begin();

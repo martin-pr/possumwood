@@ -269,7 +269,7 @@ void NodeBase::computeOutput(size_t index) {
 
 			// initialise using default of the FIRST connected port (arbitrary choice, but whatever)
 			else
-				datablock().set(index, conn.begin()->get());
+				datablock().setData(index, conn.begin()->get().getData());
 		}
 	}
 

@@ -243,12 +243,12 @@ void Port::connect(Port& p) {
 
 		// if the "input" is void acc to the metadata, we need to initialise its datablock
 		if(p.node().metadata()->attr(p.index()).type() == typeid(void))
-			p.node().datablock().set(p.index(), *this);
+			p.node().datablock().setData(p.index(), getData());
 		assert(not p.node().datablock().isNull(p.index()));
 
 		// or, if the "output" is void, we need to initialise its datablock
 		if(node().metadata()->attr(index()).type() == typeid(void))
-			node().datablock().set(index(), p);
+			node().datablock().setData(index(), p.getData());
 		assert(not node().datablock().isNull(index()));
 	}
 

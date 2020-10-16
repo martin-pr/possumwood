@@ -27,7 +27,6 @@
 #include <possumwood_sdk/app.h>
 #include <possumwood_sdk/gl.h>
 #include <dependency_graph/attr.inl>
-#include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata.inl>
 #include <dependency_graph/node_base.inl>
 
