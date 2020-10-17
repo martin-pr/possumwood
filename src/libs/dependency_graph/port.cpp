@@ -244,12 +244,10 @@ void Port::connect(Port& p) {
 		// if the "input" is void acc to the metadata, we need to initialise its datablock
 		if(p.node().metadata()->attr(p.index()).type() == typeid(void))
 			p.node().datablock().setData(p.index(), getData());
-		assert(not p.node().datablock().isNull(p.index()));
 
 		// or, if the "output" is void, we need to initialise its datablock
 		if(node().metadata()->attr(index()).type() == typeid(void))
 			node().datablock().setData(index(), p.getData());
-		assert(not node().datablock().isNull(index()));
 	}
 
 	// and mark the "connected to" as dirty - will most likely need recomputation

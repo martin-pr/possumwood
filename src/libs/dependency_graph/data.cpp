@@ -37,6 +37,7 @@ const std::type_info& Data::typeinfo() const {
 }
 
 Data Data::create(const std::string& type) {
+	assert(type != typeid(void).name());
 	return StaticInitialisation::create(type);
 }
 

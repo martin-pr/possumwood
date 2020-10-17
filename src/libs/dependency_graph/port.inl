@@ -13,6 +13,9 @@ void Port::set(const T& value) {
 
 template <typename T>
 void Port::set(T&& value) {
+	if(type() == typeid(void))
+		throw std::runtime_error("Attempting to directly set a void port");
+
 	setData(dependency_graph::Data(std::move(value)));
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <iostream>
 #include <sstream>
 
 #include "data.h"
@@ -36,6 +37,8 @@ const T& Data::get() const {
 template <typename T>
 void Data::set(const T& val) {
 	assert(std::string(typeid(T).name()) == std::string(typeinfo().name()));
+	static_assert((not std::is_same<T, void>::value) && not std::is_same<T, std::nullptr_t>::value,
+	              "Void TypeHolder is not valid");
 
 	T tmp = val;
 	m_data = std::shared_ptr<const Holder>(
@@ -45,6 +48,8 @@ void Data::set(const T& val) {
 template <typename T>
 void Data::set(T&& val) {
 	assert(std::string(typeid(T).name()) == std::string(typeinfo().name()));
+	static_assert((not std::is_same<T, void>::value) && not std::is_same<T, std::nullptr_t>::value,
+	              "Void TypeHolder is not valid");
 
 	m_data = std::shared_ptr<const Holder>(
 	    new TypedHolder<typename std::remove_reference<typename std::remove_const<T>::type>::type>(std::move(val)));
@@ -78,6 +83,8 @@ Data::Factory<T>::~Factory() {
 
 template <typename T>
 Data::TypedHolder<T>::TypedHolder(T&& d) : data(std::move(d)) {
+	static_assert((not std::is_same<T, void>::value) && not std::is_same<T, std::nullptr_t>::value,
+	              "Void TypeHolder is not valid");
 }
 
 template <typename T>

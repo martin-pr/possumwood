@@ -225,9 +225,7 @@ void NodeBase::computeOutput(size_t index) {
 		// pull on all inputs - triggers their recomputation
 		for(std::size_t& i : inputs) {
 			if(port(i).isDirty())
-				port(i).getData();  // throw away (bad! should eventually start using shader_ptr to hold data to avoid
-				                    // wasting resources)
-
+				port(i).getData();
 			assert(!port(i).isDirty());
 		}
 
@@ -238,6 +236,7 @@ void NodeBase::computeOutput(size_t index) {
 	}
 	catch(std::exception& e) {
 		result.addError(e.what());
+		assert(result.errored());
 	}
 
 	// mark as not dirty
@@ -248,11 +247,13 @@ void NodeBase::computeOutput(size_t index) {
 	std::string error_to_throw;
 	if(result.errored()) {
 		// non-void - default value comes from metadata
-		if(metadata()->attr(index).type() != typeid(void))
+		if(metadata()->attr(index).type() != typeid(void)) {
 			datablock().reset(index);
+		}
 		// void - default comes from the default of the connected port
 		else {
 			auto conn = network().connections().connectedTo(port(index));
+
 			if(conn.empty()) {
 				std::stringstream err;
 				err << "Error evaluating " << name() << "/" << port(index).name()
@@ -261,10 +262,7 @@ void NodeBase::computeOutput(size_t index) {
 				// throw an exception later, after all other state handling is finished
 				error_to_throw = err.str();
 
-				// WARNING - as no default value can be set at this stage, the ORIGINAL value
-				// on the port is kept. As this exception should not be thrown during normal
-				// runtime (it is used in tests, and can be triggered with bad graph handling),
-				// this should not pose a problem. Famous last words.
+				datablock().setData(index, Data());
 			}
 
 			// initialise using default of the FIRST connected port (arbitrary choice, but whatever)

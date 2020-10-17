@@ -2,6 +2,7 @@
 #include <dependency_graph/metadata_register.h>
 #include <dependency_graph/node.h>
 
+#include <dependency_graph/io.h>
 #include <boost/test/unit_test.hpp>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/metadata.inl>
@@ -101,13 +102,19 @@ BOOST_AUTO_TEST_CASE(void_simple_out) {
 	// and that would be sad.
 
 	// the void output doesn't have a type yet as its not connected - reading should throw
-	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
+	BOOST_REQUIRE(voidNode.port(1).isDirty());
+	BOOST_CHECK_EQUAL(std::string(voidNode.port(1).type().name()), std::string(typeid(void).name()));
+	BOOST_REQUIRE(voidNode.port(1).isDirty());
 
 	// connect the two nodes together, to "assign a type" to the void node output
 	BOOST_REQUIRE_NO_THROW(voidNode.port(1).connect(floatNode.port(0)));
 
 	// the void output now has a type and can be read
+	BOOST_REQUIRE(voidNode.port(1).isDirty());
+	BOOST_CHECK_EQUAL(std::string(voidNode.port(1).type().name()), std::string(typeid(float).name()));
+	BOOST_REQUIRE(voidNode.port(1).isDirty());
 	BOOST_CHECK_NO_THROW(voidNode.port(1).get<float>());
+	BOOST_REQUIRE(not voidNode.port(1).isDirty());
 	BOOST_CHECK_EQUAL(voidNode.port(1).get<float>(), 0.0f);
 	BOOST_CHECK(not voidNode.state().errored());
 
@@ -144,9 +151,7 @@ BOOST_AUTO_TEST_CASE(void_simple_out) {
 
 namespace {
 
-void untyped_handle_error_test(const HandleRegistrar& voidHandle) {
-	Graph g;
-
+std::tuple<NodeBase&, NodeBase&> untyped_handle_error_test(const HandleRegistrar& voidHandle, Graph& g) {
 	const HandleRegistrar& floatHandle = typedNode<float, float>(Assign<float, float>::compute);
 
 	NodeBase& voidNode = g.nodes().add(voidHandle, "void_node");
@@ -160,9 +165,28 @@ void untyped_handle_error_test(const HandleRegistrar& voidHandle) {
 	BOOST_REQUIRE(floatNode.port(0).type() == typeid(float));
 	BOOST_REQUIRE(floatNode.port(1).type() == typeid(float));
 
-	// the void output doesn't have a type yet as its not connected - reading should throw
+	return std::tie(voidNode, floatNode);
+}
+
+}  // namespace
+
+// 1. untyped OUTPUT port evaluation on error:
+// 	 throw an exception during evaluation (pulling on a connected output should work)
+BOOST_AUTO_TEST_CASE(void_error_out) {
+	Graph g;
+
+	// make a simple assignment node handle, float "float" to "untyped"
+	const HandleRegistrar& voidHandle =
+	    typedNode<float, void>([](dependency_graph::Values& val, const InAttr<float>& in, const OutAttr<void>& out) {
+		    throw std::runtime_error("error");
+	    });
+
+	std::tuple<NodeBase&, NodeBase&> tuple = untyped_handle_error_test(voidHandle, g);
+	NodeBase& voidNode = std::get<0>(tuple);
+	NodeBase& floatNode = std::get<1>(tuple);
+
+	// the void output evaluates to integer - trying to read it as a float should throw
 	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
-	BOOST_CHECK(voidNode.state().errored());
 
 	// connect the two nodes together, to "assign a type" to the void node output
 	BOOST_REQUIRE_NO_THROW(voidNode.port(1).connect(floatNode.port(0)));
@@ -199,31 +223,29 @@ void untyped_handle_error_test(const HandleRegistrar& voidHandle) {
 	BOOST_CHECK(voidNode.state().errored());
 }
 
-}  // namespace
-
-// 1. untyped OUTPUT port evaluation on error:
-// 	 throw an exception during evaluation (pulling on a connected output should work)
-BOOST_AUTO_TEST_CASE(void_error_out) {
-	// make a simple assignment node handle, float "float" to "untyped"
-	const HandleRegistrar& voidHandle =
-	    typedNode<float, void>([](dependency_graph::Values& val, const InAttr<float>& in, const OutAttr<void>& out) {
-		    throw std::runtime_error("error");
-	    });
-
-	untyped_handle_error_test(voidHandle);
-}
-
 // 2. untyped OUTPUT incorrect type request:
 //   assign incorrect datatype (should throw an exception, but pulling on the connected out should work)
 BOOST_AUTO_TEST_CASE(void_error_assignment_out) {
+	Graph g;
+
 	// make a simple assignment node handle, float "float" to "untyped"
 	const HandleRegistrar& voidHandle =
 	    typedNode<float, void>([](dependency_graph::Values& val, const InAttr<float>& in, const OutAttr<void>& out) {
-		    // assigns an integer - assuming connected node is float, this should throw an exception
+		    // assigns an integer - assuming connected node is float, this should throw an exception eventually
+		    // (either on evaluation, or on trying to later connect the output somewhere)
 		    val.set(out, (int)val.get(in));
 	    });
 
-	untyped_handle_error_test(voidHandle);
+	std::tuple<NodeBase&, NodeBase&> tuple = untyped_handle_error_test(voidHandle, g);
+	NodeBase& voidNode = std::get<0>(tuple);
+	NodeBase& floatNode = std::get<1>(tuple);
+
+	// the void output evaluates to integer - trying to read it as a float should throw
+	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
+	BOOST_CHECK_NO_THROW(voidNode.port(1).get<int>());
+
+	// connect the two nodes together, to "assign a type" to the void node output after evaluation will throw
+	BOOST_REQUIRE_THROW(voidNode.port(1).connect(floatNode.port(0)), std::runtime_error);
 }
 
 // untyped OUTPUT port evaluation:
@@ -267,8 +289,11 @@ BOOST_AUTO_TEST_CASE(void_complex_out) {
 	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 2.0f);
 	BOOST_CHECK(not voidNode.state().errored());
 	// disconnect and test the value + throw on pull
+	BOOST_CHECK_EQUAL(floatNode.port(0).get<float>(), 2.0f);
+	BOOST_REQUIRE(dependency_graph::io::isSaveable(floatNode.port(0).getData()));
 	BOOST_REQUIRE_NO_THROW(voidNode.port(1).disconnect(floatNode.port(0)));
 	BOOST_CHECK_THROW(voidNode.port(1).get<float>(), std::runtime_error);
+	BOOST_CHECK_EQUAL(floatNode.port(0).get<float>(), 2.0f);
 	BOOST_CHECK_EQUAL(floatNode.port(1).get<float>(), 2.0f);
 	BOOST_CHECK(/*not*/ voidNode.state().errored());
 
