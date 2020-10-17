@@ -21,12 +21,16 @@ class Datablock {
 
 	const Data& data(size_t index) const;
 	void setData(size_t index, const Data& data);
+
 	bool isNull(std::size_t index) const;
+
+	bool isDirty(std::size_t index) const;
+	void setDirtyFlag(std::size_t index, bool dirty);
 
 	const MetadataHandle& meta() const;
 
   private:
-	std::vector<Data> m_data;
+	std::vector<std::pair<Data, bool>> m_data;
 	MetadataHandle m_meta;
 };
 

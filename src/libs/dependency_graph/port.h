@@ -94,7 +94,6 @@ class Port : public boost::noncopyable {
 
 	NodeBase* m_parent;
 	unsigned m_id;
-	bool m_dirty;
 
 	Port* m_linkedToPort;
 	Port* m_linkedFromPort;
