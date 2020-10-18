@@ -1,0 +1,292 @@
+{
+    "connections": [
+        {
+            "in_node": "network_0",
+            "in_port": "input",
+            "out_node": "subdivision_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "network_1",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "subdivision_0",
+            "in_port": "in_mesh",
+            "out_node": "network_1",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_mesh",
+            "out_node": "network_1",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "transform_2",
+            "in_port": "in_mesh",
+            "out_node": "network_1",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "subdivision_1",
+            "in_port": "in_mesh",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "subdivision_2",
+            "in_port": "in_mesh",
+            "out_node": "transform_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "subdivision_3",
+            "in_port": "in_mesh",
+            "out_node": "transform_2",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_2",
+            "in_port": "input",
+            "out_node": "subdivision_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_3",
+            "in_port": "input",
+            "out_node": "subdivision_2",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_4",
+            "in_port": "input",
+            "out_node": "subdivision_3",
+            "out_port": "out_mesh"
+        }
+    ],
+    "description": "",
+    "name": "network",
+    "nodes": {
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 135.171142578125,
+                    "y": 643.069458007812
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 353.463439941406,
+                    "y": 2.97864413261414
+                }
+            },
+            "name": "tetrahedron",
+            "ports": {
+                "diameter": 1.0
+            },
+            "source": "$NODES/cgal/primitives/tetrahedron.psw",
+            "type": "network"
+        },
+        "network_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 367.753997802734,
+                    "y": 635.443786621094
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 560.937561035156,
+                    "y": 644.340393066406
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 737.598876953125,
+                    "y": 641.798522949219
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "subdivision_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 110.087371826172,
+                    "y": 464.778961181641
+                }
+            },
+            "name": "subdivision",
+            "ports": {
+                "level": 3,
+                "method": "Catmull Clark"
+            },
+            "type": "cgal/topology/subdivision"
+        },
+        "subdivision_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 342.670227050781,
+                    "y": 457.153289794922
+                }
+            },
+            "name": "subdivision",
+            "ports": {
+                "level": 3,
+                "method": "Loop"
+            },
+            "type": "cgal/topology/subdivision"
+        },
+        "subdivision_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 535.853820800781,
+                    "y": 466.049896240234
+                }
+            },
+            "name": "subdivision",
+            "ports": {
+                "level": 3,
+                "method": "Doo Sabin"
+            },
+            "type": "cgal/topology/subdivision"
+        },
+        "subdivision_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 712.51513671875,
+                    "y": 463.507995605469
+                }
+            },
+            "name": "subdivision",
+            "ports": {
+                "level": 3,
+                "method": "Sqrt 3"
+            },
+            "type": "cgal/topology/subdivision"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 336.137268066406,
+                    "y": 205.534820556641
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        },
+        "transform_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 529.320861816406,
+                    "y": 206.805770874023
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 2.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        },
+        "transform_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 702.169311523438,
+                    "y": 213.160491943359
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 3.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAtAAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACxAQAAAwAAAvIAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
