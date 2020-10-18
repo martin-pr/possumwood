@@ -1,21 +1,21 @@
 {
     "connections": [
         {
-            "in_node": "minkowski_0",
-            "in_port": "nef1",
-            "out_node": "network_0",
+            "in_node": "network_0",
+            "in_port": "input",
+            "out_node": "minkowski_0",
             "out_port": "nef"
         },
         {
             "in_node": "minkowski_0",
             "in_port": "nef2",
-            "out_node": "network_2",
+            "out_node": "network_1",
             "out_port": "nef"
         },
         {
-            "in_node": "network_1",
-            "in_port": "input",
-            "out_node": "minkowski_0",
+            "in_node": "minkowski_0",
+            "in_port": "nef1",
+            "out_node": "network_2",
             "out_port": "nef"
         }
     ],
@@ -37,38 +37,6 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 324.0,
-                    "y": 310.0
-                }
-            },
-            "name": "cylinder",
-            "ports": {
-                "diameter": 1.0,
-                "height": 1.0,
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "subdivision": 8,
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            },
-            "source": "$NODES/cgal/csg/primitives/cylinder.psw",
-            "type": "network"
-        },
-        "network_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
                     "x": 405.057006835938,
                     "y": 728.649780273438
                 }
@@ -77,7 +45,7 @@
             "source": "$NODES/cgal/csg/draw.psw",
             "type": "network"
         },
-        "network_2": {
+        "network_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -87,8 +55,8 @@
             },
             "name": "sphere",
             "ports": {
-                "diameter": 1.0,
-                "h_subdivision": 6,
+                "diameter": 0.200000002980232,
+                "h_subdivision": 12,
                 "rotation": {
                     "x": 0.0,
                     "y": 0.0,
@@ -108,6 +76,36 @@
             },
             "source": "$NODES/cgal/csg/primitives/sphere.psw",
             "type": "network"
+        },
+        "network_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 331.0,
+                    "y": 360.0
+                }
+            },
+            "name": "box",
+            "ports": {
+                "center": true,
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "source": "$NODES/cgal/csg/primitives/box.psw",
+            "type": "network"
         }
     },
     "scene_config": {
@@ -116,6 +114,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACxAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
