@@ -320,7 +320,7 @@
                 "stop_condition": "Count_stop_predicate",
                 "stop_parameter": 200.0
             },
-            "type": "cgal/simplification/simplification"
+            "type": "cgal/topology/simplification"
         },
         "simplification_1": {
             "blind_data": {
@@ -337,7 +337,7 @@
                 "stop_condition": "Count_stop_predicate",
                 "stop_parameter": 200.0
             },
-            "type": "cgal/simplification/simplification"
+            "type": "cgal/topology/simplification"
         },
         "transform_0": {
             "blind_data": {

@@ -178,5 +178,5 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("cgal/simplification/simplification", init);
+possumwood::NodeImplementation s_impl("cgal/topology/simplification", init);
 }  // namespace
