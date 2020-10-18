@@ -1,26 +1,35 @@
-#include <dependency_graph/graph.h>
-#include <possumwood_sdk/app.h>
-#include <possumwood_sdk/gl.h>
-#include <qt_node_editor/connected_edge.h>
-#include <qt_node_editor/graph_widget.h>
-#include <qt_node_editor/node.h>
+#include <execinfo.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-#include <Eigen/Core>
+#include <iostream>
+#include <stdexcept>
+#include <string>
+
+#include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
+
 #include <QAction>
 #include <QApplication>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QMainWindow>
 #include <QMenu>
-#include <boost/filesystem.hpp>
-#include <boost/program_options.hpp>
+
+#include <Eigen/Core>
+
+#include <qt_node_editor/connected_edge.h>
+#include <qt_node_editor/graph_widget.h>
+#include <qt_node_editor/node.h>
+
+#include <dependency_graph/graph.h>
+#include <possumwood_sdk/app.h>
+#include <possumwood_sdk/gl.h>
 #include <dependency_graph/attr.inl>
 #include <dependency_graph/datablock.inl>
 #include <dependency_graph/metadata.inl>
 #include <dependency_graph/node_base.inl>
-#include <iostream>
-#include <stdexcept>
-#include <string>
 
 #include "adaptor.h"
 #include "common.h"
@@ -33,6 +42,20 @@ namespace po = boost::program_options;
 using std::cout;
 using std::endl;
 using std::flush;
+
+void signalHandler(int sig) {
+	void* array[100];
+	size_t size;
+
+	size = backtrace(array, 100);
+
+	fprintf(stderr,
+	        "\nSIGNAL %d CAUGHT. This is probably an error in the application. Please create an issue at "
+	        "https://github.com/martin-pr/possumwood/issues, with steps to reproduce and the following stacktrace:\n",
+	        sig);
+	backtrace_symbols_fd(array, size, STDERR_FILENO);
+	exit(1);
+}
 
 int main(int argc, char* argv[]) {
 	// // Declare the supported options.
@@ -48,6 +71,11 @@ int main(int argc, char* argv[]) {
 		cout << desc << "\n";
 		return 1;
 	}
+
+	///////////////////////////////
+
+	// install segfault handler
+	signal(SIGSEGV, signalHandler);
 
 	///////////////////////////////
 
