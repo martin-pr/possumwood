@@ -49,12 +49,6 @@
             "out_port": "shader"
         },
         {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "loader_0",
-            "out_port": "polyhedron"
-        },
-        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
@@ -89,6 +83,18 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_2",
             "out_port": "shader"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "network_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
         }
     ],
     "description": "### Mesh subdivision in a geometry shader\n\nWhile modern GPUs contain a bespoke functionality for subdivision, this simple demo shows how a similar (if limited) effect can be achieved using a simple geometry shader.\n\nThis demo implements a simple interpolative sudvision scheme with normal-based displacement. All subdivision computation is done in a geometry shader, with additional vertices and topology emitted by calling a recusive function. This approach is just a toy example, as it is strictly limited by the capabilities of individual GPUs - in practical applications, bespoke tesselation shaders perform much better.",
@@ -226,20 +232,35 @@
             },
             "type": "render/geometry_shader"
         },
-        "loader_0": {
+        "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -146.7802734375,
-                    "y": 265.985626220703
+                    "x": -157.428619384766,
+                    "y": 117.093826293945
                 }
             },
-            "name": "loader",
+            "name": "tetrahedron",
             "ports": {
-                "filename": "$EXAMPLES/tetrahedron.obj",
-                "name": "mesh"
+                "diameter": 1.0
             },
-            "type": "cgal/loader"
+            "source": "$NODES/cgal/primitives/tetrahedron.psw",
+            "type": "network"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -186.015640258789,
+                    "y": 253.584487915039
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "attr_name": "N",
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
         },
         "program_0": {
             "blind_data": {
@@ -324,5 +345,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQiAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAcIAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABVAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABzwAAA24AAACuAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQiAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAvwAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABVAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABzwAAA24AAACxAQAAAwAAAuAAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
