@@ -41,7 +41,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	{
 		possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(vertices), typeof(faces)> builder(
-		    vertices, faces);
+		    &vertices, &faces);
 		mesh.polyhedron().delegate(builder);
 	}
 

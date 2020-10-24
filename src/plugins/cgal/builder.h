@@ -7,7 +7,7 @@ namespace possumwood {
 template <class HDS, class POINTS, class FACES>
 class CGALBuilder : public CGAL::Modifier_base<HDS> {
   public:
-	CGALBuilder(const POINTS& pts, const FACES& f) : m_points(&pts), m_faces(&f) {
+	CGALBuilder(const POINTS* pts, const FACES* f) : m_points(pts), m_faces(f) {
 	}
 	void operator()(HDS& hds) {
 		// Postcondition: hds is a valid polyhedral surface.
