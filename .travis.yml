@@ -1,9 +1,9 @@
 # Basic parameters of the build
-sudo: required
+sudo: false
 dist: bionic
 group: edge
 language: cpp
-compiler: gcc
+compiler: clang
 
 # Blacklist - make sure we don't try to build gh-pages branch
 branches:
@@ -20,8 +20,7 @@ addons:
       - doxygen-latex
       - doxygen-gui
       - graphviz
-      - gcc-5
-      - g++-5
+      - clang
       - freeglut3-dev
       - libxmu-dev
       - libxi-dev
@@ -54,10 +53,6 @@ stages:
 jobs:
   include:
   - stage: build
-    env:
-    - CXX: g++-5
-    - CC: gcc-5
-    - COMPILER: g++-5
     script:
     - cd $TRAVIS_BUILD_DIR
     - ./tools/build-debug -j 4
