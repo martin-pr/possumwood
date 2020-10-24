@@ -19,11 +19,18 @@ Properties::Properties(QWidget* parent) : QTreeWidget(parent) {
 	header()->setStretchLastSection(true);
 
 	connect(this, &Properties::itemChanged, [this](QTreeWidgetItem* item, int column) {
-		auto it = m_nodes.find(item);
-		assert(it != m_nodes.end());
+		auto it = m_nodes.left.find(item);
+		assert(it != m_nodes.left.end());
 
 		possumwood::actions::renameNode(*it->second, item->text(0).toStdString());
 	});
+
+	m_metadataConnection = possumwood::AppCore::instance().graph().onMetadataChanged(
+	    [this](dependency_graph::NodeBase& nb) { onMetadataChanged(nb); });
+}
+
+Properties::~Properties() {
+	m_metadataConnection.disconnect();
 }
 
 void Properties::show(const dependency_graph::Selection& selection) {
@@ -41,7 +48,7 @@ void Properties::show(const dependency_graph::Selection& selection) {
 		nodeItem->setFirstColumnSpanned(true);
 		nodeItem->setFlags(nodeItem->flags() | Qt::ItemIsEditable);
 
-		m_nodes.insert(std::make_pair(nodeItem, &(node.get())));
+		m_nodes.left.insert(std::make_pair(nodeItem, &(node.get())));
 
 		// add each port as a subitem
 		std::map<std::string, QTreeWidgetItem*> parentItems;
@@ -85,6 +92,16 @@ void Properties::show(const dependency_graph::Selection& selection) {
 
 	expandAll();
 	resizeColumnToContents(0);
+}
+
+void Properties::onMetadataChanged(dependency_graph::NodeBase& n) {
+	if(m_nodes.right.find(&n) != m_nodes.right.end()) {
+		dependency_graph::Selection sel;
+		for(auto& i : m_nodes.right)
+			sel.addNode(*i.first);
+
+		show(sel);
+	}
 }
 
 ////////

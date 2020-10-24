@@ -1,12 +1,16 @@
 #pragma once
 
-#include <dependency_graph/selection.h>
-#include <possumwood_sdk/properties/property.h>
-#include <qt_node_editor/node.h>
+#include <map>
+
+#include <boost/bimap.hpp>
+#include <boost/noncopyable.hpp>
 
 #include <QtWidgets/QTreeWidget>
-#include <boost/noncopyable.hpp>
-#include <map>
+
+#include <dependency_graph/selection.h>
+#include <qt_node_editor/node.h>
+
+#include <possumwood_sdk/properties/property.h>
 
 /// A widget displaying properties of selected nodes
 class Properties : public QTreeWidget {
@@ -14,10 +18,13 @@ class Properties : public QTreeWidget {
 
   public:
 	Properties(QWidget* parent = NULL);
+	virtual ~Properties();
 
 	void show(const dependency_graph::Selection& selection);
 
   protected:
+	void onMetadataChanged(dependency_graph::NodeBase& n);
+
   private:
 	struct PropertyHolder : public boost::noncopyable {
 		PropertyHolder(dependency_graph::Port& port);
@@ -30,5 +37,7 @@ class Properties : public QTreeWidget {
 	};
 
 	std::vector<PropertyHolder> m_properties;
-	std::map<QTreeWidgetItem*, dependency_graph::NodeBase*> m_nodes;
+	boost::bimap<QTreeWidgetItem*, dependency_graph::NodeBase*> m_nodes;
+
+	boost::signals2::connection m_metadataConnection;
 };
