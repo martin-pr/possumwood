@@ -37,8 +37,8 @@ PolyhedronWrapper::operator Meshes() const {
 		dependency_graph::State state;
 
 		try {
-			possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(m_points), typeof(m_faces)>
-				builder(m_points, m_faces);
+			possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(m_points), typeof(m_faces)> builder(
+			    &m_points, &m_faces);
 			mesh.polyhedron().delegate(builder);
 		}
 		catch(std::exception& exc) {

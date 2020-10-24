@@ -25,6 +25,12 @@ struct Face {
 	std::size_t objectId;
 };
 
+std::ostream& operator<<(std::ostream& out, const Face& f) {
+	for(auto& i : f.indices)
+		out << "  v=" << i.v << " n=" << i.vn << " t=" << i.vt << std::endl;
+	return out;
+}
+
 class FaceAdaptor {
   public:
 	class Vertices {
@@ -116,7 +122,9 @@ Mesh makeMesh(const std::string& name, const std::vector<std::array<float, 3>>& 
 	Mesh::MeshData& mesh = result.edit();
 
 	// build the base polymesh
-	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, typeof(v), FaceAdaptor> builder(v, FaceAdaptor(&f));
+	FaceAdaptor adaptor(&f);
+	possumwood::CGALBuilder<possumwood::CGALPolyhedron::HalfedgeDS, std::vector<std::array<float, 3>>, FaceAdaptor>
+	    builder(&v, &adaptor);
 	mesh.polyhedron().delegate(builder);
 
 	return result;
@@ -160,6 +168,25 @@ void addUVs(Mesh& mesh,
             const std::vector<Face>& f) {
 	addHalfedgeProperty(mesh.edit(), attrName, std::array<float, 2>{{0, 0}}, uv, f,
 	                    [](const FaceIndex& fi) { return fi.vt - 1; });
+}
+
+bool checkValid(const Face& f,
+                const std::vector<std::array<float, 3>>& v,
+                const std::vector<std::array<float, 3>>& n,
+                const std::vector<std::array<float, 2>>& uv) {
+	for(auto& i : f.indices) {
+		if(i.v > (int)v.size() && i.v > 0)
+			return false;
+		if(i.vn > (int)n.size() && i.vn > 0)
+			return false;
+		if(i.vt > (int)uv.size() && i.vt > 0)
+			return false;
+
+		if(i.v == 0 || i.vn == 0 || i.vt == 0)
+			return false;
+	}
+
+	return true;
 }
 
 }  // namespace
@@ -245,8 +272,16 @@ Mesh loadObj(boost::filesystem::path path,
 				}
 
 				assert(f.indices.size() >= 3);
-
-				faces.push_back(f);
+				if(!checkValid(f, vertices, normals, uvs)) {
+					std::stringstream ss;
+					ss << "Invalid face definition found:" << std::endl
+					   << f << "vertex count=" << vertices.size() << std::endl
+					   << "normal count=" << normals.size() << std::endl
+					   << "uvs count=" << uvs.size() << std::endl;
+					throw std::runtime_error(ss.str());
+				}
+				else
+					faces.push_back(f);
 			}
 		}
 	}
