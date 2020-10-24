@@ -16,6 +16,7 @@ VecUI<T>::VecUI() {
 
 	for(int a = 0; a < VecTraits<T>::dims(); ++a) {
 		m_values[a] = new typename VecTraits<T>::QtType(NULL);
+		m_values[a]->setMinimumWidth(20);
 		layout->addWidget(m_values[a]);
 
 		m_connections[a] =
