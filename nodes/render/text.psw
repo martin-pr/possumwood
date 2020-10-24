@@ -19,12 +19,6 @@
             "out_port": "shader"
         },
         {
-            "in_node": "program_1",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_1",
-            "out_port": "shader"
-        },
-        {
             "in_node": "color_0",
             "in_port": "in_frame",
             "out_node": "image_0",
@@ -43,19 +37,7 @@
             "out_port": "program"
         },
         {
-            "in_node": "draw_1",
-            "in_port": "program",
-            "out_node": "program_1",
-            "out_port": "program"
-        },
-        {
             "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "text_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "draw_1",
             "in_port": "vertex_data",
             "out_node": "text_0",
             "out_port": "vertex_data"
@@ -67,21 +49,9 @@
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "draw_1",
-            "in_port": "uniforms",
-            "out_node": "transform_1",
-            "out_port": "out_uniforms"
-        },
-        {
             "in_node": "program_0",
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "program_1",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_1",
             "out_port": "shader"
         },
         {
@@ -91,15 +61,39 @@
             "out_port": "out_uniforms"
         },
         {
-            "in_node": "transform_1",
-            "in_port": "in_uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
-        },
-        {
             "in_node": "text_0",
             "in_port": "text",
             "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "translation",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "rotation",
+            "out_node": "input_2",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "scale",
+            "out_node": "input_3",
+            "out_port": "data"
+        },
+        {
+            "in_node": "text_0",
+            "in_port": "horiz_align",
+            "out_node": "input_4",
+            "out_port": "data"
+        },
+        {
+            "in_node": "text_0",
+            "in_port": "vert_align",
+            "out_node": "input_5",
             "out_port": "data"
         }
     ],
@@ -124,24 +118,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 353.264495849609,
-                    "y": 432.896484375
-                }
-            },
-            "name": "draw",
-            "ports": {
-                "setup": {
-                    "culling": "ccw"
-                }
-            },
-            "type": "render/draw"
-        },
-        "draw_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 541.12646484375,
-                    "y": 839.930725097656
+                    "x": 554.454284667969,
+                    "y": 385.678466796875
                 }
             },
             "name": "draw",
@@ -156,8 +134,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -497.390319824219,
-                    "y": 822.002807617188
+                    "x": 83.6894836425781,
+                    "y": 532.62890625
                 }
             },
             "name": "font",
@@ -170,27 +148,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -72.5803146362305,
-                    "y": 332.590484619141
+                    "x": 128.609451293945,
+                    "y": 285.372467041016
                 }
             },
             "name": "fragment_shader",
             "ports": {
                 "source": "#version 130 \n \nout vec4 color; \n \nin vec2 vertexUV;\n\nuniform sampler2D font;\n\nvoid main() {\n\tfloat sample = texture(font, vertexUV).x;\n\tfloat scale = 1.0 / fwidth(sample);\n\tfloat signedDistance = (sample - 0.5) * scale;\n\n\tfloat value = smoothstep(-0.5, 0.5, signedDistance);\n\n\tif(value <= 0.0)\n\t\tdiscard;\n\tcolor = vec4(value, value, value,1);\n} \n"
-            },
-            "type": "render/fragment_shader"
-        },
-        "fragment_shader_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 141.126449584961,
-                    "y": 771.930725097656
-                }
-            },
-            "name": "fragment_shader",
-            "ports": {
-                "source": "#version 130 \n \nout vec4 color; \n \nin vec2 vertexUV;\n\nuniform sampler2D font;\n\nvoid main() {\n\tfloat sample = texture(font, vertexUV).x;\n\n\tif(sample > 0.1)\n\t\tcolor = vec4(vec3(sample), 0);\n\telse\n\t\tdiscard;\n} \n"
             },
             "type": "render/fragment_shader"
         },
@@ -212,11 +176,66 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -454.035247802734,
-                    "y": 708.959106445312
+                    "x": 217.281646728516,
+                    "y": 509.822296142578
                 }
             },
             "name": "text",
+            "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 360.264495849609,
+                    "y": -0.944610834121704
+                }
+            },
+            "name": "translation",
+            "type": "input"
+        },
+        "input_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 375.264526367188,
+                    "y": 81.0553817749023
+                }
+            },
+            "name": "rotation",
+            "type": "input"
+        },
+        "input_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 388.264526367188,
+                    "y": 155.055404663086
+                }
+            },
+            "name": "scale",
+            "type": "input"
+        },
+        "input_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 219.264495849609,
+                    "y": 631.055541992188
+                }
+            },
+            "name": "horiz_align",
+            "type": "input"
+        },
+        "input_5": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 216.264495849609,
+                    "y": 711.055541992188
+                }
+            },
+            "name": "vert_align",
             "type": "input"
         },
         "opencv_texture_0": {
@@ -238,19 +257,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 143.26448059082,
-                    "y": 288.896484375
-                }
-            },
-            "name": "program",
-            "type": "render/program"
-        },
-        "program_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 331.126434326172,
-                    "y": 695.930725097656
+                    "x": 344.454254150391,
+                    "y": 241.678482055664
                 }
             },
             "name": "program",
@@ -260,72 +268,24 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -307.890319824219,
-                    "y": 738.871826171875
+                    "x": 363.426574707031,
+                    "y": 539.734985351562
                 }
             },
             "name": "text",
-            "ports": {
-                "horiz_align": "Center",
-                "vert_align": "Top"
-            },
             "type": "render/vertex_data/text"
         },
         "transform_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 356.540283203125,
-                    "y": 141.238998413086
+                    "x": 557.730041503906,
+                    "y": 94.0209884643555
                 }
             },
             "name": "transform",
             "ports": {
-                "name": "transform",
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 0.100000001490116,
-                    "y": 0.100000001490116,
-                    "z": 0.100000001490116
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.100000001490116,
-                    "z": 0.0
-                }
-            },
-            "type": "render/uniforms/transform"
-        },
-        "transform_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 561.8359375,
-                    "y": 172.033340454102
-                }
-            },
-            "name": "transform",
-            "ports": {
-                "name": "transform",
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 0.100000001490116,
-                    "y": 0.100000001490116,
-                    "z": 0.100000001490116
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
+                "name": "transform"
             },
             "type": "render/uniforms/transform"
         },
@@ -333,22 +293,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -52.5803146362305,
-                    "y": 233.590484619141
-                }
-            },
-            "name": "vertex_shader",
-            "ports": {
-                "source": "#version 130 \n \nin vec2 position;\nin vec2 uv;\n \nuniform mat4 iProjection;\nuniform mat4 iModelView;\nuniform mat4 transform;\n\nout vec2 vertexUV;\n \nvoid main() {\n\tvec4 pos4 = vec4(position.x, position.y, 0, 1);\n\n   \tgl_Position = iProjection * iModelView * transform * pos4;\n\n\tvertexUV = uv;\n} \n"
-            },
-            "type": "render/vertex_shader"
-        },
-        "vertex_shader_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 161.126449584961,
-                    "y": 672.930725097656
+                    "x": 148.609451293945,
+                    "y": 186.372482299805
                 }
             },
             "name": "vertex_shader",
@@ -370,7 +316,24 @@
         }
     },
     "ports": {
-        "text": "ABCD"
+        "horiz_align": "Center",
+        "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "scale": {
+            "x": 0.100000001490116,
+            "y": 0.100000001490116,
+            "z": 0.100000001490116
+        },
+        "text": "ABCD",
+        "translation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "vert_align": "Bottom"
     },
     "scene_config": {
         "end_time": 5.0,
