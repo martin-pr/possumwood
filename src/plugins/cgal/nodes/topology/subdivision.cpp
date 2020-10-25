@@ -26,6 +26,14 @@ static std::vector<std::pair<std::string, int>> s_method{
     {"Sqrt 3", kSqrt3},
 };
 
+// a workaround for namespace changes in CGAL - parameters namespace for polygon mesh processing has changed
+// from Ubuntu 18.04 to 20.10
+#if CGAL_VERSION_MAJOR >= 5
+using namespace CGAL::parameters;
+#else
+using namespace CGAL::Polygon_mesh_processing::parameters;
+#endif
+
 dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::ScopedOutputRedirect redirect;
 
@@ -34,7 +42,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	for(auto& mesh : result) {
 		auto& poly = mesh.edit();
 
-		auto params = CGAL::parameters::number_of_iterations(data.get(a_level))
+		auto params = number_of_iterations(data.get(a_level))
 		                  .vertex_index_map(CGAL::get(CGAL::vertex_external_index, poly.polyhedron()))
 		                  .halfedge_index_map(CGAL::get(CGAL::halfedge_external_index, poly.polyhedron()))
 		                  .face_index_map(CGAL::get(CGAL::halfedge_external_index, poly.polyhedron()));
