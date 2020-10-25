@@ -29,6 +29,12 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "loader_0",
+            "in_port": "filename",
+            "out_node": "input_0",
+            "out_port": "data"
         }
     ],
     "description": "### OBJ file loading\n\nThis simple demo shows how to load an object from .obj file, and display it in the viewport.\n\nThe display code is contained in a subnetwork (double click the blue node to \"enter\" it), and is based on a trivial implementation of a vertex and fragment OpenGL shader.",
@@ -78,6 +84,17 @@
             },
             "type": "render/fragment_shader"
         },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -30.5659351348877,
+                    "y": 774.463012695312
+                }
+            },
+            "name": "Filename",
+            "type": "input"
+        },
         "loader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -88,7 +105,6 @@
             },
             "name": "loader",
             "ports": {
-                "filename": "$EXAMPLES/stanford_models/bunny.obj",
                 "name": "mesh"
             },
             "type": "cgal/loader"
@@ -119,12 +135,15 @@
             "type": "render/vertex_shader"
         }
     },
+    "ports": {
+        "Filename": "$EXAMPLES/stanford_models/bunny.obj"
+    },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACvQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADOAAAAgUAAACuAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA8wAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABaQAAAgUAAACtAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAA="
 }

@@ -1,0 +1,342 @@
+{
+    "connections": [
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "minkowski_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "minkowski_0",
+            "in_port": "nef1",
+            "out_node": "network_1",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "transform_2",
+            "in_port": "in_mesh",
+            "out_node": "network_1",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "subdivision_0",
+            "in_port": "in_mesh",
+            "out_node": "network_2",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "minkowski_0",
+            "in_port": "nef2",
+            "out_node": "poly_to_nef_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_mesh",
+            "out_node": "poly_to_nef_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "poly_to_nef_0",
+            "in_port": "mesh",
+            "out_node": "subdivision_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_4",
+            "in_port": "input",
+            "out_node": "transform_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_3",
+            "in_port": "input",
+            "out_node": "transform_2",
+            "out_port": "out_mesh"
+        }
+    ],
+    "description": "### Minkowski addition in CGAL\n\n[Minkowski addition](https://en.wikipedia.org/wiki/Minkowski_addition) allows to combine two polyhedra such that the result is a polyhedron where one of the object has been \"swiped\" around the other (please see the link for more accurate description).\n\nIn CGAL, [Minowski addition is implemented](https://doc.cgal.org/latest/Minkowski_sum_3/index.html) on top of the [Nef polyhedra](https://doc.cgal.org/latest/Nef_3/index.html#chapterNef3). This example setup shows how Minkowski addition can be used to \"expand\" and \"round edges\" a polyhedron.",
+    "name": "network",
+    "nodes": {
+        "minkowski_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 662.526000976562,
+                    "y": 1320.68603515625
+                }
+            },
+            "name": "minkowski",
+            "type": "cgal/csg/minkowski"
+        },
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 690.391052246094,
+                    "y": 1656.86901855469
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/csg/draw.psw",
+            "type": "network"
+        },
+        "network_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 318.505157470703,
+                    "y": 997.237060546875
+                }
+            },
+            "name": "box",
+            "ports": {
+                "center": true,
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "source": "$NODES/cgal/csg/primitives/box.psw",
+            "type": "network"
+        },
+        "network_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 473.353210449219,
+                    "y": 820.626647949219
+                }
+            },
+            "name": "tetrahedron",
+            "ports": {
+                "diameter": 1.0
+            },
+            "source": "$NODES/cgal/primitives/tetrahedron.psw",
+            "type": "network"
+        },
+        "network_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 245.359405517578,
+                    "y": 1650.0224609375
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/csg/draw.psw",
+            "type": "network"
+        },
+        "network_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 464.451873779297,
+                    "y": 1658.58068847656
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/csg/draw.psw",
+            "type": "network"
+        },
+        "network_5": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 338.902618408203,
+                    "y": 1610.17944335938
+                }
+            },
+            "name": "+",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "text": "+",
+                "translation": {
+                    "x": -2.79999995231628,
+                    "y": 0.100000001490116,
+                    "z": 0.0
+                },
+                "vert_align": "Center"
+            },
+            "source": "$NODES/render/text.psw",
+            "type": "network"
+        },
+        "network_6": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 568.265075683594,
+                    "y": 1613.60278320312
+                }
+            },
+            "name": "=",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "text": "=",
+                "translation": {
+                    "x": -1.29999995231628,
+                    "y": 0.100000001490116,
+                    "z": 0.0
+                },
+                "vert_align": "Center"
+            },
+            "source": "$NODES/render/text.psw",
+            "type": "network"
+        },
+        "poly_to_nef_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 473.353210449219,
+                    "y": 1114.29113769531
+                }
+            },
+            "name": "poly_to_nef",
+            "type": "cgal/csg/poly_to_nef"
+        },
+        "subdivision_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 479.471221923828,
+                    "y": 947.881225585938
+                }
+            },
+            "name": "subdivision",
+            "ports": {
+                "level": 4,
+                "method": "Sqrt 3"
+            },
+            "type": "cgal/topology/subdivision"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 674.388000488281,
+                    "y": 1454.41821289062
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/csg/transform"
+        },
+        "transform_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 445.025543212891,
+                    "y": 1442.43664550781
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": -2.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/csg/transform"
+        },
+        "transform_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 237.914672851562,
+                    "y": 1423.6083984375
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": -4.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "type": "cgal/csg/transform"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK4AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADHAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADlwAAAaYAAACxAQAAAwAABZ4AAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

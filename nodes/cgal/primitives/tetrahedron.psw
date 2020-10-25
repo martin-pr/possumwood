@@ -1,0 +1,124 @@
+{
+    "connections": [
+        {
+            "in_node": "float_0",
+            "in_port": "in_context",
+            "out_node": "cgal_0",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "script_0",
+            "in_port": "context",
+            "out_node": "float_0",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "value",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "output_0",
+            "in_port": "data",
+            "out_node": "mesh_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "mesh_0",
+            "in_port": "state",
+            "out_node": "script_0",
+            "out_port": "state"
+        }
+    ],
+    "description": "",
+    "name": "network",
+    "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 983.724670410156,
+                    "y": 587.921203613281
+                }
+            },
+            "name": "cgal",
+            "type": "lua/modules/cgal"
+        },
+        "float_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 983.120666503906,
+                    "y": 714.949157714844
+                }
+            },
+            "name": "diameter",
+            "ports": {
+                "name": "diameter"
+            },
+            "type": "lua/inject/float"
+        },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 817.390747070312,
+                    "y": 757.225830078125
+                }
+            },
+            "name": "diameter",
+            "type": "input"
+        },
+        "mesh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1150.98266601562,
+                    "y": 918.905090332031
+                }
+            },
+            "name": "mesh",
+            "ports": {
+                "name": "mesh"
+            },
+            "type": "lua/extract/mesh"
+        },
+        "output_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1244.98901367188,
+                    "y": 1045.14758300781
+                }
+            },
+            "name": "mesh",
+            "type": "output"
+        },
+        "script_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 996.982604980469,
+                    "y": 902.905090332031
+                }
+            },
+            "name": "script",
+            "ports": {
+                "source": "radius = diameter / 2\n\nmesh = cgal.mesh(\"mesh\")\n\nmesh:addPoint(math.sqrt(8/9), -1/3, 0)\nmesh:addPoint(-math.sqrt(2/9), -1/3, math.sqrt(2/3))\nmesh:addPoint(-math.sqrt(2/9), -1/3, -math.sqrt(2/3))\nmesh:addPoint(0, 1, 0)\n\nface = cgal.face()\nface:addVertex(0)\nface:addVertex(1)\nface:addVertex(2)\nmesh:addFace(face)\n\nface = cgal.face()\nface:addVertex(1)\nface:addVertex(3)\nface:addVertex(2)\nmesh:addFace(face)\n\nface = cgal.face()\nface:addVertex(3)\nface:addVertex(0)\nface:addVertex(2)\nmesh:addFace(face)\n\nface = cgal.face()\nface:addVertex(3)\nface:addVertex(1)\nface:addVertex(0)\nmesh:addFace(face)\n"
+            },
+            "type": "lua/script"
+        }
+    },
+    "ports": {
+        "diameter": 1.0
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAABBQAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACxAQAAAwAAAa4AAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}

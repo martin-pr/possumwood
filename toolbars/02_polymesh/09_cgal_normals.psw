@@ -174,6 +174,70 @@
             },
             "type": "cgal/loader"
         },
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 640.902160644531,
+                    "y": -70.2800598144531
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.0299999993294477,
+                    "y": 0.0299999993294477,
+                    "z": 0.0299999993294477
+                },
+                "text": "Per-vertex",
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
+            },
+            "source": "$NODES/render/text.psw",
+            "type": "network"
+        },
+        "network_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 987.080871582031,
+                    "y": -227.268081665039
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.0299999993294477,
+                    "y": 0.0299999993294477,
+                    "z": 0.0299999993294477
+                },
+                "text": "Per-face",
+                "translation": {
+                    "x": 0.200000002980232,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
+            },
+            "source": "$NODES/render/text.psw",
+            "type": "network"
+        },
         "normals_generator_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -265,6 +329,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAagAAATD/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADNgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADsQAAAYwAAACuAQAAA/sAAAAGAGwAbwBnAQAAAjoAAAGPAAAAAAAAAAAAAAVeAAAEwwAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAL4AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAD+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABbAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB4gAAAYwAAACtAQAAA/sAAAAGAGwAbwBnAQAAAjoAAAGPAAAAAAAAAAAAAAIJAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

@@ -1,30 +1,6 @@
 {
     "connections": [
         {
-            "in_node": "draw_0",
-            "in_port": "vertex_data",
-            "out_node": "cgal_0",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "draw_1",
-            "in_port": "vertex_data",
-            "out_node": "cgal_1",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "draw_2",
-            "in_port": "vertex_data",
-            "out_node": "cgal_2",
-            "out_port": "vertex_data"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "fragment_shader",
-            "out_node": "fragment_shader_0",
-            "out_port": "shader"
-        },
-        {
             "in_node": "transform_0",
             "in_port": "in_mesh",
             "out_node": "loader_0",
@@ -37,55 +13,19 @@
             "out_port": "polyhedron"
         },
         {
-            "in_node": "normals_generator_1",
+            "in_node": "network_0",
             "in_port": "input",
             "out_node": "loader_0",
             "out_port": "polyhedron"
         },
         {
-            "in_node": "cgal_2",
-            "in_port": "mesh",
-            "out_node": "normals_generator_0",
-            "out_port": "output"
-        },
-        {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "normals_generator_1",
-            "out_port": "output"
-        },
-        {
-            "in_node": "cgal_1",
-            "in_port": "mesh",
-            "out_node": "normals_generator_2",
-            "out_port": "output"
-        },
-        {
-            "in_node": "draw_1",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "draw_2",
-            "in_port": "program",
-            "out_node": "program_0",
-            "out_port": "program"
-        },
-        {
-            "in_node": "normals_generator_0",
+            "in_node": "network_4",
             "in_port": "input",
             "out_node": "simplification_0",
             "out_port": "output"
         },
         {
-            "in_node": "normals_generator_2",
+            "in_node": "network_1",
             "in_port": "input",
             "out_node": "simplification_1",
             "out_port": "output"
@@ -101,139 +41,11 @@
             "in_port": "input",
             "out_node": "transform_1",
             "out_port": "out_mesh"
-        },
-        {
-            "in_node": "program_0",
-            "in_port": "vertex_shader",
-            "out_node": "vertex_shader_0",
-            "out_port": "shader"
-        },
-        {
-            "in_node": "draw_1",
-            "in_port": "uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "draw_0",
-            "in_port": "uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "draw_2",
-            "in_port": "uniforms",
-            "out_node": "viewport_0",
-            "out_port": "out_uniforms"
         }
     ],
     "description": "### CGAL mesh decimation\n\nMesh simplification (decimation) is a common operation in mesh processing - it aims to reduce the mesh complexity without removing its details, reducing the memory footprint without compromising the quality of the resulting model.\n\nThis demo shows how to use [CGAL's implementation of mesh decimation](https://doc.cgal.org/latest/Surface_mesh_simplification/index.html) in Possumwood, allowing to experiment with its various parameters.",
     "name": "network",
     "nodes": {
-        "cgal_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 668.5634765625,
-                    "y": 96.4234161376953
-                }
-            },
-            "name": "cgal",
-            "ports": {
-                "p_attr_name": "P"
-            },
-            "type": "render/vertex_data/cgal"
-        },
-        "cgal_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 881.152160644531,
-                    "y": 33.9411201477051
-                }
-            },
-            "name": "cgal",
-            "ports": {
-                "p_attr_name": "P"
-            },
-            "type": "render/vertex_data/cgal"
-        },
-        "cgal_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 467.472686767578,
-                    "y": 183.527404785156
-                }
-            },
-            "name": "cgal",
-            "ports": {
-                "p_attr_name": "P"
-            },
-            "type": "render/vertex_data/cgal"
-        },
-        "draw_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 1180.97644042969,
-                    "y": 231.237991333008
-                }
-            },
-            "name": "draw",
-            "ports": {
-                "setup": {
-                    "culling": "ccw"
-                }
-            },
-            "type": "render/draw"
-        },
-        "draw_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 1080.10546875,
-                    "y": 59.5625
-                }
-            },
-            "name": "draw",
-            "ports": {
-                "setup": {
-                    "culling": "ccw"
-                }
-            },
-            "type": "render/draw"
-        },
-        "draw_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 1295.63696289062,
-                    "y": 422.973449707031
-                }
-            },
-            "name": "draw",
-            "ports": {
-                "setup": {
-                    "culling": "ccw"
-                }
-            },
-            "type": "render/draw"
-        },
-        "fragment_shader_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 514.152954101562,
-                    "y": 623.040893554688
-                }
-            },
-            "name": "fragment_shader",
-            "ports": {
-                "source": "#version 130 \n \nout vec4 color; \n \nin vec3 vertexPosition; \nin vec3 vertexNormal; \n \nvoid main() { \n\tvec3 norm = normalize(vertexNormal); \n\n\tcolor = vec4(norm.z, norm.z, norm.z, 1); \n} \n"
-            },
-            "type": "render/fragment_shader"
-        },
         "loader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -249,68 +61,144 @@
             },
             "type": "cgal/loader"
         },
-        "normals_generator_0": {
+        "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 429.611663818359,
-                    "y": -135.96940612793
+                    "x": 701.719909667969,
+                    "y": -177.797912597656
                 }
             },
-            "name": "normals_generator",
-            "ports": {
-                "attr_name": "N",
-                "mode": "Per-face normals"
-            },
-            "type": "cgal/normals_generator"
+            "name": "draw",
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
         },
-        "normals_generator_1": {
+        "network_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 657.454711914062,
-                    "y": -150.52751159668
+                    "x": 499.120300292969,
+                    "y": -176.596984863281
                 }
             },
-            "name": "normals_generator",
-            "ports": {
-                "attr_name": "N",
-                "mode": "Per-face normals"
-            },
-            "type": "cgal/normals_generator"
+            "name": "draw",
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
         },
-        "normals_generator_2": {
+        "network_2": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 864.1083984375,
-                    "y": -148.232528686523
+                    "x": 693.497924804688,
+                    "y": -60.8115692138672
                 }
             },
-            "name": "normals_generator",
+            "name": "text",
             "ports": {
-                "attr_name": "N",
-                "mode": "Per-face normals"
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.0299999993294477,
+                    "y": 0.0299999993294477,
+                    "z": 0.0299999993294477
+                },
+                "text": "Original",
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
             },
-            "type": "cgal/normals_generator"
+            "source": "$NODES/render/text.psw",
+            "type": "network"
         },
-        "program_0": {
+        "network_3": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 800.928955078125,
-                    "y": 550.244201660156
+                    "x": 857.309448242188,
+                    "y": -70.1190414428711
                 }
             },
-            "name": "program",
-            "type": "render/program"
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.0299999993294477,
+                    "y": 0.0299999993294477,
+                    "z": 0.0299999993294477
+                },
+                "text": "Lindtsrom Turk",
+                "translation": {
+                    "x": 0.200000002980232,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
+            },
+            "source": "$NODES/render/text.psw",
+            "type": "network"
+        },
+        "network_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 872.977355957031,
+                    "y": -177.797912597656
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_5": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 481.287628173828,
+                    "y": -75.7035217285156
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.0299999993294477,
+                    "y": 0.0299999993294477,
+                    "z": 0.0299999993294477
+                },
+                "text": "Edge length",
+                "translation": {
+                    "x": -0.200000002980232,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
+            },
+            "source": "$NODES/render/text.psw",
+            "type": "network"
         },
         "simplification_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 452.019714355469,
-                    "y": -412.949005126953
+                    "x": 841.071960449219,
+                    "y": -418.533477783203
                 }
             },
             "name": "simplification",
@@ -320,14 +208,14 @@
                 "stop_condition": "Count_stop_predicate",
                 "stop_parameter": 200.0
             },
-            "type": "cgal/simplification/simplification"
+            "type": "cgal/topology/simplification"
         },
         "simplification_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 884.989685058594,
-                    "y": -430.0888671875
+                    "x": 468.015014648438,
+                    "y": -426.365875244141
                 }
             },
             "name": "simplification",
@@ -337,14 +225,14 @@
                 "stop_condition": "Count_stop_predicate",
                 "stop_parameter": 200.0
             },
-            "type": "cgal/simplification/simplification"
+            "type": "cgal/topology/simplification"
         },
         "transform_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 919.802917480469,
-                    "y": -645.499816894531
+                    "x": 502.828247070312,
+                    "y": -641.77685546875
                 }
             },
             "name": "transform",
@@ -372,8 +260,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 464.539459228516,
-                    "y": -651.551086425781
+                    "x": 853.591735839844,
+                    "y": -657.135620117188
                 }
             },
             "name": "transform",
@@ -396,31 +284,6 @@
                 "vec3_as_normals": true
             },
             "type": "cgal/transform"
-        },
-        "vertex_shader_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 567.662475585938,
-                    "y": 446.576293945312
-                }
-            },
-            "name": "vertex_shader",
-            "ports": {
-                "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \nin vec3 N;                     // normal attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \nuniform mat4 iModelViewNormal; // modelview normal matrix \n \nout vec3 vertexPosition;       // vertex position for the fragment shader \nout vec3 vertexNormal;\n \nvoid main() {\n\tvec4 pos4 = vec4(P, 1);\n\tvec4 norm4 = vec4(N, 0);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n\tvertexNormal = (iModelViewNormal * norm4).xyz;\n\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
-            },
-            "type": "render/vertex_shader"
-        },
-        "viewport_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 1286.05078125,
-                    "y": -107.544158935547
-                }
-            },
-            "name": "viewport",
-            "type": "render/uniforms/viewport"
         }
     },
     "scene_config": {
@@ -429,6 +292,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKPAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAaoAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABjQAAAHYBAAAD/AAAAggAAAM1AAAArgD////6AAAAAAEAAAAC+wAAAAwAZQBkAGkAdABvAHIBAAAAAP////8AAADHAQAAA/sAAAAGAGwAbwBnAQAABh0AAAFjAAAAAAAAAAAAAAXFAAAEwwAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKPAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAaoAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABjQAAAHkBAAAD/AAAAgMAAAFrAAAArQD////6AAAAAAEAAAAC+wAAAAwAZQBkAGkAdABvAHIBAAAAAP////8AAACwAQAAA/sAAAAGAGwAbwBnAQAABh0AAAFjAAAAAAAAAAAAAAJwAAAC+QAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAA"
 }

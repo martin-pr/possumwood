@@ -19,12 +19,6 @@
             "out_port": "shader"
         },
         {
-            "in_node": "cgal_0",
-            "in_port": "mesh",
-            "out_node": "loader_0",
-            "out_port": "polyhedron"
-        },
-        {
             "in_node": "draw_0",
             "in_port": "program",
             "out_node": "program_0",
@@ -35,6 +29,18 @@
             "in_port": "vertex_shader",
             "out_node": "vertex_shader_0",
             "out_port": "shader"
+        },
+        {
+            "in_node": "normals_generator_0",
+            "in_port": "input",
+            "out_node": "network_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "cgal_0",
+            "in_port": "mesh",
+            "out_node": "normals_generator_0",
+            "out_port": "output"
         }
     ],
     "description": "### PN Triangles in a geometry shader\n\nCurved PN Triangles is a simple geometry subdivision scheme, replacing all triangles with a bezier patch directly on the GPU. The shape interpolation uses a cubic spline, and normals are interpolated using a quadratic spline to maintain continuity.\n\nThis implementation uses a geometry shader for emitting additional polygons.\n\n<sub>Vlachos, Alex, et al. [\"Curved PN triangles.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.4338&rep=rep1&type=pdf) Proceedings of the 2001 symposium on Interactive 3D graphics. ACM, 2001.</sub>",
@@ -98,20 +104,35 @@
             },
             "type": "render/geometry_shader"
         },
-        "loader_0": {
+        "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -143.991577148438,
-                    "y": 257.263488769531
+                    "x": -159.109268188477,
+                    "y": 125.616836547852
                 }
             },
-            "name": "loader",
+            "name": "tetrahedron",
             "ports": {
-                "filename": "$EXAMPLES/tetrahedron.obj",
-                "name": "mesh"
+                "diameter": 1.0
             },
-            "type": "cgal/loader"
+            "source": "$NODES/cgal/primitives/tetrahedron.psw",
+            "type": "network"
+        },
+        "normals_generator_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -184.109268188477,
+                    "y": 251.616851806641
+                }
+            },
+            "name": "normals_generator",
+            "ports": {
+                "attr_name": "N",
+                "mode": "Per-vertex normals"
+            },
+            "type": "cgal/normals_generator"
         },
         "program_0": {
             "blind_data": {
@@ -146,5 +167,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJdAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJwBAAADAAAAAQAAAkcAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACgwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAC/gAAAj8AAACuAQAAAwAABVoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJdAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAkcAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACgwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAC/gAAAj8AAACxAQAAAwAABVoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
