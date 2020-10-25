@@ -25,7 +25,7 @@
             "out_port": "mesh"
         },
         {
-            "in_node": "network_5",
+            "in_node": "network_6",
             "in_port": "input",
             "out_node": "network_1",
             "out_port": "mesh"
@@ -37,19 +37,19 @@
             "out_port": "out_mesh"
         },
         {
-            "in_node": "network_2",
+            "in_node": "network_3",
             "in_port": "input",
             "out_node": "subdivision_1",
             "out_port": "out_mesh"
         },
         {
-            "in_node": "network_3",
+            "in_node": "network_4",
             "in_port": "input",
             "out_node": "subdivision_2",
             "out_port": "out_mesh"
         },
         {
-            "in_node": "network_4",
+            "in_node": "network_5",
             "in_port": "input",
             "out_node": "subdivision_3",
             "out_port": "out_mesh"
@@ -79,7 +79,7 @@
             "out_port": "out_mesh"
         }
     ],
-    "description": "",
+    "description": "### Mesh Subdivision in CGAL\n\nThis simple demo demonstrates the [mesh subdivision](https://en.wikipedia.org/wiki/Subdivision_surface) functionality as [implemented in CGAL](https://doc.cgal.org/latest/Subdivision_method_3/index.html).\n\nThere are [four subdivision methods](https://doc.cgal.org/latest/Subdivision_method_3/index.html#title6) implemented in CGAL - Catmull Clark, Loop, Doo Sabin and Sqrt 3. In Possumwood, all these are implemented as a single node acting on the polyhedron type.",
     "name": "network",
     "nodes": {
         "network_0": {
@@ -113,6 +113,38 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
+                    "x": 548.294311523438,
+                    "y": 771.244750976562
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
+                },
+                "text": "Doo Sabin",
+                "translation": {
+                    "x": 3.0,
+                    "y": -0.5,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
+            },
+            "source": "$NODES/render/text.psw",
+            "type": "network"
+        },
+        "network_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
                     "x": 721.449645996094,
                     "y": 774.393005371094
                 }
@@ -141,7 +173,7 @@
             "source": "$NODES/render/text.psw",
             "type": "network"
         },
-        "network_2": {
+        "network_3": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -153,7 +185,7 @@
             "source": "$NODES/cgal/draw.psw",
             "type": "network"
         },
-        "network_3": {
+        "network_4": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -165,7 +197,7 @@
             "source": "$NODES/cgal/draw.psw",
             "type": "network"
         },
-        "network_4": {
+        "network_5": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -177,7 +209,7 @@
             "source": "$NODES/cgal/draw.psw",
             "type": "network"
         },
-        "network_5": {
+        "network_6": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -189,7 +221,7 @@
             "source": "$NODES/cgal/draw.psw",
             "type": "network"
         },
-        "network_6": {
+        "network_7": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -221,7 +253,7 @@
             "source": "$NODES/render/text.psw",
             "type": "network"
         },
-        "network_7": {
+        "network_8": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -253,7 +285,7 @@
             "source": "$NODES/render/text.psw",
             "type": "network"
         },
-        "network_8": {
+        "network_9": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -277,38 +309,6 @@
                 "text": "Loop",
                 "translation": {
                     "x": 2.0,
-                    "y": -0.5,
-                    "z": 0.0
-                },
-                "vert_align": "Top"
-            },
-            "source": "$NODES/render/text.psw",
-            "type": "network"
-        },
-        "network_9": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 548.294311523438,
-                    "y": 771.244750976562
-                }
-            },
-            "name": "text",
-            "ports": {
-                "horiz_align": "Center",
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 0.100000001490116,
-                    "y": 0.100000001490116,
-                    "z": 0.100000001490116
-                },
-                "text": "Doo Sabin",
-                "translation": {
-                    "x": 3.0,
                     "y": -0.5,
                     "z": 0.0
                 },
@@ -500,6 +500,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAH8AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAwUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAH8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADEAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADiwAAAbIAAACxAQAAAwAABloAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

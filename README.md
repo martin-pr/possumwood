@@ -483,6 +483,26 @@ This demo shows how to use [CGAL's implementation of mesh decimation](https://do
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/11_subdivision.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Mesh Subdivision in CGAL
+
+This simple demo demonstrates the [mesh subdivision](https://en.wikipedia.org/wiki/Subdivision_surface) functionality as [implemented in CGAL](https://doc.cgal.org/latest/Subdivision_method_3/index.html).
+
+There are [four subdivision methods](https://doc.cgal.org/latest/Subdivision_method_3/index.html#title6) implemented in CGAL - Catmull Clark, Loop, Doo Sabin and Sqrt 3. In Possumwood, all these are implemented as a single node acting on the polyhedron type.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/11_subdivision_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 <img src="toolbars/02_polymesh/20_csg.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
@@ -497,6 +517,26 @@ This demo shows how a simple CSG setup can be created in Possumwood. A subnetwor
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 <img src="toolbars/02_polymesh/20_csg_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/21_minkowski.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Minkowski addition in CGAL
+
+[Minkowski addition](https://en.wikipedia.org/wiki/Minkowski_addition) allows to combine two polyhedra such that the result is a polyhedron where one of the object has been "swiped" around the other (please see the link for more accurate description).
+
+In CGAL, [Minowski addition is implemented](https://doc.cgal.org/latest/Minkowski_sum_3/index.html) on top of the [Nef polyhedra](https://doc.cgal.org/latest/Nef_3/index.html#chapterNef3). This example setup shows how Minkowski addition can be used to "expand" and "round edges" a polyhedron.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/21_minkowski_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -2435,6 +2475,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 

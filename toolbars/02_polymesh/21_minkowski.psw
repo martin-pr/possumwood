@@ -25,12 +25,6 @@
             "out_port": "mesh"
         },
         {
-            "in_node": "poly_to_nef_0",
-            "in_port": "mesh",
-            "out_node": "subdivision_0",
-            "out_port": "out_mesh"
-        },
-        {
             "in_node": "minkowski_0",
             "in_port": "nef2",
             "out_node": "poly_to_nef_0",
@@ -41,6 +35,12 @@
             "in_port": "in_mesh",
             "out_node": "poly_to_nef_0",
             "out_port": "nef"
+        },
+        {
+            "in_node": "poly_to_nef_0",
+            "in_port": "mesh",
+            "out_node": "subdivision_0",
+            "out_port": "out_mesh"
         },
         {
             "in_node": "network_0",
@@ -61,7 +61,7 @@
             "out_port": "out_mesh"
         }
     ],
-    "description": "",
+    "description": "### Minkowski addition in CGAL\n\n[Minkowski addition](https://en.wikipedia.org/wiki/Minkowski_addition) allows to combine two polyhedra such that the result is a polyhedron where one of the object has been \"swiped\" around the other (please see the link for more accurate description).\n\nIn CGAL, [Minowski addition is implemented](https://doc.cgal.org/latest/Minkowski_sum_3/index.html) on top of the [Nef polyhedra](https://doc.cgal.org/latest/Nef_3/index.html#chapterNef3). This example setup shows how Minkowski addition can be used to \"expand\" and \"round edges\" a polyhedron.",
     "name": "network",
     "nodes": {
         "minkowski_0": {
@@ -337,6 +337,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK4AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAkkAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK4AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADHAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADlwAAAaYAAACxAQAAAwAABZ4AAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
