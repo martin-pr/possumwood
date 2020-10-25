@@ -72,7 +72,7 @@ QWidget* filename_ui::widget() {
 }
 
 void filename_ui::onFlagsChanged(unsigned flags) {
-	assert((!(flags & kOutput)) && "Filename should never be used as an output.");
-
-	m_browseButton->setDisabled(flags & kDisabled);
+	m_browseButton->setDisabled(flags & kDisabled || flags & kOutput);
+	m_lineEdit->setDisabled(flags & kDisabled);
+	m_lineEdit->setReadOnly(flags & kOutput);
 }
