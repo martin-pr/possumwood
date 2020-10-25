@@ -1,19 +1,7 @@
 {
     "connections": [
         {
-            "in_node": "network_0",
-            "in_port": "input",
-            "out_node": "subdivision_0",
-            "out_port": "out_mesh"
-        },
-        {
             "in_node": "transform_0",
-            "in_port": "in_mesh",
-            "out_node": "network_1",
-            "out_port": "mesh"
-        },
-        {
-            "in_node": "subdivision_0",
             "in_port": "in_mesh",
             "out_node": "network_1",
             "out_port": "mesh"
@@ -29,6 +17,42 @@
             "in_port": "in_mesh",
             "out_node": "network_1",
             "out_port": "mesh"
+        },
+        {
+            "in_node": "transform_3",
+            "in_port": "in_mesh",
+            "out_node": "network_1",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "network_5",
+            "in_port": "input",
+            "out_node": "network_1",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "input",
+            "out_node": "subdivision_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_2",
+            "in_port": "input",
+            "out_node": "subdivision_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_3",
+            "in_port": "input",
+            "out_node": "subdivision_2",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_4",
+            "in_port": "input",
+            "out_node": "subdivision_3",
+            "out_port": "out_mesh"
         },
         {
             "in_node": "subdivision_1",
@@ -49,21 +73,9 @@
             "out_port": "out_mesh"
         },
         {
-            "in_node": "network_2",
-            "in_port": "input",
-            "out_node": "subdivision_1",
-            "out_port": "out_mesh"
-        },
-        {
-            "in_node": "network_3",
-            "in_port": "input",
-            "out_node": "subdivision_2",
-            "out_port": "out_mesh"
-        },
-        {
-            "in_node": "network_4",
-            "in_port": "input",
-            "out_node": "subdivision_3",
+            "in_node": "subdivision_0",
+            "in_port": "in_mesh",
+            "out_node": "transform_3",
             "out_port": "out_mesh"
         }
     ],
@@ -86,8 +98,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 353.463439941406,
-                    "y": 2.97864413261414
+                    "x": 343.171295166016,
+                    "y": -7.31351089477539
                 }
             },
             "name": "tetrahedron",
@@ -95,6 +107,38 @@
                 "diameter": 1.0
             },
             "source": "$NODES/cgal/primitives/tetrahedron.psw",
+            "type": "network"
+        },
+        "network_10": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 721.449645996094,
+                    "y": 774.393005371094
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
+                },
+                "text": "Sqrt 3",
+                "translation": {
+                    "x": 4.0,
+                    "y": -0.5,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
+            },
+            "source": "$NODES/render/text.psw",
             "type": "network"
         },
         "network_2": {
@@ -131,6 +175,146 @@
             },
             "name": "draw",
             "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_5": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -74.8086624145508,
+                    "y": 230.619033813477
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_6": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -84.5097503662109,
+                    "y": 771.244750976562
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
+                },
+                "text": "Original",
+                "translation": {
+                    "x": 0.0,
+                    "y": -0.5,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
+            },
+            "source": "$NODES/render/text.psw",
+            "type": "network"
+        },
+        "network_7": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 116.980087280273,
+                    "y": 771.244750976562
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
+                },
+                "text": "Catmull Clark",
+                "translation": {
+                    "x": 1.0,
+                    "y": -0.5,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
+            },
+            "source": "$NODES/render/text.psw",
+            "type": "network"
+        },
+        "network_8": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 346.804443359375,
+                    "y": 768.096496582031
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
+                },
+                "text": "Loop",
+                "translation": {
+                    "x": 2.0,
+                    "y": -0.5,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
+            },
+            "source": "$NODES/render/text.psw",
+            "type": "network"
+        },
+        "network_9": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 548.294311523438,
+                    "y": 771.244750976562
+                }
+            },
+            "name": "text",
+            "ports": {
+                "horiz_align": "Center",
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.100000001490116,
+                    "y": 0.100000001490116,
+                    "z": 0.100000001490116
+                },
+                "text": "Doo Sabin",
+                "translation": {
+                    "x": 3.0,
+                    "y": -0.5,
+                    "z": 0.0
+                },
+                "vert_align": "Top"
+            },
+            "source": "$NODES/render/text.psw",
             "type": "network"
         },
         "subdivision_0": {
@@ -214,7 +398,7 @@
                     "z": 1.0
                 },
                 "translation": {
-                    "x": 1.0,
+                    "x": 2.0,
                     "y": 0.0,
                     "z": 0.0
                 },
@@ -243,7 +427,7 @@
                     "z": 1.0
                 },
                 "translation": {
-                    "x": 2.0,
+                    "x": 3.0,
                     "y": 0.0,
                     "z": 0.0
                 },
@@ -272,7 +456,36 @@
                     "z": 1.0
                 },
                 "translation": {
-                    "x": 3.0,
+                    "x": 4.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        },
+        "transform_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 106.390342712402,
+                    "y": 219.175430297852
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 1.0,
                     "y": 0.0,
                     "z": 0.0
                 },
@@ -287,6 +500,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAtAAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACxAQAAAwAAAvIAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAH8AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAwUAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
