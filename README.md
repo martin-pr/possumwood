@@ -540,6 +540,26 @@ In CGAL, [Minowski addition is implemented](https://doc.cgal.org/latest/Minkowsk
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/22_convex_hull.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Convex Hull in CGAL
+
+[Convex hull](https://en.wikipedia.org/wiki/Convex_hull) algorithm, [implemented in CGAL](https://doc.cgal.org/latest/Convex_hull_3/index.html), generates the smallest possible convex polyhedron fully enclosing a set of points. In Possumwood, the input to convex hull is a set of points from input meshes, and output is a convex polyhedron enclosing all of them.
+
+Convex hull is useful for mesh generation for 3D printing - alongside boolean operations, it allows for creating complex shapes out of very simple primitives.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_polymesh/22_convex_hull_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
 </table> 
 
 ### Image
@@ -2475,6 +2495,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 
