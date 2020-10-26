@@ -73,7 +73,7 @@
                 }
             },
             "name": "minkowski",
-            "type": "cgal/csg/minkowski"
+            "type": "cgal/nef_polyhedra/minkowski"
         },
         "network_0": {
             "blind_data": {
@@ -84,7 +84,7 @@
                 }
             },
             "name": "draw",
-            "source": "$NODES/cgal/csg/draw.psw",
+            "source": "$NODES/cgal/nef_polyhedra/draw.psw",
             "type": "network"
         },
         "network_1": {
@@ -114,7 +114,7 @@
                     "z": 0.0
                 }
             },
-            "source": "$NODES/cgal/csg/primitives/box.psw",
+            "source": "$NODES/cgal/nef_polyhedra/primitives/box.psw",
             "type": "network"
         },
         "network_2": {
@@ -141,7 +141,7 @@
                 }
             },
             "name": "draw",
-            "source": "$NODES/cgal/csg/draw.psw",
+            "source": "$NODES/cgal/nef_polyhedra/draw.psw",
             "type": "network"
         },
         "network_4": {
@@ -153,7 +153,7 @@
                 }
             },
             "name": "draw",
-            "source": "$NODES/cgal/csg/draw.psw",
+            "source": "$NODES/cgal/nef_polyhedra/draw.psw",
             "type": "network"
         },
         "network_5": {
@@ -229,7 +229,7 @@
                 }
             },
             "name": "poly_to_nef",
-            "type": "cgal/csg/poly_to_nef"
+            "type": "cgal/nef_polyhedra/poly_to_nef"
         },
         "subdivision_0": {
             "blind_data": {
@@ -272,7 +272,7 @@
                     "z": 0.0
                 }
             },
-            "type": "cgal/csg/transform"
+            "type": "cgal/nef_polyhedra/transform"
         },
         "transform_1": {
             "blind_data": {
@@ -300,7 +300,7 @@
                     "z": 0.0
                 }
             },
-            "type": "cgal/csg/transform"
+            "type": "cgal/nef_polyhedra/transform"
         },
         "transform_2": {
             "blind_data": {
@@ -328,7 +328,7 @@
                     "z": 0.0
                 }
             },
-            "type": "cgal/csg/transform"
+            "type": "cgal/nef_polyhedra/transform"
         }
     },
     "scene_config": {

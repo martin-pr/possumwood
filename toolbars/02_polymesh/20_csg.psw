@@ -103,7 +103,7 @@
                 }
             },
             "name": "difference",
-            "type": "cgal/csg/operations/difference"
+            "type": "cgal/nef_polyhedra/operations/difference"
         },
         "input_0": {
             "blind_data": {
@@ -125,7 +125,7 @@
                 }
             },
             "name": "intersection",
-            "type": "cgal/csg/operations/intersection"
+            "type": "cgal/nef_polyhedra/operations/intersection"
         },
         "network_0": {
             "blind_data": {
@@ -136,7 +136,7 @@
                 }
             },
             "name": "draw",
-            "source": "$NODES/cgal/csg/draw.psw",
+            "source": "$NODES/cgal/nef_polyhedra/draw.psw",
             "type": "network"
         },
         "network_1": {
@@ -167,7 +167,7 @@
                 },
                 "v_subdivision": 16
             },
-            "source": "$NODES/cgal/csg/primitives/sphere.psw",
+            "source": "$NODES/cgal/nef_polyhedra/primitives/sphere.psw",
             "type": "network"
         },
         "transform_0": {
@@ -196,7 +196,7 @@
                     "z": 0.0
                 }
             },
-            "type": "cgal/csg/transform"
+            "type": "cgal/nef_polyhedra/transform"
         },
         "transform_1": {
             "blind_data": {
@@ -224,7 +224,7 @@
                     "z": 0.0
                 }
             },
-            "type": "cgal/csg/transform"
+            "type": "cgal/nef_polyhedra/transform"
         },
         "transform_2": {
             "blind_data": {
@@ -252,7 +252,7 @@
                     "z": 0.0
                 }
             },
-            "type": "cgal/csg/transform"
+            "type": "cgal/nef_polyhedra/transform"
         },
         "union_0": {
             "blind_data": {
@@ -263,7 +263,7 @@
                 }
             },
             "name": "union",
-            "type": "cgal/csg/operations/union"
+            "type": "cgal/nef_polyhedra/operations/union"
         },
         "union_1": {
             "blind_data": {
@@ -274,7 +274,7 @@
                 }
             },
             "name": "union",
-            "type": "cgal/csg/operations/union"
+            "type": "cgal/nef_polyhedra/operations/union"
         },
         "union_2": {
             "blind_data": {
@@ -285,7 +285,7 @@
                 }
             },
             "name": "union",
-            "type": "cgal/csg/operations/union"
+            "type": "cgal/nef_polyhedra/operations/union"
         }
     },
     "ports": {

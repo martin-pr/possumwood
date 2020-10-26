@@ -38,5 +38,5 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("cgal/csg/minkowski", init);
+possumwood::NodeImplementation s_impl("cgal/nef_polyhedra/minkowski", init);
 }  // namespace
