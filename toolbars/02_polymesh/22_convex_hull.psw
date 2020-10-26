@@ -1,0 +1,253 @@
+{
+    "connections": [
+        {
+            "in_node": "network_2",
+            "in_port": "input",
+            "out_node": "convex_hull_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "network_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_mesh",
+            "out_node": "network_1",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "append_0",
+            "in_port": "in_mesh_1",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "append_0",
+            "in_port": "in_mesh_2",
+            "out_node": "transform_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "append_1",
+            "in_port": "in_mesh_1",
+            "out_node": "append_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "transform_2",
+            "in_port": "in_mesh",
+            "out_node": "network_3",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "append_1",
+            "in_port": "in_mesh_2",
+            "out_node": "transform_2",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "convex_hull_0",
+            "in_port": "in_mesh",
+            "out_node": "append_1",
+            "out_port": "out_mesh"
+        }
+    ],
+    "description": "### Convex Hull in CGAL\n\n[Convex hull](https://en.wikipedia.org/wiki/Convex_hull) algorithm, [implemented in CGAL](https://doc.cgal.org/latest/Convex_hull_3/index.html), generates the smallest possible convex polyhedron fully enclosing a set of points. In Possumwood, the input to convex hull is a set of points from input meshes, and output is a convex polyhedron enclosing all of them.\n\nConvex hull is useful for mesh generation for 3D printing - alongside boolean operations, it allows for creating complex shapes out of very simple primitives.",
+    "name": "network",
+    "nodes": {
+        "append_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 315.0,
+                    "y": 771.0
+                }
+            },
+            "name": "append",
+            "type": "cgal/append"
+        },
+        "append_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 392.527618408203,
+                    "y": 900.636352539062
+                }
+            },
+            "name": "append",
+            "type": "cgal/append"
+        },
+        "convex_hull_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 427.069488525391,
+                    "y": 1035.07495117188
+                }
+            },
+            "name": "convex_hull",
+            "type": "cgal/topology/convex_hull"
+        },
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 156.0,
+                    "y": 339.0
+                }
+            },
+            "name": "sphere",
+            "ports": {
+                "diameter": 1.0,
+                "h_subdivision": 32,
+                "v_subdivision": 16
+            },
+            "source": "$NODES/cgal/primitives/sphere.psw",
+            "type": "network"
+        },
+        "network_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 352.0,
+                    "y": 336.0
+                }
+            },
+            "name": "sphere",
+            "ports": {
+                "diameter": 0.200000002980232,
+                "h_subdivision": 32,
+                "v_subdivision": 16
+            },
+            "source": "$NODES/cgal/primitives/sphere.psw",
+            "type": "network"
+        },
+        "network_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 454.256652832031,
+                    "y": 1176.24243164062
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 540.0,
+                    "y": 331.0
+                }
+            },
+            "name": "sphere",
+            "ports": {
+                "diameter": 0.200000002980232,
+                "h_subdivision": 32,
+                "v_subdivision": 16
+            },
+            "source": "$NODES/cgal/primitives/sphere.psw",
+            "type": "network"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 152.0,
+                    "y": 517.0
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": -0.5,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        },
+        "transform_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 343.0,
+                    "y": 517.0
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.5,
+                    "y": -0.400000005960464,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        },
+        "transform_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 531.0,
+                    "y": 512.0
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.5,
+                    "y": 0.400000005960464,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ3AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACxAQAAAwAABd8AAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
