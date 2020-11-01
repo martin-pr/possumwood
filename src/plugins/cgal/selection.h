@@ -16,12 +16,6 @@ class FaceSelection {
 
 		Item(const Mesh& mesh);
 
-		const_iterator begin() const;
-		const_iterator end() const;
-
-		iterator begin();
-		iterator end();
-
 		bool empty() const;
 		std::size_t size() const;
 

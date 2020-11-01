@@ -5,22 +5,6 @@ namespace possumwood {
 FaceSelection::Item::Item(const Mesh& mesh) : m_mesh(mesh) {
 }
 
-FaceSelection::Item::const_iterator FaceSelection::Item::begin() const {
-	return m_faces.begin();
-}
-
-FaceSelection::Item::const_iterator FaceSelection::Item::end() const {
-	return m_faces.end();
-}
-
-FaceSelection::Item::iterator FaceSelection::Item::begin() {
-	return m_faces.begin();
-}
-
-FaceSelection::Item::iterator FaceSelection::Item::end() {
-	return m_faces.end();
-}
-
 void FaceSelection::Item::push_back(const possumwood::CGALPolyhedron::Facet_const_handle& value) {
 	m_faces.insert(value);
 }
@@ -71,12 +55,9 @@ FaceSelection::const_iterator FaceSelection::end() const {
 
 std::ostream& operator<<(std::ostream& out, const FaceSelection& sel) {
 	out << "Selection in " << sel.size() << " meshes:" << std::endl;
-	for(auto& i : sel) {
-		out << "  " << i.size() << " items with IDs:";
-		for(auto& num : i)
-			out << " " << num->halfedge()->property_key();
-		out << std::endl;
-	}
+	for(auto& i : sel)
+		out << "  " << i.mesh().name() << ": " << i.size() << "/" << i.mesh().polyhedron().size_of_facets()
+		    << std::endl;
 	return out;
 }
 
