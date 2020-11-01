@@ -21,14 +21,12 @@ FaceSelection::Item::iterator FaceSelection::Item::end() {
 	return m_faces.end();
 }
 
-// FaceSelection::Item::iterator FaceSelection::Item::insert(
-//     const_iterator hint,
-//     const possumwood::CGALPolyhedron::Facet_handle& value) {
-// 	return m_faces.insert(hint, value);
-// }
-
 void FaceSelection::Item::push_back(const possumwood::CGALPolyhedron::Facet_const_handle& value) {
-	m_faces.push_back(value);
+	m_faces.insert(value);
+}
+
+bool FaceSelection::Item::contains(const possumwood::CGALPolyhedron::Facet_const_handle& value) const {
+	return m_faces.find(value) != m_faces.end();
 }
 
 bool FaceSelection::Item::empty() const {

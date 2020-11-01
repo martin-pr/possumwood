@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <set>
 
 #include "mesh.h"
 
@@ -10,8 +10,8 @@ class FaceSelection {
   public:
 	class Item {
 	  public:
-		typedef std::vector<possumwood::CGALPolyhedron::Facet_const_handle>::const_iterator const_iterator;
-		typedef std::vector<possumwood::CGALPolyhedron::Facet_const_handle>::iterator iterator;
+		typedef std::set<possumwood::CGALPolyhedron::Facet_const_handle>::const_iterator const_iterator;
+		typedef std::set<possumwood::CGALPolyhedron::Facet_const_handle>::iterator iterator;
 		typedef possumwood::CGALPolyhedron::Facet_const_handle value_type;
 
 		Item(const Mesh& mesh);
@@ -25,14 +25,14 @@ class FaceSelection {
 		bool empty() const;
 		std::size_t size() const;
 
-		// iterator insert(const_iterator hint, const possumwood::CGALPolyhedron::Facet_const_handle& value);
 		void push_back(const possumwood::CGALPolyhedron::Facet_const_handle& value);
+		bool contains(const possumwood::CGALPolyhedron::Facet_const_handle& value) const;
 
 		// mesh is used only for operations on selection (grow, shrink...), not for anything else
 		const Mesh& mesh() const;
 
 	  private:
-		std::vector<possumwood::CGALPolyhedron::Facet_const_handle> m_faces;
+		std::set<possumwood::CGALPolyhedron::Facet_const_handle> m_faces;
 		Mesh m_mesh;
 	};
 
