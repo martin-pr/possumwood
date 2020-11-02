@@ -20,13 +20,14 @@ class FaceSelection {
 		std::size_t size() const;
 
 		void push_back(const possumwood::CGALPolyhedron::Facet_const_handle& value);
+		void remove(const possumwood::CGALPolyhedron::Facet_const_handle& value);
 		bool contains(const possumwood::CGALPolyhedron::Facet_const_handle& value) const;
 
 		// mesh is used only for operations on selection (grow, shrink...), not for anything else
 		const Mesh& mesh() const;
 
 	  private:
-		std::set<possumwood::CGALPolyhedron::Facet_const_handle> m_faces;
+		std::set<unsigned long> m_faces;
 		Mesh m_mesh;
 	};
 

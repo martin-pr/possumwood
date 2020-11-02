@@ -6,11 +6,17 @@ FaceSelection::Item::Item(const Mesh& mesh) : m_mesh(mesh) {
 }
 
 void FaceSelection::Item::push_back(const possumwood::CGALPolyhedron::Facet_const_handle& value) {
-	m_faces.insert(value);
+	m_faces.insert(value->uniqueId());
+}
+
+void FaceSelection::Item::remove(const possumwood::CGALPolyhedron::Facet_const_handle& value) {
+	auto it = m_faces.find(value->uniqueId());
+	if(it != m_faces.end())
+		m_faces.erase(it);
 }
 
 bool FaceSelection::Item::contains(const possumwood::CGALPolyhedron::Facet_const_handle& value) const {
-	return m_faces.find(value) != m_faces.end();
+	return m_faces.find(value->uniqueId()) != m_faces.end();
 }
 
 bool FaceSelection::Item::empty() const {

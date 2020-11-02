@@ -28,16 +28,22 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		{
 			auto& edit = mesh.edit();
 
+			std::vector<possumwood::CGALPolyhedron::Facet_handle> handles;
+
+			auto it = edit.polyhedron().facets_begin();
 			if(data.get(a_mode).value() == "Keep selected")
-				for(auto f = edit.polyhedron().facets_begin(); f != edit.polyhedron().facets_end(); ++f) {
+				for(auto f = edit.polyhedron().facets_begin(); f != edit.polyhedron().facets_end(); ++f, ++it) {
 					if(!item.contains(f))
-						edit.polyhedron().erase_facet(f->halfedge());
+						handles.push_back(it);
 				}
 			else
-				for(auto f = edit.polyhedron().facets_begin(); f != edit.polyhedron().facets_end(); ++f) {
+				for(auto f = edit.polyhedron().facets_begin(); f != edit.polyhedron().facets_end(); ++f, ++it) {
 					if(item.contains(f))
-						edit.polyhedron().erase_facet(f->halfedge());
+						handles.push_back(it);
 				}
+
+			for(auto& h : handles)
+				edit.polyhedron().erase_facet(h->halfedge());
 		}
 
 		meshes.addMesh(mesh);
