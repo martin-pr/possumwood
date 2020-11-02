@@ -9,6 +9,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 add_definitions(-Wno-error=ignored-optimization-argument) # not supported by clang
 endif()
 
+# eigen
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
 # Find CGAL
 find_package(CGAL REQUIRED)
 set(LIBS ${LIBS} CGAL::CGAL)
