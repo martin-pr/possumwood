@@ -1,0 +1,466 @@
+{
+    "connections": [
+        {
+            "in_node": "mesh_to_selection_0",
+            "in_port": "mesh",
+            "out_node": "loader_0",
+            "out_port": "polyhedron"
+        },
+        {
+            "in_node": "point_inside_poly_0",
+            "in_port": "in_selection",
+            "out_node": "mesh_to_selection_0",
+            "out_port": "selection"
+        },
+        {
+            "in_node": "triangulate_faces_0",
+            "in_port": "input",
+            "out_node": "network_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "selection_to_mesh_0",
+            "in_port": "selection",
+            "out_node": "point_inside_poly_0",
+            "out_port": "out_selection"
+        },
+        {
+            "in_node": "selection_to_mesh_1",
+            "in_port": "selection",
+            "out_node": "point_inside_poly_0",
+            "out_port": "out_selection"
+        },
+        {
+            "in_node": "network_2",
+            "in_port": "input",
+            "out_node": "selection_to_mesh_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "network_3",
+            "in_port": "input",
+            "out_node": "selection_to_mesh_1",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "point_inside_poly_0",
+            "in_port": "mesh",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_1",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "triangulate_faces_0",
+            "out_port": "output"
+        }
+    ],
+    "description": "### Face selection in CGAL\n\nSelection in CGAL's mesh processing is primarily used to determine which region is supposed to be influenced by an operation.\n\nThis demo shows the most basic selection by mesh intersection - faces of a mesh within another mesh are selected, and displayed in a different color.",
+    "name": "network",
+    "nodes": {
+        "loader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 352.464813232422,
+                    "y": -187.099487304688
+                }
+            },
+            "name": "loader",
+            "ports": {
+                "filename": "$EXAMPLES/stanford_models/bunny.obj",
+                "name": "mesh"
+            },
+            "type": "cgal/loader"
+        },
+        "mesh_to_selection_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 321.440124511719,
+                    "y": -13.3381223678589
+                }
+            },
+            "name": "mesh_to_selection",
+            "ports": {
+                "mode": "Select all faces"
+            },
+            "type": "cgal/selection/mesh_to_selection"
+        },
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 617.833435058594,
+                    "y": -524.669250488281
+                }
+            },
+            "name": "sphere",
+            "ports": {
+                "diameter": 0.100000001490116,
+                "h_subdivision": 32,
+                "v_subdivision": 16
+            },
+            "source": "$NODES/cgal/primitives/sphere.psw",
+            "type": "network"
+        },
+        "network_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 641.625061035156,
+                    "y": 184.963073730469
+                }
+            },
+            "connections": [
+                {
+                    "in_node": "draw_0",
+                    "in_port": "vertex_data",
+                    "out_node": "cgal_0",
+                    "out_port": "vertex_data"
+                },
+                {
+                    "in_node": "program_0",
+                    "in_port": "fragment_shader",
+                    "out_node": "fragment_shader_0",
+                    "out_port": "shader"
+                },
+                {
+                    "in_node": "cgal_0",
+                    "in_port": "mesh",
+                    "out_node": "input_0",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "draw_0",
+                    "in_port": "program",
+                    "out_node": "program_0",
+                    "out_port": "program"
+                },
+                {
+                    "in_node": "program_0",
+                    "in_port": "vertex_shader",
+                    "out_node": "vertex_shader_0",
+                    "out_port": "shader"
+                }
+            ],
+            "name": "draw_transparent",
+            "nodes": {
+                "cgal_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 1110.69909667969,
+                            "y": 177.028564453125
+                        }
+                    },
+                    "name": "cgal",
+                    "ports": {
+                        "p_attr_name": "P"
+                    },
+                    "type": "render/vertex_data/cgal"
+                },
+                "draw_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 1331.70397949219,
+                            "y": 287.221496582031
+                        }
+                    },
+                    "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
+                    "type": "render/draw"
+                },
+                "fragment_shader_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 885.623046875,
+                            "y": 426.183349609375
+                        }
+                    },
+                    "name": "fragment_shader",
+                    "ports": {
+                        "source": "#version 130 \n \nout vec4 color; \n \nin vec3 vertexPosition; \n \nvoid main() { \n\tif((int(gl_FragCoord.x) + int(gl_FragCoord.y)) % 8 != 0)\n\t\tdiscard;\n\n\tcolor = vec4(1,0,0, 1); \n} \n"
+                    },
+                    "type": "render/fragment_shader"
+                },
+                "input_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 1060.09899902344,
+                            "y": 53.9858169555664
+                        }
+                    },
+                    "name": "input",
+                    "type": "input"
+                },
+                "program_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 1087.884765625,
+                            "y": 366.983703613281
+                        }
+                    },
+                    "name": "program",
+                    "type": "render/program"
+                },
+                "vertex_shader_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 920.623046875,
+                            "y": 328.183319091797
+                        }
+                    },
+                    "name": "vertex_shader",
+                    "ports": {
+                        "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nout vec3 vertexPosition;       // vertex position for the fragment shader \n \nvoid main() {\n\tvec4 pos4 = vec4(P.x, P.y, P.z, 1);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                    },
+                    "type": "render/vertex_shader"
+                }
+            },
+            "type": "network"
+        },
+        "network_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 562.851623535156,
+                    "y": 576.373718261719
+                }
+            },
+            "name": "draw",
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 306.092193603516,
+                    "y": 554.654479980469
+                }
+            },
+            "connections": [
+                {
+                    "in_node": "draw_0",
+                    "in_port": "vertex_data",
+                    "out_node": "cgal_0",
+                    "out_port": "vertex_data"
+                },
+                {
+                    "in_node": "program_0",
+                    "in_port": "fragment_shader",
+                    "out_node": "fragment_shader_0",
+                    "out_port": "shader"
+                },
+                {
+                    "in_node": "cgal_0",
+                    "in_port": "mesh",
+                    "out_node": "input_0",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "draw_0",
+                    "in_port": "program",
+                    "out_node": "program_0",
+                    "out_port": "program"
+                },
+                {
+                    "in_node": "program_0",
+                    "in_port": "vertex_shader",
+                    "out_node": "vertex_shader_0",
+                    "out_port": "shader"
+                }
+            ],
+            "name": "draw_orange",
+            "nodes": {
+                "cgal_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 186.038146972656,
+                            "y": 605.442138671875
+                        }
+                    },
+                    "name": "cgal",
+                    "ports": {
+                        "p_attr_name": "P"
+                    },
+                    "type": "render/vertex_data/cgal"
+                },
+                "draw_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 360.182373046875,
+                            "y": 677.374328613281
+                        }
+                    },
+                    "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
+                    "type": "render/draw"
+                },
+                "fragment_shader_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": -74.2046356201172,
+                            "y": 861.886901855469
+                        }
+                    },
+                    "name": "fragment_shader",
+                    "ports": {
+                        "source": "#version 130 \n \nout vec4 color; \n \nin vec3 vertexPosition; \n \nvoid main() { \n\tvec3 dx = dFdx(vertexPosition); \n\tvec3 dy = dFdy(vertexPosition); \n \n\tvec3 norm = normalize(cross(dx, dy)); \n \n\tcolor = vec4(norm.z, 0.5*norm.z, 0, 1); \n} \n"
+                    },
+                    "type": "render/fragment_shader"
+                },
+                "input_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 113.213638305664,
+                            "y": 477.664031982422
+                        }
+                    },
+                    "name": "input",
+                    "type": "input"
+                },
+                "program_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 145.476211547852,
+                            "y": 771.430114746094
+                        }
+                    },
+                    "name": "program",
+                    "type": "render/program"
+                },
+                "vertex_shader_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": -33.8221282958984,
+                            "y": 727.817016601562
+                        }
+                    },
+                    "name": "vertex_shader",
+                    "ports": {
+                        "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nout vec3 vertexPosition;       // vertex position for the fragment shader \n \nvoid main() {\n\tvec4 pos4 = vec4(P.x, P.y, P.z, 1);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+                    },
+                    "type": "render/vertex_shader"
+                }
+            },
+            "type": "network"
+        },
+        "point_inside_poly_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 411.715026855469,
+                    "y": 168.091857910156
+                }
+            },
+            "name": "point_inside_poly",
+            "ports": {
+                "mode": "Replace selection"
+            },
+            "type": "cgal/selection/point_inside_poly"
+        },
+        "selection_to_mesh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 504.641021728516,
+                    "y": 399.201690673828
+                }
+            },
+            "name": "selection_to_mesh",
+            "ports": {
+                "mode": "Remove selected"
+            },
+            "type": "cgal/selection/selection_to_mesh"
+        },
+        "selection_to_mesh_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 286.098907470703,
+                    "y": 396.515991210938
+                }
+            },
+            "name": "selection_to_mesh",
+            "ports": {
+                "mode": "Keep selected"
+            },
+            "type": "cgal/selection/selection_to_mesh"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 606.6328125,
+                    "y": -149.0361328125
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": -0.0500000007450581,
+                    "y": 0.180000007152557,
+                    "z": -0.0280000008642673
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        },
+        "triangulate_faces_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 590.021667480469,
+                    "y": -315.598571777344
+                }
+            },
+            "name": "triangulate_faces",
+            "type": "cgal/topology/triangulate_faces"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAH8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAlkAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADEAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADiwAAAbIAAACxAQAAAwAABakAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
