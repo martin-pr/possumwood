@@ -13,6 +13,18 @@
             "out_port": "vertex_data"
         },
         {
+            "in_node": "selection_to_mesh_0",
+            "in_port": "selection",
+            "out_node": "fair_0",
+            "out_port": "out_selection"
+        },
+        {
+            "in_node": "selection_to_mesh_1",
+            "in_port": "selection",
+            "out_node": "fair_0",
+            "out_port": "out_selection"
+        },
+        {
             "in_node": "program_0",
             "in_port": "fragment_shader",
             "out_node": "fragment_shader_0",
@@ -37,14 +49,8 @@
             "out_port": "mesh"
         },
         {
-            "in_node": "selection_to_mesh_0",
-            "in_port": "selection",
-            "out_node": "point_inside_poly_0",
-            "out_port": "out_selection"
-        },
-        {
-            "in_node": "selection_to_mesh_1",
-            "in_port": "selection",
+            "in_node": "fair_0",
+            "in_port": "in_selection",
             "out_node": "point_inside_poly_0",
             "out_port": "out_selection"
         },
@@ -98,8 +104,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 544.181396484375,
-                    "y": 585.545288085938
+                    "x": 563.68408203125,
+                    "y": 702.561218261719
                 }
             },
             "name": "cgal",
@@ -112,8 +118,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 186.038146972656,
-                    "y": 605.442138671875
+                    "x": 243.856369018555,
+                    "y": 749.987670898438
                 }
             },
             "name": "cgal",
@@ -126,8 +132,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 715.095031738281,
-                    "y": 581.558349609375
+                    "x": 734.597717285156,
+                    "y": 698.574279785156
                 }
             },
             "name": "draw",
@@ -142,8 +148,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 360.182373046875,
-                    "y": 677.374328613281
+                    "x": 418.000610351562,
+                    "y": 821.919860839844
                 }
             },
             "name": "draw",
@@ -154,12 +160,26 @@
             },
             "type": "render/draw"
         },
+        "fair_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 448.581909179688,
+                    "y": 301.792297363281
+                }
+            },
+            "name": "fair",
+            "ports": {
+                "continuity": 1
+            },
+            "type": "cgal/meshing/fair"
+        },
         "fragment_shader_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -74.2046356201172,
-                    "y": 861.886901855469
+                    "x": -16.3864116668701,
+                    "y": 1006.43243408203
                 }
             },
             "name": "fragment_shader",
@@ -236,6 +256,12 @@
                     "out_port": "shader"
                 },
                 {
+                    "in_node": "cgal_0",
+                    "in_port": "mesh",
+                    "out_node": "input_0",
+                    "out_port": "data"
+                },
+                {
                     "in_node": "draw_0",
                     "in_port": "program",
                     "out_node": "program_0",
@@ -246,12 +272,6 @@
                     "in_port": "vertex_shader",
                     "out_node": "vertex_shader_0",
                     "out_port": "shader"
-                },
-                {
-                    "in_node": "cgal_0",
-                    "in_port": "mesh",
-                    "out_node": "input_0",
-                    "out_port": "data"
                 }
             ],
             "name": "draw_transparent",
@@ -357,8 +377,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 145.476211547852,
-                    "y": 771.430114746094
+                    "x": 203.29443359375,
+                    "y": 915.975646972656
                 }
             },
             "name": "program",
@@ -368,8 +388,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 504.641021728516,
-                    "y": 399.201690673828
+                    "x": 524.143676757812,
+                    "y": 516.217651367188
                 }
             },
             "name": "selection_to_mesh",
@@ -382,8 +402,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 146.497772216797,
-                    "y": 419.098541259766
+                    "x": 204.315994262695,
+                    "y": 563.644104003906
                 }
             },
             "name": "selection_to_mesh",
@@ -436,8 +456,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -33.8221282958984,
-                    "y": 727.817016601562
+                    "x": 23.9960956573486,
+                    "y": 872.362548828125
                 }
             },
             "name": "vertex_shader",
@@ -453,6 +473,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAH8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAlkAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADEAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADiwAAAbIAAACxAQAAAwAABakAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHuAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAksAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABWQAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABzwAAAZ8AAACtAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

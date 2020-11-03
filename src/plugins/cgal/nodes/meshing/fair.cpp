@@ -1,58 +1,59 @@
-#include <Eigen/Core>
-
-#include <boost/range/begin.hpp>
-#include <boost/range/end.hpp>
-
 #include <CGAL/Polygon_mesh_processing/fair.h>
 
 #include <possumwood_sdk/node_implementation.h>
 
 #include "datatypes/meshes.h"
+#include "datatypes/selection.h"
 #include "errors.h"
-
-// // hacking boost begin and end - fairing seems to be assuming a version of boost we don't have
-// namespace boost {
-// using boost::range::begin;
-// using boost::range::end;
-// }  // namespace boost
 
 namespace {
 
-using possumwood::CGALPolyhedron;
-using possumwood::Meshes;
+using possumwood::FaceSelection;
 
-typedef possumwood::CGALPolyhedron Mesh;
-
-dependency_graph::InAttr<Meshes> a_inMesh;
+dependency_graph::InAttr<FaceSelection> a_inSelection;
 dependency_graph::InAttr<unsigned> a_continuity;
-dependency_graph::OutAttr<Meshes> a_outMesh;
+dependency_graph::OutAttr<FaceSelection> a_outSelection;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::ScopedOutputRedirect redirect;
 
-	Meshes result;
-	for(auto mesh : data.get(a_inMesh)) {
-		auto& editableMesh = mesh.edit();
+	FaceSelection result;
+	for(const auto& current : data.get(a_inSelection)) {
+		auto mesh = current.mesh();
+		{
+			auto& editableMesh = mesh.edit();
 
-		CGAL::Polygon_mesh_processing::fair(
-		    editableMesh.polyhedron(), CGAL::vertices(editableMesh.polyhedron()),
-		    CGAL::Polygon_mesh_processing::parameters::fairing_continuity(data.get(a_continuity)));
+			std::set<possumwood::CGALPolyhedron::Vertex_handle> handles;
+			for(auto it = editableMesh.polyhedron().facets_begin(); it != editableMesh.polyhedron().facets_end(); ++it)
+				if(current.contains(it)) {
+					auto vit = it->facet_begin();
+					for(std::size_t a=0; a<it->facet_degree(); ++a, ++vit)
+						handles.insert(vit->vertex());
+				}
 
-		result.addMesh(mesh);
+			CGAL::Polygon_mesh_processing::fair(
+				editableMesh.polyhedron(), handles,
+				CGAL::Polygon_mesh_processing::parameters::fairing_continuity(data.get(a_continuity)));
+		}
+
+		FaceSelection::Item item = current;
+		item.setMesh(mesh);
+
+		result.push_back(item);
 	}
 
-	data.set(a_outMesh, result);
+	data.set(a_outSelection, result);
 
 	return redirect.state();
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_inMesh, "in_mesh", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_inSelection, "in_selection", possumwood::FaceSelection(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_continuity, "continuity", 2u);
-	meta.addAttribute(a_outMesh, "out_mesh", possumwood::Meshes(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_outSelection, "out_selection", possumwood::FaceSelection(), possumwood::AttrFlags::kVertical);
 
-	meta.addInfluence(a_inMesh, a_outMesh);
-	meta.addInfluence(a_continuity, a_outMesh);
+	meta.addInfluence(a_inSelection, a_outSelection);
+	meta.addInfluence(a_continuity, a_outSelection);
 
 	meta.setCompute(compute);
 }
