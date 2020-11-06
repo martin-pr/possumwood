@@ -11,6 +11,42 @@
             "in_port": "mesh",
             "out_node": "input_0",
             "out_port": "data"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "uniforms",
+            "out_node": "vec3_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "vec3_0",
+            "in_port": "in_uniforms",
+            "out_node": "viewport_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "vec3_0",
+            "in_port": "value",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "draw_0",
+            "in_port": "program",
+            "out_node": "program_0",
+            "out_port": "program"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "fragment_shader",
+            "out_node": "fragment_shader_0",
+            "out_port": "shader"
+        },
+        {
+            "in_node": "program_0",
+            "in_port": "vertex_shader",
+            "out_node": "vertex_shader_0",
+            "out_port": "shader"
         }
     ],
     "description": "",
@@ -20,8 +56,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 309.484771728516,
-                    "y": 476.491729736328
+                    "x": 294.677276611328,
+                    "y": 767.047912597656
                 }
             },
             "name": "cgal",
@@ -46,16 +82,98 @@
             },
             "type": "render/draw"
         },
+        "fragment_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 29.2727527618408,
+                    "y": 530.516662597656
+                }
+            },
+            "name": "fragment_shader",
+            "ports": {
+                "source": "#version 130 \n \nout vec4 output; \n \nin vec3 vertexPosition; \n\nuniform vec3 color;\n \nvoid main() { \n\tvec3 dx = dFdx(vertexPosition); \n\tvec3 dy = dFdy(vertexPosition); \n \n\tvec3 norm = normalize(cross(dx, dy)); \n \n\toutput = vec4(color*norm.z, 1); \n} \n"
+            },
+            "type": "render/fragment_shader"
+        },
         "input_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 253.333923339844,
-                    "y": 346.723449707031
+                    "x": 238.526428222656,
+                    "y": 637.279663085938
                 }
             },
             "name": "input",
             "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 286.046447753906,
+                    "y": 300.923126220703
+                }
+            },
+            "name": "color",
+            "type": "input"
+        },
+        "program_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 253.27278137207,
+                    "y": 441.516632080078
+                }
+            },
+            "name": "program",
+            "type": "render/program"
+        },
+        "vec3_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 475.356231689453,
+                    "y": 277.927062988281
+                }
+            },
+            "name": "vec3",
+            "ports": {
+                "name": "color"
+            },
+            "type": "render/uniforms/vec3"
+        },
+        "vertex_shader_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 51.2727508544922,
+                    "y": 377.516632080078
+                }
+            },
+            "name": "vertex_shader",
+            "ports": {
+                "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n \nout vec3 vertexPosition;       // vertex position for the fragment shader \n \nvoid main() {\n\tvec4 pos4 = vec4(P.x, P.y, P.z, 1);\n\n\tvertexPosition = (iModelView * pos4).xyz;\n   \tgl_Position = iProjection * iModelView * pos4;\n} \n"
+            },
+            "type": "render/vertex_shader"
+        },
+        "viewport_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 477.543762207031,
+                    "y": 145.375854492188
+                }
+            },
+            "name": "viewport",
+            "type": "render/uniforms/viewport"
+        }
+    },
+    "ports": {
+        "color": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
         }
     },
     "scene_config": {
@@ -64,6 +182,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACxAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
