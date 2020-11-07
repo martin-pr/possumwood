@@ -31,6 +31,10 @@ const Mesh& FaceSelection::Item::mesh() const {
 	return m_mesh;
 }
 
+void FaceSelection::Item::clear() {
+	m_faces.clear();
+}
+
 bool FaceSelection::empty() const {
 	return m_items.empty();
 }

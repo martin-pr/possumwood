@@ -23,6 +23,8 @@ class FaceSelection {
 		void remove(const possumwood::CGALPolyhedron::Facet_const_handle& value);
 		bool contains(const possumwood::CGALPolyhedron::Facet_const_handle& value) const;
 
+		void clear();
+
 		// mesh is used only for operations on selection (grow, shrink...), not for anything else
 		const Mesh& mesh() const;
 
