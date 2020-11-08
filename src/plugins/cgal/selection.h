@@ -27,6 +27,7 @@ class FaceSelection {
 
 		// mesh is used only for operations on selection (grow, shrink...), not for anything else
 		const Mesh& mesh() const;
+		void setMesh(const Mesh& mesh);
 
 	  private:
 		std::set<unsigned long> m_faces;

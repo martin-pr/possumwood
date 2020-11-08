@@ -35,6 +35,22 @@ void FaceSelection::Item::clear() {
 	m_faces.clear();
 }
 
+void FaceSelection::Item::setMesh(const Mesh& mesh) {
+	std::set<unsigned long> ids;
+	for(auto fi = mesh.polyhedron().facets_begin(); fi != mesh.polyhedron().facets_end(); ++fi)
+		ids.insert(fi->uniqueId());
+
+	auto it = m_faces.begin();
+	while(it != m_faces.end()) {
+		if(ids.find(*it) == ids.end())
+			m_faces.erase(it++);
+		else
+			++it;
+	}
+
+	m_mesh = mesh;
+}
+
 bool FaceSelection::empty() const {
 	return m_items.empty();
 }
