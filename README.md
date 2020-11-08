@@ -20,15 +20,15 @@ Possumwood is built on top of a simple graph-evaluation engine and a Qt-based no
   - [Building from source](#building-from-source)
 - [Example setups](#example-setups)
   - [Opengl](#opengl)
-  - [Polymesh](#polymesh)
+  - [Cgal](#cgal)
   - [Lua mesh generation](#lua-mesh-generation)
-  - [Image](#image)
   - [Lua](#lua)
-  - [Animation](#animation)
-  - [Opencv](#opencv)
-  - [Hdr](#hdr)
+  - [Opencv basics](#opencv-basics)
+  - [Opencv image ops](#opencv-image-ops)
+  - [Opencv hdr](#opencv-hdr)
   - [Lightfields import](#lightfields-import)
   - [Lightfields depth](#lightfields-depth)
+  - [Animation](#animation)
 - [Tutorials](#tutorials)
   - [Basics](#basics)
   - [OpenGL / GLSL](#opengl--glsl)
@@ -398,12 +398,12 @@ This demo shows a simple implementation of this technique.
 </tr> 
 </table> 
 
-### Polymesh
+### Cgal
 <table> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/01_load_mesh.png" style="width:70px;">
+<img src="toolbars/02_cgal/01_load_mesh.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -416,14 +416,14 @@ The display code is contained in a subnetwork (double click the blue node to "en
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/01_load_mesh_screenshot.png" style="width:70px;">
+<img src="toolbars/02_cgal/01_load_mesh_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/02_lua_mesh.png" style="width:70px;">
+<img src="toolbars/02_cgal/02_lua_mesh.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -436,14 +436,14 @@ A simple setup demonstrating a way to generate a new mesh in Lua using simple me
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/02_lua_mesh_screenshot.png" style="width:70px;">
+<img src="toolbars/02_cgal/02_lua_mesh_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/09_cgal_normals.png" style="width:70px;">
+<img src="toolbars/02_cgal/09_cgal_normals.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -456,14 +456,14 @@ This simple demo shows [two methods of computing normals](https://doc.cgal.org/l
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/09_cgal_normals_screenshot.png" style="width:70px;">
+<img src="toolbars/02_cgal/09_cgal_normals_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/10_cgal_decimation.png" style="width:70px;">
+<img src="toolbars/02_cgal/10_cgal_decimation.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -476,14 +476,14 @@ This demo shows how to use [CGAL's implementation of mesh decimation](https://do
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/10_cgal_decimation_screenshot.png" style="width:70px;">
+<img src="toolbars/02_cgal/10_cgal_decimation_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/11_subdivision.png" style="width:70px;">
+<img src="toolbars/02_cgal/11_subdivision.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -496,14 +496,14 @@ There are [four subdivision methods](https://doc.cgal.org/latest/Subdivision_met
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/11_subdivision_screenshot.png" style="width:70px;">
+<img src="toolbars/02_cgal/11_subdivision_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/20_csg.png" style="width:70px;">
+<img src="toolbars/02_cgal/20_csg.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -516,14 +516,14 @@ This demo shows how a simple CSG setup can be created in Possumwood. A subnetwor
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/20_csg_screenshot.png" style="width:70px;">
+<img src="toolbars/02_cgal/20_csg_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/21_minkowski.png" style="width:70px;">
+<img src="toolbars/02_cgal/21_minkowski.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -536,14 +536,14 @@ In CGAL, [Minowski addition is implemented](https://doc.cgal.org/latest/Minkowsk
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/21_minkowski_screenshot.png" style="width:70px;">
+<img src="toolbars/02_cgal/21_minkowski_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/22_convex_hull.png" style="width:70px;">
+<img src="toolbars/02_cgal/22_convex_hull.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -556,87 +556,47 @@ Convex hull is useful for mesh generation for 3D printing - alongside boolean op
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/02_polymesh/22_convex_hull_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-</table> 
-
-### Image
-<table> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/01_load_display.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### OpenCV image loading and display
-
-This simple demo shows how to load an image using OpenCV's [`imread()`](https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html?highlight=imread#imread) method, and pass the resulting image data to OpenGL as a texture and a set of additional metadata represented by GLSL uniforms. 
-
-In following demos, this OpenGL setup is wrapped in a subnetwork.
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/01_load_display_screenshot.png" style="width:70px;">
+<img src="toolbars/02_cgal/22_convex_hull_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/02_load_network.png" style="width:70px;">
+<img src="toolbars/02_cgal/50_selection.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Image loading
+#### Face selection in CGAL
 
-A simple demo showing how to load an image from a file, and display it using an OpenGL setup (wrapped in a subnetwork - enter it by double-clicking the blue node).
+Selection in CGAL's mesh processing is primarily used to determine which region is supposed to be influenced by an operation.
+
+This demo shows the most basic selection by mesh intersection - faces of a mesh within another mesh are selected, and displayed in a different color.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/02_load_network_screenshot.png" style="width:70px;">
+<img src="toolbars/02_cgal/50_selection_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/03_fullscreen_display.png" style="width:70px;">
+<img src="toolbars/02_cgal/51_selection_combination.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Fullscreen image display
+#### Face selection in CGAL
 
-While Possumwood's viewport is primarily intended for viewing 3D content, using a set of shaders it is possible to alter it to display 2D textures as well.
+Selection in CGAL's mesh processing is primarily used to determine which region is supposed to be influenced by an operation.
 
-This demo uses shaders that ignore the perspective projection matrix and draw 2D image in a 2D front-facing view in the viewport.
+This demo shows "boolean" set operations on selections, allowing to procedurally create more complex selections from simple inputs.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/03_fullscreen_display_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/10_grayscale.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Grayscale conversion
-
-Color conversion in OpenCV is implemented in the [`cvtColor()`](https://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html?#cvtcolor) function. This demo shows how to use the corresponding `color` node to first convert to grayscale, and then back to BGR to allow the image to be passed to OpenGL as RGB data.
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/03_image/10_grayscale_screenshot.png" style="width:70px;">
+<img src="toolbars/02_cgal/51_selection_combination_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -647,7 +607,7 @@ Color conversion in OpenCV is implemented in the [`cvtColor()`](https://docs.ope
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/01_add.png" style="width:70px;">
+<img src="toolbars/03_lua/01_add.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -660,14 +620,14 @@ Double click the node too see its content.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/01_add_screenshot.png" style="width:70px;">
+<img src="toolbars/03_lua/01_add_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/02_mult.png" style="width:70px;">
+<img src="toolbars/03_lua/02_mult.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -680,14 +640,14 @@ Double click the node too see its content.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/02_mult_screenshot.png" style="width:70px;">
+<img src="toolbars/03_lua/02_mult_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/04_animated_cube.png" style="width:70px;">
+<img src="toolbars/03_lua/04_animated_cube.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -698,14 +658,14 @@ A simple demo showing how to use a Lua script to create animated data, which are
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/04_animated_cube_screenshot.png" style="width:70px;">
+<img src="toolbars/03_lua/04_animated_cube_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/09_lua_grid.png" style="width:70px;">
+<img src="toolbars/03_lua/09_lua_grid.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -718,14 +678,14 @@ This demo shows how to synthesize an image programatically. It "injects" the `im
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/09_lua_grid_screenshot.png" style="width:70px;">
+<img src="toolbars/03_lua/09_lua_grid_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/10_lua_expression.png" style="width:70px;">
+<img src="toolbars/03_lua/10_lua_expression.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -736,14 +696,14 @@ This demo builds on the Lua Grid setup, extending it by additional parameters, a
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/10_lua_expression_screenshot.png" style="width:70px;">
+<img src="toolbars/03_lua/10_lua_expression_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/11_lua_tonemapping.png" style="width:70px;">
+<img src="toolbars/03_lua/11_lua_tonemapping.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -756,152 +716,98 @@ This demo shows how to implement simple [Gamma compression](https://en.wikipedia
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/04_lua/11_lua_tonemapping_screenshot.png" style="width:70px;">
+<img src="toolbars/03_lua/11_lua_tonemapping_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 </table> 
 
-### Animation
+### Opencv basics
 <table> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/01_loading.png" style="width:70px;">
+<img src="toolbars/04_opencv_basics/01_load_display.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Animation loading
+#### OpenCV image loading and display
 
-This demo shows how to load animation data from a [`.bvh`](https://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/BVH.html) file (a common file used for this kind of data), and from a combination of [`.asf` and `amc`](https://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/ASF-AMC.html) files (another common file format, used for the [CMU Mocap Library](http://mocap.cs.cmu.edu/)).
+This simple demo shows how to load an image using OpenCV's [`imread()`](https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html?highlight=imread#imread) method, and pass the resulting image data to OpenGL as a texture and a set of additional metadata represented by GLSL uniforms. 
 
-The loaded animation data are then processed (scaled, translated), and displayed in OpenGL using a simple skeleton render node.
+In following demos, this OpenGL setup is wrapped in a subnetwork.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/01_loading_screenshot.png" style="width:70px;">
+<img src="toolbars/04_opencv_basics/01_load_display_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/02_glsl_skeleton.png" style="width:70px;">
+<img src="toolbars/04_opencv_basics/02_load_network.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### GLSL skeleton
+#### Image loading
 
-This demo uses GLSL (geometry shader) to generate a shaded polygonal stick figure from a set of line segments.
+A simple demo showing how to load an image from a file, and display it using an OpenGL setup (wrapped in a subnetwork - enter it by double-clicking the blue node).
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/02_glsl_skeleton_screenshot.png" style="width:70px;">
+<img src="toolbars/04_opencv_basics/02_load_network_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/03_periodic.png" style="width:70px;">
+<img src="toolbars/04_opencv_basics/03_fullscreen_display.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Periodic animation
+#### Fullscreen image display
 
-A motion capture data source captures reality, and due to both capturing noise and imperfections, a locomotion or another periodic motion will never be perfectly periodic.
+While Possumwood's viewport is primarily intended for viewing 3D content, using a set of shaders it is possible to alter it to display 2D textures as well.
 
-This demo uses a simple hierarchical linear blend to convert motion capture data to a periodic animation. To allow user to understand the input data well, the user interface uses a simple display of per-frame comparison error metric, similar to Kovar et al.'s [Motion Graphs](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf).
-
-<sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
+This demo uses shaders that ignore the perspective projection matrix and draw 2D image in a 2D front-facing view in the viewport.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/03_periodic_screenshot.png" style="width:70px;">
+<img src="toolbars/04_opencv_basics/03_fullscreen_display_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/04_transition.png" style="width:70px;">
+<img src="toolbars/04_opencv_basics/10_grayscale.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Animation transition
+#### Grayscale conversion
 
-A linear blend is the simplest way to transition between two animations. This demo shows how a hand-picked linear blend can be used in Possumwood to transition between two animations. To assist the user with picking the blending point, the editor window displays a visualisation of frame similarity metric, similar to Kovar et al.'s Motion Graphs.
-
-<sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
+Color conversion in OpenCV is implemented in the [`cvtColor()`](https://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html?#cvtcolor) function. This demo shows how to use the corresponding `color` node to first convert to grayscale, and then back to BGR to allow the image to be passed to OpenGL as RGB data.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/04_transition_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/10_random_mgraph.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Motion graph random walk
-
-A motion graph is a simple directional graph data structure describing possible transition points between a number of motion clips. Each transition is determined by comparing kinematic and dynamic properties of corresponding frames, which should lead to a transition that does not introduce any salient discontinuities or artifacts.
-
-A random walk through such a graph would generate a variation of the original motion(s) by adding random transitions.
-
-This demo shows a random walk through a motion graph. In its current state, it does not attempt to synthesize smooth continuous transitions - it just switches between different clips. (todo: introduce smooth transitions)
-
-<sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](https://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM Transactions on Graphics (TOG). Vol. 21. No. 3. ACM, 2002.</sub>
-
-<sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/10_random_mgraph_screenshot.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-</tr> 
-<tr> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/20_feet_detect.png" style="width:70px;">
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-</td>
-<td> 
-
-#### Footstep detection
-
-Animations represented as sequences of poses of hierarchical skeletons do not naturally represent information about character interaction with the environment. This information is necessary for motion editing to maintain desirable properties, such as realistic stationary footsteps. A number of methods has been used to perform this task, but a simple velocity thresholding has proven sufficient for most practical applications.
-
-This demo shows how this simple technique can be used in Possumwood. The resulting constraint information can be further processed via median filtering, to remove any noise introduced in the detection process.
-
-<sub>Kovar, Lucas, John Schreiner, and Michael Gleicher. ["Footskate cleanup for motion capture editing."](http://kucg.korea.ac.kr/seminar/2005/src/PA-05-01.pdf) Proceedings of the 2002 ACM SIGGRAPH/Eurographics symposium on Computer animation. ACM, 2002.</sub>
-
-<sub>Ikemoto, Leslie, Okan Arikan, and David Forsyth. ["Knowing when to put your foot down."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.151.1882&rep=rep1&type=pdf) Proceedings of the 2006 symposium on Interactive 3D graphics and games. ACM, 2006.</sub>
-</td> 
-<td>
-<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/05_animation/20_feet_detect_screenshot.png" style="width:70px;">
+<img src="toolbars/04_opencv_basics/10_grayscale_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 </table> 
 
-### Opencv
+### Opencv image ops
 <table> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/10_haar_faces.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/10_haar_faces.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -914,14 +820,14 @@ Lienhart, Rainer, and Jochen Maydt. ["An extended set of haar-like features for 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/10_haar_faces_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/10_haar_faces_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/20_denoise_grayscale.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/20_denoise_grayscale.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -932,14 +838,14 @@ This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.ope
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/20_denoise_grayscale_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/20_denoise_grayscale_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/21_denoise_colored.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/21_denoise_colored.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -950,14 +856,14 @@ This tutorial closely follows the [OpenCV's denoising tutorial](https://docs.ope
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/21_denoise_colored_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/21_denoise_colored_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/22_noise_grayscale.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/22_noise_grayscale.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -968,14 +874,14 @@ This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/22_noise_grayscale_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/22_noise_grayscale_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/23_noise_colored.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/23_noise_colored.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -986,14 +892,14 @@ This tutorial follows the [OpenCV's denoising tutorial](https://docs.opencv.org/
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/23_noise_colored_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/23_noise_colored_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/27_fourier_transform.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/27_fourier_transform.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1006,14 +912,14 @@ This demo shows how to perform a DFT on an image, and implements a simple freque
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/27_fourier_transform_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/27_fourier_transform_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/30_video_frame.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/30_video_frame.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1024,14 +930,14 @@ OpenCV's [VideoCapture](https://docs.opencv.org/3.4/d8/dfe/classcv_1_1VideoCaptu
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/30_video_frame_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/30_video_frame_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/31_optical_flow.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/31_optical_flow.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1046,14 +952,14 @@ This demo shows how to set up this type of optical flow in Possumwood, and how t
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/31_optical_flow_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/31_optical_flow_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/40_circles_pattern.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/40_circles_pattern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1064,14 +970,14 @@ Pattern detection is the first step of camera calibration for many computer visi
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/40_circles_pattern_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/40_circles_pattern_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/41_chessboard_pattern.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/41_chessboard_pattern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1082,14 +988,14 @@ Pattern detection is the first step of camera calibration for many computer visi
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/41_chessboard_pattern_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/41_chessboard_pattern_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/42_camera_undistort.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/42_camera_undistort.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1104,14 +1010,14 @@ The left side of the graph detects a pattern in a set of 4 images, accumulating 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/42_camera_undistort_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/42_camera_undistort_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/70_inpaint_circle.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/70_inpaint_circle.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1126,14 +1032,14 @@ Telea's algorithm shown in this demo uses a Fast Marching method to inpaint pixe
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/70_inpaint_circle_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/70_inpaint_circle_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/71_inpaint_mask.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/71_inpaint_mask.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1148,14 +1054,14 @@ The Navier-Stokes-based algorithm shown in this demo uses a heuristic based on f
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/71_inpaint_mask_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/71_inpaint_mask_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/72_inpaint_restore.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/72_inpaint_restore.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1168,14 +1074,14 @@ This setup shows how an image can be partially restored using inpainting from a 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/72_inpaint_restore_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/72_inpaint_restore_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/73_laplace_circle.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/73_laplace_circle.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1188,14 +1094,14 @@ A slightly different take on image inpainting can use the smoothness prior to tr
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/73_laplace_circle_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/73_laplace_circle_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/74_laplace_restore.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/74_laplace_restore.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1208,14 +1114,14 @@ The smoothness prior can be also used to try to reconstruct missing pixels in a 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/74_laplace_restore_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/74_laplace_restore_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/80_anisotropic_diffusion.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/80_anisotropic_diffusion.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1230,14 +1136,14 @@ A simple implementation of the [Anisotropic Diffusion](https://en.wikipedia.org/
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/80_anisotropic_diffusion_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/80_anisotropic_diffusion_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/90_slic_superpixels.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/90_slic_superpixels.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1252,14 +1158,14 @@ SLIC (Simple Linear Iterative Clustering) is a simple adaptation of k-means clus
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/90_slic_superpixels_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/90_slic_superpixels_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/91_superpixel_mean.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/91_superpixel_mean.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1274,18 +1180,18 @@ One of the simplest such algorithm is mean, averaging the values in a superpixel
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/06_opencv/91_superpixel_mean_screenshot.png" style="width:70px;">
+<img src="toolbars/05_opencv_image_ops/91_superpixel_mean_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 </table> 
 
-### Hdr
+### Opencv hdr
 <table> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/50_naive_mertens.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/50_naive_mertens.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1300,14 +1206,14 @@ This setup merges 5 hand-held exposures of a scene to an HDR image using Mertens
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/50_naive_mertens_screenshot.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/50_naive_mertens_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/51_aligned_mertens.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/51_aligned_mertens.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1324,14 +1230,14 @@ This demo shows how a simple alignment of hand-held multiple exposures can be ac
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/51_aligned_mertens_screenshot.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/51_aligned_mertens_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/52_aligned_debevec.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/52_aligned_debevec.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1346,14 +1252,14 @@ This setup shows how to use EXIF data from a set of JPG images to estimate the c
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/52_aligned_debevec_screenshot.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/52_aligned_debevec_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/60_tonemap_drago.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/60_tonemap_drago.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1369,14 +1275,14 @@ This demo shows how to set up Drago's tonemapping algorithm in Possumwood.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/60_tonemap_drago_screenshot.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/60_tonemap_drago_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/61_tonemap_reinhard.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/61_tonemap_reinhard.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1391,14 +1297,14 @@ This demo shows how to set up Reinhards's tonemapping algorithm in Possumwood.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/61_tonemap_reinhard_screenshot.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/61_tonemap_reinhard_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/62_tonemap_mantiuk.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/62_tonemap_mantiuk.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1413,7 +1319,7 @@ This demo shows how to set up Mantiuk's tonemapping algorithm in Possumwood.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_hdr/62_tonemap_mantiuk_screenshot.png" style="width:70px;">
+<img src="toolbars/06_opencv_hdr/62_tonemap_mantiuk_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -1424,7 +1330,7 @@ This demo shows how to set up Mantiuk's tonemapping algorithm in Possumwood.
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/01_lytro_reading.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/01_lytro_reading.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1445,14 +1351,14 @@ This demo implements a reader for Lytro RAW files, extracting both image data an
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/01_lytro_reading_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/01_lytro_reading_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/02_lytro_normalize.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/02_lytro_normalize.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1467,14 +1373,14 @@ Georgiev, Todor, et al. ["Lytro camera technology: theory, algorithms, performan
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/02_lytro_normalize_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/02_lytro_normalize_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/03_reading_debayern.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/03_reading_debayern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1489,14 +1395,14 @@ This demo shows how to obtain a debayered normalised lightfield in Possumwood.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/03_reading_debayern_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/03_reading_debayern_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/04_lytro_pattern.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/04_lytro_pattern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1511,14 +1417,14 @@ Georgiev, Todor, et al. ["Lytro camera technology: theory, algorithms, performan
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/04_lytro_pattern_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/04_lytro_pattern_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/05_pattern_detection.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/05_pattern_detection.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1533,14 +1439,14 @@ This demo only shows the image-processing part - the pattern fitting is demonstr
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/05_pattern_detection_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/05_pattern_detection_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/06_pattern_extraction.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/06_pattern_extraction.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1553,14 +1459,14 @@ Display allows to preview both the original pattern, and the new detected patter
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/06_pattern_extraction_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/06_pattern_extraction_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/11_epi.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/11_epi.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1577,14 +1483,14 @@ The u-x and v-y images (left, right, top and bottom) show slices with "line dire
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/11_epi_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/11_epi_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/12_epi_uv.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/12_epi_uv.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1597,14 +1503,14 @@ The epipolar images accumulated in UV space show images representing averages of
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/12_epi_uv_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/12_epi_uv_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/20_mozaic.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/20_mozaic.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1619,14 +1525,14 @@ This demo shows how to use demultiplexing to reconstruct multiple views from raw
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/20_mozaic_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/20_mozaic_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/21_mozaic_normalize.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/21_mozaic_normalize.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1641,14 +1547,14 @@ This demo shows how to use demultiplexing to reconstruct multiple views from nor
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/21_mozaic_normalize_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/21_mozaic_normalize_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/22_mozaic_split.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/22_mozaic_split.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1661,14 +1567,14 @@ This demo addempts to visualise this difference explicitly, by showing both each
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/22_mozaic_split_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/22_mozaic_split_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/23_mozaic_inpainted.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/23_mozaic_inpainted.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1683,14 +1589,14 @@ To reconstruct missing data after obtaining sub-apreture images, this demo uses 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/23_mozaic_inpainted_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/23_mozaic_inpainted_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/24_laplacian_inpainted.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/24_laplacian_inpainted.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1705,14 +1611,14 @@ To reconstruct missing data after obtaining sub-apreture images, this demo uses 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/24_laplacian_inpainted_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/24_laplacian_inpainted_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/25_mozaic_superres.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/25_mozaic_superres.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1725,14 +1631,14 @@ This demo shows the result of this algorithm on an inpainted mosaic from previou
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/25_mozaic_superres_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/25_mozaic_superres_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/30_naive_refocus.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/30_naive_refocus.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1747,14 +1653,14 @@ While very simple and fast, the number of samples for each pixel can vary depend
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/30_naive_refocus_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/30_naive_refocus_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/31_naive_detail.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/31_naive_detail.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1767,14 +1673,14 @@ This demo shows the detail of the sampling and integration pattern of previous d
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/31_naive_detail_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/31_naive_detail_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/32_naive_debayern.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/32_naive_debayern.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1787,14 +1693,14 @@ Applying a de-Bayer filter to raw lightfield data reduces some artifacts seen in
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/32_naive_debayern_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/32_naive_debayern_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/33_gaussian_refocus.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/33_gaussian_refocus.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1813,14 +1719,14 @@ This demo shows how a simple gaussian-based accumulation, similar to one used fo
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/33_gaussian_refocus_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/33_gaussian_refocus_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/34_gaussian_detail.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/34_gaussian_detail.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1833,14 +1739,14 @@ This demo shows the detail of the sampling and integration pattern of previous d
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/34_gaussian_detail_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/34_gaussian_detail_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/35_gaussian_debayer.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/35_gaussian_debayer.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1850,14 +1756,14 @@ Applying a de-Bayer filter to raw lightfield data reduces some artifacts seen in
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/35_gaussian_debayer_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/35_gaussian_debayer_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/36_bezier_refocus.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/36_bezier_refocus.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1868,14 +1774,14 @@ Briand, Thibaud, and Pascal Monasse. ["Theory and Practice of Image B-Spline Int
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/36_bezier_refocus_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/36_bezier_refocus_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/37_bezier_debayer.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/37_bezier_debayer.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1886,14 +1792,14 @@ Briand, Thibaud, and Pascal Monasse. ["Theory and Practice of Image B-Spline Int
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/37_bezier_debayer_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/37_bezier_debayer_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/38_detail_comparison.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/38_detail_comparison.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1904,7 +1810,7 @@ This demo shows the difference in integration patterns between different methods
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/08_lightfields_import/38_detail_comparison_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/38_detail_comparison_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -1915,7 +1821,7 @@ This demo shows the difference in integration patterns between different methods
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/00_correspondence_depth.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/00_correspondence_depth.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1928,14 +1834,14 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/00_correspondence_depth_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/00_correspondence_depth_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/01_correspondence_confidence.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/01_correspondence_confidence.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1952,14 +1858,14 @@ Hu, Xiaoyan, and Philippos Mordohai. ["A quantitative evaluation of confidence m
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/01_correspondence_confidence_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/01_correspondence_confidence_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/02_correspondence_markov.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/02_correspondence_markov.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1974,14 +1880,14 @@ Hu, Xiaoyan, and Philippos Mordohai. ["A quantitative evaluation of confidence m
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/02_correspondence_markov_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/02_correspondence_markov_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/10_defocus_depth.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/10_defocus_depth.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -1994,14 +1900,14 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/10_defocus_depth_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/10_defocus_depth_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/11_defocus_confidence.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/11_defocus_confidence.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2018,14 +1924,14 @@ Hu, Xiaoyan, and Philippos Mordohai. ["A quantitative evaluation of confidence m
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/11_defocus_confidence_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/11_defocus_confidence_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/12_defocus_markov.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/12_defocus_markov.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2040,14 +1946,14 @@ Hu, Xiaoyan, and Philippos Mordohai. ["A quantitative evaluation of confidence m
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/12_defocus_markov_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/12_defocus_markov_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/30_narrowbase_single.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/30_narrowbase_single.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2060,14 +1966,14 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/30_narrowbase_single_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/30_narrowbase_single_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/31_narrowbase_depth.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/31_narrowbase_depth.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2082,14 +1988,14 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/31_narrowbase_depth_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/31_narrowbase_depth_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/32_narrowbase_confidence.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/32_narrowbase_confidence.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2104,14 +2010,14 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/32_narrowbase_confidence_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/32_narrowbase_confidence_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/33_narrowbase_markov.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/33_narrowbase_markov.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2126,14 +2032,14 @@ Hu, Xiaoyan, and Philippos Mordohai. ["A quantitative evaluation of confidence m
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/33_narrowbase_markov_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/33_narrowbase_markov_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/40_relative_corresp.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/40_relative_corresp.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2144,14 +2050,14 @@ Tao, Michael W., et al. ["Depth from combining defocus and correspondence using 
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/40_relative_corresp_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/40_relative_corresp_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/41_absolute_metrics.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/41_absolute_metrics.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2168,14 +2074,14 @@ The *narrow-base metric* compares the integrated pixel values to a narrow-base i
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/41_absolute_metrics_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/41_absolute_metrics_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/60_st_graphcut.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/60_st_graphcut.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2188,14 +2094,14 @@ A simple ST Graph Cut demo, implementing a 2-label version of the Graph Cut clas
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/60_st_graphcut_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/60_st_graphcut_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/61_multilevel_graphcut.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/61_multilevel_graphcut.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2210,14 +2116,14 @@ Ishikawa, Hiroshi, and Davi Geiger. [Global optimization using embedded graphs](
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/61_multilevel_graphcut_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/61_multilevel_graphcut_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/62_graphcut_separation.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/62_graphcut_separation.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2228,14 +2134,14 @@ The simplest use-case for a graph-cut algorithm, splitting the image into two di
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/62_graphcut_separation_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/62_graphcut_separation_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/63_graphcut_depth.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/63_graphcut_depth.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2246,14 +2152,14 @@ Depth reconstruction resolved using a graph cut on a multi-level grid graph, wit
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/63_graphcut_depth_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/63_graphcut_depth_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/70_diffusion_depth.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/70_diffusion_depth.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2270,14 +2176,14 @@ This demo tries to use a data-driven anisotropic diffusion to propagate these va
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/70_diffusion_depth_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/70_diffusion_depth_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/71_superpixels_depth.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/71_superpixels_depth.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2296,14 +2202,14 @@ By averaging the depth values derived from the correspondence metric for each su
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/71_superpixels_depth_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/71_superpixels_depth_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/80_linear_mean.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/80_linear_mean.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2318,14 +2224,14 @@ Ignoring the lends deformation, each offset value makes the average images conve
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/80_linear_mean_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/80_linear_mean_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/81_linear_gldraw.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/81_linear_gldraw.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
@@ -2342,7 +2248,141 @@ The average is computed on the GPU - this allows much faster image synthesis tha
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/09_lightfields_depth/81_linear_gldraw_screenshot.png" style="width:70px;">
+<img src="toolbars/08_lightfields_depth/81_linear_gldraw_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+</table> 
+
+### Animation
+<table> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/01_loading.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Animation loading
+
+This demo shows how to load animation data from a [`.bvh`](https://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/BVH.html) file (a common file used for this kind of data), and from a combination of [`.asf` and `amc`](https://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/ASF-AMC.html) files (another common file format, used for the [CMU Mocap Library](http://mocap.cs.cmu.edu/)).
+
+The loaded animation data are then processed (scaled, translated), and displayed in OpenGL using a simple skeleton render node.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/01_loading_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/02_glsl_skeleton.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### GLSL skeleton
+
+This demo uses GLSL (geometry shader) to generate a shaded polygonal stick figure from a set of line segments.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/02_glsl_skeleton_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/03_periodic.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Periodic animation
+
+A motion capture data source captures reality, and due to both capturing noise and imperfections, a locomotion or another periodic motion will never be perfectly periodic.
+
+This demo uses a simple hierarchical linear blend to convert motion capture data to a periodic animation. To allow user to understand the input data well, the user interface uses a simple display of per-frame comparison error metric, similar to Kovar et al.'s [Motion Graphs](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf).
+
+<sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/03_periodic_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/04_transition.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Animation transition
+
+A linear blend is the simplest way to transition between two animations. This demo shows how a hand-picked linear blend can be used in Possumwood to transition between two animations. To assist the user with picking the blending point, the editor window displays a visualisation of frame similarity metric, similar to Kovar et al.'s Motion Graphs.
+
+<sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/04_transition_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/10_random_mgraph.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Motion graph random walk
+
+A motion graph is a simple directional graph data structure describing possible transition points between a number of motion clips. Each transition is determined by comparing kinematic and dynamic properties of corresponding frames, which should lead to a transition that does not introduce any salient discontinuities or artifacts.
+
+A random walk through such a graph would generate a variation of the original motion(s) by adding random transitions.
+
+This demo shows a random walk through a motion graph. In its current state, it does not attempt to synthesize smooth continuous transitions - it just switches between different clips. (todo: introduce smooth transitions)
+
+<sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](https://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM Transactions on Graphics (TOG). Vol. 21. No. 3. ACM, 2002.</sub>
+
+<sub>Kovar, Lucas, Michael Gleicher, and Fr&#233;d&#233;ric Pighin. ["Motion graphs."](http://graphics.cs.wisc.edu/Papers/2002/KGP02/mograph.pdf) ACM SIGGRAPH 2008 classes. ACM, 2008.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/10_random_mgraph_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/20_feet_detect.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Footstep detection
+
+Animations represented as sequences of poses of hierarchical skeletons do not naturally represent information about character interaction with the environment. This information is necessary for motion editing to maintain desirable properties, such as realistic stationary footsteps. A number of methods has been used to perform this task, but a simple velocity thresholding has proven sufficient for most practical applications.
+
+This demo shows how this simple technique can be used in Possumwood. The resulting constraint information can be further processed via median filtering, to remove any noise introduced in the detection process.
+
+<sub>Kovar, Lucas, John Schreiner, and Michael Gleicher. ["Footskate cleanup for motion capture editing."](http://kucg.korea.ac.kr/seminar/2005/src/PA-05-01.pdf) Proceedings of the 2002 ACM SIGGRAPH/Eurographics symposium on Computer animation. ACM, 2002.</sub>
+
+<sub>Ikemoto, Leslie, Okan Arikan, and David Forsyth. ["Knowing when to put your foot down."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.151.1882&rep=rep1&type=pdf) Proceedings of the 2006 symposium on Interactive 3D graphics and games. ACM, 2006.</sub>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/09_animation/20_feet_detect_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -2495,6 +2535,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 
