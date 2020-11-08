@@ -35,6 +35,14 @@ bool Meshes::empty() const {
 	return m_data.empty();
 }
 
+Mesh& Meshes::operator[](std::size_t index) {
+	return m_data[index];
+}
+
+const Mesh& Meshes::operator[](std::size_t index) const {
+	return m_data[index];
+}
+
 bool Meshes::operator==(const Meshes& m) const {
 	if(size() != m.size())
 		return false;
