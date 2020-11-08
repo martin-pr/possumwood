@@ -72,7 +72,7 @@
                 }
             },
             "name": "nef_to_poly",
-            "type": "cgal/csg/nef_to_poly"
+            "type": "cgal/nef_polyhedra/nef_to_poly"
         }
     },
     "scene_config": {

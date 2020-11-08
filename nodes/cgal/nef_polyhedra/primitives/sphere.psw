@@ -2,38 +2,20 @@
     "connections": [
         {
             "in_node": "network_0",
-            "in_port": "height",
+            "in_port": "diameter",
             "out_node": "input_0",
             "out_port": "data"
         },
         {
             "in_node": "network_0",
-            "in_port": "diameter",
+            "in_port": "v_subdivision",
             "out_node": "input_1",
             "out_port": "data"
         },
         {
             "in_node": "network_0",
-            "in_port": "subdivision",
+            "in_port": "h_subdivision",
             "out_node": "input_2",
-            "out_port": "data"
-        },
-        {
-            "in_node": "transform_0",
-            "in_port": "translation",
-            "out_node": "input_3",
-            "out_port": "data"
-        },
-        {
-            "in_node": "transform_0",
-            "in_port": "rotation",
-            "out_node": "input_4",
-            "out_port": "data"
-        },
-        {
-            "in_node": "transform_0",
-            "in_port": "scale",
-            "out_node": "input_5",
             "out_port": "data"
         },
         {
@@ -51,6 +33,30 @@
         {
             "in_node": "poly_to_nef_0",
             "in_port": "mesh",
+            "out_node": "triangulate_faces_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "rotation",
+            "out_node": "input_3",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "scale",
+            "out_node": "input_4",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "translation",
+            "out_node": "input_5",
+            "out_port": "data"
+        },
+        {
+            "in_node": "triangulate_faces_0",
+            "in_port": "input",
             "out_node": "transform_0",
             "out_port": "out_mesh"
         }
@@ -62,86 +68,86 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 973.5810546875,
-                    "y": 607.365600585938
+                    "x": -283.190368652344,
+                    "y": 542.666259765625
                 }
             },
-            "name": "height",
+            "name": "diameter",
             "type": "input"
         },
         "input_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 985.869506835938,
-                    "y": 690.234497070312
+                    "x": -304.329071044922,
+                    "y": 618.114807128906
                 }
             },
-            "name": "diameter",
+            "name": "v_subdivision",
             "type": "input"
         },
         "input_2": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 964.730834960938,
-                    "y": 765.683044433594
+                    "x": -287.473022460938,
+                    "y": 701.095825195312
                 }
             },
-            "name": "subdivision",
+            "name": "h_subdivision",
             "type": "input"
         },
         "input_3": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 960.695007324219,
-                    "y": 874.0048828125
+                    "x": -304.226440429688,
+                    "y": 859.212707519531
                 }
             },
-            "name": "translation",
+            "name": "rotation",
             "type": "input"
         },
         "input_4": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 965.560363769531,
-                    "y": 963.202209472656
+                    "x": -296.117584228516,
+                    "y": 946.788146972656
                 }
             },
-            "name": "rotation",
+            "name": "scale",
             "type": "input"
         },
         "input_5": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 973.669189453125,
-                    "y": 1050.77770996094
+                    "x": -309.091766357422,
+                    "y": 770.015380859375
                 }
             },
-            "name": "scale",
+            "name": "translation",
             "type": "input"
         },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1177.88330078125,
-                    "y": 719.494079589844
+                    "x": -101.309226989746,
+                    "y": 604.898254394531
                 }
             },
-            "name": "cone",
-            "source": "$NODES/cgal/primitives/cone.psw",
+            "name": "sphere",
+            "source": "$NODES/cgal/primitives/sphere.psw",
             "type": "network"
         },
         "output_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1296.5869140625,
-                    "y": 1276.64306640625
+                    "x": 13.6889553070068,
+                    "y": 1318.24731445312
                 }
             },
             "name": "nef",
@@ -151,19 +157,19 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1173.98779296875,
-                    "y": 1152.60705566406
+                    "x": -108.91024017334,
+                    "y": 1195.62426757812
                 }
             },
             "name": "poly_to_nef",
-            "type": "cgal/csg/poly_to_nef"
+            "type": "cgal/nef_polyhedra/poly_to_nef"
         },
         "transform_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1161.79418945312,
-                    "y": 908.06201171875
+                    "x": -104.703353881836,
+                    "y": 785.981811523438
                 }
             },
             "name": "transform",
@@ -171,11 +177,22 @@
                 "vec3_as_normals": true
             },
             "type": "cgal/transform"
+        },
+        "triangulate_faces_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -119.504699707031,
+                    "y": 1038.81018066406
+                }
+            },
+            "name": "triangulate_faces",
+            "type": "cgal/topology/triangulate_faces"
         }
     },
     "ports": {
         "diameter": 1.0,
-        "height": 1.0,
+        "h_subdivision": 16,
         "rotation": {
             "x": 0.0,
             "y": 0.0,
@@ -186,12 +203,12 @@
             "y": 1.0,
             "z": 1.0
         },
-        "subdivision": 32,
         "translation": {
             "x": 0.0,
             "y": 0.0,
             "z": 0.0
-        }
+        },
+        "v_subdivision": 8
     },
     "scene_config": {
         "end_time": 5.0,
@@ -199,6 +216,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADHAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADlwAAAaYAAACxAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

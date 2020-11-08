@@ -54,5 +54,5 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("cgal/csg/transform", init);
+possumwood::NodeImplementation s_impl("cgal/nef_polyhedra/transform", init);
 }  // namespace

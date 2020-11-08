@@ -1,20 +1,20 @@
 {
     "connections": [
         {
-            "in_node": "transform_0",
-            "in_port": "translation",
+            "in_node": "network_0",
+            "in_port": "height",
             "out_node": "input_0",
             "out_port": "data"
         },
         {
-            "in_node": "transform_0",
-            "in_port": "rotation",
+            "in_node": "network_0",
+            "in_port": "diameter",
             "out_node": "input_1",
             "out_port": "data"
         },
         {
-            "in_node": "transform_0",
-            "in_port": "scale",
+            "in_node": "network_0",
+            "in_port": "subdivision",
             "out_node": "input_2",
             "out_port": "data"
         },
@@ -31,16 +31,28 @@
             "out_port": "nef"
         },
         {
+            "in_node": "transform_0",
+            "in_port": "translation",
+            "out_node": "input_3",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "scale",
+            "out_node": "input_4",
+            "out_port": "data"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "rotation",
+            "out_node": "input_5",
+            "out_port": "data"
+        },
+        {
             "in_node": "poly_to_nef_0",
             "in_port": "mesh",
             "out_node": "transform_0",
             "out_port": "out_mesh"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "center",
-            "out_node": "input_3",
-            "out_port": "data"
         }
     ],
     "description": "",
@@ -50,64 +62,89 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 960.695007324219,
-                    "y": 874.0048828125
+                    "x": -299.494964599609,
+                    "y": 668.636657714844
                 }
             },
-            "name": "translation",
+            "name": "height",
             "type": "input"
         },
         "input_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 965.560363769531,
-                    "y": 963.202209472656
+                    "x": -287.206512451172,
+                    "y": 751.505554199219
                 }
             },
-            "name": "rotation",
+            "name": "diameter",
             "type": "input"
         },
         "input_2": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 973.669189453125,
-                    "y": 1050.77770996094
+                    "x": -308.34521484375,
+                    "y": 826.9541015625
                 }
             },
-            "name": "size",
+            "name": "subdivision",
             "type": "input"
         },
         "input_3": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 972.803833007812,
-                    "y": 742.747436523438
+                    "x": -318.959442138672,
+                    "y": 960.790222167969
                 }
             },
-            "name": "center",
+            "name": "translation",
+            "type": "input"
+        },
+        "input_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -305.985260009766,
+                    "y": 1137.56298828125
+                }
+            },
+            "name": "scale",
+            "type": "input"
+        },
+        "input_5": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -314.094116210938,
+                    "y": 1049.98754882812
+                }
+            },
+            "name": "rotation",
             "type": "input"
         },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1190.53454589844,
-                    "y": 760.982177734375
+                    "x": -102.647277832031,
+                    "y": 751.02294921875
                 }
             },
-            "name": "box",
-            "source": "$NODES/cgal/primitives/box.psw",
+            "name": "cylinder",
+            "ports": {
+                "center": false
+            },
+            "source": "$NODES/cgal/primitives/cylinder.psw",
             "type": "network"
         },
         "output_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1296.5869140625,
-                    "y": 1276.64306640625
+                    "x": 33.1501693725586,
+                    "y": 1356.94128417969
                 }
             },
             "name": "nef",
@@ -117,19 +154,19 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1173.98779296875,
-                    "y": 1141.60705566406
+                    "x": -89.4490356445312,
+                    "y": 1232.9052734375
                 }
             },
             "name": "poly_to_nef",
-            "type": "cgal/csg/poly_to_nef"
+            "type": "cgal/nef_polyhedra/poly_to_nef"
         },
         "transform_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1161.79418945312,
-                    "y": 908.06201171875
+                    "x": -114.571014404297,
+                    "y": 976.756652832031
                 }
             },
             "name": "transform",
@@ -140,17 +177,19 @@
         }
     },
     "ports": {
-        "center": true,
+        "diameter": 1.0,
+        "height": 1.0,
         "rotation": {
             "x": 0.0,
             "y": 0.0,
             "z": 0.0
         },
-        "size": {
+        "scale": {
             "x": 1.0,
             "y": 1.0,
             "z": 1.0
         },
+        "subdivision": 32,
         "translation": {
             "x": 0.0,
             "y": 0.0,
@@ -163,6 +202,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAA1wAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADGgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADlQAAAagAAACxAQAAAwAABBEAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABUgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAByAAAAaYAAACtAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

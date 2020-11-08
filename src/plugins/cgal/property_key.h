@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -17,5 +18,10 @@ class PropertyKey {
 
 	template <typename T>
 	friend class Property;
+
+	friend std::ostream& operator<<(std::ostream& out, const PropertyKey& prop);
 };
+
+std::ostream& operator<<(std::ostream& out, const PropertyKey& prop);
+
 }  // namespace possumwood

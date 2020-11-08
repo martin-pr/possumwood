@@ -20,6 +20,9 @@ class Meshes {
 	iterator begin();
 	iterator end();
 
+	Mesh& operator[](std::size_t index);
+	const Mesh& operator[](std::size_t index) const;
+
 	std::size_t size() const;
 	bool empty() const;
 

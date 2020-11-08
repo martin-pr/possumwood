@@ -65,9 +65,12 @@ struct SymDiffOp {
 	}
 };
 
-possumwood::NodeImplementation s_implUnion("cgal/csg/operations/union", BinaryOp<UnionOp>::init);
-possumwood::NodeImplementation s_implDifference("cgal/csg/operations/difference", BinaryOp<DifferenceOp>::init);
-possumwood::NodeImplementation s_implIntersection("cgal/csg/operations/intersection", BinaryOp<IntersectionOp>::init);
-possumwood::NodeImplementation s_implSymDiff("cgal/csg/operations/symmetric_diference", BinaryOp<SymDiffOp>::init);
+possumwood::NodeImplementation s_implUnion("cgal/nef_polyhedra/operations/union", BinaryOp<UnionOp>::init);
+possumwood::NodeImplementation s_implDifference("cgal/nef_polyhedra/operations/difference",
+                                                BinaryOp<DifferenceOp>::init);
+possumwood::NodeImplementation s_implIntersection("cgal/nef_polyhedra/operations/intersection",
+                                                  BinaryOp<IntersectionOp>::init);
+possumwood::NodeImplementation s_implSymDiff("cgal/nef_polyhedra/operations/symmetric_diference",
+                                             BinaryOp<SymDiffOp>::init);
 
 }  // namespace

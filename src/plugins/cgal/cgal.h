@@ -11,9 +11,14 @@
 
 namespace possumwood {
 
+unsigned long getNewFaceId();
+
 template <class Refs>
 struct CGALFace : public CGAL::HalfedgeDS_face_base<Refs> {
   public:
+	CGALFace() : m_uniqueId(getNewFaceId()) {
+	}
+
 	PropertyKey& property_key() {
 		return m_propKey;
 	}
@@ -22,8 +27,13 @@ struct CGALFace : public CGAL::HalfedgeDS_face_base<Refs> {
 		return m_propKey;
 	}
 
+	unsigned long uniqueId() const {
+		return m_uniqueId;
+	}
+
   private:
 	PropertyKey m_propKey;
+	unsigned long m_uniqueId;
 };
 
 template <class Refs>
