@@ -600,6 +600,28 @@ This demo shows "boolean" set operations on selections, allowing to procedurally
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_cgal/60_isotropic_remeshing.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Isotropic remeshing in CGAL
+
+Isotropic remeshing alters the input mesh such that it consists of "well behaved" polygons - uniformly distributes polygons with similar area and edge lengths.
+
+This demo shows how to use remeshing of whole meshes in Possumwood. The input for remeshing is a selection - it is also possible to remesh only a part of the input mesh.
+
+<small>Botsch, Mario, and Leif Kobbelt. ["A remeshing approach to multiresolution modeling."](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.3.5346&rep=rep1&type=pdf) Proceedings of the 2004 Eurographics/ACM SIGGRAPH symposium on Geometry processing. 2004.</small>
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/02_cgal/60_isotropic_remeshing_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
 </table> 
 
 ### Lua
@@ -2535,6 +2557,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 
