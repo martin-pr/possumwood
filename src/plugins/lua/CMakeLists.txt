@@ -21,7 +21,7 @@ include_directories(./)
 
 #####
 
-file(GLOB sources *.cpp datatypes/*.cpp ui/*.cpp)
+file(GLOB sources *.cpp datatypes/*.cpp ui/*.cpp, modules/*.cpp wrappers/*.cpp)
 file(GLOB_RECURSE headers *.h)
 
 QT5_WRAP_CPP(headers_moc ${headers})
