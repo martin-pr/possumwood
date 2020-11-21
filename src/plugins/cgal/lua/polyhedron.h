@@ -1,5 +1,7 @@
 #pragma once
 
+#include "lua/wrappers/vec3.h"
+
 #include "meshes.h"
 
 namespace possumwood {
@@ -20,6 +22,7 @@ class PolyhedronWrapper {
 	PolyhedronWrapper(const std::string& name);
 
 	std::size_t addPoint(float x, float y, float z);
+	std::size_t addPoint(const lua::Vec3& vec);
 	void addFace(const Face& f);
 
 	operator Meshes() const;

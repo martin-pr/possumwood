@@ -1,5 +1,7 @@
 #include "maths.h"
 
+#include <luabind/operator.hpp>
+
 #include "wrappers/vec3.h"
 
 namespace possumwood {
@@ -16,7 +18,11 @@ void MathsModule::init(possumwood::lua::State& state) {
 	                                  .def(luabind::constructor<float, float, float>())
 	                                  .def_readwrite("x", &Vec3::x)
 	                                  .def_readwrite("y", &Vec3::y)
-	                                  .def_readwrite("z", &Vec3::z)];
+	                                  .def_readwrite("z", &Vec3::z)
+	                                  .def(const_self + const_self)
+	                                  .def(const_self - const_self)
+	                                  .def(const_self * other<float>())
+	                                  .def(other<float>() * const_self)];
 }
 
 }  // namespace lua

@@ -18,7 +18,10 @@ void Module::init(possumwood::lua::State& state) {
 
 	                              class_<PolyhedronWrapper>("mesh")
 	                                  .def(luabind::constructor<std::string>())
-	                                  .def("addPoint", &PolyhedronWrapper::addPoint)
+	                                  .def("addPoint", (std::size_t(PolyhedronWrapper::*)(float, float, float)) &
+	                                                       PolyhedronWrapper::addPoint)
+	                                  .def("addPoint", (std::size_t(PolyhedronWrapper::*)(const lua::Vec3&)) &
+	                                                       PolyhedronWrapper::addPoint)
 	                                  .def("addFace", &PolyhedronWrapper::addFace)];
 }
 

@@ -18,6 +18,11 @@ std::size_t PolyhedronWrapper::addPoint(float x, float y, float z) {
 	return m_points.size() - 1;
 }
 
+std::size_t PolyhedronWrapper::addPoint(const lua::Vec3& vec) {
+	m_points.push_back(possumwood::CGALKernel::Point_3(vec.x, vec.y, vec.z));
+	return m_points.size() - 1;
+}
+
 void PolyhedronWrapper::addFace(const Face& f) {
 	m_faces.push_back(std::vector<std::size_t>());
 

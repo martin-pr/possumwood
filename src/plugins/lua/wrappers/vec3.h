@@ -26,8 +26,24 @@ struct Vec3 {
 		return x != v.x || y != v.y || z != v.z;
 	}
 
+	Vec3 operator+(const Vec3& other) const {
+		return Vec3(x + other.x, y + other.y, z + other.z);
+	}
+
+	Vec3 operator-(const Vec3& other) const {
+		return Vec3(x - other.x, y - other.y, z - other.z);
+	}
+
+	Vec3 operator*(float other) const {
+		return Vec3(x * other, y * other, z * other);
+	}
+
 	float x, y, z;
 };
+
+inline Vec3 operator*(float other, const Vec3& val) {
+	return Vec3(val.x * other, val.y * other, val.z * other);
+}
 
 inline std::string to_string(const Vec3& wrapper) {
 	std::stringstream out;
