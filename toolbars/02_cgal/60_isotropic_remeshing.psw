@@ -1,0 +1,469 @@
+{
+    "connections": [
+        {
+            "in_node": "nef_to_poly_0",
+            "in_port": "nef",
+            "out_node": "difference_0",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "selection_to_mesh_0",
+            "in_port": "selection",
+            "out_node": "isotropic_remeshing_0",
+            "out_port": "out_selection"
+        },
+        {
+            "in_node": "selection_to_mesh_1",
+            "in_port": "selection",
+            "out_node": "isotropic_remeshing_1",
+            "out_port": "out_selection"
+        },
+        {
+            "in_node": "selection_to_mesh_2",
+            "in_port": "selection",
+            "out_node": "isotropic_remeshing_2",
+            "out_port": "out_selection"
+        },
+        {
+            "in_node": "isotropic_remeshing_0",
+            "in_port": "in_selection",
+            "out_node": "mesh_to_selection_0",
+            "out_port": "selection"
+        },
+        {
+            "in_node": "isotropic_remeshing_1",
+            "in_port": "in_selection",
+            "out_node": "mesh_to_selection_0",
+            "out_port": "selection"
+        },
+        {
+            "in_node": "isotropic_remeshing_2",
+            "in_port": "in_selection",
+            "out_node": "mesh_to_selection_0",
+            "out_port": "selection"
+        },
+        {
+            "in_node": "mesh_to_selection_0",
+            "in_port": "mesh",
+            "out_node": "nef_to_poly_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "network_3",
+            "in_port": "input",
+            "out_node": "nef_to_poly_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "difference_0",
+            "in_port": "nef_1",
+            "out_node": "network_1",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "difference_0",
+            "in_port": "nef_2",
+            "out_node": "network_2",
+            "out_port": "nef"
+        },
+        {
+            "in_node": "transform_0",
+            "in_port": "in_mesh",
+            "out_node": "selection_to_mesh_0",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "transform_1",
+            "in_port": "in_mesh",
+            "out_node": "selection_to_mesh_1",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "transform_2",
+            "in_port": "in_mesh",
+            "out_node": "selection_to_mesh_2",
+            "out_port": "mesh"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "input",
+            "out_node": "transform_0",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_4",
+            "in_port": "input",
+            "out_node": "transform_1",
+            "out_port": "out_mesh"
+        },
+        {
+            "in_node": "network_5",
+            "in_port": "input",
+            "out_node": "transform_2",
+            "out_port": "out_mesh"
+        }
+    ],
+    "description": "### Isotropic remeshing in CGAL\n\nIsotropic remeshing alters the input mesh such that it consists of \"well behaved\" polygons - uniformly distributes polygons with similar area and edge lengths.\n\nThis demo shows how to use remeshing of whole meshes in Possumwood. The input for remeshing is a selection - it is also possible to remesh only a part of the input mesh.\n\n<small>Botsch, Mario, and Leif Kobbelt. [\"A remeshing approach to multiresolution modeling.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.3.5346&rep=rep1&type=pdf) Proceedings of the 2004 Eurographics/ACM SIGGRAPH symposium on Geometry processing. 2004.</small>",
+    "name": "network",
+    "nodes": {
+        "difference_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 376.719573974609,
+                    "y": 138.880737304688
+                }
+            },
+            "name": "difference",
+            "type": "cgal/nef_polyhedra/operations/difference"
+        },
+        "isotropic_remeshing_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 354.0,
+                    "y": 573.0
+                }
+            },
+            "name": "isotropic_remeshing",
+            "ports": {
+                "iterations": 1,
+                "relaxation_steps": 1,
+                "target_edge_length": 0.200000002980232
+            },
+            "type": "cgal/mesh_processing/isotropic_remeshing"
+        },
+        "isotropic_remeshing_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 608.188903808594,
+                    "y": 564.103393554688
+                }
+            },
+            "name": "isotropic_remeshing",
+            "ports": {
+                "iterations": 5,
+                "relaxation_steps": 5,
+                "target_edge_length": 0.200000002980232
+            },
+            "type": "cgal/mesh_processing/isotropic_remeshing"
+        },
+        "isotropic_remeshing_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 854.752197265625,
+                    "y": 567.916198730469
+                }
+            },
+            "name": "isotropic_remeshing",
+            "ports": {
+                "iterations": 1,
+                "relaxation_steps": 1,
+                "target_edge_length": 0.100000001490116
+            },
+            "type": "cgal/mesh_processing/isotropic_remeshing"
+        },
+        "mesh_to_selection_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 366.0,
+                    "y": 414.0
+                }
+            },
+            "name": "mesh_to_selection",
+            "ports": {
+                "mode": "Select all faces"
+            },
+            "type": "cgal/selection/mesh_to_selection"
+        },
+        "nef_to_poly_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 396.103149414062,
+                    "y": 271.335357666016
+                }
+            },
+            "name": "nef_to_poly",
+            "type": "cgal/nef_polyhedra/nef_to_poly"
+        },
+        "network_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 408.923522949219,
+                    "y": 1158.06433105469
+                }
+            },
+            "name": "draw",
+            "ports": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 292.723937988281,
+                    "y": -148.642639160156
+                }
+            },
+            "name": "sphere",
+            "ports": {
+                "diameter": 1.0,
+                "h_subdivision": 32,
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "v_subdivision": 16
+            },
+            "source": "$NODES/cgal/nef_polyhedra/primitives/sphere.psw",
+            "type": "network"
+        },
+        "network_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 514.02001953125,
+                    "y": -121.182556152344
+                }
+            },
+            "name": "box",
+            "ports": {
+                "center": true,
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 0.5,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "source": "$NODES/cgal/nef_polyhedra/primitives/box.psw",
+            "type": "network"
+        },
+        "network_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 179.550903320312,
+                    "y": 455.408905029297
+                }
+            },
+            "name": "draw",
+            "ports": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 663.112426757812,
+                    "y": 1149.16772460938
+                }
+            },
+            "name": "draw",
+            "ports": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "network_5": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 909.675720214844,
+                    "y": 1152.98059082031
+                }
+            },
+            "name": "draw",
+            "ports": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "source": "$NODES/cgal/draw.psw",
+            "type": "network"
+        },
+        "selection_to_mesh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 361.0,
+                    "y": 767.0
+                }
+            },
+            "name": "selection_to_mesh",
+            "ports": {
+                "mode": "Remove selected"
+            },
+            "type": "cgal/selection/selection_to_mesh"
+        },
+        "selection_to_mesh_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 615.188903808594,
+                    "y": 758.103393554688
+                }
+            },
+            "name": "selection_to_mesh",
+            "ports": {
+                "mode": "Remove selected"
+            },
+            "type": "cgal/selection/selection_to_mesh"
+        },
+        "selection_to_mesh_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 861.752197265625,
+                    "y": 761.916198730469
+                }
+            },
+            "name": "selection_to_mesh",
+            "ports": {
+                "mode": "Remove selected"
+            },
+            "type": "cgal/selection/selection_to_mesh"
+        },
+        "transform_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 384.796081542969,
+                    "y": 923.916564941406
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        },
+        "transform_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 638.984985351562,
+                    "y": 915.019958496094
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 2.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        },
+        "transform_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 885.548278808594,
+                    "y": 918.832763671875
+                }
+            },
+            "name": "transform",
+            "ports": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translation": {
+                    "x": 3.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "vec3_as_normals": true
+            },
+            "type": "cgal/transform"
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACsgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADLQAAAhAAAACxAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
