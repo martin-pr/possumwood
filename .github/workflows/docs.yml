@@ -1,0 +1,42 @@
+name: Possumwood Docs
+
+on:
+  push:
+    branches: [ master ]
+  #pull_request:
+  #  branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Make docs directory
+      run: mkdir docs
+
+    - name: Make tmp directory
+      run: mkdir tmp
+
+    - name: Doxygen
+      uses: mattnotmitt/doxygen-action@v1
+      with:
+        working-directory: './tmp/'
+        doxyfile-path: 'Doxyfile'
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/doxygen
+
+#    # install dependencies
+#    - name: dependencies
+#      run: sudo apt-get update && sudo apt-get install -yq doxygen doxygen-doc doxygen-latex doxygen-gui graphviz
+#
+#    # build project
+#    - name: build docs
+#      run: ./tools/build-docs
+
+

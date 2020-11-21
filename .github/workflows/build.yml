@@ -1,0 +1,23 @@
+name: Possumwood CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Dependencies
+      run: sudo apt-get update && sudo apt-get install -yq libboost-all-dev clang freeglut3-dev libxmu-dev libxi-dev cmake libglew-dev libmpfr-dev libglfw3-dev qt5-default qtdeclarative5-dev libqt5opengl5-dev libluabind-dev libtbb-dev libopencv-dev libcgal-dev libopenimageio-dev libjsoncpp-dev libeigen3-dev libjemalloc-dev
+
+    - name: Build
+      run: ./tools/build-debug -j 4
+
+    - name: Tests
+      run: ./tools/run-tests
