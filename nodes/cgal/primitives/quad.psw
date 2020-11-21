@@ -1,0 +1,212 @@
+{
+    "connections": [
+        {
+            "in_node": "vec3_0",
+            "in_port": "in_context",
+            "out_node": "cgal_0",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "vec3_0",
+            "in_port": "value",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "vec3_1",
+            "in_port": "value",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "vec3_2",
+            "in_port": "value",
+            "out_node": "input_2",
+            "out_port": "data"
+        },
+        {
+            "in_node": "output_0",
+            "in_port": "data",
+            "out_node": "mesh_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "mesh_0",
+            "in_port": "state",
+            "out_node": "script_0",
+            "out_port": "state"
+        },
+        {
+            "in_node": "vec3_1",
+            "in_port": "in_context",
+            "out_node": "vec3_0",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "vec3_2",
+            "in_port": "in_context",
+            "out_node": "vec3_1",
+            "out_port": "out_context"
+        },
+        {
+            "in_node": "script_0",
+            "in_port": "context",
+            "out_node": "vec3_2",
+            "out_port": "out_context"
+        }
+    ],
+    "description": "",
+    "name": "network",
+    "nodes": {
+        "cgal_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 343.975891113281,
+                    "y": -28.1548347473145
+                }
+            },
+            "name": "cgal",
+            "type": "lua/modules/cgal"
+        },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 182.723556518555,
+                    "y": 111.980049133301
+                }
+            },
+            "name": "origin",
+            "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 147.723556518555,
+                    "y": 294.980072021484
+                }
+            },
+            "name": "axis/primary",
+            "type": "input"
+        },
+        "input_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 130.723556518555,
+                    "y": 452.980102539062
+                }
+            },
+            "name": "axis/secondary",
+            "type": "input"
+        },
+        "mesh_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 511.323852539062,
+                    "y": 611.998107910156
+                }
+            },
+            "name": "mesh",
+            "ports": {
+                "name": "mesh"
+            },
+            "type": "lua/extract/mesh"
+        },
+        "output_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 605.330200195312,
+                    "y": 738.240539550781
+                }
+            },
+            "name": "mesh",
+            "type": "output"
+        },
+        "script_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 357.323791503906,
+                    "y": 595.998107910156
+                }
+            },
+            "name": "script",
+            "ports": {
+                "source": "mesh = cgal.mesh(\"mesh\")\n\np1 = mesh:addPoint(origin)\np2 = mesh:addPoint(origin + axis_primary)\np3 = mesh:addPoint(origin + axis_secondary)\np4 = mesh:addPoint(origin + axis_primary + axis_secondary)\n\nface = cgal.face()\nface:addVertex(p1)\nface:addVertex(p2)\nface:addVertex(p4)\nface:addVertex(p3)\nmesh:addFace(face)\n"
+            },
+            "type": "lua/script"
+        },
+        "vec3_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 344.723571777344,
+                    "y": 85.9800415039062
+                }
+            },
+            "name": "vec3",
+            "ports": {
+                "name": "origin"
+            },
+            "type": "lua/inject/vec3"
+        },
+        "vec3_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 347.723571777344,
+                    "y": 250.980072021484
+                }
+            },
+            "name": "vec3",
+            "ports": {
+                "name": "axis_primary"
+            },
+            "type": "lua/inject/vec3"
+        },
+        "vec3_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 346.723571777344,
+                    "y": 415.980102539062
+                }
+            },
+            "name": "vec3",
+            "ports": {
+                "name": "axis_secondary"
+            },
+            "type": "lua/inject/vec3"
+        }
+    },
+    "ports": {
+        "axis/primary": {
+            "x": 1.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "axis/secondary": {
+            "x": 0.0,
+            "y": 1.0,
+            "z": 0.0
+        },
+        "origin": {
+            "x": 9.34927868456725e-09,
+            "y": 4.58322688726718e-41,
+            "z": 8.65495621837908e-07
+        }
+    },
+    "scene_config": {
+        "end_time": 5.0,
+        "fps": 24.0,
+        "start_time": 0.0
+    },
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAQ8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACHgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACmQAAAqQAAACxAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+}
