@@ -71,7 +71,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// pattern
 	const lightfields::Pattern pattern = lightfields::Pattern::fromFit(lenslets);
-	data.set(a_samples, lightfields::Samples::fromPattern(pattern));
+	data.set(a_samples, lightfields::Samples::fromPattern(pattern, *data.get(a_in)));
 
 	return dependency_graph::State();
 }

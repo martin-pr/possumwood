@@ -6,16 +6,22 @@
 
 #include <opencv2/opencv.hpp>
 
+#include "frame.h"
 #include "lightfields.h"
 #include "tools.h"
 
 namespace {
 
+dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<lightfields::Metadata> a_meta;
 dependency_graph::InAttr<float> a_scaleCompensation;
 dependency_graph::OutAttr<lightfields::Samples> a_samples;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
+		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " +
+		                         possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
+
 	// metadata instance - just a bunch of JSON dictionaries extracted from the image
 	const lightfields::Metadata& meta = data.get(a_meta);
 
@@ -26,16 +32,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	pattern.scale(data.get(a_scaleCompensation));
 
 	// comvert the pattern to the samples instance
-	data.set(a_samples, lightfields::Samples::fromPattern(pattern));
+	data.set(a_samples, lightfields::Samples::fromPattern(pattern, *data.get(a_in)));
 
 	return dependency_graph::State();
 }
 
 void init(possumwood::Metadata& meta) {
+	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_meta, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_scaleCompensation, "scale_compensation", 1.0f);
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 
+	meta.addInfluence(a_in, a_samples);
 	meta.addInfluence(a_meta, a_samples);
 	meta.addInfluence(a_scaleCompensation, a_samples);
 

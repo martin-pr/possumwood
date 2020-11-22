@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 
+#include <opencv2/opencv.hpp>
+
 #include "pattern.h"
 
 namespace lightfields {
@@ -12,13 +14,13 @@ namespace lightfields {
 /// Creates 2D samples for lightfield refocusing (i.e., sampling a 2D plane in 4D space with constant U and V).
 class Samples {
   public:
-	enum Color { kRed = 2, kGreen = 1, kBlue = 0 };
+	enum Color { kRGB = 3, kRed = 2, kGreen = 1, kBlue = 0 };
 
 	struct Sample {
-		Imath::V2i source;  ///< Integer position of the source pixel in source image
-		Imath::V2f xy;      ///< XY coordinates of the sample
-		Imath::V2f uv;      ///< UV coordinates of the sample
-		Color color;        ///< Target colour channel, based on the Bayer pattern
+		Imath::V2f xy;     ///< XY coordinates of the sample
+		Imath::V2f uv;     ///< UV coordinates of the sample
+		Color color;       ///< Target colour channel, based on the Bayer pattern, or RGB for de-Bayer data
+		Imath::V3f value;  ///< Sample colour value (only the valid channels are populated)
 	};
 
 	Samples();
@@ -32,8 +34,8 @@ class Samples {
 
 	using const_iterator = std::vector<Sample>::const_iterator;
 
-	const_iterator begin(std::size_t row = 0) const;
-	const_iterator end(std::size_t row = std::numeric_limits<std::size_t>::max()) const;
+	const_iterator begin() const;
+	const_iterator end() const;
 
 	std::size_t size() const;
 	bool empty() const;
@@ -45,13 +47,10 @@ class Samples {
 	void scale(float xy_scale);
 	void filterInvalid();
 
-	static Samples fromPattern(const Pattern& p);
+	static Samples fromPattern(const Pattern& p, const cv::Mat& data);
 
   private:
-	void makeRowOffsets();
-
 	std::vector<Sample> m_samples;
-	std::vector<std::size_t> m_rowOffsets;
 	Imath::V2i m_size;
 };
 

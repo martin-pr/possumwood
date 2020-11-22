@@ -15,7 +15,6 @@
 
 namespace {
 
-dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
 dependency_graph::InAttr<unsigned> a_levels, a_offset;
@@ -29,12 +28,6 @@ struct Sample {
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const lightfields::Samples& samples = data.get(a_samples);
 
-	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
-		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " +
-		                         possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
-
-	const cv::Mat& input = *data.get(a_in);
-
 	const unsigned width = data.get(a_size)[0];
 	const unsigned height = data.get(a_size)[1];
 
@@ -42,15 +35,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const float y_scale = 1.0f / (float)samples.sensorSize()[1];
 
 	std::vector<Sample> cache[3];
-	if((*data.get(a_in)).type() == CV_32FC1)
-		for(auto s : samples)
-			cache[s.color].push_back(
-			    Sample{Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale), input.at<float>(s.source[1], s.source[0])});
-	else
-		for(auto s : samples)
+
+	for(auto s : samples) {
+		if(s.color == lightfields::Samples::kRGB)
 			for(int c = 0; c < 3; ++c)
-				cache[c].push_back(Sample{Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale),
-				                          *(input.ptr<float>(s.source[1], s.source[0]) + c)});
+				cache[c].push_back(Sample{Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale), s.value[c]});
+		else
+			cache[s.color].push_back(Sample{Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale), s.value[s.color]});
+	}
 
 	const std::size_t levels = data.get(a_levels);
 	const std::size_t offset = data.get(a_offset);
@@ -92,14 +84,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(300u, 300u));
 	meta.addAttribute(a_levels, "levels", 3u);
 	meta.addAttribute(a_offset, "offset", 6u);
 	meta.addAttribute(a_out, "out_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 
-	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_samples, a_out);
 	meta.addInfluence(a_size, a_out);
 	meta.addInfluence(a_levels, a_out);

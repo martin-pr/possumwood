@@ -7,35 +7,7 @@
 namespace lightfields {
 namespace nearest {
 
-namespace {
-
-void add1channel(float* color, uint16_t* n, int colorIndex, const float* value) {
-	color[colorIndex] += value[0];
-	++n[colorIndex];
-}
-
-void add3channel(float* color, uint16_t* n, int colorIndex, const float* value) {
-	color[0] += value[0];
-	++n[0];
-
-	color[1] += value[1];
-	++n[1];
-
-	color[2] += value[2];
-	++n[2];
-}
-
-}  // namespace
-
-IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size,
-                            const cv::Mat& input, float offset) {
-	if(input.type() != CV_32FC3 && input.type() != CV_32FC1)
-		throw std::runtime_error("Nearest neighbour integration - only 1 or 3 channel float data allowed on input.");
-
-	auto applyFn = &add1channel;
-	if(input.type() == CV_32FC3)
-		applyFn = &add3channel;
-
+IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Vec2<unsigned>& size, float offset) {
 	const unsigned width = size[0];
 	const unsigned height = size[1];
 
@@ -50,30 +22,29 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	const float widthf = width;
 	const float heightf = height;
 
-	tbb::parallel_for(0, input.rows, [&](int y) {
-		const auto begin = samples.begin(y);
-		const auto end = samples.end(y);
-		assert(begin <= end);
+	tbb::parallel_for(
+	    tbb::blocked_range<lightfields::Samples::const_iterator>(samples.begin(), samples.end()),
+	    [&](const tbb::blocked_range<lightfields::Samples::const_iterator> range) {
+		    for(const lightfields::Samples::Sample& sample : range) {
+			    const float target_x = (sample.xy[0] + offset * sample.uv[0]) * x_scale;
+			    const float target_y = (sample.xy[1] + offset * sample.uv[1]) * y_scale;
 
-		for(auto it = begin; it != end; ++it) {
-			assert(it->source[1] == y);
+			    if((target_x >= 0.0f) && (target_y >= 0.0f) && (target_x < widthf) && (target_y < heightf)) {
+				    float* color = average.ptr<float>(floor(target_y), floor(target_x));
+				    uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
 
-			const float target_x = (it->xy[0] + offset * it->uv[0]) * x_scale;
-			const float target_y = (it->xy[1] + offset * it->uv[1]) * y_scale;
-
-			// sanity checks
-			assert(it->source[0] < input.rows);
-			assert(it->source[1] < input.cols);
-
-			if((target_x >= 0.0f) && (target_y >= 0.0f) && (target_x < widthf) && (target_y < heightf)) {
-				float* color = average.ptr<float>(floor(target_y), floor(target_x));
-				uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
-
-				const float* value = input.ptr<float>(it->source[1], it->source[0]);
-				(*applyFn)(color, n, it->color, value);
-			}
-		}
-	});
+				    if(sample.color == lightfields::Samples::kRGB)
+					    for(int a = 0; a < 3; ++a) {
+						    color[a] += sample.value[a];
+						    ++n[a];
+					    }
+				    else {
+					    color[sample.color] += sample.value[sample.color];
+					    ++n[sample.color];
+				    }
+			    }
+		    }
+	    });
 
 	tbb::parallel_for(0, average.rows, [&](int y) {
 		for(int x = 0; x < average.cols; ++x)
@@ -83,13 +54,9 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	});
 
 	return IntegrationResult{average, norm};
-}
+}  // namespace nearest
 
-cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input, const IntegrationResult& integration,
-                       float offset) {
-	if(input.type() != CV_32FC1 && input.type() != CV_32FC3)
-		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input.");
-
+cv::Mat correspondence(const lightfields::Samples& samples, const IntegrationResult& integration, float offset) {
 	const unsigned width = integration.average.cols;
 	const unsigned height = integration.average.rows;
 
@@ -102,32 +69,29 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input
 	const float heightf = height;
 
 	// accumulate the sums for std dev
-	tbb::parallel_for(0, input.rows, [&](int y) {
-		const auto end = samples.end(y);
-		const auto begin = samples.begin(y);
-		assert(begin <= end);
+	tbb::parallel_for(
+	    tbb::blocked_range<lightfields::Samples::const_iterator>(samples.begin(), samples.end()),
+	    [&](const tbb::blocked_range<lightfields::Samples::const_iterator>& range) {
+		    for(const lightfields::Samples::Sample& sample : range) {
+			    const float target_x = (sample.xy[0] + offset * sample.uv[0]) * x_scale;
+			    const float target_y = (sample.xy[1] + offset * sample.uv[1]) * y_scale;
 
-		for(auto it = begin; it != end; ++it) {
-			const float target_x = (it->xy[0] + offset * it->uv[0]) * x_scale;
-			const float target_y = (it->xy[1] + offset * it->uv[1]) * y_scale;
+			    if((target_x >= 0.0f) && (target_y >= 0.0f) && (target_x < widthf) && (target_y < heightf)) {
+				    float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
+				    const float* ave = integration.average.ptr<float>(target_y, target_x);
 
-			if((target_x >= 0.0f) && (target_y >= 0.0f) && (target_x < widthf) && (target_y < heightf)) {
-				float* target = corresp.ptr<float>(floor(target_y), floor(target_x));
-				const float* value = input.ptr<float>(it->source[1], it->source[0]);
-				const float* ave = integration.average.ptr<float>(target_y, target_x);
-
-				if(input.channels() == 3)
-					for(int c = 0; c < 3; ++c) {
-						const float tmp = value[c] - ave[c];  // because pow() is expensive?!
-						*target += tmp * tmp;
-					}
-				else {
-					const float tmp = (*value - ave[it->color]);
-					*target += tmp * tmp;
-				}
-			}
-		}
-	});
+				    if(sample.color == lightfields::Samples::kRGB)
+					    for(int c = 0; c < 3; ++c) {
+						    const float tmp = sample.value[c] - ave[c];  // because pow() is expensive?!
+						    *target += tmp * tmp;
+					    }
+				    else {
+					    const float tmp = (sample.value[sample.color] - ave[sample.color]);
+					    *target += tmp * tmp;
+				    }
+			    }
+		    }
+	    });
 
 	// normalization
 	tbb::parallel_for(0u, height, [&](unsigned y) {
@@ -136,7 +100,7 @@ cv::Mat correspondence(const lightfields::Samples& samples, const cv::Mat& input
 			const uint16_t* n = integration.samples.ptr<uint16_t>(y, x);
 
 			uint16_t norm = 0;
-			for(int c = 0; c < input.channels(); ++c)
+			for(int c = 0; c < 3; ++c)
 				norm += n[c];
 
 			if(norm > 0)
