@@ -8,6 +8,7 @@
         }
     ],
     "description": "### Image loading\n\nA simple demo showing how to load an image from a file, and display it using an OpenGL setup (wrapped in a subnetwork - enter it by double-clicking the blue node).",
+    "name": "network",
     "nodes": {
         "image_0": {
             "blind_data": {
@@ -32,6 +33,12 @@
                 }
             },
             "connections": [
+                {
+                    "in_node": "draw_0",
+                    "in_port": "vertex_data",
+                    "out_node": "cgal_0",
+                    "out_port": "vertex_data"
+                },
                 {
                     "in_node": "program_0",
                     "in_port": "fragment_shader",
@@ -107,14 +114,8 @@
                 {
                     "in_node": "cgal_0",
                     "in_port": "mesh",
-                    "out_node": "grid_0",
+                    "out_node": "network_0",
                     "out_port": "mesh"
-                },
-                {
-                    "in_node": "draw_0",
-                    "in_port": "vertex_data",
-                    "out_node": "cgal_0",
-                    "out_port": "vertex_data"
                 }
             ],
             "name": "image_display",
@@ -128,6 +129,9 @@
                         }
                     },
                     "name": "cgal",
+                    "ports": {
+                        "p_attr_name": "P"
+                    },
                     "type": "render/vertex_data/cgal"
                 },
                 "draw_0": {
@@ -139,6 +143,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "fragment_shader_0": {
@@ -154,28 +163,6 @@
                         "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform sampler2D image;\n\nvoid main() { \n\tcolor = vec4(texture(image, vec2(uv.x, 1.0-uv.y))); \n} \n"
                     },
                     "type": "render/fragment_shader"
-                },
-                "grid_0": {
-                    "blind_data": {
-                        "type": "possumwood::NodeData",
-                        "value": {
-                            "x": -13.6900844573975,
-                            "y": 276.425964355469
-                        }
-                    },
-                    "name": "grid",
-                    "ports": {
-                        "origin": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "size/x": 1.0,
-                        "size/y": 1.0,
-                        "subdivision/x": 1,
-                        "subdivision/y": 1
-                    },
-                    "type": "cgal/grid"
                 },
                 "input_0": {
                     "blind_data": {
@@ -198,6 +185,35 @@
                     },
                     "name": "metadata",
                     "type": "opencv/metadata"
+                },
+                "network_0": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": 124.734336853027,
+                            "y": 307.760894775391
+                        }
+                    },
+                    "name": "quad",
+                    "ports": {
+                        "axis/primary": {
+                            "x": 1.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "axis/secondary": {
+                            "x": 0.0,
+                            "y": 1.0,
+                            "z": 0.0
+                        },
+                        "origin": {
+                            "x": 9.34927868456725e-09,
+                            "y": 4.58322688726718e-41,
+                            "z": 8.65495621837908e-07
+                        }
+                    },
+                    "source": "$NODES/cgal/primitives/quad.psw",
+                    "type": "network"
                 },
                 "opencv_texture_0": {
                     "blind_data": {
@@ -298,6 +314,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAACiAAAAAACAAAACgAAAAAAAAAAGAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ0AAAE0PwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAE0AAAAJgBAAADAAAAAQAAAcUAAATQ/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABwQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACNwAAAw4AAACqAQAAAwAABcUAAATQAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ0AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAcUAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABvQAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACOAAAAwUAAACxAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

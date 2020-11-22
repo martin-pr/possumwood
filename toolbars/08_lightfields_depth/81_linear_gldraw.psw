@@ -89,9 +89,16 @@
             "in_port": "in_uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "interval_0",
+            "in_port": "interval",
+            "out_node": "input_0",
+            "out_port": "data"
         }
     ],
     "description": "### 2D+1D Lightfields Integration (OpenGL)\n\nA simple lighfield slicing example (depth-based 2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail.\n\nThe camera captures a sequence of evenly-spaced 2D images, which are then offset and merged using a simple average. This corresponds to a 3D lightfield (i.e., a standard 4D lightfield with one sample on the second spatial axis).\n\nIgnoring the lends deformation, each offset value makes the average images converge on a particular focal plane, which allows to synthesize a sharp image for particular depths while leaving other depth values blurred-out on the free spatial axis (horizonatlly, in this case).\n\nThe average is computed on the GPU - this allows much faster image synthesis than would be possible on the CPU.",
+    "name": "network",
     "nodes": {
         "background_0": {
             "blind_data": {
@@ -113,6 +120,11 @@
                 }
             },
             "name": "draw",
+            "ports": {
+                "setup": {
+                    "culling": "ccw"
+                }
+            },
             "type": "render/draw"
         },
         "float_0": {
@@ -198,6 +210,17 @@
             },
             "type": "opencv/capture/image_sequence"
         },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -300.403991699219,
+                    "y": 934.840087890625
+                }
+            },
+            "name": "refocus",
+            "type": "input"
+        },
         "interval_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -207,15 +230,6 @@
                 }
             },
             "name": "REFOCUS_VALUE",
-            "ports": {
-                "interval": {
-                    "in_progress_updates": true,
-                    "max": 10.0,
-                    "min": 0.0,
-                    "type": "linear",
-                    "value": 7.05999946594238
-                }
-            },
             "type": "maths/interval"
         },
         "metadata_0": {
@@ -320,11 +334,21 @@
             "type": "render/uniforms/viewport"
         }
     },
+    "ports": {
+        "refocus": {
+            "in_progress_updates": true,
+            "max": 10.0,
+            "min": 0.0,
+            "type": "linear",
+            "value": 7.09000015258789
+        }
+    },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJsAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAc0AAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAAB1AAABVQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAAdQAAAvkAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACnAAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAMnAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAc0AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACcgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAC7QAAAlAAAACxAQAAAwAABQoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

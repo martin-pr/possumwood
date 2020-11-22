@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "state.h"
 #include "variable.h"
 
