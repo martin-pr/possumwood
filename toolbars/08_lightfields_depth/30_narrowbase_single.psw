@@ -91,25 +91,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_gaussian_0",
-            "in_port": "in_frame",
-            "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "integrate_gaussian_1",
-            "in_port": "in_frame",
-            "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "integrate_gaussian_3",
-            "in_port": "in_frame",
-            "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "integrate_gaussian_2",
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -290,6 +272,7 @@
         }
     ],
     "description": "### Narrow-base depth reconstruction\n\nThis demo shows raw depth reconstruction using the narrow-base comparison metric of pixel values - i.e., each pixel's error value is based on its difference to a narrow-base (i.e., sharp) version of the image.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
+    "name": "network",
     "nodes": {
         "abs_0": {
             "blind_data": {
@@ -504,8 +487,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1635.46081542969,
-                    "y": -88.7180862426758
+                    "x": 1825.93200683594,
+                    "y": -297.45361328125
                 }
             },
             "name": "divide",
@@ -618,8 +601,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1791.65466308594,
-                    "y": -263.236083984375
+                    "x": 1982.12585449219,
+                    "y": -471.971618652344
                 }
             },
             "name": "lytro_lightfield",
@@ -632,8 +615,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1595.48071289062,
-                    "y": -267.559051513672
+                    "x": 1785.95190429688,
+                    "y": -476.294586181641
                 }
             },
             "name": "lytro_lightfield",
@@ -770,6 +753,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -1074,6 +1062,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALaAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACEQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAChwAAAVoAAACqAQAAAwAAAvwAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALaAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABhAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB/wAAAz4AAACxAQAAAwAABXwAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
