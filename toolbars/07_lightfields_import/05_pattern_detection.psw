@@ -79,6 +79,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "convert_4",
+            "in_port": "in_frame",
+            "out_node": "draw_samples_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "colormap_1",
             "in_port": "in_frame",
             "out_node": "equalize_0",
@@ -133,19 +139,26 @@
             "out_port": "output"
         },
         {
-            "in_node": "convert_4",
-            "in_port": "in_frame",
-            "out_node": "draw_samples_0",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "draw_samples_0",
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "zoom",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "blend",
+            "out_node": "input_1",
+            "out_port": "data"
         }
     ],
     "description": "### Lytro pattern detection\n\nLytro files come with metadata that descibe the parameters of the lenslet pattern used to capture the image. Unfortunately, this lenslet pattern was detected using a simple peak-detection algorithm, with together with the main-lens vignetting causes the lenslet centers to be slightly biased towards the centre of the image.\n\nThis demo attempt to detect the lenslets using a different method - by inverting the image, locally normalising it and convoluting it with an inverted lenslet pattern (a \"hexagonal\" shape representing the darker spaces between lenslets), we can achieve a better match with the original lenslet placement.\n\nThis demo only shows the image-processing part - the pattern fitting is demonstrated in the next demo.",
+    "name": "network",
     "nodes": {
         "color_0": {
             "blind_data": {
@@ -385,6 +398,28 @@
             },
             "type": "opencv/filter/gaussian_blur"
         },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -110.642059326172,
+                    "y": 2178.79614257812
+                }
+            },
+            "name": "zoom",
+            "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -105.558280944824,
+                    "y": 2281.74267578125
+                }
+            },
+            "name": "blend",
+            "type": "input"
+        },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -395,7 +430,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/IMG_0012.lfr"
+                "filename": "$EXAMPLES/lytro/calibration.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -557,6 +592,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -782,22 +822,6 @@
                     },
                     "name": "viewport",
                     "type": "render/uniforms/viewport"
-                }
-            },
-            "ports": {
-                "blend": {
-                    "in_progress_updates": true,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "linear",
-                    "value": 0.0
-                },
-                "zoom": {
-                    "in_progress_updates": true,
-                    "max": 8.0,
-                    "min": 1.0,
-                    "type": "linear",
-                    "value": 1.0
                 }
             },
             "type": "network"
@@ -1861,7 +1885,26 @@
                 }
             },
             "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
             "type": "opencv/lightfields/samples_from_metadata"
+        }
+    },
+    "ports": {
+        "blend": {
+            "in_progress_updates": true,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "linear",
+            "value": 0.0
+        },
+        "zoom": {
+            "in_progress_updates": true,
+            "max": 8.0,
+            "min": 1.0,
+            "type": "linear",
+            "value": 1.0
         }
     },
     "scene_config": {
@@ -1869,6 +1912,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALMAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABNwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABrQAAAjQAAACqAQAAAwAAAwoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALMAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACjwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADCgAAAjMAAACxAQAAAwAABYoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -6,6 +6,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "frame.h"
+#include "scoped_error_redirect.h"
 
 namespace {
 
@@ -30,13 +31,19 @@ static const std::vector<std::pair<std::string, int>> s_colorEnum{
     {"YUV2BGR", cv::COLOR_YUV2BGR},     {"YUV2RGB", cv::COLOR_YUV2RGB}};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	dependency_graph::State state;
+
 	cv::Mat result;
 
-	cvtColor(*data.get(a_inFrame), result, data.get(a_mode).intValue());
+	{
+		possumwood::opencv::ScopedErrorRedirect errors;
+		cvtColor(*data.get(a_inFrame), result, data.get(a_mode).intValue());
+		state.append(errors.state());
+	}
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
-	return dependency_graph::State();
+	return state;
 }
 
 void init(possumwood::Metadata& meta) {

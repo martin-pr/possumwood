@@ -4,13 +4,15 @@
 set -e
 
 # run the individual unit tests
-for t in `find ./build/ -executable | grep '_tests$'`
+for t in `find ./build/ -executable | grep '_tests$' | sort`
 do
 	$t
 done
 
 # try to open all setups
-for s in `find ./toolbars/ | grep '.*\.psw$'`
+for s in `find ./toolbars/ | grep '.*\.psw$' | sort`
 do
+	echo "Running $s ..."
 	./build/possumwood_cli --scene $s
+	echo
 done
