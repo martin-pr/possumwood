@@ -85,8 +85,8 @@
             "out_port": "out_seq"
         },
         {
-            "in_node": "depth_0",
-            "in_port": "in_image",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
         },
@@ -200,6 +200,7 @@
         }
     ],
     "description": "### Defocus-based depth reconstructed using Markov Random Fields belief propagation\n\nThis demo shows reconstructs the lightfield depth using the defocus metric of reconstructed images, and propagates it based on the confidence value for each reconstructed pixel.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
+    "name": "network",
     "nodes": {
         "color_0": {
             "blind_data": {
@@ -375,8 +376,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 994.024841308594,
-                    "y": 286.837493896484
+                    "x": 990.794189453125,
+                    "y": 118.84619140625
                 }
             },
             "name": "divide",
@@ -403,8 +404,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1150.21862792969,
-                    "y": 112.319465637207
+                    "x": 1146.98803710938,
+                    "y": -55.6718406677246
                 }
             },
             "name": "lytro_lightfield",
@@ -417,8 +418,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 954.044799804688,
-                    "y": 107.996513366699
+                    "x": 950.814208984375,
+                    "y": -59.9947929382324
                 }
             },
             "name": "lytro_lightfield",
@@ -627,6 +628,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -877,8 +883,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1217.59362792969,
-                    "y": 277.986022949219
+                    "x": 1046.37170410156,
+                    "y": 316.753234863281
                 }
             },
             "name": "samples_from_metadata",
@@ -911,6 +917,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJdAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAcYAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB6wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACYQAAAYAAAACqAQAAAwAAA1sAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAO0AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAcYAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADQgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADvQAAAYAAAACxAQAAAwAABIQAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
