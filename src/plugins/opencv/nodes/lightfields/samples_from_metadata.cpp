@@ -19,9 +19,11 @@ dependency_graph::OutAttr<lightfields::Samples> a_samples;
 dependency_graph::OutAttr<float> a_lensPitch;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
+	const cv::Mat& input = *data.get(a_in);
+
+	if((input).type() != CV_32FC1 && (input).type() != CV_32FC3)
 		throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input, " +
-		                         possumwood::opencv::type2str((*data.get(a_in)).type()) + " found instead!");
+		                         possumwood::opencv::type2str((input).type()) + " found instead!");
 
 	// metadata instance - just a bunch of JSON dictionaries extracted from the image
 	const lightfields::Metadata& meta = data.get(a_meta);
@@ -29,11 +31,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// get the data from dicts and make it into a pattern
 	lightfields::Pattern pattern = lightfields::Pattern::fromMetadata(meta);
 
+	if(pattern.sensorResolution().y != input.rows || pattern.sensorResolution().x != input.cols) {
+		std::stringstream err;
+		err << "Input image and pattern resolutions don't match! Image is " << input.cols << " x " << input.rows
+		    << " and pattern is " << pattern.sensorResolution().x << " x " << pattern.sensorResolution().y;
+
+		throw std::runtime_error(err.str());
+	}
+
 	// compensate for metadata scale (user parameter)
 	pattern.scale(data.get(a_scaleCompensation));
 
 	// comvert the pattern to the samples instance
-	data.set(a_samples, lightfields::Samples::fromPattern(pattern, *data.get(a_in)));
+	data.set(a_samples, lightfields::Samples::fromPattern(pattern, input));
 	data.set(a_lensPitch, pattern.lensPitch());
 
 	return dependency_graph::State();
