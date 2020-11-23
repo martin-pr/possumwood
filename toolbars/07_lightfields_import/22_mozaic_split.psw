@@ -91,7 +91,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_mosaic_0",
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -133,6 +133,12 @@
             "out_port": "metadata"
         },
         {
+            "in_node": "integrate_mosaic_0",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
             "in_node": "colormap_0",
             "in_port": "in_frame",
             "out_node": "split_0",
@@ -167,15 +173,10 @@
             "in_port": "in_frame",
             "out_node": "split_1",
             "out_port": "out_3"
-        },
-        {
-            "in_node": "integrate_mosaic_0",
-            "in_port": "samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
         }
     ],
     "description": "### Sub-apreture mosaic image sample counts\n\nDemultiplexing a Bayern image leads to a significantly larger number of samples for green pixels, compared to red and blue values.\n\nThis demo addempts to visualise this difference explicitly, by showing both each channel of the demultiplexed image, and the number of samples used to reconstruct each of its pixels.",
+    "name": "network",
     "nodes": {
         "color_0": {
             "blind_data": {
@@ -404,8 +405,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 145.389923095703,
-                    "y": -93.3291244506836
+                    "x": 268.567321777344,
+                    "y": -319.154357910156
                 }
             },
             "name": "divide",
@@ -451,8 +452,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 181.185440063477,
-                    "y": -236.794372558594
+                    "x": 195.556137084961,
+                    "y": -487.255065917969
                 }
             },
             "name": "lytro_lightfield",
@@ -465,8 +466,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 390.336547851562,
-                    "y": -232.584259033203
+                    "x": 406.760192871094,
+                    "y": -480.992004394531
                 }
             },
             "name": "lytro_lightfield",
@@ -603,6 +604,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -783,8 +789,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 390.616668701172,
-                    "y": -110.658264160156
+                    "x": 281.809967041016,
+                    "y": -122.976005554199
                 }
             },
             "name": "samples_from_metadata",
@@ -821,6 +827,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB1QAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACSwAAAZYAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADLAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADpwAAAZYAAACxAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

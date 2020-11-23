@@ -37,7 +37,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_mosaic_0",
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -103,6 +103,12 @@
             "out_port": "metadata"
         },
         {
+            "in_node": "integrate_mosaic_0",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
             "in_node": "inpaint_laplacian_0",
             "in_port": "mask",
             "out_node": "threshold_0",
@@ -113,15 +119,10 @@
             "in_port": "mask",
             "out_node": "threshold_0",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "integrate_mosaic_0",
-            "in_port": "samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
         }
     ],
     "description": "### Sub-apreture image inpainting using smoothness prior\n\nTo reconstruct missing data after obtaining sub-apreture images, this demo uses a simple Laplacian-based inpainting technique to reconstruct missing data in each image separately.\n\n<sub>Sabater, Neus, et al. [\"Accurate disparity estimation for plenoptic images.\"](https://pdfs.semanticscholar.org/e79c/4371f7636d3c94c839d00653390e791e0e0b.pdf) European Conference on Computer Vision. Springer, Cham, 2014.</sub>\n\n<sub>Cohen-Or, Daniel, et al. [A sampler of useful computational tools for applied geometry, computer graphics, and image processing.](https://pdfs.semanticscholar.org/de0c/afb6c0775ed29b79a9d947b5174092581a4e.pdf) AK Peters/CRC Press, 2015.</sub>",
+    "name": "network",
     "nodes": {
         "concat_0": {
             "blind_data": {
@@ -205,8 +206,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 41.9297142028809,
-                    "y": -318.206512451172
+                    "x": 15.8377723693848,
+                    "y": -539.988037109375
                 }
             },
             "name": "divide",
@@ -297,8 +298,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -69.7639236450195,
-                    "y": -513.258666992188
+                    "x": -95.8558654785156,
+                    "y": -735.040161132812
                 }
             },
             "name": "lytro_lightfield",
@@ -311,8 +312,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 244.572998046875,
-                    "y": -509.645568847656
+                    "x": 218.481048583984,
+                    "y": -731.427062988281
                 }
             },
             "name": "lytro_lightfield",
@@ -449,6 +450,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -629,8 +635,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 265.613220214844,
-                    "y": -316.004211425781
+                    "x": 88.1880111694336,
+                    "y": -352.532928466797
                 }
             },
             "name": "samples_from_metadata",
@@ -663,6 +669,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHXAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACqAQAAAwAAA/8AAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAHXAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACXAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAC1wAAAmYAAACxAQAAAwAABn8AAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
