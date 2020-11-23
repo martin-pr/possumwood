@@ -1402,12 +1402,12 @@ Georgiev, Todor, et al. ["Lytro camera technology: theory, algorithms, performan
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields_import/03_reading_debayern.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/03_reading_debayer.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Lytro lightfields debayern
+#### Lytro lightfields debayer
 
 The sensor of Lytro cameras are conventional Bayer-pattern color filters. In standard photography, one of the first steps of image processing involves the interpolation of values of neighbouring pixels to remove the Bayer pattern.
 
@@ -1417,7 +1417,7 @@ This demo shows how to obtain a debayered normalised lightfield in Possumwood.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields_import/03_reading_debayern_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/03_reading_debayer_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -1477,7 +1477,7 @@ This demo only shows the image-processing part - the pattern fitting is demonstr
 
 This demo implements fitting of lenslet data detected using a convolution-based setup described in the previous demo.
 
-Display allows to preview both the original pattern, and the new detected pattern - just change the "blend" parameter.
+Display allows to preview both the Lytro metadata pattern (blue), and the new detected pattern (red) - just change the "blend" parameter.
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
@@ -1583,7 +1583,7 @@ This demo shows how to use demultiplexing to reconstruct multiple views from nor
 
 #### Sub-apreture mosaic image sample counts
 
-Demultiplexing a Bayern image leads to a significantly larger number of samples for green pixels, compared to red and blue values.
+Demultiplexing a Bayer image leads to a significantly larger number of samples for green pixels, compared to red and blue values.
 
 This demo addempts to visualise this difference explicitly, by showing both each channel of the demultiplexed image, and the number of samples used to reconstruct each of its pixels.
 </td> 
@@ -1669,7 +1669,7 @@ This demo shows the result of this algorithm on an inpainted mosaic from previou
 
 The simplest method of lightfields digital refocusing is to directly use the lightfield's equation to determine the target pixel position for each sample, given its position in the lightfield image and its corresponding `u` and `v` values.
 
-While very simple and fast, the number of samples for each pixel can vary depending on the bayern pattern and focal distance, often leading to noisy and/or low-resolution results with artifacts.
+While very simple and fast, the number of samples for each pixel can vary depending on the bayer pattern and focal distance, often leading to noisy and/or low-resolution results with artifacts.
 
 <sub>Ng, Ren, et al. ["Light field photography with a hand-held plenoptic camera."](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>
 </td> 
@@ -1702,12 +1702,12 @@ This demo shows the detail of the sampling and integration pattern of previous d
 <tr> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields_import/32_naive_debayern.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/32_naive_debayer.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 <td> 
 
-#### Naive refocusing with a de-bayern filter
+#### Naive refocusing with a de-bayer filter
 
 Applying a de-Bayer filter to raw lightfield data reduces some artifacts seen in previous two demos.
 
@@ -1715,7 +1715,7 @@ Applying a de-Bayer filter to raw lightfield data reduces some artifacts seen in
 </td> 
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
-<img src="toolbars/07_lightfields_import/32_naive_debayern_screenshot.png" style="width:70px;">
+<img src="toolbars/07_lightfields_import/32_naive_debayer_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -1808,7 +1808,7 @@ Briand, Thibaud, and Pascal Monasse. ["Theory and Practice of Image B-Spline Int
 </td>
 <td> 
 
-#### Refocussing with hierarchical B-spline regression and de-bayern filter
+#### Refocussing with hierarchical B-spline regression and de-bayer filter
 
 Briand, Thibaud, and Pascal Monasse. ["Theory and Practice of Image B-Spline Interpolation."](https://www.ipol.im/pub/art/2018/221/article.pdf) Image Processing On Line 8 (2018): 99-141.
 </td> 
@@ -2577,6 +2577,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 
