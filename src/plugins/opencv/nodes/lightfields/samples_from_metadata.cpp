@@ -16,6 +16,7 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<lightfields::Metadata> a_meta;
 dependency_graph::InAttr<float> a_scaleCompensation;
 dependency_graph::OutAttr<lightfields::Samples> a_samples;
+dependency_graph::OutAttr<float> a_lensPitch;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	if((*data.get(a_in)).type() != CV_32FC1 && (*data.get(a_in)).type() != CV_32FC3)
@@ -33,6 +34,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// comvert the pattern to the samples instance
 	data.set(a_samples, lightfields::Samples::fromPattern(pattern, *data.get(a_in)));
+	data.set(a_lensPitch, pattern.lensPitch());
 
 	return dependency_graph::State();
 }
@@ -42,10 +44,15 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_meta, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_scaleCompensation, "scale_compensation", 1.0f);
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_lensPitch, "lens_pitch");
 
 	meta.addInfluence(a_in, a_samples);
 	meta.addInfluence(a_meta, a_samples);
 	meta.addInfluence(a_scaleCompensation, a_samples);
+
+	meta.addInfluence(a_in, a_lensPitch);
+	meta.addInfluence(a_meta, a_lensPitch);
+	meta.addInfluence(a_scaleCompensation, a_lensPitch);
 
 	meta.setCompute(compute);
 }

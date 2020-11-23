@@ -12,7 +12,11 @@ namespace lightfields {
 Pattern::Pattern() : m_sensorResolution(0, 0), m_lensPitch(0) {
 }
 
-Pattern::Pattern(float lensPitch, float pixelPitch, float rotation, Imath::V2d scaleFactor, Imath::V3d sensorOffset,
+Pattern::Pattern(float lensPitch,
+                 float pixelPitch,
+                 float rotation,
+                 Imath::V2d scaleFactor,
+                 Imath::V3d sensorOffset,
                  Imath::V2i sensorResolution)
     : m_sensorResolution(sensorResolution), m_lensPitch(lensPitch / pixelPitch) {
 	// put together lens transformation matrix
@@ -55,6 +59,10 @@ Pattern::~Pattern() {
 
 const Imath::V2i& Pattern::sensorResolution() const {
 	return m_sensorResolution;
+}
+
+float Pattern::lensPitch() const {
+	return m_lensPitch;
 }
 
 Pattern::Sample Pattern::sample(const Imath::V2i& pixelPos) const {

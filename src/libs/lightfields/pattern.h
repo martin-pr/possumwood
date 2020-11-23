@@ -27,6 +27,7 @@ class Pattern {
 
 	Sample sample(const Imath::V2i& pixelPos) const;
 	const Imath::V2i& sensorResolution() const;
+	float lensPitch() const;
 
 	bool operator==(const Pattern& p) const;
 	bool operator!=(const Pattern& p) const;
@@ -37,7 +38,11 @@ class Pattern {
 	static Pattern fromFit(const LensletGraph& lg);
 
   private:
-	Pattern(float lensPitch, float pixelPitch, float rotation, Imath::V2d scaleFactor, Imath::V3d sensorOffset,
+	Pattern(float lensPitch,
+	        float pixelPitch,
+	        float rotation,
+	        Imath::V2d scaleFactor,
+	        Imath::V3d sensorOffset,
 	        Imath::V2i sensorResolution);
 	Pattern(float lensPitch, const Imath::M33d& tr, Imath::V2i sensorResolution);
 
