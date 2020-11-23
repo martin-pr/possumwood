@@ -85,7 +85,7 @@
             "out_port": "data"
         }
     ],
-    "description": "### Refocussing with hierarchical B-spline regression and de-bayern filter\n\nBriand, Thibaud, and Pascal Monasse. [\"Theory and Practice of Image B-Spline Interpolation.\"](https://www.ipol.im/pub/art/2018/221/article.pdf) Image Processing On Line 8 (2018): 99-141.",
+    "description": "### Refocussing with hierarchical B-spline regression and de-bayer filter\n\nBriand, Thibaud, and Pascal Monasse. [\"Theory and Practice of Image B-Spline Interpolation.\"](https://www.ipol.im/pub/art/2018/221/article.pdf) Image Processing On Line 8 (2018): 99-141.",
     "name": "network",
     "nodes": {
         "convert_0": {

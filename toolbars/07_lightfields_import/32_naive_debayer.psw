@@ -91,7 +91,7 @@
             "out_port": "data"
         }
     ],
-    "description": "### Naive refocusing with a de-bayern filter\n\nApplying a de-Bayer filter to raw lightfield data reduces some artifacts seen in previous two demos.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
+    "description": "### Naive refocusing with a de-bayer filter\n\nApplying a de-Bayer filter to raw lightfield data reduces some artifacts seen in previous two demos.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
     "name": "network",
     "nodes": {
         "convert_0": {

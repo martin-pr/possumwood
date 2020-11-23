@@ -175,7 +175,7 @@
             "out_port": "out_3"
         }
     ],
-    "description": "### Sub-apreture mosaic image sample counts\n\nDemultiplexing a Bayern image leads to a significantly larger number of samples for green pixels, compared to red and blue values.\n\nThis demo addempts to visualise this difference explicitly, by showing both each channel of the demultiplexed image, and the number of samples used to reconstruct each of its pixels.",
+    "description": "### Sub-apreture mosaic image sample counts\n\nDemultiplexing a Bayer image leads to a significantly larger number of samples for green pixels, compared to red and blue values.\n\nThis demo addempts to visualise this difference explicitly, by showing both each channel of the demultiplexed image, and the number of samples used to reconstruct each of its pixels.",
     "name": "network",
     "nodes": {
         "color_0": {
