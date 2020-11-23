@@ -6,6 +6,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "frame.h"
+#include "scoped_error_redirect.h"
 
 namespace {
 
@@ -26,15 +27,21 @@ int modeToEnum(const std::string& mode) {
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	dependency_graph::State state;
+
 	cv::Mat result;
 
-	(*data.get(a_inFrame))
-	    .clone()
-	    .convertTo(result, modeToEnum(data.get(a_mode).value()), data.get(a_a), data.get(a_b));
+	{
+		possumwood::opencv::ScopedErrorRedirect errors;
+		(*data.get(a_inFrame))
+		    .clone()
+		    .convertTo(result, modeToEnum(data.get(a_mode).value()), data.get(a_a), data.get(a_b));
+		state.append(errors.state());
+	}
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
-	return dependency_graph::State();
+	return state;
 }
 
 void init(possumwood::Metadata& meta) {
