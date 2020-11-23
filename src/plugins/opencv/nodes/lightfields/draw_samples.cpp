@@ -19,21 +19,22 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	cv::Mat mat(samples.sensorSize()[0], samples.sensorSize()[1], CV_32FC1);
 
-	tbb::parallel_for(0, mat.rows, [&](int y) {
-		for(auto it = samples.begin(y); it != samples.end(y); ++it) {
-			float* color = mat.ptr<float>(it->source[1], it->source[0]);
-			float current = it->uv[0] * it->uv[0] + it->uv[1] * it->uv[1];
-			if(current <= 1.0f)
-				color[0] = (1.0f - current);
-			else
-				color[0] = 0.0f;
-		}
-	});
+	tbb::parallel_for(tbb::blocked_range<lightfields::Samples::const_iterator>(samples.begin(), samples.end()),
+	                  [&](const tbb::blocked_range<lightfields::Samples::const_iterator>& range) {
+		                  for(const lightfields::Samples::Sample& sample : range) {
+			                  float* color = mat.ptr<float>(sample.xy.y, sample.xy.x);
+			                  float current = sample.uv[0] * sample.uv[0] + sample.uv[1] * sample.uv[1];
+			                  if(current <= 1.0f)
+				                  color[0] = (1.0f - current);
+			                  else
+				                  color[0] = 0.0f;
+		                  }
+	                  });
 
 	data.set(a_out, possumwood::opencv::Frame(mat));
 
 	return dependency_graph::State();
-}
+}  // namespace
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);

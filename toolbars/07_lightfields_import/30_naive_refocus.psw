@@ -2,12 +2,30 @@
     "connections": [
         {
             "in_node": "concat_0",
+            "in_port": "in_frame_2",
+            "out_node": "colormap_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "concat_0",
             "in_port": "in_frame_1",
             "out_node": "convert_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_nearest_0",
+            "in_node": "colormap_0",
+            "in_port": "in_frame",
+            "out_node": "convert_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -59,27 +77,10 @@
             "in_port": "samples",
             "out_node": "samples_refocus_0",
             "out_port": "out_samples"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "concat_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "colormap_0",
-            "in_port": "in_frame",
-            "out_node": "convert_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_0",
-            "in_port": "in_frame_2",
-            "out_node": "colormap_0",
-            "out_port": "out_frame"
         }
     ],
-    "description": "### Naive refocusing\n\nThe simplest method of lightfields digital refocusing is to directly use the lightfield's equation to determine the target pixel position for each sample, given its position in the lightfield image and its corresponding `u` and `v` values.\n\nWhile very simple and fast, the number of samples for each pixel can vary depending on the bayern pattern and focal distance, often leading to noisy and/or low-resolution results with artifacts.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
+    "description": "### Naive refocusing\n\nThe simplest method of lightfields digital refocusing is to directly use the lightfield's equation to determine the target pixel position for each sample, given its position in the lightfield image and its corresponding `u` and `v` values.\n\nWhile very simple and fast, the number of samples for each pixel can vary depending on the bayer pattern and focal distance, often leading to noisy and/or low-resolution results with artifacts.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
+    "name": "network",
     "nodes": {
         "colormap_0": {
             "blind_data": {
@@ -146,8 +147,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -67.6602249145508,
-                    "y": 178.407821655273
+                    "x": -110.872367858887,
+                    "y": -290.571075439453
                 }
             },
             "name": "divide",
@@ -192,8 +193,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 137.180435180664,
-                    "y": -101.603019714355
+                    "x": 76.175048828125,
+                    "y": -470.177215576172
                 }
             },
             "name": "lytro_lightfield",
@@ -206,8 +207,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -126.112457275391,
-                    "y": -104.503448486328
+                    "x": -187.11784362793,
+                    "y": -473.07763671875
                 }
             },
             "name": "lytro_lightfield",
@@ -344,6 +345,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -524,8 +530,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 186.323699951172,
-                    "y": 22.9162864685059
+                    "x": 46.5196952819824,
+                    "y": -44.4438247680664
                 }
             },
             "name": "samples_from_metadata",
@@ -538,8 +544,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 175.21061706543,
-                    "y": 148.457534790039
+                    "x": 88.7863235473633,
+                    "y": 149.728485107422
                 }
             },
             "name": "samples_refocus",
@@ -556,6 +562,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABigAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACAAAAAeEAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAC4QAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADXAAAAeEAAACxAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -7,7 +7,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_nearest_0",
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -43,6 +43,12 @@
             "out_port": "frame"
         },
         {
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
             "in_node": "integrate_nearest_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
@@ -50,12 +56,13 @@
         },
         {
             "in_node": "samples_refocus_0",
-            "in_port": "in_samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "in_port": "uv_offset",
+            "out_node": "input_0",
+            "out_port": "data"
         }
     ],
     "description": "### Naive refocusing detail\n\nThis demo shows the detail of the sampling and integration pattern of previous demo.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
+    "name": "network",
     "nodes": {
         "convert_0": {
             "blind_data": {
@@ -77,8 +84,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -14.2833518981934,
-                    "y": 26.489013671875
+                    "x": 95.0179595947266,
+                    "y": -248.035217285156
                 }
             },
             "name": "divide",
@@ -102,6 +109,17 @@
             },
             "type": "opencv/gamma"
         },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 61.3394622802734,
+                    "y": 176.560531616211
+                }
+            },
+            "name": "refocus",
+            "type": "input"
+        },
         "integrate_nearest_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -123,8 +141,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 131.962051391602,
-                    "y": -104.212211608887
+                    "x": 241.263366699219,
+                    "y": -378.736450195312
                 }
             },
             "name": "lytro_lightfield",
@@ -137,8 +155,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -140.483154296875,
-                    "y": -129.138931274414
+                    "x": -31.1818389892578,
+                    "y": -403.663177490234
                 }
             },
             "name": "lytro_lightfield",
@@ -275,6 +293,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -455,35 +478,41 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 194.00749206543,
-                    "y": 17.8665962219238
+                    "x": 163.504791259766,
+                    "y": -46.9516258239746
                 }
             },
             "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
             "type": "opencv/lightfields/samples_from_metadata"
         },
         "samples_refocus_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 270.927764892578,
+                    "x": 220.089935302734,
                     "y": 141.184432983398
                 }
             },
             "name": "samples_refocus",
             "ports": {
-                "uv_offset": 3.0,
                 "uv_threshold": 1.0,
                 "xy_scale": 50.0
             },
             "type": "opencv/lightfields/samples_refocus"
         }
     },
+    "ports": {
+        "refocus": 4.0
+    },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAa0AAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABCQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABfwAAAmIAAACqAQAAAwAAA4AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAa0AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACYAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAC2wAAAmIAAACxAQAAAwAABgAAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

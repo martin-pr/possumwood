@@ -12,33 +12,6 @@ Samples::Samples() {
 Samples::~Samples() {
 }
 
-void Samples::makeRowOffsets() {
-	if(m_samples.empty())
-		m_rowOffsets.clear();
-
-	else {
-		// initialise to maximum offset
-		m_rowOffsets = std::vector<std::size_t>(m_size[1], m_samples.size());
-		m_rowOffsets[0] = 0;
-
-		// collect row start indices
-		int current = 0;
-		for(auto it = m_samples.begin(); it != m_samples.end(); ++it) {
-			assert(it->source[1] >= 0 && it->source[1] < m_size[1]);
-			assert(it->source[1] >= current);
-
-			// propagate current value, to account for "empty" scanlines
-			for(int r = current + 1; r < it->source[1]; ++r)
-				m_rowOffsets[r] = m_rowOffsets[r - 1];
-			current = it->source[1];
-
-			// and update the current starting index
-			if(m_rowOffsets[it->source[1]] > (std::size_t)(it - m_samples.begin()))
-				m_rowOffsets[it->source[1]] = it - m_samples.begin();
-		}
-	}
-}
-
 void Samples::offset(float uvOffset) {
 	tbb::parallel_for(std::size_t(0), m_samples.size(), [&](std::size_t i) {
 		auto& s = m_samples[i];
@@ -58,8 +31,6 @@ void Samples::threshold(float uvThreshold) {
 		}
 	}
 	m_samples.resize(tgt - m_samples.begin());
-
-	makeRowOffsets();
 }
 
 void Samples::filterInvalid() {
@@ -75,8 +46,6 @@ void Samples::filterInvalid() {
 		}
 	}
 	m_samples.resize(tgt - m_samples.begin());
-
-	makeRowOffsets();
 }
 
 void Samples::scale(float xy_scale) {
@@ -88,21 +57,12 @@ void Samples::scale(float xy_scale) {
 	});
 }
 
-Samples::const_iterator Samples::begin(std::size_t row) const {
-	auto it = m_samples.end();
-
-	if(row < m_rowOffsets.size()) {
-		assert(m_rowOffsets[row] <= m_samples.size());
-		it = m_samples.begin() + m_rowOffsets[row];
-	}
-	assert(it <= m_samples.end());
-
-	return it;
+Samples::const_iterator Samples::begin() const {
+	return m_samples.begin();
 }
 
-Samples::const_iterator Samples::end(std::size_t row) const {
-	row = std::min(row, std::numeric_limits<std::size_t>::max() - 1);
-	return begin(row + 1);
+Samples::const_iterator Samples::end() const {
+	return m_samples.end();
 }
 
 std::size_t Samples::size() const {
@@ -119,34 +79,83 @@ const Imath::V2i Samples::sensorSize() const {
 
 /////////
 
-Samples Samples::fromPattern(const Pattern& pattern) {
-	Samples result;
+namespace {
 
-	result.m_size = pattern.sensorResolution();
+template <int CV_TYPE>
+struct AssignSample;
 
-	result.m_samples.resize(result.m_size[0] * result.m_size[1]);
+template <>
+struct AssignSample<CV_32FC1> {
+	static void assign(Samples::Sample& sample, std::size_t x, std::size_t y, const cv::Mat& m) {
+		// hardcoded bayer pattern, for now - generates kRed, kGreen or kBlue only
+		sample.color = Samples::Color((x % 2) + (y % 2));
+
+		// and the value
+		sample.value = Imath::V3f(0, 0, 0);
+		sample.value[sample.color] = *m.ptr<float>(y, x);
+	}
+};
+
+template <>
+struct AssignSample<CV_32FC3> {
+	static void assign(Samples::Sample& sample, std::size_t x, std::size_t y, const cv::Mat& m) {
+		// hardcoded bayer pattern, for now - generates kRed, kGreen or kBlue only
+		sample.color = Samples::kRGB;
+
+		// and the value
+		const float* ptr = m.ptr<float>(y, x);
+		sample.value = Imath::V3f(ptr[0], ptr[1], ptr[2]);
+	}
+};
+
+template <int CV_TYPE>
+std::vector<Samples::Sample> makeSamples(const Pattern& pattern, const cv::Mat& m) {
+	std::vector<Samples::Sample> result;
+	result.resize(m.rows * m.cols);
 
 	// assemble the samples
-	tbb::parallel_for(std::size_t(0), (std::size_t)result.m_size[0], [&](std::size_t y) {
-		for(std::size_t x = 0; x < (std::size_t)result.m_size[1]; ++x) {
-			Sample& sample = result.m_samples[y * result.m_size[0] + x];
+	tbb::parallel_for(0, m.rows, [&](int y) {
+		for(int x = 0; x < m.cols; ++x) {
+			auto& sample = result[y * m.cols + x];
 
 			const Pattern::Sample coords = pattern.sample(Imath::V2i(x, y));
 
-			// input image pixel position, integer in pixels
-			sample.source = Imath::V2i(x, y);
 			// and UV coordinates, -1..1
 			sample.uv = coords.offset;
 
 			// target pixel position, normalized (0..1) - adding the UV offset to handle displacement
 			sample.xy = coords.lensCenter;
 
-			// hardcoded bayer pattern, for now
-			sample.color = Color((x % 2) + (y % 2));
+			// and assign the value
+			AssignSample<CV_TYPE>::assign(sample, x, y, m);
 		}
 	});
 
-	result.makeRowOffsets();
+	return result;
+}
+
+}  // namespace
+
+Samples Samples::fromPattern(const Pattern& pattern, const cv::Mat& m) {
+	assert(m.rows == pattern.sensorResolution().y && m.cols == pattern.sensorResolution().x);
+	assert(m.type() == CV_32FC1 || m.type() == CV_32FC3);
+
+	// if(data.type() != CV_32FC1 && data.type() != CV_32FC3)
+	// 	throw std::runtime_error("Only 32-bit single-float or 32-bit 3 channel float format supported on input.");
+
+	Samples result;
+
+	result.m_size = pattern.sensorResolution();
+
+	switch(m.type()) {
+		case CV_32FC1:
+			result.m_samples = makeSamples<CV_32FC1>(pattern, m);
+			break;
+
+		case CV_32FC3:
+			result.m_samples = makeSamples<CV_32FC3>(pattern, m);
+			break;
+	}
 
 	return result;
 }

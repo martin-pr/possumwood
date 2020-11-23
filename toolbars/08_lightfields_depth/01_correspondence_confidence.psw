@@ -85,8 +85,8 @@
             "out_port": "corresp_seq"
         },
         {
-            "in_node": "depth_0",
-            "in_port": "in_image",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
         },
@@ -164,6 +164,7 @@
         }
     ],
     "description": "### Correspondence depth reconstruction with confidence measure\n\nThis demo shows how to reconstruct raw depth using the correspondence metric of depth values.\n\nIn the bottom-right image, the correspondence value's brightness is altered using a confidence metric value, based on the shape of the correspondence curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.\n\nHu, Xiaoyan, and Philippos Mordohai. [\"A quantitative evaluation of confidence measures for stereo vision.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.295.5787&rep=rep1&type=pdf) IEEE transactions on pattern analysis and machine intelligence 34.11 (2012): 2121-2133.",
+    "name": "network",
     "nodes": {
         "color_0": {
             "blind_data": {
@@ -341,8 +342,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1389.64978027344,
-                    "y": -177.915771484375
+                    "x": 1388.03454589844,
+                    "y": -376.597747802734
                 }
             },
             "name": "divide",
@@ -369,8 +370,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1545.84362792969,
-                    "y": -352.433807373047
+                    "x": 1544.22839355469,
+                    "y": -551.115783691406
                 }
             },
             "name": "lytro_lightfield",
@@ -383,8 +384,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1349.66979980469,
-                    "y": -356.756744384766
+                    "x": 1348.05456542969,
+                    "y": -555.438720703125
                 }
             },
             "name": "lytro_lightfield",
@@ -575,6 +576,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -783,8 +789,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1613.21850585938,
-                    "y": -186.767211914062
+                    "x": 1462.99560546875,
+                    "y": -165.768310546875
                 }
             },
             "name": "samples_from_metadata",
@@ -799,6 +805,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJxAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABxQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACOwAAAaYAAACqAQAAAwAAA2UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAPAAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADHAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADlwAAAaYAAACxAQAAAwAABJYAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

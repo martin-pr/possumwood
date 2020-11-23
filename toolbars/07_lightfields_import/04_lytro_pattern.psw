@@ -25,6 +25,24 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "draw_samples_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "blend",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "zoom",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
             "in_node": "convert_1",
             "in_port": "in_frame",
             "out_node": "lytro_lightfield_0",
@@ -32,31 +50,50 @@
         },
         {
             "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
             "in_port": "metadata",
-            "out_node": "lytro_lightfield_1",
+            "out_node": "lytro_lightfield_0",
             "out_port": "metadata"
         },
         {
-            "in_node": "convert_0",
-            "in_port": "in_frame",
-            "out_node": "draw_samples_0",
-            "out_port": "out_frame"
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
+            "in_node": "mult_0",
+            "in_port": "a",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "lens_pitch"
         },
         {
             "in_node": "draw_samples_0",
             "in_port": "samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "out_node": "samples_refocus_0",
+            "out_port": "out_samples"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "uv_offset",
+            "out_node": "mult_0",
+            "out_port": "out"
         }
     ],
     "description": "### Lytro microlens pattern reconstruction\n\nReconstruction of the microlens pattern is essential for recovering the lightfield data from a Lytro image.\n\nThis demo shows how the information embedded in the metadata of a Lytro raw image can be used to reconstruct the microlens array, and visualise the result.\n\nGeorgiev, Todor, et al. [\"Lytro camera technology: theory, algorithms, performance analysis.\"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.679.5441&rep=rep1&type=pdf) Multimedia Content and Mobile Devices. Vol. 8667. International Society for Optics and Photonics, 2013.",
+    "name": "network",
     "nodes": {
         "colormap_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 412.207305908203,
-                    "y": 1216.95361328125
+                    "x": 587.399719238281,
+                    "y": 1481.40209960938
                 }
             },
             "name": "colormap",
@@ -69,8 +106,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 275.258270263672,
-                    "y": 1214.41174316406
+                    "x": 100.892234802246,
+                    "y": 1412.56103515625
                 }
             },
             "name": "colormap",
@@ -83,8 +120,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 420.419128417969,
-                    "y": 1011.65795898438
+                    "x": 595.611511230469,
+                    "y": 1276.1064453125
                 }
             },
             "name": "convert",
@@ -99,8 +136,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 278.703002929688,
-                    "y": 1006.85321044922
+                    "x": 104.336967468262,
+                    "y": 1205.00244140625
                 }
             },
             "name": "convert",
@@ -115,47 +152,69 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 405.181335449219,
-                    "y": 862.107849121094
+                    "x": 580.373718261719,
+                    "y": 1126.55627441406
                 }
             },
             "name": "draw_samples",
             "type": "opencv/lightfields/draw_samples"
         },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -36.4581756591797,
+                    "y": 1725.84020996094
+                }
+            },
+            "name": "blend",
+            "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -31.3743896484375,
+                    "y": 1626.70654296875
+                }
+            },
+            "name": "zoom",
+            "type": "input"
+        },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 129.341033935547,
-                    "y": 521.197387695312
+                    "x": 116.877685546875,
+                    "y": 388.528503417969
                 }
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/IMG_0012.lfr"
+                "filename": "$EXAMPLES/lytro/calibration.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
-        "lytro_lightfield_1": {
+        "mult_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 391.152496337891,
-                    "y": 530.33056640625
+                    "x": 470.752502441406,
+                    "y": 635.492431640625
                 }
             },
-            "name": "lytro_lightfield",
+            "name": "mult",
             "ports": {
-                "filename": "$EXAMPLES/lytro/IMG_0012.lfr"
+                "b": 0.5
             },
-            "type": "opencv/capture/lytro_lightfield"
+            "type": "maths/mult"
         },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 301.074584960938,
-                    "y": 1391.48291015625
+                    "x": 288.892150878906,
+                    "y": 1643.00903320312
                 }
             },
             "connections": [
@@ -308,6 +367,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -535,34 +599,52 @@
                     "type": "render/uniforms/viewport"
                 }
             },
-            "ports": {
-                "blend": {
-                    "in_progress_updates": true,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "linear",
-                    "value": 0.0
-                },
-                "zoom": {
-                    "in_progress_updates": true,
-                    "max": 8.0,
-                    "min": 1.0,
-                    "type": "linear",
-                    "value": 4.59800004959106
-                }
-            },
             "type": "network"
         },
         "samples_from_metadata_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 363.406616210938,
-                    "y": 729.040100097656
+                    "x": 198.041351318359,
+                    "y": 567.979431152344
                 }
             },
             "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
             "type": "opencv/lightfields/samples_from_metadata"
+        },
+        "samples_refocus_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 587.282409667969,
+                    "y": 918.604858398438
+                }
+            },
+            "name": "samples_refocus",
+            "ports": {
+                "uv_threshold": 1.0,
+                "xy_scale": 1.0
+            },
+            "type": "opencv/lightfields/samples_refocus"
+        }
+    },
+    "ports": {
+        "blend": {
+            "in_progress_updates": true,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "linear",
+            "value": 1.0
+        },
+        "zoom": {
+            "in_progress_updates": true,
+            "max": 8.0,
+            "min": 1.0,
+            "type": "linear",
+            "value": 4.75899982452393
         }
     },
     "scene_config": {
@@ -570,6 +652,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAlMAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABoAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACFgAAAcsAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAlMAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACRAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACvwAAAn4AAACxAQAAAwAABVoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

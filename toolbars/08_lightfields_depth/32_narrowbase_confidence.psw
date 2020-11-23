@@ -79,14 +79,8 @@
             "out_port": "out_seq"
         },
         {
-            "in_node": "depth_0",
-            "in_port": "in_image",
-            "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "network_1",
-            "in_port": "frame",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
         },
@@ -163,6 +157,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "median_0",
+            "in_port": "in_frame",
+            "out_node": "normalize_1",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "confidence_0",
             "in_port": "in_sequence",
             "out_node": "pixel_normalize_0",
@@ -179,15 +179,10 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "median_0",
-            "in_port": "in_frame",
-            "out_node": "normalize_1",
-            "out_port": "out_frame"
         }
     ],
     "description": "### Narrow-base depth reconstruction with confidence measure\n\nThis demo shows raw depth reconstruction using the narrow-base comparison metric of pixel values - i.e., each pixel's error value is based on its difference to a narrow-base (i.e., sharp) version of the image.\n\nThe per-pixel metric is evaluated for a range of depth reconstruction values, with the lowest difference value picked as the appropriate depth value candidate. In the bottom-right image, the depth candidate brightness is altered using a confidence metric value, based on the shape of the defocus curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
+    "name": "network",
     "nodes": {
         "color_0": {
             "blind_data": {
@@ -365,8 +360,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1047.08312988281,
-                    "y": 286.837493896484
+                    "x": 1253.20983886719,
+                    "y": 91.1476058959961
                 }
             },
             "name": "divide",
@@ -393,8 +388,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1203.27697753906,
-                    "y": 112.319465637207
+                    "x": 1409.40368652344,
+                    "y": -83.3704223632812
                 }
             },
             "name": "lytro_lightfield",
@@ -407,8 +402,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1007.10314941406,
-                    "y": 107.996513366699
+                    "x": 1213.22985839844,
+                    "y": -87.6933746337891
                 }
             },
             "name": "lytro_lightfield",
@@ -599,6 +594,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -831,12 +831,6 @@
                     "in_port": "data",
                     "out_node": "divide_0",
                     "out_port": "out"
-                },
-                {
-                    "in_node": "integrate_gaussian_0",
-                    "in_port": "in_frame",
-                    "out_node": "input_0",
-                    "out_port": "data"
                 },
                 {
                     "in_node": "samples_refocus_0",
@@ -1177,6 +1171,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKFAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAh8AAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACCwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgQAAAWAAAACqAQAAAwAAAtoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKFAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAh8AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADYgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAD3QAAAWAAAACxAQAAAwAABVoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

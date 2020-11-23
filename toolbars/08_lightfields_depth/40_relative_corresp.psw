@@ -25,13 +25,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_nearest_0",
-            "in_port": "in_frame",
-            "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "integrate_nearest_1",
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -85,6 +79,18 @@
             "out_port": "frame"
         },
         {
+            "in_node": "samples_refocus_1",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
             "in_node": "integrate_nearest_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
@@ -97,19 +103,20 @@
             "out_port": "out_samples"
         },
         {
-            "in_node": "samples_refocus_1",
-            "in_port": "in_samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "in_node": "interval_0",
+            "in_port": "interval",
+            "out_node": "input_0",
+            "out_port": "data"
         },
         {
             "in_node": "samples_refocus_0",
-            "in_port": "in_samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "in_port": "uv_offset",
+            "out_node": "interval_0",
+            "out_port": "out"
         }
     ],
     "description": "### Per-pixel correspondence metric (relative results)\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
+    "name": "network",
     "nodes": {
         "colormap_0": {
             "blind_data": {
@@ -176,8 +183,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 228.527862548828,
-                    "y": 121.276718139648
+                    "x": 325.068267822266,
+                    "y": -304.022796630859
                 }
             },
             "name": "divide",
@@ -215,6 +222,17 @@
             },
             "type": "opencv/gamma"
         },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 8.49083137512207,
+                    "y": 141.869537353516
+                }
+            },
+            "name": "refocus",
+            "type": "input"
+        },
         "integrate_nearest_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -249,12 +267,23 @@
             },
             "type": "opencv/lightfields/integrate_nearest"
         },
+        "interval_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 162.275512695312,
+                    "y": 132.972900390625
+                }
+            },
+            "name": "interval",
+            "type": "maths/interval"
+        },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 600.2822265625,
-                    "y": -84.9059600830078
+                    "x": 490.695831298828,
+                    "y": -458.021484375
                 }
             },
             "name": "lytro_lightfield",
@@ -267,8 +296,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 334.469299316406,
-                    "y": -76.6713027954102
+                    "x": 224.882934570312,
+                    "y": -449.786834716797
                 }
             },
             "name": "lytro_lightfield",
@@ -405,6 +434,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -585,24 +619,26 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 669.617919921875,
-                    "y": 27.4601078033447
+                    "x": 390.433563232422,
+                    "y": -126.482666015625
                 }
             },
             "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
             "type": "opencv/lightfields/samples_from_metadata"
         },
         "samples_refocus_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 522.670654296875,
-                    "y": 143.220962524414
+                    "x": 321.762298583984,
+                    "y": 101.473770141602
                 }
             },
             "name": "samples_refocus",
             "ports": {
-                "uv_offset": -15.0,
                 "uv_threshold": 1.0,
                 "xy_scale": 1.0
             },
@@ -612,8 +648,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 703.66455078125,
-                    "y": 141.302429199219
+                    "x": 502.756195068359,
+                    "y": 99.5552368164062
                 }
             },
             "name": "samples_refocus",
@@ -625,11 +661,21 @@
             "type": "opencv/lightfields/samples_refocus"
         }
     },
+    "ports": {
+        "refocus": {
+            "in_progress_updates": false,
+            "max": 30.0,
+            "min": -30.0,
+            "type": "linear",
+            "value": -17.7600002288818
+        }
+    },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALGAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACqAQAAAwAAAxAAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALGAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACXAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAC1wAAAmYAAACxAQAAAwAABZAAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

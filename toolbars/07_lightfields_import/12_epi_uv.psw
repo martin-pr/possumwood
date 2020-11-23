@@ -31,27 +31,15 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "network_1",
-            "in_port": "lightfield",
-            "out_node": "lytro_lightfield_1",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "network_3",
-            "in_port": "lightfield",
-            "out_node": "lytro_lightfield_1",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "network_4",
-            "in_port": "lightfield",
-            "out_node": "lytro_lightfield_1",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
+            "out_node": "lytro_lightfield_0",
             "out_port": "frame"
         },
         {
             "in_node": "samples_from_metadata_0",
             "in_port": "metadata",
-            "out_node": "lytro_lightfield_1",
+            "out_node": "lytro_lightfield_0",
             "out_port": "metadata"
         },
         {
@@ -59,6 +47,24 @@
             "in_port": "in_frame_1",
             "out_node": "network_1",
             "out_port": "output"
+        },
+        {
+            "in_node": "network_1",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
+            "in_node": "network_3",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
+            "in_node": "network_4",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
         },
         {
             "in_node": "concat_3_0",
@@ -73,25 +79,26 @@
             "out_port": "output"
         },
         {
-            "in_node": "network_4",
-            "in_port": "samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "in_node": "network_1",
+            "in_port": "resolution",
+            "out_node": "input_0",
+            "out_port": "data"
         },
         {
             "in_node": "network_3",
-            "in_port": "samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "in_port": "resolution",
+            "out_node": "input_0",
+            "out_port": "data"
         },
         {
-            "in_node": "network_1",
-            "in_port": "samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "in_node": "network_4",
+            "in_port": "resolution",
+            "out_node": "input_0",
+            "out_port": "data"
         }
     ],
     "description": "### UV EPIs\n\nThe epipolar images accumulated in UV space show images representing averages of lenslets in different part of the image. This provides a good measure for the quality of Lytro lenslet pattern detection and main lens calibration - if correct, all lenslets should look very similar.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
+    "name": "network",
     "nodes": {
         "concat_3_0": {
             "blind_data": {
@@ -170,26 +177,23 @@
             },
             "type": "opencv/gamma"
         },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -112.064208984375,
+                    "y": 182.657989501953
+                }
+            },
+            "name": "resolution",
+            "type": "input"
+        },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 295.630981445312,
-                    "y": -145.129440307617
-                }
-            },
-            "name": "lytro_lightfield",
-            "ports": {
-                "filename": "$EXAMPLES/lytro/calibration.lfr"
-            },
-            "type": "opencv/capture/lytro_lightfield"
-        },
-        "lytro_lightfield_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 295.630981445312,
-                    "y": -145.129440307617
+                    "x": 284.004272460938,
+                    "y": -351.819366455078
                 }
             },
             "name": "lytro_lightfield",
@@ -326,6 +330,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -506,8 +515,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 83.7936553955078,
-                    "y": 120.078262329102
+                    "x": 114.296440124512,
+                    "y": 107.368766784668
                 }
             },
             "connections": [
@@ -537,24 +546,6 @@
                 },
                 {
                     "in_node": "epi_0",
-                    "in_port": "in_image",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "epi_1",
-                    "in_port": "in_image",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "epi_2",
-                    "in_port": "in_image",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "epi_0",
                     "in_port": "samples",
                     "out_node": "input_1",
                     "out_port": "data"
@@ -587,6 +578,42 @@
                     "in_node": "epi_2",
                     "in_port": "range/y",
                     "out_node": "input_2",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_0",
+                    "in_port": "x/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_0",
+                    "in_port": "y/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_1",
+                    "in_port": "x/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_1",
+                    "in_port": "y/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_2",
+                    "in_port": "x/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_2",
+                    "in_port": "y/resolution",
+                    "out_node": "input_3",
                     "out_port": "data"
                 }
             ],
@@ -630,9 +657,7 @@
                             "y": 0.0599999986588955
                         },
                         "x/mode": "u",
-                        "x/resolution": 40,
-                        "y/mode": "v",
-                        "y/resolution": 40
+                        "y/mode": "v"
                     },
                     "type": "opencv/lightfields/epi"
                 },
@@ -659,9 +684,7 @@
                             "y": 0.529999971389771
                         },
                         "x/mode": "u",
-                        "x/resolution": 40,
-                        "y/mode": "v",
-                        "y/resolution": 40
+                        "y/mode": "v"
                     },
                     "type": "opencv/lightfields/epi"
                 },
@@ -688,9 +711,7 @@
                             "y": 1.0
                         },
                         "x/mode": "u",
-                        "x/resolution": 40,
-                        "y/mode": "v",
-                        "y/resolution": 40
+                        "y/mode": "v"
                     },
                     "type": "opencv/lightfields/epi"
                 },
@@ -725,6 +746,17 @@
                         }
                     },
                     "name": "y_range",
+                    "type": "input"
+                },
+                "input_3": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": -95.8319549560547,
+                            "y": 132.957733154297
+                        }
+                    },
+                    "name": "resolution",
                     "type": "input"
                 },
                 "output_0": {
@@ -875,6 +907,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -1055,8 +1092,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 284.983459472656,
-                    "y": 118.025291442871
+                    "x": 297.313110351562,
+                    "y": 107.368774414062
                 }
             },
             "connections": [
@@ -1086,24 +1123,6 @@
                 },
                 {
                     "in_node": "epi_0",
-                    "in_port": "in_image",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "epi_1",
-                    "in_port": "in_image",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "epi_2",
-                    "in_port": "in_image",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "epi_0",
                     "in_port": "samples",
                     "out_node": "input_1",
                     "out_port": "data"
@@ -1136,6 +1155,42 @@
                     "in_node": "epi_2",
                     "in_port": "range/y",
                     "out_node": "input_2",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_0",
+                    "in_port": "x/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_0",
+                    "in_port": "y/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_1",
+                    "in_port": "x/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_1",
+                    "in_port": "y/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_2",
+                    "in_port": "x/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_2",
+                    "in_port": "y/resolution",
+                    "out_node": "input_3",
                     "out_port": "data"
                 }
             ],
@@ -1179,9 +1234,7 @@
                             "y": 0.0599999986588955
                         },
                         "x/mode": "u",
-                        "x/resolution": 40,
-                        "y/mode": "v",
-                        "y/resolution": 40
+                        "y/mode": "v"
                     },
                     "type": "opencv/lightfields/epi"
                 },
@@ -1208,9 +1261,7 @@
                             "y": 0.529999971389771
                         },
                         "x/mode": "u",
-                        "x/resolution": 40,
-                        "y/mode": "v",
-                        "y/resolution": 40
+                        "y/mode": "v"
                     },
                     "type": "opencv/lightfields/epi"
                 },
@@ -1237,9 +1288,7 @@
                             "y": 1.0
                         },
                         "x/mode": "u",
-                        "x/resolution": 40,
-                        "y/mode": "v",
-                        "y/resolution": 40
+                        "y/mode": "v"
                     },
                     "type": "opencv/lightfields/epi"
                 },
@@ -1276,6 +1325,17 @@
                     "name": "y_range",
                     "type": "input"
                 },
+                "input_3": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": -95.8319549560547,
+                            "y": 132.957733154297
+                        }
+                    },
+                    "name": "resolution",
+                    "type": "input"
+                },
                 "output_0": {
                     "blind_data": {
                         "type": "possumwood::NodeData",
@@ -1290,8 +1350,8 @@
             },
             "ports": {
                 "y_range": {
-                    "x": 0.469999998807907,
-                    "y": 0.529999971389771
+                    "x": 0.529999971389771,
+                    "y": 0.469999998807907
                 }
             },
             "type": "network"
@@ -1300,8 +1360,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 484.120300292969,
-                    "y": 122.131202697754
+                    "x": 466.349365234375,
+                    "y": 107.368782043457
                 }
             },
             "connections": [
@@ -1331,24 +1391,6 @@
                 },
                 {
                     "in_node": "epi_0",
-                    "in_port": "in_image",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "epi_1",
-                    "in_port": "in_image",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "epi_2",
-                    "in_port": "in_image",
-                    "out_node": "input_0",
-                    "out_port": "data"
-                },
-                {
-                    "in_node": "epi_0",
                     "in_port": "samples",
                     "out_node": "input_1",
                     "out_port": "data"
@@ -1381,6 +1423,42 @@
                     "in_node": "epi_2",
                     "in_port": "range/y",
                     "out_node": "input_2",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_0",
+                    "in_port": "x/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_0",
+                    "in_port": "y/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_1",
+                    "in_port": "x/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_1",
+                    "in_port": "y/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_2",
+                    "in_port": "x/resolution",
+                    "out_node": "input_3",
+                    "out_port": "data"
+                },
+                {
+                    "in_node": "epi_2",
+                    "in_port": "y/resolution",
+                    "out_node": "input_3",
                     "out_port": "data"
                 }
             ],
@@ -1424,9 +1502,7 @@
                             "y": 0.0599999986588955
                         },
                         "x/mode": "u",
-                        "x/resolution": 40,
-                        "y/mode": "v",
-                        "y/resolution": 40
+                        "y/mode": "v"
                     },
                     "type": "opencv/lightfields/epi"
                 },
@@ -1453,9 +1529,7 @@
                             "y": 0.529999971389771
                         },
                         "x/mode": "u",
-                        "x/resolution": 40,
-                        "y/mode": "v",
-                        "y/resolution": 40
+                        "y/mode": "v"
                     },
                     "type": "opencv/lightfields/epi"
                 },
@@ -1482,9 +1556,7 @@
                             "y": 1.0
                         },
                         "x/mode": "u",
-                        "x/resolution": 40,
-                        "y/mode": "v",
-                        "y/resolution": 40
+                        "y/mode": "v"
                     },
                     "type": "opencv/lightfields/epi"
                 },
@@ -1504,7 +1576,7 @@
                         "type": "possumwood::NodeData",
                         "value": {
                             "x": -61.4714202880859,
-                            "y": -33.650764465332
+                            "y": -29.544849395752
                         }
                     },
                     "name": "samples",
@@ -1519,6 +1591,17 @@
                         }
                     },
                     "name": "y_range",
+                    "type": "input"
+                },
+                "input_3": {
+                    "blind_data": {
+                        "type": "possumwood::NodeData",
+                        "value": {
+                            "x": -95.8319549560547,
+                            "y": 132.957733154297
+                        }
+                    },
+                    "name": "resolution",
                     "type": "input"
                 },
                 "output_0": {
@@ -1545,8 +1628,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 501.192779541016,
-                    "y": -33.0821495056152
+                    "x": 239.500274658203,
+                    "y": -219.600921630859
                 }
             },
             "name": "samples_from_metadata",
@@ -1556,11 +1639,15 @@
             "type": "opencv/lightfields/samples_from_metadata"
         }
     },
+    "ports": {
+        "resolution": 35
+    },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJeAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAdsAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAADbAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIAAAACJgAAAbsAAACqAQAAAwAAA0UAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAPPAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAdsAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAEwwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIAAAACJgAAAbsAAACxAQAAAwAABFQAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

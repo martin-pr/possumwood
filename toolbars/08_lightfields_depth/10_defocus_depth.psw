@@ -37,8 +37,8 @@
             "out_port": "out_seq"
         },
         {
-            "in_node": "depth_0",
-            "in_port": "in_image",
+            "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
         },
@@ -73,6 +73,12 @@
             "out_port": "out"
         },
         {
+            "in_node": "colormap_0",
+            "in_port": "in_frame",
+            "out_node": "median_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "median_0",
             "in_port": "in_frame",
             "out_node": "normalize_0",
@@ -89,15 +95,10 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
-        },
-        {
-            "in_node": "colormap_0",
-            "in_port": "in_frame",
-            "out_node": "median_0",
-            "out_port": "out_frame"
         }
     ],
     "description": "### Defocus depth reconstruction\n\nThis demo shows raw depth reconstruction using the defocus (Laplacian) metric of depth values - i.e., for each pixel, the algorithm picks the depth value where contrast value was highest.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
+    "name": "network",
     "nodes": {
         "colormap_0": {
             "blind_data": {
@@ -176,7 +177,7 @@
                 },
                 "samples/end": 40.0,
                 "samples/start": -40.0,
-                "samples/steps": 5
+                "samples/steps": 11
             },
             "type": "opencv/lightfields/depth"
         },
@@ -184,8 +185,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1164.56823730469,
-                    "y": 10.7662763595581
+                    "x": 1221.97058105469,
+                    "y": -184.923355102539
                 }
             },
             "name": "divide",
@@ -212,8 +213,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1320.76208496094,
-                    "y": -163.751739501953
+                    "x": 1378.16442871094,
+                    "y": -359.441375732422
                 }
             },
             "name": "lytro_lightfield",
@@ -226,8 +227,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1124.58813476562,
-                    "y": -168.074691772461
+                    "x": 1181.99047851562,
+                    "y": -363.764343261719
                 }
             },
             "name": "lytro_lightfield",
@@ -389,6 +390,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -597,7 +603,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1388.13696289062,
+                    "x": 1270.72314453125,
                     "y": 1.91482281684875
                 }
             },
@@ -613,6 +619,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGcAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACEgAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACiAAAAVkAAACqAQAAAwAABDoAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJOAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADaQAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAD5AAAAVkAAACxAQAAAwAABggAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
