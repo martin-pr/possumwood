@@ -109,7 +109,25 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "network_0",
+            "in_port": "zoom",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "blend",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
             "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "lytro_lightfield_0",
             "out_port": "frame"
@@ -139,22 +157,28 @@
             "out_port": "output"
         },
         {
-            "in_node": "draw_samples_0",
-            "in_port": "samples",
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
         },
         {
-            "in_node": "network_0",
-            "in_port": "zoom",
-            "out_node": "input_0",
-            "out_port": "data"
+            "in_node": "mult_0",
+            "in_port": "a",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "lens_pitch"
         },
         {
-            "in_node": "network_0",
-            "in_port": "blend",
-            "out_node": "input_1",
-            "out_port": "data"
+            "in_node": "draw_samples_0",
+            "in_port": "samples",
+            "out_node": "samples_refocus_0",
+            "out_port": "out_samples"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "uv_offset",
+            "out_node": "mult_0",
+            "out_port": "out"
         }
     ],
     "description": "### Lytro pattern detection\n\nLytro files come with metadata that descibe the parameters of the lenslet pattern used to capture the image. Unfortunately, this lenslet pattern was detected using a simple peak-detection algorithm, with together with the main-lens vignetting causes the lenslet centers to be slightly biased towards the centre of the image.\n\nThis demo attempt to detect the lenslets using a different method - by inverting the image, locally normalising it and convoluting it with an inverted lenslet pattern (a \"hexagonal\" shape representing the darker spaces between lenslets), we can achieve a better match with the original lenslet placement.\n\nThis demo only shows the image-processing part - the pattern fitting is demonstrated in the next demo.",
@@ -342,8 +366,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 36.5668907165527,
-                    "y": 1189.91979980469
+                    "x": 10.7220773696899,
+                    "y": 1197.99633789062
                 }
             },
             "name": "draw_samples",
@@ -403,7 +427,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": -110.642059326172,
-                    "y": 2178.79614257812
+                    "y": 2462.10424804688
                 }
             },
             "name": "zoom",
@@ -414,7 +438,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": -105.558280944824,
-                    "y": 2281.74267578125
+                    "y": 2565.05078125
                 }
             },
             "name": "blend",
@@ -434,12 +458,26 @@
             },
             "type": "opencv/capture/lytro_lightfield"
         },
+        "mult_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -205.973724365234,
+                    "y": 871.46728515625
+                }
+            },
+            "name": "mult",
+            "ports": {
+                "b": 0.5
+            },
+            "type": "maths/mult"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 93.7202072143555,
-                    "y": 2200.4482421875
+                    "y": 2483.75634765625
                 }
             },
             "connections": [
@@ -831,7 +869,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 67.553337097168,
-                    "y": 1955.95935058594
+                    "y": 2239.26733398438
                 }
             },
             "connections": [
@@ -1249,7 +1287,7 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 286.139007568359,
-                    "y": 1973.8583984375
+                    "y": 2257.16650390625
                 }
             },
             "connections": [
@@ -1880,8 +1918,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -13.0078096389771,
-                    "y": 1028.14978027344
+                    "x": -155.154281616211,
+                    "y": 679.244812011719
                 }
             },
             "name": "samples_from_metadata",
@@ -1889,6 +1927,21 @@
                 "scale_compensation": 1.0
             },
             "type": "opencv/lightfields/samples_from_metadata"
+        },
+        "samples_refocus_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -68.6731567382812,
+                    "y": 919.926330566406
+                }
+            },
+            "name": "samples_refocus",
+            "ports": {
+                "uv_threshold": 1.0,
+                "xy_scale": 1.0
+            },
+            "type": "opencv/lightfields/samples_refocus"
         }
     },
     "ports": {
@@ -1897,7 +1950,7 @@
             "max": 1.0,
             "min": 0.0,
             "type": "linear",
-            "value": 0.0
+            "value": 0.73199999332428
         },
         "zoom": {
             "in_progress_updates": true,

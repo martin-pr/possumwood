@@ -25,10 +25,16 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "draw_samples_0",
-            "in_port": "samples",
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
             "out_node": "detect_pattern_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "mult_0",
+            "in_port": "a",
+            "out_node": "detect_pattern_0",
+            "out_port": "lens_pitch"
         },
         {
             "in_node": "convert_0",
@@ -43,8 +49,32 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "network_0",
+            "in_port": "zoom",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "blend",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
             "in_node": "network_3",
             "in_port": "input",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "detect_pattern_0",
+            "in_port": "in_frame",
             "out_node": "lytro_lightfield_0",
             "out_port": "frame"
         },
@@ -53,6 +83,12 @@
             "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
             "out_port": "metadata"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "uv_offset",
+            "out_node": "mult_0",
+            "out_port": "out"
         },
         {
             "in_node": "network_0",
@@ -86,38 +122,50 @@
         },
         {
             "in_node": "detect_pattern_0",
-            "in_port": "in_frame",
+            "in_port": "calibration",
             "out_node": "network_6",
             "out_port": "output"
         },
         {
-            "in_node": "draw_samples_1",
-            "in_port": "samples",
+            "in_node": "samples_refocus_1",
+            "in_port": "in_samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
         },
         {
-            "in_node": "network_0",
-            "in_port": "zoom",
-            "out_node": "input_0",
-            "out_port": "data"
+            "in_node": "mult_1",
+            "in_port": "a",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "lens_pitch"
         },
         {
-            "in_node": "network_0",
-            "in_port": "blend",
-            "out_node": "input_1",
-            "out_port": "data"
+            "in_node": "draw_samples_0",
+            "in_port": "samples",
+            "out_node": "samples_refocus_0",
+            "out_port": "out_samples"
+        },
+        {
+            "in_node": "samples_refocus_1",
+            "in_port": "uv_offset",
+            "out_node": "mult_1",
+            "out_port": "out"
+        },
+        {
+            "in_node": "draw_samples_1",
+            "in_port": "samples",
+            "out_node": "samples_refocus_1",
+            "out_port": "out_samples"
         }
     ],
-    "description": "### Lytro pattern fitting\n\nThis demo implements fitting of lenslet data detected using a convolution-based setup described in the previous demo.\n\nDisplay allows to preview both the original pattern, and the new detected pattern - just change the \"blend\" parameter.",
+    "description": "### Lytro pattern fitting\n\nThis demo implements fitting of lenslet data detected using a convolution-based setup described in the previous demo.\n\nDisplay allows to preview both the Lytro metadata pattern (blue), and the new detected pattern (red) - just change the \"blend\" parameter.",
     "name": "network",
     "nodes": {
         "colormap_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 152.759628295898,
-                    "y": -89.4095611572266
+                    "x": 82.0186233520508,
+                    "y": 174.888168334961
                 }
             },
             "name": "colormap",
@@ -130,8 +178,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 309.218780517578,
-                    "y": -88.8824615478516
+                    "x": 381.072265625,
+                    "y": 249.855422973633
                 }
             },
             "name": "colormap",
@@ -144,8 +192,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 148.321395874023,
-                    "y": -339.271881103516
+                    "x": 77.5803909301758,
+                    "y": -74.9741516113281
                 }
             },
             "name": "convert",
@@ -160,8 +208,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 314.910369873047,
-                    "y": -329.458892822266
+                    "x": 386.763854980469,
+                    "y": 9.27899169921875
                 }
             },
             "name": "convert",
@@ -176,8 +224,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 68.7335205078125,
-                    "y": -713.98388671875
+                    "x": -60.4709625244141,
+                    "y": -659.39208984375
                 }
             },
             "name": "detect_pattern",
@@ -190,8 +238,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 127.129005432129,
-                    "y": -513.058349609375
+                    "x": 56.3880081176758,
+                    "y": -248.760604858398
                 }
             },
             "name": "draw_samples",
@@ -201,8 +249,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 306.427307128906,
-                    "y": -516.288940429688
+                    "x": 378.280792236328,
+                    "y": -177.551055908203
                 }
             },
             "name": "draw_samples",
@@ -212,8 +260,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -3.07226085662842,
-                    "y": 275.660400390625
+                    "x": -35.1299629211426,
+                    "y": 667.4541015625
                 }
             },
             "name": "zoom",
@@ -223,8 +271,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 0.740575850009918,
-                    "y": 367.168487548828
+                    "x": -31.31715965271,
+                    "y": 758.962219238281
                 }
             },
             "name": "blend",
@@ -244,12 +292,40 @@
             },
             "type": "opencv/capture/lytro_lightfield"
         },
+        "mult_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -121.17219543457,
+                    "y": -454.151550292969
+                }
+            },
+            "name": "mult",
+            "ports": {
+                "b": 0.5
+            },
+            "type": "maths/mult"
+        },
+        "mult_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 316.107635498047,
+                    "y": -437.727874755859
+                }
+            },
+            "name": "mult",
+            "ports": {
+                "b": 0.5
+            },
+            "type": "maths/mult"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 155.390121459961,
-                    "y": 300.117034912109
+                    "x": 157.292221069336,
+                    "y": 644.159057617188
                 }
             },
             "connections": [
@@ -640,8 +716,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 158.912460327148,
-                    "y": 106.439071655273
+                    "x": 88.1714553833008,
+                    "y": 370.736785888672
                 }
             },
             "connections": [
@@ -1058,8 +1134,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 316.565155029297,
-                    "y": 100.345077514648
+                    "x": 388.418640136719,
+                    "y": 439.082977294922
                 }
             },
             "connections": [
@@ -2137,6 +2213,36 @@
                 "scale_compensation": 1.0
             },
             "type": "opencv/lightfields/samples_from_metadata"
+        },
+        "samples_refocus_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 19.9026641845703,
+                    "y": -460.506286621094
+                }
+            },
+            "name": "samples_refocus",
+            "ports": {
+                "uv_threshold": 1.0,
+                "xy_scale": 1.0
+            },
+            "type": "opencv/lightfields/samples_refocus"
+        },
+        "samples_refocus_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 457.182464599609,
+                    "y": -444.082611083984
+                }
+            },
+            "name": "samples_refocus",
+            "ports": {
+                "uv_threshold": 1.0,
+                "xy_scale": 1.0
+            },
+            "type": "opencv/lightfields/samples_refocus"
         }
     },
     "ports": {
