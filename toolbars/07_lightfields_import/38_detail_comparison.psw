@@ -25,25 +25,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_nearest_0",
-            "in_port": "in_frame",
-            "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "integrate_gaussian_0",
-            "in_port": "in_frame",
-            "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "integrate_bezier_1",
-            "in_port": "in_frame",
-            "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "integrate_bezier_0",
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -97,6 +79,12 @@
             "out_port": "frame"
         },
         {
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
             "in_node": "integrate_nearest_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
@@ -122,12 +110,13 @@
         },
         {
             "in_node": "samples_refocus_0",
-            "in_port": "in_samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "in_port": "uv_offset",
+            "out_node": "input_0",
+            "out_port": "data"
         }
     ],
     "description": "### Comparison of details of different refocusing method\n\nThis demo shows the difference in integration patterns between different methods shown in previous demos.",
+    "name": "network",
     "nodes": {
         "concat_0": {
             "blind_data": {
@@ -194,8 +183,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 103.174194335938,
-                    "y": -116.770805358887
+                    "x": 315.407440185547,
+                    "y": -488.178955078125
                 }
             },
             "name": "divide",
@@ -218,6 +207,17 @@
                 "normalization_coef": 1.0
             },
             "type": "opencv/gamma"
+        },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 92.5667343139648,
+                    "y": -16.8761539459229
+                }
+            },
+            "name": "refocus",
+            "type": "input"
         },
         "integrate_bezier_0": {
             "blind_data": {
@@ -261,13 +261,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 273.297821044922,
-                    "y": 408.742401123047
+                    "x": 203.658798217773,
+                    "y": 365.632537841797
                 }
             },
             "name": "integrate_gaussian",
             "ports": {
-                "sigma2": 40.0,
+                "sigma": 40.0,
                 "size": {
                     "x": 300,
                     "y": 300
@@ -279,8 +279,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -100.062858581543,
-                    "y": 425.788391113281
+                    "x": -169.701889038086,
+                    "y": 382.678527832031
                 }
             },
             "name": "integrate_nearest",
@@ -296,8 +296,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 246.397384643555,
-                    "y": -289.595977783203
+                    "x": 458.630615234375,
+                    "y": -661.004089355469
                 }
             },
             "name": "lytro_lightfield",
@@ -310,8 +310,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 47.4288215637207,
-                    "y": -289.595977783203
+                    "x": 259.662048339844,
+                    "y": -661.004089355469
                 }
             },
             "name": "lytro_lightfield",
@@ -448,6 +448,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -628,11 +633,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 344.560852050781,
-                    "y": -165.382568359375
+                    "x": 357.825439453125,
+                    "y": -231.705459594727
                 }
             },
             "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
             "type": "opencv/lightfields/samples_from_metadata"
         },
         "samples_refocus_0": {
@@ -645,18 +653,21 @@
             },
             "name": "samples_refocus",
             "ports": {
-                "uv_offset": 4.0,
                 "uv_threshold": 1.0,
                 "xy_scale": 20.0
             },
             "type": "opencv/lightfields/samples_refocus"
         }
     },
+    "ports": {
+        "refocus": -40.0
+    },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIfAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABuwAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACMQAAAbAAAACqAQAAAwAAA7cAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIfAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADEgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADjQAAAbAAAACxAQAAAwAABjcAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -25,7 +25,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_gaussian_0",
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -77,9 +77,28 @@
             "in_port": "samples",
             "out_node": "samples_refocus_0",
             "out_port": "out_samples"
+        },
+        {
+            "in_node": "integrate_gaussian_0",
+            "in_port": "size",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "interval_0",
+            "in_port": "interval",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "uv_offset",
+            "out_node": "interval_0",
+            "out_port": "out"
         }
     ],
     "description": "### Refocusing with radial-basis function regression\n\nTo reduce the gaps in refocused images caused by missing samples, and to exploit the information in samples that would otherwise be averaged-out into a single pixel, it is possible to use a radial-basis function regression superresolution framework.\n\nThis demo shows how a simple gaussian-based accumulation, similar to one used for mult-frame supersampling on modern phones, can be used to improve the resolution and quality of a super-sampled refocused image.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>\n\n<sub>Bartlomiej Wronski, Ignacio Garcia-Dorado, Manfred Ernst, Damien Kelly, Michael Krainin, Chia-Kai Liang, Marc Levoy, and Peyman Milanfar. 2019. [Handheld multi-frame super-resolution.](https://drive.google.com/file/d/1T1u2Mhm8ay6reHHouM1wO0TegvRJbJV_/view?usp=sharing) ACM Trans. Graph. 38, 4, Article 28 (July 2019), 18 pages. </sub>\n\n<sub>Fiss, Juliet, Brian Curless, and Richard Szeliski. \"Refocusing plenoptic images using depth-adaptive splatting.\" 2014 IEEE international conference on computational photography (ICCP). IEEE, 2014.</sub>",
+    "name": "network",
     "nodes": {
         "colormap_0": {
             "blind_data": {
@@ -146,8 +165,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 84.8414535522461,
-                    "y": 38.1253852844238
+                    "x": 116.151779174805,
+                    "y": -214.966430664062
                 }
             },
             "name": "divide",
@@ -166,10 +185,32 @@
             },
             "name": "gamma",
             "ports": {
-                "gamma": 0.550000011920929,
+                "gamma": 0.699999988079071,
                 "normalization_coef": 0.100000001490116
             },
             "type": "opencv/gamma"
+        },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -26.0949211120605,
+                    "y": 390.366119384766
+                }
+            },
+            "name": "resolution",
+            "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -213.469757080078,
+                    "y": 173.915863037109
+                }
+            },
+            "name": "refocus",
+            "type": "input"
         },
         "integrate_gaussian_0": {
             "blind_data": {
@@ -181,20 +222,27 @@
             },
             "name": "integrate_gaussian",
             "ports": {
-                "sigma": 6.0,
-                "size": {
-                    "x": 1000,
-                    "y": 1000
-                }
+                "sigma": 6.0
             },
             "type": "opencv/lightfields/integrate_gaussian"
+        },
+        "interval_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -32.5561180114746,
+                    "y": 183.607666015625
+                }
+            },
+            "name": "interval",
+            "type": "maths/interval"
         },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 236.428802490234,
-                    "y": -115.679992675781
+                    "x": 267.739135742188,
+                    "y": -368.771820068359
                 }
             },
             "name": "lytro_lightfield",
@@ -207,8 +255,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 66.5047378540039,
-                    "y": -115.857635498047
+                    "x": 97.8150634765625,
+                    "y": -368.949462890625
                 }
             },
             "name": "lytro_lightfield",
@@ -345,6 +393,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -525,8 +578,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 305.3759765625,
-                    "y": 30.768102645874
+                    "x": 151.433532714844,
+                    "y": -10.9790019989014
                 }
             },
             "name": "samples_from_metadata",
@@ -539,17 +592,29 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 299.671081542969,
-                    "y": 163.079345703125
+                    "x": 173.443740844727,
+                    "y": 152.507965087891
                 }
             },
             "name": "samples_refocus",
             "ports": {
-                "uv_offset": 30.0,
                 "uv_threshold": 1.0,
                 "xy_scale": 1.0
             },
             "type": "opencv/lightfields/samples_refocus"
+        }
+    },
+    "ports": {
+        "refocus": {
+            "in_progress_updates": false,
+            "max": 40.0,
+            "min": -40.0,
+            "type": "linear",
+            "value": 16.9599990844727
+        },
+        "resolution": {
+            "x": 1000,
+            "y": 1000
         }
     },
     "scene_config": {
@@ -557,6 +622,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAAQ6AAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAFFAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABnAAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACEgAAAc8AAACqAQAAAwAABJEAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK+AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACPQAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACuAAAAoUAAACxAQAAAwAABZgAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

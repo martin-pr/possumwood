@@ -7,7 +7,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_bezier_0",
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -49,19 +49,26 @@
             "out_port": "frame"
         },
         {
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
             "in_node": "integrate_bezier_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
             "out_port": "out_samples"
         },
         {
-            "in_node": "samples_refocus_0",
-            "in_port": "in_samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "in_node": "interval_0",
+            "in_port": "interval",
+            "out_node": "input_0",
+            "out_port": "data"
         }
     ],
     "description": "### Refocussing with hierarchical B-spline regression\n\nBriand, Thibaud, and Pascal Monasse. [\"Theory and Practice of Image B-Spline Interpolation.\"](https://www.ipol.im/pub/art/2018/221/article.pdf) Image Processing On Line 8 (2018): 99-141.",
+    "name": "network",
     "nodes": {
         "convert_0": {
             "blind_data": {
@@ -83,8 +90,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 94.8270797729492,
-                    "y": 16.253532409668
+                    "x": 190.129852294922,
+                    "y": -222.811065673828
                 }
             },
             "name": "divide",
@@ -108,12 +115,23 @@
             },
             "type": "opencv/gamma"
         },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -17.6423740386963,
+                    "y": 166.615371704102
+                }
+            },
+            "name": "refocus",
+            "type": "input"
+        },
         "integrate_bezier_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 146.0,
-                    "y": 330.0
+                    "x": 168.614227294922,
+                    "y": 350.998931884766
                 }
             },
             "name": "integrate_bezier",
@@ -131,28 +149,19 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -218.359634399414,
-                    "y": 261.225555419922
+                    "x": 93.3935394287109,
+                    "y": 153.000366210938
                 }
             },
-            "name": "focus",
-            "ports": {
-                "interval": {
-                    "in_progress_updates": false,
-                    "max": 40.0,
-                    "min": -40.0,
-                    "type": "linear",
-                    "value": -22.4799995422363
-                }
-            },
+            "name": "interval",
             "type": "maths/interval"
         },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 243.148529052734,
-                    "y": -146.132278442383
+                    "x": 338.451293945312,
+                    "y": -385.196868896484
                 }
             },
             "name": "lytro_lightfield",
@@ -165,8 +174,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 5.58057403564453,
-                    "y": -159.903961181641
+                    "x": 100.883354187012,
+                    "y": -398.968566894531
                 }
             },
             "name": "lytro_lightfield",
@@ -303,6 +312,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -483,11 +497,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 307.189605712891,
-                    "y": -0.860104560852051
+                    "x": 216.732727050781,
+                    "y": -41.2426376342773
                 }
             },
             "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
             "type": "opencv/lightfields/samples_from_metadata"
         },
         "samples_refocus_0": {
@@ -506,11 +523,21 @@
             "type": "opencv/lightfields/samples_refocus"
         }
     },
+    "ports": {
+        "refocus": {
+            "in_progress_updates": false,
+            "max": 40.0,
+            "min": -40.0,
+            "type": "linear",
+            "value": -22.4799995422363
+        }
+    },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACqAQAAAwAAA4cAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADZAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAD3wAAAV4AAACxAQAAAwAABgcAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

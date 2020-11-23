@@ -7,7 +7,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_gaussian_0",
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "convert_1",
             "out_port": "out_frame"
@@ -61,6 +61,12 @@
             "out_port": "frame"
         },
         {
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
             "in_node": "integrate_gaussian_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
@@ -68,19 +74,32 @@
         },
         {
             "in_node": "samples_refocus_0",
-            "in_port": "in_samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "in_port": "uv_offset",
+            "out_node": "interval_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "interval_0",
+            "in_port": "interval",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "integrate_gaussian_0",
+            "in_port": "sigma",
+            "out_node": "input_1",
+            "out_port": "data"
         }
     ],
     "description": "### Refocussing with radial-basis function regression - detail\n\nThis demo shows the detail of the sampling and integration pattern of previous demo.\n\n",
+    "name": "network",
     "nodes": {
         "convert_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 48.3466262817383,
-                    "y": 154.819869995117
+                    "x": 144.523239135742,
+                    "y": -212.736114501953
                 }
             },
             "name": "convert",
@@ -95,8 +114,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 41.0569381713867,
-                    "y": 498.968292236328
+                    "x": 137.233551025391,
+                    "y": 131.412307739258
                 }
             },
             "name": "convert",
@@ -127,8 +146,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 46.8922958374023,
-                    "y": 351.87646484375
+                    "x": 143.068908691406,
+                    "y": -15.6795320510864
                 }
             },
             "name": "demosaic",
@@ -141,8 +160,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1.01878523826599,
-                    "y": 9.90830516815186
+                    "x": 95.157829284668,
+                    "y": -357.647674560547
                 }
             },
             "name": "divide",
@@ -166,6 +185,28 @@
             },
             "type": "opencv/gamma"
         },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -93.1700668334961,
+                    "y": 542.934875488281
+                }
+            },
+            "name": "refocus",
+            "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -77.4383392333984,
+                    "y": 836.734436035156
+                }
+            },
+            "name": "sigma",
+            "type": "input"
+        },
         "integrate_gaussian_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -176,7 +217,6 @@
             },
             "name": "integrate_gaussian",
             "ports": {
-                "sigma2": 40.0,
                 "size": {
                     "x": 500,
                     "y": 500
@@ -184,12 +224,23 @@
             },
             "type": "opencv/lightfields/integrate_gaussian"
         },
+        "interval_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 17.402156829834,
+                    "y": 549.289611816406
+                }
+            },
+            "name": "interval",
+            "type": "maths/interval"
+        },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 131.962051391602,
-                    "y": -106.821403503418
+                    "x": 228.138671875,
+                    "y": -474.377410888672
                 }
             },
             "name": "lytro_lightfield",
@@ -202,8 +253,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -41.9411582946777,
-                    "y": -112.715263366699
+                    "x": 54.2354469299316,
+                    "y": -480.271270751953
                 }
             },
             "name": "lytro_lightfield",
@@ -340,6 +391,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -520,35 +576,48 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 198.62223815918,
-                    "y": 114.939331054688
+                    "x": 120.346397399902,
+                    "y": 362.812835693359
                 }
             },
             "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
             "type": "opencv/lightfields/samples_from_metadata"
         },
         "samples_refocus_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 217.626937866211,
-                    "y": 275.857238769531
+                    "x": 139.351089477539,
+                    "y": 523.730773925781
                 }
             },
             "name": "samples_refocus",
             "ports": {
-                "uv_offset": 0.0,
                 "uv_threshold": 1.0,
                 "xy_scale": 10.0
             },
             "type": "opencv/lightfields/samples_refocus"
         }
     },
+    "ports": {
+        "refocus": {
+            "in_progress_updates": false,
+            "max": 30.0,
+            "min": -30.0,
+            "type": "linear",
+            "value": 0.0
+        },
+        "sigma": 15.0
+    },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAICAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAa0AAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABBQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABewAAAmYAAACqAQAAAwAAA88AAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAICAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAa0AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAACXAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAC1wAAAmYAAACxAQAAAwAABk8AAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

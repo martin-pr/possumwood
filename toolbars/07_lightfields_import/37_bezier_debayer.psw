@@ -13,7 +13,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "integrate_bezier_0",
+            "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "convert_2",
             "out_port": "out_frame"
@@ -67,19 +67,26 @@
             "out_port": "frame"
         },
         {
+            "in_node": "samples_refocus_0",
+            "in_port": "in_samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
+        },
+        {
             "in_node": "integrate_bezier_0",
             "in_port": "samples",
             "out_node": "samples_refocus_0",
             "out_port": "out_samples"
         },
         {
-            "in_node": "samples_refocus_0",
-            "in_port": "in_samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
+            "in_node": "interval_0",
+            "in_port": "interval",
+            "out_node": "input_0",
+            "out_port": "data"
         }
     ],
     "description": "### Refocussing with hierarchical B-spline regression and de-bayern filter\n\nBriand, Thibaud, and Pascal Monasse. [\"Theory and Practice of Image B-Spline Interpolation.\"](https://www.ipol.im/pub/art/2018/221/article.pdf) Image Processing On Line 8 (2018): 99-141.",
+    "name": "network",
     "nodes": {
         "convert_0": {
             "blind_data": {
@@ -101,8 +108,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 165.760345458984,
-                    "y": -236.559219360352
+                    "x": 223.173324584961,
+                    "y": -628.717468261719
                 }
             },
             "name": "convert",
@@ -117,8 +124,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 158.470672607422,
-                    "y": 107.589218139648
+                    "x": 215.883651733398,
+                    "y": -284.569030761719
                 }
             },
             "name": "convert",
@@ -133,8 +140,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 164.305999755859,
-                    "y": -39.5026245117188
+                    "x": 221.718978881836,
+                    "y": -431.660827636719
                 }
             },
             "name": "demosaic",
@@ -147,8 +154,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 116.394920349121,
-                    "y": -381.470764160156
+                    "x": 173.807907104492,
+                    "y": -773.628967285156
                 }
             },
             "name": "divide",
@@ -171,6 +178,17 @@
                 "normalization_coef": 1.0
             },
             "type": "opencv/gamma"
+        },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -91.3396835327148,
+                    "y": 122.559181213379
+                }
+            },
+            "name": "refocus",
+            "type": "input"
         },
         "integrate_bezier_0": {
             "blind_data": {
@@ -195,28 +213,19 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -110.790168762207,
-                    "y": -121.885864257812
+                    "x": 20.9266948699951,
+                    "y": 117.53881072998
                 }
             },
             "name": "refocus",
-            "ports": {
-                "interval": {
-                    "in_progress_updates": false,
-                    "max": 60.0,
-                    "min": -40.0,
-                    "type": "linear",
-                    "value": -14.3999996185303
-                }
-            },
             "type": "maths/interval"
         },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 249.375762939453,
-                    "y": -498.200469970703
+                    "x": 306.788726806641,
+                    "y": -890.358642578125
                 }
             },
             "name": "lytro_lightfield",
@@ -229,8 +238,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 75.4725570678711,
-                    "y": -504.094329833984
+                    "x": 132.885543823242,
+                    "y": -896.252563476562
                 }
             },
             "name": "lytro_lightfield",
@@ -367,6 +376,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -547,19 +561,22 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 350.294189453125,
-                    "y": -313.281127929688
+                    "x": 204.179183959961,
+                    "y": -70.625846862793
                 }
             },
             "name": "samples_from_metadata",
+            "ports": {
+                "scale_compensation": 1.0
+            },
             "type": "opencv/lightfields/samples_from_metadata"
         },
         "samples_refocus_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 291.928558349609,
-                    "y": -125.78662109375
+                    "x": 145.813552856445,
+                    "y": 116.868659973145
                 }
             },
             "name": "samples_refocus",
@@ -570,11 +587,21 @@
             "type": "opencv/lightfields/samples_refocus"
         }
     },
+    "ports": {
+        "refocus": {
+            "in_progress_updates": false,
+            "max": 40.0,
+            "min": -40.0,
+            "type": "linear",
+            "value": -14.3999996185303
+        }
+    },
     "scene_config": {
         "end_time": 5.0,
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAAAAAABQAAASlAAACVQAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKtAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAACDQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACgwAAAV4AAACqAQAAAwAAAykAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKtAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADZAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAD3wAAAV4AAACxAQAAAwAABakAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
