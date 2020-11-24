@@ -19,7 +19,8 @@ enum Modes { kInt, kFloat };
 static const std::vector<std::pair<std::string, int>> s_modes{{"Nearest pixel", kInt}, {"Subpixel", kFloat}};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	possumwood::opencv::Sequence seq = data.get(a_inSequence).clone();
+	const possumwood::opencv::Sequence& seq = data.get(a_inSequence);
+	possumwood::opencv::Sequence result;
 
 	if(!seq.empty()) {
 		const float offset = data.get(a_offset);
@@ -30,7 +31,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		for(std::size_t i = 0; i < seq.size(); ++i) {
 			const float current = start + i * offset;
-			cv::Mat& f = *seq[i];
+			cv::Mat f = seq(i).clone();
 
 			if(data.get(a_mode).intValue() == kInt) {
 				f = f(cv::Rect(std::round(current), 0, f.cols - std::ceil(offset * float(seq.size() - 1)), f.rows));
@@ -41,10 +42,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				cv::getRectSubPix(f, cv::Size(int(width), f.rows),
 				                  cv::Point2f(current + width / 2.0f, (float)f.rows / 2.0f), f);
 			}
+
+			result.add(std::move(f));
 		}
 	}
 
-	data.set(a_outSequence, seq);
+	data.set(a_outSequence, result);
 
 	return dependency_graph::State();
 }

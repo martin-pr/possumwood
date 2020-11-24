@@ -15,26 +15,18 @@ dependency_graph::InAttr<possumwood::Enum> a_mode;
 dependency_graph::InAttr<float> a_a, a_b;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSeq;
 
-int modeToEnum(const std::string& mode) {
-	if(mode == "CV_8U")
-		return CV_8U;
-	else if(mode == "CV_16U")
-		return CV_16U;
-	else if(mode == "CV_32F")
-		return CV_32F;
-
-	throw std::runtime_error("Unknown conversion mode " + mode);
-}
+static const std::vector<std::pair<std::string, int>> s_modes{{"CV_8U", CV_8U}, {"CV_16U", CV_16U}, {"CV_32F", CV_32F}};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::Sequence& in = data.get(a_inSeq).clone();
+	const possumwood::opencv::Sequence& in = data.get(a_inSeq);
 
 	possumwood::opencv::Sequence out(in.size());
 
 	tbb::parallel_for(std::size_t(0), in.size(), [&](std::size_t id) {
-		in[id]->convertTo(*out[id], modeToEnum(data.get(a_mode).value()), data.get(a_a), data.get(a_b));
+		cv::Mat m;
+		in(id).convertTo(m, data.get(a_mode).intValue(), data.get(a_a), data.get(a_b));
 
-		out[id].meta() = in[id].meta();
+		out(id) = std::move(m);
 	});
 
 	data.set(a_outSeq, out);
@@ -44,7 +36,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_inSeq, "in_sequence");
-	meta.addAttribute(a_mode, "mode", possumwood::Enum({"CV_8U", "CV_16U", "CV_32F"}));
+	meta.addAttribute(a_mode, "mode", possumwood::Enum(s_modes.begin(), s_modes.end()));
 	meta.addAttribute(a_a, "a", 1.0f);
 	meta.addAttribute(a_b, "b", 0.0f);
 	meta.addAttribute(a_outSeq, "out_sequence");

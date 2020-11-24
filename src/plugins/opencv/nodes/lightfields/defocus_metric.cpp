@@ -21,7 +21,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::opencv::Sequence outSeq(inSeq);
 
 	tbb::parallel_for(std::size_t(0), inSeq.size(), [&](std::size_t i) {
-		const cv::Mat& in = *inSeq[i];
+		const cv::Mat& in = inSeq(i);
 
 		if((in.type() != CV_32FC1) && (in.type() != CV_32FC3))
 			throw std::runtime_error("Only works with CV_32FC1 and CV_32FC3");
@@ -38,7 +38,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(std::size_t a = 1; a < tmp.size(); ++a)
 			cv::add(tmp[0], tmp[a], tmp[0]);
 
-		*outSeq[i] = tmp[0];
+		outSeq(i) = std::move(tmp[0]);
 	});
 
 	data.set(a_out, outSeq);

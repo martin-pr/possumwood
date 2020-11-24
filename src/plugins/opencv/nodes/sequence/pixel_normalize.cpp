@@ -20,17 +20,14 @@ enum Mode {
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& in = data.get(a_in);
 
-	if(!in.isValid())
-		throw std::runtime_error("Input sequence does not have consistent size or type.");
-
-	possumwood::opencv::Sequence out = in.clone();
+	possumwood::opencv::Sequence out(in.size());
 
 	if(!in.empty()) {
-		if(in.type() != CV_32FC1)
+		if(in.meta().type != CV_32FC1)
 			throw std::runtime_error("Only 1-channel float images supported for the moment.");
 
-		const int cols = in.cols();
-		const int rows = in.rows();
+		const int cols = in.meta().cols;
+		const int rows = in.meta().rows;
 
 		Mode mode = kMinMax;
 		if(data.get(a_mode).value() == "Maximum")
@@ -44,13 +41,13 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			for(int c = 0; c < cols; ++c) {
 				auto it = out.begin();
 
-				float max = (*it)->at<float>(r, c);
+				float max = it->at<float>(r, c);
 				float min = max;
 				float sum = max;
 				++it;
 
 				while(it != out.end()) {
-					const float& tmp = (*it)->at<float>(r, c);
+					const float& tmp = it->at<float>(r, c);
 
 					max = std::max(max, tmp);
 					min = std::min(min, tmp);
@@ -61,7 +58,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 				if(mode == kMinMax)
 					for(it = out.begin(); it != out.end(); ++it) {
-						float& val = (*it)->at<float>(r, c);
+						float& val = it->at<float>(r, c);
 						if(max != min)
 							val = (val - min) / (max - min);
 						else
@@ -69,7 +66,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					}
 				else if(mode == kMax)
 					for(it = out.begin(); it != out.end(); ++it) {
-						float& val = (*it)->at<float>(r, c);
+						float& val = it->at<float>(r, c);
 						if(max != 0.0f)
 							val /= max;
 						else
@@ -77,7 +74,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 					}
 				else if(mode == kSum)
 					for(it = out.begin(); it != out.end(); ++it) {
-						float& val = (*it)->at<float>(r, c);
+						float& val = it->at<float>(r, c);
 						if(sum != 0.0f)
 							val /= sum;
 						else
@@ -86,7 +83,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				else if(mode == kMinSum) {
 					sum -= min * (float)out.size();
 					for(it = out.begin(); it != out.end(); ++it) {
-						float& val = (*it)->at<float>(r, c);
+						float& val = it->at<float>(r, c);
 						if(sum != 0.0f)
 							val = (val - min) / sum;
 						else

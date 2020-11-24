@@ -13,10 +13,14 @@ dependency_graph::InAttr<float> a_power;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSequence;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	possumwood::opencv::Sequence result = data.get(a_inSequence).clone();
+	const possumwood::opencv::Sequence& in = data.get(a_inSequence);
+	possumwood::opencv::Sequence result(in.size());
 
-	tbb::parallel_for(std::size_t(0), result.size(),
-	                  [&](std::size_t i) { cv::pow(*result[i], data.get(a_power), *result[i]); });
+	tbb::parallel_for(std::size_t(0), result.size(), [&](std::size_t i) {
+		cv::Mat m;
+		cv::pow(in(i), data.get(a_power), m);
+		result(i) = std::move(m);
+	});
 
 	data.set(a_outSequence, possumwood::opencv::Sequence(result));
 

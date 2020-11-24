@@ -36,15 +36,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		if(data.get(a_method).intValue() == 0) {
 			auto tmp = lightfields::nearest::integrate(samples, data.get(a_res), d);
-			*corresp[a] = lightfields::nearest::correspondence(samples, tmp, d);
+			corresp(a) = lightfields::nearest::correspondence(samples, tmp, d);
 
-			*out[a] = tmp.average;
+			out(a) = std::move(tmp.average);
 		}
 		else {
 			auto tmp = lightfields::gaussian::integrate(samples, data.get(a_res), data.get(a_sigma), d);
-			*corresp[a] = lightfields::gaussian::correspondence(samples, tmp, data.get(a_sigma), d);
+			corresp(a) = lightfields::gaussian::correspondence(samples, tmp, data.get(a_sigma), d);
 
-			*out[a] = tmp.average;
+			out(a) = std::move(tmp.average);
 		}
 	});
 

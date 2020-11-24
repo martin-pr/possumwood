@@ -29,14 +29,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	for(std::size_t f = 0; f < data.get(a_count); ++f) {
 		cv::Mat frame;
-		possumwood::opencv::Sequence::Item::Meta meta;
 
 		cap >> frame;
 
-		meta["frame"] = f + data.get(a_start);
-		meta["time"] = cap.get(cv::CAP_PROP_POS_MSEC) / 1000.0f;
-
-		result.add(frame, meta);
+		result.add(std::move(frame));
 	}
 
 	data.set(a_sequence, result);

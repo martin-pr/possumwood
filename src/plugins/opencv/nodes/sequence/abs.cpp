@@ -12,9 +12,10 @@ dependency_graph::InAttr<possumwood::opencv::Sequence> a_inSequence;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSequence;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	possumwood::opencv::Sequence result = data.get(a_inSequence);
+	const possumwood::opencv::Sequence& sequence = data.get(a_inSequence);
+	possumwood::opencv::Sequence result(sequence.size());
 
-	tbb::parallel_for(std::size_t(0), result.size(), [&](std::size_t i) { *result[i] = cv::abs(*result[i]); });
+	tbb::parallel_for(std::size_t(0), result.size(), [&](std::size_t i) { result(i) = cv::abs(sequence(i)); });
 
 	data.set(a_outSequence, possumwood::opencv::Sequence(result));
 

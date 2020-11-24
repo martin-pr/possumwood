@@ -18,7 +18,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	tbb::parallel_for(std::size_t(0), filenames.size(), [&](std::size_t i) {
 		auto img = possumwood::opencv::load(filenames[i].toPath());
-		seq[i] = img.first;
+		seq(i) = std::move(img.first);
 	});
 
 	data.set(a_seq, seq);

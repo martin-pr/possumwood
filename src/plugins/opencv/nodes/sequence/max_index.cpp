@@ -11,28 +11,25 @@ dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& in = data.get(a_in);
 
-	if(!in.isValid())
-		throw std::runtime_error("Input sequence does not have consistent size or type.");
+	cv::Mat out = cv::Mat::zeros(in.meta().rows, in.meta().cols, CV_8UC1);
 
-	cv::Mat out = cv::Mat::zeros(in.rows(), in.cols(), CV_8UC1);
+	if(in.meta().type != CV_32FC1)
+		throw std::runtime_error("Only 1-channel float images supported for the moment.");
 
 	if(in.size() > 1) {
-		if(in.type() != CV_32FC1)
-			throw std::runtime_error("Only 1-channel float images supported for the moment.");
-
-		const int cols = in.cols();
-		const int rows = in.rows();
+		const int cols = in.meta().cols;
+		const int rows = in.meta().rows;
 
 		tbb::parallel_for(0, rows, [&](int r) {
 			for(int c = 0; c < cols; ++c) {
 				auto it = in.begin();
 
 				std::size_t max_id = 0;
-				float max = (*it)->at<float>(r, c);
+				float max = it->at<float>(r, c);
 				++it;
 
 				while(it != in.end()) {
-					const float current = (*it)->at<float>(r, c);
+					const float current = it->at<float>(r, c);
 					if(max < current) {
 						max = current;
 						max_id = it - in.begin();

@@ -5,35 +5,34 @@
 namespace possumwood {
 namespace opencv {
 
+struct Metadata {
+	int type;      // OpenCV type, e.g., CV_8UC1 or CV_32FC3
+	int rows;      // number of rows of all images in this sequence
+	int cols;      // number of columns of all images in this sequence
+	int depth;     // OpenCV depth, e.g., CV_8U or CV_32F
+	int channels;  // number of channels (e.g., 1 for mono, 3 for rgb)
+};
+
+Sequence::MatProxy& Sequence::MatProxy::operator=(cv::Mat&& m) {
+	// faking move semantics
+	*m_mat = m;
+	m = cv::Mat();
+
+	m_seq->updateMeta(*m_mat);
+
+	return *this;
+}
+
+Sequence::MatProxy::MatProxy(cv::Mat* m, Sequence* s) : m_mat(m), m_seq(s) {
+}
+
 Sequence::Sequence(std::size_t size) : m_sequence(size) {
 }
 
-Sequence Sequence::clone() const {
-	Sequence result;
-
-	for(auto& f : m_sequence)
-		result.add(f->clone());
-
-	return result;
-}
-
-Sequence::Item& Sequence::add(const cv::Mat& frame, const Item::Meta& meta) {
-	// check for consistency
-	if(!m_sequence.empty())
-		if(frame.rows != m_sequence.front()->rows || frame.cols != m_sequence.front()->cols ||
-		   frame.type() != m_sequence.front()->type())
-			throw std::runtime_error("Adding an inconsistent frame to a sequence!");  // TODO: more details
-
-	m_sequence.push_back(Item(frame, meta));
-	return m_sequence.back();
-}
-
-bool Sequence::isValid() const {
-	for(auto& f : m_sequence)
-		if(f->rows != m_sequence.front()->rows || f->cols != m_sequence.front()->cols ||
-		   f->type() != m_sequence.front()->type())
-			return false;
-	return true;
+void Sequence::add(cv::Mat&& frame) {
+	// faking move semantics
+	m_sequence.push_back(frame);
+	frame = cv::Mat();
 }
 
 bool Sequence::empty() const {
@@ -44,33 +43,18 @@ std::size_t Sequence::size() const {
 	return m_sequence.size();
 }
 
-int Sequence::type() const {
-	if(m_sequence.empty())
-		return 0;
-	return m_sequence.front()->type();
+const Sequence::Metadata& Sequence::meta() const {
+	return m_meta;
 }
 
-int Sequence::depth() const {
-	if(m_sequence.empty())
-		return 0;
-	return m_sequence.front()->depth();
+const cv::Mat& Sequence::operator()(std::size_t index) const {
+	assert(index < m_sequence.size());
+	return m_sequence[index];
 }
 
-int Sequence::channels() const {
-	if(m_sequence.empty())
-		return 0;
-	return m_sequence.front()->channels();
-}
-int Sequence::rows() const {
-	if(m_sequence.empty())
-		return 0;
-	return m_sequence.front()->rows;
-}
-
-int Sequence::cols() const {
-	if(m_sequence.empty())
-		return 0;
-	return m_sequence.front()->cols;
+Sequence::MatProxy Sequence::operator()(std::size_t index) {
+	assert(index < m_sequence.size());
+	return MatProxy(&m_sequence[index], this);
 }
 
 Sequence::iterator Sequence::begin() {
@@ -89,86 +73,94 @@ Sequence::const_iterator Sequence::end() const {
 	return m_sequence.end();
 }
 
-const Sequence::Item& Sequence::front() const {
-	return m_sequence.front();
-}
+void Sequence::updateMeta(const cv::Mat& m) {
+	// first image
+	if(m_meta.channels == 0) {
+		m_meta.channels = m.channels();
+		m_meta.cols = m.cols;
+		m_meta.depth = m.depth();
+		m_meta.rows = m.rows;
+		m_meta.type = m.type();
+	}
+	// images already present - compare + throw
+	else {
+		if(m_meta.channels != m.channels())
+			throw std::runtime_error("Inserting incompatible matrix into a sequence - the sequence has " +
+			                         std::to_string(m_meta.channels) + " channels while the matrix has " +
+			                         std::to_string(m.channels()));
 
-const Sequence::Item& Sequence::back() const {
-	return m_sequence.back();
-}
+		if(m_meta.cols != m.cols)
+			throw std::runtime_error("Inserting incompatible matrix into a sequence - the sequence has " +
+			                         std::to_string(m_meta.cols) + " columns while the matrix has " +
+			                         std::to_string(m.cols));
 
-Sequence::Item& Sequence::operator[](std::size_t index) {
-	assert(index < m_sequence.size());
-	return m_sequence[index];
-}
+		if(m_meta.depth != m.depth())
+			throw std::runtime_error("Inserting incompatible matrix into a sequence - the sequence has " +
+			                         std::to_string(m_meta.depth) + " depth while the matrix has " +
+			                         std::to_string(m.depth()));
 
-const Sequence::Item& Sequence::operator[](std::size_t index) const {
-	assert(index < m_sequence.size());
-	return m_sequence[index];
+		if(m_meta.rows != m.rows)
+			throw std::runtime_error("Inserting incompatible matrix into a sequence - the sequence has " +
+			                         std::to_string(m_meta.rows) + " rows while the matrix has " +
+			                         std::to_string(m.rows));
+
+		if(m_meta.type != m.type())
+			throw std::runtime_error("Inserting incompatible matrix into a sequence - the sequence has " +
+			                         opencv::type2str(m_meta.type) + " type while the matrix has " +
+			                         opencv::type2str(m.type()));
+	}
 }
 
 bool Sequence::operator==(const Sequence& f) const {
-	return m_sequence == f.m_sequence;
+	if(m_meta != f.m_meta)
+		return false;
+
+	if(m_sequence.size() != f.m_sequence.size())
+		return false;
+
+	auto it1 = m_sequence.begin();
+	auto it2 = f.begin();
+
+	while(it1 != m_sequence.end()) {
+		if(it1->data != it2->data)
+			return false;
+
+		++it1;
+		++it2;
+	}
+
+	return true;
 }
 
 bool Sequence::operator!=(const Sequence& f) const {
-	return m_sequence != f.m_sequence;
+	if(m_meta != f.m_meta)
+		return true;
+
+	if(m_sequence.size() != f.m_sequence.size())
+		return true;
+
+	auto it1 = m_sequence.begin();
+	auto it2 = f.begin();
+
+	while(it1 != m_sequence.end()) {
+		if(it1->data != it2->data)
+			return true;
+
+		++it1;
+		++it2;
+	}
+
+	return false;
 }
 
-///////////////
-
-Sequence::Item::Item() {
+bool Sequence::Metadata::operator==(const Metadata& meta) const {
+	return type == meta.type && rows == meta.rows && cols == meta.cols && depth == meta.depth &&
+	       channels == meta.channels;
 }
 
-Sequence::Item::Item(const cv::Mat& m, const Meta& meta) : m_mat(m), m_meta(meta) {
-}
-
-Sequence::Item::Meta& Sequence::Item::meta() {
-	return m_meta;
-}
-
-const Sequence::Item::Meta& Sequence::Item::meta() const {
-	return m_meta;
-}
-
-bool Sequence::Item::operator==(const Item& i) const {
-	return m_mat.ptr() == i->ptr();
-}
-
-bool Sequence::Item::operator!=(const Item& i) const {
-	return m_mat.ptr() != i->ptr();
-}
-
-/////////////
-
-bool Sequence::Item::Meta::empty() const {
-	return m_meta.empty();
-}
-
-float Sequence::Item::Meta::operator[](const std::string& key) const {
-	auto it = m_meta.find(key);
-	if(it != m_meta.end())
-		return it->second;
-	return 0.0f;
-}
-
-float& Sequence::Item::Meta::operator[](const std::string& key) {
-	return m_meta[key];
-}
-
-Sequence::Item::Meta::const_iterator Sequence::Item::Meta::begin() const {
-	return m_meta.begin();
-}
-
-Sequence::Item::Meta::const_iterator Sequence::Item::Meta::end() const {
-	return m_meta.end();
-}
-
-Sequence::Item::Meta Sequence::Item::Meta::merge(const Meta& m1, const Meta& m2) {
-	Sequence::Item::Meta result = m2;
-	for(auto& m : m1)
-		result[m.first] = m.second;
-	return result;
+bool Sequence::Metadata::operator!=(const Metadata& meta) const {
+	return type != meta.type || rows != meta.rows || cols != meta.cols || depth != meta.depth ||
+	       channels != meta.channels;
 }
 
 /////////////
@@ -177,25 +169,11 @@ std::ostream& operator<<(std::ostream& out, const Sequence& seq) {
 	if(seq.empty())
 		out << "Empty sequence" << std::endl;
 	else if(seq.size() == 1)
-		out << "A sequence with 1 frame, " << opencv::type2str((*seq[0]).type()) << ", " << (*seq[0]).cols << "x"
-		    << (*seq[0]).rows << std::endl;
+		out << "A sequence with 1 frame, " << opencv::type2str(seq.meta().type) << ", " << seq.meta().cols << "x"
+		    << seq.meta().rows << std::endl;
 	else
-		out << "A sequence of " << seq.size() << " frames, " << opencv::type2str((*seq[0]).type()) << ", "
-		    << (*seq[0]).cols << "x" << (*seq[0]).rows << std::endl;
-
-	unsigned ctr = 0;
-	for(auto& f : seq) {
-		out << "  [" << ctr << "] ->";
-		if(f.meta().empty())
-			out << " no metadata" << std::endl;
-		else {
-			for(auto& m : f.meta())
-				out << " " << m.first << "=" << m.second;
-			out << std::endl;
-		}
-
-		++ctr;
-	}
+		out << "A sequence with " << seq.size() << " frames, " << opencv::type2str(seq.meta().type) << ", "
+		    << seq.meta().cols << "x" << seq.meta().rows << std::endl;
 
 	return out;
 }

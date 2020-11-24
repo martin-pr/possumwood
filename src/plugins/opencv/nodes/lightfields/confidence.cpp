@@ -16,8 +16,8 @@ class Curve {
   public:
 	Curve(const possumwood::opencv::Sequence& s, const cv::Vec2i& pos) : m_seq(&s), m_pos(pos) {
 		assert(s.size() > 0);
-		assert(pos[0] < s[0]->cols);
-		assert(pos[1] < s[0]->rows);
+		assert(pos[0] < s(0).cols);
+		assert(pos[1] < s(0).rows);
 	}
 
 	bool empty() const {
@@ -147,7 +147,7 @@ class Curve {
 
   private:
 	float get(std::size_t index) const {
-		return (*m_seq)[index]->at<float>(m_pos[1], m_pos[0]);
+		return (*m_seq)(index).at<float>(m_pos[1], m_pos[0]);
 	}
 
 	bool isPeak(std::size_t index) const {
@@ -314,16 +314,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(sequence.size() < 2)
 		throw std::runtime_error("At least two images required in the input sequence.");
 
-	const int width = (**sequence.begin()).cols;
-	const int height = (**sequence.begin()).rows;
+	const int width = sequence.meta().cols;
+	const int height = sequence.meta().rows;
 
-	for(auto& f : sequence)
-		if((*f).rows != height || (*f).cols != width)
-			throw std::runtime_error("Consistent width and height is required in the input sequence.");
-
-	for(auto& f : sequence)
-		if((*f).type() != CV_32FC1)
-			throw std::runtime_error("Only CV_32FC1 images accepted on input.");
+	if(sequence.meta().type != CV_32FC1)
+		throw std::runtime_error("Only CV_32FC1 images accepted on input.");
 
 	float (*fn)(const Curve&, float) = nullptr;
 	for(auto& m : s_measures)

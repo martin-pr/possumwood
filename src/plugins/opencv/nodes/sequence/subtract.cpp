@@ -25,9 +25,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		const std::size_t id1 = std::min(index, seq1.size() - 1);
 		const std::size_t id2 = std::min(index, seq2.size() - 1);
 
-		cv::subtract(*seq1[id1], *seq2[id2], *result[index]);
-
-		result[index].meta() = possumwood::opencv::Sequence::Item::Meta::merge(seq1[id1].meta(), seq2[id2].meta());
+		cv::Mat m;
+		cv::subtract(seq1(id1), seq2(id2), m);
+		result(index) = std::move(m);
 	});
 
 	data.set(a_out, result);

@@ -19,7 +19,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// doesn't copy, just uses shared references
 	std::vector<cv::Mat> inputs;
 	for(auto& in : data.get(a_in))
-		inputs.push_back(*in);
+		inputs.push_back(in);
 
 	const possumwood::opencv::CameraResponse& response = data.get(a_response);
 

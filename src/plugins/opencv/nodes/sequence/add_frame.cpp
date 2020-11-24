@@ -15,7 +15,7 @@ dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSequence;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::opencv::Sequence seq = data.get(a_inSequence);
 
-	seq.add(*data.get(a_frame));
+	seq.add(data.get(a_frame)->clone());
 
 	data.set(a_outSequence, seq);
 

@@ -25,7 +25,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// collect input frames - doesn't copy, just uses shared references
 	std::vector<cv::Mat> inputs;
 	for(auto& in : data.get(a_sequence))
-		inputs.push_back(*in);
+		inputs.push_back(in);
 
 	// build an array of exposures from exif
 	std::vector<float> exposures;

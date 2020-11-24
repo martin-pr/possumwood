@@ -31,20 +31,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(!contrast.empty() && contrast.size() != sequence.size())
 		throw std::runtime_error("Contrast sequence (if any) needs to be the same size as input sequence.");
 
-	const int width = (**sequence.begin()).cols;
-	const int height = (**sequence.begin()).rows;
+	const int width = sequence.meta().cols;
+	const int height = sequence.meta().rows;
 
-	for(auto& f : sequence)
-		if((*f).rows != height || (*f).cols != width)
-			throw std::runtime_error("Consistent width and height is required in the input sequence.");
+	if(sequence.meta().type != CV_8UC1)
+		throw std::runtime_error("Only CV_8UC1 sequences accepted on input.");
 
-	for(auto& f : sequence)
-		if((*f).type() != CV_8UC1)
-			throw std::runtime_error("Only CV_8UC1 images accepted on input.");
-
-	for(auto& f : contrast)
-		if((*f).type() != CV_8UC1 && (*f).type() != CV_8UC3)
-			throw std::runtime_error("Only CV_8UC1 or CV_8UC3 images accepted as contrast input.");
+	if(contrast.meta().type != CV_8UC1 && contrast.meta().type != CV_8UC3)
+		throw std::runtime_error("Only CV_8UC1 or CV_8UC3 images accepted as contrast input.");
 
 	lightfields::Graph graph(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size());
 
@@ -56,7 +50,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			for(int col = 0; col < width; ++col) {
 				std::size_t ctr = 0;
 				for(auto& m : sequence) {
-					values[ctr] = 255 - (*m).at<unsigned char>(row, col);
+					values[ctr] = 255 - m.at<unsigned char>(row, col);
 					++ctr;
 				}
 
@@ -67,7 +61,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// setting horizontal data
 	if(!contrast.empty()) {
 		for(std::size_t a = 0; a < contrast.size(); ++a)
-			graph.setLayer(*contrast[a], a, data.get(a_contPower));
+			graph.setLayer(contrast(a), a, data.get(a_contPower));
 	}
 
 	if(data.get(a_mode).value() == "Edmonds-Karp")
@@ -78,8 +72,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	data.set(a_out, possumwood::opencv::Frame(graph.minCut()));
 
 	possumwood::opencv::Sequence debug;
-	for(auto& m : graph.debug())
-		debug.add(m);
+	for(auto m : graph.debug())
+		debug.add(std::move(m));
 
 	data.set(a_debug, debug);
 

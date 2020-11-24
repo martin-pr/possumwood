@@ -23,7 +23,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	// opencv creates shared (shallow) copies of its inputs -> copies are "free"
 	std::vector<cv::Mat> mats;
 	for(auto& f : data.get(a_inSequence))
-		mats.push_back(*f);
+		mats.push_back(f);
 
 	// result
 	cv::Mat result;
