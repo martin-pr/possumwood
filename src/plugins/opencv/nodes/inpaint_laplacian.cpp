@@ -1,14 +1,16 @@
 #include <possumwood_sdk/node_implementation.h>
 
-#define EIGEN_STACK_ALLOCATION_LIMIT 0
-
-#include <actions/traits.h>
-#include <tbb/task_group.h>
-
-#include <Eigen/Sparse>
 #include <mutex>
+
+#define EIGEN_STACK_ALLOCATION_LIMIT 0
+#include <Eigen/Sparse>
+
 #include <opencv2/opencv.hpp>
 
+#include <tbb/parallel_for.h>
+#include <tbb/task_group.h>
+
+#include <actions/traits.h>
 #include "frame.h"
 
 namespace {
@@ -155,6 +157,69 @@ float buildMatrices(const cv::Mat& image, const cv::Mat& mask, Eigen::SparseMatr
 	return (float)validCtr / ((float)validCtr + (float)interpolatedCtr);
 }
 
+dependency_graph::State solve(const cv::Mat& input, const cv::Mat& mask, std::vector<float>& output) {
+	assert(input.rows == mask.rows);
+	assert(input.cols == mask.cols);
+	assert(input.type() == CV_32FC1);
+	assert(mask.type() == CV_8UC1);
+
+	output = std::vector<float>(input.rows * input.cols, 0.0f);
+
+	Eigen::SparseMatrix<double> A;
+	Eigen::VectorXd b, tmp;
+
+	dependency_graph::State state;
+
+	const float ratio = buildMatrices(input, mask, A, b);
+
+	if(ratio > 0.003) {
+		const char* stage = "solver construction";
+
+		Eigen::SparseLU<Eigen::SparseMatrix<double> /*, Eigen::NaturalOrdering<int>*/> chol(A);
+
+		if(chol.info() == Eigen::Success) {
+			stage = "analyze pattern";
+
+			chol.analyzePattern(A);
+
+			if(chol.info() == Eigen::Success) {
+				stage = "factorize";
+
+				chol.factorize(A);
+
+				if(chol.info() == Eigen::Success) {
+					stage = "solve";
+
+					tmp = chol.solve(b);
+
+					assert(tmp.size() == input.rows * input.cols);
+					for(int i = 0; i < tmp.size(); ++i) {
+						const int row = i / input.cols;
+						const int col = i % input.cols;
+						const int index = row * mask.cols + col;
+
+						assert((std::size_t)index < output.size());
+						output[index] = tmp[i];
+					}
+				}
+			}
+		}
+
+		if(chol.info() == Eigen::NumericalIssue)
+			state.addWarning("Decomposition failed - Eigen::NumericalIssue at stage " + std::string(stage));
+		else if(chol.info() == Eigen::NoConvergence)
+			state.addWarning("Decomposition failed - Eigen::NoConvergence at stage " + std::string(stage));
+		else if(chol.info() == Eigen::InvalidInput)
+			state.addWarning("Decomposition failed - Eigen::InvalidInput at stage " + std::string(stage));
+		else if(chol.info() != Eigen::Success)
+			state.addWarning("Decomposition failed - unknown error at stage " + std::string(stage));
+	}
+	else
+		state.addError("Solve failed - not enough non-masked data in input matrix");
+
+	return state;
+}
+
 dependency_graph::InAttr<possumwood::opencv::Frame> a_inFrame, a_inMask;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_outFrame;
 
@@ -176,7 +241,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::vector<std::vector<float>> x(input.channels(), std::vector<float>(input.rows * input.cols, 0.0f));
 
 	tbb::task_group tasks;
-	std::mutex solve_mutex;
+	std::mutex state_mutex;
 
 	// split the inputs and masks per channel
 	std::vector<cv::Mat> inputs, masks;
@@ -187,75 +252,23 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	assert((int)masks.size() == mask.channels());
 
 	for(int channel = 0; channel < input.channels(); ++channel) {
-		tasks.run([channel, &inputs, &masks, &x, &state, &solve_mutex]() {
-			cv::Mat inTile = inputs[channel];
+		tasks.run([channel, &inputs, &masks, &x, &state, &state_mutex]() {
+			const dependency_graph::State currentState =
+			    solve(inputs[channel], masks.size() == 1 ? masks[0] : masks[channel], x[channel]);
 
-			cv::Mat inMask;
-			if(masks.size() == 1)
-				inMask = masks[0];
-			else
-				inMask = masks[channel];
-
-			Eigen::SparseMatrix<double> A;
-			Eigen::VectorXd b, tmp;
-
-			const float ratio = buildMatrices(inTile, inMask, A, b);
-
-			if(ratio > 0.003) {
-				const char* stage = "solver construction";
-
-				Eigen::SparseLU<Eigen::SparseMatrix<double> /*, Eigen::NaturalOrdering<int>*/> chol(A);
-
-				if(chol.info() == Eigen::Success) {
-					stage = "analyze pattern";
-
-					chol.analyzePattern(A);
-
-					if(chol.info() == Eigen::Success) {
-						stage = "factorize";
-
-						chol.factorize(A);
-
-						if(chol.info() == Eigen::Success) {
-							stage = "solve";
-
-							tmp = chol.solve(b);
-
-							assert(tmp.size() == inTile.rows * inTile.cols);
-							for(int i = 0; i < tmp.size(); ++i) {
-								const int row = i / inTile.cols;
-								const int col = i % inTile.cols;
-								const int index = row * masks[0].cols + col;
-
-								assert((std::size_t)index < x[channel].size());
-
-								x[channel][index] = tmp[i];
-							}
-						}
-					}
-				}
-
-				std::lock_guard<std::mutex> guard(solve_mutex);
-
-				if(chol.info() == Eigen::NumericalIssue)
-					state.addWarning("Decomposition failed - Eigen::NumericalIssue at stage " + std::string(stage));
-				else if(chol.info() == Eigen::NoConvergence)
-					state.addWarning("Decomposition failed - Eigen::NoConvergence at stage " + std::string(stage));
-				else if(chol.info() == Eigen::InvalidInput)
-					state.addWarning("Decomposition failed - Eigen::InvalidInput at stage " + std::string(stage));
-				else if(chol.info() != Eigen::Success)
-					state.addWarning("Decomposition failed - unknown error at stage " + std::string(stage));
-			}
+			std::lock_guard<std::mutex> guard(state_mutex);
+			state.append(currentState);
 		});
 	}
 
 	tasks.wait();
 
-	cv::Mat result = input.clone();
-	for(int yi = 0; yi < result.rows; ++yi)
+	cv::Mat result = cv::Mat::zeros(input.rows, input.cols, input.type());
+	tbb::parallel_for(0, result.rows, [&](int yi) {
 		for(int xi = 0; xi < result.cols; ++xi)
 			for(int c = 0; c < input.channels(); ++c)
 				result.ptr<float>(yi, xi)[c] = x[c][yi * result.cols + xi];
+	});
 
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
