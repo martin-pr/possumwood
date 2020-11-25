@@ -5,13 +5,13 @@
 namespace possumwood {
 namespace opencv {
 
-struct Metadata {
-	int type;      // OpenCV type, e.g., CV_8UC1 or CV_32FC3
-	int rows;      // number of rows of all images in this sequence
-	int cols;      // number of columns of all images in this sequence
-	int depth;     // OpenCV depth, e.g., CV_8U or CV_32F
-	int channels;  // number of channels (e.g., 1 for mono, 3 for rgb)
-};
+Sequence::Metadata::Metadata() : type(0), rows(0), cols(0), depth(0), channels(0) {
+}
+
+Sequence::Metadata::Metadata(int type_, int rows_, int cols_) : type(type_), rows(rows_), cols(cols_) {
+	depth = type & CV_MAT_DEPTH_MASK;
+	channels = 1 + (type >> CV_CN_SHIFT);
+}
 
 Sequence::MatProxy& Sequence::MatProxy::operator=(cv::Mat&& m) {
 	// faking move semantics
@@ -30,7 +30,7 @@ Sequence::MatProxy::operator const cv::Mat &() const {
 	return *m_mat;
 }
 
-Sequence::Sequence() : m_min(0, 0), m_max(0, 0) {
+Sequence::Sequence(const Metadata& meta) : m_meta(meta), m_min(0, 0), m_max(0, 0) {
 }
 
 Sequence::Sequence(const Sequence& s) : m_sequence(s.m_sequence), m_meta(s.m_meta), m_min(s.m_min), m_max(s.m_max) {

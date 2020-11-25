@@ -25,6 +25,9 @@ namespace opencv {
 class Sequence final {
   public:
 	struct Metadata {
+		Metadata();
+		Metadata(int type, int rows, int cols);
+
 		int type = 0;      // OpenCV type, e.g., CV_8UC1 or CV_32FC3
 		int rows = 0;      // number of rows of all images in this sequence
 		int cols = 0;      // number of columns of all images in this sequence
@@ -51,7 +54,7 @@ class Sequence final {
 		friend class Sequence;
 	};
 
-	Sequence();
+	Sequence(const Metadata& meta = Metadata());
 
 	Sequence(const Sequence& s);
 	Sequence& operator=(const Sequence& s);
