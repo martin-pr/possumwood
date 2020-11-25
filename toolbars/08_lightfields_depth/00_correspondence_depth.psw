@@ -207,7 +207,10 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 10
+                "index": {
+                    "x": 8,
+                    "y": 0
+                }
             },
             "type": "opencv/sequence/get_frame"
         },

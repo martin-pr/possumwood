@@ -7,21 +7,15 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "concat_1",
+            "in_node": "multiply_0",
             "in_port": "in_frame_1",
             "out_node": "colormap_0",
             "out_port": "out_frame"
         },
         {
-            "in_node": "multiply_0",
-            "in_port": "in_frame_1",
-            "out_node": "colormap_1",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "concat_0",
             "in_port": "in_frame_2",
-            "out_node": "colormap_1",
+            "out_node": "colormap_0",
             "out_port": "out_frame"
         },
         {
@@ -55,7 +49,7 @@
             "out_port": "out_sequence"
         },
         {
-            "in_node": "colormap_0",
+            "in_node": "color_1",
             "in_port": "in_frame",
             "out_node": "convert_1",
             "out_port": "out_frame"
@@ -115,7 +109,7 @@
             "out_port": "out"
         },
         {
-            "in_node": "colormap_1",
+            "in_node": "colormap_0",
             "in_port": "in_frame",
             "out_node": "median_0",
             "out_port": "out_frame"
@@ -179,6 +173,12 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "concat_1",
+            "in_port": "in_frame_1",
+            "out_node": "color_1",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Narrow-base depth reconstruction with confidence measure\n\nThis demo shows raw depth reconstruction using the narrow-base comparison metric of pixel values - i.e., each pixel's error value is based on its difference to a narrow-base (i.e., sharp) version of the image.\n\nThe per-pixel metric is evaluated for a range of depth reconstruction values, with the lowest difference value picked as the appropriate depth value candidate. In the bottom-right image, the depth candidate brightness is altered using a confidence metric value, based on the shape of the defocus curve for each pixel (i.e., pixels with lower confidence are darker).\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
@@ -198,21 +198,21 @@
             },
             "type": "opencv/color"
         },
-        "colormap_0": {
+        "color_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 1788.73913574219,
-                    "y": 1350.6142578125
+                    "x": 1781.685546875,
+                    "y": 1315.5751953125
                 }
             },
-            "name": "colormap",
+            "name": "color",
             "ports": {
-                "type": "COLORMAP_BONE"
+                "mode": "GRAY2RGB"
             },
-            "type": "opencv/colormap"
+            "type": "opencv/color"
         },
-        "colormap_1": {
+        "colormap_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
@@ -380,7 +380,10 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 2
+                "index": {
+                    "x": 10,
+                    "y": 0
+                }
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -1173,5 +1176,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKFAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAh8AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADYgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAD3QAAAWAAAACxAQAAAwAABVoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKFAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAh8AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABdgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB8QAAA0wAAACxAQAAAwAABVoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

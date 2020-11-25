@@ -25,7 +25,7 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "samples_from_metadata_0",
+            "in_node": "convert_2",
             "in_port": "in_frame",
             "out_node": "divide_0",
             "out_port": "out_frame"
@@ -41,6 +41,12 @@
             "in_port": "in_frame",
             "out_node": "gamma_0",
             "out_port": "out_frame"
+        },
+        {
+            "in_node": "interval_0",
+            "in_port": "interval",
+            "out_node": "input_0",
+            "out_port": "data"
         },
         {
             "in_node": "gamma_0",
@@ -59,6 +65,12 @@
             "in_port": "in_frame_2",
             "out_node": "integrate_nearest_1",
             "out_port": "correspondence"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "uv_offset",
+            "out_node": "interval_0",
+            "out_port": "out"
         },
         {
             "in_node": "divide_0",
@@ -103,16 +115,22 @@
             "out_port": "out_samples"
         },
         {
-            "in_node": "interval_0",
-            "in_port": "interval",
-            "out_node": "input_0",
-            "out_port": "data"
+            "in_node": "convert_3",
+            "in_port": "in_frame",
+            "out_node": "demosaic_0",
+            "out_port": "out_frame"
         },
         {
-            "in_node": "samples_refocus_0",
-            "in_port": "uv_offset",
-            "out_node": "interval_0",
-            "out_port": "out"
+            "in_node": "demosaic_0",
+            "in_port": "in_frame",
+            "out_node": "convert_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
+            "out_node": "convert_3",
+            "out_port": "out_frame"
         }
     ],
     "description": "### Per-pixel correspondence metric (relative results)\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
@@ -157,7 +175,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 120.0,
+                "a": 100.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -179,12 +197,58 @@
             },
             "type": "opencv/convert"
         },
+        "convert_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 372.5205078125,
+                    "y": -697.438537597656
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 1000.0,
+                "b": 0.0,
+                "mode": "CV_16U"
+            },
+            "type": "opencv/convert"
+        },
+        "convert_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 389.156463623047,
+                    "y": -338.807220458984
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 0.00100000004749745,
+                "b": 0.0,
+                "mode": "CV_32F"
+            },
+            "type": "opencv/convert"
+        },
+        "demosaic_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 380.732391357422,
+                    "y": -494.195465087891
+                }
+            },
+            "name": "demosaic",
+            "ports": {
+                "mode": "BayerRG2BGR_EA"
+            },
+            "type": "opencv/demosaic"
+        },
         "divide_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 325.068267822266,
-                    "y": -304.022796630859
+                    "x": 320.790344238281,
+                    "y": -844.386840820312
                 }
             },
             "name": "divide",
@@ -217,7 +281,7 @@
             },
             "name": "gamma",
             "ports": {
-                "gamma": 0.699999988079071,
+                "gamma": 0.899999976158142,
                 "normalization_coef": 1.0
             },
             "type": "opencv/gamma"
@@ -244,8 +308,8 @@
             "name": "integrate_nearest",
             "ports": {
                 "size": {
-                    "x": 350,
-                    "y": 350
+                    "x": 320,
+                    "y": 320
                 }
             },
             "type": "opencv/lightfields/integrate_nearest"
@@ -261,8 +325,8 @@
             "name": "integrate_nearest",
             "ports": {
                 "size": {
-                    "x": 350,
-                    "y": 350
+                    "x": 320,
+                    "y": 320
                 }
             },
             "type": "opencv/lightfields/integrate_nearest"
@@ -282,8 +346,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 490.695831298828,
-                    "y": -458.021484375
+                    "x": 486.417907714844,
+                    "y": -998.385498046875
                 }
             },
             "name": "lytro_lightfield",
@@ -296,8 +360,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 224.882934570312,
-                    "y": -449.786834716797
+                    "x": 220.605026245117,
+                    "y": -990.15087890625
                 }
             },
             "name": "lytro_lightfield",
@@ -667,7 +731,7 @@
             "max": 30.0,
             "min": -30.0,
             "type": "linear",
-            "value": -17.7600002288818
+            "value": -20.2200012207031
         }
     },
     "scene_config": {
