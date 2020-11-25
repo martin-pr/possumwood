@@ -32,7 +32,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		cap >> frame;
 
-		result.add(std::move(frame));
+		result(f, 0) = std::move(frame);
 	}
 
 	data.set(a_sequence, result);

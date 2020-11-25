@@ -1,6 +1,7 @@
 #include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
-#include <tbb/parallel_for.h>
+
+#include <tbb/task_group.h>
 
 #include "sequence.h"
 #include "tools.h"
@@ -14,21 +15,37 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& seq1 = data.get(a_seq1);
 	const possumwood::opencv::Sequence& seq2 = data.get(a_seq2);
 
-	if(seq1.size() == 0 || seq2.size() == 0)
-		throw std::runtime_error("One of the sequences is empty.");
+	if(seq1.empty() || seq2.empty())
+		throw std::runtime_error("One or both sequences are empty.");
 
-	if(seq1.size() != seq2.size() && seq1.size() != 1 && seq2.size() != 1)
+	if(!possumwood::opencv::Sequence::hasMatchingKeys(seq1, seq2) && !seq1.hasOneElement() && !seq2.hasOneElement())
 		throw std::runtime_error("Sequences need to be the same size, or one of them needs to be of size 1.");
 
-	possumwood::opencv::Sequence result(std::max(seq1.size(), seq2.size()));
-	tbb::parallel_for(std::size_t(0), result.size(), [&](std::size_t index) {
-		const std::size_t id1 = std::min(index, seq1.size() - 1);
-		const std::size_t id2 = std::min(index, seq2.size() - 1);
+	possumwood::opencv::Sequence result;
 
-		cv::Mat m;
-		cv::subtract(seq1(id1), seq2(id2), m);
-		result(index) = std::move(m);
-	});
+	tbb::task_group group;
+
+	auto it1 = seq1.begin();
+	auto it2 = seq2.begin();
+
+	while(it1 != seq1.end() && it2 != seq2.end()) {
+		group.run([&seq1, &result, it1, it2]() {
+			cv::Mat m;
+			cv::subtract(it1->second, it2->second, m);
+
+			if(seq1.hasOneElement())
+				result[it2->first] = std::move(m);
+			else
+				result[it1->first] = std::move(m);
+		});
+
+		if(seq1.hasOneElement())
+			++it2;
+		else
+			++it1;
+	}
+
+	group.wait();
 
 	data.set(a_out, result);
 

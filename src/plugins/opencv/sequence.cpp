@@ -18,43 +18,85 @@ Sequence::MatProxy& Sequence::MatProxy::operator=(cv::Mat&& m) {
 	*m_mat = m;
 	m = cv::Mat();
 
-	m_seq->updateMeta(*m_mat);
+	m_seq->updateMeta(m_index, *m_mat);
 
 	return *this;
 }
 
-Sequence::MatProxy::MatProxy(cv::Mat* m, Sequence* s) : m_mat(m), m_seq(s) {
+Sequence::MatProxy::MatProxy(const Imath::V2i& index, cv::Mat* m, Sequence* s) : m_index(index), m_mat(m), m_seq(s) {
 }
 
-Sequence::Sequence(std::size_t size) : m_sequence(size) {
+Sequence::MatProxy::operator const cv::Mat &() const {
+	return *m_mat;
 }
 
-void Sequence::add(cv::Mat&& frame) {
-	// faking move semantics
-	m_sequence.push_back(frame);
-	frame = cv::Mat();
+Sequence::Sequence() : m_min(0, 0), m_max(0, 0) {
+}
+
+Sequence::Sequence(const Sequence& s) : m_sequence(s.m_sequence), m_meta(s.m_meta), m_min(s.m_min), m_max(s.m_max) {
+}
+
+Sequence& Sequence::operator=(const Sequence& s) {
+	m_sequence = s.m_sequence;
+	m_meta = s.m_meta;
+	m_min = s.m_min;
+	m_max = s.m_max;
+
+	return *this;
 }
 
 bool Sequence::empty() const {
 	return m_sequence.empty();
 }
 
-std::size_t Sequence::size() const {
-	return m_sequence.size();
+bool Sequence::hasOneElement() const {
+	return m_sequence.size() == 1;
+}
+
+const Imath::V2i& Sequence::min() const {
+	return m_min;
+}
+
+const Imath::V2i& Sequence::max() const {
+	return m_max;
 }
 
 const Sequence::Metadata& Sequence::meta() const {
 	return m_meta;
 }
 
-const cv::Mat& Sequence::operator()(std::size_t index) const {
-	assert(index < m_sequence.size());
-	return m_sequence[index];
+namespace {
+
+static const cv::Mat s_empty;
+
 }
 
-Sequence::MatProxy Sequence::operator()(std::size_t index) {
-	assert(index < m_sequence.size());
-	return MatProxy(&m_sequence[index], this);
+const cv::Mat& Sequence::operator()(int x, int y) const {
+	auto it = m_sequence.find(Imath::V2i(x, y));
+	if(it == m_sequence.end())
+		return s_empty;
+
+	return it->second;
+}
+
+Sequence::MatProxy Sequence::operator()(int x, int y) {
+	std::lock_guard<std::mutex> guard(m_mutex);
+
+	return MatProxy(Imath::V2i(x, y), &(m_sequence[Imath::V2i(x, y)]), this);
+}
+
+const cv::Mat& Sequence::operator[](const Imath::V2i& index) const {
+	auto it = m_sequence.find(index);
+	if(it == m_sequence.end())
+		return s_empty;
+
+	return it->second;
+}
+
+Sequence::MatProxy Sequence::operator[](const Imath::V2i& index) {
+	std::lock_guard<std::mutex> guard(m_mutex);
+
+	return MatProxy(index, &(m_sequence[index]), this);
 }
 
 Sequence::iterator Sequence::begin() {
@@ -73,7 +115,11 @@ Sequence::const_iterator Sequence::end() const {
 	return m_sequence.end();
 }
 
-void Sequence::updateMeta(const cv::Mat& m) {
+Sequence::const_iterator Sequence::find(const Imath::V2i& index) const {
+	return m_sequence.find(index);
+}
+
+void Sequence::updateMeta(const Imath::V2i& index, const cv::Mat& m) {
 	// first image
 	if(m_meta.channels == 0) {
 		m_meta.channels = m.channels();
@@ -81,6 +127,9 @@ void Sequence::updateMeta(const cv::Mat& m) {
 		m_meta.depth = m.depth();
 		m_meta.rows = m.rows;
 		m_meta.type = m.type();
+
+		m_min = index;
+		m_max = index;
 	}
 	// images already present - compare + throw
 	else {
@@ -108,6 +157,11 @@ void Sequence::updateMeta(const cv::Mat& m) {
 			throw std::runtime_error("Inserting incompatible matrix into a sequence - the sequence has " +
 			                         opencv::type2str(m_meta.type) + " type while the matrix has " +
 			                         opencv::type2str(m.type()));
+
+		m_min.x = std::min(m_min.x, index.x);
+		m_max.x = std::max(m_max.x, index.x);
+		m_min.y = std::min(m_min.y, index.y);
+		m_max.y = std::max(m_max.y, index.y);
 	}
 }
 
@@ -122,7 +176,7 @@ bool Sequence::operator==(const Sequence& f) const {
 	auto it2 = f.begin();
 
 	while(it1 != m_sequence.end()) {
-		if(it1->data != it2->data)
+		if(it1->first != it2->first || it1->second.data != it2->second.data)
 			return false;
 
 		++it1;
@@ -143,7 +197,7 @@ bool Sequence::operator!=(const Sequence& f) const {
 	auto it2 = f.begin();
 
 	while(it1 != m_sequence.end()) {
-		if(it1->data != it2->data)
+		if(it1->first != it2->first || it1->second.data != it2->second.data)
 			return true;
 
 		++it1;
@@ -151,6 +205,29 @@ bool Sequence::operator!=(const Sequence& f) const {
 	}
 
 	return false;
+}
+
+bool Sequence::hasMatchingKeys(const Sequence& s1, const Sequence& s2) {
+	if(s1.m_sequence.size() != s2.m_sequence.size())
+		return false;
+
+	auto it1 = s1.m_sequence.begin();
+	auto it2 = s2.m_sequence.begin();
+	while(it1 != s1.m_sequence.end()) {
+		if(it1->first != it2->first)
+			return false;
+
+		++it1;
+		++it2;
+	}
+
+	return true;
+}
+
+bool Sequence::Comparator::operator()(const Imath::V2i& v1, const Imath::V2i& v2) const {
+	if(v1.y != v2.y)
+		return v1.y < v2.y;
+	return v1.x < v2.x;
 }
 
 bool Sequence::Metadata::operator==(const Metadata& meta) const {
@@ -168,11 +245,11 @@ bool Sequence::Metadata::operator!=(const Metadata& meta) const {
 std::ostream& operator<<(std::ostream& out, const Sequence& seq) {
 	if(seq.empty())
 		out << "Empty sequence" << std::endl;
-	else if(seq.size() == 1)
+	else if(seq.m_sequence.size() == 1)
 		out << "A sequence with 1 frame, " << opencv::type2str(seq.meta().type) << ", " << seq.meta().cols << "x"
 		    << seq.meta().rows << std::endl;
 	else
-		out << "A sequence with " << seq.size() << " frames, " << opencv::type2str(seq.meta().type) << ", "
+		out << "A sequence with " << seq.m_sequence.size() << " frames, " << opencv::type2str(seq.meta().type) << ", "
 		    << seq.meta().cols << "x" << seq.meta().rows << std::endl;
 
 	return out;

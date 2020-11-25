@@ -16,7 +16,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(in.meta().type != CV_32FC1)
 		throw std::runtime_error("Only 1-channel float images supported for the moment.");
 
-	if(in.size() > 1) {
+	if(!in.empty() && !in.hasOneElement()) {
 		const int cols = in.meta().cols;
 		const int rows = in.meta().rows;
 
@@ -25,17 +25,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				auto it = in.begin();
 
 				std::size_t max_id = 0;
-				float max = it->at<float>(r, c);
+				float max = it->second.at<float>(r, c);
 				++it;
 
+				std::size_t counter = 1;
 				while(it != in.end()) {
-					const float current = it->at<float>(r, c);
+					const float current = it->second.at<float>(r, c);
 					if(max < current) {
 						max = current;
-						max_id = it - in.begin();
+						max_id = counter;
 					}
 
 					++it;
+					++counter;
 				}
 
 				out.at<unsigned char>(r, c) = max_id;

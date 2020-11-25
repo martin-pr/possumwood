@@ -1,9 +1,13 @@
 #pragma once
 
+#include <memory>
+#include <mutex>
+#include <vector>
+
 #include <boost/filesystem/path.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
-#include <memory>
-#include <vector>
+
+#include <OpenEXR/ImathVec.h>
 
 #include "frame.h"
 
@@ -35,47 +39,67 @@ class Sequence final {
 	class MatProxy {
 	  public:
 		MatProxy& operator=(cv::Mat&& m);
+		operator const cv::Mat &() const;
 
 	  private:
-		MatProxy(cv::Mat* m, Sequence* s);
+		MatProxy(const Imath::V2i& index, cv::Mat* m, Sequence* s);
 
+		Imath::V2i m_index;
 		cv::Mat* m_mat;
 		Sequence* m_seq;
 
 		friend class Sequence;
 	};
 
-	Sequence(std::size_t size = 0);
+	Sequence();
 
-	// for now, only allow adding a matrix/frame by moving, to avoid problems with shared
-	// const-ignorant handling of OpenCV's Mats
-	void add(cv::Mat&& frame);
+	Sequence(const Sequence& s);
+	Sequence& operator=(const Sequence& s);
 
 	bool empty() const;
-	std::size_t size() const;
+	bool hasOneElement() const;
+
+	const Imath::V2i& min() const;
+	const Imath::V2i& max() const;
 	const Metadata& meta() const;
 
 	// a bad attempt at semi const correctness - doesn't work, because cv::Mat doesn't.
 	// Please don't copy a Mat + change, it would break everything.
-	const cv::Mat& operator()(std::size_t index) const;
-	MatProxy operator()(std::size_t index);
+	const cv::Mat& operator[](const Imath::V2i& index) const;
+	MatProxy operator[](const Imath::V2i& index);
 
-	typedef std::vector<cv::Mat>::iterator iterator;
+	const cv::Mat& operator()(int x, int y) const;
+	MatProxy operator()(int x, int y);
+
+	typedef std::map<Imath::V2i, cv::Mat>::iterator iterator;
 	iterator begin();
 	iterator end();
 
-	typedef std::vector<cv::Mat>::const_iterator const_iterator;
+	typedef std::map<Imath::V2i, cv::Mat>::const_iterator const_iterator;
+	const_iterator find(const Imath::V2i& index) const;
 	const_iterator begin() const;
 	const_iterator end() const;
 
 	bool operator==(const Sequence& f) const;
 	bool operator!=(const Sequence& f) const;
 
-  private:
-	void updateMeta(const cv::Mat& m);
+	static bool hasMatchingKeys(const Sequence& s1, const Sequence& s2);
 
-	std::vector<cv::Mat> m_sequence;
+  private:
+	void updateMeta(const Imath::V2i& index, const cv::Mat& m);
+
+	struct Comparator {
+		bool operator()(const Imath::V2i& v1, const Imath::V2i& v2) const;
+	};
+
+	std::map<Imath::V2i, cv::Mat, Comparator> m_sequence;
 	Metadata m_meta;
+
+	Imath::V2i m_min, m_max;
+
+	mutable std::mutex m_mutex;
+
+	friend std::ostream& operator<<(std::ostream& out, const Sequence& f);
 };
 
 std::ostream& operator<<(std::ostream& out, const Sequence& f);

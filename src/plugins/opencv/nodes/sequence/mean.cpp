@@ -14,7 +14,7 @@ dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 struct Reduce : public boost::noncopyable {
 	explicit Reduce(const possumwood::opencv::Sequence& seq) {
 		for(auto& f : seq)
-			mats.push_back(f);  // "shallow" copy
+			mats.push_back(f.second);  // "shallow" copy
 	}
 
 	// splitting constructor - copies the input matrices but there is no need to initialise the accumulator
@@ -58,14 +58,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	cv::Mat out;
 
-	if(in.size() > 1) {
+	if(!in.empty() && !in.hasOneElement()) {
 		// parallelized reduction implementing the accumulation and data conversion on multiple threads
 		Reduce r(in);
-		tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, in.size()), r);
+		tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, r.mats.size()), r);
 
 		// normalize the result of the accumulation, and convert back to the original type
-		r.accum /= (double)in.size();
-		r.accum.convertTo(out, in(0).type());
+		r.accum /= (double)r.mats.size();
+		r.accum.convertTo(out, in.meta().type);
 	}
 
 	else

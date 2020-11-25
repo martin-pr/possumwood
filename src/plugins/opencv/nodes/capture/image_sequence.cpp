@@ -14,11 +14,11 @@ dependency_graph::OutAttr<possumwood::opencv::Sequence> a_seq;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const auto filenames = data.get(a_filenames).filenames();
 
-	possumwood::opencv::Sequence seq(filenames.size());
+	possumwood::opencv::Sequence seq;
 
 	tbb::parallel_for(std::size_t(0), filenames.size(), [&](std::size_t i) {
 		auto img = possumwood::opencv::load(filenames[i].toPath());
-		seq(i) = std::move(img.first);
+		seq(i, 0) = std::move(img.first);
 	});
 
 	data.set(a_seq, seq);

@@ -2,7 +2,7 @@
 #include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/datatypes/filename.h>
 #include <possumwood_sdk/node_implementation.h>
-#include <tbb/parallel_for.h>
+#include <tbb/task_group.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -18,16 +18,22 @@ dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSeq;
 static const std::vector<std::pair<std::string, int>> s_modes{{"CV_8U", CV_8U}, {"CV_16U", CV_16U}, {"CV_32F", CV_32F}};
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	const possumwood::opencv::Sequence& in = data.get(a_inSeq);
+	const possumwood::opencv::Sequence& input = data.get(a_inSeq);
 
-	possumwood::opencv::Sequence out(in.size());
+	possumwood::opencv::Sequence out;
 
-	tbb::parallel_for(std::size_t(0), in.size(), [&](std::size_t id) {
-		cv::Mat m;
-		in(id).convertTo(m, data.get(a_mode).intValue(), data.get(a_a), data.get(a_b));
+	tbb::task_group group;
 
-		out(id) = std::move(m);
-	});
+	for(auto it = input.begin(); it != input.end(); ++it) {
+		group.run([&data, &out, it]() {
+			cv::Mat m;
+			it->second.convertTo(m, data.get(a_mode).intValue(), data.get(a_a), data.get(a_b));
+
+			out[it->first] = std::move(m);
+		});
+	}
+
+	group.wait();
 
 	data.set(a_outSeq, out);
 

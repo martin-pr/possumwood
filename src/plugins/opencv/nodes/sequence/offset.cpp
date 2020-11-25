@@ -5,6 +5,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <tbb/task_group.h>
+
 #include "sequence.h"
 
 namespace {
@@ -25,26 +27,36 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(!seq.empty()) {
 		const float offset = data.get(a_offset);
 
-		float start = 0.0f;
+		Imath::V2f start(0, 0);
 		if(offset < 0.0f)
-			start = -offset * float(seq.size() - 1);
+			start = -offset * Imath::V2f(seq.max() - seq.min());
 
-		for(std::size_t i = 0; i < seq.size(); ++i) {
-			const float current = start + i * offset;
-			cv::Mat f = seq(i).clone();
+		tbb::task_group group;
 
-			if(data.get(a_mode).intValue() == kInt) {
-				f = f(cv::Rect(std::round(current), 0, f.cols - std::ceil(offset * float(seq.size() - 1)), f.rows));
-			}
-			else {
-				const float width = (float)f.cols - std::ceil(offset * float(seq.size() - 1));
+		for(auto it = seq.begin(); it != seq.end(); ++it) {
+			group.run([&start, it, &offset, &seq, &result, &data] {
+				const Imath::V2f current = start + Imath::V2f(it->first * Imath::V2i(offset, offset));
 
-				cv::getRectSubPix(f, cv::Size(int(width), f.rows),
-				                  cv::Point2f(current + width / 2.0f, (float)f.rows / 2.0f), f);
-			}
+				cv::Mat f = it->second.clone();
 
-			result.add(std::move(f));
+				if(data.get(a_mode).intValue() == kInt) {
+					f = f(cv::Rect(std::round(current.x), std::round(current.y),
+					               f.cols - std::ceil(offset * float(seq.max().x - seq.min().x)),
+					               f.rows - std::ceil(offset * float(seq.max().y - seq.max().y))));
+				}
+				else {
+					const float width = (float)f.cols - std::ceil(offset * float(seq.max().x - seq.min().x));
+					const float height = (float)f.rows - std::ceil(offset * float(seq.max().y - seq.min().y));
+
+					cv::getRectSubPix(f, cv::Size(int(width), int(height)),
+					                  cv::Point2f(current.x + width / 2.0f, current.y + height / 2.0f), f);
+				}
+
+				result[it->first] = std::move(f);
+			});
 		}
+
+		group.wait();
 	}
 
 	data.set(a_outSequence, result);

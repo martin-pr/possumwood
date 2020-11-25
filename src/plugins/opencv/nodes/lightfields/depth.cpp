@@ -1,9 +1,12 @@
+#include <tbb/task_group.h>
+
+#include <maths/io/vec2.h>
+
 #include <lightfields/gaussian_integration.h>
 #include <lightfields/nearest_integration.h>
-#include <maths/io/vec2.h>
+
 #include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
-#include <tbb/parallel_for.h>
 
 #include "lightfields.h"
 #include "sequence.h"
@@ -27,26 +30,34 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(data.get(a_start) >= data.get(a_end))
 		throw std::runtime_error("Invalid interval - start needs to be lower than end");
 
-	possumwood::opencv::Sequence out(data.get(a_steps));
-	possumwood::opencv::Sequence corresp(data.get(a_steps));
+	possumwood::opencv::Sequence out;
+	possumwood::opencv::Sequence corresp;
 
-	tbb::parallel_for(0u, data.get(a_steps), [&](unsigned a) {
+	tbb::task_group group;
+
+	for(unsigned a = 0; a < data.get(a_steps); ++a) {
 		const float w = (float)a / (float)(data.get(a_steps) - 1);
 		const float d = data.get(a_start) + (data.get(a_end) - data.get(a_start)) * w;
 
 		if(data.get(a_method).intValue() == 0) {
-			auto tmp = lightfields::nearest::integrate(samples, data.get(a_res), d);
-			corresp(a) = lightfields::nearest::correspondence(samples, tmp, d);
+			group.run([&samples, &corresp, &out, a, &data, d]() {
+				auto tmp = lightfields::nearest::integrate(samples, data.get(a_res), d);
+				corresp(a, 0) = lightfields::nearest::correspondence(samples, tmp, d);
 
-			out(a) = std::move(tmp.average);
+				out(a, 0) = std::move(tmp.average);
+			});
 		}
 		else {
-			auto tmp = lightfields::gaussian::integrate(samples, data.get(a_res), data.get(a_sigma), d);
-			corresp(a) = lightfields::gaussian::correspondence(samples, tmp, data.get(a_sigma), d);
+			group.run([&samples, &corresp, &out, a, &data, d]() {
+				auto tmp = lightfields::gaussian::integrate(samples, data.get(a_res), data.get(a_sigma), d);
+				corresp(a, 0) = lightfields::gaussian::correspondence(samples, tmp, data.get(a_sigma), d);
 
-			out(a) = std::move(tmp.average);
+				out(a, 0) = std::move(tmp.average);
+			});
 		}
-	});
+	}
+
+	group.wait();
 
 	data.set(a_out, out);
 	data.set(a_corresp, corresp);

@@ -31,7 +31,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(value.meta().depth == CV_8U) {
 		std::vector<const unsigned char*> frames;
 		for(auto& f : value)
-			frames.push_back(f.data);
+			frames.push_back(f.second.data);
 
 		if(value.meta().type == CV_8UC1)
 			uniforms.addTextureArray(
@@ -50,7 +50,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			throw std::runtime_error(ss.str());
 		}
 
-		const unsigned count = value.size();
+		const unsigned count = frames.size();
 		uniforms.addUniform<unsigned>(
 		    data.get(a_name) + "_count", 1, possumwood::Uniforms::kPerFrame,
 		    [count](unsigned* value, std::size_t, const possumwood::ViewportState&) { *value = count; });

@@ -26,9 +26,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& sequence = data.get(a_in);
 	const possumwood::opencv::Sequence& contrast = data.get(a_contrast);
 
-	if(sequence.size() < 2)
+	if(sequence.empty() || sequence.hasOneElement())
 		throw std::runtime_error("At least two images required in the input sequence.");
-	if(!contrast.empty() && contrast.size() != sequence.size())
+	if(!contrast.empty() && !possumwood::opencv::Sequence::hasMatchingKeys(contrast, sequence))
 		throw std::runtime_error("Contrast sequence (if any) needs to be the same size as input sequence.");
 
 	const int width = sequence.meta().cols;
@@ -40,17 +40,21 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(contrast.meta().type != CV_8UC1 && contrast.meta().type != CV_8UC3)
 		throw std::runtime_error("Only CV_8UC1 or CV_8UC3 images accepted as contrast input.");
 
-	lightfields::Graph graph(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), sequence.size());
+	std::size_t count = 0;
+	for(auto it = sequence.begin(); it != sequence.end(); ++it)
+		++count;
+
+	lightfields::Graph graph(lightfields::V2i(width, height), std::max(0.0f, data.get(a_constness)), count);
 
 	// setting vertical data
 	{
-		std::vector<int> values(sequence.size(), 0);
+		std::vector<int> values(count, 0);
 
 		for(int row = 0; row < height; ++row)
 			for(int col = 0; col < width; ++col) {
 				std::size_t ctr = 0;
 				for(auto& m : sequence) {
-					values[ctr] = 255 - m.at<unsigned char>(row, col);
+					values[ctr] = 255 - m.second.at<unsigned char>(row, col);
 					++ctr;
 				}
 
@@ -60,8 +64,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	// setting horizontal data
 	if(!contrast.empty()) {
-		for(std::size_t a = 0; a < contrast.size(); ++a)
-			graph.setLayer(contrast(a), a, data.get(a_contPower));
+		std::size_t a = 0;
+		for(auto& l : contrast) {
+			graph.setLayer(l.second, a, data.get(a_contPower));
+			++a;
+		}
 	}
 
 	if(data.get(a_mode).value() == "Edmonds-Karp")
@@ -72,8 +79,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	data.set(a_out, possumwood::opencv::Frame(graph.minCut()));
 
 	possumwood::opencv::Sequence debug;
-	for(auto m : graph.debug())
-		debug.add(std::move(m));
+	{
+		std::size_t ctr = 0;
+		for(auto m : graph.debug())
+			debug(ctr++, 0) = std::move(m);
+	}
 
 	data.set(a_debug, debug);
 

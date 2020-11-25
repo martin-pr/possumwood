@@ -58,10 +58,11 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(int c = 0; c < index.cols; ++c) {
 			const unsigned char i = index.at<unsigned char>(r, c);
 
-			if(i >= seq.size())
+			auto it = seq.find(Imath::V2i(i, 0));
+			if(it == seq.end())
 				throw std::runtime_error("Index out of range of the input sequence.");
 
-			copyPixel(r, c, seq(i), out);
+			copyPixel(r, c, it->second, out);
 		}
 	});
 
