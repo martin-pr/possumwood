@@ -210,8 +210,6 @@ dependency_graph::State solve(const cv::Mat& input, const cv::Mat& mask, std::ve
 		else if(chol.info() != Eigen::Success)
 			state.addWarning("Decomposition failed - unknown error at stage " + std::string(stage));
 	}
-	else
-		state.addError("Solve failed - not enough non-masked data in input matrix");
 
 	return state;
 }
