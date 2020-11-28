@@ -1,5 +1,7 @@
 #include "laplacian_inpainting.h"
 
+#include <mutex>
+
 #define EIGEN_STACK_ALLOCATION_LIMIT 0
 #include <Eigen/Sparse>
 
