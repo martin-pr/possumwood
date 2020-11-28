@@ -1,6 +1,9 @@
 #include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
 
+#include <chrono>
+#include <thread>
+
 #include <tbb/parallel_for.h>
 #include <tbb/task_group.h>
 
@@ -11,6 +14,8 @@
 #include "tools.h"
 
 namespace {
+
+using namespace std::chrono_literals;
 
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
@@ -35,8 +40,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	const float offset = data.get(a_offset);
 
-	cv::Mat mat = cv::Mat::zeros(height, width, CV_32FC3);
-	cv::Mat norm = cv::Mat::zeros(height, width, CV_16UC3);
+	std::vector<std::atomic<float>> mat(height * width * 3);
+	std::vector<std::atomic<int16_t>> norm(height * width * 3);
 
 	const bool circular_filter = data.get(a_circularFilter);
 	const float circular_threshold = powf(mosaic_size * data.get(a_circularThreshold) / 2, 2);
@@ -45,24 +50,29 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	for(auto it = input.begin(); it != input.end(); ++it) {
 		if(!circular_filter || (Imath::V2f(it->first) - mosaic_center).length2() <= circular_threshold) {
-			group.run([it, &mat, &norm, &offset, &mosaic_center]() {
+			group.run([it, &mat, &norm, &offset, &mosaic_center, &width, &height]() {
 				const Imath::V2f offs = (Imath::V2f(it->first.x, it->first.y) - mosaic_center) * (float)offset;
 				for(int y = 0; y < it->second.rows; ++y)
 					for(int x = 0; x < it->second.cols; ++x) {
-						const Imath::V2f posf((float)x / (float)it->second.cols * (float)mat.cols + offs.x,
-						                      (float)y / (float)it->second.rows * (float)mat.rows + offs.y);
+						const Imath::V2f posf((float)x / (float)it->second.cols * (float)width + offs.x,
+						                      (float)y / (float)it->second.rows * (float)height - offs.y);
 
 						const Imath::V2i pos(round(posf.x), round(posf.y));
 
-						if(pos.x >= 0 && pos.x < mat.cols && pos.y >= 0 && pos.y < mat.rows) {
-							float* color = mat.ptr<float>(pos.y, pos.x);
-							int16_t* n = norm.ptr<int16_t>(pos.y, pos.x);
+						if(pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height) {
+							std::atomic<float>* color = mat.data() + (pos.y * width + pos.x) * 3;
+							std::atomic<int16_t>* n = norm.data() + (pos.y * width + pos.x) * 3;
 
 							const float* value = it->second.ptr<float>(y, x);
 
 							for(int a = 0; a < 3; ++a) {
-								color[a] += value[a];
-								n[a] += 1;
+								float exp_color = color[a];
+								while(!color[a].compare_exchange_weak(exp_color, exp_color + value[a]))
+									std::this_thread::sleep_for(100us);
+
+								int16_t exp_norm = n[a];
+								while(!n[a].compare_exchange_weak(exp_norm, exp_norm + 1))
+									std::this_thread::sleep_for(100us);
 							}
 						}
 					}
@@ -72,15 +82,21 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	group.wait();
 
-	tbb::parallel_for(0, mat.rows, [&](int y) {
-		for(int x = 0; x < mat.cols; ++x)
-			for(int a = 0; a < 3; ++a)
-				if(norm.ptr<int16_t>(y, x)[a] > 0)
-					mat.ptr<float>(y, x)[a] /= (float)norm.ptr<int16_t>(y, x)[a];
+	cv::Mat result = cv::Mat::zeros(height, width, CV_32FC3);
+	cv::Mat resultNorm = cv::Mat::zeros(height, width, CV_16UC3);
+
+	tbb::parallel_for(0, height, [&](int y) {
+		for(int x = 0; x < width; ++x)
+			for(int a = 0; a < 3; ++a) {
+				const int16_t n = norm[(y * width + x) * 3 + a];
+				if(n > 0)
+					result.ptr<float>(y, x)[a] = mat[(y * width + x) * 3 + a] / (float)n;
+				resultNorm.ptr<int16_t>(y, x)[a] = n;
+			}
 	});
 
-	data.set(a_out, possumwood::opencv::Frame(mat));
-	data.set(a_mask, possumwood::opencv::Frame(norm));
+	data.set(a_out, possumwood::opencv::Frame(result));
+	data.set(a_mask, possumwood::opencv::Frame(resultNorm));
 
 	return dependency_graph::State();
 }
@@ -109,6 +125,6 @@ void init(possumwood::Metadata& meta) {
 	meta.setCompute(compute);
 }
 
-possumwood::NodeImplementation s_impl("opencv/lightfields/mosaic_superres", init);
+possumwood::NodeImplementation s_impl("opencv/sequence/mosaic_superres", init);
 
 }  // namespace

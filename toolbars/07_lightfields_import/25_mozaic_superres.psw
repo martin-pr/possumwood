@@ -19,6 +19,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "concat_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "threshold_0",
             "in_port": "in_frame",
             "out_node": "convert_0",
@@ -55,6 +61,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "concat_0",
+            "in_port": "in_frame_1",
+            "out_node": "convert_6",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "convert_3",
             "in_port": "in_frame",
             "out_node": "demosaic_0",
@@ -88,6 +100,12 @@
             "in_node": "samples_refocus_0",
             "in_port": "uv_offset",
             "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "interval_0",
+            "in_port": "interval",
+            "out_node": "input_1",
             "out_port": "data"
         },
         {
@@ -179,24 +197,6 @@
             "in_port": "mask",
             "out_node": "threshold_0",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "concat_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_0",
-            "in_port": "in_frame_1",
-            "out_node": "convert_6",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "interval_0",
-            "in_port": "interval",
-            "out_node": "input_1",
-            "out_port": "data"
         }
     ],
     "description": "### Mosaic-based lightfields superresolution\n\nReconstructed mosaic data can be used to reconstruct a high-resolution image using a simple multiplexing algorithm.\n\nThis demo shows the result of this algorithm on an inpainted mosaic from previous demos.",
@@ -279,7 +279,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 0.400000005960464,
+                "a": 0.379999995231628,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -500,7 +500,7 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/tea.lfr"
+                "filename": "$EXAMPLES/lytro/road.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -542,11 +542,11 @@
                 "filter/circular": true,
                 "filter/threshold": 1.0,
                 "size": {
-                    "x": 300,
-                    "y": 300
+                    "x": 900,
+                    "y": 900
                 }
             },
-            "type": "opencv/lightfields/mosaic_superres"
+            "type": "opencv/sequence/mosaic_superres"
         },
         "network_0": {
             "blind_data": {
@@ -922,9 +922,9 @@
             "max": 2.0,
             "min": -2.0,
             "type": "linear",
-            "value": 0.584000110626221
+            "value": -1.06400001049042
         },
-        "refocus": 0.0
+        "refocus": 5.0
     },
     "scene_config": {
         "end_time": 5.0,
@@ -933,5 +933,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAPFAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAh8AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABbAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB5wAAA1YAAACxAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAOVAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAh8AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABbAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB5wAAA1YAAACxAQAAAwAABEoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
