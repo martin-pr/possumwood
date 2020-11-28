@@ -18,6 +18,8 @@ Sequence::MatProxy& Sequence::MatProxy::operator=(cv::Mat&& m) {
 	*m_mat = m;
 	m = cv::Mat();
 
+	std::lock_guard<std::mutex> guard(m_seq->m_mutex);
+
 	m_seq->updateMeta(m_index, *m_mat);
 
 	return *this;
