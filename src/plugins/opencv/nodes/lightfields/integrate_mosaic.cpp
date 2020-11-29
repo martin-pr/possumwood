@@ -16,6 +16,7 @@ namespace {
 dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
 dependency_graph::InAttr<unsigned> a_elements;
+dependency_graph::InAttr<float> a_threshold;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_out, a_norm;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -72,6 +73,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		    }
 	    });
 
+	std::vector<std::size_t> counters(mats.size(), 0);
 	tbb::parallel_for(0u, elements * elements, [&](unsigned index) {
 		cv::Mat& mat = mats[index];
 		cv::Mat& norm = norms[index];
@@ -79,15 +81,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		for(int y = 0; y < mat.rows; ++y) {
 			for(int x = 0; x < mat.cols; ++x)
 				for(int a = 0; a < 3; ++a)
-					if(norm.ptr<uint16_t>(y, x)[a] > 0.0f)
+					if(norm.ptr<uint16_t>(y, x)[a] > 0.0f) {
 						mat.ptr<float>(y, x)[a] /= (float)norm.ptr<uint16_t>(y, x)[a];
+						++counters[index];
+					}
 		}
 	});
 
 	possumwood::opencv::Sequence matSeq, normSeq;
 	for(std::size_t i = 0; i < mats.size(); ++i) {
-		matSeq(i % elements - elements / 2, i / elements - elements / 2) = std::move(mats[i]);
-		normSeq(i % elements - elements / 2, i / elements - elements / 2) = std::move(norms[i]);
+		if((float)counters[i] / (float)(mats[i].rows * mats[i].cols) > data.get(a_threshold)) {
+			matSeq(i % elements - elements / 2, i / elements - elements / 2) = std::move(mats[i]);
+			normSeq(i % elements - elements / 2, i / elements - elements / 2) = std::move(norms[i]);
+		}
 	}
 
 	data.set(a_out, matSeq);
@@ -100,16 +106,19 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_size, "size", Imath::Vec2<unsigned>(300u, 300u));
 	meta.addAttribute(a_elements, "elements", 5u);
+	meta.addAttribute(a_threshold, "inclusion_ratio", 0.2f);
 	meta.addAttribute(a_out, "sequence");
 	meta.addAttribute(a_norm, "sample_count");
 
 	meta.addInfluence(a_samples, a_out);
 	meta.addInfluence(a_size, a_out);
 	meta.addInfluence(a_elements, a_out);
+	meta.addInfluence(a_threshold, a_out);
 
 	meta.addInfluence(a_samples, a_norm);
 	meta.addInfluence(a_size, a_out);
 	meta.addInfluence(a_elements, a_norm);
+	meta.addInfluence(a_threshold, a_norm);
 
 	meta.setCompute(compute);
 }

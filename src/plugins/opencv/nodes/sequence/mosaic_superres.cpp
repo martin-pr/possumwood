@@ -20,8 +20,6 @@ using namespace std::chrono_literals;
 dependency_graph::InAttr<possumwood::opencv::Sequence> a_in;
 dependency_graph::InAttr<Imath::Vec2<unsigned>> a_size;
 dependency_graph::InAttr<float> a_offset;
-dependency_graph::InAttr<bool> a_circularFilter;
-dependency_graph::InAttr<float> a_circularThreshold;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_mask;
 
 void putPixel(std::vector<std::atomic<float>>& colors,
@@ -75,32 +73,24 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const int width = data.get(a_size)[0];
 	const int height = data.get(a_size)[1];
 
-	float mosaic_size = std::max(std::max(std::abs(input.max().x), std::abs(input.min().x)),
-	                             std::max(std::abs(input.max().y), std::abs(input.min().y)));
-
 	const float offset = data.get(a_offset);
 
 	std::vector<std::atomic<float>> mat(height * width * 3);
 	std::vector<std::atomic<float>> norm(height * width * 3);
 
-	const bool circular_filter = data.get(a_circularFilter);
-	const float circular_threshold = powf(mosaic_size * data.get(a_circularThreshold), 2);
-
 	tbb::task_group group;
 
 	for(auto it = input.begin(); it != input.end(); ++it) {
-		if(!circular_filter || (float)(it->first).length2() <= circular_threshold + 0.01f) {
-			group.run([it, &mat, &norm, &offset, &width, &height]() {
-				const Imath::V2f offs = Imath::V2f(it->first.x, it->first.y) * (float)offset;
-				for(int y = 0; y < it->second.rows; ++y)
-					for(int x = 0; x < it->second.cols; ++x) {
-						const Imath::V2f posf((float)x / (float)it->second.cols * (float)width + offs.x,
-						                      (float)y / (float)it->second.rows * (float)height + offs.y);
+		group.run([it, &mat, &norm, &offset, &width, &height]() {
+			const Imath::V2f offs = Imath::V2f(it->first.x, it->first.y) * (float)offset;
+			for(int y = 0; y < it->second.rows; ++y)
+				for(int x = 0; x < it->second.cols; ++x) {
+					const Imath::V2f posf((float)x / (float)it->second.cols * (float)width + offs.x,
+					                      (float)y / (float)it->second.rows * (float)height + offs.y);
 
-						putPixel(mat, norm, posf, width, height, it->second.ptr<float>(y, x));
-					}
-			});
-		}
+					putPixel(mat, norm, posf, width, height, it->second.ptr<float>(y, x));
+				}
+		});
 	}
 
 	group.wait();
@@ -130,20 +120,14 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_offset, "offset", 3.0f);
 	meta.addAttribute(a_out, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_mask, "mask", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_circularFilter, "filter/circular", true);
-	meta.addAttribute(a_circularThreshold, "filter/threshold", 1.0f);
 
 	meta.addInfluence(a_in, a_out);
 	meta.addInfluence(a_size, a_out);
 	meta.addInfluence(a_offset, a_out);
-	meta.addInfluence(a_circularFilter, a_out);
-	meta.addInfluence(a_circularThreshold, a_out);
 
 	meta.addInfluence(a_in, a_mask);
 	meta.addInfluence(a_size, a_mask);
 	meta.addInfluence(a_offset, a_mask);
-	meta.addInfluence(a_circularFilter, a_mask);
-	meta.addInfluence(a_circularThreshold, a_mask);
 
 	meta.setCompute(compute);
 }
