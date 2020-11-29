@@ -85,6 +85,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "convert_7",
+            "in_port": "in_frame",
+            "out_node": "get_frame_0",
+            "out_port": "frame"
+        },
+        {
             "in_node": "get_frame_0",
             "in_port": "sequence",
             "out_node": "inpaint_0",
@@ -242,8 +248,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 884.815063476562,
-                    "y": 1237.82922363281
+                    "x": 857.35498046875,
+                    "y": 1431.66528320312
                 }
             },
             "name": "concat",
@@ -274,12 +280,12 @@
                 "type": "possumwood::NodeData",
                 "value": {
                     "x": 1006.74212646484,
-                    "y": 505.98779296875
+                    "y": 508.040740966797
                 }
             },
             "name": "convert",
             "ports": {
-                "a": 0.379999995231628,
+                "a": 1.5,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -365,6 +371,22 @@
             },
             "type": "opencv/convert"
         },
+        "convert_7": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 1287.02478027344,
+                    "y": 974.535217285156
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 255.0,
+                "b": 0.0,
+                "mode": "CV_8U"
+            },
+            "type": "opencv/convert"
+        },
         "demosaic_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -411,14 +433,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 889.945556640625,
-                    "y": 0.536492645740509
+                    "x": 1221.08203125,
+                    "y": 152.374694824219
                 }
             },
             "name": "get_frame",
             "ports": {
                 "index": {
-                    "x": 0,
+                    "x": -4,
                     "y": 0
                 }
             },
@@ -542,8 +564,8 @@
                 "filter/circular": true,
                 "filter/threshold": 1.0,
                 "size": {
-                    "x": 300,
-                    "y": 300
+                    "x": 900,
+                    "y": 900
                 }
             },
             "type": "opencv/sequence/mosaic_superres"
@@ -552,8 +574,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 944.260070800781,
-                    "y": 1440.34265136719
+                    "x": 916.799987792969,
+                    "y": 1634.1787109375
                 }
             },
             "connections": [
@@ -919,12 +941,12 @@
     "ports": {
         "offset": {
             "in_progress_updates": true,
-            "max": 2.0,
-            "min": -2.0,
+            "max": 3.0,
+            "min": -3.0,
             "type": "linear",
-            "value": -2.0
+            "value": -1.28999996185303
         },
-        "refocus": 40.0
+        "refocus": 0.0
     },
     "scene_config": {
         "end_time": 5.0,
@@ -933,5 +955,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAPHAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAh0AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABbAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB5wAAA1YAAACxAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAALoAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAh0AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABbAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB5wAAA1YAAACxAQAAAwAABPkAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

@@ -89,12 +89,12 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	tbb::task_group group;
 
 	for(auto it = input.begin(); it != input.end(); ++it) {
-		if(!circular_filter || (float)(it->first).length2() <= circular_threshold) {
+		if(!circular_filter || (float)(it->first).length2() <= circular_threshold + 0.01f) {
 			group.run([it, &mat, &norm, &offset, &width, &height]() {
 				const Imath::V2f offs = Imath::V2f(it->first.x, it->first.y) * (float)offset;
 				for(int y = 0; y < it->second.rows; ++y)
 					for(int x = 0; x < it->second.cols; ++x) {
-						const Imath::V2f posf((float)x / (float)it->second.cols * (float)width - offs.x,
+						const Imath::V2f posf((float)x / (float)it->second.cols * (float)width + offs.x,
 						                      (float)y / (float)it->second.rows * (float)height + offs.y);
 
 						putPixel(mat, norm, posf, width, height, it->second.ptr<float>(y, x));

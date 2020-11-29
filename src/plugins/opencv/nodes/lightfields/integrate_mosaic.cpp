@@ -86,8 +86,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	possumwood::opencv::Sequence matSeq, normSeq;
 	for(std::size_t i = 0; i < mats.size(); ++i) {
-		matSeq(i / elements - elements / 2, i % elements - elements / 2) = std::move(mats[i]);
-		normSeq(i / elements - elements / 2, i % elements - elements / 2) = std::move(norms[i]);
+		matSeq(i % elements - elements / 2, i / elements - elements / 2) = std::move(mats[i]);
+		normSeq(i % elements - elements / 2, i / elements - elements / 2) = std::move(norms[i]);
 	}
 
 	data.set(a_out, matSeq);
