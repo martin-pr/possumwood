@@ -24,6 +24,30 @@ dependency_graph::InAttr<bool> a_circularFilter;
 dependency_graph::InAttr<float> a_circularThreshold;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_mask;
 
+void putPixel(std::vector<std::atomic<float>>& colors,
+              std::vector<std::atomic<int16_t>>& norms,
+              const Imath::V2f& posf,
+              int width,
+              int height,
+              const float* data) {
+	const Imath::V2i pos(round(posf.x), round(posf.y));
+
+	if(pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height) {
+		std::atomic<float>* color = colors.data() + (pos.y * width + pos.x) * 3;
+		std::atomic<int16_t>* n = norms.data() + (pos.y * width + pos.x) * 3;
+
+		for(int a = 0; a < 3; ++a) {
+			float exp_color = color[a];
+			while(!color[a].compare_exchange_weak(exp_color, exp_color + data[a]))
+				std::this_thread::sleep_for(100us);
+
+			int16_t exp_norm = n[a];
+			while(!n[a].compare_exchange_weak(exp_norm, exp_norm + 1))
+				std::this_thread::sleep_for(100us);
+		}
+	}
+}
+
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& input = data.get(a_in);
 	if(input.meta().type != CV_32FC3)
@@ -55,24 +79,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 						const Imath::V2f posf((float)x / (float)it->second.cols * (float)width - offs.x,
 						                      (float)y / (float)it->second.rows * (float)height + offs.y);
 
-						const Imath::V2i pos(round(posf.x), round(posf.y));
-
-						if(pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height) {
-							std::atomic<float>* color = mat.data() + (pos.y * width + pos.x) * 3;
-							std::atomic<int16_t>* n = norm.data() + (pos.y * width + pos.x) * 3;
-
-							const float* value = it->second.ptr<float>(y, x);
-
-							for(int a = 0; a < 3; ++a) {
-								float exp_color = color[a];
-								while(!color[a].compare_exchange_weak(exp_color, exp_color + value[a]))
-									std::this_thread::sleep_for(100us);
-
-								int16_t exp_norm = n[a];
-								while(!n[a].compare_exchange_weak(exp_norm, exp_norm + 1))
-									std::this_thread::sleep_for(100us);
-							}
-						}
+						putPixel(mat, norm, posf, width, height, it->second.ptr<float>(y, x));
 					}
 			});
 		}
