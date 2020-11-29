@@ -25,27 +25,45 @@ dependency_graph::InAttr<float> a_circularThreshold;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out, a_mask;
 
 void putPixel(std::vector<std::atomic<float>>& colors,
-              std::vector<std::atomic<int16_t>>& norms,
+              std::vector<std::atomic<float>>& norms,
+              const Imath::V2i& pos,
+              int width,
+              int height,
+              const float* data,
+              float weight) {
+	if(pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height) {
+		std::atomic<float>* color = colors.data() + (pos.y * width + pos.x) * 3;
+		std::atomic<float>* n = norms.data() + (pos.y * width + pos.x) * 3;
+
+		for(int a = 0; a < 3; ++a) {
+			float exp_color = color[a];
+			while(!color[a].compare_exchange_weak(exp_color, exp_color + data[a] * weight))
+				std::this_thread::sleep_for(100us);
+
+			float exp_norm = n[a];
+			while(!n[a].compare_exchange_weak(exp_norm, exp_norm + weight))
+				std::this_thread::sleep_for(100us);
+		}
+	}
+}
+
+void putPixel(std::vector<std::atomic<float>>& colors,
+              std::vector<std::atomic<float>>& norms,
               const Imath::V2f& posf,
               int width,
               int height,
               const float* data) {
-	const Imath::V2i pos(round(posf.x), round(posf.y));
+	// putPixel(colors, norms, Imath::V2i(round(posf.x), round(posf.y)), width, height, data, 1.0f);
 
-	if(pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height) {
-		std::atomic<float>* color = colors.data() + (pos.y * width + pos.x) * 3;
-		std::atomic<int16_t>* n = norms.data() + (pos.y * width + pos.x) * 3;
+	const Imath::V2i pos(floor(posf.x), floor(posf.y));
 
-		for(int a = 0; a < 3; ++a) {
-			float exp_color = color[a];
-			while(!color[a].compare_exchange_weak(exp_color, exp_color + data[a]))
-				std::this_thread::sleep_for(100us);
+	const float wx = posf.x - floor(posf.x);
+	const float wy = posf.y - floor(posf.y);
 
-			int16_t exp_norm = n[a];
-			while(!n[a].compare_exchange_weak(exp_norm, exp_norm + 1))
-				std::this_thread::sleep_for(100us);
-		}
-	}
+	putPixel(colors, norms, Imath::V2i(pos.x, pos.y), width, height, data, (1.0f - wx) * (1.0f - wy));
+	putPixel(colors, norms, Imath::V2i(pos.x + 1, pos.y), width, height, data, (wx) * (1.0f - wy));
+	putPixel(colors, norms, Imath::V2i(pos.x, pos.y + 1), width, height, data, (1.0f - wx) * wy);
+	putPixel(colors, norms, Imath::V2i(pos.x + 1, pos.y + 1), width, height, data, wx * wy);
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {
@@ -63,7 +81,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const float offset = data.get(a_offset);
 
 	std::vector<std::atomic<float>> mat(height * width * 3);
-	std::vector<std::atomic<int16_t>> norm(height * width * 3);
+	std::vector<std::atomic<float>> norm(height * width * 3);
 
 	const bool circular_filter = data.get(a_circularFilter);
 	const float circular_threshold = powf(mosaic_size * data.get(a_circularThreshold), 2);
@@ -88,15 +106,15 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	group.wait();
 
 	cv::Mat result = cv::Mat::zeros(height, width, CV_32FC3);
-	cv::Mat resultNorm = cv::Mat::zeros(height, width, CV_16UC3);
+	cv::Mat resultNorm = cv::Mat::zeros(height, width, CV_32FC3);
 
 	tbb::parallel_for(0, height, [&](int y) {
 		for(int x = 0; x < width; ++x)
 			for(int a = 0; a < 3; ++a) {
-				const int16_t n = norm[(y * width + x) * 3 + a];
-				if(n > 0)
-					result.ptr<float>(y, x)[a] = mat[(y * width + x) * 3 + a] / (float)n;
-				resultNorm.ptr<int16_t>(y, x)[a] = n;
+				const float n = norm[(y * width + x) * 3 + a];
+				if(n > 0.0f)
+					result.ptr<float>(y, x)[a] = mat[(y * width + x) * 3 + a] / n;
+				resultNorm.ptr<float>(y, x)[a] = n;
 			}
 	});
 

@@ -411,8 +411,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 894.051452636719,
-                    "y": -1.51646518707275
+                    "x": 889.945556640625,
+                    "y": 0.536492645740509
                 }
             },
             "name": "get_frame",
@@ -471,10 +471,10 @@
             },
             "name": "integrate_mosaic",
             "ports": {
-                "elements": 15,
+                "elements": 9,
                 "size": {
-                    "x": 150,
-                    "y": 150
+                    "x": 300,
+                    "y": 300
                 }
             },
             "type": "opencv/lightfields/integrate_mosaic"
@@ -542,8 +542,8 @@
                 "filter/circular": true,
                 "filter/threshold": 1.0,
                 "size": {
-                    "x": 150,
-                    "y": 150
+                    "x": 300,
+                    "y": 300
                 }
             },
             "type": "opencv/sequence/mosaic_superres"
@@ -922,9 +922,9 @@
             "max": 2.0,
             "min": -2.0,
             "type": "linear",
-            "value": 0.0759999752044678
+            "value": -2.0
         },
-        "refocus": 5.0
+        "refocus": 40.0
     },
     "scene_config": {
         "end_time": 5.0,
