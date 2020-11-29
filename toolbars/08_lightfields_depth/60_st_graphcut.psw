@@ -230,6 +230,7 @@
         }
     ],
     "description": "### ST Graph Cut\n\nA simple ST Graph Cut demo, implementing a 2-label version of the Graph Cut classification algorithm. Specifically, it implements a single-threaded version of the [Edmonds-Karp](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm) algorithm.\n\n(to be improved in later pull requests)",
+    "name": "network",
     "nodes": {
         "add_frame_0": {
             "blind_data": {
@@ -523,7 +524,10 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 0
+                "index": {
+                    "x": 0,
+                    "y": 0
+                }
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -537,7 +541,10 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 1
+                "index": {
+                    "x": 1,
+                    "y": 0
+                }
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -551,7 +558,10 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 2
+                "index": {
+                    "x": 2,
+                    "y": 0
+                }
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -565,7 +575,10 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 3
+                "index": {
+                    "x": 3,
+                    "y": 0
+                }
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -711,6 +724,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "float_0": {
@@ -940,6 +958,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAB38AAAQTAAAAcwAAABwAAAd7AAAEDwAAAAACAAAAB4AAAAAAAAAAGAAAB38AAAQT",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJWAAADbPwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAADbAAAAJgBAAADAAAAAQAAAagAAANs/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAB7wAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACZQAAAXwAAACqAQAAAwAAA4AAAANsAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJWAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADRgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADwQAAAXwAAACxAQAAAwAABgAAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

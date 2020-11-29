@@ -1,6 +1,6 @@
 #include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
-#include <tbb/parallel_for.h>
+#include <tbb/task_group.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -13,12 +13,23 @@ dependency_graph::InAttr<float> a_power;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSequence;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	possumwood::opencv::Sequence result = data.get(a_inSequence).clone();
+	const possumwood::opencv::Sequence& input = data.get(a_inSequence);
+	possumwood::opencv::Sequence result;
 
-	tbb::parallel_for(std::size_t(0), result.size(),
-	                  [&](std::size_t i) { cv::pow(*result[i], data.get(a_power), *result[i]); });
+	tbb::task_group group;
 
-	data.set(a_outSequence, possumwood::opencv::Sequence(result));
+	for(auto it = input.begin(); it != input.end(); ++it) {
+		group.run([&data, it, &result]() {
+			cv::Mat m;
+			cv::pow(it->second, data.get(a_power), m);
+
+			result[it->first] = std::move(m);
+		});
+	}
+
+	group.wait();
+
+	data.set(a_outSequence, result);
 
 	return dependency_graph::State();
 }

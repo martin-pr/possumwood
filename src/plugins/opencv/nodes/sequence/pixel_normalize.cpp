@@ -20,17 +20,19 @@ enum Mode {
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& in = data.get(a_in);
 
-	if(!in.isValid())
-		throw std::runtime_error("Input sequence does not have consistent size or type.");
-
-	possumwood::opencv::Sequence out = in.clone();
+	possumwood::opencv::Sequence out;
+	std::size_t count = 0;
+	for(auto& f : in) {
+		out[f.first] = f.second.clone();
+		++count;
+	}
 
 	if(!in.empty()) {
-		if(in.type() != CV_32FC1)
+		if(in.meta().type != CV_32FC1)
 			throw std::runtime_error("Only 1-channel float images supported for the moment.");
 
-		const int cols = in.cols();
-		const int rows = in.rows();
+		const int cols = in.meta().cols;
+		const int rows = in.meta().rows;
 
 		Mode mode = kMinMax;
 		if(data.get(a_mode).value() == "Maximum")
@@ -42,51 +44,56 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		tbb::parallel_for(0, rows, [&](int r) {
 			for(int c = 0; c < cols; ++c) {
-				auto it = out.begin();
+				float max, min, sum;
 
-				float max = (*it)->at<float>(r, c);
-				float min = max;
-				float sum = max;
-				++it;
+				{
+					auto it = in.begin();
 
-				while(it != out.end()) {
-					const float& tmp = (*it)->at<float>(r, c);
-
-					max = std::max(max, tmp);
-					min = std::min(min, tmp);
-					sum += tmp;
-
+					max = it->second.at<float>(r, c);
+					min = max;
+					sum = max;
 					++it;
+
+					while(it != in.end()) {
+						const float& tmp = it->second.at<float>(r, c);
+
+						max = std::max(max, tmp);
+						min = std::min(min, tmp);
+						sum += tmp;
+
+						++it;
+					}
 				}
 
-				if(mode == kMinMax)
-					for(it = out.begin(); it != out.end(); ++it) {
-						float& val = (*it)->at<float>(r, c);
+				if(mode == kMinMax) {
+					for(auto it = out.begin(); it != out.end(); ++it) {
+						float& val = it->second.at<float>(r, c);
 						if(max != min)
 							val = (val - min) / (max - min);
 						else
 							val = 0.0f;
 					}
+				}
 				else if(mode == kMax)
-					for(it = out.begin(); it != out.end(); ++it) {
-						float& val = (*it)->at<float>(r, c);
+					for(auto it = out.begin(); it != out.end(); ++it) {
+						float& val = it->second.at<float>(r, c);
 						if(max != 0.0f)
 							val /= max;
 						else
 							val = 0;
 					}
 				else if(mode == kSum)
-					for(it = out.begin(); it != out.end(); ++it) {
-						float& val = (*it)->at<float>(r, c);
+					for(auto it = out.begin(); it != out.end(); ++it) {
+						float& val = it->second.at<float>(r, c);
 						if(sum != 0.0f)
 							val /= sum;
 						else
 							val = 0.0f;
 					}
 				else if(mode == kMinSum) {
-					sum -= min * (float)out.size();
-					for(it = out.begin(); it != out.end(); ++it) {
-						float& val = (*it)->at<float>(r, c);
+					sum -= min * (float)count;
+					for(auto it = out.begin(); it != out.end(); ++it) {
+						float& val = it->second.at<float>(r, c);
 						if(sum != 0.0f)
 							val = (val - min) / sum;
 						else

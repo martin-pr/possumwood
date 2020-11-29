@@ -14,10 +14,10 @@ namespace {
 
 class Curve {
   public:
-	Curve(const possumwood::opencv::Sequence& s, const cv::Vec2i& pos) : m_seq(&s), m_pos(pos) {
-		assert(s.size() > 0);
-		assert(pos[0] < s[0]->cols);
-		assert(pos[1] < s[0]->rows);
+	Curve(const std::vector<cv::Mat>& s, const cv::Vec2i& pos) : m_seq(&s), m_pos(pos) {
+		assert(!s.empty());
+		assert(pos[0] < s[0].cols);
+		assert(pos[1] < s[0].rows);
 	}
 
 	bool empty() const {
@@ -147,7 +147,7 @@ class Curve {
 
   private:
 	float get(std::size_t index) const {
-		return (*m_seq)[index]->at<float>(m_pos[1], m_pos[0]);
+		return (*m_seq)[index].at<float>(m_pos[1], m_pos[0]);
 	}
 
 	bool isPeak(std::size_t index) const {
@@ -159,7 +159,7 @@ class Curve {
 		return result;
 	}
 
-	const possumwood::opencv::Sequence* m_seq;
+	const std::vector<cv::Mat>* m_seq;
 	cv::Vec2i m_pos;
 };
 
@@ -311,19 +311,14 @@ dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& sequence = data.get(a_in);
 
-	if(sequence.size() < 2)
+	if(sequence.empty() || sequence.hasOneElement())
 		throw std::runtime_error("At least two images required in the input sequence.");
 
-	const int width = (**sequence.begin()).cols;
-	const int height = (**sequence.begin()).rows;
+	const int width = sequence.meta().cols;
+	const int height = sequence.meta().rows;
 
-	for(auto& f : sequence)
-		if((*f).rows != height || (*f).cols != width)
-			throw std::runtime_error("Consistent width and height is required in the input sequence.");
-
-	for(auto& f : sequence)
-		if((*f).type() != CV_32FC1)
-			throw std::runtime_error("Only CV_32FC1 images accepted on input.");
+	if(sequence.meta().type != CV_32FC1)
+		throw std::runtime_error("Only CV_32FC1 images accepted on input.");
 
 	float (*fn)(const Curve&, float) = nullptr;
 	for(auto& m : s_measures)
@@ -331,12 +326,17 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			fn = m.fn;
 	assert(fn != nullptr);
 
+	// using shared_ptr-like behaviour of cv::Mats
+	std::vector<cv::Mat> mats;
+	for(auto& s : sequence)
+		mats.push_back(s.second);
+
 	cv::Mat result = cv::Mat::zeros(height, width, CV_32FC1);
 	tbb::parallel_for(tbb::blocked_range2d<int>(0, height, 0, width), [&](const tbb::blocked_range2d<int>& range) {
 		const float sigma = data.get(a_sigma);
 		for(int row = range.rows().begin(); row != range.rows().end(); ++row)
 			for(int col = range.cols().begin(); col != range.cols().end(); ++col)
-				result.at<float>(row, col) = fn(Curve(sequence, cv::Vec2i(col, row)), sigma);
+				result.at<float>(row, col) = fn(Curve(mats, cv::Vec2i(col, row)), sigma);
 	});
 
 	data.set(a_out, possumwood::opencv::Frame(result));

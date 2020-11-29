@@ -15,7 +15,9 @@ dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSequence;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::opencv::Sequence seq = data.get(a_inSequence);
 
-	seq.add(*data.get(a_frame));
+	// this is rather arbitrary, but maintained for backwards compatibility. Should be extended to explicit index.
+	int index = seq.max().x + 1;
+	seq(index, 0) = data.get(a_frame)->clone();
 
 	data.set(a_outSequence, seq);
 

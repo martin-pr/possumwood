@@ -1,100 +1,108 @@
 #pragma once
 
+#include <memory>
+#include <mutex>
+#include <vector>
+
 #include <boost/filesystem/path.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
-#include <memory>
-#include <vector>
+
+#include <OpenEXR/ImathVec.h>
 
 #include "frame.h"
 
 namespace possumwood {
 namespace opencv {
 
+/// Sequence is just a container for cv::Mats (similar to Frame), where all items have consistent
+/// metadata (size, type, color depth). First added image determines the metadata for the sequence;
+/// all images need to be consistent (or Sequence throws a runtime_error when adding an image).
+/// Please be aware that cv::Mat implementation is essentially a NON CONST SHARED POINTER, and it is
+/// fundamentally flawed - COPY DOESN'T DUPLICATE THE INTERNAL DATA! There is no good way to solve
+/// this without modifications to OpenCV. The sequence class therefore BEHACES THE SAME WAY!
+/// Before any modifications, please CLONE IT FIRST! (I hate this so much, but can't fix it.)
+/// Ref: https://stackoverflow.com/questions/13713625/is-cvmat-class-flawed-by-design
 class Sequence final {
   public:
-	class Item {
-	  public:
-		class Meta {
-		  public:
-			bool empty() const;
+	struct Metadata {
+		Metadata();
+		Metadata(int type, int rows, int cols);
 
-			float operator[](const std::string& key) const;
-			float& operator[](const std::string& key);
+		int type = 0;      // OpenCV type, e.g., CV_8UC1 or CV_32FC3
+		int rows = 0;      // number of rows of all images in this sequence
+		int cols = 0;      // number of columns of all images in this sequence
+		int depth = 0;     // OpenCV depth, e.g., CV_8U or CV_32F
+		int channels = 0;  // number of channels (e.g., 1 for mono, 3 for rgb)
 
-			typedef std::map<std::string, float>::const_iterator const_iterator;
-			const_iterator begin() const;
-			const_iterator end() const;
-
-			static Meta merge(const Meta& m1, const Meta& m2);
-
-		  private:
-			std::map<std::string, float> m_meta;
-		};
-
-		Item();
-		Item(const cv::Mat& m, const Meta& meta = Meta());
-
-		cv::Mat& operator*() {
-			return m_mat;
-		}
-		const cv::Mat& operator*() const {
-			return m_mat;
-		}
-
-		cv::Mat* operator->() {
-			return &m_mat;
-		}
-		const cv::Mat* operator->() const {
-			return &m_mat;
-		}
-
-		Meta& meta();
-		const Meta& meta() const;
-
-		bool operator==(const Item& i) const;
-		bool operator!=(const Item& i) const;
-
-	  private:
-		cv::Mat m_mat;
-		Meta m_meta;
+		bool operator==(const Metadata& meta) const;
+		bool operator!=(const Metadata& meta) const;
 	};
 
-	Sequence(std::size_t size = 0);
+	// behaves essentially like an iterator
+	class MatProxy {
+	  public:
+		MatProxy& operator=(cv::Mat&& m);
+		operator const cv::Mat &() const;
 
-	Sequence clone() const;
+	  private:
+		MatProxy(const Imath::V2i& index, cv::Mat* m, Sequence* s);
 
-	Item& add(const cv::Mat& frame, const Item::Meta& meta = Item::Meta());
+		Imath::V2i m_index;
+		cv::Mat* m_mat;
+		Sequence* m_seq;
 
-	bool isValid() const;
+		friend class Sequence;
+	};
+
+	Sequence(const Metadata& meta = Metadata());
+
+	Sequence(const Sequence& s);
+	Sequence& operator=(const Sequence& s);
 
 	bool empty() const;
-	std::size_t size() const;
+	bool hasOneElement() const;
 
-	int type() const;
-	int rows() const;
-	int cols() const;
-	int depth() const;
-	int channels() const;
+	const Imath::V2i& min() const;
+	const Imath::V2i& max() const;
+	const Metadata& meta() const;
 
-	Item& operator[](std::size_t index);
-	const Item& operator[](std::size_t index) const;
+	// a bad attempt at semi const correctness - doesn't work, because cv::Mat doesn't.
+	// Please don't copy a Mat + change, it would break everything.
+	const cv::Mat& operator[](const Imath::V2i& index) const;
+	MatProxy operator[](const Imath::V2i& index);
 
-	typedef std::vector<Item>::iterator iterator;
+	const cv::Mat& operator()(int x, int y) const;
+	MatProxy operator()(int x, int y);
+
+	typedef std::map<Imath::V2i, cv::Mat>::iterator iterator;
 	iterator begin();
 	iterator end();
 
-	typedef std::vector<Item>::const_iterator const_iterator;
+	typedef std::map<Imath::V2i, cv::Mat>::const_iterator const_iterator;
+	const_iterator find(const Imath::V2i& index) const;
 	const_iterator begin() const;
 	const_iterator end() const;
-
-	const Item& front() const;
-	const Item& back() const;
 
 	bool operator==(const Sequence& f) const;
 	bool operator!=(const Sequence& f) const;
 
+	static bool hasMatchingKeys(const Sequence& s1, const Sequence& s2);
+
   private:
-	std::vector<Item> m_sequence;
+	void updateMeta(const Imath::V2i& index, const cv::Mat& m);
+
+	struct Comparator {
+		bool operator()(const Imath::V2i& v1, const Imath::V2i& v2) const;
+	};
+
+	std::map<Imath::V2i, cv::Mat, Comparator> m_sequence;
+	Metadata m_meta;
+
+	Imath::V2i m_min, m_max;
+
+	mutable std::mutex m_mutex;
+
+	friend std::ostream& operator<<(std::ostream& out, const Sequence& f);
 };
 
 std::ostream& operator<<(std::ostream& out, const Sequence& f);

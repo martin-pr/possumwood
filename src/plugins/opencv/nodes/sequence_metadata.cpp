@@ -14,8 +14,12 @@ dependency_graph::OutAttr<Imath::Vec2<unsigned>> a_size;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& input = data.get(a_seq);
 
-	data.set(a_count, (unsigned)input.size());
-	data.set(a_size, Imath::Vec2<unsigned>(input.cols(), input.rows()));
+	unsigned count = 0;
+	for(auto it = input.begin(); it != input.end(); ++it)
+		++count;
+
+	data.set(a_count, count);
+	data.set(a_size, Imath::Vec2<unsigned>(input.meta().cols, input.meta().rows));
 
 	return dependency_graph::State();
 }

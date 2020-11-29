@@ -80,7 +80,7 @@
             "ports": {
                 "a": 255.0,
                 "b": 0.0,
-                "mode": "CV_8U"
+                "mode": "CV_16U"
             },
             "type": "opencv/convert"
         },
@@ -118,8 +118,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 154.831008911133,
-                    "y": 124.84593963623
+                    "x": 148.36979675293,
+                    "y": 120.000038146973
                 }
             },
             "name": "divide",
@@ -147,13 +147,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 120.530220031738,
-                    "y": -35.1564865112305
+                    "x": 91.4548110961914,
+                    "y": -40.0023880004883
                 }
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/coin.lfr"
+                "filename": "$EXAMPLES/lytro/tea.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -475,7 +475,7 @@
                     "max": 8.0,
                     "min": 1.0,
                     "type": "linear",
-                    "value": 5.09499979019165
+                    "value": 3.81400012969971
                 }
             },
             "type": "network"
@@ -487,6 +487,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAAAAAAAXlAAAClQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAa0AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADkgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAEDQAAATAAAACxAQAAAwAABgAAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAa0AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB6QAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACZAAAAtkAAACxAQAAAwAABgAAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

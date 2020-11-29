@@ -19,10 +19,22 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "gamma_0",
-            "in_port": "in_frame",
+            "in_node": "integrate_mosaic_0",
+            "in_port": "size",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "uv_offset",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "mosaic_0",
+            "in_port": "seq",
             "out_node": "integrate_mosaic_0",
-            "out_port": "out_frame"
+            "out_port": "sequence"
         },
         {
             "in_node": "divide_0",
@@ -55,16 +67,10 @@
             "out_port": "out_samples"
         },
         {
-            "in_node": "integrate_mosaic_0",
-            "in_port": "size",
-            "out_node": "input_0",
-            "out_port": "data"
-        },
-        {
-            "in_node": "samples_refocus_0",
-            "in_port": "uv_offset",
-            "out_node": "input_1",
-            "out_port": "data"
+            "in_node": "gamma_0",
+            "in_port": "in_frame",
+            "out_node": "mosaic_0",
+            "out_port": "frame"
         }
     ],
     "description": "### Normalized sub-aperture images from Lytro lightfields data\n\nLightfield data contain enough information to allow for reconstruction of multiple narrow-base sub-apreture images, each with slightly different \"point of view\".\n\nThis demo shows how to use demultiplexing to reconstruct multiple views from normalized raw Lytro data. Normalization is performed by simple division of the image data by white diffuse image values.\n\n<sub>Sabater, Neus, et al. [\"Accurate disparity estimation for plenoptic images.\"](https://pdfs.semanticscholar.org/e79c/4371f7636d3c94c839d00653390e791e0e0b.pdf) European Conference on Computer Vision. Springer, Cham, 2014.</sub>",
@@ -74,8 +80,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 189.953521728516,
-                    "y": 906.574584960938
+                    "x": 427.402679443359,
+                    "y": 924.342895507812
                 }
             },
             "name": "convert",
@@ -104,8 +110,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 174.184722900391,
-                    "y": 718.693725585938
+                    "x": 411.633880615234,
+                    "y": 736.462036132812
                 }
             },
             "name": "gamma",
@@ -179,12 +185,23 @@
             },
             "type": "opencv/capture/lytro_lightfield"
         },
+        "mosaic_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 450.989044189453,
+                    "y": 562.151977539062
+                }
+            },
+            "name": "mosaic",
+            "type": "opencv/sequence/mosaic"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 210.571533203125,
-                    "y": 1128.56909179688
+                    "x": 448.020690917969,
+                    "y": 1146.33740234375
                 }
             },
             "connections": [

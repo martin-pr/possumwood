@@ -438,7 +438,10 @@
             },
             "name": "get_frame",
             "ports": {
-                "index": 10
+                "index": {
+                    "x": 0,
+                    "y": 0
+                }
             },
             "type": "opencv/sequence/get_frame"
         },
@@ -926,7 +929,7 @@
             "ports": {
                 "confidence/power": 0.100000001490116,
                 "contrast/constness": 2.0,
-                "contrast/power": 1.0,
+                "contrast/power": 2.0,
                 "mode": "Edmonds-Karp"
             },
             "type": "opencv/lightfields/st_graphcut"
@@ -939,5 +942,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ+AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADFAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADjwAAAa4AAACxAQAAAwAABdgAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ+AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADFQAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADkAAAAa0AAACxAQAAAwAABdgAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

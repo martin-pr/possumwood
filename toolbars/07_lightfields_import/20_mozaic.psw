@@ -13,10 +13,22 @@
             "out_port": "out_frame"
         },
         {
-            "in_node": "gamma_0",
-            "in_port": "in_frame",
+            "in_node": "integrate_mosaic_0",
+            "in_port": "size",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "samples_refocus_0",
+            "in_port": "uv_offset",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "mosaic_0",
+            "in_port": "seq",
             "out_node": "integrate_mosaic_0",
-            "out_port": "out_frame"
+            "out_port": "sequence"
         },
         {
             "in_node": "samples_from_metadata_0",
@@ -31,6 +43,12 @@
             "out_port": "metadata"
         },
         {
+            "in_node": "gamma_0",
+            "in_port": "in_frame",
+            "out_node": "mosaic_0",
+            "out_port": "frame"
+        },
+        {
             "in_node": "samples_refocus_0",
             "in_port": "in_samples",
             "out_node": "samples_from_metadata_0",
@@ -41,18 +59,6 @@
             "in_port": "samples",
             "out_node": "samples_refocus_0",
             "out_port": "out_samples"
-        },
-        {
-            "in_node": "integrate_mosaic_0",
-            "in_port": "size",
-            "out_node": "input_0",
-            "out_port": "data"
-        },
-        {
-            "in_node": "samples_refocus_0",
-            "in_port": "uv_offset",
-            "out_node": "input_1",
-            "out_port": "data"
         }
     ],
     "description": "### Sub-aperture images from Lytro lightfields data\n\nLightfield data contain enough information to allow for reconstruction of multiple narrow-base sub-apreture images, each with slightly different \"point of view\".\n\nThis demo shows how to use demultiplexing to reconstruct multiple views from raw Lytro data.\n\n<sub>Sabater, Neus, et al. [\"Accurate disparity estimation for plenoptic images.\"](https://pdfs.semanticscholar.org/e79c/4371f7636d3c94c839d00653390e791e0e0b.pdf) European Conference on Computer Vision. Springer, Cham, 2014.</sub>",
@@ -62,8 +68,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 146.893753051758,
-                    "y": 758.056274414062
+                    "x": 346.579986572266,
+                    "y": 762.439575195312
                 }
             },
             "name": "convert",
@@ -78,8 +84,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 131.124938964844,
-                    "y": 570.175415039062
+                    "x": 330.811187744141,
+                    "y": 574.558715820312
                 }
             },
             "name": "gamma",
@@ -129,8 +135,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 175.181091308594,
-                    "y": -329.563385009766
+                    "x": 163.378845214844,
+                    "y": -340.578826904297
                 }
             },
             "name": "lytro_lightfield",
@@ -139,12 +145,23 @@
             },
             "type": "opencv/capture/lytro_lightfield"
         },
+        "mosaic_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 366.962127685547,
+                    "y": 418.288970947266
+                }
+            },
+            "name": "mosaic",
+            "type": "opencv/sequence/mosaic"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 151.52751159668,
-                    "y": 976.736877441406
+                    "x": 351.213745117188,
+                    "y": 981.120239257812
                 }
             },
             "connections": [
@@ -492,5 +509,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAK7AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB2AAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACUwAAAuoAAACxAQAAAwAABZsAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAPAAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB2AAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACUwAAAuoAAACxAQAAAwAABJYAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

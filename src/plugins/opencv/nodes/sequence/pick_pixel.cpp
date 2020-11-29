@@ -44,26 +44,25 @@ void copyPixel(int row, int col, const cv::Mat& src, cv::Mat& dest) {
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& seq = data.get(a_seq);
-	if(!seq.isValid())
-		throw std::runtime_error("Input sequence does not have consistent size or type.");
 
 	const cv::Mat& index = *data.get(a_index);
 
-	if(index.rows != seq.rows() || index.cols != seq.cols())
+	if(index.rows != seq.meta().rows || index.cols != seq.meta().cols)
 		throw std::runtime_error("Index and sequence need to have the same size!");
 	if(index.type() != CV_8UC1)
 		throw std::runtime_error("Only CV_8UC1 type supported as index for the moment.");
 
-	cv::Mat out = cv::Mat::zeros(index.rows, index.cols, seq.type());
+	cv::Mat out = cv::Mat::zeros(index.rows, index.cols, seq.meta().type);
 
 	tbb::parallel_for(0, index.rows, [&](int r) {
 		for(int c = 0; c < index.cols; ++c) {
 			const unsigned char i = index.at<unsigned char>(r, c);
 
-			if(i >= seq.size())
+			auto it = seq.find(Imath::V2i(i, 0));
+			if(it == seq.end())
 				throw std::runtime_error("Index out of range of the input sequence.");
 
-			copyPixel(r, c, *seq[i], out);
+			copyPixel(r, c, it->second, out);
 		}
 	});
 

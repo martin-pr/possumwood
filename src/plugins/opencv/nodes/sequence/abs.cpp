@@ -1,6 +1,6 @@
 #include <actions/traits.h>
 #include <possumwood_sdk/node_implementation.h>
-#include <tbb/parallel_for.h>
+#include <tbb/task_group.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -12,9 +12,15 @@ dependency_graph::InAttr<possumwood::opencv::Sequence> a_inSequence;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSequence;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	possumwood::opencv::Sequence result = data.get(a_inSequence);
+	const possumwood::opencv::Sequence& sequence = data.get(a_inSequence);
+	possumwood::opencv::Sequence result;
 
-	tbb::parallel_for(std::size_t(0), result.size(), [&](std::size_t i) { *result[i] = cv::abs(*result[i]); });
+	tbb::task_group group;
+
+	for(auto it = sequence.begin(); it != sequence.end(); ++it)
+		group.run([it, &result]() { result[it->first] = cv::abs(it->second); });
+
+	group.wait();
 
 	data.set(a_outSequence, possumwood::opencv::Sequence(result));
 

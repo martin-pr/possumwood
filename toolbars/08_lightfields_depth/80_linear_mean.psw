@@ -74,6 +74,7 @@
         }
     ],
     "description": "### 2D+1D Lightfields Integration (OpenCV)\n\nA simple lighfield slicing example (depth-based 2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail.\n\nThe camera captures a sequence of evenly-spaced 2D images, which are then offset and merged using a simple average. This corresponds to a 3D lightfield (i.e., a standard 4D lightfield with one sample on the second spatial axis).\n\nIgnoring the lends deformation, each offset value makes the average images converge on a particular focal plane, which allows to synthesize a sharp image for particular depths while leaving other depth values blurred-out on the free spatial axis (horizonatlly, in this case).",
+    "name": "network",
     "nodes": {
         "concat_0": {
             "blind_data": {
@@ -292,6 +293,11 @@
                         }
                     },
                     "name": "draw",
+                    "ports": {
+                        "setup": {
+                            "culling": "ccw"
+                        }
+                    },
                     "type": "render/draw"
                 },
                 "fragment_shader_0": {
@@ -777,7 +783,10 @@
                     },
                     "name": "get_frame",
                     "ports": {
-                        "index": 0
+                        "index": {
+                            "x": 0,
+                            "y": 0
+                        }
                     },
                     "type": "opencv/sequence/get_frame"
                 },
@@ -791,7 +800,10 @@
                     },
                     "name": "get_frame",
                     "ports": {
-                        "index": 10
+                        "index": {
+                            "x": 9,
+                            "y": 0
+                        }
                     },
                     "type": "opencv/sequence/get_frame"
                 },
@@ -805,7 +817,10 @@
                     },
                     "name": "get_frame",
                     "ports": {
-                        "index": 20
+                        "index": {
+                            "x": 19,
+                            "y": 0
+                        }
                     },
                     "type": "opencv/sequence/get_frame"
                 },
@@ -819,7 +834,10 @@
                     },
                     "name": "get_frame",
                     "ports": {
-                        "index": 30
+                        "index": {
+                            "x": 19,
+                            "y": 0
+                        }
                     },
                     "type": "opencv/sequence/get_frame"
                 },
@@ -833,7 +851,10 @@
                     },
                     "name": "get_frame",
                     "ports": {
-                        "index": 39
+                        "index": {
+                            "x": 39,
+                            "y": 0
+                        }
                     },
                     "type": "opencv/sequence/get_frame"
                 },
@@ -913,6 +934,7 @@
         "fps": 24.0,
         "start_time": 0.0
     },
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAQAABqoAAAOfAAAAAAAAAAAAAAQ6AAACfwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJgBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABdQAAAHYBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB6wAAAYMAAACqAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "type": "network",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAagAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAADPwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAADugAAAYMAAACxAQAAAwAABcUAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

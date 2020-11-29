@@ -14,17 +14,15 @@ dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSequence1, a_outSeq
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const possumwood::opencv::Sequence& in = data.get(a_inSequence);
 
-	std::vector<possumwood::opencv::Sequence> result(4, possumwood::opencv::Sequence(in.size()));
+	std::vector<possumwood::opencv::Sequence> result(4);
 
-	for(std::size_t a = 0; a < in.size(); ++a) {
-		if(in[a]->rows > 0 && in[a]->cols > 0) {
+	for(auto& f : in) {
+		if(f.second.rows > 0 && f.second.cols > 0) {
 			std::vector<cv::Mat> mats(4);
-			cv::split(*in[a], mats);
+			cv::split(f.second, mats);
 
-			for(std::size_t i = 0; i < 4; ++i) {
-				*result[i][a] = mats[i];
-				result[i][a].meta() = in[a].meta();
-			}
+			for(std::size_t i = 0; i < 4; ++i)
+				result[i][f.first] = std::move(mats[i]);
 		}
 	}
 
