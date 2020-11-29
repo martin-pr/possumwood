@@ -26,8 +26,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	for(auto it = sequence.begin(); it != sequence.end(); ++it) {
 		group.run([it, &result, &sequence]() {
-			const int x = it->first.x + sequence.min().x;
-			const int y = it->first.y + sequence.min().y;
+			const int x = it->first.x - sequence.min().x;
+			const int y = it->first.y - sequence.min().y;
 
 			cv::Rect rect(x * sequence.meta().cols, y * sequence.meta().rows, sequence.meta().cols,
 			              sequence.meta().rows);

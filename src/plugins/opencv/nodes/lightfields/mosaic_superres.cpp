@@ -33,10 +33,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const int width = data.get(a_size)[0];
 	const int height = data.get(a_size)[1];
 
-	float mosaic_size = std::max(input.max().x - input.min().x + 1, input.max().y - input.min().y + 1);
-
-	auto mci = (input.max() - input.min());
-	const Imath::V2f mosaic_center = Imath::V2f(mci.x, mci.y) / 2.0f;
+	float mosaic_size = std::max(std::max(std::abs(input.max().x), std::abs(input.min().x)),
+	                             std::max(std::abs(input.max().y), std::abs(input.min().y)));
 
 	const float offset = data.get(a_offset);
 
@@ -44,18 +42,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::vector<std::atomic<int16_t>> norm(height * width * 3);
 
 	const bool circular_filter = data.get(a_circularFilter);
-	const float circular_threshold = powf(mosaic_size * data.get(a_circularThreshold) / 2, 2);
+	const float circular_threshold = powf(mosaic_size * data.get(a_circularThreshold), 2);
 
 	tbb::task_group group;
 
 	for(auto it = input.begin(); it != input.end(); ++it) {
-		if(!circular_filter || (Imath::V2f(it->first) - mosaic_center).length2() <= circular_threshold) {
-			group.run([it, &mat, &norm, &offset, &mosaic_center, &width, &height]() {
-				const Imath::V2f offs = (Imath::V2f(it->first.x, it->first.y) - mosaic_center) * (float)offset;
+		if(!circular_filter || (float)(it->first).length2() <= circular_threshold) {
+			group.run([it, &mat, &norm, &offset, &width, &height]() {
+				const Imath::V2f offs = Imath::V2f(it->first.x, it->first.y) * (float)offset;
 				for(int y = 0; y < it->second.rows; ++y)
 					for(int x = 0; x < it->second.cols; ++x) {
-						const Imath::V2f posf((float)x / (float)it->second.cols * (float)width + offs.x,
-						                      (float)y / (float)it->second.rows * (float)height - offs.y);
+						const Imath::V2f posf((float)x / (float)it->second.cols * (float)width - offs.x,
+						                      (float)y / (float)it->second.rows * (float)height + offs.y);
 
 						const Imath::V2i pos(round(posf.x), round(posf.y));
 

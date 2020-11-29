@@ -19,11 +19,16 @@ dependency_graph::InAttr<unsigned> a_elements;
 dependency_graph::OutAttr<possumwood::opencv::Sequence> a_out, a_norm;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
+	dependency_graph::State state;
+
 	const lightfields::Samples samples = data.get(a_samples);
 
 	const unsigned width = data.get(a_size)[0];
 	const unsigned height = data.get(a_size)[1];
 	const unsigned elements = data.get(a_elements);
+
+	if(elements % 2 == 0)
+		state.addWarning("An odd number of elements is preferable to represent the central [0,0] element.");
 
 	// TODO: for parallelization to work reliably, we need to use integer atomics here, unfortunately
 
@@ -81,14 +86,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 	possumwood::opencv::Sequence matSeq, normSeq;
 	for(std::size_t i = 0; i < mats.size(); ++i) {
-		matSeq(i / elements, i % elements) = std::move(mats[i]);
-		normSeq(i / elements, i % elements) = std::move(norms[i]);
+		matSeq(i / elements - elements / 2, i % elements - elements / 2) = std::move(mats[i]);
+		normSeq(i / elements - elements / 2, i % elements - elements / 2) = std::move(norms[i]);
 	}
 
 	data.set(a_out, matSeq);
 	data.set(a_norm, normSeq);
 
-	return dependency_graph::State();
+	return state;
 }  // namespace
 
 void init(possumwood::Metadata& meta) {

@@ -418,8 +418,8 @@
             "name": "get_frame",
             "ports": {
                 "index": {
-                    "x": 2,
-                    "y": 7
+                    "x": 0,
+                    "y": 0
                 }
             },
             "type": "opencv/sequence/get_frame"
@@ -473,8 +473,8 @@
             "ports": {
                 "elements": 15,
                 "size": {
-                    "x": 300,
-                    "y": 300
+                    "x": 150,
+                    "y": 150
                 }
             },
             "type": "opencv/lightfields/integrate_mosaic"
@@ -542,8 +542,8 @@
                 "filter/circular": true,
                 "filter/threshold": 1.0,
                 "size": {
-                    "x": 900,
-                    "y": 900
+                    "x": 150,
+                    "y": 150
                 }
             },
             "type": "opencv/sequence/mosaic_superres"
@@ -922,7 +922,7 @@
             "max": 2.0,
             "min": -2.0,
             "type": "linear",
-            "value": -1.06400001049042
+            "value": 0.0759999752044678
         },
         "refocus": 5.0
     },
@@ -933,5 +933,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAOVAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAh8AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABbAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB5wAAA1YAAACxAQAAAwAABEoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAPHAAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAAh0AAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAABbAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAAB5wAAA1YAAACxAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
