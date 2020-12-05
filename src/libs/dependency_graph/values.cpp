@@ -14,12 +14,13 @@ Values& Values::operator=(Values&& vals) {
 	return *this;
 }
 
-void Values::transfer(std::size_t index, Port& p) {
-	m_node->port(index).setData(p.getData());
-}
 
 const Data& Values::data(std::size_t index) const {
 	return m_node->port(index).getData();
+}
+
+void Values::setData(std::size_t index, const Data& data) {
+	m_node->port(index).setData(data);
 }
 
 }  // namespace dependency_graph

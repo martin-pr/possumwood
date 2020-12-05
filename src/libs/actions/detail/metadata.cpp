@@ -154,7 +154,8 @@ void buildNetwork(dependency_graph::Network& network) {
 				dependency_graph::NodeBase& fromNode = detail::findNode(l.fromNode);
 
 				assignments.push_back([&fromNode, l](dependency_graph::Values& vals) {
-					vals.transfer(l.toPort, fromNode.port(l.fromPort));
+					const dependency_graph::Data& data = fromNode.port(l.fromPort).getData();
+					vals.setData(l.toPort, data);
 				});
 			}
 
