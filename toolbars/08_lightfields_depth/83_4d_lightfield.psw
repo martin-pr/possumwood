@@ -61,6 +61,18 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "override_1",
+            "in_port": "override",
+            "out_node": "divide_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "override_1",
+            "in_port": "input",
+            "out_node": "divide_1",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "network_0",
             "in_port": "input",
             "out_node": "float_0",
@@ -79,6 +91,18 @@
             "out_port": "out_uniforms"
         },
         {
+            "in_node": "float_3",
+            "in_port": "in_uniforms",
+            "out_node": "float_2",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "network_2",
+            "in_port": "input",
+            "out_node": "float_3",
+            "out_port": "out_uniforms"
+        },
+        {
             "in_node": "convert_5",
             "in_port": "in_sequence",
             "out_node": "inpaint_0",
@@ -94,6 +118,24 @@
             "in_node": "interval_1",
             "in_port": "interval",
             "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "interval_2",
+            "in_port": "interval",
+            "out_node": "input_2",
+            "out_port": "data"
+        },
+        {
+            "in_node": "override_1",
+            "in_port": "use_override",
+            "out_node": "input_3",
+            "out_port": "data"
+        },
+        {
+            "in_node": "override_0",
+            "in_port": "use_override",
+            "out_node": "input_3",
             "out_port": "data"
         },
         {
@@ -127,6 +169,12 @@
             "out_port": "out"
         },
         {
+            "in_node": "float_3",
+            "in_port": "value",
+            "out_node": "interval_2",
+            "out_port": "out"
+        },
+        {
             "in_node": "convert_1",
             "in_port": "in_frame",
             "out_node": "lytro_lightfield_0",
@@ -139,10 +187,58 @@
             "out_port": "frame"
         },
         {
+            "in_node": "override_0",
+            "in_port": "override",
+            "out_node": "lytro_lightfield_1",
+            "out_port": "metadata"
+        },
+        {
+            "in_node": "divide_1",
+            "in_port": "in_frame_1",
+            "out_node": "lytro_lightfield_2",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "divide_1",
+            "in_port": "in_frame_2",
+            "out_node": "lytro_lightfield_3",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "override_0",
+            "in_port": "input",
+            "out_node": "lytro_lightfield_3",
+            "out_port": "metadata"
+        },
+        {
+            "in_node": "split_vec2u_0",
+            "in_port": "vec",
+            "out_node": "metadata_0",
+            "out_port": "size"
+        },
+        {
             "in_node": "float_0",
             "in_port": "in_uniforms",
             "out_node": "opencv_texture_sequence_0",
             "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_2",
+            "in_port": "in_uniforms",
+            "out_node": "opencv_texture_sequence_1",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
+            "in_port": "metadata",
+            "out_node": "override_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
+            "out_node": "override_1",
+            "out_port": "output"
         },
         {
             "in_node": "samples_refocus_0",
@@ -157,54 +253,6 @@
             "out_port": "out_samples"
         },
         {
-            "in_node": "opencv_texture_sequence_0",
-            "in_port": "sequence",
-            "out_node": "subset_0",
-            "out_port": "out_seq"
-        },
-        {
-            "in_node": "inpaint_0",
-            "in_port": "mask",
-            "out_node": "threshold_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "float_3",
-            "in_port": "in_uniforms",
-            "out_node": "float_2",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "network_2",
-            "in_port": "input",
-            "out_node": "float_3",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "interval_2",
-            "in_port": "interval",
-            "out_node": "input_2",
-            "out_port": "data"
-        },
-        {
-            "in_node": "float_3",
-            "in_port": "value",
-            "out_node": "interval_2",
-            "out_port": "out"
-        },
-        {
-            "in_node": "float_2",
-            "in_port": "in_uniforms",
-            "out_node": "opencv_texture_sequence_1",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "split_vec2u_0",
-            "in_port": "vec",
-            "out_node": "metadata_0",
-            "out_port": "size"
-        },
-        {
             "in_node": "unsigned_0",
             "in_port": "value",
             "out_node": "split_vec2u_0",
@@ -215,6 +263,24 @@
             "in_port": "value",
             "out_node": "split_vec2u_0",
             "out_port": "y"
+        },
+        {
+            "in_node": "opencv_texture_sequence_0",
+            "in_port": "sequence",
+            "out_node": "subset_0",
+            "out_port": "out_seq"
+        },
+        {
+            "in_node": "opencv_texture_sequence_1",
+            "in_port": "sequence",
+            "out_node": "subset_1",
+            "out_port": "out_seq"
+        },
+        {
+            "in_node": "inpaint_0",
+            "in_port": "mask",
+            "out_node": "threshold_0",
+            "out_port": "out_frame"
         },
         {
             "in_node": "unsigned_1",
@@ -239,36 +305,6 @@
             "in_port": "in_uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "opencv_texture_sequence_1",
-            "in_port": "sequence",
-            "out_node": "subset_1",
-            "out_port": "out_seq"
-        },
-        {
-            "in_node": "samples_from_metadata_0",
-            "in_port": "in_frame",
-            "out_node": "divide_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "divide_1",
-            "in_port": "in_frame_1",
-            "out_node": "lytro_lightfield_2",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "divide_1",
-            "in_port": "in_frame_2",
-            "out_node": "lytro_lightfield_3",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "samples_from_metadata_0",
-            "in_port": "metadata",
-            "out_node": "lytro_lightfield_3",
-            "out_port": "metadata"
         }
     ],
     "description": "### 2D+1D Lightfields Visualisation\n\nA simple lighfield slicing example (2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail,, creating a simple 3D lightfield (2D pixel position + horizontal image index). \n\nUsing OpenGL, this demo visualises the \"base\" integration and the corresponding slice in Y-U (spatial Y and image index) - each row of the integral image is a sum over all rows of the slice image. Changing refocus parameter interactively visualises the corresponding slice.",
@@ -294,8 +330,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1712.44421386719,
-                    "y": 76.2502288818359
+                    "x": -2779.52099609375,
+                    "y": -147.242767333984
                 }
             },
             "name": "convert",
@@ -310,8 +346,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1693.06066894531,
-                    "y": 441.308197021484
+                    "x": -2760.13745117188,
+                    "y": 217.815200805664
                 }
             },
             "name": "convert",
@@ -326,8 +362,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1555.13330078125,
-                    "y": 76.7463226318359
+                    "x": -2622.2099609375,
+                    "y": -146.746673583984
                 }
             },
             "name": "convert",
@@ -342,8 +378,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1535.74975585938,
-                    "y": 441.804229736328
+                    "x": -2602.82641601562,
+                    "y": 218.311233520508
                 }
             },
             "name": "convert",
@@ -374,8 +410,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1707.59838867188,
-                    "y": 292.700408935547
+                    "x": -2774.67504882812,
+                    "y": 69.207405090332
                 }
             },
             "name": "demosaic",
@@ -388,8 +424,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1550.28747558594,
-                    "y": 293.196502685547
+                    "x": -2617.3642578125,
+                    "y": 69.7035064697266
                 }
             },
             "name": "demosaic",
@@ -402,8 +438,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1676.33190917969,
-                    "y": 637.139587402344
+                    "x": -2743.40869140625,
+                    "y": 413.646606445312
                 }
             },
             "name": "divide",
@@ -416,8 +452,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1241.10144042969,
-                    "y": 659.722290039062
+                    "x": -2096.10424804688,
+                    "y": -25.0376052856445
                 }
             },
             "name": "divide",
@@ -530,6 +566,17 @@
             "name": "y_position",
             "type": "input"
         },
+        "input_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -2161.52416992188,
+                    "y": 718.348876953125
+                }
+            },
+            "name": "demosaic",
+            "type": "input"
+        },
         "integrate_mosaic_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -586,8 +633,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1698.20434570312,
-                    "y": -99.2854080200195
+                    "x": -2765.28100585938,
+                    "y": -322.778381347656
                 }
             },
             "name": "lytro_lightfield",
@@ -600,8 +647,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1469.4658203125,
-                    "y": -69.578498840332
+                    "x": -2536.54248046875,
+                    "y": -293.071472167969
                 }
             },
             "name": "lytro_lightfield",
@@ -614,8 +661,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1269.1328125,
-                    "y": 469.388397216797
+                    "x": -2124.1357421875,
+                    "y": -215.371490478516
                 }
             },
             "name": "lytro_lightfield",
@@ -628,8 +675,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -1079.40075683594,
-                    "y": 472.406646728516
+                    "x": -1934.40380859375,
+                    "y": -212.353240966797
                 }
             },
             "name": "lytro_lightfield",
@@ -1159,6 +1206,28 @@
             },
             "type": "render/uniforms/opencv_texture_sequence"
         },
+        "override_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -1711.5634765625,
+                    "y": 364.626831054688
+                }
+            },
+            "name": "override",
+            "type": "override"
+        },
+        "override_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -1845.0048828125,
+                    "y": 546.518493652344
+                }
+            },
+            "name": "override",
+            "type": "override"
+        },
         "samples_from_metadata_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -1301,26 +1370,27 @@
         }
     },
     "ports": {
+        "demosaic": true,
         "refocus": {
             "in_progress_updates": true,
             "max": 5.0,
             "min": -5.0,
             "type": "linear",
-            "value": 0.860000133514404
+            "value": 1.57000017166138
         },
         "x_position": {
             "in_progress_updates": true,
             "max": 1.0,
             "min": 0.0,
             "type": "linear",
-            "value": 0.193000003695488
+            "value": 0.233999997377396
         },
         "y_position": {
             "in_progress_updates": true,
             "max": 1.0,
             "min": 0.0,
             "type": "linear",
-            "value": 0.680000007152557
+            "value": 0.635999977588654
         }
     },
     "scene_config": {

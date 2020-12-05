@@ -40,6 +40,9 @@ class Values : public boost::noncopyable {
 	template <typename T>
 	void set(const OutAttr<void>& attr, const T& value);
 
+	/// copy data between untyped attributes without ever establishing their concrete type
+	/// (useful for switch nodes, for example)
+	void copy(const InAttr<void>& inAttr, const OutAttr<void>& outAttr);
 
 	/// untyped attribute type testing.
 	/// Only useful for untyped attributes - typed attribute have an explicit T

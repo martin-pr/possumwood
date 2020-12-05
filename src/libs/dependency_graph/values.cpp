@@ -14,6 +14,9 @@ Values& Values::operator=(Values&& vals) {
 	return *this;
 }
 
+void Values::copy(const InAttr<void>& inAttr, const OutAttr<void>& outAttr) {
+	m_node->port(outAttr.offset()).setData(m_node->port(inAttr.offset()).getData());
+}
 
 const Data& Values::data(std::size_t index) const {
 	return m_node->port(index).getData();
