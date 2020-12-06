@@ -1,6 +1,24 @@
 {
     "connections": [
         {
+            "in_node": "network_0",
+            "in_port": "input",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "float_1",
+            "in_port": "in_uniforms",
+            "out_node": "float_0",
+            "out_port": "out_uniforms"
+        },
+        {
+            "in_node": "network_1",
+            "in_port": "input",
+            "out_node": "float_1",
+            "out_port": "out_uniforms"
+        },
+        {
             "in_node": "metadata_0",
             "in_port": "sequence",
             "out_node": "image_sequence_0",
@@ -11,6 +29,30 @@
             "in_port": "sequence",
             "out_node": "image_sequence_0",
             "out_port": "sequence"
+        },
+        {
+            "in_node": "interval_0",
+            "in_port": "interval",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "interval_1",
+            "in_port": "interval",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "float_0",
+            "in_port": "value",
+            "out_node": "interval_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "float_1",
+            "in_port": "value",
+            "out_node": "interval_1",
+            "out_port": "out"
         },
         {
             "in_node": "split_vec2u_0",
@@ -53,48 +95,6 @@
             "in_port": "in_uniforms",
             "out_node": "viewport_0",
             "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "input",
-            "out_node": "float_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "float_1",
-            "in_port": "in_uniforms",
-            "out_node": "float_0",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "network_1",
-            "in_port": "input",
-            "out_node": "float_1",
-            "out_port": "out_uniforms"
-        },
-        {
-            "in_node": "interval_0",
-            "in_port": "interval",
-            "out_node": "input_0",
-            "out_port": "data"
-        },
-        {
-            "in_node": "interval_1",
-            "in_port": "interval",
-            "out_node": "input_1",
-            "out_port": "data"
-        },
-        {
-            "in_node": "float_0",
-            "in_port": "value",
-            "out_node": "interval_0",
-            "out_port": "out"
-        },
-        {
-            "in_node": "float_1",
-            "in_port": "value",
-            "out_node": "interval_1",
-            "out_port": "out"
         }
     ],
     "description": "### 2D+1D Lightfields Visualisation\n\nA simple lighfield slicing example (2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail,, creating a simple 3D lightfield (2D pixel position + horizontal image index). \n\nUsing OpenGL, this demo visualises the \"base\" integration and the corresponding slice in Y-U (spatial Y and image index) - each row of the integral image is a sum over all rows of the slice image. Changing refocus parameter interactively visualises the corresponding slice.",
@@ -471,7 +471,7 @@
                     "name": "draw",
                     "ports": {
                         "setup": {
-                            "culling": "ccw"
+                            "culling": "none"
                         }
                     },
                     "type": "render/draw"
@@ -637,7 +637,7 @@
             "max": 1.0,
             "min": 0.0,
             "type": "linear",
-            "value": 0.791999995708466
+            "value": 0.681999981403351
         }
     },
     "scene_config": {

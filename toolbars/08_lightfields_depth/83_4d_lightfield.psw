@@ -929,7 +929,7 @@
                     "name": "draw",
                     "ports": {
                         "setup": {
-                            "culling": "ccw"
+                            "culling": "none"
                         }
                     },
                     "type": "render/draw"
@@ -1089,7 +1089,7 @@
                     "name": "draw",
                     "ports": {
                         "setup": {
-                            "culling": "ccw"
+                            "culling": "none"
                         }
                     },
                     "type": "render/draw"
@@ -1376,21 +1376,21 @@
             "max": 5.0,
             "min": -5.0,
             "type": "linear",
-            "value": 1.57000017166138
+            "value": 0.910000324249268
         },
         "x_position": {
             "in_progress_updates": true,
             "max": 1.0,
             "min": 0.0,
             "type": "linear",
-            "value": 0.233999997377396
+            "value": 0.241999998688698
         },
         "y_position": {
             "in_progress_updates": true,
             "max": 1.0,
             "min": 0.0,
             "type": "linear",
-            "value": 0.635999977588654
+            "value": 0.662000000476837
         }
     },
     "scene_config": {
@@ -1399,6 +1399,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAAAAAAAABQAAAXlAAACqQAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAACf8AAAV3AAACdgAAAZkAAAhbAAAELgAAAAACAAAACgAAAAAAAAAAHAAACf8AAAV3",
     "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJ8AAAEw/wCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB6AAAEwwAAAJ8BAAADAAAAAQAAA2gAAATD/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB6AAAB+gAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACdQAAAsgAAACxAQAAAwAABBoAAATDAAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
