@@ -97,7 +97,7 @@
             "out_port": "out_uniforms"
         }
     ],
-    "description": "### 2D+1D Lightfields Visualisation\n\nA simple lighfield slicing example (2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail,, creating a simple 3D lightfield (2D pixel position + horizontal image index). \n\nUsing OpenGL, this demo visualises the \"base\" integration and the corresponding slice in Y-U (spatial Y and image index) - each row of the integral image is a sum over all rows of the slice image. Changing refocus parameter interactively visualises the corresponding slice.",
+    "description": "### 2D+1D Lightfields Visualisation\n\nA simple lighfield slicing example (2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail, creating a simple 3D lightfield (2D pixel position + horizontal image index). \n\nUsing OpenGL, this demo visualises the \"base\" integration and the corresponding slice in Y-U (spatial Y and image index) - each row of the integral image is a sum over all rows of the slice image. Changing refocus parameter interactively visualises the corresponding slice.",
     "name": "network",
     "nodes": {
         "float_0": {
@@ -637,7 +637,7 @@
             "max": 1.0,
             "min": 0.0,
             "type": "linear",
-            "value": 0.681999981403351
+            "value": 0.541000008583069
         }
     },
     "scene_config": {
