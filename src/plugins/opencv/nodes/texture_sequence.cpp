@@ -52,8 +52,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		const unsigned count = frames.size();
 		uniforms.addUniform<unsigned>(
-		    data.get(a_name) + "_count", 1, possumwood::Uniforms::kPerFrame,
+		    data.get(a_name) + "_count", 1, possumwood::Uniforms::kStatic,
 		    [count](unsigned* value, std::size_t, const possumwood::ViewportState&) { *value = count; });
+
+		std::vector<Imath::V2i> indices;
+		for(auto& f : value)
+			indices.push_back(f.first);
+		uniforms.addUniform<Imath::V2i>(data.get(a_name) + "_indices", count, possumwood::Uniforms::kStatic,
+		                                [indices](Imath::V2i* value, std::size_t, const possumwood::ViewportState&) {
+			                                std::size_t ctr = 0;
+			                                for(auto& v : indices)
+				                                value[ctr++] = v;
+		                                });
 	}
 
 	else
