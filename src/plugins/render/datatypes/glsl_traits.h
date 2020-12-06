@@ -10,10 +10,44 @@
 #include <OpenEXR/ImathMatrix.h>
 #include <OpenEXR/ImathVec.h>
 
+#include <possumwood_sdk/gl.h>
+
 namespace possumwood {
 
 template <typename T>
 struct GLSLTraits {};
+
+template <>
+struct GLSLTraits<int> {
+	constexpr static unsigned width() {
+		return 1;
+	};
+	constexpr static GLenum type() {
+		return GL_INT;
+	};
+	static std::string typeString() {
+		return "int";
+	};
+	static std::string vecTypePrefix() {
+		return "i";
+	};
+	static void applyUniform(GLint attr, std::size_t size, const int* val) {
+		glUniform1iv(attr, size, val);
+	};
+	static void applyUniformVec2(GLint attr, std::size_t size, const int* val) {
+		glUniform2iv(attr, size, val);
+	};
+	static void applyUniformVec3(GLint attr, std::size_t size, const int* val) {
+		glUniform3iv(attr, size, val);
+	};
+	static void applyUniformMat4(GLint attr, std::size_t size, const int* val) {
+		float tmp[16 * size];
+		for(unsigned a = 0; a < 16 * size; ++a)
+			tmp[a] = val[a];
+
+		glUniformMatrix4fv(attr, size, false, tmp);
+	};
+};
 
 template <>
 struct GLSLTraits<unsigned> {
@@ -23,8 +57,11 @@ struct GLSLTraits<unsigned> {
 	constexpr static GLenum type() {
 		return GL_UNSIGNED_INT;
 	};
-	constexpr static const char* typeString() {
+	static std::string typeString() {
 		return "uint";
+	};
+	static std::string vecTypePrefix() {
+		return "u";
 	};
 	static void applyUniform(GLint attr, std::size_t size, const unsigned* val) {
 		glUniform1uiv(attr, size, val);
@@ -53,13 +90,15 @@ struct GLSLTraits<float> {
 	constexpr static GLenum type() {
 		return GL_FLOAT;
 	};
-	constexpr static const char* typeString() {
+	static std::string typeString() {
 		return "float";
+	};
+	static std::string vecTypePrefix() {
+		return "";
 	};
 	static void applyUniform(GLint attr, std::size_t size, const float* val) {
 		glUniform1fv(attr, size, val);
 	};
-
 	static void applyUniformVec2(GLint attr, std::size_t size, const float* val) {
 		glUniform2fv(attr, size, val);
 	};
@@ -79,13 +118,15 @@ struct GLSLTraits<double> {
 	constexpr static GLenum type() {
 		return GL_DOUBLE;
 	};
-	constexpr static const char* typeString() {
-		return "float";
+	static std::string typeString() {
+		return "double";
 	};
 	static void applyUniform(GLint attr, std::size_t size, const double* val) {
 		glUniform1dv(attr, size, val);
 	};
-
+	static std::string vecTypePrefix() {
+		return "d";
+	};
 	static void applyUniformVec2(GLint attr, std::size_t size, const double* val) {
 		glUniform2dv(attr, size, val);
 	};
@@ -96,11 +137,11 @@ struct GLSLTraits<double> {
 		// glUniformMatrix4dv(attr, size, false, val);
 
 		// glUniformMatrix4dv not supported on all platforms - need to use 4fv version instead
-		float tmp[16 * size];
+		double tmp[16 * size];
 		for(unsigned a = 0; a < 16 * size; ++a)
 			tmp[a] = val[a];
 
-		glUniformMatrix4fv(attr, size, false, tmp);
+		glUniformMatrix4dv(attr, size, false, tmp);
 	};
 };
 
@@ -112,10 +153,10 @@ struct GLSLTraits<Imath::Vec2<T>> {
 	constexpr static GLenum type() {
 		return GLSLTraits<T>::type();
 	};
-	constexpr static const char* typeString() {
-		return "vec2";
+	static std::string typeString() {
+		return GLSLTraits<T>::vecTypePrefix() + "vec2";
 	};
-	static void applyUniform(GLint attr, std::size_t size, const Imath::V2f* val) {
+	static void applyUniform(GLint attr, std::size_t size, const Imath::Vec2<T>* val) {
 		GLSLTraits<T>::applyUniformVec2(attr, size, val[0].getValue());
 	};
 };
@@ -128,10 +169,10 @@ struct GLSLTraits<Imath::Vec3<T>> {
 	constexpr static GLenum type() {
 		return GLSLTraits<T>::type();
 	};
-	constexpr static const char* typeString() {
-		return "vec3";
+	static std::string typeString() {
+		return GLSLTraits<T>::vecTypePrefix() + "vec3";
 	};
-	static void applyUniform(GLint attr, std::size_t size, const Imath::V3f* val) {
+	static void applyUniform(GLint attr, std::size_t size, const Imath::Vec3<T>* val) {
 		GLSLTraits<T>::applyUniformVec3(attr, size, val[0].getValue());
 	};
 };
@@ -144,8 +185,8 @@ struct GLSLTraits<Imath::Matrix44<T>> {
 	constexpr static GLenum type() {
 		return GLSLTraits<T>::type();
 	};
-	constexpr static const char* typeString() {
-		return "mat4";
+	static std::string typeString() {
+		return GLSLTraits<T>::vecTypePrefix() + "mat4";
 	};
 	static void applyUniform(GLint attr, std::size_t size, const Imath::Matrix44<T>* val) {
 		GLSLTraits<T>::applyUniformMat4(attr, size, val[0].getValue());
@@ -160,8 +201,8 @@ struct GLSLTraits<std::vector<Imath::Matrix44<T>>> {
 	constexpr static GLenum type() {
 		return GLSLTraits<T>::type();
 	};
-	constexpr static const char* typeString() {
-		return "mat4";
+	static std::string typeString() {
+		return GLSLTraits<T>::vecTypePrefix() + "mat4";
 	};
 	static void applyUniform(GLint attr, std::size_t size, const Imath::Matrix44<T>* val) {
 		GLSLTraits<T>::applyUniformArrayMat4(attr, size, val);
