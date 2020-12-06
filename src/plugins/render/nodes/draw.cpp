@@ -51,17 +51,28 @@ const possumwood::Program& defaultProgram() {
 	return s_program;
 }
 
+struct UniformProperties {
+	std::string name;
+	GLint size;
+
+	bool operator<(const UniformProperties& u) const {
+		if(name != u.name)
+			return name < u.name;
+		return size < u.size;
+	}
+};
+
 // source: https://www.khronos.org/opengl/wiki/Program_Introspection#Interface_query
-std::set<std::string> getUniforms(GLuint prog) {
-	std::set<std::string> result;
+std::set<UniformProperties> getUniforms(GLuint prog) {
+	std::set<UniformProperties> result;
 
 	GLint numUniforms = 0;
 	glGetProgramInterfaceiv(prog, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numUniforms);
-	const GLenum properties[4] = {GL_BLOCK_INDEX, GL_TYPE, GL_NAME_LENGTH, GL_LOCATION};
+	const GLenum properties[5] = {GL_BLOCK_INDEX, GL_TYPE, GL_NAME_LENGTH, GL_LOCATION, GL_ARRAY_SIZE};
 
 	for(int unif = 0; unif < numUniforms; ++unif) {
-		GLint values[4];
-		glGetProgramResourceiv(prog, GL_UNIFORM, unif, 4, properties, 4, NULL, values);
+		GLint values[5];
+		glGetProgramResourceiv(prog, GL_UNIFORM, unif, 5, properties, 5, NULL, values);
 
 		// Skip any uniforms that are in a block.
 		if(values[0] != -1)
@@ -71,7 +82,7 @@ std::set<std::string> getUniforms(GLuint prog) {
 		std::vector<char> tmp(values[2]);
 		glGetProgramResourceName(prog, GL_UNIFORM, unif, tmp.size(), NULL, &tmp[0]);
 
-		result.insert(std::string(&tmp.front()));
+		result.insert(UniformProperties{std::string(&tmp.front()), values[4]});
 	}
 
 	return result;
@@ -155,17 +166,29 @@ struct Drawable : public possumwood::Drawable {
 
 			// get all the uniforms and test them
 			{
-				const std::set<std::string> usedUniforms = getUniforms(program.id());
+				const std::set<UniformProperties> usedUniforms = getUniforms(program.id());
 				const std::set<std::string> inputUniforms = uniforms.names();
 
-				std::set<std::string> undefinedUniforms;
+				std::set<UniformProperties> undefinedUniforms;
 				for(auto& u : usedUniforms)
-					if(inputUniforms.find(u) == inputUniforms.end() && !boost::algorithm::starts_with(u, "gl_"))
+					if(inputUniforms.find(u.name) == inputUniforms.end() &&
+					   !boost::algorithm::starts_with(u.name, "gl_"))
 						undefinedUniforms.insert(u);
 
-				if(!undefinedUniforms.empty())
-					state.addWarning("These uniforms are used in the shader code, but are not defined: " +
-					                 boost::algorithm::join(undefinedUniforms, ", "));
+				if(!undefinedUniforms.empty()) {
+					std::stringstream msg;
+
+					msg << "These uniforms are used in the shader code, but are not defined: " << std::endl;
+					for(auto& u : undefinedUniforms)
+						msg << "  " << u.name << " (size=" << u.size << ")" << std::endl;
+					msg << std::endl;
+
+					msg << "List of defined uniforms: " << std::endl;
+					for(auto& u : inputUniforms)
+						msg << "  " << u << std::endl;
+
+					state.addWarning(msg.str());
+				}
 			}
 
 			GL_CHECK_ERR;
