@@ -37,8 +37,8 @@
             "out_port": "corresp_seq"
         },
         {
-            "in_node": "samples_from_metadata_0",
-            "in_port": "in_frame",
+            "in_node": "override_0",
+            "in_port": "input",
             "out_node": "divide_0",
             "out_port": "out_frame"
         },
@@ -46,24 +46,6 @@
             "in_node": "convert_1",
             "in_port": "in_frame",
             "out_node": "get_frame_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "divide_0",
-            "in_port": "in_frame_2",
-            "out_node": "lytro_lightfield_0",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "samples_from_metadata_0",
-            "in_port": "metadata",
-            "out_node": "lytro_lightfield_0",
-            "out_port": "metadata"
-        },
-        {
-            "in_node": "divide_0",
-            "in_port": "in_frame_1",
-            "out_node": "lytro_lightfield_1",
             "out_port": "frame"
         },
         {
@@ -95,6 +77,102 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_0",
             "out_port": "samples"
+        },
+        {
+            "in_node": "override_0",
+            "in_port": "override",
+            "out_node": "divide_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_3",
+            "in_port": "in_frame",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "divide_0",
+            "in_port": "in_frame_2",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
+            "in_port": "metadata",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "metadata"
+        },
+        {
+            "in_node": "convert_2",
+            "in_port": "in_frame",
+            "out_node": "lytro_lightfield_1",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "divide_0",
+            "in_port": "in_frame_1",
+            "out_node": "lytro_lightfield_1",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "demosaic_0",
+            "in_port": "in_frame",
+            "out_node": "convert_2",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "demosaic_1",
+            "in_port": "in_frame",
+            "out_node": "convert_3",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "divide_1",
+            "in_port": "in_frame_1",
+            "out_node": "convert_4",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "divide_1",
+            "in_port": "in_frame_2",
+            "out_node": "convert_5",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_4",
+            "in_port": "in_frame",
+            "out_node": "demosaic_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_5",
+            "in_port": "in_frame",
+            "out_node": "demosaic_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
+            "out_node": "override_0",
+            "out_port": "output"
+        },
+        {
+            "in_node": "override_0",
+            "in_port": "use_override",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "get_frame_0",
+            "in_port": "index",
+            "out_node": "make_vec2i_0",
+            "out_port": "out"
+        },
+        {
+            "in_node": "make_vec2i_0",
+            "in_port": "x",
+            "out_node": "input_1",
+            "out_port": "data"
         }
     ],
     "description": "### Correspondence depth reconstruction\n\nThis demo shows raw depth reconstruction using the correspondence metric of depth values - i.e., for each pixel, the algorithm picks the depth value where the variance of integrated samples was lowest.\n\nTao, Michael W., et al. [\"Depth from combining defocus and correspondence using light-field cameras.\"](https://www.cv-foundation.org/openaccess/content_iccv_2013/papers/Tao_Depth_from_Combining_2013_ICCV_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2013.",
@@ -161,6 +239,98 @@
             },
             "type": "opencv/convert"
         },
+        "convert_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -953.524169921875,
+                    "y": -1075.1015625
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 10000.0,
+                "b": 0.0,
+                "mode": "CV_16U"
+            },
+            "type": "opencv/convert"
+        },
+        "convert_3": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -750.173034667969,
+                    "y": -1076.37255859375
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 10000.0,
+                "b": 0.0,
+                "mode": "CV_16U"
+            },
+            "type": "opencv/convert"
+        },
+        "convert_4": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -960.156494140625,
+                    "y": -677.164672851562
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 9.99999974737875e-05,
+                "b": 0.0,
+                "mode": "CV_32F"
+            },
+            "type": "opencv/convert"
+        },
+        "convert_5": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -756.805297851562,
+                    "y": -678.435607910156
+                }
+            },
+            "name": "convert",
+            "ports": {
+                "a": 9.99999974737875e-05,
+                "b": 0.0,
+                "mode": "CV_32F"
+            },
+            "type": "opencv/convert"
+        },
+        "demosaic_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -959.319396972656,
+                    "y": -861.637145996094
+                }
+            },
+            "name": "demosaic",
+            "ports": {
+                "mode": "BayerRG2BGR_EA"
+            },
+            "type": "opencv/demosaic"
+        },
+        "demosaic_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -756.07666015625,
+                    "y": -865.743041992188
+                }
+            },
+            "name": "demosaic",
+            "ports": {
+                "mode": "BayerRG2BGR_EA"
+            },
+            "type": "opencv/demosaic"
+        },
         "depth_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -171,15 +341,15 @@
             },
             "name": "depth",
             "ports": {
-                "integration/method": "Gaussian splatting",
+                "integration/method": "Nearest neighbour",
                 "integration/sigma": 9.0,
                 "resolution": {
-                    "x": 300,
-                    "y": 300
+                    "x": 150,
+                    "y": 150
                 },
                 "samples/end": 40.0,
                 "samples/start": -40.0,
-                "samples/steps": 11
+                "samples/steps": 31
             },
             "type": "opencv/lightfields/depth"
         },
@@ -187,8 +357,22 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -175.845626831055,
-                    "y": -156.335662841797
+                    "x": -531.222229003906,
+                    "y": -435.217254638672
+                }
+            },
+            "name": "divide",
+            "ports": {
+                "scale": 1.0
+            },
+            "type": "opencv/maths/divide"
+        },
+        "divide_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -906.434143066406,
+                    "y": -434.095336914062
                 }
             },
             "name": "divide",
@@ -206,20 +390,36 @@
                 }
             },
             "name": "get_frame",
-            "ports": {
-                "index": {
-                    "x": 8,
-                    "y": 0
+            "type": "opencv/sequence/get_frame"
+        },
+        "input_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -588.656005859375,
+                    "y": -56.7670783996582
                 }
             },
-            "type": "opencv/sequence/get_frame"
+            "name": "demosaic",
+            "type": "input"
+        },
+        "input_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 224.652526855469,
+                    "y": 315.044738769531
+                }
+            },
+            "name": "preview_index",
+            "type": "input"
         },
         "lytro_lightfield_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -19.6519203186035,
-                    "y": -330.853668212891
+                    "x": -443.771606445312,
+                    "y": -1409.79309082031
                 }
             },
             "name": "lytro_lightfield",
@@ -232,8 +432,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -215.825759887695,
-                    "y": -335.176605224609
+                    "x": -639.945434570312,
+                    "y": -1415.38696289062
                 }
             },
             "name": "lytro_lightfield",
@@ -241,6 +441,20 @@
                 "filename": "$EXAMPLES/lytro/tea.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
+        },
+        "make_vec2i_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 433.026397705078,
+                    "y": 313.429443359375
+                }
+            },
+            "name": "make_vec2i",
+            "ports": {
+                "y": 0
+            },
+            "type": "maths/make_vec2i"
         },
         "max_index_0": {
             "blind_data": {
@@ -590,6 +804,17 @@
             },
             "type": "opencv/normalize"
         },
+        "override_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": -348.723876953125,
+                    "y": -217.335525512695
+                }
+            },
+            "name": "override",
+            "type": "override"
+        },
         "pixel_normalize_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -618,6 +843,10 @@
             },
             "type": "opencv/lightfields/samples_from_metadata"
         }
+    },
+    "ports": {
+        "demosaic": true,
+        "preview_index": 8
     },
     "scene_config": {
         "end_time": 5.0,

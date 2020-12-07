@@ -97,15 +97,15 @@
             "out_port": "out_uniforms"
         }
     ],
-    "description": "### 2D+1D Lightfields Visualisation\n\nA simple lighfield slicing example (2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail,, creating a simple 3D lightfield (2D pixel position + horizontal image index). \n\nUsing OpenGL, this demo visualises the \"base\" integration and the corresponding slice in Y-U (spatial Y and image index) - each row of the integral image is a sum over all rows of the slice image. Changing refocus parameter interactively visualises the corresponding slice.",
+    "description": "### 2D+1D Lightfields Visualisation\n\nA simple lighfield slicing example (2D image synthesis) from an image sequence captured using a Raspberry Pi camera and a linear rail, creating a simple 3D lightfield (2D pixel position + horizontal image index). \n\nUsing OpenGL, this demo visualises the \"base\" integration and the corresponding slice in Y-U (spatial Y and image index) - each row of the integral image is a sum over all rows of the slice image. Changing refocus parameter interactively visualises the corresponding slice.",
     "name": "network",
     "nodes": {
         "float_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 454.907836914062,
-                    "y": 1039.63342285156
+                    "x": 469.159820556641,
+                    "y": 1060.08129882812
                 }
             },
             "name": "float",
@@ -118,8 +118,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 357.045074462891,
-                    "y": 1229.00415039062
+                    "x": 367.191131591797,
+                    "y": 1251.5048828125
                 }
             },
             "name": "float",
@@ -187,8 +187,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 120.452178955078,
-                    "y": 1068.28234863281
+                    "x": 130.598205566406,
+                    "y": 1090.783203125
                 }
             },
             "name": "refocus",
@@ -198,8 +198,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 4.79620456695557,
-                    "y": 1237.31799316406
+                    "x": 14.9422445297241,
+                    "y": 1259.81884765625
                 }
             },
             "name": "x_position",
@@ -209,8 +209,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 234.489929199219,
-                    "y": 1065.67895507812
+                    "x": 244.635955810547,
+                    "y": 1088.1796875
                 }
             },
             "name": "REFOCUS_VALUE",
@@ -220,8 +220,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 160.775131225586,
-                    "y": 1243.61120605469
+                    "x": 170.921173095703,
+                    "y": 1266.11206054688
                 }
             },
             "name": "X_POSITION",
@@ -242,8 +242,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 518.345581054688,
-                    "y": 1286.54260253906
+                    "x": 528.491577148438,
+                    "y": 1309.04345703125
                 }
             },
             "connections": [
@@ -326,7 +326,7 @@
                     },
                     "name": "fragment_shader",
                     "ports": {
-                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform float offset;\nuniform sampler2DArray image;\nuniform uint image_count;\n\nuniform uint image_width;\nuniform uint image_height;\n\nvoid main() { \n\t// compute the aspect ratio from image width and height\n\tfloat aspect = float(image_width) / float(image_height);\n\n\tvec2 coords = uv;\n\n\tcoords.y -= 0.5;\n\tcoords.y *= aspect;\n\tcoords.y += 0.5;\n\n\n\tif(coords.y < 0.0 || coords.y > 1.0)\n\t\tcolor = vec4(0,0,0,1);\n\telse {\n\t\tcolor = vec4(0,0,0,1);\n\t\tfor(uint a=0u; a<image_count; ++a) {\n\t\t\tfloat uvx = 1.0-coords.x+(float(int(a)-int(image_count)/2))*0.001*offset;\n\t\t\tif(uvx >= 0.0 && uvx <= 1.0)\n\t\t\t\tcolor.rgb = color.rgb + vec4(texture(image, \n\t\t\t\t\tvec3(uvx, 1.0-coords.y, a)\n\t\t\t\t)).rgb; \n\t\t}\n\t\tcolor /= image_count;\n\t}\n} \n"
+                        "source": "#version 130 \n \nin vec2 uv; \n\nuniform float offset;\n\nuniform sampler2DArray image;\nuniform uint image_count;\n\nout vec4 color; \n\nvoid main() { \n\tcolor = vec4(0,0,0,1);\n\tfor(uint a=0u; a<image_count; ++a) {\n\t\tfloat uvx = 1.0-uv.x+(float(int(a)-int(image_count)/2))*0.001*offset;\n\t\tif(uvx >= 0.0 && uvx <= 1.0)\n\t\t\tcolor.rgb = color.rgb + vec4(texture(image, \n\t\t\t\tvec3(uvx, uv.y, a)\n\t\t\t)).rgb; \n\t}\n\tcolor /= image_count;\n} \n"
                     },
                     "type": "render/fragment_shader"
                 },
@@ -391,7 +391,7 @@
                     },
                     "name": "vertex_shader",
                     "ports": {
-                        "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n\nout vec2 uv;                   // uv texturing parameters\n \nvoid main() {\n\tvec3 pos = (P - 0.5) * 10.0;\n\n\tgl_Position = iProjection * iModelView* vec4(pos.x, 0.01, -pos.y, 1);\n\n\t// UV parameters are just untransformed world-space position\n\tuv = vec2(P);\n} \n"
+                        "source": "#version 130 \n \nin vec3 P;\n \nuniform mat4 iProjection;\nuniform mat4 iModelView;\n\nuniform uint image_width;\nuniform uint image_height;\n\nout vec2 uv;\n \nvoid main() {\n\tfloat aspect = float(image_width) / float(image_height);\n\n\tvec3 pos = (P-0.5) * 10;\n\tif(aspect > 1.0)\n\t\tpos.y /= aspect;\n\telse\n\t\tpos.x *= aspect;\n\n\tgl_Position = iProjection * iModelView* vec4(-pos.x, 0.01, pos.y, 1);\n\n\t// UV parameters are just untransformed world-space position\n\tuv = vec2(P);\n} \n"
                     },
                     "type": "render/vertex_shader"
                 }
@@ -402,8 +402,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 352.538848876953,
-                    "y": 1425.73120117188
+                    "x": 362.684906005859,
+                    "y": 1448.23193359375
                 }
             },
             "connections": [
@@ -471,7 +471,7 @@
                     "name": "draw",
                     "ports": {
                         "setup": {
-                            "culling": "ccw"
+                            "culling": "none"
                         }
                     },
                     "type": "render/draw"
@@ -486,7 +486,7 @@
                     },
                     "name": "fragment_shader",
                     "ports": {
-                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform float offset;\nuniform sampler2DArray image;\nuniform uint image_count;\n\nuniform uint image_width;\nuniform uint image_height;\n\nuniform float x_position;\n\nvoid main() { \n\t// compute the aspect ratio from image width and height\n\tfloat aspect = float(image_width) / float(image_height);\n\n\tvec2 coords = uv;\n\n\tif(coords.y < 0.0 || coords.y > 1.0)\n\t\tcolor = vec4(0,0,0,1);\n\telse {\n/*\t\tfor(uint a=0u; a<image_count; ++a) {\n\t\t\tfloat uvx = 1.0-coords.x+(float(int(a)-int(image_count)/2))*0.001*offset;\n\t\t\tif(uvx >= 0.0 && uvx <= 1.0)\n\t\t\t\tcolor.rgb = color.rgb + vec4(texture(image, \n\t\t\t\t\tvec3(uvx, 1.0-coords.y, a)\n\t\t\t\t)).rgb; \n\t\t}*/\n\n\t\tfloat uv_offs = 0.001*offset*floor((coords.y-0.5)*float(image_count));\n\t\tfloat uvx = 1.0-coords.x+uv_offs;\n\n\t\tif(uvx < 0.0 || uvx > 1.0)\n\t\t\tcolor = vec4(0,0,0,1);\n\t\telse\n\t\t\tcolor = texture(image, vec3(uvx, x_position, coords.y*float(image_count)-0.5));\n\t}\n} \n"
+                        "source": "#version 130 \n \nout vec4 color; \n \nin vec2 uv; \n\nuniform float offset;\nuniform sampler2DArray image;\nuniform uint image_count;\n\nuniform float x_position;\n\nvoid main() { \n\tfloat uv_offs = 0.001*offset*round((uv.y-0.5)*float(image_count));\n\tfloat uvx = uv.x+uv_offs;\n\n\tif(uvx < 0.0 || uvx > 1.0)\n\t\tdiscard;\n\n\tcolor = texture(image, vec3(uvx, x_position, round(uv.y*float(image_count))));\n} \n"
                     },
                     "type": "render/fragment_shader"
                 },
@@ -551,7 +551,7 @@
                     },
                     "name": "vertex_shader",
                     "ports": {
-                        "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n\nuniform float x_position;\n\nout vec2 uv;                   // uv texturing parameters\n\nuniform uint image_width;\nuniform uint image_height;\n \nvoid main() {\n\t// compute the aspect ratio from image width and height\n\tfloat aspect = float(image_width) / float(image_height);\n\n\tvec3 pos = (P - 0.5) * 10.0;\n\n\t//gl_Position = iProjection * iModelView* vec4((x_position - 0.5) * 10, P.x, -pos.y, 1);\n\tgl_Position = iProjection * iModelView* vec4(pos.x, P.y, (x_position-0.5)/aspect * 10, 1);\n\n\t// UV parameters are just untransformed world-space position\n\tuv = vec2(P);\n} \n"
+                        "source": "#version 130 \n \nin vec3 P;                     // position attr from the vbo \n \nuniform mat4 iProjection;      // projection matrix \nuniform mat4 iModelView;       // modelview matrix \n\nuniform float x_position;\n\nout vec2 uv;                   // uv texturing parameters\n\nuniform uint image_width;\nuniform uint image_height;\n \nvoid main() {\n\tfloat aspect = float(image_width) / float(image_height);\n\n\tvec3 pos = (P - 0.5) * 10.0;\n\tfloat z_scale = 10;\n\n\tif(aspect < 1.0)\n\t\tpos.x *= aspect;\n\telse\n\t\tz_scale /= aspect;\n\n\tgl_Position = iProjection * iModelView* vec4(pos.x, P.y, (x_position-0.5) * z_scale, 1);\n\n\tuv = P.xy;\n} \n"
                     },
                     "type": "render/vertex_shader"
                 }
@@ -568,7 +568,7 @@
             },
             "name": "opencv_texture_sequence",
             "ports": {
-                "mode": "Linear",
+                "mode": "Nearest",
                 "name": "image"
             },
             "type": "render/uniforms/opencv_texture_sequence"
@@ -627,17 +627,17 @@
     "ports": {
         "refocus": {
             "in_progress_updates": true,
-            "max": 10.0,
+            "max": 8.0,
             "min": 0.0,
             "type": "linear",
-            "value": 7.0
+            "value": 7.00799989700317
         },
         "x_position": {
             "in_progress_updates": true,
             "max": 1.0,
             "min": 0.0,
             "type": "linear",
-            "value": 0.537000000476837
+            "value": 0.541000008583069
         }
     },
     "scene_config": {

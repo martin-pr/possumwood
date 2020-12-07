@@ -40,10 +40,9 @@ class Values : public boost::noncopyable {
 	template <typename T>
 	void set(const OutAttr<void>& attr, const T& value);
 
-	/// "transfer" set - get a value from a different port and transfer it here.
-	/// This is a bit of a hack - used only for Network input compute().
-	/// The port has to be non-const - the call might pull, changing its value.
-	void transfer(std::size_t index, Port& p);
+	/// copy data between untyped attributes without ever establishing their concrete type
+	/// (useful for switch nodes, for example)
+	void copy(const InAttr<void>& inAttr, const OutAttr<void>& outAttr);
 
 	/// untyped attribute type testing.
 	/// Only useful for untyped attributes - typed attribute have an explicit T
@@ -51,6 +50,7 @@ class Values : public boost::noncopyable {
 	bool is(const TypedAttr<void>& attr) const;
 
 	const Data& data(std::size_t index) const;
+	void setData(std::size_t index, const Data& data);
 
   private:
 	NodeBase* m_node;

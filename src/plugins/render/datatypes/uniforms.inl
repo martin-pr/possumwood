@@ -8,7 +8,9 @@
 namespace possumwood {
 
 template <typename T>
-void Uniforms::addUniform(const std::string& name, std::size_t size, const UpdateType& updateType,
+void Uniforms::addUniform(const std::string& name,
+                          std::size_t size,
+                          const UpdateType& updateType,
                           std::function<void(T*, std::size_t, const ViewportState&)> updateFunctor) {
 	std::unique_ptr<UniformHolder> uniform(new UniformHolder());
 
@@ -45,8 +47,8 @@ void Uniforms::addUniform(const std::string& name, std::size_t size, const Updat
 		if(attr >= 0)
 			GLSLTraits<T>::applyUniform(attr, size, &(data.data[0]));
 		// else
-		// 	state.addWarning("Uniform '" + name + "' cannot be mapped to an attribute location - not used in any of the
-		// programs?");
+		// 	state.addWarning("Uniform '" + name +
+		// 	                 "' cannot be mapped to an attribute location - not used in any of the programs?");
 
 		return state;
 	};

@@ -1,18 +1,24 @@
 #include "viewport.h"
 
-#include <possumwood_sdk/gl.h>
-
-#include <QtGui/QMouseEvent>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 
-#include "gl_debug.h"
+#include <possumwood_sdk/gl.h>
+#include <possumwood_sdk/gl_debug.h>
+
+#include <QtGui/QMouseEvent>
+
 #include "gl_init.h"
 
 Viewport::Viewport(QWidget* parent)
-    : QOpenGLWidget(parent), m_sceneDistance(10), m_sceneRotationX(30), m_sceneRotationY(30), m_origin(0, 0, 0),
-      m_mouseX(0), m_mouseY(0) {
+    : QOpenGLWidget(parent),
+      m_sceneDistance(10),
+      m_sceneRotationX(30),
+      m_sceneRotationY(30),
+      m_origin(0, 0, 0),
+      m_mouseX(0),
+      m_mouseY(0) {
 	setMouseTracking(true);
 
 	setFocusPolicy(Qt::ClickFocus);
@@ -64,7 +70,7 @@ Imath::V3f eyePosition(float sceneRotX, float sceneRotY, float sceneDist) {
 void Viewport::paintGL() {
 // in debug mode, create a scoped "debug" object, turning on OpenGL debugging
 #ifndef NDEBUG
-	GlDebug scoped_gl_debug;
+	possumwood::GlDebug scoped_gl_debug;
 #endif
 
 	GL_CHECK_ERR;
