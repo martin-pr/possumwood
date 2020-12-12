@@ -60,6 +60,7 @@ class GraphScene : public QGraphicsScene {
 	virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
 	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
 	virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
+	virtual void drawBackground(QPainter* painter, const QRectF& rect) override;
 
   private slots:
 	void onSelectionChanged();

@@ -16,11 +16,11 @@ GraphWidget::GraphWidget(QWidget* parent) : QGraphicsView(parent), m_scene(this)
 	setSizeAdjustPolicy(AdjustIgnored);
 
 	m_scene.setSceneRect(-10000, -10000, 20000, 20000);
+	translate(-width() / 2, -height() / 2);
 
 	setScene(&m_scene);
 	setDragMode(QGraphicsView::RubberBandDrag);
 	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-	setBackgroundBrush(Qt::black);
 
 	setTransformationAnchor(QGraphicsView::NoAnchor);
 
@@ -69,7 +69,12 @@ void GraphWidget::wheelEvent(QWheelEvent* event) {
 	const QPointF orig = mapToScene(event->x(), event->y());
 	const float delta = pow(1.002, (float)event->angleDelta().y());
 
-	scale(delta, delta);
+	QTransform tr = transform();
+	tr.scale(delta, delta);
+
+	const float det = tr.determinant();
+	if(det > 1e-3 && det < 1e2)
+		setTransform(tr);
 
 	const QPointF current = mapToScene(event->x(), event->y());
 
