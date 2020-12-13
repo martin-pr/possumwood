@@ -1,10 +1,12 @@
 #include "graph_scene.h"
 
+#include <cassert>
+#include <cmath>
+#include <iostream>
+
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
-#include <cassert>
-#include <iostream>
 
 #include "connected_edge.h"
 #include "node.h"
@@ -15,6 +17,8 @@ GraphScene::GraphScene(QGraphicsView* parent) : QGraphicsScene(parent), m_leftMo
 	m_editedEdge = new Edge(QPointF(0, 0), QPointF(0, 0));
 	m_editedEdge->setVisible(false);
 	addItem(m_editedEdge);
+
+	setBackgroundBrush(QBrush(QColor(0, 0, 0, 255)));
 
 	QObject::connect(this, SIGNAL(selectionChanged()), this, SLOT(onSelectionChanged()));
 }
@@ -286,14 +290,72 @@ bool GraphScene::isReadOnly() const {
 void GraphScene::setReadOnly(bool ro) {
 	m_readOnly = ro;
 
-	// if(ro)
-	// 	setBackgroundBrush(QBrush(QColor(255, 0, 0, 128)));
-	// else
-	// 	setBackgroundBrush(QBrush(QColor(0, 0, 0)));
+	if(ro)
+		setBackgroundBrush(QBrush(QColor(32, 0, 0, 128)));
+	else
+		setBackgroundBrush(QBrush(QColor(0, 0, 0, 255)));
+
 	update();
 
 	for(auto& n : m_nodes) {
 		n->setReadOnly(ro);
+	}
+}
+
+namespace {
+
+QColor gridColor(int val) {
+	if(val < 0)
+		val = -val;
+
+	std::size_t level = 0;
+	int div = 5;
+	for(int a = 0; a < 8; ++a) {
+		if(val % div == 0)
+			++level;
+		div *= 5;
+	}
+
+	static std::vector<QColor> color;
+	while(color.size() <= level) {
+		const int val = (1 + color.size()) * 16 - 1;
+		color.push_back(QColor(val, val, val));
+	}
+	return color[level];
+}
+
+}  // namespace
+
+void GraphScene::drawBackground(QPainter* painter, const QRectF& rect) {
+	// make sure the grid doesn't try to do antialiasing
+	QPainter::RenderHints renderHints = painter->renderHints();
+	renderHints &= ~QPainter::Antialiasing & ~QPainter::HighQualityAntialiasing;
+	painter->setRenderHints(renderHints);
+
+	// draw the background
+	painter->setBrush(backgroundBrush());
+	painter->setPen(Qt::NoPen);
+	painter->drawRect(rect);
+
+	double size = std::max(painter->window().width() / sqrt(painter->transform().determinant()),
+	                       painter->window().height() / sqrt(painter->transform().determinant()));
+	size = pow(5, std::max(2.0, ceil(log(size) / log(5) - 3)));
+
+	if(size < 1e5) {
+		// and draw the grid
+		const int gridSize = size;
+
+		qreal left = int(rect.left()) - (int(rect.left()) % gridSize);
+		qreal top = int(rect.top()) - (int(rect.top()) % gridSize);
+
+		for(qreal x = left; x < rect.right(); x += gridSize) {
+			painter->setPen(QPen(gridColor(x / 25), 0));
+			painter->drawLine(QLineF(x, rect.top(), x, rect.bottom()));
+		}
+		for(qreal y = top; y < rect.bottom(); y += gridSize) {
+			painter->setPen(QPen(gridColor(y / 25), 0));
+			painter->drawLine(QLineF(rect.left(), y, rect.right(), y));
+		}
 	}
 }
 
