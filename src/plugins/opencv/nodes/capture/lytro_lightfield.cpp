@@ -3,8 +3,8 @@
 
 #include <boost/filesystem.hpp>
 
-#include <nlohmann/json.hpp>
 #include <tbb/parallel_for.h>
+#include <nlohmann/json.hpp>
 #include <opencv2/opencv.hpp>
 
 #include <actions/traits.h>
@@ -13,6 +13,7 @@
 
 #include "frame.h"
 #include "lightfields.h"
+#include "lightfields/bayer.h"
 #include "lightfields/block.h"
 #include "lightfields/metadata.h"
 #include "lightfields/pattern.h"
@@ -24,7 +25,11 @@ dependency_graph::InAttr<possumwood::Filename> a_filename;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
 dependency_graph::OutAttr<lightfields::Metadata> a_metadata;
 
-cv::Mat decodeData(const unsigned char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
+cv::Mat decodeData(const unsigned char* data,
+                   std::size_t width,
+                   std::size_t height,
+                   const lightfields::Bayer::Value& black,
+                   const lightfields::Bayer::Value& white) {
 	cv::Mat result(width, height, CV_32F);
 
 	tbb::parallel_for(std::size_t(0), width * height, [&](std::size_t i) {
@@ -74,7 +79,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
 		int width = 0, height = 0;
 		std::string metadataRef, imageRef;
-		int black[4] = {0, 0, 0, 0}, white[4] = {255, 255, 255, 255};
+		lightfields::Bayer::Value black, white;
 
 		std::ifstream file(filename.filename().string(), std::ios::binary);
 		lightfields::Raw raw;
@@ -85,15 +90,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		width = meta.metadata()["image"]["width"].get<int>();
 		height = meta.metadata()["image"]["height"].get<int>();
 
-		black[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].get<int>();
-		black[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].get<int>();
-		black[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].get<int>();
-		black[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].get<int>();
-
-		white[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].get<int>();
-		white[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].get<int>();
-		white[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].get<int>();
-		white[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].get<int>();
+		black = lightfields::Bayer::Value(meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]);
+		white = lightfields::Bayer::Value(meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]);
 
 		assert(raw.image() != nullptr);
 		result = decodeData(raw.image(), width, height, black, white);
