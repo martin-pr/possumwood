@@ -82,18 +82,18 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 		meta = raw.metadata();
 
-		width = meta.metadata()["image"]["width"].asInt();
-		height = meta.metadata()["image"]["height"].asInt();
+		width = meta.metadata()["image"]["width"].get<int>();
+		height = meta.metadata()["image"]["height"].get<int>();
 
-		black[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].asInt();
-		black[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].asInt();
-		black[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].asInt();
-		black[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].asInt();
+		black[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].get<int>();
+		black[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].get<int>();
+		black[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].get<int>();
+		black[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].get<int>();
 
-		white[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].asInt();
-		white[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].asInt();
-		white[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].asInt();
-		white[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].asInt();
+		white[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].get<int>();
+		white[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].get<int>();
+		white[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].get<int>();
+		white[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].get<int>();
 
 		assert(raw.image() != nullptr);
 		result = decodeData(raw.image(), width, height, black, white);

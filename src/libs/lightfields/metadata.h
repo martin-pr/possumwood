@@ -1,6 +1,6 @@
 #pragma once
 
-#include <json/value.h>
+#include <nlohmann/json.hpp>
 
 namespace lightfields {
 
@@ -11,12 +11,12 @@ class Metadata {
   public:
 	Metadata();
 
-	const Json::Value& header() const;
-	const Json::Value& metadata() const;
-	const Json::Value& privateMetadata() const;
+	const nlohmann::json& header() const;
+	const nlohmann::json& metadata() const;
+	const nlohmann::json& privateMetadata() const;
 
   private:
-	Json::Value m_header, m_meta, m_privateMeta;
+	nlohmann::json m_header, m_meta, m_privateMeta;
 
 	friend class Raw;
 };

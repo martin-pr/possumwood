@@ -1,9 +1,9 @@
 #include "raw.h"
 
-#include <json/reader.h>
-
 #include <cassert>
 #include <sstream>
+
+#include <nlohmann/json.hpp>
 
 #include "block.h"
 #include "metadata.h"
@@ -45,13 +45,13 @@ const Metadata& Raw::metadata() const {
 	return m_pimpl->meta;
 }
 
-Json::Value& Raw::header(Pimpl& p) {
+nlohmann::json& Raw::header(Pimpl& p) {
 	return p.meta.m_header;
 }
-Json::Value& Raw::meta(Pimpl& p) {
+nlohmann::json& Raw::meta(Pimpl& p) {
 	return p.meta.m_meta;
 }
-Json::Value& Raw::privateMeta(Pimpl& p) {
+nlohmann::json& Raw::privateMeta(Pimpl& p) {
 	return p.meta.m_privateMeta;
 }
 
@@ -80,53 +80,55 @@ std::istream& operator>>(std::istream& in, Raw& data) {
 			if(impl->meta.header()["frames"].size() != 1)
 				throw std::runtime_error("Only single-frame raw images supported at the moment.");
 
-			metadataRef = impl->meta.header()["frames"][0]["frame"]["metadataRef"].asString();
-			privateMetadataRef = impl->meta.header()["frames"][0]["frame"]["privateMetadataRef"].asString();
-			imageRef = impl->meta.header()["frames"][0]["frame"]["imageRef"].asString();
+			metadataRef = impl->meta.header()["frames"][0]["frame"]["metadataRef"].get<std::string>();
+			privateMetadataRef = impl->meta.header()["frames"][0]["frame"]["privateMetadataRef"].get<std::string>();
+			imageRef = impl->meta.header()["frames"][0]["frame"]["imageRef"].get<std::string>();
 		}
 
 		else if(block.name == metadataRef) {
 			std::stringstream ss((const char*)block.data.get());
 			ss >> Raw::meta(*impl);
 
-			checkThrow(impl->meta.metadata()["image"]["width"].isInt(), true, "width");
-			checkThrow(impl->meta.metadata()["image"]["height"].isInt(), true, "height");
+			checkThrow(impl->meta.metadata()["image"]["width"].is_number_integer(), true, "width");
+			checkThrow(impl->meta.metadata()["image"]["height"].is_number_integer(), true, "height");
 
-			checkThrow(impl->meta.metadata()["image"]["orientation"].asInt(), 1, "orientation");
-			checkThrow(impl->meta.metadata()["image"]["representation"].asString(), std::string("rawPacked"),
+			checkThrow(impl->meta.metadata()["image"]["orientation"].get<int>(), 1, "orientation");
+			checkThrow(impl->meta.metadata()["image"]["representation"].get<std::string>(), std::string("rawPacked"),
 			           "representation");
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["rightShift"].asInt(), 0,
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["rightShift"].get<int>(), 0,
 			           "rightShift");
 
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"].size(), 4u, "black size");
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"].size(), 4u, "white size");
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"].size(), std::size_t(4),
+			           "black size");
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"].size(), std::size_t(4),
+			           "white size");
 
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].isInt(), true,
-			           "[black][b]");
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].isInt(), true,
-			           "[black][gb]");
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].isInt(), true,
-			           "[black][gr]");
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].isInt(), true,
-			           "[black][r]");
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].is_number_integer(),
+			           true, "[black][b]");
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].is_number_integer(),
+			           true, "[black][gb]");
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].is_number_integer(),
+			           true, "[black][gr]");
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].is_number_integer(),
+			           true, "[black][r]");
 
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].isInt(), true,
-			           "[white][b]");
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].isInt(), true,
-			           "[white][gb]");
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].isInt(), true,
-			           "[white][gr]");
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].isInt(), true,
-			           "[white][r]");
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].is_number_integer(),
+			           true, "[white][b]");
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].is_number_integer(),
+			           true, "[white][gb]");
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].is_number_integer(),
+			           true, "[white][gr]");
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].is_number_integer(),
+			           true, "[white][r]");
 
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelPacking"]["endianness"].asString(),
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelPacking"]["endianness"].get<std::string>(),
 			           std::string("big"), "endianness");
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelPacking"]["bitsPerPixel"].asInt(), 12,
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["pixelPacking"]["bitsPerPixel"].get<int>(), 12,
 			           "bitsPerPixel");
 
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["mosaic"]["tile"].asString(),
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["mosaic"]["tile"].get<std::string>(),
 			           std::string("r,gr:gb,b"), "mosaic/tile");
-			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["mosaic"]["upperLeftPixel"].asString(),
+			checkThrow(impl->meta.metadata()["image"]["rawDetails"]["mosaic"]["upperLeftPixel"].get<std::string>(),
 			           std::string("b"), "mosaic/upperLeftPixel");
 		}
 
