@@ -1,9 +1,10 @@
 #pragma once
 
-#include <actions/traits.h>
+#include <map>
 
 #include <boost/filesystem/path.hpp>
-#include <map>
+
+#include <actions/traits.h>
 
 namespace possumwood {
 

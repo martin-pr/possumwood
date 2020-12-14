@@ -1,14 +1,14 @@
 #pragma once
 
-#include <actions/io/json.h>
-#include <dependency_graph/data_traits.h>
-
-#include <boost/filesystem/path.hpp>
 #include <set>
 #include <string>
 
-#include "actions/io.h"
-#include "actions/traits.h"
+#include <boost/filesystem/path.hpp>
+
+#include <dependency_graph/data_traits.h>
+
+#include <actions/io.h>
+#include <actions/traits.h>
 
 namespace possumwood {
 
@@ -32,8 +32,8 @@ class Enum {
 	bool operator==(const Enum& fn) const;
 	bool operator!=(const Enum& fn) const;
 
-	void fromJson(const ::possumwood::io::json& json);
-	void toJson(::possumwood::io::json& json) const;
+	void fromJson(const ::nlohmann::json& json);
+	void toJson(::nlohmann::json& json) const;
 
   private:
 	std::pair<std::string, int> m_value;

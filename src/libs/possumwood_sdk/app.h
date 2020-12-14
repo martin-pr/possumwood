@@ -52,8 +52,8 @@ class App : public AppCore {
 	Description& sceneDescription();
 
   private:
-	dependency_graph::State loadFile(const possumwood::io::json& json);
-	void saveFile(possumwood::io::json& json, bool saveSceneConfig = true);
+	dependency_graph::State loadFile(const nlohmann::json& json);
+	void saveFile(nlohmann::json& json, bool saveSceneConfig = true);
 
 	static App* s_instance;
 

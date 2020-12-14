@@ -1,10 +1,11 @@
 #pragma once
 
-#include <actions/io/json.h>
-#include <dependency_graph/metadata.h>
-
 #include <iostream>
 #include <typeinfo>
+
+#include <nlohmann/json.hpp>
+
+#include <dependency_graph/metadata.h>
 
 namespace std {
 
@@ -25,9 +26,9 @@ struct TestStruct {
 };
 
 // implementation of serialization of TestStruct - to make tests compile
-inline void to_json(::possumwood::io::json& json, const TestStruct& ts) {
+inline void to_json(::nlohmann::json& json, const TestStruct& ts) {
 }
-inline void from_json(const ::possumwood::io::json& json, TestStruct& ts) {
+inline void from_json(const ::nlohmann::json& json, TestStruct& ts) {
 }
 
 std::ostream& operator<<(std::ostream& out, const TestStruct& t);
@@ -50,8 +51,8 @@ struct NoncopyableStruct {
 };
 
 // no implementation of serialization - intentional, to test support for types that can't be serialized
-// inline void to_json(::possumwood::io::json& json, const TestStruct& ts) {}
-// inline void from_json(const ::possumwood::io::json& json, TestStruct& ts) {}
+// inline void to_json(::nlohmann::json& json, const TestStruct& ts) {}
+// inline void from_json(const ::nlohmann::json& json, TestStruct& ts) {}
 
 std::ostream& operator<<(std::ostream& out, const NoncopyableStruct& t);
 

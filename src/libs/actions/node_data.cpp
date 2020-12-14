@@ -4,12 +4,12 @@ namespace possumwood {
 
 namespace {
 
-void toJson(::possumwood::io::json& json, const NodeData& value) {
+void toJson(::nlohmann::json& json, const NodeData& value) {
 	json["x"] = value.position().x;
 	json["y"] = value.position().y;
 }
 
-void fromJson(const ::possumwood::io::json& json, NodeData& value) {
+void fromJson(const ::nlohmann::json& json, NodeData& value) {
 	value.setPosition(NodeData::Point{json["x"].get<float>(), json["y"].get<float>()});
 }
 

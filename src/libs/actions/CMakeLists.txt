@@ -49,7 +49,10 @@ add_definitions(-DPOSSUMWOOD_CONF_PATH=${CONF_PATH})
 ###########################################################
 # ACTIONS SDK BUILD
 
+include(possumwood_json)
+
 include_directories(./)
+include_directories(${JSON_INCLUDE_DIRS})
 
 # Building the library
 file(GLOB_RECURSE sources *.cpp)
@@ -58,4 +61,5 @@ add_library(actions SHARED ${sources})
 install(TARGETS actions DESTINATION lib)
 
 # Final linking
-target_link_libraries(actions ${LIBS} dependency_graph)
+target_link_libraries(actions PUBLIC ${LIBS} dependency_graph)
+target_link_libraries(actions PRIVATE ${JSON_LIBS})

@@ -96,7 +96,7 @@ std::ostream& operator<<(std::ostream& out, const Interval& f) {
 
 namespace {
 
-void toJson(::possumwood::io::json& json, const maths::Interval& value) {
+void toJson(::nlohmann::json& json, const maths::Interval& value) {
 	json["min"] = value.min();
 	json["max"] = value.max();
 	json["in_progress_updates"] = value.inProgressUpdates();
@@ -111,7 +111,7 @@ void toJson(::possumwood::io::json& json, const maths::Interval& value) {
 	json["value"] = value.value();
 }
 
-void fromJson(const ::possumwood::io::json& json, maths::Interval& value) {
+void fromJson(const ::nlohmann::json& json, maths::Interval& value) {
 	value.setMin(json["min"].get<float>());
 	value.setMax(json["max"].get<float>());
 	value.setInProgressUpdates(json["in_progress_updates"].get<bool>());

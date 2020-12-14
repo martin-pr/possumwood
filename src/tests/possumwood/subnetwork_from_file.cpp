@@ -13,7 +13,7 @@
 #include "common.h"
 
 using namespace dependency_graph;
-using possumwood::io::json;
+using nlohmann::json;
 
 namespace {
 

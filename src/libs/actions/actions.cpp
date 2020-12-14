@@ -1,5 +1,9 @@
 #include "actions.h"
 
+#include <functional>
+#include <set>
+#include <iomanip>
+
 #include <dependency_graph/attr_map.h>
 #include <dependency_graph/detail.h>
 #include <dependency_graph/metadata_register.h>
@@ -8,8 +12,6 @@
 
 #include <dependency_graph/node_base.inl>
 #include <dependency_graph/nodes.inl>
-#include <functional>
-#include <set>
 
 #include "app.h"
 #include "clipboard.h"
@@ -92,8 +94,8 @@ const T& dereference(const T& n) {
 	return n;
 }
 
-possumwood::io::json writeNode(const dependency_graph::NodeBase& n) {
-	possumwood::io::json j;
+nlohmann::json writeNode(const dependency_graph::NodeBase& n) {
+	nlohmann::json j;
 
 	j["name"] = n.name();
 	j["type"] = n.metadata()->type();
@@ -117,12 +119,12 @@ possumwood::io::json writeNode(const dependency_graph::NodeBase& n) {
 	return j;
 }
 
-possumwood::io::json writeNetwork(const ::dependency_graph::Network& net,
+nlohmann::json writeNetwork(const ::dependency_graph::Network& net,
                                   const dependency_graph::Selection& selection = dependency_graph::Selection());
 
 /// a wrapper of node writing, with CONTAINER either a Nodes instance or a Selection
 template <typename CONTAINER>
-void writeNodes(possumwood::io::json& j,
+void writeNodes(nlohmann::json& j,
                 const CONTAINER& nodes,
                 std::map<std::string, unsigned>& uniqueIds,
                 std::map<const ::dependency_graph::NodeBase*, std::string>& nodeIds) {
@@ -139,7 +141,7 @@ void writeNodes(possumwood::io::json& j,
 		// and use this to save the node
 		if(n.is<dependency_graph::Network>()) {
 			auto tmp = writeNetwork(n.as<dependency_graph::Network>());
-			for(possumwood::io::json::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
+			for(nlohmann::json::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
 				j[name][i.key()] = i.value();
 		}
 		else
@@ -150,8 +152,8 @@ void writeNodes(possumwood::io::json& j,
 	}
 }
 
-possumwood::io::json writeNetwork(const dependency_graph::Network& net, const dependency_graph::Selection& selection) {
-	possumwood::io::json j;
+nlohmann::json writeNetwork(const dependency_graph::Network& net, const dependency_graph::Selection& selection) {
+	nlohmann::json j;
 
 	// write the base node first
 	j = writeNode(net);
@@ -194,13 +196,13 @@ possumwood::io::json writeNetwork(const dependency_graph::Network& net, const de
 
 }  // namespace
 
-possumwood::io::json toJson(const dependency_graph::Selection& selection) {
+nlohmann::json toJson(const dependency_graph::Selection& selection) {
 	dependency_graph::Network* net = &possumwood::AppCore::instance().graph();
 	if(!selection.empty() && selection.nodes().begin()->get().hasParentNetwork())
 		net = &selection.nodes().begin()->get().network();
 
 	// convert the selection to JSON string
-	possumwood::io::json json = writeNetwork(*net, selection);
+	nlohmann::json json = writeNetwork(*net, selection);
 
 	return json;
 }
@@ -221,14 +223,14 @@ enum PasteFlags { kNone = 0, kRoot = 1 };
 
 dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action,
                                      const dependency_graph::UniqueId& targetIndex,
-                                     const possumwood::io::json& _source,
+                                     const nlohmann::json& _source,
                                      PasteFlags flags,
                                      std::set<dependency_graph::UniqueId>* ids = nullptr) {
 	dependency_graph::State state;
-	possumwood::io::json tmp;
+	nlohmann::json tmp;
 
 	// pasted network should actually be loaded from a file
-	const possumwood::io::json* source = nullptr;
+	const nlohmann::json* source = nullptr;
 	if(_source.find("source") != _source.end()) {
 		auto stream = AppCore::instance().filesystem().read(
 		    possumwood::Filepath::fromString(_source["source"].get<std::string>()));
@@ -247,9 +249,9 @@ dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action,
 	// add all the nodes to the parent network
 	//  - each node has a unique ID (unique between all graphs), store that
 	if(source->find("nodes") != source->end()) {
-		for(possumwood::io::json::const_iterator ni = (*source)["nodes"].begin(); ni != (*source)["nodes"].end();
+		for(nlohmann::json::const_iterator ni = (*source)["nodes"].begin(); ni != (*source)["nodes"].end();
 		    ++ni) {
-			const possumwood::io::json& n = ni.value();
+			const nlohmann::json& n = ni.value();
 
 			// extract the blind data via factory mechanism
 			dependency_graph::Data blindData;
@@ -292,7 +294,7 @@ dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action,
 					// and another action to set all port values based on the json content
 					//   -> as the node doesn't exist yet, we can't interpret the types
 					if(n.find("ports") != n.end())
-						for(possumwood::io::json::const_iterator pi = n["ports"].begin(); pi != n["ports"].end(); ++pi)
+						for(nlohmann::json::const_iterator pi = n["ports"].begin(); pi != n["ports"].end(); ++pi)
 							action.append(detail::setValueAction(nodeId, pi.key(), pi.value()));
 				}
 			}
@@ -330,13 +332,13 @@ dependency_graph::State pasteNetwork(possumwood::UndoStack::Action& action,
 	// and another action to set all port values based on the json content
 	//   -> as the network doesn't exist yet, we can't interpret the types
 	if(source->find("ports") != source->end())
-		for(possumwood::io::json::const_iterator pi = (*source)["ports"].begin(); pi != (*source)["ports"].end(); ++pi)
+		for(nlohmann::json::const_iterator pi = (*source)["ports"].begin(); pi != (*source)["ports"].end(); ++pi)
 			action.append(detail::setValueAction(targetIndex, pi.key(), pi.value()));
 
 	// finally, overwrite any of the ports in the original source with new values that might be present in the
 	// referencing file
 	if(_source.find("ports") != _source.end())
-		for(possumwood::io::json::const_iterator pi = _source["ports"].begin(); pi != _source["ports"].end(); ++pi)
+		for(nlohmann::json::const_iterator pi = _source["ports"].begin(); pi != _source["ports"].end(); ++pi)
 			action.append(detail::setValueAction(targetIndex, pi.key(), pi.value()));
 
 	return state;
@@ -355,7 +357,7 @@ dependency_graph::State paste(dependency_graph::Network& current,
 
 	try {
 		// convert the clipboard content to a json object
-		auto json = possumwood::io::json::parse(content);
+		auto json = nlohmann::json::parse(content);
 
 		// and pass it to the paste() implementation
 		state = fromJson(current, selection, json, haltOnError);
@@ -372,7 +374,7 @@ dependency_graph::State paste(dependency_graph::Network& current,
 
 dependency_graph::State fromJson(dependency_graph::Network& current,
                                  dependency_graph::Selection& selection,
-                                 const possumwood::io::json& json,
+                                 const nlohmann::json& json,
                                  bool haltOnError) {
 	dependency_graph::State state;
 
@@ -438,7 +440,7 @@ dependency_graph::State importNetwork(dependency_graph::Network& current,
 
 	possumwood::UndoStack::Action action;
 
-	possumwood::io::json tmp;
+	nlohmann::json tmp;
 	tmp["source"] = filepath.toString();
 
 	const dependency_graph::UniqueId networkId;

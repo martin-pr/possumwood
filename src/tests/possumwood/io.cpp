@@ -27,7 +27,7 @@ static SaveableRegistration s_saveableRegistration;
 namespace possumwood {
 namespace io {
 
-void fromJson(const json& j, dependency_graph::Data& data) {
+void fromJson(const nlohmann::json& j, dependency_graph::Data& data) {
 	if(data.type() == "float") {
 		data.set<float>(j.get<float>());
 	}
@@ -41,7 +41,7 @@ void fromJson(const json& j, dependency_graph::Data& data) {
 		assert(false);
 }
 
-void toJson(json& j, const dependency_graph::Data& data) {
+void toJson(nlohmann::json& j, const dependency_graph::Data& data) {
 	if(data.type() == "float") {
 		j = data.get<float>();
 	}

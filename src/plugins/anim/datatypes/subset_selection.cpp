@@ -181,13 +181,13 @@ namespace possumwood {
 
 namespace {
 
-void toJson(::possumwood::io::json& json, const anim::SubsetSelection& value) {
+void toJson(::nlohmann::json& json, const anim::SubsetSelection& value) {
 	for(auto& i : value)
 		if(i.second)
 			json.push_back(i.first);
 }
 
-void fromJson(const ::possumwood::io::json& json, anim::SubsetSelection& value) {
+void fromJson(const ::nlohmann::json& json, anim::SubsetSelection& value) {
 	for(auto& i : json)
 		value.select(i.get<std::string>());
 }

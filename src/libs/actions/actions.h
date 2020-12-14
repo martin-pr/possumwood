@@ -36,8 +36,8 @@ void remove(const dependency_graph::Selection& selection);
 void move(const std::map<dependency_graph::NodeBase*, possumwood::NodeData::Point>& nodes);
 
 dependency_graph::State fromJson(dependency_graph::Network& current, dependency_graph::Selection& selection,
-                                 const possumwood::io::json& json, bool haltOnError = true);
-possumwood::io::json toJson(const dependency_graph::Selection& selection = dependency_graph::Selection());
+                                 const nlohmann::json& json, bool haltOnError = true);
+nlohmann::json toJson(const dependency_graph::Selection& selection = dependency_graph::Selection());
 
 dependency_graph::State importNetwork(dependency_graph::Network& current, dependency_graph::Selection& selection,
                                       const possumwood::Filepath& filepath, const std::string& name,

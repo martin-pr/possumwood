@@ -1,13 +1,15 @@
-#include <actions/io/json.h>
+#include <fstream>
+#include <sstream>
+
+#include <boost/filesystem.hpp>
+
+#include <nlohmann/json.hpp>
+#include <tbb/parallel_for.h>
+#include <opencv2/opencv.hpp>
+
 #include <actions/traits.h>
 #include <possumwood_sdk/datatypes/filename.h>
 #include <possumwood_sdk/node_implementation.h>
-#include <tbb/parallel_for.h>
-
-#include <boost/filesystem.hpp>
-#include <fstream>
-#include <opencv2/opencv.hpp>
-#include <sstream>
 
 #include "frame.h"
 #include "lightfields.h"

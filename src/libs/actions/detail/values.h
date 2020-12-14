@@ -1,9 +1,10 @@
 #pragma once
 
-#include <actions/io/json.h>
-#include <dependency_graph/network.h>
-
 #include <boost/optional.hpp>
+
+#include <nlohmann/json.hpp>
+
+#include <dependency_graph/network.h>
 
 #include "../node_data.h"
 #include "../undo_stack.h"
@@ -17,7 +18,7 @@ possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& n
                                              const dependency_graph::Data& value);
 
 possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& nodeId, const std::string& portName,
-                                             const possumwood::io::json& value);
+                                             const nlohmann::json& value);
 
 }  // namespace detail
 }  // namespace actions
