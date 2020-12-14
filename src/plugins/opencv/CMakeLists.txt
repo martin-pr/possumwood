@@ -12,13 +12,6 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${OpenCV_LIBS})
 
-# pkg-config to find jsoncpp
-find_package(PkgConfig REQUIRED)
-pkg_search_module(JSONCPP REQUIRED jsoncpp)
-
-include_directories(${JSONCPP_INCLUDE_DIRS})
-set(LIBS ${LIBS} ${JSONCPP_LIBRARIES})
-
 # Find OpenImageIO using a custom module
 include(possumwood_oiio)
 
