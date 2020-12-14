@@ -1,5 +1,7 @@
 #include "io.h"
 
+#include <iostream>
+
 namespace {
 std::map<std::type_index, possumwood::IOBase::to_fn>& s_toFn() {
 	static std::map<std::type_index, possumwood::IOBase::to_fn> s_map;
@@ -40,7 +42,7 @@ IOBase::~IOBase() {
 namespace possumwood {
 namespace io {
 
-void fromJson(const json& j, dependency_graph::Data& data) {
+void fromJson(const nlohmann::json& j, dependency_graph::Data& data) {
 	auto it = s_fromFn().find(data.typeinfo());
 
 #ifndef NDEBUG
@@ -52,7 +54,7 @@ void fromJson(const json& j, dependency_graph::Data& data) {
 	it->second(j, data);
 }
 
-void toJson(json& j, const dependency_graph::Data& data) {
+void toJson(nlohmann::json& j, const dependency_graph::Data& data) {
 	auto it = s_toFn().find(data.typeinfo());
 #ifndef NDEBUG
 	if(it == s_toFn().end())

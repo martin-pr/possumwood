@@ -94,7 +94,7 @@ void App::newFile() {
 	m_sceneDescription.clear();
 }
 
-dependency_graph::State App::loadFile(const possumwood::io::json& json) {
+dependency_graph::State App::loadFile(const nlohmann::json& json) {
 	// read the graph
 	graph().clear();
 	undoStack().clear();
@@ -150,7 +150,7 @@ dependency_graph::State App::loadFile(const Filepath& filename, bool alterCurren
 		throw std::runtime_error("Cannot open " + filename.toString() + " - file not found.");
 	// read the json file
 	auto in = filesystem().read(filename);
-	possumwood::io::json json;
+	nlohmann::json json;
 	(*in) >> json;
 
 	// update the opened filename
@@ -167,7 +167,7 @@ void App::saveFile() {
 	saveFile(m_filename);
 }
 
-void App::saveFile(possumwood::io::json& json, bool saveSceneConfig) {
+void App::saveFile(nlohmann::json& json, bool saveSceneConfig) {
 	// make a json instance containing the graph
 	json = possumwood::actions::toJson();
 
@@ -195,7 +195,7 @@ void App::saveFile(possumwood::io::json& json, bool saveSceneConfig) {
 }
 
 void App::saveFile(const Filepath& fn, bool saveSceneConfig) {
-	possumwood::io::json json;
+	nlohmann::json json;
 	saveFile(json, saveSceneConfig);
 
 	// save the json to the file

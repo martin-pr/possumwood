@@ -63,7 +63,7 @@ Toolbar::Toolbar() {
 
 					{
 						std::ifstream file(entry.path().string());
-						possumwood::io::json json;
+						nlohmann::json json;
 						file >> json;
 
 						if(!json["description"].is_null())

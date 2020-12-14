@@ -12,7 +12,7 @@
 #include "common.h"
 
 using namespace dependency_graph;
-using possumwood::io::json;
+using nlohmann::json;
 
 namespace {
 
@@ -31,32 +31,32 @@ dependency_graph::Nodes::const_iterator findNode(const dependency_graph::Network
 }  // namespace
 
 BOOST_AUTO_TEST_CASE(clipboard) {
-	std::vector<::possumwood::io::json> data;
+	std::vector<::nlohmann::json> data;
 	std::vector<std::function<void(const dependency_graph::Network&)>> tests;
 
 	//////////////
 	// a simple network of nodes
 	data.push_back("{\"connections\":[],\"nodes\":{}, \"name\": \"network\", \"type\": \"network\"}"_json);
 
-	data.back()["nodes"]["addition_0"] = possumwood::io::json{
+	data.back()["nodes"]["addition_0"] = nlohmann::json{
 	    {"name", "add"},
 	    {"type", "addition"},
 	    {"ports", {{"input_1", 2.0}, {"input_2", 4.0}}},
 	    {"blind_data", {{"type", unmangledTypeId<possumwood::NodeData>()}, {"value", "test blind data"}}}};
 
-	data.back()["nodes"]["multiplication_0"] = possumwood::io::json{
+	data.back()["nodes"]["multiplication_0"] = nlohmann::json{
 	    {"name", "mult_0"},
 	    {"type", "multiplication"},
 	    {"ports", {{"input_2", 5.0}}},
 	    {"blind_data", {{"type", unmangledTypeId<possumwood::NodeData>()}, {"value", "test blind data"}}}};
 
-	data.back()["nodes"]["multiplication_1"] = possumwood::io::json{
+	data.back()["nodes"]["multiplication_1"] = nlohmann::json{
 	    {"name", "mult_1"},
 	    {"type", "multiplication"},
 	    {"ports", {{"input_1", 0.0}, {"input_2", 0.0}}},
 	    {"blind_data", {{"type", unmangledTypeId<possumwood::NodeData>()}, {"value", "test blind data"}}}};
 
-	data.back()["connections"] = possumwood::io::json{{
+	data.back()["connections"] = nlohmann::json{{
 	    {"out_node", "addition_0"},
 	    {"out_port", "output"},
 	    {"in_node", "multiplication_0"},
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(clipboard) {
 
 	///////////////
 	// previous network as a subnetwork (with no inputs or outputs)
-	data.push_back(possumwood::io::json());
+	data.push_back(nlohmann::json());
 	data.back()["nodes"]["network_0"] =
 	    json{{"name", "test_network"},
 	         {"type", "network"},

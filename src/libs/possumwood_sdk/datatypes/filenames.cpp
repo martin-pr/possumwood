@@ -63,7 +63,7 @@ std::ostream& operator<<(std::ostream& out, const Filenames& f) {
 
 namespace {
 
-void toJson(::possumwood::io::json& json, const Filenames& value) {
+void toJson(::nlohmann::json& json, const Filenames& value) {
 	if(value.empty())
 		json = "";
 	else {
@@ -77,7 +77,7 @@ void toJson(::possumwood::io::json& json, const Filenames& value) {
 	}
 }
 
-void fromJson(const ::possumwood::io::json& json, Filenames& value) {
+void fromJson(const ::nlohmann::json& json, Filenames& value) {
 	value.clear();
 
 	if(!json.empty()) {

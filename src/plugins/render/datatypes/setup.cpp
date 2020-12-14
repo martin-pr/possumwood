@@ -68,7 +68,7 @@ std::ostream& operator<<(std::ostream& out, const GLSetup& setup) {
 
 namespace {
 
-void toJson(::possumwood::io::json& json, const GLSetup& value) {
+void toJson(::nlohmann::json& json, const GLSetup& value) {
 	switch(value.faceCulling()) {
 		case GLSetup::kNone:
 			json["culling"] = "none";
@@ -82,7 +82,7 @@ void toJson(::possumwood::io::json& json, const GLSetup& value) {
 	}
 }
 
-void fromJson(const ::possumwood::io::json& json, GLSetup& value) {
+void fromJson(const ::nlohmann::json& json, GLSetup& value) {
 	auto val = json["culling"];
 
 	if(val == "none")

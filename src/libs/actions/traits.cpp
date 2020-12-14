@@ -16,11 +16,11 @@ namespace possumwood {
 
 namespace {
 
-void stringToJson(possumwood::io::json& json, const std::string& f) {
+void stringToJson(nlohmann::json& json, const std::string& f) {
 	json = f;
 }
 
-void stringFromJson(const possumwood::io::json& json, std::string& f) {
+void stringFromJson(const nlohmann::json& json, std::string& f) {
 	f = json.get<std::string>();
 }
 

@@ -89,9 +89,9 @@ std::ostream& operator<<(std::ostream& out, const JointMappingEditorData& d) {
 
 namespace {
 
-void toJson(::possumwood::io::json& json, const anim::JointMappingEditorData& value) {
+void toJson(::nlohmann::json& json, const anim::JointMappingEditorData& value) {
 	for(auto& i : value) {
-		::possumwood::io::json jval;
+		::nlohmann::json jval;
 		jval[0] = i.first;
 		jval[1] = i.second;
 
@@ -99,7 +99,7 @@ void toJson(::possumwood::io::json& json, const anim::JointMappingEditorData& va
 	}
 }
 
-void fromJson(const ::possumwood::io::json& json, anim::JointMappingEditorData& value) {
+void fromJson(const ::nlohmann::json& json, anim::JointMappingEditorData& value) {
 	value.clear();
 
 	for(auto& i : json)

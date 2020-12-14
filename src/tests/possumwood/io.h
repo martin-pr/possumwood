@@ -14,8 +14,8 @@ bool isSaveable(const Data& data);
 namespace possumwood {
 namespace io {
 
-void fromJson(const json& j, dependency_graph::Data& data);
-void toJson(json& j, const dependency_graph::Data& data);
+void fromJson(const nlohmann::json& j, dependency_graph::Data& data);
+void toJson(nlohmann::json& j, const dependency_graph::Data& data);
 
 }  // namespace io
 }  // namespace possumwood

@@ -60,9 +60,9 @@ std::ostream& operator<<(std::ostream& out, const FrameEditorData& d) {
 
 namespace {
 
-void toJson(::possumwood::io::json& json, const anim::FrameEditorData& value) {
+void toJson(::nlohmann::json& json, const anim::FrameEditorData& value) {
 	for(auto& i : value) {
-		::possumwood::io::json jval;
+		::nlohmann::json jval;
 		jval[0] = i.first;
 		for(unsigned a = 0; a < 4; ++a)
 			jval[1][a] = i.second.rotation[a];
@@ -71,7 +71,7 @@ void toJson(::possumwood::io::json& json, const anim::FrameEditorData& value) {
 	}
 }
 
-void fromJson(const ::possumwood::io::json& json, anim::FrameEditorData& value) {
+void fromJson(const ::nlohmann::json& json, anim::FrameEditorData& value) {
 	value.clear();
 
 	for(auto& i : json) {

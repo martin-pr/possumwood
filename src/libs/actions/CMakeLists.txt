@@ -49,6 +49,8 @@ add_definitions(-DPOSSUMWOOD_CONF_PATH=${CONF_PATH})
 ###########################################################
 # ACTIONS SDK BUILD
 
+find_package(nlohmann_json REQUIRED)
+
 include_directories(./)
 
 # Building the library
@@ -58,4 +60,5 @@ add_library(actions SHARED ${sources})
 install(TARGETS actions DESTINATION lib)
 
 # Final linking
-target_link_libraries(actions ${LIBS} dependency_graph)
+target_link_libraries(actions PUBLIC ${LIBS} dependency_graph)
+target_link_libraries(actions PRIVATE nlohmann_json::nlohmann_json)

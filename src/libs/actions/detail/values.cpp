@@ -12,7 +12,7 @@ namespace {
 
 void doSetValueFromJson(const dependency_graph::UniqueId& nodeId,
                         const std::string& portName,
-                        const possumwood::io::json& value,
+                        const nlohmann::json& value,
                         std::shared_ptr<dependency_graph::Data> original) {
 	// get the node
 	dependency_graph::NodeBase* node = nullptr;
@@ -153,7 +153,7 @@ possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& n
 
 possumwood::UndoStack::Action setValueAction(const dependency_graph::UniqueId& nodeId,
                                              const std::string& portName,
-                                             const possumwood::io::json& value) {
+                                             const nlohmann::json& value) {
 	UndoStack::Action action;
 
 	std::shared_ptr<dependency_graph::Data> original(new dependency_graph::Data());

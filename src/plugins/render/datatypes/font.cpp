@@ -1,6 +1,6 @@
 #include "font.h"
 
-#include <actions/io/json.h>
+#include <nlohmann/json.hpp>
 
 #include <fstream>
 
@@ -18,13 +18,13 @@ bool Font::Glyph::operator!=(const Glyph& g) const {
 
 void Font::load(const boost::filesystem::path& filename) {
 	// read the JSON with glyphs
-	possumwood::io::json json;
+	nlohmann::json json;
 	{
 		std::ifstream in(filename.string());
 		in >> json;
 	}
 
-	for(possumwood::io::json::const_iterator i = json["characters"].begin(); i != json["characters"].end(); ++i) {
+	for(nlohmann::json::const_iterator i = json["characters"].begin(); i != json["characters"].end(); ++i) {
 		assert(i.key().length() == 1);
 
 		Glyph g;
