@@ -49,9 +49,10 @@ add_definitions(-DPOSSUMWOOD_CONF_PATH=${CONF_PATH})
 ###########################################################
 # ACTIONS SDK BUILD
 
-find_package(nlohmann_json)
+include(possumwood_json)
 
 include_directories(./)
+include_directories(${JSON_INCLUDE_DIRS})
 
 # Building the library
 file(GLOB_RECURSE sources *.cpp)
@@ -61,4 +62,4 @@ install(TARGETS actions DESTINATION lib)
 
 # Final linking
 target_link_libraries(actions PUBLIC ${LIBS} dependency_graph)
-target_link_libraries(actions PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(actions PRIVATE ${JSON_LIBS})
