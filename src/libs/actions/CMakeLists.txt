@@ -49,7 +49,7 @@ add_definitions(-DPOSSUMWOOD_CONF_PATH=${CONF_PATH})
 ###########################################################
 # ACTIONS SDK BUILD
 
-find_package(nlohmann_json REQUIRED)
+find_package(nlohmann_json)
 
 include_directories(./)
 
