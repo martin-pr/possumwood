@@ -16,13 +16,15 @@ dependency_graph::InAttr<Meshes> a_inMeshes;
 dependency_graph::InAttr<std::string> a_attr;
 dependency_graph::OutAttr<Meshes> a_outMesh;
 
-namespace {
 struct FakeKernel {
 	typedef float FT;
 
 	typedef possumwood::CGALKernel::Point_3 Point_3;
 
 	struct Vector_3 {
+		Vector_3() : data{{0, 0, 0}} {
+		}
+
 		Vector_3(float x, float y, float z) : data{{x, y, z}} {
 		}
 
@@ -42,6 +44,22 @@ struct FakeKernel {
 
 		operator const std::array<float, 3> &() const {
 			return data;
+		}
+
+		bool operator==(const Vector_3& v) const {
+			return v.data == data;
+		}
+
+		bool operator!=(const Vector_3& v) const {
+			return v.data != data;
+		}
+
+		bool operator==(const CGAL::Null_vector&) const {
+			return data[0] == 0.0f && data[1] == 0.0f && data[2] == 0.0f;
+		}
+
+		bool operator!=(const CGAL::Null_vector) const {
+			return data[0] != 0.0f || data[1] != 0.0f || data[2] != 0.0f;
 		}
 
 		std::array<float, 3> data;
@@ -106,8 +124,6 @@ template <typename PROPERTY, typename ITERATOR>
 void put(PROPERTY& prop, const ITERATOR& target, const FakeKernel::Vector_3& norm) {
 	prop.get().set(target->property_key(), norm);
 }
-
-}  // namespace
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	possumwood::ScopedOutputRedirect redirect;
