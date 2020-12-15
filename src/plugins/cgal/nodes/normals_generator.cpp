@@ -185,7 +185,17 @@ struct FakeKernel {
 	Construct_circumcenter_3 construct_circumcenter_3_object() const {
 		return Construct_circumcenter_3();
 	}
+
+	auto collinear_3_object() const {
+		possumwood::CGALKernel tmp;
+		return tmp.collinear_3_object();
+	}
 };
+
+possumwood::CGALKernel::Point_3 operator+(const CGAL::Origin&,
+                                          const FakeKernel::Vector_3& p) {
+	return possumwood::CGALKernel::Point_3(p[0], p[1], p[2]);
+}
 
 template <typename PROPERTY, typename ITERATOR>
 void put(PROPERTY& prop, const ITERATOR& target, const FakeKernel::Vector_3& norm) {
