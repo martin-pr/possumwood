@@ -198,8 +198,13 @@ possumwood::CGALKernel::Point_3 operator+(const CGAL::Origin&,
 }
 
 template <typename PROPERTY, typename ITERATOR>
-void put(PROPERTY& prop, const ITERATOR& target, const FakeKernel::Vector_3& norm) {
-	prop.get().set(target->property_key(), norm);
+void put(std::reference_wrapper<PROPERTY>& prop, const ITERATOR& target, const FakeKernel::Vector_3& norm) {
+	put(prop.get(), target->property_key(), norm);
+}
+
+template<typename PROP_T, typename VAL_T>
+void put(possumwood::Property<PROP_T>& prop, const possumwood::PropertyKey& key, const VAL_T& value) {
+	prop.set(key, value);
 }
 
 dependency_graph::State compute(dependency_graph::Values& data) {

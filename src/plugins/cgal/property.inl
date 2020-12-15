@@ -24,7 +24,7 @@ void Property<T>::set(PropertyKey& key, const T& value) {
 template <typename T>
 void Property<T>::set(const PropertyKey& key, const T& value) {
 	assert(!key.isDefault());
-	assert(key.m_index < m_data.size());
+	assert(key.m_index < (int)m_data.size());
 
 	m_data[key.m_index] = value;
 }
