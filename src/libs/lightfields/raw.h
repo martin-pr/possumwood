@@ -1,6 +1,6 @@
 #pragma once
 
-#include <json/value.h>
+#include <nlohmann/json.hpp>
 
 #include <iostream>
 #include <memory>
@@ -23,9 +23,9 @@ class Raw {
 	struct Pimpl;
 
 	// only used for file reading
-	static Json::Value& header(Pimpl& p);
-	static Json::Value& meta(Pimpl& p);
-	static Json::Value& privateMeta(Pimpl& p);
+	static nlohmann::json& header(Pimpl& p);
+	static nlohmann::json& meta(Pimpl& p);
+	static nlohmann::json& privateMeta(Pimpl& p);
 
 	std::shared_ptr<const Pimpl> m_pimpl;
 

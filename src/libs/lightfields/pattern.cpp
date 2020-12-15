@@ -146,15 +146,15 @@ std::ostream& operator<<(std::ostream& out, const Pattern& p) {
 
 Pattern Pattern::fromMetadata(const Metadata& meta) {
 	return lightfields::Pattern(
-	    meta.metadata()["devices"]["mla"]["lensPitch"].asDouble(),
-	    meta.metadata()["devices"]["sensor"]["pixelPitch"].asDouble(),
-	    meta.metadata()["devices"]["mla"]["rotation"].asDouble(),
-	    Imath::V2f(meta.metadata()["devices"]["mla"]["scaleFactor"]["x"].asDouble(),
-	               meta.metadata()["devices"]["mla"]["scaleFactor"]["y"].asDouble()),
-	    Imath::V3f(meta.metadata()["devices"]["mla"]["sensorOffset"]["x"].asDouble(),
-	               meta.metadata()["devices"]["mla"]["sensorOffset"]["y"].asDouble(),
-	               meta.metadata()["devices"]["mla"]["sensorOffset"]["z"].asDouble()),
-	    Imath::V2i(meta.metadata()["image"]["width"].asInt(), meta.metadata()["image"]["height"].asInt()));
+	    meta.metadata()["devices"]["mla"]["lensPitch"].get<float>(),
+	    meta.metadata()["devices"]["sensor"]["pixelPitch"].get<float>(),
+	    meta.metadata()["devices"]["mla"]["rotation"].get<float>(),
+	    Imath::V2f(meta.metadata()["devices"]["mla"]["scaleFactor"]["x"].get<float>(),
+	               meta.metadata()["devices"]["mla"]["scaleFactor"]["y"].get<float>()),
+	    Imath::V3f(meta.metadata()["devices"]["mla"]["sensorOffset"]["x"].get<float>(),
+	               meta.metadata()["devices"]["mla"]["sensorOffset"]["y"].get<float>(),
+	               meta.metadata()["devices"]["mla"]["sensorOffset"]["z"].get<float>()),
+	    Imath::V2i(meta.metadata()["image"]["width"].get<int>(), meta.metadata()["image"]["height"].get<int>()));
 }
 
 Pattern Pattern::fromFit(const LensletGraph& lg) {

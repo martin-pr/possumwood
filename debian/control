@@ -2,7 +2,7 @@ Source: possumwood
 Section: graphics
 Priority: optional
 Maintainer: Martin Prazak <martin.prazak@gmail.com>
-Build-Depends: debhelper (>= 9), cmake, libboost-all-dev, libcgal-dev, libqt5opengl5-dev, libglew-dev, libglu1-mesa-dev, libtbb-dev, libpthread-stubs0-dev, libopenimageio-dev, libopenexr-dev, libilmbase-dev, freeglut3-dev, libluabind-dev, libglfw3-dev, pkg-config, libopencv-dev, libmpfr-dev, libjsoncpp-dev, libeigen3-dev, libjemalloc-dev, nlohmann-json-dev | nlohmann-json3-dev
+Build-Depends: debhelper (>= 9), cmake, libboost-all-dev, libcgal-dev, libqt5opengl5-dev, libglew-dev, libglu1-mesa-dev, libtbb-dev, libpthread-stubs0-dev, libopenimageio-dev, libopenexr-dev, libilmbase-dev, freeglut3-dev, libluabind-dev, libglfw3-dev, pkg-config, libopencv-dev, libmpfr-dev, libeigen3-dev, libjemalloc-dev, nlohmann-json-dev | nlohmann-json3-dev
 Standards-Version: 4.1.2
 Homepage: https://github.com/martin-pr/possumwood
 Vcs-Git: https://github.com/martin-pr/possumwood

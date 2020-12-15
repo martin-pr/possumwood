@@ -5,13 +5,6 @@ find_package(Boost REQUIRED COMPONENTS
 include_directories(${Boost_INCLUDE_DIR})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
-# pkg-config to find jsoncpp
-find_package(PkgConfig REQUIRED)
-
-pkg_search_module(JSONCPP REQUIRED jsoncpp)
-include_directories(${JSONCPP_INCLUDE_DIRS})
-set(LIBS ${LIBS} ${JSONCPP_LIBRARIES})
-
 # Find opencv
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
