@@ -75,9 +75,13 @@ void adjustScrollBar(QScrollBar* scrollBar, float factor, float pos) {
 }  // namespace
 
 void MotionMap::wheelEvent(QWheelEvent* mouseEvent) {
-	const float sc = powf(10.0f, (float)mouseEvent->delta() / 480.0f);
+	const float sc = powf(10.0f, (float)mouseEvent->angleDelta().y() / 480.0f);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+	QPointF pos = mouseEvent->position();
+#else
 	QPointF pos = mouseEvent->pos();
+#endif
 
 	setTransformationAnchor(QGraphicsView::NoAnchor);
 	scale(sc, sc);

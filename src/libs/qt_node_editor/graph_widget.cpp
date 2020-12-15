@@ -47,12 +47,12 @@ void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 	}
 	// translation when mid button is pressed
 	else if(event->buttons() & Qt::MiddleButton) {
-		const QPointF tr = QPointF(event->x(), event->y()) - QPointF(m_mouseX, m_mouseY);
+		const QPointF translation = QPointF(event->x(), event->y()) - QPointF(m_mouseX, m_mouseY);
 
-		const QMatrix m = matrix();
+		const QTransform m = transform();
 		const float scale = sqrt(m.m11() * m.m22());
 
-		translate(tr.x() / scale, tr.y() / scale);
+		translate(translation.x() / scale, translation.y() / scale);
 
 		event->accept();
 	}
@@ -66,7 +66,11 @@ void GraphWidget::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void GraphWidget::wheelEvent(QWheelEvent* event) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+	const QPointF orig = mapToScene(event->position().x(), event->position().y());
+#else
 	const QPointF orig = mapToScene(event->x(), event->y());
+#endif
 	const float delta = pow(1.002, (float)event->angleDelta().y());
 
 	QTransform tr = transform();
@@ -76,7 +80,11 @@ void GraphWidget::wheelEvent(QWheelEvent* event) {
 	if(det > 1e-3 && det < 1e2)
 		setTransform(tr);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+	const QPointF current = mapToScene(event->position().x(), event->position().y());
+#else
 	const QPointF current = mapToScene(event->x(), event->y());
+#endif
 
 	translate((current - orig).x(), (current - orig).y());
 }
