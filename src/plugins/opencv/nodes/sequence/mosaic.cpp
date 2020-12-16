@@ -19,8 +19,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	const auto& sequence = data.get(a_inSequence);
 
 	// result
-	cv::Mat result(sequence.meta().rows * (sequence.max().y - sequence.min().y + 1),
-	               sequence.meta().cols * (sequence.max().x - sequence.min().x + 1), sequence.meta().type);
+	cv::Mat result =
+	    cv::Mat::zeros(sequence.meta().rows * (sequence.max().y - sequence.min().y + 1),
+	                   sequence.meta().cols * (sequence.max().x - sequence.min().x + 1), sequence.meta().type);
 
 	tbb::task_group group;
 
