@@ -110,20 +110,34 @@ void doResetValueFromJson(const dependency_graph::UniqueId& nodeId,
                           std::shared_ptr<dependency_graph::Data> value) {
 	assert(value != nullptr);
 	if(!value->empty()) {
-		auto nodeIt = AppCore::instance().graph().nodes().find(nodeId, dependency_graph::Nodes::kRecursive);
-		assert(nodeIt != AppCore::instance().graph().nodes().end());
+		dependency_graph::NodeBase* nodePtr = nullptr;
+		{
+			auto nodeIt = AppCore::instance().graph().nodes().find(nodeId, dependency_graph::Nodes::kRecursive);
+			if(nodeIt != AppCore::instance().graph().nodes().end())
+				nodePtr = &(*nodeIt);
+
+			else if(nodeId == AppCore::instance().graph().index())
+				nodePtr = &(AppCore::instance().graph());
+		}
+
+		if(nodePtr == nullptr) {
+			std::stringstream ss;
+			ss << "Failed to set value on " << nodeId << " port " << portName
+			   << " - the node ID doesn't seem to exist?";
+			throw std::runtime_error(ss.str());
+		}
 
 		// get the port
 		int portId = -1;
-		for(std::size_t pi = 0; pi < nodeIt->portCount(); ++pi)
-			if(nodeIt->port(pi).name() == portName) {
+		for(std::size_t pi = 0; pi < nodePtr->portCount(); ++pi)
+			if(nodePtr->port(pi).name() == portName) {
 				portId = pi;
 				break;
 			}
 
 		assert(portId >= 0);
 
-		nodeIt->port(portId).setData(*value);
+		nodePtr->port(portId).setData(*value);
 	}
 }
 
