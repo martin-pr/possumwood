@@ -33,15 +33,15 @@ cv::Mat decodeData(const unsigned char* data,
 	cv::Mat result(width, height, CV_32F);
 
 	tbb::parallel_for(std::size_t(0), width * height, [&](std::size_t i) {
-		const unsigned char c1 = data[i / 2 * 3];
-		const unsigned char c2 = data[i / 2 * 3 + 1];
-		const unsigned char c3 = data[i / 2 * 3 + 2];
+		const uint16_t c1 = data[i / 2 * 3];
+		const uint16_t c2 = data[i / 2 * 3 + 1];
+		const uint16_t c3 = data[i / 2 * 3 + 2];
 
-		unsigned short val;
+		uint16_t val;
 		if(i % 2 == 0)
-			val = ((unsigned short)c1 << 4) + (unsigned short)c2;
+			val = (c1 << 4) + (c2 >> 4);
 		else
-			val = (((unsigned short)c2 & 0x0f) << 8) + (unsigned short)c3;
+			val = ((c2 & 0x0f) << 8) + c3;
 
 		const unsigned patternId = (i % width) % 2 + ((i / width) % 2) * 2;
 
