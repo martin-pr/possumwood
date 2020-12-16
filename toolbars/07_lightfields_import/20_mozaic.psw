@@ -127,8 +127,8 @@
             },
             "name": "integrate_mosaic",
             "ports": {
-                "elements": 9,
-                "inclusion_ratio": 0.20000000298023224
+                "elements": 15,
+                "inclusion_ratio": 0.5
             },
             "type": "opencv/lightfields/integrate_mosaic"
         },
@@ -136,8 +136,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 121.63153076171875,
-                    "y": -335.36041259765625
+                    "x": 163.37884521484375,
+                    "y": -340.5788269042969
                 }
             },
             "name": "lytro_lightfield",
@@ -476,8 +476,7 @@
             },
             "name": "samples_from_metadata",
             "ports": {
-                "correct_gain": true,
-                "scale_compensation": 1.0
+                "correct_gain": true
             },
             "type": "opencv/lightfields/samples_from_metadata"
         },
@@ -498,10 +497,10 @@
         }
     },
     "ports": {
-        "refocus": 20.0,
+        "refocus": 5.0,
         "size": {
-            "x": 100,
-            "y": 100
+            "x": 40,
+            "y": 40
         }
     },
     "scene_config": {
@@ -510,6 +509,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAASlAAACVQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJuAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAAA/wAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABdQAAAfkAAACtAQAAAwAAApMAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAIcAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAAAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABJwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABnQAAAdEAAACtAQAAAwAABQIAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
