@@ -26,13 +26,13 @@ std::ostream& operator<<(std::ostream& out, const Metadata& meta) {
 	out << std::setw(4);
 
 	out << "### Header" << std::endl;
-	out << meta.header() << std::endl;
+	out << std::setw(4) << meta.header() << std::endl;
 
 	out << "### Metadata" << std::endl;
-	out << meta.metadata() << std::endl;
+	out << std::setw(4) << meta.metadata() << std::endl;
 
 	out << "### Private metadata:" << std::endl;
-	out << meta.privateMetadata() << std::endl;
+	out << std::setw(4) << meta.privateMetadata() << std::endl;
 
 	return out;
 }
