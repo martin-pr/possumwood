@@ -8,6 +8,7 @@
 #include <opencv2/opencv.hpp>
 
 #include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/datatypes/filename.h>
 #include <possumwood_sdk/node_implementation.h>
 
@@ -22,8 +23,15 @@
 namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
+dependency_graph::InAttr<possumwood::Enum> a_debayer;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
 dependency_graph::OutAttr<lightfields::Metadata> a_metadata;
+
+static std::vector<std::pair<std::string, int>> s_debayer{
+    {"None", lightfields::Bayer::kNone},
+    {"Basic", lightfields::Bayer::kBasic},
+    {"Edge-aware", lightfields::Bayer::kEA},
+};
 
 template <typename T>
 std::string str(const T& val) {
@@ -56,7 +64,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		lightfields::Bayer bayer(raw.metadata().metadata());
 
 		assert(raw.image() != nullptr);
-		result = bayer.decode(raw.image());
+		result = bayer.decode(raw.image(), (lightfields::Bayer::Decoding)data.get(a_debayer).intValue());
 
 		meta = raw.metadata();
 	}
@@ -72,11 +80,14 @@ void init(possumwood::Metadata& meta) {
 	                  possumwood::Filename({
 	                      "Lytro files (*.lfr *.RAW)",
 	                  }));
+	meta.addAttribute(a_debayer, "debayer", possumwood::Enum(s_debayer.begin(), s_debayer.end()));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_metadata, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
 	meta.addInfluence(a_filename, a_metadata);
+	meta.addInfluence(a_debayer, a_frame);
+	meta.addInfluence(a_debayer, a_metadata);
 
 	meta.setCompute(compute);
 }
