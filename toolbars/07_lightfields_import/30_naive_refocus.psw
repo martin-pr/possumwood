@@ -31,6 +31,12 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "convert_2",
+            "in_port": "in_frame",
+            "out_node": "demosaic_0",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "convert_0",
             "in_port": "in_frame",
             "out_node": "gamma_0",
@@ -67,7 +73,7 @@
             "out_port": "out"
         },
         {
-            "in_node": "convert_2",
+            "in_node": "demosaic_0",
             "in_port": "in_frame",
             "out_node": "lytro_lightfield_0",
             "out_port": "frame"
@@ -171,6 +177,21 @@
             },
             "type": "opencv/convert"
         },
+        "demosaic_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 343.0738830566406,
+                    "y": 89.83418273925781
+                }
+            },
+            "name": "demosaic",
+            "ports": {
+                "mode": "Edge-Aware",
+                "mozaic": "RG"
+            },
+            "type": "opencv/demosaic"
+        },
         "gamma_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -234,14 +255,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 347.1607360839844,
-                    "y": 162.89340209960938
+                    "x": 377.0060119628906,
+                    "y": -122.2947006225586
                 }
             },
             "name": "lytro_lightfield",
             "ports": {
-                "debayer": "Basic",
-                "filename": "$EXAMPLES/lytro/tea.lfr"
+                "debayer": "None",
+                "filename": "$EXAMPLES/lytro/road.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -603,6 +624,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAA1UAAAOeAAAAAQAAABkAAANUAAADnQAAAAAAAAAABqsAAAABAAAAGQAAA1QAAAOd",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGqAAAC9vwCAAAAAfsAAAAKAGcAcgBhAHAAaAAAAAB1AAAC9gAAAJsBAAADAAAAAQAAAagAAAL1/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAAB1AAABLAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIAAAAAdQAAAvUAAACtAQAAAwAAA1QAAAL1AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAQAAABkAAANUAAADnQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAG8AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABKgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABoAAAAc4AAACtAQAAAwAAA0UAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
