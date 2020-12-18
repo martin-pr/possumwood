@@ -145,7 +145,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 255.0,
+                "a": 512.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -161,7 +161,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 500.0,
+                "a": 2000.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -191,7 +191,7 @@
             },
             "name": "gamma",
             "ports": {
-                "gamma": 0.699999988079071,
+                "gamma": 1.0,
                 "normalization_coef": 1.0
             },
             "type": "opencv/gamma"
@@ -623,5 +623,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAQAAABkAAANUAAADnQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGqAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABIAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABlgAAAdgAAACtAQAAAwAAA1cAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGqAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABGwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABkQAAAd0AAACtAQAAAwAAA1cAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
