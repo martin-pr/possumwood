@@ -133,7 +133,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 5.0,
+                "a": 255.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -149,7 +149,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 0.014999999664723873,
+                "a": 500.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -159,13 +159,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 315.1704406738281,
-                    "y": 307.2774963378906
+                    "x": 326.7059020996094,
+                    "y": 322.3043518066406
                 }
             },
             "name": "convert",
             "ports": {
-                "a": 0.10000000149011612,
+                "a": 0.0006000000284984708,
                 "b": 0.0,
                 "mode": "CV_32F"
             },
@@ -234,14 +234,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 335.6252746582031,
-                    "y": 147.8665313720703
+                    "x": 347.1607360839844,
+                    "y": 162.89340209960938
                 }
             },
             "name": "lytro_lightfield",
             "ports": {
                 "debayer": "Basic",
-                "filename": "$EXAMPLES/lytro/road.lfr"
+                "filename": "$EXAMPLES/lytro/tea.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -558,7 +558,7 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 320.0396423339844,
+                    "x": 321.0396423339844,
                     "y": 525.0156860351563
                 }
             },
@@ -590,7 +590,7 @@
             "max": 40.0,
             "min": -20.0,
             "type": "linear",
-            "value": -20.0
+            "value": 29.979999542236328
         },
         "resolution": {
             "x": 500,
@@ -603,6 +603,6 @@
         "start_time": 0.0
     },
     "type": "network",
-    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAG1AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABLQAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABowAAAcsAAACtAQAAAwAAA0wAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAAA1UAAAOeAAAAAQAAABkAAANUAAADnQAAAAAAAAAABqsAAAABAAAAGQAAA1QAAAOd",
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGqAAAC9vwCAAAAAfsAAAAKAGcAcgBhAHAAaAAAAAB1AAAC9gAAAJsBAAADAAAAAQAAAagAAAL1/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwAAAAB1AAABLAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIAAAAAdQAAAvUAAACtAQAAAwAAA1QAAAL1AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

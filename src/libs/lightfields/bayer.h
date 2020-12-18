@@ -12,21 +12,27 @@ class Bayer {
 
 	Bayer(const nlohmann::json& meta);
 
+	cv::Mat decode(const unsigned char* raw, Decoding decoding);
+
+  private:
+	template <typename T>
 	struct Value {
 		Value();
 		Value(const nlohmann::json& json);
 
-		uint16_t operator[](unsigned id) const;
+		template <typename U>
+		Value<T>& operator=(const Value<U>& val);
 
-		uint16_t b, gb, gr, r;
+		T operator[](unsigned id) const;
+
+		T b, gb, gr, r;
+		T max, min;
 	};
 
-	cv::Mat decode(const unsigned char* raw, Decoding decoding);
-
-  private:
 	int m_width, m_height;
-	Value m_black, m_white;
+	Value<float> m_black, m_white;
 	std::size_t m_opencvBayerEnumOffset, m_bayerOffset;
+	Value<float> m_gain;
 };
 
 }  // namespace lightfields

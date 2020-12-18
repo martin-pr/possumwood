@@ -6,33 +6,54 @@ namespace lightfields {
 
 namespace {
 
-uint16_t getComponent(const nlohmann::json& json, const std::string& key) {
+template <typename T>
+T getComponent(const nlohmann::json& json, const std::string& key) {
 	auto it = json.find(key);
 	if(it == json.end())
 		throw std::runtime_error("Error reading Bayer component - missing '" + key + "' value.");
-	return it->get<uint16_t>();
+	return it->get<T>();
 }
 
 }  // namespace
 
-Bayer::Value::Value() : b(0), gb(0), gr(0), r(0) {
+template <typename T>
+Bayer::Value<T>::Value() : b(0), gb(0), gr(0), r(0) {
 }
 
-Bayer::Value::Value(const nlohmann::json& json) {
-	b = getComponent(json, "b");
-	gb = getComponent(json, "gb");
-	gr = getComponent(json, "gr");
-	r = getComponent(json, "r");
+template <typename T>
+Bayer::Value<T>::Value(const nlohmann::json& json) {
+	b = getComponent<T>(json, "b");
+	gb = getComponent<T>(json, "gb");
+	gr = getComponent<T>(json, "gr");
+	r = getComponent<T>(json, "r");
+
+	max = std::max(std::max(b, gb), std::max(gr, r));
+	min = std::min(std::min(b, gb), std::min(gr, r));
 }
 
-uint16_t Bayer::Value::operator[](unsigned id) const {
+template <typename T>
+T Bayer::Value<T>::operator[](unsigned id) const {
 	assert(id < 4 && "Bayer value ID should be in range 0..3");
-	return reinterpret_cast<const uint16_t*>(this)[id];
+	return reinterpret_cast<const T*>(this)[id];
+}
+
+template <typename T>
+template <typename U>
+Bayer::Value<T>& Bayer::Value<T>::operator=(const Value<U>& val) {
+	b = val.b;
+	gb = val.gb;
+	gr = val.gr;
+	r = val.r;
+
+	max = val.max;
+	min = val.min;
+
+	return *this;
 }
 
 Bayer::Bayer(const nlohmann::json& meta) {
-	m_black = lightfields::Bayer::Value(meta["image"]["rawDetails"]["pixelFormat"]["black"]);
-	m_white = lightfields::Bayer::Value(meta["image"]["rawDetails"]["pixelFormat"]["white"]);
+	m_black = lightfields::Bayer::Value<uint16_t>(meta["image"]["rawDetails"]["pixelFormat"]["black"]);
+	m_white = lightfields::Bayer::Value<uint16_t>(meta["image"]["rawDetails"]["pixelFormat"]["white"]);
 
 	const std::string upperLeftPixel = meta["devices"]["sensor"]["mosaic"]["upperLeftPixel"].get<std::string>();
 
@@ -60,6 +81,8 @@ Bayer::Bayer(const nlohmann::json& meta) {
 
 	if(meta["devices"]["sensor"]["bitsPerPixel"].get<int>() != 12)
 		throw std::runtime_error("Only 12 bits per pixel supported at the moment");
+
+	m_gain = lightfields::Bayer::Value<float>(meta["devices"]["sensor"]["analogGain"]);
 }
 
 cv::Mat Bayer::decode(const unsigned char* raw, Decoding decoding) {
@@ -76,15 +99,23 @@ cv::Mat Bayer::decode(const unsigned char* raw, Decoding decoding) {
 		else
 			val = ((c2 & 0x0f) << 8) + c3;
 
+		float fval = val;
+
 		const unsigned patternId = ((i % m_width) % 2 + ((i / m_width) % 2) * 2 + m_bayerOffset) % 4;
 
-		if(val < m_black[patternId])
-			val = m_black[patternId];
-		if(val > m_white[patternId])
-			val = m_white[patternId];
+		// adjust based on normalized gain
+		// This is tricky - gain adjustment introduces "purple edges" in oversatureated regions.
+		// Needs more work.
+		fval *= m_gain[patternId] / m_gain.min;
 
-		const float fval =
-		    ((float)val - (float)m_black[patternId]) / ((float)(m_white[patternId] - m_black[patternId]));
+		// make sure the value is in black-white range to avoid negative values
+		if(fval < m_black[patternId])
+			fval = m_black[patternId];
+		if(fval > m_white[patternId])
+			fval = m_white[patternId];
+
+		// normalize to 0..1 for black..white
+		fval = (fval - m_black[patternId]) / (m_white[patternId] - m_black[patternId]);
 
 		// int values normalized between 0 and 12-bit max
 		tmp.at<uint16_t>(i / m_width, i % m_width) = floor((float)((1 << 12) - 1) * fval);
