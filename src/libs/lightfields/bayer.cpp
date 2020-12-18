@@ -17,7 +17,7 @@ T getComponent(const nlohmann::json& json, const std::string& key) {
 }  // namespace
 
 template <typename T>
-Bayer::Value<T>::Value() : b(0), gb(0), gr(0), r(0) {
+Bayer::Value<T>::Value() : r(0), gr(0), gb(0), b(0) {
 }
 
 template <typename T>
@@ -58,19 +58,15 @@ Bayer::Bayer(const nlohmann::json& meta) {
 	const std::string upperLeftPixel = meta["devices"]["sensor"]["mosaic"]["upperLeftPixel"].get<std::string>();
 
 	if(upperLeftPixel == "b") {
-		m_opencvBayerEnumOffset = 2;
 		m_mozaic = kBG;
 	}
 	else if(upperLeftPixel == "gb") {
-		m_opencvBayerEnumOffset = 3;
 		m_mozaic = kGB;
 	}
 	else if(upperLeftPixel == "gr") {
-		m_opencvBayerEnumOffset = 1;
 		m_mozaic = kGR;
 	}
 	else if(upperLeftPixel == "r") {
-		m_opencvBayerEnumOffset = 0;
 		m_mozaic = kRG;
 	}
 	else

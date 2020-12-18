@@ -30,13 +30,12 @@ class Bayer {
 
 		T operator[](unsigned id) const;
 
-		T b, gb, gr, r;
+		T r, gr, gb, b;
 		T max, min;
 	};
 
 	int m_width, m_height;
 	Value<float> m_black, m_white;
-	std::size_t m_opencvBayerEnumOffset;
 	MozaicType m_mozaic;
 	Value<float> m_gain;
 };
