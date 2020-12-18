@@ -89,7 +89,7 @@ Bayer::MozaicType Bayer::mozaic() const {
 	return m_mozaic;
 }
 
-cv::Mat Bayer::decode(const unsigned char* raw) {
+cv::Mat Bayer::decode(const unsigned char* raw) const {
 	cv::Mat tmp(m_width, m_height, CV_16UC1);
 
 	tbb::parallel_for(0, m_width * m_height, [&](int i) {
@@ -103,29 +103,63 @@ cv::Mat Bayer::decode(const unsigned char* raw) {
 		else
 			val = ((c2 & 0x0f) << 8) + c3;
 
-		float fval = val;
-
-		const unsigned patternId = ((i % m_width) % 2 + ((i / m_width) % 2) * 2 + (int)m_mozaic) % 4;
-
-		// adjust based on normalized gain
-		// This is tricky - gain adjustment introduces "purple edges" in oversatureated regions.
-		// Needs more work.
-		fval *= m_gain[patternId] / m_gain.min;
-
-		// make sure the value is in black-white range to avoid negative values
-		if(fval < m_black[patternId])
-			fval = m_black[patternId];
-		if(fval > m_white[patternId])
-			fval = m_white[patternId];
-
-		// normalize to 0..1 for black..white
-		fval = (fval - m_black[patternId]) / (m_white[patternId] - m_black[patternId]);
-
-		// int values normalized between 0 and 12-bit max
-		tmp.at<uint16_t>(i / m_width, i % m_width) = floor((float)((1 << 12) - 1) * fval);
+		tmp.at<uint16_t>(i / m_width, i % m_width) = val;
 	});
 
 	return tmp;
+}
+
+cv::Mat Bayer::uint16ToFloatMat(const cv::Mat& m, const Flags& f) const {
+	cv::Mat result = cv::Mat::zeros(m.rows, m.cols, CV_MAKETYPE(CV_32F, m.channels()));
+
+	tbb::parallel_for(tbb::blocked_range<int>(0, m_width * m_height),
+	                  [&result, &m, this, &f](const tbb::blocked_range<int>& range) {
+		                  for(int i = range.begin(); i != range.end(); ++i) {
+			                  const uint16_t* val = m.ptr<uint16_t>(i / m_width, i % m_width);
+
+			                  for(int chan = 0; chan < m.channels(); ++chan) {
+				                  float fval = val[chan];
+
+				                  // for 1-channel pics use bayer; 3-channel use the values directly
+				                  unsigned patternId;
+				                  if(m.channels() == 1)
+					                  patternId = ((i % m_width) % 2 + ((i / m_width) % 2) * 2 + (int)m_mozaic) % 4;
+				                  else {
+					                  switch(chan) {
+						                  case 0:
+							                  patternId = 0;  // blue
+							                  break;
+						                  case 1:
+							                  patternId = 1;  // green; assuming GB == GR
+							                  break;
+						                  case 2:
+							                  patternId = 3;  // red
+							                  break;
+					                  }
+				                  }
+
+				                  // adjust based on normalized gain
+				                  // This is tricky - gain adjustment introduces "purple edges" in oversatureated
+				                  // regions. Needs more work.
+				                  if(f & kCorrectGain)
+					                  fval *= m_gain[patternId] / m_gain.min;
+
+				                  // make sure the value is in black-white range to avoid negative values
+				                  if(fval < m_black[patternId])
+					                  fval = m_black[patternId];
+				                  if(fval > m_white[patternId])
+					                  fval = m_white[patternId];
+
+				                  // normalize to 0..1 for black..white
+				                  fval = (fval - m_black[patternId]) / (m_white[patternId] - m_black[patternId]);
+
+				                  // and set the output value
+				                  result.ptr<float>(i / m_width, i % m_width)[chan] = fval;
+			                  }
+		                  }
+	                  });
+
+	return result;
 }
 
 }  // namespace lightfields

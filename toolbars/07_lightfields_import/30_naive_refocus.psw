@@ -27,12 +27,6 @@
         {
             "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
-            "out_node": "convert_2",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "convert_2",
-            "in_port": "in_frame",
             "out_node": "demosaic_0",
             "out_port": "out_frame"
         },
@@ -52,6 +46,12 @@
             "in_node": "integrate_nearest_0",
             "in_port": "size",
             "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "lytro_lightfield_0",
+            "in_port": "filename",
+            "out_node": "input_2",
             "out_port": "data"
         },
         {
@@ -167,28 +167,12 @@
             },
             "type": "opencv/convert"
         },
-        "convert_2": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 326.7059020996094,
-                    "y": 322.3043518066406
-                }
-            },
-            "name": "convert",
-            "ports": {
-                "a": 0.0006000000284984708,
-                "b": 0.0,
-                "mode": "CV_32F"
-            },
-            "type": "opencv/convert"
-        },
         "demosaic_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 343.0738830566406,
-                    "y": 89.83418273925781
+                    "x": 292.8624572753906,
+                    "y": 359.115478515625
                 }
             },
             "name": "demosaic",
@@ -234,6 +218,17 @@
             "name": "resolution",
             "type": "input"
         },
+        "input_2": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 136.83033752441406,
+                    "y": 180.9834747314453
+                }
+            },
+            "name": "filename",
+            "type": "input"
+        },
         "integrate_nearest_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -260,14 +255,11 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 377.0060119628906,
-                    "y": -122.2947006225586
+                    "x": 303.9947509765625,
+                    "y": 178.419677734375
                 }
             },
             "name": "lytro_lightfield",
-            "ports": {
-                "filename": "$EXAMPLES/lytro/road.lfr"
-            },
             "type": "opencv/capture/lytro_lightfield"
         },
         "network_0": {
@@ -589,6 +581,7 @@
             },
             "name": "samples_from_metadata",
             "ports": {
+                "correct_gain": true,
                 "scale_compensation": 0.9988499879837036
             },
             "type": "opencv/lightfields/samples_from_metadata"
@@ -610,16 +603,17 @@
         }
     },
     "ports": {
+        "filename": "$EXAMPLES/lytro/road.lfr",
         "refocus": {
             "in_progress_updates": false,
             "max": 40.0,
             "min": -20.0,
             "type": "linear",
-            "value": 29.979999542236328
+            "value": -20.0
         },
         "resolution": {
-            "x": 500,
-            "y": 500
+            "x": 300,
+            "y": 300
         }
     },
     "scene_config": {
@@ -629,5 +623,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAQAAABkAAANUAAADnQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGqAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABKAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABngAAAdAAAACtAQAAAwAAA1cAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGqAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABIAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABlgAAAdgAAACtAQAAAwAAA1cAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

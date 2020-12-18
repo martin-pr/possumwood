@@ -14,7 +14,10 @@ class Bayer {
 	enum MozaicType { kBG = 0, kGB = 1, kGR = 2, kRG = 3 };
 	MozaicType mozaic() const;
 
-	cv::Mat decode(const unsigned char* raw);
+	cv::Mat decode(const unsigned char* raw) const;
+
+	enum Flags { kNone = 0, kCorrectGain = 1 };
+	cv::Mat uint16ToFloatMat(const cv::Mat& m, const Flags& f) const;
 
   private:
 	template <typename T>
