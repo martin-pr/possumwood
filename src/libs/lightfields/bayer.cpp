@@ -59,19 +59,19 @@ Bayer::Bayer(const nlohmann::json& meta) {
 
 	if(upperLeftPixel == "b") {
 		m_opencvBayerEnumOffset = 2;
-		m_bayerOffset = 0;
+		m_mozaic = kBG;
 	}
 	else if(upperLeftPixel == "gb") {
 		m_opencvBayerEnumOffset = 3;
-		m_bayerOffset = 1;
+		m_mozaic = kGB;
 	}
 	else if(upperLeftPixel == "gr") {
 		m_opencvBayerEnumOffset = 1;
-		m_bayerOffset = 2;
+		m_mozaic = kGR;
 	}
 	else if(upperLeftPixel == "r") {
 		m_opencvBayerEnumOffset = 0;
-		m_bayerOffset = 3;
+		m_mozaic = kRG;
 	}
 	else
 		throw std::runtime_error("Unknown 'upperLeftPixel' value '" + upperLeftPixel + "' in image metadata");
@@ -85,7 +85,11 @@ Bayer::Bayer(const nlohmann::json& meta) {
 	m_gain = lightfields::Bayer::Value<float>(meta["devices"]["sensor"]["analogGain"]);
 }
 
-cv::Mat Bayer::decode(const unsigned char* raw, Decoding decoding) {
+Bayer::MozaicType Bayer::mozaic() const {
+	return m_mozaic;
+}
+
+cv::Mat Bayer::decode(const unsigned char* raw) {
 	cv::Mat tmp(m_width, m_height, CV_16UC1);
 
 	tbb::parallel_for(0, m_width * m_height, [&](int i) {
@@ -101,7 +105,7 @@ cv::Mat Bayer::decode(const unsigned char* raw, Decoding decoding) {
 
 		float fval = val;
 
-		const unsigned patternId = ((i % m_width) % 2 + ((i / m_width) % 2) * 2 + m_bayerOffset) % 4;
+		const unsigned patternId = ((i % m_width) % 2 + ((i / m_width) % 2) * 2 + (int)m_mozaic) % 4;
 
 		// adjust based on normalized gain
 		// This is tricky - gain adjustment introduces "purple edges" in oversatureated regions.
@@ -121,29 +125,7 @@ cv::Mat Bayer::decode(const unsigned char* raw, Decoding decoding) {
 		tmp.at<uint16_t>(i / m_width, i % m_width) = floor((float)((1 << 12) - 1) * fval);
 	});
 
-	if(decoding == kNone)
-		return tmp;
-	else {
-		cv::Mat result(m_width, m_height, CV_16UC3);
-
-		int mode;
-		switch(decoding) {
-			case kBasic:
-				mode = cv::COLOR_BayerBG2BGR + m_opencvBayerEnumOffset;
-				break;
-
-			case kEA:
-				mode = cv::COLOR_BayerBG2BGR_EA + m_opencvBayerEnumOffset;
-				break;
-
-			default:
-				throw std::runtime_error("Unsupported debayer mode");
-		}
-
-		cvtColor(tmp, result, mode);
-
-		return result;
-	}
+	return tmp;
 }
 
 }  // namespace lightfields

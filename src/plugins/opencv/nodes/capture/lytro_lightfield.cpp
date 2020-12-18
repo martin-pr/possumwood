@@ -12,7 +12,6 @@
 #include <possumwood_sdk/datatypes/filename.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include "frame.h"
 #include "lightfields.h"
 #include "lightfields/bayer.h"
 #include "lightfields/block.h"
@@ -20,18 +19,15 @@
 #include "lightfields/pattern.h"
 #include "lightfields/raw.h"
 
+#include "datatypes/mozaic_type.h"
+#include "frame.h"
+
 namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
-dependency_graph::InAttr<possumwood::Enum> a_debayer;
+dependency_graph::OutAttr<possumwood::MozaicType> a_mozaic;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
 dependency_graph::OutAttr<lightfields::Metadata> a_metadata;
-
-static std::vector<std::pair<std::string, int>> s_debayer{
-    {"None", lightfields::Bayer::kNone},
-    {"Basic", lightfields::Bayer::kBasic},
-    {"Edge-aware", lightfields::Bayer::kEA},
-};
 
 template <typename T>
 std::string str(const T& val) {
@@ -55,6 +51,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result;
 	lightfields::Pattern pattern;
 	lightfields::Metadata meta;
+	possumwood::MozaicType mozaic;
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
 		std::ifstream file(filename.filename().string(), std::ios::binary);
@@ -64,13 +61,25 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		lightfields::Bayer bayer(raw.metadata().metadata());
 
 		assert(raw.image() != nullptr);
-		result = bayer.decode(raw.image(), (lightfields::Bayer::Decoding)data.get(a_debayer).intValue());
+		result = bayer.decode(raw.image());
+
+		switch(bayer.mozaic()) {
+			case lightfields::Bayer::kBG:
+				mozaic = possumwood::MozaicType::BG;
+			case lightfields::Bayer::kGB:
+				mozaic = possumwood::MozaicType::GB;
+			case lightfields::Bayer::kGR:
+				mozaic = possumwood::MozaicType::GR;
+			case lightfields::Bayer::kRG:
+				mozaic = possumwood::MozaicType::RG;
+		}
 
 		meta = raw.metadata();
 	}
 
 	data.set(a_frame, possumwood::opencv::Frame(result));
 	data.set(a_metadata, meta);
+	data.set(a_mozaic, mozaic);
 
 	return dependency_graph::State();
 }
@@ -80,14 +89,13 @@ void init(possumwood::Metadata& meta) {
 	                  possumwood::Filename({
 	                      "Lytro files (*.lfr *.RAW)",
 	                  }));
-	meta.addAttribute(a_debayer, "debayer", possumwood::Enum(s_debayer.begin(), s_debayer.end()));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_mozaic, "mozaic", possumwood::MozaicType::BG, possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_metadata, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
 	meta.addInfluence(a_filename, a_metadata);
-	meta.addInfluence(a_debayer, a_frame);
-	meta.addInfluence(a_debayer, a_metadata);
+	meta.addInfluence(a_filename, a_mozaic);
 
 	meta.setCompute(compute);
 }

@@ -8,11 +8,13 @@ namespace lightfields {
 
 class Bayer {
   public:
-	enum Decoding { kNone = 0, kBasic, kEA };
-
 	Bayer(const nlohmann::json& meta);
 
-	cv::Mat decode(const unsigned char* raw, Decoding decoding);
+	// values correspond to pattern "offsets" as used in the decode() method
+	enum MozaicType { kBG = 0, kGB = 1, kGR = 2, kRG = 3 };
+	MozaicType mozaic() const;
+
+	cv::Mat decode(const unsigned char* raw);
 
   private:
 	template <typename T>
@@ -31,7 +33,8 @@ class Bayer {
 
 	int m_width, m_height;
 	Value<float> m_black, m_white;
-	std::size_t m_opencvBayerEnumOffset, m_bayerOffset;
+	std::size_t m_opencvBayerEnumOffset;
+	MozaicType m_mozaic;
 	Value<float> m_gain;
 };
 

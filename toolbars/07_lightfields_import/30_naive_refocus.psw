@@ -79,6 +79,12 @@
             "out_port": "frame"
         },
         {
+            "in_node": "demosaic_0",
+            "in_port": "mozaic",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "mozaic"
+        },
+        {
             "in_node": "samples_from_metadata_0",
             "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
@@ -187,8 +193,7 @@
             },
             "name": "demosaic",
             "ports": {
-                "mode": "Edge-Aware",
-                "mozaic": "RG"
+                "mode": "Edge-Aware"
             },
             "type": "opencv/demosaic"
         },
@@ -261,7 +266,6 @@
             },
             "name": "lytro_lightfield",
             "ports": {
-                "debayer": "None",
                 "filename": "$EXAMPLES/lytro/road.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
@@ -625,5 +629,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAQAAABkAAANUAAADnQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAG8AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABKgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABoAAAAc4AAACtAQAAAwAAA0UAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGqAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABKAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABngAAAdAAAACtAQAAAwAAA1cAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
