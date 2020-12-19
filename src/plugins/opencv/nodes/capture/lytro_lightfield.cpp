@@ -66,12 +66,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		switch(bayer.mozaic()) {
 			case lightfields::Bayer::kBG:
 				mozaic = possumwood::MozaicType::BG;
+				break;
 			case lightfields::Bayer::kGB:
 				mozaic = possumwood::MozaicType::GB;
+				break;
 			case lightfields::Bayer::kGR:
 				mozaic = possumwood::MozaicType::GR;
+				break;
 			case lightfields::Bayer::kRG:
 				mozaic = possumwood::MozaicType::RG;
+				break;
 		}
 
 		meta = raw.metadata();
