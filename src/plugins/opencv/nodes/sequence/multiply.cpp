@@ -38,10 +38,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				result[it1->first] = std::move(m);
 		});
 
-		if(seq1.hasOneElement())
-			++it2;
-		else
+		if(!seq1.hasOneElement())
 			++it1;
+		if(!seq2.hasOneElement())
+			++it2;
 	}
 
 	group.wait();
