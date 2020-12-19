@@ -18,7 +18,7 @@ dependency_graph::OutAttr<possumwood::opencv::Sequence> a_outSequence;
 template <typename T>
 class MedianFilter {
   public:
-	MedianFilter(int size) : m_size(size / 2), m_buffer(std::vector<T>(size * size)) {
+	explicit MedianFilter(int size) : m_size(size / 2), m_buffer(std::vector<T>(size * size)) {
 		assert(size % 2 == 1);
 	}
 
