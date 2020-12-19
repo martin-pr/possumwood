@@ -8,7 +8,9 @@
 namespace possumwood {
 
 // the values here correspond to the offsets in OpenCV's demozaicing enums
-enum class MozaicType { BG = 0, GB = 1, RG = 2, GR = 3 };
+// TODO: these are a bit mysterious - they don't directly match with MozaicType from lightfields::Bayer.
+// The current version just tries to look "right" for the Lytro input, thats all.
+enum class MozaicType { BG = 2, GB = 3, RG = 0, GR = 1 };
 
 template <>
 struct Traits<MozaicType> {
