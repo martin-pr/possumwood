@@ -3,50 +3,31 @@
 
 #include <boost/filesystem.hpp>
 
-#include <nlohmann/json.hpp>
 #include <tbb/parallel_for.h>
+#include <nlohmann/json.hpp>
 #include <opencv2/opencv.hpp>
 
 #include <actions/traits.h>
+#include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/datatypes/filename.h>
 #include <possumwood_sdk/node_implementation.h>
 
-#include "frame.h"
 #include "lightfields.h"
+#include "lightfields/bayer.h"
 #include "lightfields/block.h"
 #include "lightfields/metadata.h"
 #include "lightfields/pattern.h"
 #include "lightfields/raw.h"
 
+#include "datatypes/mozaic_type.h"
+#include "frame.h"
+
 namespace {
 
 dependency_graph::InAttr<possumwood::Filename> a_filename;
+dependency_graph::OutAttr<possumwood::MozaicType> a_mozaic;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
 dependency_graph::OutAttr<lightfields::Metadata> a_metadata;
-
-cv::Mat decodeData(const unsigned char* data, std::size_t width, std::size_t height, int black[4], int white[4]) {
-	cv::Mat result(width, height, CV_32F);
-
-	tbb::parallel_for(std::size_t(0), width * height, [&](std::size_t i) {
-		const unsigned char c1 = data[i / 2 * 3];
-		const unsigned char c2 = data[i / 2 * 3 + 1];
-		const unsigned char c3 = data[i / 2 * 3 + 2];
-
-		unsigned short val;
-		if(i % 2 == 0)
-			val = ((unsigned short)c1 << 4) + (unsigned short)c2;
-		else
-			val = (((unsigned short)c2 & 0x0f) << 8) + (unsigned short)c3;
-
-		const unsigned patternId = (i % width) % 2 + ((i / width) % 2) * 2;
-
-		const float fval = ((float)val - (float)black[patternId]) / ((float)(white[patternId] - black[patternId]));
-
-		result.at<float>(i / width, i % width) = fval;
-	});
-
-	return result;
-}
 
 template <typename T>
 std::string str(const T& val) {
@@ -70,37 +51,39 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	cv::Mat result;
 	lightfields::Pattern pattern;
 	lightfields::Metadata meta;
+	possumwood::MozaicType mozaic;
 
 	if(!filename.filename().empty() && boost::filesystem::exists(filename.filename())) {
-		int width = 0, height = 0;
-		std::string metadataRef, imageRef;
-		int black[4] = {0, 0, 0, 0}, white[4] = {255, 255, 255, 255};
-
 		std::ifstream file(filename.filename().string(), std::ios::binary);
 		lightfields::Raw raw;
 		file >> raw;
 
-		meta = raw.metadata();
-
-		width = meta.metadata()["image"]["width"].get<int>();
-		height = meta.metadata()["image"]["height"].get<int>();
-
-		black[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["b"].get<int>();
-		black[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gb"].get<int>();
-		black[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["gr"].get<int>();
-		black[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["black"]["r"].get<int>();
-
-		white[0] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["b"].get<int>();
-		white[1] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gb"].get<int>();
-		white[2] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["gr"].get<int>();
-		white[3] = meta.metadata()["image"]["rawDetails"]["pixelFormat"]["white"]["r"].get<int>();
+		lightfields::Bayer bayer(raw.metadata().metadata());
 
 		assert(raw.image() != nullptr);
-		result = decodeData(raw.image(), width, height, black, white);
+		result = bayer.decode(raw.image());
+
+		switch(bayer.mozaic()) {
+			case lightfields::Bayer::kBG:
+				mozaic = possumwood::MozaicType::BG;
+				break;
+			case lightfields::Bayer::kGB:
+				mozaic = possumwood::MozaicType::GB;
+				break;
+			case lightfields::Bayer::kGR:
+				mozaic = possumwood::MozaicType::GR;
+				break;
+			case lightfields::Bayer::kRG:
+				mozaic = possumwood::MozaicType::RG;
+				break;
+		}
+
+		meta = raw.metadata();
 	}
 
 	data.set(a_frame, possumwood::opencv::Frame(result));
 	data.set(a_metadata, meta);
+	data.set(a_mozaic, mozaic);
 
 	return dependency_graph::State();
 }
@@ -111,10 +94,12 @@ void init(possumwood::Metadata& meta) {
 	                      "Lytro files (*.lfr *.RAW)",
 	                  }));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_mozaic, "mozaic", possumwood::MozaicType::BG, possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_metadata, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_filename, a_frame);
 	meta.addInfluence(a_filename, a_metadata);
+	meta.addInfluence(a_filename, a_mozaic);
 
 	meta.setCompute(compute);
 }
