@@ -151,7 +151,7 @@
             "out_port": "out_seq"
         }
     ],
-    "description": "### Microlens normalisation\n\n",
+    "description": "### Microlens normalisation using filtered center-view difference\n\nDue to the specific structure of the lens and microlens-array construction of the Lytro camera, the output image contains a complex 4-dimensional vignetting pattern, degrading the quality of the reconstruction.\n\nIn this demo, we use the central view (u,v ~ 0) image as a reference to normalize other views. This will lead to discontinuities due to parallax changes between images - assuming most of the image will contain low-frequency content, we can address these using a simple median filter.\n\nWhile removing the requirement for specific reference images, this approach might introduce low-frequency artifacts due to filtering.",
     "name": "network",
     "nodes": {
         "concat_0": {

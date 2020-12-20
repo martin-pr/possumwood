@@ -1,9 +1,87 @@
 {
     "connections": [
         {
+            "in_node": "concat_1",
+            "in_port": "in_frame_1",
+            "out_node": "concat_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "concat_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "frame",
+            "out_node": "convert_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "divide_0",
+            "in_port": "in_frame_1",
+            "out_node": "demosaic_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "samples_from_metadata_1",
+            "in_port": "in_frame",
+            "out_node": "demosaic_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "divide_0",
+            "in_port": "in_frame_2",
+            "out_node": "demosaic_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "samples_from_metadata_2",
+            "in_port": "in_frame",
+            "out_node": "demosaic_1",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "samples_from_metadata_0",
+            "in_port": "in_frame",
+            "out_node": "divide_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "lytro_lightfield_0",
+            "in_port": "filename",
+            "out_node": "input_0",
+            "out_port": "data"
+        },
+        {
+            "in_node": "network_0",
+            "in_port": "zoom",
+            "out_node": "input_1",
+            "out_port": "data"
+        },
+        {
+            "in_node": "lytro_lightfield_1",
+            "in_port": "filename",
+            "out_node": "input_2",
+            "out_port": "data"
+        },
+        {
             "in_node": "mosaic_2",
             "in_port": "seq",
             "out_node": "integrate_mosaic_0",
+            "out_port": "sequence"
+        },
+        {
+            "in_node": "mosaic_0",
+            "in_port": "seq",
+            "out_node": "integrate_mosaic_1",
+            "out_port": "sequence"
+        },
+        {
+            "in_node": "mosaic_1",
+            "in_port": "seq",
+            "out_node": "integrate_mosaic_2",
             "out_port": "sequence"
         },
         {
@@ -28,6 +106,24 @@
             "in_node": "samples_from_metadata_1",
             "in_port": "metadata",
             "out_node": "lytro_lightfield_0",
+            "out_port": "metadata"
+        },
+        {
+            "in_node": "demosaic_1",
+            "in_port": "in_frame",
+            "out_node": "lytro_lightfield_1",
+            "out_port": "frame"
+        },
+        {
+            "in_node": "demosaic_1",
+            "in_port": "mozaic",
+            "out_node": "lytro_lightfield_1",
+            "out_port": "mozaic"
+        },
+        {
+            "in_node": "samples_from_metadata_2",
+            "in_port": "metadata",
+            "out_node": "lytro_lightfield_1",
             "out_port": "metadata"
         },
         {
@@ -43,106 +139,16 @@
             "out_port": "frame"
         },
         {
-            "in_node": "integrate_mosaic_1",
-            "in_port": "samples",
-            "out_node": "samples_from_metadata_0",
-            "out_port": "samples"
-        },
-        {
-            "in_node": "divide_0",
-            "in_port": "in_frame_1",
-            "out_node": "demosaic_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "samples_from_metadata_1",
-            "in_port": "in_frame",
-            "out_node": "demosaic_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_1",
-            "in_port": "in_frame_1",
-            "out_node": "concat_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "frame",
-            "out_node": "convert_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "convert_0",
-            "in_port": "in_frame",
-            "out_node": "concat_1",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "concat_0",
             "in_port": "in_frame_1",
             "out_node": "mosaic_2",
             "out_port": "frame"
         },
         {
-            "in_node": "lytro_lightfield_0",
-            "in_port": "filename",
-            "out_node": "input_0",
-            "out_port": "data"
-        },
-        {
-            "in_node": "network_0",
-            "in_port": "zoom",
-            "out_node": "input_1",
-            "out_port": "data"
-        },
-        {
-            "in_node": "demosaic_1",
-            "in_port": "in_frame",
-            "out_node": "lytro_lightfield_1",
-            "out_port": "frame"
-        },
-        {
-            "in_node": "demosaic_1",
-            "in_port": "mozaic",
-            "out_node": "lytro_lightfield_1",
-            "out_port": "mozaic"
-        },
-        {
-            "in_node": "samples_from_metadata_2",
-            "in_port": "metadata",
-            "out_node": "lytro_lightfield_1",
-            "out_port": "metadata"
-        },
-        {
-            "in_node": "lytro_lightfield_1",
-            "in_port": "filename",
-            "out_node": "input_2",
-            "out_port": "data"
-        },
-        {
-            "in_node": "samples_from_metadata_0",
-            "in_port": "in_frame",
-            "out_node": "divide_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "divide_0",
-            "in_port": "in_frame_2",
-            "out_node": "demosaic_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "samples_from_metadata_2",
-            "in_port": "in_frame",
-            "out_node": "demosaic_1",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "mosaic_0",
-            "in_port": "seq",
-            "out_node": "integrate_mosaic_1",
-            "out_port": "sequence"
+            "in_node": "integrate_mosaic_1",
+            "in_port": "samples",
+            "out_node": "samples_from_metadata_0",
+            "out_port": "samples"
         },
         {
             "in_node": "integrate_mosaic_0",
@@ -155,15 +161,9 @@
             "in_port": "samples",
             "out_node": "samples_from_metadata_2",
             "out_port": "samples"
-        },
-        {
-            "in_node": "mosaic_1",
-            "in_port": "seq",
-            "out_node": "integrate_mosaic_2",
-            "out_port": "sequence"
         }
     ],
-    "description": "### Microlens normalisation\n\n",
+    "description": "### Microlens normalisation using a reference image\n\nDue to the specific structure of the lens and microlens-array construction of the Lytro camera, the output image contains a complex 4-dimensional vignetting pattern, degrading the quality of the reconstruction.\n\nThis demo shows a simple example of removing this artifact using a reference image of a white plane captured with the exact same settings.\n\nAs the bignetting artifacts change significantly with the capture settings, this approach requires a number of reference images smpling the parameter space.",
     "name": "network",
     "nodes": {
         "concat_0": {
