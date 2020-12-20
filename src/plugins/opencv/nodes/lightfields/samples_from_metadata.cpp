@@ -15,7 +15,6 @@ namespace {
 
 dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<lightfields::Metadata> a_meta;
-dependency_graph::InAttr<float> a_scaleCompensation;
 dependency_graph::InAttr<bool> a_correctGain;
 dependency_graph::OutAttr<lightfields::Samples> a_samples;
 dependency_graph::OutAttr<float> a_lensPitch;
@@ -42,9 +41,6 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		throw std::runtime_error(err.str());
 	}
 
-	// compensate for metadata scale (user parameter)
-	pattern.scale(data.get(a_scaleCompensation));
-
 	// convert the input to a float
 	const lightfields::Bayer bayer(meta.metadata());
 	const cv::Mat fm = bayer.uint16ToFloatMat(
@@ -60,19 +56,16 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_in, "in_frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_meta, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
-	meta.addAttribute(a_scaleCompensation, "scale_compensation", 1.0f);
 	meta.addAttribute(a_correctGain, "correct_gain", true);
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_lensPitch, "lens_pitch");
 
 	meta.addInfluence(a_in, a_samples);
 	meta.addInfluence(a_meta, a_samples);
-	meta.addInfluence(a_scaleCompensation, a_samples);
 	meta.addInfluence(a_correctGain, a_samples);
 
 	meta.addInfluence(a_in, a_lensPitch);
 	meta.addInfluence(a_meta, a_lensPitch);
-	meta.addInfluence(a_scaleCompensation, a_lensPitch);
 	meta.addInfluence(a_correctGain, a_lensPitch);
 
 	meta.setCompute(compute);

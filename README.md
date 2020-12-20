@@ -22,6 +22,7 @@ Possumwood is built on top of a simple graph-evaluation engine and a Qt-based no
   - [Opengl](#opengl)
   - [Cgal](#cgal)
   - [Lua mesh generation](#lua-mesh-generation)
+  - [Polymesh](#polymesh)
   - [Lua](#lua)
   - [Opencv basics](#opencv-basics)
   - [Opencv image ops](#opencv-image-ops)
@@ -622,6 +623,10 @@ This demo shows how to use remeshing of whole meshes in Possumwood. The input fo
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
+</table> 
+
+### Polymesh
+<table> 
 </table> 
 
 ### Lua
@@ -1526,6 +1531,50 @@ The epipolar images accumulated in UV space show images representing averages of
 <td>
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 <img src="toolbars/07_lightfields_import/12_epi_uv_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields_import/15_reference_normalization.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Microlens normalisation using a reference image
+
+Due to the specific structure of the lens and microlens-array construction of the Lytro camera, the output image contains a complex 4-dimensional vignetting pattern, degrading the quality of the reconstruction.
+
+This demo shows a simple example of removing this artifact using a reference image of a white plane captured with the exact same settings.
+
+As the bignetting artifacts change significantly with the capture settings, this approach requires a number of reference images smpling the parameter space.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields_import/15_reference_normalization_screenshot.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+</tr> 
+<tr> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields_import/16_filtered_normalization.png" style="width:70px;">
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+</td>
+<td> 
+
+#### Microlens normalisation using filtered center-view difference
+
+Due to the specific structure of the lens and microlens-array construction of the Lytro camera, the output image contains a complex 4-dimensional vignetting pattern, degrading the quality of the reconstruction.
+
+In this demo, we use the central view (u,v ~ 0) image as a reference to normalize other views. This will lead to discontinuities due to parallax changes between images - assuming most of the image will contain low-frequency content, we can address these using a simple median filter.
+
+While removing the requirement for specific reference images, this approach might introduce low-frequency artifacts due to filtering.
+</td> 
+<td>
+<div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+<img src="toolbars/07_lightfields_import/16_filtered_normalization_screenshot.png" style="width:70px;">
 <div style="width:290px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div> 
 </td>
 </tr> 
@@ -2597,6 +2646,7 @@ At the moment, the project is in its **prototype stage**, and any feedback or he
 ## License
 
 The code is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). Included example assets come with their own licenses, included in the directory of each asset.
+
 
 
 
