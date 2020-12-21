@@ -18,7 +18,9 @@ namespace {
 // 	return std::cos(M_PI * n * ((float)k + 0.5f));
 // }
 
-Imath::V2f dctCoef(float n, float k) {
+Imath::V2f dctCoef(float n, int k, int width) {
+	if(k > width / 2)
+		k = -k;
 	return Imath::V2f(std::cos(M_PI * n * k), -std::sin(M_PI * n * k));
 }
 
@@ -50,8 +52,8 @@ DCT dct(const Samples& samples, unsigned xy_samples, unsigned uv_samples) {
 					for(unsigned xi = 0; xi < xy_samples; ++xi)
 						for(unsigned vi = 0; vi < uv_samples; ++vi)
 							for(unsigned ui = 0; ui < uv_samples; ++ui) {
-								const Imath::V2f coef =
-								    dctCoef(xy.y, yi) * dctCoef(xy.x, xi) * dctCoef(uv.y, vi) * dctCoef(uv.x, ui);
+								const Imath::V2f coef = dctCoef(xy.y, yi, xy_samples) * dctCoef(xy.x, xi, xy_samples) *
+								                        dctCoef(uv.y, vi, uv_samples) * dctCoef(uv.x, ui, uv_samples);
 
 								float* d = data[yi][xi].ptr<float>(vi, ui);
 
@@ -99,7 +101,8 @@ std::array<float, 3> DCT::get(float x, float y, float u, float v) const {
 		for(unsigned xi = 0; xi < m_xySamples; ++xi)
 			for(unsigned vi = 0; vi < m_uvSamples; ++vi)
 				for(unsigned ui = 0; ui < m_uvSamples; ++ui) {
-					const Imath::V2f coef = dctCoef(y, yi) * dctCoef(x, xi) * dctCoef(v, vi) * dctCoef(u, ui);
+					const Imath::V2f coef = dctCoef(y, yi, m_xySamples) * dctCoef(x, xi, m_xySamples) *
+					                        dctCoef(v, vi, m_uvSamples) * dctCoef(u, ui, m_uvSamples);
 
 					const float* d = m_data[yi][xi].ptr<float>(vi, ui);
 
