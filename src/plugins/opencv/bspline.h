@@ -10,7 +10,8 @@ namespace opencv {
 template <unsigned DEGREE>
 class BSpline {
   public:
-	BSpline(unsigned subdiv, const std::array<double, DEGREE>& min = initArray(0.0),
+	BSpline(unsigned subdiv = 0,
+	        const std::array<double, DEGREE>& min = initArray(0.0),
 	        const std::array<double, DEGREE>& max = initArray(1.0));
 
 	void addSample(const std::array<double, DEGREE>& coords, double value);
@@ -30,6 +31,9 @@ class BSpline {
 	std::vector<std::pair<float, float>> m_controls;
 	std::array<double, DEGREE> m_min, m_max;
 };
+
+template <unsigned DEGREE>
+std::ostream& operator<<(std::ostream& out, const BSpline<DEGREE>& spline);
 
 }  // namespace opencv
 }  // namespace possumwood

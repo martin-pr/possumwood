@@ -46,7 +46,7 @@ std::array<double, DEGREE> BSpline<DEGREE>::initArray(double val) {
 template <unsigned DEGREE>
 BSpline<DEGREE>::BSpline(unsigned subdiv, const std::array<double, DEGREE>& min, const std::array<double, DEGREE>& max)
     : m_subdiv(subdiv), m_controls(std::pow(subdiv + 3, DEGREE), std::make_pair(0.0f, 0.0f)), m_min(min), m_max(max) {
-	assert(subdiv > 0);
+	assert(subdiv >= 0);
 }
 
 template <unsigned DEGREE>
@@ -107,6 +107,8 @@ double BSpline<DEGREE>::sample(const std::array<double, DEGREE>& coords) const {
 			result += m_controls[index].first / m_controls[index].second * weight;
 	});
 
+	assert(std::isfinite(result));
+
 	return result;
 }
 
@@ -118,6 +120,12 @@ bool BSpline<DEGREE>::operator==(const BSpline& b) const {
 template <unsigned DEGREE>
 bool BSpline<DEGREE>::operator!=(const BSpline& b) const {
 	return m_subdiv != b.m_subdiv || m_controls != b.m_controls || m_min != b.m_min || m_max != b.m_max;
+}
+
+template <unsigned DEGREE>
+std::ostream& operator<<(std::ostream& out, const BSpline<DEGREE>& spline) {
+	out << "B-Spline, degree=" << DEGREE;
+	return out;
 }
 
 }  // namespace opencv
