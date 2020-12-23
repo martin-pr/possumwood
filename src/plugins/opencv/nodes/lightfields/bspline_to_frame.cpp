@@ -12,7 +12,7 @@
 
 namespace {
 
-dependency_graph::InAttr<possumwood::opencv::BSpline<4>> a_bspline;
+dependency_graph::InAttr<std::array<possumwood::opencv::BSpline<4>, 3>> a_bspline;
 dependency_graph::InAttr<Imath::V2i> a_resolution;
 dependency_graph::InAttr<Imath::V2f> a_uv;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
@@ -23,7 +23,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	Imath::V2f uv = data.get(a_uv);
 	uv = (uv + Imath::V2f(1.0f, 1.0f)) / 2.0f;
 
-	const possumwood::opencv::BSpline<4>& bspline = data.get(a_bspline);
+	const std::array<possumwood::opencv::BSpline<4>, 3>& bspline = data.get(a_bspline);
 
 	cv::Mat result = cv::Mat::zeros(res.y, res.x, CV_32FC3);
 
@@ -32,10 +32,10 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 			for(int x = range.cols().begin(); x != range.cols().end(); ++x) {
 				float* pixel = result.ptr<float>(y, x);
 
-				const auto& arr = bspline.sample(
-				    std::array<double, 4>{{(float)x / (float)(res.x - 1), (float)y / (float)(res.y - 1), uv.x, uv.y}});
 				for(int c = 0; c < 3; ++c)
-					pixel[c] = arr;
+					pixel[c] = bspline[c].sample(std::array<float, 4>{
+					    {(float)x / (float)(res.x - 1), (float)y / (float)(res.y - 1), uv.x, uv.y}});
+				;
 			}
 	});
 
@@ -45,7 +45,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 }
 
 void init(possumwood::Metadata& meta) {
-	meta.addAttribute(a_bspline, "bspline", possumwood::opencv::BSpline<4>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_bspline, "bspline", std::array<possumwood::opencv::BSpline<4>, 3>(),
+	                  possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_resolution, "resolution", Imath::V2i(10, 10));
 	meta.addAttribute(a_uv, "uv", Imath::V2f(0, 0));
 	meta.addAttribute(a_frame, "frame", possumwood::opencv::Frame(), possumwood::AttrFlags::kVertical);

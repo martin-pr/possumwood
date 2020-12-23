@@ -18,8 +18,8 @@ BSpline<2>& BSplineHierarchy::level(std::size_t level) {
 	return m_levels[level];
 }
 
-double BSplineHierarchy::sample(double x, double y) const {
-	double result = 0;
+float BSplineHierarchy::sample(float x, float y) const {
+	float result = 0;
 	for(auto& l : m_levels)
 		result += l.sample({x, y});
 	return result;

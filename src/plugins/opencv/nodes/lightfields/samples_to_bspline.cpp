@@ -10,10 +10,13 @@ namespace {
 
 dependency_graph::InAttr<lightfields::Samples> a_samples;
 dependency_graph::InAttr<unsigned> a_xyRes, a_uvRes;
-dependency_graph::OutAttr<possumwood::opencv::BSpline<4>> a_bspline;
+dependency_graph::OutAttr<std::array<possumwood::opencv::BSpline<4>, 3>> a_bspline;
 
 dependency_graph::State compute(dependency_graph::Values& data) {
-	possumwood::opencv::BSpline<4> bspline(data.get(a_xyRes));
+	std::array<possumwood::opencv::BSpline<4>, 3> bspline;
+	bspline[0] = possumwood::opencv::BSpline<4>(data.get(a_xyRes));
+	bspline[1] = possumwood::opencv::BSpline<4>(data.get(a_xyRes));
+	bspline[2] = possumwood::opencv::BSpline<4>(data.get(a_xyRes));
 
 	const lightfields::Samples& samples = data.get(a_samples);
 	for(auto& s : samples) {
@@ -24,9 +27,9 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		   uv.y >= 0.0f && uv.y <= 1.0f) {
 			if(s.color == lightfields::Samples::kRGB)
 				for(int a = 0; a < 3; ++a)
-					bspline.addSample(std::array<double, 4>{xy.x, xy.y, uv.x, uv.y}, s.value[a]);
+					bspline[a].addSample(std::array<float, 4>{xy.x, xy.y, uv.x, uv.y}, s.value[a]);
 			else
-				bspline.addSample(std::array<double, 4>{xy.x, xy.y, uv.x, uv.y}, s.value[s.color]);
+				bspline[s.color].addSample(std::array<float, 4>{xy.x, xy.y, uv.x, uv.y}, s.value[s.color]);
 		}
 	}
 
@@ -39,7 +42,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_xyRes, "resolution/xy", 10u);
 	meta.addAttribute(a_uvRes, "resolution/uv", 10u);
-	meta.addAttribute(a_bspline, "bspline", possumwood::opencv::BSpline<4>(), possumwood::AttrFlags::kVertical);
+	meta.addAttribute(a_bspline, "bspline", std::array<possumwood::opencv::BSpline<4>, 3>(),
+	                  possumwood::AttrFlags::kVertical);
 
 	meta.addInfluence(a_samples, a_bspline);
 	meta.addInfluence(a_xyRes, a_bspline);

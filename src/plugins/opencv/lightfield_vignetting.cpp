@@ -11,7 +11,8 @@ LightfieldVignetting::LightfieldVignetting() : m_bspline(1, {{0, 0, -1, -1}}, {{
 	m_bspline.addSample({{0.5, 0.5, 0, 0}}, 1.0f);
 }
 
-LightfieldVignetting::LightfieldVignetting(std::size_t subdiv, const lightfields::Pattern& pattern,
+LightfieldVignetting::LightfieldVignetting(std::size_t subdiv,
+                                           const lightfields::Pattern& pattern,
                                            const cv::Mat& image)
     :
 
@@ -23,10 +24,10 @@ LightfieldVignetting::LightfieldVignetting(std::size_t subdiv, const lightfields
 		for(int x = 0; x < image.cols; ++x) {
 			const lightfields::Pattern::Sample& coord = pattern.sample(Imath::V2i{x, y});
 
-			const double uv_magnitude_2 = coord.offset[0] * coord.offset[0] + coord.offset[1] * coord.offset[1];
+			const float uv_magnitude_2 = coord.offset[0] * coord.offset[0] + coord.offset[1] * coord.offset[1];
 			if(uv_magnitude_2 < 1.0) {
-				const double xf = (double)x / (double)(image.cols - 1);
-				const double yf = (double)y / (double)(image.rows - 1);
+				const float xf = (float)x / (float)(image.cols - 1);
+				const float yf = (float)y / (float)(image.rows - 1);
 
 				m_bspline.addSample({{xf, yf, coord.offset[0], coord.offset[1]}}, image.at<float>(y, x));
 			}
@@ -34,7 +35,7 @@ LightfieldVignetting::LightfieldVignetting(std::size_t subdiv, const lightfields
 	});
 }
 
-double LightfieldVignetting::sample(const cv::Vec4f& coord) const {
+float LightfieldVignetting::sample(const cv::Vec4f& coord) const {
 	return m_bspline.sample({{coord[0], coord[1], coord[2], coord[3]}});
 }
 

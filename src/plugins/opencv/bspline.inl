@@ -6,7 +6,7 @@ namespace possumwood {
 namespace opencv {
 
 template <unsigned DEGREE>
-double BSpline<DEGREE>::B(double t, unsigned k) {
+float BSpline<DEGREE>::B(float t, unsigned k) {
 	assert(t >= 0.0 && t <= 1.0);
 	assert(k < 4);
 
@@ -37,22 +37,22 @@ double BSpline<DEGREE>::B(double t, unsigned k) {
 }
 
 template <unsigned DEGREE>
-std::array<double, DEGREE> BSpline<DEGREE>::initArray(double val) {
-	std::array<double, DEGREE> result;
+std::array<float, DEGREE> BSpline<DEGREE>::initArray(float val) {
+	std::array<float, DEGREE> result;
 	result.fill(val);
 	return result;
 }
 
 template <unsigned DEGREE>
-BSpline<DEGREE>::BSpline(unsigned subdiv, const std::array<double, DEGREE>& min, const std::array<double, DEGREE>& max)
+BSpline<DEGREE>::BSpline(unsigned subdiv, const std::array<float, DEGREE>& min, const std::array<float, DEGREE>& max)
     : m_subdiv(subdiv), m_controls(std::pow(subdiv + 3, DEGREE), std::make_pair(0.0f, 0.0f)), m_min(min), m_max(max) {
 	assert(subdiv >= 0);
 }
 
 template <unsigned DEGREE>
 template <typename FN>
-void BSpline<DEGREE>::visit(const std::array<double, DEGREE>& _coords, const FN& fn) const {
-	std::array<double, DEGREE> coords = _coords;
+void BSpline<DEGREE>::visit(const std::array<float, DEGREE>& _coords, const FN& fn) const {
+	std::array<float, DEGREE> coords = _coords;
 	std::array<unsigned, DEGREE> offset;
 
 	for(unsigned d = 0; d < DEGREE; ++d) {
@@ -65,9 +65,9 @@ void BSpline<DEGREE>::visit(const std::array<double, DEGREE>& _coords, const FN&
 			throw std::runtime_error(ss.str());
 		}
 
-		coords[d] *= (double)m_subdiv;
+		coords[d] *= (float)m_subdiv;
 
-		const double rounded = std::min(floor(coords[d]), (double)(m_subdiv - 1));
+		const float rounded = std::min(floor(coords[d]), (float)(m_subdiv - 1));
 
 		offset[d] = rounded;
 		coords[d] = coords[d] - rounded;
@@ -75,7 +75,7 @@ void BSpline<DEGREE>::visit(const std::array<double, DEGREE>& _coords, const FN&
 
 	const unsigned end = pow(4, DEGREE);
 	for(unsigned i = 0; i < end; ++i) {
-		double weight = 1.0;
+		float weight = 1.0;
 		unsigned j = i;
 		std::size_t index = 0;
 
@@ -92,17 +92,17 @@ void BSpline<DEGREE>::visit(const std::array<double, DEGREE>& _coords, const FN&
 }
 
 template <unsigned DEGREE>
-void BSpline<DEGREE>::addSample(const std::array<double, DEGREE>& coords, double value) {
-	visit(coords, [&](unsigned index, double weight) {
+void BSpline<DEGREE>::addSample(const std::array<float, DEGREE>& coords, float value) {
+	visit(coords, [&](unsigned index, float weight) {
 		m_controls[index].first += weight * value;
 		m_controls[index].second += weight;
 	});
 }
 
 template <unsigned DEGREE>
-double BSpline<DEGREE>::sample(const std::array<double, DEGREE>& coords) const {
-	double result = 0;
-	visit(coords, [&](unsigned index, double weight) {
+float BSpline<DEGREE>::sample(const std::array<float, DEGREE>& coords) const {
+	float result = 0;
+	visit(coords, [&](unsigned index, float weight) {
 		if(m_controls[index].second > 0.0)
 			result += m_controls[index].first / m_controls[index].second * weight;
 	});

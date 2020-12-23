@@ -17,7 +17,7 @@ class LightfieldVignetting {
 	LightfieldVignetting();
 	LightfieldVignetting(std::size_t subdiv, const lightfields::Pattern& pattern, const cv::Mat& image);
 
-	double sample(const cv::Vec4f& coord) const;
+	float sample(const cv::Vec4f& coord) const;
 
 	bool operator==(const LightfieldVignetting& f) const;
 	bool operator!=(const LightfieldVignetting& f) const;

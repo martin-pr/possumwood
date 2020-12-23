@@ -506,7 +506,7 @@
             "name": "samples_to_bspline",
             "ports": {
                 "resolution/uv": 10,
-                "resolution/xy": 100
+                "resolution/xy": 50
             },
             "type": "opencv/lightfields/samples_to_bspline"
         }

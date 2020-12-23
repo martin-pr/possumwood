@@ -21,7 +21,7 @@ dependency_graph::InAttr<unsigned> a_levels, a_offset;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 struct Sample {
-	Imath::V2d target;
+	Imath::V2f target;
 	float value;
 };
 
