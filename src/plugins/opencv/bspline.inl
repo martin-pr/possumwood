@@ -61,7 +61,7 @@ template <unsigned DEGREE>
 template <typename FN>
 void BSpline<DEGREE>::visit(const std::array<float, DEGREE>& _coords, const FN& fn) const {
 	std::array<float, DEGREE> coords = _coords;
-	std::array<unsigned, DEGREE> offset;
+	std::array<int, DEGREE> offset;
 
 	for(unsigned d = 0; d < DEGREE; ++d) {
 		coords[d] = (coords[d] - m_min[d]) / (m_max[d] - m_min[d]);
@@ -81,15 +81,19 @@ void BSpline<DEGREE>::visit(const std::array<float, DEGREE>& _coords, const FN& 
 		coords[d] = coords[d] - rounded;
 	}
 
-	const unsigned end = pow(4, DEGREE);
-	for(unsigned i = 0; i < end; ++i) {
+	const int end = pow(4, DEGREE);
+	for(int i = 0; i < end; ++i) {
 		float weight = 1.0;
-		unsigned j = i;
+		int j = i;
 		std::size_t index = 0;
 
-		for(unsigned d = 0; d < DEGREE; ++d) {
+		for(int d = 0; d < (int)DEGREE; ++d) {
+			int ofs = j % 4 + offset[d] - 1;
+			ofs = std::max(0, ofs);
+			ofs = std::min(ofs, (int)m_subdiv[d] - 1);
+
 			weight *= B(coords[d], j % 4);
-			index = index * m_subdiv + j % 4 + offset[d];
+			index = index * m_subdiv[d] + ofs;
 
 			j /= 4;
 		}
