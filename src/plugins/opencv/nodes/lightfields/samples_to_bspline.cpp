@@ -14,9 +14,9 @@ dependency_graph::OutAttr<std::array<possumwood::opencv::BSpline<4>, 3>> a_bspli
 
 dependency_graph::State compute(dependency_graph::Values& data) {
 	std::array<possumwood::opencv::BSpline<4>, 3> bspline;
-	bspline[0] = possumwood::opencv::BSpline<4>(data.get(a_xyRes));
-	bspline[1] = possumwood::opencv::BSpline<4>(data.get(a_xyRes));
-	bspline[2] = possumwood::opencv::BSpline<4>(data.get(a_xyRes));
+	for(int a = 0; a < 3; ++a)
+		bspline[a] = possumwood::opencv::BSpline<4>(
+		    {{data.get(a_xyRes), data.get(a_xyRes), data.get(a_uvRes), data.get(a_uvRes)}});
 
 	const lightfields::Samples& samples = data.get(a_samples);
 	for(auto& s : samples) {

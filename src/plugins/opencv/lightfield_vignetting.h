@@ -15,7 +15,7 @@ namespace opencv {
 class LightfieldVignetting {
   public:
 	LightfieldVignetting();
-	LightfieldVignetting(std::size_t subdiv, const lightfields::Pattern& pattern, const cv::Mat& image);
+	LightfieldVignetting(unsigned subdiv, const lightfields::Pattern& pattern, const cv::Mat& image);
 
 	float sample(const cv::Vec4f& coord) const;
 

@@ -7,16 +7,14 @@
 namespace possumwood {
 namespace opencv {
 
-LightfieldVignetting::LightfieldVignetting() : m_bspline(1, {{0, 0, -1, -1}}, {{1, 1, 1, 1}}) {
+LightfieldVignetting::LightfieldVignetting() : m_bspline({{1, 1, 1, 1}}, {{0, 0, -1, -1}}, {{1, 1, 1, 1}}) {
 	m_bspline.addSample({{0.5, 0.5, 0, 0}}, 1.0f);
 }
 
-LightfieldVignetting::LightfieldVignetting(std::size_t subdiv,
-                                           const lightfields::Pattern& pattern,
-                                           const cv::Mat& image)
+LightfieldVignetting::LightfieldVignetting(unsigned subdiv, const lightfields::Pattern& pattern, const cv::Mat& image)
     :
 
-      m_bspline(subdiv, {{0, 0, -1, -1}}, {{1, 1, 1, 1}}) {
+      m_bspline({{subdiv, subdiv, subdiv, subdiv}}, {{0, 0, -1, -1}}, {{1, 1, 1, 1}}) {
 	if(image.rows != pattern.sensorResolution()[1] || image.cols != pattern.sensorResolution()[0])
 		throw std::runtime_error("Pattern and image resolution doesn't match!");
 

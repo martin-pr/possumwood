@@ -37,16 +37,24 @@ float BSpline<DEGREE>::B(float t, unsigned k) {
 }
 
 template <unsigned DEGREE>
-std::array<float, DEGREE> BSpline<DEGREE>::initArray(float val) {
-	std::array<float, DEGREE> result;
+template <typename T>
+std::array<T, DEGREE> BSpline<DEGREE>::initArray(T val) {
+	std::array<T, DEGREE> result;
 	result.fill(val);
 	return result;
 }
 
 template <unsigned DEGREE>
-BSpline<DEGREE>::BSpline(unsigned subdiv, const std::array<float, DEGREE>& min, const std::array<float, DEGREE>& max)
-    : m_subdiv(subdiv), m_controls(std::pow(subdiv + 3, DEGREE), std::make_pair(0.0f, 0.0f)), m_min(min), m_max(max) {
-	assert(subdiv >= 0);
+BSpline<DEGREE>::BSpline(const std::array<unsigned, DEGREE>& subdiv,
+                         const std::array<float, DEGREE>& min,
+                         const std::array<float, DEGREE>& max)
+    : m_subdiv(subdiv), m_min(min), m_max(max) {
+	std::size_t controlCount = 1;
+	for(unsigned d = 0; d < DEGREE; ++d) {
+		assert(subdiv[d] >= 0);
+		controlCount *= subdiv[d] + 3;
+	}
+	m_controls.resize(controlCount, std::make_pair(0.0f, 0.0f));
 }
 
 template <unsigned DEGREE>
@@ -65,9 +73,9 @@ void BSpline<DEGREE>::visit(const std::array<float, DEGREE>& _coords, const FN& 
 			throw std::runtime_error(ss.str());
 		}
 
-		coords[d] *= (float)m_subdiv;
+		coords[d] *= (float)m_subdiv[d];
 
-		const float rounded = std::min(floor(coords[d]), (float)(m_subdiv - 1));
+		const float rounded = std::min(floor(coords[d]), (float)(m_subdiv[d] - 1));
 
 		offset[d] = rounded;
 		coords[d] = coords[d] - rounded;

@@ -10,9 +10,9 @@ namespace opencv {
 template <unsigned DEGREE>
 class BSpline {
   public:
-	BSpline(unsigned subdiv = 0,
-	        const std::array<float, DEGREE>& min = initArray(0.0),
-	        const std::array<float, DEGREE>& max = initArray(1.0));
+	explicit BSpline(const std::array<unsigned, DEGREE>& subdiv = initArray(0u),
+	                 const std::array<float, DEGREE>& min = initArray(0.0f),
+	                 const std::array<float, DEGREE>& max = initArray(1.0f));
 
 	void addSample(const std::array<float, DEGREE>& coords, float value);
 	float sample(const std::array<float, DEGREE>& coords) const;
@@ -25,9 +25,11 @@ class BSpline {
 
 	template <typename FN>
 	inline void visit(const std::array<float, DEGREE>& coords, const FN& fn) const;
-	static std::array<float, DEGREE> initArray(float val);
 
-	std::size_t m_subdiv;
+	template <typename T>
+	static std::array<T, DEGREE> initArray(T val);
+
+	std::array<unsigned, DEGREE> m_subdiv;
 	std::vector<std::pair<float, float>> m_controls;
 	std::array<float, DEGREE> m_min, m_max;
 };

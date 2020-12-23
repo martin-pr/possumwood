@@ -81,8 +81,8 @@
             "name": "bspline_to_frame",
             "ports": {
                 "resolution": {
-                    "x": 100,
-                    "y": 100
+                    "x": 1000,
+                    "y": 1000
                 },
                 "uv": {
                     "x": 0.0,
@@ -490,7 +490,7 @@
             "name": "samples_refocus",
             "ports": {
                 "uv_offset": 0.0,
-                "uv_threshold": 0.05000000074505806,
+                "uv_threshold": 1.0,
                 "xy_scale": 1.0
             },
             "type": "opencv/lightfields/samples_refocus"
@@ -506,7 +506,7 @@
             "name": "samples_to_bspline",
             "ports": {
                 "resolution/uv": 10,
-                "resolution/xy": 50
+                "resolution/xy": 1000
             },
             "type": "opencv/lightfields/samples_to_bspline"
         }
@@ -528,5 +528,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAI0AAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABJwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABnQAAAdEAAACtAQAAAwAAAs0AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJgAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABJwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABnQAAAdEAAACtAQAAAwAAAqEAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
