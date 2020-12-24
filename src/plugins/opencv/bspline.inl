@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <opencv2/opencv.hpp>
 
 #include "bspline.h"
@@ -57,6 +59,48 @@ BSpline<DEGREE>::BSpline(const std::array<unsigned, DEGREE>& subdiv,
 	m_controls.resize(controlCount, std::make_pair(0.0f, 0.0f));
 }
 
+namespace {
+
+template <class T>
+constexpr const T& clamp(const T& v, const T& lo, const T& hi) {
+	assert(hi >= lo);
+	return (v < lo) ? lo : (hi < v) ? hi : v;
+}
+
+template <unsigned DIM, unsigned DEGREE>
+struct IndexMaker {
+	static std::pair<std::size_t, float> makeIndex(const std::array<float, DEGREE * 4>& b_coeffs,
+	                                               const std::array<float, DEGREE>& coords,
+	                                               const std::array<int, DEGREE>& offsets,
+	                                               const std::array<unsigned, DEGREE>& subdiv,
+	                                               int base) {
+		std::pair<std::size_t, float> result =
+		    std::make_pair(clamp<int>(base % 4 + offsets[DIM] - 1, 0, subdiv[DIM]), b_coeffs[DIM * 4 + base % 4]);
+
+		const std::pair<std::size_t, float>& tmp =
+		    IndexMaker<DIM - 1, DEGREE>::makeIndex(b_coeffs, coords, offsets, subdiv, base / 4);
+		result.first += subdiv[DIM] * tmp.first;
+		result.second *= tmp.second;
+
+		return result;
+	}
+};
+
+template <unsigned DEGREE>
+struct IndexMaker<0, DEGREE> {
+	static std::pair<std::size_t, float> makeIndex(const std::array<float, DEGREE * 4>& b_coeffs,
+	                                               const std::array<float, DEGREE>& coords,
+	                                               const std::array<int, DEGREE>& offsets,
+	                                               const std::array<unsigned, DEGREE>& subdiv,
+	                                               int base) {
+		std::pair<std::size_t, float> result =
+		    std::make_pair(clamp<int>(base % 4 + offsets[0] - 1, 0, subdiv[0]), b_coeffs[base % 4]);
+		return result;
+	}
+};
+
+}  // namespace
+
 template <unsigned DEGREE>
 template <typename FN>
 void BSpline<DEGREE>::visit(const std::array<float, DEGREE>& _coords, const FN& fn) const {
@@ -73,33 +117,29 @@ void BSpline<DEGREE>::visit(const std::array<float, DEGREE>& _coords, const FN& 
 			throw std::runtime_error(ss.str());
 		}
 
-		coords[d] *= (float)m_subdiv[d];
+		coords[d] *= (float)(m_subdiv[d] - 1);
 
-		const float rounded = std::min(floor(coords[d]), (float)(m_subdiv[d] - 1));
+		const float rounded = std::min(floor(coords[d]), (float)(m_subdiv[d] - 2));
 
 		offset[d] = rounded;
 		coords[d] = coords[d] - rounded;
+
+		assert(coords[d] >= 0.0f);
+		assert(coords[d] <= 1.0f);
 	}
 
+	// precompute per-dim b-spline coeficients
+	std::array<float, DEGREE * 4> b_coeffs;
+	for(unsigned d = 0; d < DEGREE; ++d)
+		for(unsigned a = 0; a < 4; ++a)
+			b_coeffs[d * 4 + a] = B(coords[d], a);
+
+	// fill the coeff values
 	const int end = pow(4, DEGREE);
 	for(int i = 0; i < end; ++i) {
-		float weight = 1.0;
-		int j = i;
-		std::size_t index = 0;
-
-		for(int d = 0; d < (int)DEGREE; ++d) {
-			int ofs = j % 4 + offset[d] - 1;
-			ofs = std::max(0, ofs);
-			ofs = std::min(ofs, (int)m_subdiv[d] - 1);
-
-			weight *= B(coords[d], j % 4);
-			index = index * m_subdiv[d] + ofs;
-
-			j /= 4;
-		}
-		assert(index < m_controls.size());
-
-		fn(index, weight);
+		const std::pair<std::size_t, float>& index =
+		    IndexMaker<DEGREE - 1, DEGREE>::makeIndex(b_coeffs, coords, offset, m_subdiv, i);
+		fn(index.first, index.second);
 	}
 }
 
