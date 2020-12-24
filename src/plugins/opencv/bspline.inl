@@ -67,20 +67,24 @@ constexpr const T& clamp(const T& v, const T& lo, const T& hi) {
 	return (v < lo) ? lo : (hi < v) ? hi : v;
 }
 
+struct Index {
+	std::size_t index;
+	float weight;
+};
+
 template <unsigned DIM, unsigned DEGREE>
 struct IndexMaker {
-	static std::pair<std::size_t, float> makeIndex(const std::array<float, DEGREE * 4>& b_coeffs,
-	                                               const std::array<float, DEGREE>& coords,
-	                                               const std::array<int, DEGREE>& offsets,
-	                                               const std::array<unsigned, DEGREE>& subdiv,
-	                                               int base) {
-		std::pair<std::size_t, float> result =
-		    std::make_pair(clamp<int>(base % 4 + offsets[DIM] - 1, 0, subdiv[DIM]), b_coeffs[DIM * 4 + base % 4]);
+	static Index makeIndex(const std::array<float, DEGREE * 4>& b_coeffs,
+	                       const std::array<float, DEGREE>& coords,
+	                       const std::array<int, DEGREE>& offsets,
+	                       const std::array<unsigned, DEGREE>& subdiv,
+	                       int base) {
+		Index result{(std::size_t)clamp<int>(base % 4 + offsets[DIM] - 1, 0, subdiv[DIM]),
+		             b_coeffs[DIM * 4 + base % 4]};
 
-		const std::pair<std::size_t, float>& tmp =
-		    IndexMaker<DIM - 1, DEGREE>::makeIndex(b_coeffs, coords, offsets, subdiv, base / 4);
-		result.first += subdiv[DIM] * tmp.first;
-		result.second *= tmp.second;
+		const Index& tmp = IndexMaker<DIM - 1, DEGREE>::makeIndex(b_coeffs, coords, offsets, subdiv, base / 4);
+		result.index += subdiv[DIM] * tmp.index;
+		result.weight *= tmp.weight;
 
 		return result;
 	}
@@ -88,14 +92,12 @@ struct IndexMaker {
 
 template <unsigned DEGREE>
 struct IndexMaker<0, DEGREE> {
-	static std::pair<std::size_t, float> makeIndex(const std::array<float, DEGREE * 4>& b_coeffs,
-	                                               const std::array<float, DEGREE>& coords,
-	                                               const std::array<int, DEGREE>& offsets,
-	                                               const std::array<unsigned, DEGREE>& subdiv,
-	                                               int base) {
-		std::pair<std::size_t, float> result =
-		    std::make_pair(clamp<int>(base % 4 + offsets[0] - 1, 0, subdiv[0]), b_coeffs[base % 4]);
-		return result;
+	static Index makeIndex(const std::array<float, DEGREE * 4>& b_coeffs,
+	                       const std::array<float, DEGREE>& coords,
+	                       const std::array<int, DEGREE>& offsets,
+	                       const std::array<unsigned, DEGREE>& subdiv,
+	                       int base) {
+		return Index{(std::size_t)clamp<int>(base % 4 + offsets[0] - 1, 0, subdiv[0]), b_coeffs[base % 4]};
 	}
 };
 
@@ -137,9 +139,8 @@ void BSpline<DEGREE>::visit(const std::array<float, DEGREE>& _coords, const FN& 
 	// fill the coeff values
 	const int end = pow(4, DEGREE);
 	for(int i = 0; i < end; ++i) {
-		const std::pair<std::size_t, float>& index =
-		    IndexMaker<DEGREE - 1, DEGREE>::makeIndex(b_coeffs, coords, offset, m_subdiv, i);
-		fn(index.first, index.second);
+		const Index& index = IndexMaker<DEGREE - 1, DEGREE>::makeIndex(b_coeffs, coords, offset, m_subdiv, i);
+		fn(index.index, index.weight);
 	}
 }
 
