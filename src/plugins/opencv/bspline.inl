@@ -49,36 +49,29 @@ BSpline<DEGREE>::BSpline(const std::array<std::size_t, DEGREE>& subdiv,
 
 namespace {
 
-struct Index {
-	std::size_t index;
-	float weight;
-};
+template <unsigned DEGREE, typename FN>
+struct Visitor {
+	const std::array<float, DEGREE * 4>& b_coeffs;
+	const std::array<std::size_t, DEGREE>& offsets;
+	const std::array<std::size_t, DEGREE>& subdiv;
+	const FN& fn;
 
-template <unsigned DEGREE, unsigned DIM = DEGREE - 1>
-struct IndexMaker {
-	template <typename FN>
-	static void visit(const std::array<float, DEGREE * 4>& b_coeffs,
-	                  const std::array<std::size_t, DEGREE>& offsets,
-	                  const std::array<std::size_t, DEGREE>& subdiv,
-	                  const FN& fn,
-	                  std::size_t index = 0,
-	                  float weight = 1.0f) {
+	Visitor(const std::array<float, DEGREE * 4>& b_coeffs_,
+	        const std::array<std::size_t, DEGREE>& offsets_,
+	        const std::array<std::size_t, DEGREE>& subdiv_,
+	        const FN& fn_)
+	    : b_coeffs(b_coeffs_), offsets(offsets_), subdiv(subdiv_), fn(fn_) {
+	}
+
+	template <unsigned DIM = DEGREE - 1>
+	void visit(std::size_t index = 0, float weight = 1.0f) const {
 		index = index * (subdiv[DIM] + 2) + offsets[DIM];
 		for(std::size_t a = 0; a < 4; ++a)
-			IndexMaker<DEGREE, DIM - 1>::visit(b_coeffs, offsets, subdiv, fn, index + a,
-			                                   b_coeffs[DIM * 4 + a] * weight);
+			visit<DIM - 1>(index + a, b_coeffs[DIM * 4 + a] * weight);
 	}
-};
 
-template <unsigned DEGREE>
-struct IndexMaker<DEGREE, 0> {
-	template <typename FN>
-	static void visit(const std::array<float, DEGREE * 4>& b_coeffs,
-	                  const std::array<std::size_t, DEGREE>& offsets,
-	                  const std::array<std::size_t, DEGREE>& subdiv,
-	                  const FN& fn,
-	                  std::size_t index = 0,
-	                  float weight = 1.0f) {
+	template <>
+	void visit<0>(std::size_t index, float weight) const {
 		index = index * (subdiv[0] + 2) + offsets[0];
 		for(std::size_t a = 0; a < 4; ++a)
 			fn(index + a, weight * b_coeffs[a]);
@@ -120,25 +113,46 @@ void BSpline<DEGREE>::visit(const std::array<float, DEGREE>& _coords, const FN& 
 		for(unsigned a = 0; a < 4; ++a)
 			b_coeffs[d * 4 + a] = B(coords[d], a);
 
-	// fill the coeff values
-	IndexMaker<DEGREE>::visit(b_coeffs, offset, m_subdiv, fn);
+	// evaluate the visitor
+	Visitor<DEGREE, FN> visitor(b_coeffs, offset, m_subdiv, fn);
+	visitor.visit();
 }
+
+namespace {
+
+struct AddSample {
+	std::vector<std::pair<float, float>>* m_controls;
+	float m_value;
+
+	void operator()(std::size_t index, float weight) const {
+		(*m_controls)[index].first += weight * m_value;
+		(*m_controls)[index].second += weight;
+	}
+};
+
+struct Sample {
+	const std::vector<std::pair<float, float>>* m_controls;
+	float* m_result;
+
+	void operator()(std::size_t index, float weight) const {
+		if((*m_controls)[index].second > 0.0f)
+			(*m_result) += (*m_controls)[index].first / (*m_controls)[index].second * weight;
+	}
+};
+
+}  // namespace
 
 template <unsigned DEGREE>
 void BSpline<DEGREE>::addSample(const std::array<float, DEGREE>& coords, float value) {
-	visit(coords, [&](unsigned index, float weight) {
-		m_controls[index].first += weight * value;
-		m_controls[index].second += weight;
-	});
+	AddSample add{&m_controls, value};
+	visit(coords, add);
 }
 
 template <unsigned DEGREE>
 float BSpline<DEGREE>::sample(const std::array<float, DEGREE>& coords) const {
 	float result = 0;
-	visit(coords, [&](unsigned index, float weight) {
-		if(m_controls[index].second > 0.0)
-			result += m_controls[index].first / m_controls[index].second * weight;
-	});
+	Sample smp{&m_controls, &result};
+	this->visit(coords, smp);
 
 	assert(std::isfinite(result));
 
