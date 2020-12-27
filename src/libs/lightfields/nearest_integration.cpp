@@ -22,29 +22,29 @@ IntegrationResult integrate(const lightfields::Samples& samples, const Imath::Ve
 	const float widthf = width;
 	const float heightf = height;
 
-	tbb::parallel_for(
-	    tbb::blocked_range<lightfields::Samples::const_iterator>(samples.begin(), samples.end()),
-	    [&](const tbb::blocked_range<lightfields::Samples::const_iterator> range) {
-		    for(const lightfields::Samples::Sample& sample : range) {
-			    const float target_x = (sample.xy[0] + offset * sample.uv[0]) * x_scale;
-			    const float target_y = (sample.xy[1] + offset * sample.uv[1]) * y_scale;
+	const tbb::blocked_range<lightfields::Samples::const_iterator> range(samples.begin(), samples.end());
 
-			    if((target_x >= 0.0f) && (target_y >= 0.0f) && (target_x < widthf) && (target_y < heightf)) {
-				    float* color = average.ptr<float>(floor(target_y), floor(target_x));
-				    uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
+	tbb::parallel_for(range, [&](const tbb::blocked_range<lightfields::Samples::const_iterator> range) {
+		for(const lightfields::Samples::Sample& sample : range) {
+			const float target_x = (sample.xy[0] + offset * sample.uv[0]) * x_scale;
+			const float target_y = (sample.xy[1] + offset * sample.uv[1]) * y_scale;
 
-				    if(sample.color == lightfields::Samples::kRGB)
-					    for(int a = 0; a < 3; ++a) {
-						    color[a] += sample.value[a];
-						    ++n[a];
-					    }
-				    else {
-					    color[sample.color] += sample.value[sample.color];
-					    ++n[sample.color];
-				    }
-			    }
-		    }
-	    });
+			if((target_x >= 0.0f) && (target_y >= 0.0f) && (target_x < widthf) && (target_y < heightf)) {
+				float* color = average.ptr<float>(floor(target_y), floor(target_x));
+				uint16_t* n = norm.ptr<uint16_t>(floor(target_y), floor(target_x));
+
+				if(sample.color == lightfields::Samples::kRGB)
+					for(int a = 0; a < 3; ++a) {
+						color[a] += sample.value[a];
+						++n[a];
+					}
+				else {
+					color[sample.color] += sample.value[sample.color];
+					++n[sample.color];
+				}
+			}
+		}
+	});
 
 	tbb::parallel_for(0, average.rows, [&](int y) {
 		for(int x = 0; x < average.cols; ++x)
