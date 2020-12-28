@@ -8,7 +8,6 @@ namespace possumwood {
 namespace opencv {
 
 LightfieldVignetting::LightfieldVignetting() : m_bspline({{1, 1, 1, 1}}, {{0, 0, -1, -1}}, {{1, 1, 1, 1}}) {
-	m_bspline.addSample({{0.5, 0.5, 0, 0}}, 1.0f);
 }
 
 LightfieldVignetting::LightfieldVignetting(unsigned subdiv, const lightfields::Pattern& pattern, const cv::Mat& image)
