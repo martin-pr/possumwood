@@ -36,15 +36,17 @@ std::array<T, DEGREE> BSpline<DEGREE>::initArray(T val) {
 }
 
 template <unsigned DEGREE>
-BSpline<DEGREE>::BSpline(const std::array<std::size_t, DEGREE>& subdiv,
-                         const std::array<float, DEGREE>& min,
-                         const std::array<float, DEGREE>& max)
-    : m_subdiv(subdiv), m_min(min), m_max(max) {
-	std::size_t controlCount = 1;
-	for(unsigned d = 0; d < DEGREE; ++d)
-		controlCount *= subdiv[d] + 2;
-	m_controls.reserve(controlCount);
-	m_controls.resize(controlCount, std::make_pair(0.0f, 0.0f));
+BSpline<DEGREE>::BSpline(const std::array<std::size_t, DEGREE>& subdiv) : m_subdiv(subdiv) {
+	std::size_t controlCount = 1, baseCount = 1;
+	for(unsigned d = 0; d < DEGREE; ++d) {
+		controlCount *= subdiv[d] + 3;
+		baseCount *= subdiv[d];
+	}
+
+	if(baseCount > 0) {
+		m_controls.reserve(controlCount);
+		m_controls.resize(controlCount, std::make_pair(0.0f, 0.0f));
+	}
 }
 
 namespace {
@@ -60,7 +62,7 @@ struct Visitor {
 template <typename VISITOR, unsigned DIM>
 struct Visit {
 	static void visit(const VISITOR& visitor, std::size_t index = 0, float weight = 1.0f) {
-		index = index * (visitor.subdiv[DIM] + 2) + visitor.offsets[DIM];
+		index = index * (visitor.subdiv[DIM] + 3) + visitor.offsets[DIM];
 		for(std::size_t a = 0; a < 4; ++a)
 			Visit<VISITOR, DIM - 1>::visit(visitor, index + a, visitor.b_coeffs[DIM * 4 + a] * weight);
 	}
@@ -69,7 +71,7 @@ struct Visit {
 template <typename VISITOR>
 struct Visit<VISITOR, 0> {
 	static void visit(const VISITOR& visitor, std::size_t index, float weight) {
-		index = index * (visitor.subdiv[0] + 2) + visitor.offsets[0];
+		index = index * (visitor.subdiv[0] + 3) + visitor.offsets[0];
 		for(std::size_t a = 0; a < 4; ++a)
 			visitor.fn(index + a, weight * visitor.b_coeffs[a]);
 	}
@@ -87,24 +89,26 @@ void BSpline<DEGREE>::visit(const std::array<float, DEGREE>& _coords, const FN& 
 	data.fn = fn;
 
 	for(unsigned d = 0; d < DEGREE; ++d) {
-		coords[d] = (coords[d] - m_min[d]) / (m_max[d] - m_min[d] + 1e-6f);
+		coords[d] += 0.5f;
 
-		if(coords[d] < 0.0 || coords[d] >= 1.0) {
+		assert(coords[d] >= 0.0f);
+		assert(floor(coords[d]) >= 0.0f);
+
+		data.offsets[d] = floor(coords[d]);
+
+		if(data.offsets[d] >= m_subdiv[d]) {
 			std::stringstream ss;
-			ss << "Coordinate #" << d << " out of range - " << _coords[d] << " (expected between " << m_min[d]
-			   << " and " << m_max[d] << ")";
+			ss << "Coordinate #" << d << " out of range - " << (_coords[d] - 0.5f) << " (expected between 0.0 and "
+			   << (m_subdiv[d] - 3) << ")";
 			throw std::runtime_error(ss.str());
 		}
 
-		coords[d] *= (float)(m_subdiv[d]);
-
-		data.offsets[d] = floor(coords[d]);
 		coords[d] = coords[d] - data.offsets[d];
 
 		assert(coords[d] >= 0.0f);
 		assert(coords[d] < 1.0f);
 
-		assert(data.offsets[d] >= std::size_t(0) && data.offsets[d] < m_subdiv[d]);
+		assert(data.offsets[d] < m_subdiv[d]);
 	}
 
 	// precompute per-dim b-spline coeficients
@@ -123,6 +127,7 @@ struct AddSample {
 	float m_value;
 
 	void operator()(std::size_t index, float weight) const {
+		assert(index < m_controls->size());
 		(*m_controls)[index].first += weight * m_value;
 		(*m_controls)[index].second += weight;
 	}
@@ -133,6 +138,8 @@ struct Sample {
 	float* m_result;
 
 	void operator()(std::size_t index, float weight) const {
+		assert(index < m_controls->size());
+
 		if((*m_controls)[index].second > 0.0f)
 			(*m_result) += (*m_controls)[index].first / (*m_controls)[index].second * weight;
 	}
@@ -142,15 +149,20 @@ struct Sample {
 
 template <unsigned DEGREE>
 void BSpline<DEGREE>::addSample(const std::array<float, DEGREE>& coords, float value) {
+	assert(!m_controls.empty());
+
 	AddSample add{&m_controls, value};
 	visit(coords, add);
 }
 
 template <unsigned DEGREE>
 float BSpline<DEGREE>::sample(const std::array<float, DEGREE>& coords) const {
+	if(m_controls.empty())
+		return 0.0f;
+
 	float result = 0;
 	Sample smp{&m_controls, &result};
-	this->visit(coords, smp);
+	visit(coords, smp);
 
 	assert(std::isfinite(result));
 
@@ -158,13 +170,19 @@ float BSpline<DEGREE>::sample(const std::array<float, DEGREE>& coords) const {
 }
 
 template <unsigned DEGREE>
+std::size_t BSpline<DEGREE>::size(unsigned dim) const {
+	assert(dim < DEGREE);
+	return m_subdiv[dim];
+}
+
+template <unsigned DEGREE>
 bool BSpline<DEGREE>::operator==(const BSpline& b) const {
-	return m_subdiv == b.m_subdiv && m_controls == b.m_controls && m_min == b.m_min && m_max == b.m_max;
+	return m_subdiv == b.m_subdiv && m_controls == b.m_controls;
 }
 
 template <unsigned DEGREE>
 bool BSpline<DEGREE>::operator!=(const BSpline& b) const {
-	return m_subdiv != b.m_subdiv || m_controls != b.m_controls || m_min != b.m_min || m_max != b.m_max;
+	return m_subdiv != b.m_subdiv || m_controls != b.m_controls;
 }
 
 template <unsigned DEGREE>

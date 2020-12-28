@@ -1,6 +1,12 @@
 {
     "connections": [
         {
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "bspline_to_frame_0",
+            "out_port": "frame"
+        },
+        {
             "in_node": "network_0",
             "in_port": "frame",
             "out_node": "convert_0",
@@ -35,12 +41,6 @@
             "in_port": "sequence",
             "out_node": "integrate_mosaic_0",
             "out_port": "sequence"
-        },
-        {
-            "in_node": "convert_0",
-            "in_port": "in_frame",
-            "out_node": "integrate_nearest_0",
-            "out_port": "out_frame"
         },
         {
             "in_node": "demosaic_0",
@@ -131,7 +131,7 @@
             },
             "name": "convert",
             "ports": {
-                "a": 512.0,
+                "a": 500.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -632,5 +632,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKRAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABJwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABnQAAAdEAAACtAQAAAwAAAnAAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJjAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABJwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABnQAAAdEAAACtAQAAAwAAAp4AAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

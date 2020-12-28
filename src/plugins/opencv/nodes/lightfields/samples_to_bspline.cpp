@@ -19,23 +19,38 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		    std::array<std::size_t, 4>{{data.get(a_xyRes), data.get(a_xyRes), data.get(a_uvRes), data.get(a_uvRes)}});
 
 	const lightfields::Samples& samples = data.get(a_samples);
-	for(auto& s : samples) {
-		const Imath::V2f xy = s.xy / Imath::V2f(samples.sensorSize());
-		const Imath::V2f uv = s.uv / 2.0 + Imath::V2f(0.5f, 0.5f);
+	const Imath::V2f xy_scale = Imath::V2f(data.get(a_xyRes) - 1, data.get(a_xyRes) - 1) /
+	                            Imath::V2f(samples.sensorSize().x - 1, samples.sensorSize().y - 1);
+	const Imath::V2f uv_scale = Imath::V2f(data.get(a_uvRes) - 1, data.get(a_uvRes) - 1);
 
-		if(xy.x >= 0.0f && xy.x <= 1.0f && xy.y >= 0.0f && xy.y <= 1.0f && uv.x >= 0.0f && uv.x <= 1.0f &&
-		   uv.y >= 0.0f && uv.y <= 1.0f) {
+	const float xy_lim = data.get(a_xyRes);
+	const float uv_lim = data.get(a_uvRes);
+
+	std::size_t missed = 0;
+
+	for(auto& s : samples) {
+		const Imath::V2f xy = s.xy * xy_scale;
+		const Imath::V2f uv = (s.uv / 2.0 + Imath::V2f(0.5f, 0.5f)) * uv_scale;
+
+		if(xy.x >= 0.0f && xy.x <= xy_lim && xy.y >= 0.0f && xy.y <= xy_lim && uv.x >= 0.0f && uv.x <= uv_lim &&
+		   uv.y >= 0.0f && uv.y <= uv_lim) {
 			if(s.color == lightfields::Samples::kRGB)
 				for(int a = 0; a < 3; ++a)
 					bspline[a].addSample(std::array<float, 4>{xy.x, xy.y, uv.x, uv.y}, s.value[a]);
 			else
 				bspline[s.color].addSample(std::array<float, 4>{xy.x, xy.y, uv.x, uv.y}, s.value[s.color]);
 		}
+		else
+			++missed;
 	}
 
 	data.set(a_bspline, bspline);
 
-	return dependency_graph::State();
+	dependency_graph::State state;
+	if(missed > 0)
+		state.addWarning(std::to_string(missed) + " samples were missed when constructing the b spline.");
+
+	return state;
 }
 
 void init(possumwood::Metadata& meta) {

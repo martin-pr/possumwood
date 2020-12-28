@@ -20,10 +20,13 @@ dependency_graph::OutAttr<possumwood::opencv::Frame> a_frame;
 dependency_graph::State compute(dependency_graph::Values& data) {
 	const Imath::V2i& res = data.get(a_resolution);
 
-	Imath::V2f uv = data.get(a_uv);
-	uv = (uv + Imath::V2f(1.0f, 1.0f)) / 2.0f;
-
 	const std::array<possumwood::opencv::BSpline<4>, 3>& bspline = data.get(a_bspline);
+
+	Imath::V2f uv = data.get(a_uv);
+	uv = (uv + Imath::V2f(1.0f, 1.0f)) / 2.0f * Imath::V2f(bspline[0].size(2) - 1, bspline[0].size(3) - 1);
+
+	Imath::V2f xy_scale =
+	    Imath::V2f(bspline[0].size(0) - 1, bspline[0].size(1) - 1) / Imath::V2f(data.get(a_resolution));
 
 	cv::Mat result = cv::Mat::zeros(res.y, res.x, CV_32FC3);
 
@@ -33,9 +36,8 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 				float* pixel = result.ptr<float>(y, x);
 
 				for(int c = 0; c < 3; ++c)
-					pixel[c] = bspline[c].sample(std::array<float, 4>{
-					    {(float)x / (float)(res.x - 1), (float)y / (float)(res.y - 1), uv.x, uv.y}});
-				;
+					pixel[c] = bspline[c].sample(
+					    std::array<float, 4>{{(float)x * xy_scale.x, (float)y * xy_scale.y, uv.x, uv.y}});
 			}
 	});
 
