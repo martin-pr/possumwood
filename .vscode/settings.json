@@ -73,6 +73,7 @@
         "variant": "cpp",
         "bit": "cpp",
         "compare": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "valarray": "cpp"
     }
 }

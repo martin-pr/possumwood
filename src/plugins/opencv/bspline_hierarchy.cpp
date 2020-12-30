@@ -21,7 +21,7 @@ BSpline<2>& BSplineHierarchy::level(std::size_t level) {
 float BSplineHierarchy::sample(float x, float y) const {
 	float result = 0;
 	for(auto& l : m_levels)
-		result += l.sample({x, y});
+		result += l.sample({x * float(l.size(0)), y * float(l.size(1))});
 	return result;
 }
 

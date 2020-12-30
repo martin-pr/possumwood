@@ -96,10 +96,10 @@ void BSpline<DEGREE>::visit(const std::array<float, DEGREE>& _coords, const FN& 
 
 		data.offsets[d] = floor(coords[d]);
 
-		if(data.offsets[d] >= m_subdiv[d]) {
+		if(data.offsets[d] > m_subdiv[d]) {
 			std::stringstream ss;
 			ss << "Coordinate #" << d << " out of range - " << (_coords[d] - 0.5f) << " (expected between 0.0 and "
-			   << (m_subdiv[d] - 3) << ")";
+			   << (m_subdiv[d]) << ")";
 			throw std::runtime_error(ss.str());
 		}
 

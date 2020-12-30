@@ -7,6 +7,18 @@
             "out_port": "out_frame"
         },
         {
+            "in_node": "divide_0",
+            "in_port": "in_frame_1",
+            "out_node": "demosaic_0",
+            "out_port": "out_frame"
+        },
+        {
+            "in_node": "divide_0",
+            "in_port": "in_frame_2",
+            "out_node": "demosaic_1",
+            "out_port": "out_frame"
+        },
+        {
             "in_node": "samples_from_metadata_0",
             "in_port": "in_frame",
             "out_node": "divide_0",
@@ -37,10 +49,16 @@
             "out_port": "out"
         },
         {
-            "in_node": "divide_0",
-            "in_port": "in_frame_2",
+            "in_node": "demosaic_1",
+            "in_port": "in_frame",
             "out_node": "lytro_lightfield_0",
             "out_port": "frame"
+        },
+        {
+            "in_node": "demosaic_1",
+            "in_port": "mozaic",
+            "out_node": "lytro_lightfield_0",
+            "out_port": "mozaic"
         },
         {
             "in_node": "samples_from_metadata_0",
@@ -49,10 +67,16 @@
             "out_port": "metadata"
         },
         {
-            "in_node": "divide_0",
-            "in_port": "in_frame_1",
+            "in_node": "demosaic_0",
+            "in_port": "in_frame",
             "out_node": "lytro_lightfield_1",
             "out_port": "frame"
+        },
+        {
+            "in_node": "demosaic_0",
+            "in_port": "mozaic",
+            "out_node": "lytro_lightfield_1",
+            "out_port": "mozaic"
         },
         {
             "in_node": "samples_refocus_0",
@@ -74,24 +98,52 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 188.5601043701172,
-                    "y": 766.9078979492188
+                    "x": 234.9210968017578,
+                    "y": 1365.3861083984375
                 }
             },
             "name": "convert",
             "ports": {
-                "a": 255.0,
-                "b": 0.0,
+                "a": 330.0,
+                "b": -10.0,
                 "mode": "CV_8U"
             },
             "type": "opencv/convert"
+        },
+        "demosaic_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 106.38545227050781,
+                    "y": 183.65252685546875
+                }
+            },
+            "name": "demosaic",
+            "ports": {
+                "mode": "Basic"
+            },
+            "type": "opencv/demosaic"
+        },
+        "demosaic_1": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 371.29473876953125,
+                    "y": 199.8055419921875
+                }
+            },
+            "name": "demosaic",
+            "ports": {
+                "mode": "Basic"
+            },
+            "type": "opencv/demosaic"
         },
         "divide_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 190.12985229492188,
-                    "y": -222.81106567382813
+                    "x": 236.4908447265625,
+                    "y": 375.6672058105469
                 }
             },
             "name": "divide",
@@ -104,13 +156,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 158.6298370361328,
-                    "y": 575.129638671875
+                    "x": 204.99082946777344,
+                    "y": 1173.60791015625
                 }
             },
             "name": "gamma",
             "ports": {
-                "gamma": 0.800000011920929,
+                "gamma": 1.0,
                 "normalization_coef": 1.0
             },
             "type": "opencv/gamma"
@@ -119,8 +171,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": -17.64237403869629,
-                    "y": 166.61537170410156
+                    "x": 28.718618392944336,
+                    "y": 765.0936279296875
                 }
             },
             "name": "refocus",
@@ -130,8 +182,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 168.61422729492188,
-                    "y": 350.9989318847656
+                    "x": 214.9752197265625,
+                    "y": 949.4771728515625
                 }
             },
             "name": "integrate_bezier",
@@ -149,8 +201,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 93.39353942871094,
-                    "y": 153.0003662109375
+                    "x": 139.75453186035156,
+                    "y": 751.4786376953125
                 }
             },
             "name": "interval",
@@ -160,13 +212,13 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 338.4512939453125,
-                    "y": -385.1968688964844
+                    "x": 396.119384765625,
+                    "y": 27.521846771240234
                 }
             },
             "name": "lytro_lightfield",
             "ports": {
-                "filename": "$EXAMPLES/lytro/calibration.lfr"
+                "filename": "$EXAMPLES/lytro/calibration_long.lfr"
             },
             "type": "opencv/capture/lytro_lightfield"
         },
@@ -174,8 +226,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 100.88335418701172,
-                    "y": -398.96856689453125
+                    "x": 108.47713470458984,
+                    "y": 34.749080657958984
                 }
             },
             "name": "lytro_lightfield",
@@ -188,8 +240,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 195.9407196044922,
-                    "y": 993.0398559570313
+                    "x": 242.3017120361328,
+                    "y": 1591.51806640625
                 }
             },
             "connections": [
@@ -497,14 +549,14 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 216.73272705078125,
-                    "y": -41.242637634277344
+                    "x": 263.0937194824219,
+                    "y": 557.2356567382813
                 }
             },
             "name": "samples_from_metadata",
             "ports": {
-                "correct_gain": true,
-                "scale_compensation": 1.0
+                "correct_gain": false,
+                "scale_compensation": 0.9990000128746033
             },
             "type": "opencv/lightfields/samples_from_metadata"
         },
@@ -512,8 +564,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 229.85321044921875,
-                    "y": 149.68637084960938
+                    "x": 276.2142028808594,
+                    "y": 748.1646118164063
                 }
             },
             "name": "samples_refocus",
@@ -530,7 +582,7 @@
             "max": 40.0,
             "min": -40.0,
             "type": "linear",
-            "value": -22.479999542236328
+            "value": -20.959999084472656
         }
     },
     "scene_config": {
@@ -540,5 +592,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAQAAABkAAANUAAADnQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJPAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABmgAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACEAAAAV4AAACtAQAAAwAAArIAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGqAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABlAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAACCgAAAWQAAACtAQAAAwAAA1cAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
