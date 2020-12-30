@@ -1,10 +1,10 @@
 {
     "connections": [
         {
-            "in_node": "convert_0",
-            "in_port": "in_frame",
-            "out_node": "bspline_to_frame_0",
-            "out_port": "frame"
+            "in_node": "mosaic_0",
+            "in_port": "seq",
+            "out_node": "bspline_to_sequence_0",
+            "out_port": "sequence"
         },
         {
             "in_node": "network_0",
@@ -21,13 +21,13 @@
         {
             "in_node": "lytro_lightfield_0",
             "in_port": "filename",
-            "out_node": "input_1",
+            "out_node": "input_0",
             "out_port": "data"
         },
         {
             "in_node": "network_0",
             "in_port": "zoom",
-            "out_node": "input_2",
+            "out_node": "input_1",
             "out_port": "data"
         },
         {
@@ -49,6 +49,12 @@
             "out_port": "metadata"
         },
         {
+            "in_node": "convert_0",
+            "in_port": "in_frame",
+            "out_node": "mosaic_0",
+            "out_port": "frame"
+        },
+        {
             "in_node": "samples_refocus_0",
             "in_port": "in_samples",
             "out_node": "samples_from_metadata_0",
@@ -61,7 +67,7 @@
             "out_port": "out_samples"
         },
         {
-            "in_node": "bspline_to_frame_0",
+            "in_node": "bspline_to_sequence_0",
             "in_port": "bspline",
             "out_node": "samples_to_bspline_0",
             "out_port": "bspline"
@@ -70,32 +76,32 @@
     "description": "### Microlens normalisation using filtered center-view difference\n\nDue to the specific structure of the lens and microlens-array construction of the Lytro camera, the output image contains a complex 4-dimensional vignetting pattern, degrading the quality of the reconstruction.\n\nIn this demo, we use the central view (u,v ~ 0) image as a reference to normalize other views. This will lead to discontinuities due to parallax changes between images - assuming most of the image will contain low-frequency content, we can address these using a simple median filter.\n\nWhile removing the requirement for specific reference images, this approach might introduce low-frequency artifacts due to filtering.",
     "name": "network",
     "nodes": {
-        "bspline_to_frame_0": {
+        "bspline_to_sequence_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 430.7798156738281,
-                    "y": 991.0454711914063
+                    "x": 422.68548583984375,
+                    "y": 962.7109985351563
                 }
             },
-            "name": "bspline_to_frame",
+            "name": "bspline_to_sequence",
             "ports": {
-                "resolution": {
-                    "x": 1000,
-                    "y": 1000
+                "uv_resolution": {
+                    "x": 30,
+                    "y": 30
                 },
-                "uv": {
-                    "x": -1.0,
-                    "y": 0.0
+                "xy_resolution": {
+                    "x": 30,
+                    "y": 30
                 }
             },
-            "type": "opencv/lightfields/bspline_to_frame"
+            "type": "opencv/lightfields/bspline_to_sequence"
         },
         "convert_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 488.3110046386719,
+                    "x": 701.1376342773438,
                     "y": 1216.783935546875
                 }
             },
@@ -125,17 +131,6 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 16.799766540527344,
-                    "y": 811.9969482421875
-                }
-            },
-            "name": "size",
-            "type": "input"
-        },
-        "input_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
                     "x": 32.4499626159668,
                     "y": 87.27973175048828
                 }
@@ -143,11 +138,11 @@
             "name": "filename",
             "type": "input"
         },
-        "input_2": {
+        "input_1": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 422.6103820800781,
+                    "x": 635.43701171875,
                     "y": 1438.3726806640625
                 }
             },
@@ -165,11 +160,22 @@
             "name": "lytro_lightfield",
             "type": "opencv/capture/lytro_lightfield"
         },
+        "mosaic_0": {
+            "blind_data": {
+                "type": "possumwood::NodeData",
+                "value": {
+                    "x": 711.5875854492188,
+                    "y": 1046.2042236328125
+                }
+            },
+            "name": "mosaic",
+            "type": "opencv/sequence/mosaic"
+        },
         "network_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 521.8609619140625,
+                    "x": 734.6876220703125,
                     "y": 1443.4097900390625
                 }
             },
@@ -505,14 +511,14 @@
             },
             "name": "samples_to_bspline",
             "ports": {
-                "resolution/uv": 4,
-                "resolution/xy": 1000
+                "resolution/uv": 30,
+                "resolution/xy": 30
             },
             "type": "opencv/lightfields/samples_to_bspline"
         }
     },
     "ports": {
-        "filename": "/home/martin/gdrive/Coding/possumwood/examples/lytro/tea.lfr",
+        "filename": "/home/martin/gdrive/Coding/possumwood/examples/lytro/IMG_0015.lfr",
         "zoom": {
             "in_progress_updates": true,
             "max": 8.0,
@@ -528,5 +534,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAAAAABQAAAQ6AAACkwAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAJgAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABJwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABnQAAAdEAAACtAQAAAwAAAqEAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAKHAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABJwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABnQAAAdEAAACtAQAAAwAAAnoAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }
