@@ -29,55 +29,52 @@ static std::vector<std::pair<std::string, int>> s_filterMode{
     {"connected components, each iteration", kComponentsEachIteration},
 };
 
-dependency_graph::State compute(dependency_graph::Values& data) {
+template <typename T>
+dependency_graph::State computeT(dependency_graph::Values& data) {
 	const cv::Mat& in = *data.get(a_inFrame);
-	if(in.type() != CV_8UC3)
-		throw std::runtime_error("Only CV_8UC3 type supported on input for the moment!");
-
-	if(data.get(a_targetPixelCount) == 0)
-		throw std::runtime_error("Only positive pixel counts are allowed.");
 
 	// compute the superpixel spacing S
-	const int S = lightfields::SlicSuperpixels::initS(in.rows, in.cols, data.get(a_targetPixelCount));
+	const int S = lightfields::SlicSuperpixels<T>::initS(in.rows, in.cols, data.get(a_targetPixelCount));
 
 	// start with a regular grid of superpixels
-	auto pixels = lightfields::SlicSuperpixels::initPixels(in, S);
+	auto pixels = lightfields::SlicSuperpixels<T>::initPixels(in, S);
 
 	// create a Metric instance based on input parameters
-	const lightfields::SlicSuperpixels::Metric metric(S, data.get(a_spatialBias));
+	const typename lightfields::SlicSuperpixels<T>::Metric metric(S, data.get(a_spatialBias));
 
 	// build the labelling and metric value matrices
 #ifndef NDEBUG
 	{
-		std::atomic<lightfields::SlicSuperpixels::Label> tmp(lightfields::SlicSuperpixels::Label(0, 0));
+		std::atomic<typename lightfields::SlicSuperpixels<T>::Label> tmp(
+		    typename lightfields::SlicSuperpixels<T>::Label(0, 0));
 		assert(tmp.is_lock_free() && "Atomics in this instance make sense only if they're lock free.");
 	}
 #endif
 
-	lightfields::Grid<lightfields::SlicSuperpixels::Label> labels(in.rows, in.cols);
+	lightfields::Grid<typename lightfields::SlicSuperpixels<T>::Label> labels(in.rows, in.cols);
 
 	// make sure labelling happens even with 0 iteration count
 	bool firstStep = true;
-	lightfields::SlicSuperpixels::label(in, labels, pixels, metric);
+	lightfields::SlicSuperpixels<T>::label(in, labels, pixels, metric);
 
 	for(unsigned i = 0; i < data.get(a_iterations); ++i) {
 		// using the metric instance, label all pixels
 		if(!firstStep)
-			lightfields::SlicSuperpixels::label(in, labels, pixels, metric);
+			lightfields::SlicSuperpixels<T>::label(in, labels, pixels, metric);
 		else
 			firstStep = false;
 
 		// perform the filtering, if selected
 		if(data.get(a_filter).intValue() == kComponentsEachIteration)
-			lightfields::SlicSuperpixels::connectedComponents(labels, pixels);
+			lightfields::SlicSuperpixels<T>::connectedComponents(labels, pixels);
 
 		// recompute centres as means of all labelled pixels
-		lightfields::SlicSuperpixels::findCenters(in, labels, pixels);
+		lightfields::SlicSuperpixels<T>::findCenters(in, labels, pixels);
 	}
 
 	// address all disconnected components
 	if(data.get(a_filter).intValue() == kComponentsFinalize)
-		lightfields::SlicSuperpixels::connectedComponents(labels, pixels);
+		lightfields::SlicSuperpixels<T>::connectedComponents(labels, pixels);
 
 	// copy all to a cv::Mat
 	cv::Mat result = cv::Mat::zeros(in.rows, in.cols, CV_32SC1);
@@ -88,6 +85,21 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	data.set(a_outFrame, possumwood::opencv::Frame(result));
 
 	return dependency_graph::State();
+}
+
+dependency_graph::State compute(dependency_graph::Values& data) {
+	if(data.get(a_targetPixelCount) == 0)
+		throw std::runtime_error("Only positive pixel counts are allowed.");
+
+	const cv::Mat& in = *data.get(a_inFrame);
+	switch(in.type()) {
+		case CV_8UC3:
+			return computeT<unsigned char>(data);
+		case CV_32FC3:
+			return computeT<float>(data);
+		default:
+			throw std::runtime_error("Only CV_8UC3 type supported on input for the moment!");
+	}
 }
 
 void init(possumwood::Metadata& meta) {
