@@ -7,19 +7,22 @@
 
 namespace lightfields {
 
-SlicSuperpixels::Center::Center() : row(0), col(0), color{{0, 0, 0}} {
+template <typename T>
+SlicSuperpixels<T>::Center::Center() : row(0), col(0), color{{0, 0, 0}} {
 }
 
-SlicSuperpixels::Center::Center(const cv::Mat& m, int r, int c) : row(r), col(c) {
+template <typename T>
+SlicSuperpixels<T>::Center::Center(const cv::Mat& m, int r, int c) : row(r), col(c) {
 	assert(r >= 0 && r < m.rows);
 	assert(c >= 0 && c < m.cols);
 
-	auto ptr = m.ptr<unsigned char>(r, c);
+	auto ptr = m.ptr<T>(r, c);
 	for(int a = 0; a < 3; ++a)
 		color[a] = ptr[a];
 }
 
-SlicSuperpixels::Center& SlicSuperpixels::Center::operator+=(const Center& c) {
+template <typename T>
+typename SlicSuperpixels<T>::Center& SlicSuperpixels<T>::Center::operator+=(const Center& c) {
 	row += c.row;
 	col += c.col;
 
@@ -29,7 +32,8 @@ SlicSuperpixels::Center& SlicSuperpixels::Center::operator+=(const Center& c) {
 	return *this;
 }
 
-SlicSuperpixels::Center& SlicSuperpixels::Center::operator/=(int div) {
+template <typename T>
+typename SlicSuperpixels<T>::Center& SlicSuperpixels<T>::Center::operator/=(int div) {
 	row /= div;
 	col /= div;
 
@@ -41,14 +45,18 @@ SlicSuperpixels::Center& SlicSuperpixels::Center::operator/=(int div) {
 
 ////////////
 
-SlicSuperpixels::Metric::Metric(int S, float m) : m_S(S), m_SS(S * S), m_mm(m * m) {
+template <typename T>
+SlicSuperpixels<T>::Metric::Metric(int S, float m) : m_S(S), m_SS(S * S), m_mm(m * m) {
 }
 
-float SlicSuperpixels::Metric::operator()(const lightfields::SlicSuperpixels::Center& c, const cv::Mat& m,
-                                          const int row, const int col) const {
+template <typename T>
+float SlicSuperpixels<T>::Metric::operator()(const lightfields::SlicSuperpixels<T>::Center& c,
+                                             const cv::Mat& m,
+                                             const int row,
+                                             const int col) const {
 	float d_c = 0.0f;
 	for(int a = 0; a < 3; ++a) {
-		float elem = float(c.color[a]) - float(m.ptr<unsigned char>(row, col)[a]);
+		float elem = float(c.color[a]) - float(m.ptr<T>(row, col)[a]);
 		elem *= elem;
 
 		d_c += elem;
@@ -59,13 +67,15 @@ float SlicSuperpixels::Metric::operator()(const lightfields::SlicSuperpixels::Ce
 	return std::sqrt(d_c + d_s / m_SS * m_mm);
 }
 
-int SlicSuperpixels::Metric::S() const {
+template <typename T>
+int SlicSuperpixels<T>::Metric::S() const {
 	return m_S;
 }
 
 ////////////
 
-int SlicSuperpixels::initS(int rows, int cols, int pixelCount) {
+template <typename T>
+int SlicSuperpixels<T>::initS(int rows, int cols, int pixelCount) {
 	int result = std::sqrt((cols * rows) / pixelCount);
 	if(result <= 0)
 		throw std::runtime_error("Only positive pixel counts are allowed.");
@@ -73,56 +83,67 @@ int SlicSuperpixels::initS(int rows, int cols, int pixelCount) {
 	return result;
 }
 
-lightfields::Grid<lightfields::SlicSuperpixels::Center> SlicSuperpixels::initPixels(const cv::Mat& in, int S) {
+template <typename T>
+lightfields::Grid<typename lightfields::SlicSuperpixels<T>::Center> SlicSuperpixels<T>::initPixels(const cv::Mat& in,
+                                                                                                   int S) {
 	const int rows = in.rows / S;
 	const int cols = in.cols / S;
 
-	lightfields::Grid<lightfields::SlicSuperpixels::Center> pixels(rows, cols);
+	lightfields::Grid<lightfields::SlicSuperpixels<T>::Center> pixels(rows, cols);
 
 	for(int y = 0; y < rows; ++y)
 		for(int x = 0; x < cols; ++x)
 			pixels(y, x) =
-			    lightfields::SlicSuperpixels::Center(in, (in.rows * y) / rows + S / 2, (in.cols * x) / cols + S / 2);
+			    lightfields::SlicSuperpixels<T>::Center(in, (in.rows * y) / rows + S / 2, (in.cols * x) / cols + S / 2);
 
 	return pixels;
 }
 
 namespace {
-void labelRange(const tbb::blocked_range2d<int>& range, const cv::Mat& in, Grid<SlicSuperpixels::Label>& labels,
-                const Grid<SlicSuperpixels::Center>& centers, const SlicSuperpixels::Metric& metric) {
+template <typename T>
+void labelRange(const tbb::blocked_range2d<int>& range,
+                const cv::Mat& in,
+                Grid<typename SlicSuperpixels<T>::Label>& labels,
+                const Grid<typename SlicSuperpixels<T>::Center>& centers,
+                const typename SlicSuperpixels<T>::Metric& metric) {
 	for(std::size_t center_id = 0; center_id < centers.container().size(); ++center_id) {
-		const lightfields::SlicSuperpixels::Center& center = centers.container()[center_id];
+		const typename lightfields::SlicSuperpixels<T>::Center& center = centers.container()[center_id];
 
 		for(int y = std::max(range.rows().begin(), center.row - metric.S());
 		    y < std::min(range.rows().end(), center.row + metric.S() + 1); ++y)
 			for(int x = std::max(range.cols().begin(), center.col - metric.S());
 			    x < std::min(range.cols().end(), center.col + metric.S() + 1); ++x) {
 				const float dist = metric(center, in, y, x);
-				SlicSuperpixels::Label& current = labels(y, x);
+				typename SlicSuperpixels<T>::Label& current = labels(y, x);
 
 				if(current.metric > dist)
-					current = SlicSuperpixels::Label(center_id, dist);
+					current = typename SlicSuperpixels<T>::Label(center_id, dist);
 			}
 	}
 }
 }  // namespace
 
-void SlicSuperpixels::label(const cv::Mat& in, lightfields::Grid<Label>& labels,
-                            const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers,
-                            const Metric& metric) {
+template <typename T>
+void SlicSuperpixels<T>::label(const cv::Mat& in,
+                               lightfields::Grid<Label>& labels,
+                               const lightfields::Grid<lightfields::SlicSuperpixels<T>::Center>& centers,
+                               const Metric& metric) {
 	assert(in.rows == (int)labels.rows() && in.cols == (int)labels.cols());
 
 	// clear all labels
 	tbb::parallel_for(0, int(labels.container().size()), [&](int a) { labels.container()[a] = Label(); });
 
 	// using the metric instance, label all pixels
-	tbb::parallel_for(tbb::blocked_range2d<int>(0, in.rows, 0, in.cols),
-	                  [&](const tbb::blocked_range2d<int>& range) { labelRange(range, in, labels, centers, metric); });
+	tbb::parallel_for(tbb::blocked_range2d<int>(0, in.rows, 0, in.cols), [&](const tbb::blocked_range2d<int>& range) {
+		labelRange<T>(range, in, labels, centers, metric);
+	});
 }
 
-void SlicSuperpixels::findCenters(const cv::Mat& in, const lightfields::Grid<Label>& labels,
-                                  lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers) {
-	std::vector<lightfields::SlicSuperpixels::Center> sum(centers.container().size());
+template <typename T>
+void SlicSuperpixels<T>::findCenters(const cv::Mat& in,
+                                     const lightfields::Grid<Label>& labels,
+                                     lightfields::Grid<lightfields::SlicSuperpixels<T>::Center>& centers) {
+	std::vector<lightfields::SlicSuperpixels<T>::Center> sum(centers.container().size());
 	std::vector<int> count(centers.container().size(), 0);
 
 	for(int row = 0; row < in.rows; ++row)
@@ -130,7 +151,7 @@ void SlicSuperpixels::findCenters(const cv::Mat& in, const lightfields::Grid<Lab
 			const int label = labels(row, col).id;
 			assert(label >= 0 && label < (int)sum.size());
 
-			sum[label] += lightfields::SlicSuperpixels::Center(in, row, col);
+			sum[label] += lightfields::SlicSuperpixels<T>::Center(in, row, col);
 			count[label]++;
 		}
 
@@ -141,8 +162,10 @@ void SlicSuperpixels::findCenters(const cv::Mat& in, const lightfields::Grid<Lab
 		}
 }
 
-void SlicSuperpixels::connectedComponents(lightfields::Grid<Label>& labels,
-                                          const lightfields::Grid<lightfields::SlicSuperpixels::Center>& centers) {
+template <typename T>
+void SlicSuperpixels<T>::connectedComponents(
+    lightfields::Grid<Label>& labels,
+    const lightfields::Grid<lightfields::SlicSuperpixels<T>::Center>& centers) {
 	// first, find all components for each label
 	//  label - component - pixels (pair of ints)
 	std::vector<std::vector<std::vector<std::pair<int, int>>>> components(centers.container().size());
@@ -252,7 +275,7 @@ void SlicSuperpixels::connectedComponents(lightfields::Grid<Label>& labels,
 				if(maxCount > 0) {
 					// and label all the pixels with this label
 					for(auto& p : comp) {
-						labels(p.first, p.second) = lightfields::SlicSuperpixels::Label(maxLabel);
+						labels(p.first, p.second) = lightfields::SlicSuperpixels<T>::Label(maxLabel);
 						processed(p.first, p.second) = true;
 					}
 				}
@@ -262,5 +285,9 @@ void SlicSuperpixels::connectedComponents(lightfields::Grid<Label>& labels,
 		}
 	}
 }
+
+// explicit instantiation
+template struct SlicSuperpixels<unsigned char>;
+template struct SlicSuperpixels<float>;
 
 }  // namespace lightfields
