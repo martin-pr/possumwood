@@ -1,8 +1,12 @@
+#include <possumwood_sdk/node_implementation.h>
+
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
+
 #include <actions/traits.h>
 #include <lightfields/metadata.h>
 #include <lightfields/pattern.h>
 #include <lightfields/samples.h>
-#include <possumwood_sdk/node_implementation.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -17,6 +21,8 @@ dependency_graph::InAttr<possumwood::opencv::Frame> a_in;
 dependency_graph::InAttr<lightfields::Metadata> a_meta;
 dependency_graph::InAttr<float> a_scaleCompensation;
 dependency_graph::InAttr<bool> a_correctGain;
+dependency_graph::InAttr<int> a_uvPower;
+dependency_graph::InAttr<float> a_uvFactor;
 dependency_graph::OutAttr<lightfields::Samples> a_samples;
 dependency_graph::OutAttr<float> a_lensPitch;
 
@@ -51,7 +57,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	    input, data.get(a_correctGain) ? lightfields::Bayer::kCorrectGain : lightfields::Bayer::kNone);
 
 	// convert the pattern to the samples instance
-	data.set(a_samples, lightfields::Samples::fromPattern(pattern, fm));
+	auto samples = lightfields::Samples::fromPattern(pattern, fm);
+
+	// try to compensate for higher-power deformation
+	const int uvPower = data.get(a_uvPower);
+	const float uvFactor = data.get(a_uvFactor);
+
+	using Range = tbb::blocked_range<lightfields::Samples::iterator>;
+	tbb::parallel_for(Range(samples.begin(), samples.end()), [&](const Range& range) {
+		for(auto& s : range)
+			s.uv *= 1.0f + std::pow(s.uv.length(), uvPower) * uvFactor;
+	});
+
+	data.set(a_samples, samples);
 	data.set(a_lensPitch, pattern.lensPitch());
 
 	return dependency_graph::State();
@@ -62,6 +80,8 @@ void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_meta, "metadata", lightfields::Metadata(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_scaleCompensation, "scale_compensation", 1.0f);
 	meta.addAttribute(a_correctGain, "correct_gain", true);
+	meta.addAttribute(a_uvPower, "uv_compensation/power", 3);
+	meta.addAttribute(a_uvFactor, "uv_compensation/factor", 0.1f);
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
 	meta.addAttribute(a_lensPitch, "lens_pitch");
 
@@ -69,11 +89,15 @@ void init(possumwood::Metadata& meta) {
 	meta.addInfluence(a_meta, a_samples);
 	meta.addInfluence(a_scaleCompensation, a_samples);
 	meta.addInfluence(a_correctGain, a_samples);
+	meta.addInfluence(a_uvPower, a_samples);
+	meta.addInfluence(a_uvFactor, a_samples);
 
 	meta.addInfluence(a_in, a_lensPitch);
 	meta.addInfluence(a_meta, a_lensPitch);
 	meta.addInfluence(a_scaleCompensation, a_lensPitch);
 	meta.addInfluence(a_correctGain, a_lensPitch);
+	meta.addInfluence(a_uvPower, a_lensPitch);
+	meta.addInfluence(a_uvFactor, a_lensPitch);
 
 	meta.setCompute(compute);
 }
