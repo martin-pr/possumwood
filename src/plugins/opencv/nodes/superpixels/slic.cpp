@@ -1,10 +1,11 @@
+#include <tbb/parallel_for.h>
+#include <opencv2/opencv.hpp>
+
 #include <actions/traits.h>
-#include <lightfields/slic_superpixels.h>
 #include <possumwood_sdk/datatypes/enum.h>
 #include <possumwood_sdk/node_implementation.h>
-#include <tbb/parallel_for.h>
 
-#include <opencv2/opencv.hpp>
+#include <lightfields/slic_superpixels_2d.h>
 
 #include "frame.h"
 
@@ -34,47 +35,47 @@ dependency_graph::State computeT(dependency_graph::Values& data) {
 	const cv::Mat& in = *data.get(a_inFrame);
 
 	// compute the superpixel spacing S
-	const int S = lightfields::SlicSuperpixels<T>::initS(in.rows, in.cols, data.get(a_targetPixelCount));
+	const int S = lightfields::SlicSuperpixels2D<T>::initS(in.rows, in.cols, data.get(a_targetPixelCount));
 
 	// start with a regular grid of superpixels
-	auto pixels = lightfields::SlicSuperpixels<T>::initPixels(in, S);
+	auto pixels = lightfields::SlicSuperpixels2D<T>::initPixels(in, S);
 
 	// create a Metric instance based on input parameters
-	const typename lightfields::SlicSuperpixels<T>::Metric metric(S, data.get(a_spatialBias));
+	const typename lightfields::SlicSuperpixels2D<T>::Metric metric(S, data.get(a_spatialBias));
 
 	// build the labelling and metric value matrices
 #ifndef NDEBUG
 	{
-		std::atomic<typename lightfields::SlicSuperpixels<T>::Label> tmp(
-		    typename lightfields::SlicSuperpixels<T>::Label(0, 0));
+		std::atomic<typename lightfields::SlicSuperpixels2D<T>::Label> tmp(
+		    typename lightfields::SlicSuperpixels2D<T>::Label(0, 0));
 		assert(tmp.is_lock_free() && "Atomics in this instance make sense only if they're lock free.");
 	}
 #endif
 
-	lightfields::Grid<typename lightfields::SlicSuperpixels<T>::Label> labels(in.rows, in.cols);
+	lightfields::Grid<typename lightfields::SlicSuperpixels2D<T>::Label> labels(in.rows, in.cols);
 
 	// make sure labelling happens even with 0 iteration count
 	bool firstStep = true;
-	lightfields::SlicSuperpixels<T>::label(in, labels, pixels, metric);
+	lightfields::SlicSuperpixels2D<T>::label(in, labels, pixels, metric);
 
 	for(unsigned i = 0; i < data.get(a_iterations); ++i) {
 		// using the metric instance, label all pixels
 		if(!firstStep)
-			lightfields::SlicSuperpixels<T>::label(in, labels, pixels, metric);
+			lightfields::SlicSuperpixels2D<T>::label(in, labels, pixels, metric);
 		else
 			firstStep = false;
 
 		// perform the filtering, if selected
 		if(data.get(a_filter).intValue() == kComponentsEachIteration)
-			lightfields::SlicSuperpixels<T>::connectedComponents(labels, pixels);
+			lightfields::SlicSuperpixels2D<T>::connectedComponents(labels, pixels);
 
 		// recompute centres as means of all labelled pixels
-		lightfields::SlicSuperpixels<T>::findCenters(in, labels, pixels);
+		lightfields::SlicSuperpixels2D<T>::findCenters(in, labels, pixels);
 	}
 
 	// address all disconnected components
 	if(data.get(a_filter).intValue() == kComponentsFinalize)
-		lightfields::SlicSuperpixels<T>::connectedComponents(labels, pixels);
+		lightfields::SlicSuperpixels2D<T>::connectedComponents(labels, pixels);
 
 	// copy all to a cv::Mat
 	cv::Mat result = cv::Mat::zeros(in.rows, in.cols, CV_32SC1);
