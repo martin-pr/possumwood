@@ -32,58 +32,34 @@ static std::vector<std::pair<std::string, int>> s_filterMode{
 
 template <typename T>
 dependency_graph::State computeT(dependency_graph::Values& data) {
-	const cv::Mat& in = *data.get(a_inFrame);
-
-	// compute the superpixel spacing S
-	const int S = lightfields::SlicSuperpixels2D<T>::initS(in.rows, in.cols, data.get(a_targetPixelCount));
-
-	// start with a regular grid of superpixels
-	auto pixels = lightfields::SlicSuperpixels2D<T>::initPixels(in, S);
-
-	// create a Metric instance based on input parameters
-	const typename lightfields::SlicSuperpixels2D<T>::Metric metric(S, data.get(a_spatialBias));
-
-	// build the labelling and metric value matrices
-#ifndef NDEBUG
-	{
-		std::atomic<typename lightfields::SlicSuperpixels2D<T>::Label> tmp(
-		    typename lightfields::SlicSuperpixels2D<T>::Label(0, 0));
-		assert(tmp.is_lock_free() && "Atomics in this instance make sense only if they're lock free.");
-	}
-#endif
-
-	lightfields::Grid<typename lightfields::SlicSuperpixels2D<T>::Label> labels(in.rows, in.cols);
+	typename lightfields::SlicSuperpixels2D<T> superpixels(*data.get(a_inFrame), data.get(a_targetPixelCount),
+	                                                       data.get(a_spatialBias));
 
 	// make sure labelling happens even with 0 iteration count
 	bool firstStep = true;
-	lightfields::SlicSuperpixels2D<T>::label(in, labels, pixels, metric);
+	superpixels.label();
 
 	for(unsigned i = 0; i < data.get(a_iterations); ++i) {
 		// using the metric instance, label all pixels
 		if(!firstStep)
-			lightfields::SlicSuperpixels2D<T>::label(in, labels, pixels, metric);
+			superpixels.label();
 		else
 			firstStep = false;
 
 		// perform the filtering, if selected
 		if(data.get(a_filter).intValue() == kComponentsEachIteration)
-			lightfields::SlicSuperpixels2D<T>::connectedComponents(labels, pixels);
+			superpixels.connectedComponents();
 
 		// recompute centres as means of all labelled pixels
-		lightfields::SlicSuperpixels2D<T>::findCenters(in, labels, pixels);
+		superpixels.findCenters();
 	}
 
 	// address all disconnected components
 	if(data.get(a_filter).intValue() == kComponentsFinalize)
-		lightfields::SlicSuperpixels2D<T>::connectedComponents(labels, pixels);
+		superpixels.connectedComponents();
 
 	// copy all to a cv::Mat
-	cv::Mat result = cv::Mat::zeros(in.rows, in.cols, CV_32SC1);
-	tbb::parallel_for(0, in.rows, [&](int y) {
-		for(int x = 0; x < in.cols; ++x)
-			result.at<int>(y, x) = labels(y, x).id;
-	});
-	data.set(a_outFrame, possumwood::opencv::Frame(result));
+	data.set(a_outFrame, possumwood::opencv::Frame(superpixels.labels()));
 
 	return dependency_graph::State();
 }

@@ -304,8 +304,53 @@ void SlicSuperpixels2D<T>::connectedComponents(
 	}
 }
 
+template <typename T>
+SlicSuperpixels2D<T>::SlicSuperpixels2D(const cv::Mat& in, int pixelCount, float spatialToColorWeight)
+    : m_in(in),
+      m_metric(initS(in.rows, in.cols, pixelCount), spatialToColorWeight),
+      // start with a regular grid of superpixels
+      m_centers(initPixels(in, m_metric.S())),
+      // build the labelling and metric value matrices
+      m_labels(lightfields::Grid<typename lightfields::SlicSuperpixels2D<T>::Label>(in.rows, in.cols)) {
+#ifndef NDEBUG
+	{
+		// a sanity check - we need to work in parallel, and can't afford the labels to lock
+		std::atomic<typename lightfields::SlicSuperpixels2D<T>::Label> tmp(
+		    typename lightfields::SlicSuperpixels2D<T>::Label(0, 0));
+		assert(tmp.is_lock_free() && "Atomics in this instance make sense only if they're lock free.");
+	}
+#endif
+}
+
+template <typename T>
+void SlicSuperpixels2D<T>::label() {
+	lightfields::SlicSuperpixels2D<T>::label(m_in, m_labels, m_centers, m_metric);
+}
+
+template <typename T>
+void SlicSuperpixels2D<T>::connectedComponents() {
+	lightfields::SlicSuperpixels2D<T>::connectedComponents(m_labels, m_centers);
+}
+
+template <typename T>
+void SlicSuperpixels2D<T>::findCenters() {
+	lightfields::SlicSuperpixels2D<T>::findCenters(m_in, m_labels, m_centers);
+}
+
+template <typename T>
+cv::Mat SlicSuperpixels2D<T>::labels() const {
+	// copy all to a cv::Mat
+	cv::Mat result = cv::Mat::zeros(m_in.rows, m_in.cols, CV_32SC1);
+	tbb::parallel_for(0, m_in.rows, [&](int y) {
+		for(int x = 0; x < m_in.cols; ++x)
+			result.at<int>(y, x) = m_labels(y, x).id;
+	});
+
+	return result;
+}
+
 // explicit instantiation
-template struct SlicSuperpixels2D<unsigned char>;
-template struct SlicSuperpixels2D<float>;
+template class SlicSuperpixels2D<unsigned char>;
+template class SlicSuperpixels2D<float>;
 
 }  // namespace lightfields

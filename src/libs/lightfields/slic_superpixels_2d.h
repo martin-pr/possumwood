@@ -13,7 +13,8 @@ namespace lightfields {
 /// on pattern analysis and machine intelligence 34.11 (2012): 2274-2282. Each step of the algorithm is explicitly
 /// exposed to allow for different wiring based on the use-case.
 template <typename T>
-struct SlicSuperpixels2D {
+class SlicSuperpixels2D {
+  public:
 	/// Representation of one center of a superpixel
 	class Center {
 	  public:
@@ -59,6 +60,22 @@ struct SlicSuperpixels2D {
 		float m_SS, m_mm;
 	};
 
+	/// Initialise the parameter holder class
+	SlicSuperpixels2D(const cv::Mat& in, int pixelCount, float spatialToColorWeight);
+
+	/// label all pixels based on the closest distance to centers
+	void label();
+
+	/// recompute the centres based on labels
+	void findCenters();
+
+	/// connect labels using connected components
+	void connectedComponents();
+
+	/// get the result
+	cv::Mat labels() const;
+
+  private:
 	/// Initialise the S (grid spacing) variable
 	static int initS(int rows, int cols, int pixelCount);
 
@@ -82,6 +99,12 @@ struct SlicSuperpixels2D {
 	/// the large ones.
 	static void connectedComponents(lightfields::Grid<Label>& labels,
 	                                const lightfields::Grid<lightfields::SlicSuperpixels2D<T>::Center>& centers);
+
+	cv::Mat m_in;
+
+	Metric m_metric;
+	lightfields::Grid<lightfields::SlicSuperpixels2D<T>::Center> m_centers;
+	lightfields::Grid<Label> m_labels;
 };
 
 }  // namespace lightfields
