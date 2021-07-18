@@ -3,20 +3,14 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/usr/include/x86_64-linux-gnu/qt5/QtWidgets",
-                "/usr/include/x86_64-linux-gnu/qt5",
-                "/usr/include/OpenEXR",
-                "/usr/include/x86_64-linux-gnu/qt5/QtCore",
-                "${workspaceFolder}/src/libs",
-                "${workspaceFolder}/src/plugins/cgal"
+                "${workspaceFolder}/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/g++",
+            "compilerPath": "/usr/bin/clang",
             "cStandard": "c11",
             "cppStandard": "c++14",
-            "configurationProvider": "ms-vscode.cmake-tools",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "linux-clang-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4
