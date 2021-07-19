@@ -6,7 +6,7 @@
 
 namespace lightfields {
 
-Samples::Samples() {
+Samples::Samples(const Imath::V2i& sensor) : m_size(sensor) {
 }
 
 Samples::~Samples() {
@@ -62,6 +62,14 @@ Samples::const_iterator Samples::begin() const {
 }
 
 Samples::const_iterator Samples::end() const {
+	return m_samples.end();
+}
+
+Samples::iterator Samples::begin() {
+	return m_samples.begin();
+}
+
+Samples::iterator Samples::end() {
 	return m_samples.end();
 }
 
@@ -158,6 +166,20 @@ Samples Samples::fromPattern(const Pattern& pattern, const cv::Mat& m) {
 	}
 
 	return result;
+}
+
+void Samples::resize(std::size_t size) {
+	m_samples.resize(size);
+}
+
+Samples::Sample& Samples::operator[](std::size_t index) {
+	assert(index < m_samples.size());
+	return m_samples[index];
+}
+
+const Samples::Sample& Samples::operator[](std::size_t index) const {
+	assert(index < m_samples.size());
+	return m_samples[index];
 }
 
 /////////

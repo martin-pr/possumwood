@@ -11,7 +11,7 @@ class BSplineHierarchy {
 
 	BSpline<2>& level(std::size_t level);
 
-	double sample(double x, double y) const;
+	float sample(float x, float y) const;
 
   private:
 	std::vector<BSpline<2>> m_levels;

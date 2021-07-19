@@ -39,39 +39,39 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 		norms.push_back(cv::Mat::zeros(height, width, CV_16UC3));
 	}
 
-	tbb::parallel_for(
-	    tbb::blocked_range<lightfields::Samples::const_iterator>(samples.begin(), samples.end()),
-	    [&](const tbb::blocked_range<lightfields::Samples::const_iterator> range) {
-		    for(const lightfields::Samples::Sample& sample : range) {
-			    const double uv_magnitude_2 = sample.uv[0] * sample.uv[0] + sample.uv[1] * sample.uv[1];
-			    if(uv_magnitude_2 < 1.0) {
-				    float target_x = sample.xy[0] / (float)samples.sensorSize()[0] * (float)width;
-				    float target_y = sample.xy[1] / (float)samples.sensorSize()[1] * (float)height;
+	const tbb::blocked_range<lightfields::Samples::const_iterator> range(samples.begin(), samples.end());
 
-				    target_x = std::min(target_x, (float)(width - 1));
-				    target_y = std::min(target_y, (float)(height - 1));
+	tbb::parallel_for(range, [&](const tbb::blocked_range<lightfields::Samples::const_iterator> range) {
+		for(const lightfields::Samples::Sample& sample : range) {
+			const double uv_magnitude_2 = sample.uv[0] * sample.uv[0] + sample.uv[1] * sample.uv[1];
+			if(uv_magnitude_2 < 1.0) {
+				float target_x = sample.xy[0] / (float)samples.sensorSize()[0] * (float)width;
+				float target_y = sample.xy[1] / (float)samples.sensorSize()[1] * (float)height;
 
-				    target_x = std::max(target_x, 0.0f);
-				    target_y = std::max(target_y, 0.0f);
+				target_x = std::min(target_x, (float)(width - 1));
+				target_y = std::min(target_y, (float)(height - 1));
 
-				    int index_x = floor((sample.uv[0] + 1.0) / 2.0 * (float)elements);
-				    int index_y = floor((sample.uv[1] + 1.0) / 2.0 * (float)elements);
+				target_x = std::max(target_x, 0.0f);
+				target_y = std::max(target_y, 0.0f);
 
-				    float* color = mats[index_x + elements * index_y].ptr<float>(floor(target_y), floor(target_x));
-				    uint16_t* n = norms[index_x + elements * index_y].ptr<uint16_t>(floor(target_y), floor(target_x));
+				int index_x = floor((sample.uv[0] + 1.0) / 2.0 * (float)elements);
+				int index_y = floor((sample.uv[1] + 1.0) / 2.0 * (float)elements);
 
-				    if(sample.color == lightfields::Samples::kRGB)
-					    for(int c = 0; c < 3; ++c) {
-						    color[c] += sample.value[c];
-						    ++n[c];
-					    }
-				    else {
-					    color[sample.color] += sample.value[sample.color];
-					    ++n[sample.color];
-				    }
-			    }
-		    }
-	    });
+				float* color = mats[index_x + elements * index_y].ptr<float>(floor(target_y), floor(target_x));
+				uint16_t* n = norms[index_x + elements * index_y].ptr<uint16_t>(floor(target_y), floor(target_x));
+
+				if(sample.color == lightfields::Samples::kRGB)
+					for(int c = 0; c < 3; ++c) {
+						color[c] += sample.value[c];
+						++n[c];
+					}
+				else {
+					color[sample.color] += sample.value[sample.color];
+					++n[sample.color];
+				}
+			}
+		}
+	});
 
 	std::vector<std::size_t> counters(mats.size(), 0);
 	tbb::parallel_for(0u, elements * elements, [&](unsigned index) {

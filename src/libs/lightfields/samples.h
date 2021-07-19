@@ -23,7 +23,7 @@ class Samples {
 		Imath::V3f value;  ///< Sample colour value (only the valid channels are populated)
 	};
 
-	Samples();
+	Samples(const Imath::V2i& sensorSize = Imath::V2i(0, 0));
 	~Samples();
 
 	Samples(const Samples&) = default;
@@ -33,9 +33,13 @@ class Samples {
 	Samples& operator=(Samples&&) = default;
 
 	using const_iterator = std::vector<Sample>::const_iterator;
+	using iterator = std::vector<Sample>::iterator;
 
 	const_iterator begin() const;
 	const_iterator end() const;
+
+	iterator begin();
+	iterator end();
 
 	std::size_t size() const;
 	bool empty() const;
@@ -48,6 +52,10 @@ class Samples {
 	void filterInvalid();
 
 	static Samples fromPattern(const Pattern& p, const cv::Mat& data);
+
+	void resize(std::size_t size);
+	Sample& operator[](std::size_t index);
+	const Sample& operator[](std::size_t index) const;
 
   private:
 	std::vector<Sample> m_samples;

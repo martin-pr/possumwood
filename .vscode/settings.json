@@ -1,6 +1,7 @@
 {
     "C_Cpp.intelliSenseEngineFallback": "Disabled",
     "files.associations": {
+        "*.inl": "cpp",
         "functional": "cpp",
         "hash_map": "cpp",
         "unordered_map": "cpp",
@@ -71,6 +72,8 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "bit": "cpp",
-        "compare": "cpp"
+        "compare": "cpp",
+        "*.ipp": "cpp",
+        "valarray": "cpp"
     }
 }

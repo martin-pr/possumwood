@@ -8,7 +8,7 @@ namespace opencv {
 BSplineHierarchy::BSplineHierarchy(std::size_t level_count, std::size_t level_offset) {
 	std::size_t level = pow(2, level_offset);
 	for(std::size_t i = 0; i < level_count; ++i) {
-		m_levels.push_back(BSpline<2>(level));
+		m_levels.push_back(BSpline<2>(std::array<std::size_t, 2>{{level, level}}));
 		level *= 2;
 	}
 }
@@ -18,10 +18,10 @@ BSpline<2>& BSplineHierarchy::level(std::size_t level) {
 	return m_levels[level];
 }
 
-double BSplineHierarchy::sample(double x, double y) const {
-	double result = 0;
+float BSplineHierarchy::sample(float x, float y) const {
+	float result = 0;
 	for(auto& l : m_levels)
-		result += l.sample({x, y});
+		result += l.sample({x * float(l.size(0)), y * float(l.size(1))});
 	return result;
 }
 

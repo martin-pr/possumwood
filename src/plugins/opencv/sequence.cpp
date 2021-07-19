@@ -55,6 +55,10 @@ bool Sequence::hasOneElement() const {
 	return m_sequence.size() == 1;
 }
 
+std::size_t Sequence::size() const {
+	return m_sequence.size();
+}
+
 const Imath::V2i& Sequence::min() const {
 	return m_min;
 }

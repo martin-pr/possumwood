@@ -10,26 +10,31 @@ namespace opencv {
 template <unsigned DEGREE>
 class BSpline {
   public:
-	BSpline(unsigned subdiv, const std::array<double, DEGREE>& min = initArray(0.0),
-	        const std::array<double, DEGREE>& max = initArray(1.0));
+	explicit BSpline(const std::array<std::size_t, DEGREE>& subdiv = initArray(std::size_t(0)));
 
-	void addSample(const std::array<double, DEGREE>& coords, double value);
-	double sample(const std::array<double, DEGREE>& coords) const;
+	void addSample(const std::array<float, DEGREE>& coords, float value);
+	float sample(const std::array<float, DEGREE>& coords) const;
+
+	std::size_t size(unsigned dim) const;
 
 	bool operator==(const BSpline& b) const;
 	bool operator!=(const BSpline& b) const;
 
   private:
-	static double B(double t, unsigned k);
+	static float B(float t, unsigned k);
 
 	template <typename FN>
-	inline void visit(const std::array<double, DEGREE>& coords, const FN& fn) const;
-	static std::array<double, DEGREE> initArray(double val);
+	inline void visit(const std::array<float, DEGREE>& coords, const FN& fn) const;
 
-	std::size_t m_subdiv;
+	template <typename T>
+	static std::array<T, DEGREE> initArray(T val);
+
+	std::array<std::size_t, DEGREE> m_subdiv;
 	std::vector<std::pair<float, float>> m_controls;
-	std::array<double, DEGREE> m_min, m_max;
 };
+
+template <unsigned DEGREE>
+std::ostream& operator<<(std::ostream& out, const BSpline<DEGREE>& spline);
 
 }  // namespace opencv
 }  // namespace possumwood

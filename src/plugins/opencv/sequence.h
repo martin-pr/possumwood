@@ -61,6 +61,7 @@ class Sequence final {
 
 	bool empty() const;
 	bool hasOneElement() const;
+	std::size_t size() const;
 
 	const Imath::V2i& min() const;
 	const Imath::V2i& max() const;

@@ -1,27 +1,9 @@
 {
     "connections": [
         {
-            "in_node": "concat_0",
-            "in_port": "in_frame_2",
-            "out_node": "colormap_0",
-            "out_port": "out_frame"
-        },
-        {
             "in_node": "network_0",
             "in_port": "frame",
-            "out_node": "concat_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "concat_0",
-            "in_port": "in_frame_1",
             "out_node": "convert_0",
-            "out_port": "out_frame"
-        },
-        {
-            "in_node": "colormap_0",
-            "in_port": "in_frame",
-            "out_node": "convert_1",
             "out_port": "out_frame"
         },
         {
@@ -59,12 +41,6 @@
             "in_port": "in_frame",
             "out_node": "integrate_nearest_0",
             "out_port": "out_frame"
-        },
-        {
-            "in_node": "convert_1",
-            "in_port": "in_frame",
-            "out_node": "integrate_nearest_0",
-            "out_port": "correspondence"
         },
         {
             "in_node": "samples_refocus_0",
@@ -106,35 +82,6 @@
     "description": "### Naive refocusing\n\nThe simplest method of lightfields digital refocusing is to directly use the lightfield's equation to determine the target pixel position for each sample, given its position in the lightfield image and its corresponding `u` and `v` values.\n\nWhile very simple and fast, the number of samples for each pixel can vary depending on the bayer pattern and focal distance, often leading to noisy and/or low-resolution results with artifacts.\n\n<sub>Ng, Ren, et al. [\"Light field photography with a hand-held plenoptic camera.\"](http://www2.ene.unb.br/mylene/PI/refs/lfcamera-150dpi.pdf) Computer Science Technical Report CSTR 2.11 (2005): 1-11.</sub>",
     "name": "network",
     "nodes": {
-        "colormap_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 510.0705871582031,
-                    "y": 1361.0601806640625
-                }
-            },
-            "name": "colormap",
-            "ports": {
-                "type": "COLORMAP_JET"
-            },
-            "type": "opencv/colormap"
-        },
-        "concat_0": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 355.1289367675781,
-                    "y": 1552.659423828125
-                }
-            },
-            "name": "concat",
-            "ports": {
-                "mode": "Horizontal",
-                "separation": 0
-            },
-            "type": "opencv/concat"
-        },
         "convert_0": {
             "blind_data": {
                 "type": "possumwood::NodeData",
@@ -146,22 +93,6 @@
             "name": "convert",
             "ports": {
                 "a": 512.0,
-                "b": 0.0,
-                "mode": "CV_8U"
-            },
-            "type": "opencv/convert"
-        },
-        "convert_1": {
-            "blind_data": {
-                "type": "possumwood::NodeData",
-                "value": {
-                    "x": 500.3787841796875,
-                    "y": 1118.76513671875
-                }
-            },
-            "name": "convert",
-            "ports": {
-                "a": 2000.0,
                 "b": 0.0,
                 "mode": "CV_8U"
             },
@@ -266,8 +197,8 @@
             "blind_data": {
                 "type": "possumwood::NodeData",
                 "value": {
-                    "x": 407.0784606933594,
-                    "y": 1766.50439453125
+                    "x": 306.48345947265625,
+                    "y": 1516.0433349609375
                 }
             },
             "connections": [
@@ -607,13 +538,13 @@
         "refocus": {
             "in_progress_updates": false,
             "max": 40.0,
-            "min": -20.0,
+            "min": -30.0,
             "type": "linear",
-            "value": -20.0
+            "value": -17.469999313354492
         },
         "resolution": {
-            "x": 300,
-            "y": 300
+            "x": 1000,
+            "y": 1000
         }
     },
     "scene_config": {
@@ -623,5 +554,5 @@
     },
     "type": "network",
     "ui_geometry": "AdnQywADAAAAAAAAAAAAAAAABqoAAAOfAAAAAQAAABkAAANUAAADnQAAAAACAAAABqsAAAAAAAAAFwAABqoAAAOf",
-    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGqAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABGwAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABkQAAAd0AAACtAQAAAwAAA1cAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
+    "ui_state": "AAAA/wAAAAD9AAAAAgAAAAAAAAGqAAAC+fwCAAAAAfsAAAAKAGcAcgBhAHAAaAEAAAB1AAAC+QAAAJsBAAADAAAAAQAAAagAAAL5/AIAAAAC+wAAABQAcAByAG8AcABlAHIAdABpAGUAcwEAAAB1AAABGAAAAHkBAAAD+wAAAAwAZQBkAGkAdABvAHIBAAABjgAAAeAAAACtAQAAAwAAA1cAAAL5AAAABAAAAAQAAAAIAAAACPwAAAAA"
 }

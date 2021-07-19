@@ -21,7 +21,7 @@ dependency_graph::InAttr<unsigned> a_levels, a_offset;
 dependency_graph::OutAttr<possumwood::opencv::Frame> a_out;
 
 struct Sample {
-	Imath::V2d target;
+	Imath::V2f target;
 	float value;
 };
 
@@ -37,11 +37,14 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	std::vector<Sample> cache[3];
 
 	for(auto s : samples) {
-		if(s.color == lightfields::Samples::kRGB)
-			for(int c = 0; c < 3; ++c)
-				cache[c].push_back(Sample{Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale), s.value[c]});
-		else
-			cache[s.color].push_back(Sample{Imath::V2f(s.xy[0] * x_scale, s.xy[1] * y_scale), s.value[s.color]});
+		const Imath::V2f pos(s.xy[0] * x_scale, s.xy[1] * y_scale);
+		if(pos.x >= 0.0f && pos.x <= 1.0f && pos.y >= 0.0f && pos.y <= 1.0f) {
+			if(s.color == lightfields::Samples::kRGB)
+				for(int c = 0; c < 3; ++c)
+					cache[c].push_back(Sample{pos, s.value[c]});
+			else
+				cache[s.color].push_back(Sample{pos, s.value[s.color]});
+		}
 	}
 
 	const std::size_t levels = data.get(a_levels);
@@ -58,13 +61,19 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 
 			tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
 				auto& s = cache[c][a];
-				spline.addSample({{s.target[0], s.target[1]}}, s.value);
+
+				std::array<float, 2> pos;
+				pos[0] = s.target[0] * float(spline.size(0));
+				pos[1] = s.target[1] * float(spline.size(1));
+
+				spline.addSample(pos, s.value);
 			});
 
 			if(a < levels - 1)
 				tbb::parallel_for(std::size_t(0), cache[c].size(), [&](std::size_t a) {
 					auto& s = cache[c][a];
-					s.value -= spline.sample({{s.target[0], s.target[1]}});
+					s.value -=
+					    spline.sample({{s.target[0] * float(spline.size(0)), s.target[1] * float(spline.size(1))}});
 				});
 		}
 	}
@@ -81,7 +90,7 @@ dependency_graph::State compute(dependency_graph::Values& data) {
 	data.set(a_out, possumwood::opencv::Frame(mat));
 
 	return dependency_graph::State();
-}
+}  // namespace
 
 void init(possumwood::Metadata& meta) {
 	meta.addAttribute(a_samples, "samples", lightfields::Samples(), possumwood::AttrFlags::kVertical);
